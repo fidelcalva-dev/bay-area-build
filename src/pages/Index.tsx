@@ -6,6 +6,7 @@ import { GoogleGuaranteeSection } from '@/components/sections/GoogleGuaranteeSec
 import { RealWorkSection } from '@/components/sections/RealWorkSection';
 import { SizesPreviewSection } from '@/components/sections/SizesPreviewSection';
 import { AreasPreviewSection } from '@/components/sections/AreasPreviewSection';
+import { ServiceCoverageMapSection } from '@/components/sections/ServiceCoverageMapSection';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -19,6 +20,7 @@ const Index = () => {
       <GoogleGuaranteeSection />
       <RealWorkSection />
       <SizesPreviewSection />
+      <ServiceCoverageMapSection />
       <ReviewsSection />
       <AreasPreviewSection />
       <FAQSection />
