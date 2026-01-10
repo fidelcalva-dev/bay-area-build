@@ -1,326 +1,244 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calculator, ArrowRight, CheckCircle } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { MessageCircle, Zap, MapPin, Package, Recycle, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const DUMPSTER_SIZES = [
-  { value: '8', label: '8 Yard', price: 350 },
-  { value: '10', label: '10 Yard', price: 395 },
-  { value: '15', label: '15 Yard', price: 445 },
-  { value: '20', label: '20 Yard', price: 495 },
-  { value: '30', label: '30 Yard', price: 595 },
-  { value: '40', label: '40 Yard', price: 695 },
+  { value: '8', label: '8 Yard', price: 350, desc: 'Small cleanouts' },
+  { value: '10', label: '10 Yard', price: 395, desc: 'Garage/basement' },
+  { value: '15', label: '15 Yard', price: 445, desc: 'Kitchen remodel' },
+  { value: '20', label: '20 Yard', price: 495, desc: 'Full renovation', popular: true },
+  { value: '30', label: '30 Yard', price: 595, desc: 'Construction' },
+  { value: '40', label: '40 Yard', price: 695, desc: 'Large projects' },
 ];
 
 const MATERIAL_TYPES = [
-  { value: 'household', label: 'Household Junk' },
-  { value: 'construction', label: 'Construction Debris' },
-  { value: 'concrete', label: 'Concrete/Dirt' },
-  { value: 'roofing', label: 'Roofing Materials' },
-  { value: 'yard', label: 'Yard Waste' },
-  { value: 'mixed', label: 'Mixed Materials' },
+  { value: 'household', label: 'Household Junk', icon: '🏠', adjustment: 0 },
+  { value: 'construction', label: 'Construction', icon: '🔨', adjustment: 0 },
+  { value: 'concrete', label: 'Concrete/Dirt', icon: '🪨', adjustment: 100 },
+  { value: 'roofing', label: 'Roofing', icon: '🏗️', adjustment: 75 },
+  { value: 'yard', label: 'Yard Waste', icon: '🌿', adjustment: 0 },
+  { value: 'mixed', label: 'Mixed', icon: '📦', adjustment: 25 },
 ];
 
 const RENTAL_DAYS = [
-  { value: '3', label: '3 Days' },
-  { value: '5', label: '5 Days' },
-  { value: '7', label: '7 Days (Standard)' },
-  { value: '10', label: '10 Days' },
-  { value: '14', label: '14 Days' },
+  { value: '3', label: '3 Days', extra: 0 },
+  { value: '5', label: '5 Days', extra: 0 },
+  { value: '7', label: '7 Days', extra: 0, popular: true },
+  { value: '10', label: '10 Days', extra: 150 },
+  { value: '14', label: '14 Days', extra: 350 },
+];
+
+const SERVICE_AREAS = [
+  { zip: '94601', city: 'Oakland' },
+  { zip: '94606', city: 'Oakland' },
+  { zip: '94501', city: 'Alameda' },
+  { zip: '94577', city: 'San Leandro' },
+  { zip: '94541', city: 'Hayward' },
+  { zip: '94536', city: 'Fremont' },
+  { zip: '95112', city: 'San Jose' },
+  { zip: '94102', city: 'San Francisco' },
+  { zip: '94806', city: 'Richmond' },
+  { zip: '94520', city: 'Concord' },
 ];
 
 export function InstantQuoteForm() {
-  const navigate = useNavigate();
   const { t } = useLanguage();
-  const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [estimate, setEstimate] = useState<{ min: number; max: number } | null>(null);
   
   const [formData, setFormData] = useState({
     zip: '',
-    size: '',
-    material: '',
-    deliveryDate: '',
+    size: '20',
+    material: 'household',
     rentalDays: '7',
-    notes: '',
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const selectedSize = DUMPSTER_SIZES.find((s) => s.value === formData.size);
+  const selectedMaterial = MATERIAL_TYPES.find((m) => m.value === formData.material);
+  const selectedDays = RENTAL_DAYS.find((d) => d.value === formData.rentalDays);
 
-  const calculateEstimate = () => {
-    const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
-    if (!sizeData) return null;
-    
-    let base = sizeData.price;
-    const days = parseInt(formData.rentalDays) || 7;
-    const extraDays = Math.max(0, days - 7);
-    const extraDayFee = extraDays * 50;
-    
-    // Material adjustments
-    if (formData.material === 'concrete') base += 100;
-    if (formData.material === 'roofing') base += 75;
-    
-    const min = base + extraDayFee;
-    const max = min + 100;
-    
+  const estimate = useMemo(() => {
+    if (!selectedSize) return null;
+    const base = selectedSize.price;
+    const materialAdj = selectedMaterial?.adjustment || 0;
+    const daysAdj = selectedDays?.extra || 0;
+    const min = base + materialAdj + daysAdj;
+    const max = min + 75;
     return { min, max };
+  }, [selectedSize, selectedMaterial, selectedDays]);
+
+  const matchedCity = SERVICE_AREAS.find((a) => a.zip === formData.zip)?.city;
+
+  const handleConfirmByText = () => {
+    const message = `Hi! I'd like a quote for a ${formData.size} yard dumpster.%0A%0A📍 ZIP: ${formData.zip}${matchedCity ? ` (${matchedCity})` : ''}%0A📦 Size: ${selectedSize?.label}%0A♻️ Material: ${selectedMaterial?.label}%0A📅 Rental: ${selectedDays?.label}%0A💰 Estimate: $${estimate?.min}-$${estimate?.max}`;
+    window.open(`sms:+15106802150?body=${message}`, '_blank');
   };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const est = calculateEstimate();
-    setEstimate(est);
-    setStep(2);
-  };
-
-  const handleFinalSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Navigate to thank you page
-    navigate('/thank-you', { state: { formData, estimate } });
-  };
-
-  if (step === 2 && estimate) {
-    return (
-      <div className="bg-card rounded-2xl shadow-card p-6 md:p-8">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-success/10 text-success mb-4">
-            <CheckCircle className="w-8 h-8" />
-          </div>
-          <h3 className="heading-md text-foreground mb-2">Your Estimated Price</h3>
-          <div className="text-4xl md:text-5xl font-extrabold text-primary">
-            ${estimate.min} - ${estimate.max}
-          </div>
-          <p className="text-muted-foreground mt-2">
-            For a {formData.size} yard dumpster • {formData.rentalDays} days rental
-          </p>
-        </div>
-
-        <form onSubmit={handleFinalSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                {t('form.name')} *
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                {t('form.phone')} *
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.email')} *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.address')} *
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              placeholder="Full delivery address"
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="flex-1"
-              onClick={() => setStep(1)}
-            >
-              Back
-            </Button>
-            <Button
-              type="submit"
-              variant="cta"
-              size="lg"
-              className="flex-1"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? t('form.submitting') : 'Request Quote'}
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
-          
-          <p className="text-center text-sm text-muted-foreground">
-            Or call us now: <a href="tel:+15106802150" className="font-semibold text-primary">(510) 680-2150</a>
-          </p>
-        </form>
-      </div>
-    );
-  }
 
   return (
-    <div className="bg-card rounded-2xl shadow-card p-6 md:p-8" id="quote">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 text-accent">
-          <Calculator className="w-6 h-6" />
-        </div>
-        <div>
-          <h3 className="heading-sm text-foreground">{t('nav.getQuote')}</h3>
-          <p className="text-sm text-muted-foreground">Get your price in 30 seconds</p>
+    <div className="bg-card rounded-2xl shadow-card overflow-hidden" id="quote">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-primary to-primary/80 px-5 py-4 text-primary-foreground">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+            <Zap className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg">Instant Quote</h3>
+            <p className="text-sm text-primary-foreground/80">Get your price in seconds</p>
+          </div>
         </div>
       </div>
 
-      <form onSubmit={handleStep1Submit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.zip')} *
-            </label>
+      <div className="p-5 space-y-5">
+        {/* ZIP/City Input */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+            <MapPin className="w-4 h-4 text-muted-foreground" />
+            ZIP Code
+          </label>
+          <div className="relative">
             <input
               type="text"
-              name="zip"
               value={formData.zip}
-              onChange={handleChange}
-              required
-              maxLength={5}
-              pattern="[0-9]{5}"
-              placeholder="94606"
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              onChange={(e) => setFormData((prev) => ({ ...prev, zip: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
+              placeholder="Enter ZIP code"
+              className="w-full px-4 py-3.5 rounded-xl border-2 border-input bg-background text-foreground text-lg font-medium focus:outline-none focus:border-primary transition-colors"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.size')} *
-            </label>
-            <select
-              name="size"
-              value={formData.size}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            >
-              <option value="">Select size...</option>
-              {DUMPSTER_SIZES.map((size) => (
-                <option key={size.value} value={size.value}>
-                  {size.label} - from ${size.price}
-                </option>
-              ))}
-            </select>
+            {matchedCity && (
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-success font-medium">
+                ✓ {matchedCity}
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.material')} *
-            </label>
-            <select
-              name="material"
-              value={formData.material}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            >
-              <option value="">Select material...</option>
-              {MATERIAL_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              {t('form.deliveryDate')} *
-            </label>
-            <input
-              type="date"
-              name="deliveryDate"
-              value={formData.deliveryDate}
-              onChange={handleChange}
-              required
-              min={new Date().toISOString().split('T')[0]}
-              className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            />
-          </div>
-        </div>
-
+        {/* Dumpster Size Selector */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            {t('form.rentalDays')}
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+            <Package className="w-4 h-4 text-muted-foreground" />
+            Dumpster Size
           </label>
-          <select
-            name="rentalDays"
-            value={formData.rentalDays}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-          >
-            {RENTAL_DAYS.map((day) => (
-              <option key={day.value} value={day.value}>
-                {day.label}
-              </option>
+          <div className="grid grid-cols-3 gap-2">
+            {DUMPSTER_SIZES.map((size) => (
+              <button
+                key={size.value}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, size: size.value }))}
+                className={`relative p-3 rounded-xl border-2 text-center transition-all ${
+                  formData.size === size.value
+                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                    : 'border-input bg-background hover:border-muted-foreground/50'
+                }`}
+              >
+                {size.popular && (
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full uppercase">
+                    Popular
+                  </span>
+                )}
+                <div className="text-lg font-bold text-foreground">{size.value}</div>
+                <div className="text-[11px] text-muted-foreground">yards</div>
+              </button>
             ))}
-          </select>
+          </div>
+          {selectedSize && (
+            <p className="mt-2 text-sm text-muted-foreground text-center">
+              Best for: {selectedSize.desc}
+            </p>
+          )}
         </div>
 
+        {/* Material Type Selector */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            {t('form.notes')}
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+            <Recycle className="w-4 h-4 text-muted-foreground" />
+            Material Type
           </label>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            rows={2}
-            placeholder="Driveway placement, gate access, etc."
-            className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
-          />
+          <div className="grid grid-cols-2 gap-2">
+            {MATERIAL_TYPES.map((type) => (
+              <button
+                key={type.value}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, material: type.value }))}
+                className={`flex items-center gap-2 p-3 rounded-xl border-2 text-left transition-all ${
+                  formData.material === type.value
+                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                    : 'border-input bg-background hover:border-muted-foreground/50'
+                }`}
+              >
+                <span className="text-xl">{type.icon}</span>
+                <span className="text-sm font-medium text-foreground">{type.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        <Button type="submit" variant="cta" size="lg" className="w-full">
-          {t('form.submit')}
-          <ArrowRight className="w-4 h-4" />
+        {/* Rental Duration */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            Rental Duration
+          </label>
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+            {RENTAL_DAYS.map((day) => (
+              <button
+                key={day.value}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, rentalDays: day.value }))}
+                className={`relative flex-shrink-0 px-4 py-2.5 rounded-xl border-2 text-center transition-all ${
+                  formData.rentalDays === day.value
+                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                    : 'border-input bg-background hover:border-muted-foreground/50'
+                }`}
+              >
+                {day.popular && (
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-success text-success-foreground text-[9px] font-bold rounded-full">
+                    STD
+                  </span>
+                )}
+                <span className="text-sm font-semibold text-foreground">{day.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Price Estimate */}
+        {estimate && (
+          <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-xl p-4 border border-success/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Estimated Price</p>
+                <div className="text-3xl font-extrabold text-foreground">
+                  ${estimate.min}
+                  <span className="text-lg font-medium text-muted-foreground"> - ${estimate.max}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Includes</p>
+                <p className="text-sm font-medium text-success">Delivery + Pickup</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CTA Button */}
+        <Button
+          type="button"
+          variant="cta"
+          size="lg"
+          className="w-full gap-2"
+          onClick={handleConfirmByText}
+          disabled={!formData.zip || formData.zip.length < 5}
+        >
+          <MessageCircle className="w-5 h-5" />
+          Confirm by Text
         </Button>
-      </form>
+
+        {/* Secondary Options */}
+        <div className="flex items-center justify-center gap-4 text-sm">
+          <a href="tel:+15106802150" className="text-muted-foreground hover:text-primary transition-colors">
+            Or call <span className="font-semibold text-foreground">(510) 680-2150</span>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
