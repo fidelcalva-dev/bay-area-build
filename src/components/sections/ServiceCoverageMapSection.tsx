@@ -1,474 +1,435 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, ChevronRight, Navigation, Zap, Clock, CheckCircle2 } from 'lucide-react';
+import { MapPin, Phone, ChevronRight, CheckCircle2, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-interface CityMarker {
+interface Region {
+  id: string;
   name: string;
-  slug: string;
-  countySlug: string;
   status: 'active' | 'coming-soon';
-  x: number;
-  y: number;
-  region?: string;
+  cities: string[];
+  path: string;
+  labelX: number;
+  labelY: number;
 }
 
-// Bay Area cities positioned on California map (coordinates are percentages)
-const cityMarkers: CityMarker[] = [
-  // Active - Bay Area cities
-  { name: 'San Francisco', slug: 'downtown-sf', countySlug: 'san-francisco', status: 'active', x: 22, y: 42, region: 'SF Bay' },
-  { name: 'Oakland', slug: 'oakland', countySlug: 'alameda', status: 'active', x: 26, y: 43, region: 'East Bay' },
-  { name: 'San Jose', slug: 'san-jose', countySlug: 'santa-clara', status: 'active', x: 28, y: 52, region: 'South Bay' },
-  { name: 'Fremont', slug: 'fremont', countySlug: 'alameda', status: 'active', x: 30, y: 47, region: 'East Bay' },
-  { name: 'Berkeley', slug: 'berkeley', countySlug: 'alameda', status: 'active', x: 25, y: 40, region: 'East Bay' },
-  { name: 'Concord', slug: 'concord', countySlug: 'contra-costa', status: 'active', x: 30, y: 38, region: 'East Bay' },
-  { name: 'Walnut Creek', slug: 'walnut-creek', countySlug: 'contra-costa', status: 'active', x: 32, y: 40, region: 'East Bay' },
-  { name: 'Palo Alto', slug: 'palo-alto', countySlug: 'santa-clara', status: 'active', x: 25, y: 50, region: 'Peninsula' },
-  { name: 'Sunnyvale', slug: 'sunnyvale', countySlug: 'santa-clara', status: 'active', x: 27, y: 51, region: 'South Bay' },
-  { name: 'Santa Rosa', slug: 'santa-rosa', countySlug: 'sonoma', status: 'active', x: 20, y: 32, region: 'North Bay' },
-  { name: 'Napa', slug: 'napa', countySlug: 'napa', status: 'active', x: 26, y: 34, region: 'North Bay' },
-  { name: 'Vallejo', slug: 'vallejo', countySlug: 'solano', status: 'active', x: 24, y: 36, region: 'North Bay' },
-  { name: 'San Rafael', slug: 'san-rafael', countySlug: 'marin', status: 'active', x: 21, y: 38, region: 'North Bay' },
-  { name: 'Hayward', slug: 'hayward', countySlug: 'alameda', status: 'active', x: 28, y: 45, region: 'East Bay' },
-  { name: 'San Mateo', slug: 'san-mateo', countySlug: 'san-mateo', status: 'active', x: 24, y: 47, region: 'Peninsula' },
-  
-  // Coming Soon - Future expansion cities
-  { name: 'Sacramento', slug: 'sacramento', countySlug: '', status: 'coming-soon', x: 38, y: 35, region: 'Central Valley' },
-  { name: 'Stockton', slug: 'stockton', countySlug: '', status: 'coming-soon', x: 42, y: 42, region: 'Central Valley' },
-  { name: 'Modesto', slug: 'modesto', countySlug: '', status: 'coming-soon', x: 45, y: 48, region: 'Central Valley' },
-  { name: 'Fresno', slug: 'fresno', countySlug: '', status: 'coming-soon', x: 52, y: 60, region: 'Central Valley' },
-  { name: 'Los Angeles', slug: 'los-angeles', countySlug: '', status: 'coming-soon', x: 48, y: 82, region: 'SoCal' },
-  { name: 'San Diego', slug: 'san-diego', countySlug: '', status: 'coming-soon', x: 55, y: 92, region: 'SoCal' },
+const regions: Region[] = [
+  // Bay Area Counties - Active
+  {
+    id: 'san-francisco',
+    name: 'San Francisco',
+    status: 'active',
+    cities: ['Downtown SF', 'SOMA', 'Mission', 'Marina'],
+    path: 'M118,195 L125,190 L132,193 L130,202 L122,205 Z',
+    labelX: 124,
+    labelY: 198,
+  },
+  {
+    id: 'alameda',
+    name: 'Alameda County',
+    status: 'active',
+    cities: ['Oakland', 'Berkeley', 'Fremont', 'Hayward'],
+    path: 'M132,190 L155,185 L165,200 L160,225 L145,235 L130,220 L128,205 Z',
+    labelX: 145,
+    labelY: 210,
+  },
+  {
+    id: 'contra-costa',
+    name: 'Contra Costa',
+    status: 'active',
+    cities: ['Concord', 'Walnut Creek', 'Richmond', 'Antioch'],
+    path: 'M132,165 L175,155 L185,175 L165,200 L155,185 L132,190 Z',
+    labelX: 155,
+    labelY: 178,
+  },
+  {
+    id: 'santa-clara',
+    name: 'Santa Clara',
+    status: 'active',
+    cities: ['San Jose', 'Sunnyvale', 'Palo Alto', 'Mountain View'],
+    path: 'M115,225 L145,235 L160,225 L175,260 L145,280 L115,265 Z',
+    labelX: 142,
+    labelY: 252,
+  },
+  {
+    id: 'san-mateo',
+    name: 'San Mateo',
+    status: 'active',
+    cities: ['San Mateo', 'Redwood City', 'Daly City', 'Burlingame'],
+    path: 'M105,200 L122,205 L130,220 L115,225 L115,265 L95,250 L100,215 Z',
+    labelX: 112,
+    labelY: 232,
+  },
+  {
+    id: 'marin',
+    name: 'Marin County',
+    status: 'active',
+    cities: ['San Rafael', 'Novato', 'Mill Valley', 'Sausalito'],
+    path: 'M95,165 L118,160 L125,175 L118,195 L105,200 L95,185 Z',
+    labelX: 110,
+    labelY: 180,
+  },
+  {
+    id: 'sonoma',
+    name: 'Sonoma County',
+    status: 'active',
+    cities: ['Santa Rosa', 'Petaluma', 'Rohnert Park', 'Healdsburg'],
+    path: 'M75,120 L110,115 L118,160 L95,165 L80,155 L70,135 Z',
+    labelX: 95,
+    labelY: 142,
+  },
+  {
+    id: 'napa',
+    name: 'Napa County',
+    status: 'active',
+    cities: ['Napa', 'Yountville', 'St. Helena', 'Calistoga'],
+    path: 'M110,115 L135,110 L145,145 L132,165 L118,160 Z',
+    labelX: 128,
+    labelY: 140,
+  },
+  {
+    id: 'solano',
+    name: 'Solano County',
+    status: 'active',
+    cities: ['Vallejo', 'Fairfield', 'Vacaville', 'Benicia'],
+    path: 'M135,110 L170,105 L175,155 L132,165 L145,145 Z',
+    labelX: 152,
+    labelY: 135,
+  },
+  // Coming Soon Regions
+  {
+    id: 'sacramento',
+    name: 'Sacramento',
+    status: 'coming-soon',
+    cities: ['Sacramento', 'Elk Grove', 'Roseville', 'Folsom'],
+    path: 'M170,105 L215,95 L225,140 L210,165 L185,175 L175,155 Z',
+    labelX: 195,
+    labelY: 135,
+  },
+  {
+    id: 'san-joaquin',
+    name: 'San Joaquin',
+    status: 'coming-soon',
+    cities: ['Stockton', 'Tracy', 'Manteca', 'Lodi'],
+    path: 'M185,175 L210,165 L225,200 L220,240 L175,260 L165,200 Z',
+    labelX: 198,
+    labelY: 210,
+  },
+  {
+    id: 'fresno',
+    name: 'Fresno County',
+    status: 'coming-soon',
+    cities: ['Fresno', 'Clovis', 'Madera', 'Selma'],
+    path: 'M175,260 L220,240 L250,320 L210,350 L170,320 L145,280 Z',
+    labelX: 200,
+    labelY: 295,
+  },
+  {
+    id: 'los-angeles',
+    name: 'Los Angeles',
+    status: 'coming-soon',
+    cities: ['Los Angeles', 'Long Beach', 'Pasadena', 'Glendale'],
+    path: 'M170,420 L230,400 L260,440 L250,480 L200,490 L165,460 Z',
+    labelX: 210,
+    labelY: 445,
+  },
+  {
+    id: 'san-diego',
+    name: 'San Diego',
+    status: 'coming-soon',
+    cities: ['San Diego', 'Chula Vista', 'Oceanside', 'Carlsbad'],
+    path: 'M200,490 L250,480 L275,520 L260,550 L215,545 L195,515 Z',
+    labelX: 235,
+    labelY: 520,
+  },
 ];
 
 export const ServiceCoverageMapSection = () => {
-  const [selectedCity, setSelectedCity] = useState<CityMarker | null>(null);
-  const [hoveredCity, setHoveredCity] = useState<string | null>(null);
+  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
 
-  const activeCities = cityMarkers.filter(c => c.status === 'active');
-  const comingSoonCities = cityMarkers.filter(c => c.status === 'coming-soon');
+  const activeRegions = regions.filter(r => r.status === 'active');
+  const comingSoonRegions = regions.filter(r => r.status === 'coming-soon');
 
-  const handleCityClick = useCallback((city: CityMarker) => {
-    setSelectedCity(prev => prev?.slug === city.slug ? null : city);
-  }, []);
+  const handleRegionClick = (region: Region) => {
+    setSelectedRegion(prev => prev?.id === region.id ? null : region);
+  };
 
   return (
-    <section className="section-padding bg-gradient-to-b from-secondary via-secondary to-background relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent rounded-full blur-3xl" />
-      </div>
-
-      <div className="container-wide relative z-10">
+    <section className="section-padding bg-background">
+      <div className="container-wide">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-primary/20 text-primary-foreground px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Navigation className="h-4 w-4" />
-            Interactive Coverage Map
-          </div>
-          <h2 className="heading-lg text-secondary-foreground mb-4">
-            Bay Area Coverage — California Expansion
+        <div className="text-center mb-10">
+          <h2 className="heading-lg text-foreground mb-3">
+            Service Coverage Map
           </h2>
-          <p className="text-lg text-secondary-foreground/70 max-w-3xl mx-auto">
-            Tap any city to see service details. We operate our own yards and fleet across the Bay Area.
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Click any region to see service details. Green areas have same-day delivery.
           </p>
         </div>
 
-        {/* Stats bar */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-10">
-          {[
-            { icon: MapPin, label: 'Active Cities', value: activeCities.length.toString() },
-            { icon: Clock, label: 'Same-Day Delivery', value: '100%' },
-            { icon: Zap, label: 'Expansion Cities', value: comingSoonCities.length.toString() },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-center gap-3 bg-card/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/10">
-              <stat.icon className="h-5 w-5 text-accent" />
-              <div>
-                <div className="text-xl font-bold text-secondary-foreground">{stat.value}</div>
-                <div className="text-xs text-secondary-foreground/60">{stat.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Map Container */}
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
+          {/* SVG Map */}
           <div className="lg:col-span-2">
-            <div className="relative bg-gradient-to-br from-card via-card to-muted/50 rounded-2xl p-1 shadow-2xl">
-              {/* Map inner container with border effect */}
-              <div className="bg-card rounded-xl overflow-hidden relative">
-                {/* Map header bar */}
-                <div className="bg-secondary/80 backdrop-blur-sm px-4 py-3 flex items-center justify-between border-b border-border/20">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400/80" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
-                    <div className="w-3 h-3 rounded-full bg-green-400/80" />
-                  </div>
-                  <span className="text-xs text-secondary-foreground/60 font-mono">calsan-coverage.map</span>
-                  <div className="w-16" />
-                </div>
+            <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+              <svg
+                viewBox="60 80 230 500"
+                className="w-full h-auto"
+                style={{ maxHeight: '600px' }}
+              >
+                {/* California State Outline */}
+                <path
+                  d="M85,95 L130,90 L170,105 L215,95 L240,110 L260,150 L280,200 L295,260 L300,320 L290,380 L275,420 L260,440 L250,480 L275,520 L260,560 L215,555 L195,515 L165,460 L150,400 L125,350 L110,300 L95,250 L85,200 L75,150 L80,120 Z"
+                  fill="hsl(var(--muted) / 0.5)"
+                  stroke="hsl(var(--border))"
+                  strokeWidth="1.5"
+                />
 
-                {/* California Map SVG */}
-                <div className="relative p-4 md:p-6">
-                  <svg
-                    viewBox="0 0 100 120"
-                    className="w-full h-auto transition-all duration-500"
-                    style={{ maxHeight: '500px' }}
-                  >
-                    {/* Gradient definitions */}
-                    <defs>
-                      <linearGradient id="californiaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="hsl(var(--muted))" />
-                        <stop offset="100%" stopColor="hsl(var(--muted) / 0.7)" />
-                      </linearGradient>
-                      <linearGradient id="bayAreaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="hsl(var(--primary) / 0.25)" />
-                        <stop offset="100%" stopColor="hsl(var(--primary) / 0.1)" />
-                      </linearGradient>
-                      <filter id="glow">
-                        <feGaussianBlur stdDeviation="1" result="coloredBlur" />
-                        <feMerge>
-                          <feMergeNode in="coloredBlur" />
-                          <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                      </filter>
-                      <filter id="dropShadow">
-                        <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.3" />
-                      </filter>
-                    </defs>
+                {/* Render regions */}
+                {regions.map((region) => {
+                  const isHovered = hoveredRegion === region.id;
+                  const isSelected = selectedRegion?.id === region.id;
+                  const isActive = region.status === 'active';
 
-                    {/* California outline */}
-                    <path
-                      d="M15 5 L35 3 L40 8 L42 15 L45 25 L50 35 L55 45 L60 55 L65 65 L70 75 L68 85 L65 95 L60 100 L55 105 L50 110 L45 112 L42 108 L40 100 L38 90 L35 80 L30 70 L25 60 L20 50 L18 40 L17 30 L15 20 L14 10 Z"
-                      fill="url(#californiaGradient)"
-                      stroke="hsl(var(--border))"
-                      strokeWidth="0.5"
-                      filter="url(#dropShadow)"
-                    />
-
-                    {/* Bay Area active zone */}
-                    <ellipse
-                      cx="26"
-                      cy="44"
-                      rx="15"
-                      ry="14"
-                      fill="url(#bayAreaGradient)"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth="0.4"
-                      strokeDasharray="2,1"
-                      className="animate-pulse-slow"
-                    />
-
-                    {/* Bay Area label */}
-                    <text
-                      x="26"
-                      y="58"
-                      textAnchor="middle"
-                      className="text-[2.5px] font-semibold fill-primary"
-                    >
-                      BAY AREA
-                    </text>
-
-                    {/* Connection lines from Bay Area to expansion cities */}
-                    {comingSoonCities.map((city) => (
-                      <line
-                        key={`line-${city.slug}`}
-                        x1="26"
-                        y1="44"
-                        x2={city.x}
-                        y2={city.y}
-                        stroke="hsl(var(--accent) / 0.2)"
-                        strokeWidth="0.3"
-                        strokeDasharray="1,1"
-                        className={`transition-all duration-300 ${
-                          hoveredCity === city.slug ? 'stroke-[hsl(var(--accent))] opacity-100' : 'opacity-50'
-                        }`}
+                  return (
+                    <g key={region.id}>
+                      {/* Region path */}
+                      <path
+                        d={region.path}
+                        fill={
+                          isActive
+                            ? isHovered || isSelected
+                              ? 'hsl(var(--primary) / 0.6)'
+                              : 'hsl(var(--primary) / 0.4)'
+                            : isHovered || isSelected
+                              ? 'hsl(var(--muted-foreground) / 0.3)'
+                              : 'hsl(var(--muted-foreground) / 0.15)'
+                        }
+                        stroke={
+                          isActive
+                            ? 'hsl(var(--primary))'
+                            : 'hsl(var(--muted-foreground) / 0.4)'
+                        }
+                        strokeWidth={isHovered || isSelected ? '2' : '1'}
+                        className="cursor-pointer transition-all duration-200"
+                        onMouseEnter={() => setHoveredRegion(region.id)}
+                        onMouseLeave={() => setHoveredRegion(null)}
+                        onClick={() => handleRegionClick(region)}
                       />
-                    ))}
 
-                    {/* City markers - Coming Soon first (render behind) */}
-                    {comingSoonCities.map((city) => (
-                      <g
-                        key={city.slug}
-                        className="cursor-pointer transition-transform duration-200"
-                        onClick={() => handleCityClick(city)}
-                        onMouseEnter={() => setHoveredCity(city.slug)}
-                        onMouseLeave={() => setHoveredCity(null)}
-                        style={{
-                          transform: hoveredCity === city.slug || selectedCity?.slug === city.slug 
-                            ? 'scale(1.2)' 
-                            : 'scale(1)',
-                          transformOrigin: `${city.x}px ${city.y}px`,
-                        }}
+                      {/* Region label */}
+                      <text
+                        x={region.labelX}
+                        y={region.labelY}
+                        textAnchor="middle"
+                        className={`text-[8px] font-semibold pointer-events-none select-none ${
+                          isActive ? 'fill-primary' : 'fill-muted-foreground'
+                        }`}
                       >
-                        {/* Outer glow ring */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r="3"
-                          fill="none"
-                          stroke="hsl(var(--accent) / 0.3)"
-                          strokeWidth="0.5"
-                          className={`transition-all duration-300 ${
-                            hoveredCity === city.slug || selectedCity?.slug === city.slug 
-                              ? 'opacity-100' 
-                              : 'opacity-0'
-                          }`}
-                        />
-                        {/* Main marker */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r="1.8"
-                          fill="hsl(var(--accent))"
-                          stroke="hsl(var(--card))"
-                          strokeWidth="0.5"
-                          className="transition-all duration-200"
-                        />
-                        {/* Inner dot */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r="0.6"
-                          fill="hsl(var(--accent-foreground))"
-                        />
-                      </g>
-                    ))}
+                        {region.name.split(' ')[0]}
+                      </text>
 
-                    {/* City markers - Active cities (render on top) */}
-                    {activeCities.map((city) => (
-                      <g
-                        key={city.slug}
-                        className="cursor-pointer"
-                        onClick={() => handleCityClick(city)}
-                        onMouseEnter={() => setHoveredCity(city.slug)}
-                        onMouseLeave={() => setHoveredCity(null)}
-                      >
-                        {/* Pulse animation ring */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r={hoveredCity === city.slug || selectedCity?.slug === city.slug ? "4" : "3"}
-                          fill="none"
-                          stroke="hsl(var(--primary))"
-                          strokeWidth="0.3"
-                          className={`transition-all duration-300 ${
-                            hoveredCity === city.slug || selectedCity?.slug === city.slug 
-                              ? 'opacity-100 animate-ping' 
-                              : 'opacity-0'
-                          }`}
-                          style={{ transformOrigin: `${city.x}px ${city.y}px` }}
-                        />
-                        {/* Outer glow */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r="3"
-                          fill="hsl(var(--primary) / 0.2)"
-                          className={`transition-all duration-200 ${
-                            hoveredCity === city.slug || selectedCity?.slug === city.slug 
-                              ? 'opacity-100' 
-                              : 'opacity-0'
-                          }`}
-                        />
-                        {/* Main marker with glow */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r={hoveredCity === city.slug || selectedCity?.slug === city.slug ? "2.2" : "1.8"}
-                          fill="hsl(var(--primary))"
-                          stroke="hsl(var(--card))"
-                          strokeWidth="0.6"
-                          filter={hoveredCity === city.slug || selectedCity?.slug === city.slug ? "url(#glow)" : ""}
-                          className="transition-all duration-200"
-                        />
-                        {/* Inner checkmark indicator */}
-                        <circle
-                          cx={city.x}
-                          cy={city.y}
-                          r="0.7"
-                          fill="hsl(var(--primary-foreground))"
-                        />
-                      </g>
-                    ))}
-                  </svg>
+                      {/* Status indicator dot */}
+                      <circle
+                        cx={region.labelX}
+                        cy={region.labelY + 10}
+                        r="3"
+                        fill={isActive ? 'hsl(var(--primary))' : 'hsl(var(--accent))'}
+                        className="pointer-events-none"
+                      />
+                    </g>
+                  );
+                })}
 
-                  {/* Selected city popup card */}
-                  {selectedCity && (
-                    <div 
-                      className="absolute bg-card border border-border rounded-xl shadow-2xl p-4 min-w-[240px] z-20 animate-fade-in"
-                      style={{
-                        left: `${Math.min(Math.max(selectedCity.x, 25), 75)}%`,
-                        top: `${Math.min(selectedCity.y + 5, 70)}%`,
-                        transform: 'translateX(-50%)',
-                      }}
-                    >
-                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-card border-l border-t border-border rotate-45" />
-                      
-                      <div className="relative">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-bold text-foreground text-lg">{selectedCity.name}</h4>
-                            <p className="text-xs text-muted-foreground">{selectedCity.region}</p>
-                          </div>
-                          <span
-                            className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
-                              selectedCity.status === 'active'
-                                ? 'bg-primary/15 text-primary'
-                                : 'bg-accent/15 text-accent'
-                            }`}
-                          >
-                            {selectedCity.status === 'active' ? '● Active' : '◐ Coming Soon'}
-                          </span>
-                        </div>
-                        
-                        {selectedCity.status === 'active' ? (
-                          <>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                              <CheckCircle2 className="h-4 w-4 text-primary" />
-                              Same-day delivery available
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="cta" className="flex-1 text-sm" asChild>
-                                <Link to={`/areas#${selectedCity.countySlug}`}>
-                                  Get Instant Quote
-                                  <ChevronRight className="ml-1 h-3 w-3" />
-                                </Link>
-                              </Button>
-                              <Button size="sm" variant="outline" className="px-3" asChild>
-                                <a href="tel:+15106802150">
-                                  <Phone className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="space-y-3">
-                            <p className="text-sm text-muted-foreground">
-                              We're expanding to {selectedCity.name} soon! Get notified when we launch.
-                            </p>
-                            <Button size="sm" variant="outline" className="w-full" asChild>
-                              <a href="tel:+15106802150">
-                                <Phone className="mr-2 h-3 w-3" />
-                                Request Early Access
-                              </a>
-                            </Button>
-                          </div>
-                        )}
-
-                        <button
-                          onClick={() => setSelectedCity(null)}
-                          className="absolute -top-1 -right-1 w-6 h-6 bg-muted hover:bg-muted-foreground/20 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors text-xs"
+                {/* Hover tooltip */}
+                {hoveredRegion && !selectedRegion && (
+                  (() => {
+                    const region = regions.find(r => r.id === hoveredRegion);
+                    if (!region) return null;
+                    const tooltipX = Math.min(Math.max(region.labelX, 100), 250);
+                    const tooltipY = region.labelY - 35;
+                    
+                    return (
+                      <g className="pointer-events-none">
+                        <rect
+                          x={tooltipX - 50}
+                          y={tooltipY - 12}
+                          width="100"
+                          height="28"
+                          rx="4"
+                          fill="hsl(var(--popover))"
+                          stroke="hsl(var(--border))"
+                          strokeWidth="1"
+                        />
+                        <text
+                          x={tooltipX}
+                          y={tooltipY}
+                          textAnchor="middle"
+                          className="text-[9px] font-semibold fill-foreground"
                         >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                          {region.name}
+                        </text>
+                        <text
+                          x={tooltipX}
+                          y={tooltipY + 10}
+                          textAnchor="middle"
+                          className={`text-[7px] ${
+                            region.status === 'active' ? 'fill-primary' : 'fill-accent'
+                          }`}
+                        >
+                          {region.status === 'active' ? '● Active' : '○ Coming Soon'}
+                        </text>
+                      </g>
+                    );
+                  })()
+                )}
+              </svg>
 
-                {/* Map footer legend */}
-                <div className="bg-muted/30 backdrop-blur-sm px-4 py-3 flex flex-wrap items-center justify-center gap-4 md:gap-8 border-t border-border/20">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
-                    <span className="text-sm text-foreground font-medium">Active Service</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-accent shadow-[0_0_8px_hsl(var(--accent)/0.5)]" />
-                    <span className="text-sm text-foreground font-medium">Coming Soon</span>
-                  </div>
-                  <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="px-2 py-0.5 bg-muted rounded">Click pin for details</span>
-                  </div>
+              {/* Legend */}
+              <div className="flex items-center justify-center gap-8 py-4 border-t border-border bg-muted/30">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-primary/40 border border-primary" />
+                  <span className="text-sm text-foreground">Active Service</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-muted-foreground/15 border border-muted-foreground/40" />
+                  <span className="text-sm text-foreground">Coming Soon</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Side Panel */}
-          <div className="space-y-5">
-            {/* Active Cities Card */}
-            <div className="bg-card rounded-xl p-5 border border-border/50 shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-foreground">Active Service</h3>
-                  <p className="text-xs text-muted-foreground">{activeCities.length} cities ready</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 mb-4">
-                {activeCities.slice(0, 8).map((city) => (
-                  <button
-                    key={city.slug}
-                    onClick={() => handleCityClick(city)}
-                    className={`text-sm text-left px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                      selectedCity?.slug === city.slug
-                        ? 'bg-primary/10 text-primary font-medium'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    }`}
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    {city.name}
-                  </button>
-                ))}
-              </div>
-              {activeCities.length > 8 && (
-                <p className="text-xs text-muted-foreground mb-3">
-                  +{activeCities.length - 8} more cities
-                </p>
-              )}
-              <Button variant="cta" className="w-full" size="sm" asChild>
-                <Link to="/areas">
-                  View All Service Areas
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Coming Soon Card */}
-            <div className="bg-muted/30 rounded-xl p-5 border border-border/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                  <Zap className="h-5 w-5 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-foreground">Expanding Soon</h3>
-                  <p className="text-xs text-muted-foreground">{comingSoonCities.length} new markets</p>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                {comingSoonCities.map((city) => (
-                  <button
-                    key={city.slug}
-                    onClick={() => handleCityClick(city)}
-                    className={`w-full text-sm text-left px-2.5 py-2 rounded-lg transition-all flex items-center justify-between ${
-                      selectedCity?.slug === city.slug
-                        ? 'bg-accent/10 text-accent font-medium'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      {city.name}
+          <div className="space-y-4">
+            {/* Selected Region Card */}
+            {selectedRegion ? (
+              <div className="bg-card rounded-xl border border-border p-5 shadow-lg animate-fade-in">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="font-bold text-lg text-foreground">{selectedRegion.name}</h3>
+                    <span
+                      className={`inline-flex items-center gap-1.5 text-xs font-medium mt-1 ${
+                        selectedRegion.status === 'active' ? 'text-primary' : 'text-accent'
+                      }`}
+                    >
+                      {selectedRegion.status === 'active' ? (
+                        <>
+                          <CheckCircle2 className="h-3 w-3" /> Active Service
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="h-3 w-3" /> Coming Soon
+                        </>
+                      )}
                     </span>
-                    <span className="text-xs opacity-60">{city.region}</span>
+                  </div>
+                  <button
+                    onClick={() => setSelectedRegion(null)}
+                    className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-xs text-muted-foreground mb-2">Cities served:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedRegion.cities.map((city) => (
+                      <span
+                        key={city}
+                        className="text-xs bg-muted px-2 py-1 rounded-full text-foreground"
+                      >
+                        {city}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedRegion.status === 'active' ? (
+                  <div className="space-y-2">
+                    <Button variant="cta" className="w-full" size="sm" asChild>
+                      <Link to={`/areas#${selectedRegion.id}`}>
+                        Get Instant Quote
+                        <ChevronRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full" size="sm" asChild>
+                      <a href="tel:+15106802150">
+                        <Phone className="mr-2 h-4 w-4" />
+                        Call (510) 680-2150
+                      </a>
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full" size="sm" asChild>
+                    <a href="tel:+15106802150">
+                      <Phone className="mr-2 h-4 w-4" />
+                      Request Early Access
+                    </a>
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="bg-muted/50 rounded-xl border border-border/50 p-5 text-center">
+                <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Click a region on the map to see details
+                </p>
+              </div>
+            )}
+
+            {/* Quick Links */}
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-primary" />
+                Active Regions ({activeRegions.length})
+              </h4>
+              <div className="space-y-1 mb-4">
+                {activeRegions.map((region) => (
+                  <button
+                    key={region.id}
+                    onClick={() => handleRegionClick(region)}
+                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+                      selectedRegion?.id === region.id
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    }`}
+                  >
+                    {region.name}
+                  </button>
+                ))}
+              </div>
+
+              <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-accent" />
+                Expanding Soon ({comingSoonRegions.length})
+              </h4>
+              <div className="space-y-1">
+                {comingSoonRegions.map((region) => (
+                  <button
+                    key={region.id}
+                    onClick={() => handleRegionClick(region)}
+                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+                      selectedRegion?.id === region.id
+                        ? 'bg-accent/10 text-accent font-medium'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    }`}
+                  >
+                    {region.name}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* CTA Card */}
-            <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-xl p-5 border border-primary/20">
-              <p className="text-sm text-foreground font-medium mb-3">
-                Don't see your city? We may still serve your area.
+            {/* CTA */}
+            <div className="bg-primary/5 rounded-xl border border-primary/20 p-5 text-center">
+              <p className="text-sm text-foreground mb-3">
+                Don't see your area? We may still serve you.
               </p>
-              <Button variant="outline" className="w-full" size="sm" asChild>
-                <a href="tel:+15106802150" className="flex items-center justify-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  Call to Check Coverage
+              <Button variant="outline" size="sm" asChild>
+                <a href="tel:+15106802150">
+                  <Phone className="mr-2 h-4 w-4" />
+                  Check Coverage
                 </a>
               </Button>
             </div>
