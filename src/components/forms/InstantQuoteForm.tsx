@@ -1,7 +1,35 @@
 import { useState, useMemo } from 'react';
-import { MessageCircle, Zap, MapPin, Package, Recycle, Calendar } from 'lucide-react';
+import { MessageCircle, Zap, MapPin, Package, Recycle, Calendar, Home, HardHat, Building2, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
+
+const USER_TYPES = [
+  { 
+    value: 'homeowner', 
+    label: 'Homeowner', 
+    icon: Home,
+    headline: 'Perfect for home projects',
+    cta: 'Get My Quote',
+    benefits: ['Same-day delivery', 'Simple pricing', 'Friendly service'],
+  },
+  { 
+    value: 'contractor', 
+    label: 'Contractor', 
+    icon: HardHat,
+    headline: 'Built for pros like you',
+    cta: 'Get Contractor Quote',
+    benefits: ['Volume discounts', 'Priority scheduling', 'Net-30 available'],
+  },
+  { 
+    value: 'business', 
+    label: 'Business / City', 
+    icon: Building2,
+    headline: 'Enterprise-ready service',
+    cta: 'Request Business Quote',
+    benefits: ['Sustainability reports', 'Dedicated account rep', 'Flexible billing'],
+  },
+];
 
 const DUMPSTER_SIZES = [
   { value: '8', label: '8 Yard', price: 350, desc: 'Small cleanouts' },
@@ -46,12 +74,14 @@ export function InstantQuoteForm() {
   const { t } = useLanguage();
   
   const [formData, setFormData] = useState({
+    userType: 'homeowner',
     zip: '',
     size: '20',
     material: 'household',
     rentalDays: '7',
   });
 
+  const selectedUserType = USER_TYPES.find((u) => u.value === formData.userType);
   const selectedSize = DUMPSTER_SIZES.find((s) => s.value === formData.size);
   const selectedMaterial = MATERIAL_TYPES.find((m) => m.value === formData.material);
   const selectedDays = RENTAL_DAYS.find((d) => d.value === formData.rentalDays);
@@ -61,15 +91,19 @@ export function InstantQuoteForm() {
     const base = selectedSize.price;
     const materialAdj = selectedMaterial?.adjustment || 0;
     const daysAdj = selectedDays?.extra || 0;
-    const min = base + materialAdj + daysAdj;
-    const max = min + 75;
-    return { min, max };
-  }, [selectedSize, selectedMaterial, selectedDays]);
+    // Contractor discount
+    const discount = formData.userType === 'contractor' ? 0.1 : 0;
+    const subtotal = base + materialAdj + daysAdj;
+    const min = Math.round(subtotal * (1 - discount));
+    const max = Math.round((subtotal + 75) * (1 - discount));
+    return { min, max, hasDiscount: discount > 0 };
+  }, [selectedSize, selectedMaterial, selectedDays, formData.userType]);
 
   const matchedCity = SERVICE_AREAS.find((a) => a.zip === formData.zip)?.city;
 
   const handleConfirmByText = () => {
-    const message = `Hi! I'd like a quote for a ${formData.size} yard dumpster.%0A%0A📍 ZIP: ${formData.zip}${matchedCity ? ` (${matchedCity})` : ''}%0A📦 Size: ${selectedSize?.label}%0A♻️ Material: ${selectedMaterial?.label}%0A📅 Rental: ${selectedDays?.label}%0A💰 Estimate: $${estimate?.min}-$${estimate?.max}`;
+    const userTypeLabel = selectedUserType?.label || 'Customer';
+    const message = `Hi! I'm a ${userTypeLabel} and I'd like a quote for a ${formData.size} yard dumpster.%0A%0A📍 ZIP: ${formData.zip}${matchedCity ? ` (${matchedCity})` : ''}%0A📦 Size: ${selectedSize?.label}%0A♻️ Material: ${selectedMaterial?.label}%0A📅 Rental: ${selectedDays?.label}%0A💰 Estimate: $${estimate?.min}-$${estimate?.max}`;
     window.open(`sms:+15106802150?body=${message}`, '_blank');
   };
 
@@ -83,12 +117,58 @@ export function InstantQuoteForm() {
           </div>
           <div>
             <h3 className="font-bold text-lg">Instant Quote</h3>
-            <p className="text-sm text-primary-foreground/80">Get your price in seconds</p>
+            <p className="text-sm text-primary-foreground/80">{selectedUserType?.headline || 'Get your price in seconds'}</p>
           </div>
         </div>
       </div>
 
       <div className="p-5 space-y-5">
+        {/* Who Are You Selector */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+            <User className="w-4 h-4 text-muted-foreground" />
+            Who are you?
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {USER_TYPES.map((type) => {
+              const Icon = type.icon;
+              return (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, userType: type.value }))}
+                  className={cn(
+                    'relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all',
+                    formData.userType === type.value
+                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                      : 'border-input bg-background hover:border-muted-foreground/50'
+                  )}
+                >
+                  <Icon className={cn(
+                    'w-5 h-5',
+                    formData.userType === type.value ? 'text-primary' : 'text-muted-foreground'
+                  )} />
+                  <span className="text-xs font-medium text-foreground leading-tight">{type.label}</span>
+                </button>
+              );
+            })}
+          </div>
+          {/* Dynamic Benefits */}
+          {selectedUserType && (
+            <div className="mt-3 flex flex-wrap gap-2 justify-center">
+              {selectedUserType.benefits.map((benefit, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-muted rounded-full text-xs text-muted-foreground"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  {benefit}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* ZIP/City Input */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
@@ -205,7 +285,14 @@ export function InstantQuoteForm() {
           <div className="bg-gradient-to-br from-success/10 to-success/5 rounded-xl p-4 border border-success/20">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Estimated Price</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-sm text-muted-foreground">Estimated Price</p>
+                  {estimate.hasDiscount && (
+                    <span className="px-1.5 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded">
+                      10% PRO DISCOUNT
+                    </span>
+                  )}
+                </div>
                 <div className="text-3xl font-extrabold text-foreground">
                   ${estimate.min}
                   <span className="text-lg font-medium text-muted-foreground"> - ${estimate.max}</span>
@@ -229,7 +316,7 @@ export function InstantQuoteForm() {
           disabled={!formData.zip || formData.zip.length < 5}
         >
           <MessageCircle className="w-5 h-5" />
-          Confirm by Text
+          {selectedUserType?.cta || 'Confirm by Text'}
         </Button>
 
         {/* Secondary Options */}
