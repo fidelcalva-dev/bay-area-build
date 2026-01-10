@@ -11,6 +11,7 @@ import { AreasPreviewSection } from '@/components/sections/AreasPreviewSection';
 import { ServiceCoverageMapSection } from '@/components/sections/ServiceCoverageMapSection';
 import { MeetTheTeamSection } from '@/components/sections/MeetTheTeamSection';
 import { CityOperatorSection } from '@/components/sections/CityOperatorSection';
+import { ExpansionRoadmapSection } from '@/components/sections/ExpansionRoadmapSection';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { VideoTestimonialsSection } from '@/components/sections/VideoTestimonialsSection';
 import { FAQSection } from '@/components/sections/FAQSection';
@@ -30,6 +31,7 @@ const Index = () => {
       <ServiceCoverageMapSection />
       <MeetTheTeamSection />
       <CityOperatorSection />
+      <ExpansionRoadmapSection />
       <ReviewsSection />
       <VideoTestimonialsSection />
       <AreasPreviewSection />
