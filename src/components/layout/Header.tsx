@@ -1,0 +1,134 @@
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Phone, Truck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const TRASHLAB_URL = 'https://app.trashlab.com';
+
+export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+  const location = useLocation();
+
+  const navLinks = [
+    { to: '/', label: t('nav.home') },
+    { to: '/pricing', label: t('nav.pricing') },
+    { to: '/sizes', label: t('nav.sizes') },
+    { to: '/areas', label: t('nav.areas') },
+    { to: '/materials', label: t('nav.materials') },
+    { to: '/contractors', label: t('nav.contractors') },
+    { to: '/about', label: t('nav.about') },
+    { to: '/contact', label: t('nav.contact') },
+    { to: '/blog', label: t('nav.blog') },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 border-b border-border">
+      <div className="container-wide">
+        <div className="flex h-16 md:h-20 items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
+              <Truck className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-foreground leading-tight">Calsan</span>
+              <span className="text-xs text-muted-foreground leading-tight">Dumpsters Pro</span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isActive(link.to)
+                    ? 'text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right side actions */}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Language Toggle */}
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
+              className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-md transition-colors"
+            >
+              {language === 'en' ? '🇪🇸 ES' : '🇺🇸 EN'}
+            </button>
+
+            {/* Phone */}
+            <a
+              href="tel:+15106802150"
+              className="hidden md:flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              <span>(510) 680-2150</span>
+            </a>
+
+            {/* Order Now Button */}
+            <Button asChild variant="cta" size="default" className="hidden sm:inline-flex">
+              <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                {t('nav.orderNow')}
+              </a>
+            </Button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 text-foreground"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="lg:hidden border-t border-border bg-card py-4 animate-fade-in">
+            <nav className="flex flex-col gap-1 mb-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                    isActive(link.to)
+                      ? 'text-primary bg-primary/5'
+                      : 'text-foreground hover:bg-muted'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="flex flex-col gap-2 px-4">
+              <button
+                onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
+                className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-muted-foreground border border-border rounded-lg"
+              >
+                {language === 'en' ? '🇪🇸 Cambiar a Español' : '🇺🇸 Switch to English'}
+              </button>
+              <Button asChild variant="cta" size="lg" className="w-full">
+                <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                  {t('nav.orderNow')}
+                </a>
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
