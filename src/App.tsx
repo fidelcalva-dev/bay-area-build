@@ -21,6 +21,7 @@ import PortalLogin from "./pages/portal/PortalLogin";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ProjectDetail from "./pages/portal/ProjectDetail";
 import SustainabilityReport from "./pages/portal/SustainabilityReport";
+import GreenImpactMap from "./pages/GreenImpactMap";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/thank-you" element={<ThankYou />} />
+              <Route path="/green-impact" element={<GreenImpactMap />} />
               {/* Green Halo Client Portal */}
               <Route path="/portal" element={<PortalLogin />} />
               <Route path="/portal/dashboard" element={<PortalDashboard />} />
