@@ -1,298 +1,365 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import Map, { Marker, Popup, NavigationControl } from 'react-map-gl';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, ChevronRight, CheckCircle2, Clock } from 'lucide-react';
+import { MapPin, Phone, ChevronRight, CheckCircle2, Clock, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import 'mapbox-gl/dist/mapbox-gl.css';
+// Mapbox public access token - safe to embed in frontend
+// Get your token at: https://account.mapbox.com/access-tokens/
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
-interface Region {
+interface City {
   id: string;
   name: string;
   status: 'active' | 'coming-soon';
   cities: string[];
-  path: string;
-  labelX: number;
-  labelY: number;
+  coordinates: [number, number]; // [lng, lat]
 }
 
-const regions: Region[] = [
-  // Bay Area Counties - Active
+const serviceLocations: City[] = [
+  // Bay Area - Active
   {
     id: 'san-francisco',
     name: 'San Francisco',
     status: 'active',
     cities: ['Downtown SF', 'SOMA', 'Mission', 'Marina'],
-    path: 'M118,195 L125,190 L132,193 L130,202 L122,205 Z',
-    labelX: 124,
-    labelY: 198,
+    coordinates: [-122.4194, 37.7749],
   },
   {
-    id: 'alameda',
-    name: 'Alameda County',
+    id: 'oakland',
+    name: 'Oakland',
     status: 'active',
-    cities: ['Oakland', 'Berkeley', 'Fremont', 'Hayward'],
-    path: 'M132,190 L155,185 L165,200 L160,225 L145,235 L130,220 L128,205 Z',
-    labelX: 145,
-    labelY: 210,
+    cities: ['Downtown Oakland', 'Lake Merritt', 'Rockridge', 'Jack London Square'],
+    coordinates: [-122.2711, 37.8044],
   },
   {
-    id: 'contra-costa',
-    name: 'Contra Costa',
+    id: 'san-jose',
+    name: 'San Jose',
     status: 'active',
-    cities: ['Concord', 'Walnut Creek', 'Richmond', 'Antioch'],
-    path: 'M132,165 L175,155 L185,175 L165,200 L155,185 L132,190 Z',
-    labelX: 155,
-    labelY: 178,
+    cities: ['Downtown SJ', 'Willow Glen', 'Santana Row', 'Evergreen'],
+    coordinates: [-121.8863, 37.3382],
   },
   {
-    id: 'santa-clara',
-    name: 'Santa Clara',
+    id: 'fremont',
+    name: 'Fremont',
     status: 'active',
-    cities: ['San Jose', 'Sunnyvale', 'Palo Alto', 'Mountain View'],
-    path: 'M115,225 L145,235 L160,225 L175,260 L145,280 L115,265 Z',
-    labelX: 142,
-    labelY: 252,
+    cities: ['Fremont', 'Newark', 'Union City'],
+    coordinates: [-121.9886, 37.5485],
   },
   {
-    id: 'san-mateo',
-    name: 'San Mateo',
+    id: 'hayward',
+    name: 'Hayward',
     status: 'active',
-    cities: ['San Mateo', 'Redwood City', 'Daly City', 'Burlingame'],
-    path: 'M105,200 L122,205 L130,220 L115,225 L115,265 L95,250 L100,215 Z',
-    labelX: 112,
-    labelY: 232,
+    cities: ['Hayward', 'Castro Valley', 'San Leandro'],
+    coordinates: [-122.0808, 37.6688],
   },
   {
-    id: 'marin',
-    name: 'Marin County',
+    id: 'concord',
+    name: 'Concord',
     status: 'active',
-    cities: ['San Rafael', 'Novato', 'Mill Valley', 'Sausalito'],
-    path: 'M95,165 L118,160 L125,175 L118,195 L105,200 L95,185 Z',
-    labelX: 110,
-    labelY: 180,
+    cities: ['Concord', 'Walnut Creek', 'Pleasant Hill', 'Martinez'],
+    coordinates: [-122.0311, 37.9780],
   },
   {
-    id: 'sonoma',
-    name: 'Sonoma County',
+    id: 'santa-rosa',
+    name: 'Santa Rosa',
     status: 'active',
-    cities: ['Santa Rosa', 'Petaluma', 'Rohnert Park', 'Healdsburg'],
-    path: 'M75,120 L110,115 L118,160 L95,165 L80,155 L70,135 Z',
-    labelX: 95,
-    labelY: 142,
+    cities: ['Santa Rosa', 'Petaluma', 'Rohnert Park'],
+    coordinates: [-122.7141, 38.4404],
   },
   {
     id: 'napa',
-    name: 'Napa County',
+    name: 'Napa',
     status: 'active',
-    cities: ['Napa', 'Yountville', 'St. Helena', 'Calistoga'],
-    path: 'M110,115 L135,110 L145,145 L132,165 L118,160 Z',
-    labelX: 128,
-    labelY: 140,
+    cities: ['Napa', 'Yountville', 'St. Helena'],
+    coordinates: [-122.2869, 38.2975],
   },
   {
-    id: 'solano',
-    name: 'Solano County',
+    id: 'vallejo',
+    name: 'Vallejo',
     status: 'active',
-    cities: ['Vallejo', 'Fairfield', 'Vacaville', 'Benicia'],
-    path: 'M135,110 L170,105 L175,155 L132,165 L145,145 Z',
-    labelX: 152,
-    labelY: 135,
+    cities: ['Vallejo', 'Fairfield', 'Benicia'],
+    coordinates: [-122.2566, 38.1041],
   },
-  // Coming Soon Regions
+  // Coming Soon
   {
     id: 'sacramento',
     name: 'Sacramento',
     status: 'coming-soon',
     cities: ['Sacramento', 'Elk Grove', 'Roseville', 'Folsom'],
-    path: 'M170,105 L215,95 L225,140 L210,165 L185,175 L175,155 Z',
-    labelX: 195,
-    labelY: 135,
+    coordinates: [-121.4944, 38.5816],
   },
   {
-    id: 'san-joaquin',
-    name: 'San Joaquin',
+    id: 'stockton',
+    name: 'Stockton',
     status: 'coming-soon',
     cities: ['Stockton', 'Tracy', 'Manteca', 'Lodi'],
-    path: 'M185,175 L210,165 L225,200 L220,240 L175,260 L165,200 Z',
-    labelX: 198,
-    labelY: 210,
+    coordinates: [-121.2908, 37.9577],
   },
   {
     id: 'fresno',
-    name: 'Fresno County',
+    name: 'Fresno',
     status: 'coming-soon',
-    cities: ['Fresno', 'Clovis', 'Madera', 'Selma'],
-    path: 'M175,260 L220,240 L250,320 L210,350 L170,320 L145,280 Z',
-    labelX: 200,
-    labelY: 295,
+    cities: ['Fresno', 'Clovis', 'Madera'],
+    coordinates: [-119.7871, 36.7378],
   },
   {
     id: 'los-angeles',
     name: 'Los Angeles',
     status: 'coming-soon',
     cities: ['Los Angeles', 'Long Beach', 'Pasadena', 'Glendale'],
-    path: 'M170,420 L230,400 L260,440 L250,480 L200,490 L165,460 Z',
-    labelX: 210,
-    labelY: 445,
+    coordinates: [-118.2437, 34.0522],
   },
   {
     id: 'san-diego',
     name: 'San Diego',
     status: 'coming-soon',
     cities: ['San Diego', 'Chula Vista', 'Oceanside', 'Carlsbad'],
-    path: 'M200,490 L250,480 L275,520 L260,550 L215,545 L195,515 Z',
-    labelX: 235,
-    labelY: 520,
+    coordinates: [-117.1611, 32.7157],
+  },
+  {
+    id: 'bakersfield',
+    name: 'Bakersfield',
+    status: 'coming-soon',
+    cities: ['Bakersfield', 'Delano', 'Wasco'],
+    coordinates: [-119.0187, 35.3733],
   },
 ];
 
+// Bay Area center for initial view
+const BAY_AREA_CENTER = {
+  longitude: -122.2,
+  latitude: 37.7,
+  zoom: 8.5,
+};
+
+// California bounds for max extent
+const CALIFORNIA_BOUNDS: [[number, number], [number, number]] = [
+  [-124.5, 32.5], // Southwest
+  [-114.0, 42.0], // Northeast
+];
+
 export const ServiceCoverageMapSection = () => {
-  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
-  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  const activeRegions = regions.filter(r => r.status === 'active');
-  const comingSoonRegions = regions.filter(r => r.status === 'coming-soon');
+  // Lazy load map when section becomes visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsMapVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
 
-  const handleRegionClick = (region: Region) => {
-    setSelectedRegion(prev => prev?.id === region.id ? null : region);
-  };
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleMarkerClick = useCallback((city: City) => {
+    setSelectedCity(prev => (prev?.id === city.id ? null : city));
+  }, []);
+
+  const activeLocations = useMemo(
+    () => serviceLocations.filter(l => l.status === 'active'),
+    []
+  );
+  const comingSoonLocations = useMemo(
+    () => serviceLocations.filter(l => l.status === 'coming-soon'),
+    []
+  );
+
+  const markers = useMemo(
+    () =>
+      serviceLocations.map(city => (
+        <Marker
+          key={city.id}
+          longitude={city.coordinates[0]}
+          latitude={city.coordinates[1]}
+          anchor="bottom"
+          onClick={e => {
+            e.originalEvent.stopPropagation();
+            handleMarkerClick(city);
+          }}
+        >
+          <div
+            className={`relative cursor-pointer transition-transform duration-200 hover:scale-110 ${
+              selectedCity?.id === city.id ? 'scale-125 z-10' : ''
+            }`}
+          >
+            {/* Pin */}
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 ${
+                city.status === 'active'
+                  ? 'bg-primary border-primary-foreground'
+                  : 'bg-accent border-accent-foreground'
+              }`}
+            >
+              <MapPin className="h-4 w-4 text-primary-foreground" />
+            </div>
+            {/* Pulse animation for active */}
+            {city.status === 'active' && (
+              <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+            )}
+          </div>
+        </Marker>
+      )),
+    [selectedCity, handleMarkerClick]
+  );
 
   return (
-    <section className="section-padding bg-background">
+    <section ref={sectionRef} className="section-padding bg-background">
       <div className="container-wide">
         {/* Header */}
         <div className="text-center mb-10">
-          <h2 className="heading-lg text-foreground mb-3">
-            Service Coverage Map
-          </h2>
+          <h2 className="heading-lg text-foreground mb-3">Service Coverage Map</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Click any region to see service details. Green areas have same-day delivery.
+            Tap any pin to see service details. Green pins have same-day delivery available.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 items-start">
-          {/* SVG Map */}
+          {/* Map Container */}
           <div className="lg:col-span-2">
             <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
-              <svg
-                viewBox="60 80 230 500"
-                className="w-full h-auto"
-                style={{ maxHeight: '600px' }}
-              >
-                {/* California State Outline */}
-                <path
-                  d="M85,95 L130,90 L170,105 L215,95 L240,110 L260,150 L280,200 L295,260 L300,320 L290,380 L275,420 L260,440 L250,480 L275,520 L260,560 L215,555 L195,515 L165,460 L150,400 L125,350 L110,300 L95,250 L85,200 L75,150 L80,120 Z"
-                  fill="hsl(var(--muted) / 0.5)"
-                  stroke="hsl(var(--border))"
-                  strokeWidth="1.5"
-                />
+              <div className="relative w-full" style={{ height: 'min(600px, 70vh)' }}>
+                {!MAPBOX_TOKEN ? (
+                  // Token missing - show setup message
+                  <div className="w-full h-full bg-gradient-to-br from-muted/80 to-muted flex items-center justify-center">
+                    <div className="text-center max-w-md px-6">
+                      <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
+                      <h3 className="font-semibold text-lg text-foreground mb-2">
+                        Interactive Map Coming Soon
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Add your Mapbox public token to enable the satellite map view.
+                      </p>
+                      <div className="bg-card border border-border rounded-lg p-3 text-left">
+                        <p className="text-xs text-muted-foreground mb-1">Add to your environment:</p>
+                        <code className="text-xs text-primary break-all">
+                          VITE_MAPBOX_TOKEN=pk.your_token_here
+                        </code>
+                      </div>
+                    </div>
+                  </div>
+                ) : isMapVisible ? (
+                  <Map
+                    mapboxAccessToken={MAPBOX_TOKEN}
+                    initialViewState={BAY_AREA_CENTER}
+                    mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+                    maxBounds={CALIFORNIA_BOUNDS}
+                    minZoom={5}
+                    maxZoom={12}
+                    attributionControl={false}
+                    onClick={() => setSelectedCity(null)}
+                    style={{ width: '100%', height: '100%' }}
+                  >
+                    <NavigationControl position="top-right" />
 
-                {/* Render regions */}
-                {regions.map((region) => {
-                  const isHovered = hoveredRegion === region.id;
-                  const isSelected = selectedRegion?.id === region.id;
-                  const isActive = region.status === 'active';
+                    {markers}
 
-                  return (
-                    <g key={region.id}>
-                      {/* Region path */}
-                      <path
-                        d={region.path}
-                        fill={
-                          isActive
-                            ? isHovered || isSelected
-                              ? 'hsl(var(--primary) / 0.6)'
-                              : 'hsl(var(--primary) / 0.4)'
-                            : isHovered || isSelected
-                              ? 'hsl(var(--muted-foreground) / 0.3)'
-                              : 'hsl(var(--muted-foreground) / 0.15)'
-                        }
-                        stroke={
-                          isActive
-                            ? 'hsl(var(--primary))'
-                            : 'hsl(var(--muted-foreground) / 0.4)'
-                        }
-                        strokeWidth={isHovered || isSelected ? '2' : '1'}
-                        className="cursor-pointer transition-all duration-200"
-                        onMouseEnter={() => setHoveredRegion(region.id)}
-                        onMouseLeave={() => setHoveredRegion(null)}
-                        onClick={() => handleRegionClick(region)}
-                      />
-
-                      {/* Region label */}
-                      <text
-                        x={region.labelX}
-                        y={region.labelY}
-                        textAnchor="middle"
-                        className={`text-[8px] font-semibold pointer-events-none select-none ${
-                          isActive ? 'fill-primary' : 'fill-muted-foreground'
-                        }`}
+                    {/* Popup for selected city */}
+                    {selectedCity && (
+                      <Popup
+                        longitude={selectedCity.coordinates[0]}
+                        latitude={selectedCity.coordinates[1]}
+                        anchor="bottom"
+                        offset={45}
+                        closeButton={false}
+                        closeOnClick={false}
+                        className="mapbox-popup-custom"
                       >
-                        {region.name.split(' ')[0]}
-                      </text>
+                        <div className="p-4 min-w-[220px] max-w-[280px]">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="font-bold text-base text-foreground">
+                                {selectedCity.name}
+                              </h3>
+                              <span
+                                className={`inline-flex items-center gap-1 text-xs font-medium mt-0.5 ${
+                                  selectedCity.status === 'active'
+                                    ? 'text-primary'
+                                    : 'text-accent'
+                                }`}
+                              >
+                                {selectedCity.status === 'active' ? (
+                                  <>
+                                    <CheckCircle2 className="h-3 w-3" /> Active Service
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock className="h-3 w-3" /> Coming Soon
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => setSelectedCity(null)}
+                              className="text-muted-foreground hover:text-foreground transition-colors p-0.5 -mt-1 -mr-1"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
 
-                      {/* Status indicator dot */}
-                      <circle
-                        cx={region.labelX}
-                        cy={region.labelY + 10}
-                        r="3"
-                        fill={isActive ? 'hsl(var(--primary))' : 'hsl(var(--accent))'}
-                        className="pointer-events-none"
-                      />
-                    </g>
-                  );
-                })}
+                          <div className="mb-3">
+                            <p className="text-xs text-muted-foreground mb-1.5">Areas served:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {selectedCity.cities.slice(0, 4).map(city => (
+                                <span
+                                  key={city}
+                                  className="text-xs bg-muted px-2 py-0.5 rounded-full text-foreground"
+                                >
+                                  {city}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
 
-                {/* Hover tooltip */}
-                {hoveredRegion && !selectedRegion && (
-                  (() => {
-                    const region = regions.find(r => r.id === hoveredRegion);
-                    if (!region) return null;
-                    const tooltipX = Math.min(Math.max(region.labelX, 100), 250);
-                    const tooltipY = region.labelY - 35;
-                    
-                    return (
-                      <g className="pointer-events-none">
-                        <rect
-                          x={tooltipX - 50}
-                          y={tooltipY - 12}
-                          width="100"
-                          height="28"
-                          rx="4"
-                          fill="hsl(var(--popover))"
-                          stroke="hsl(var(--border))"
-                          strokeWidth="1"
-                        />
-                        <text
-                          x={tooltipX}
-                          y={tooltipY}
-                          textAnchor="middle"
-                          className="text-[9px] font-semibold fill-foreground"
-                        >
-                          {region.name}
-                        </text>
-                        <text
-                          x={tooltipX}
-                          y={tooltipY + 10}
-                          textAnchor="middle"
-                          className={`text-[7px] ${
-                            region.status === 'active' ? 'fill-primary' : 'fill-accent'
-                          }`}
-                        >
-                          {region.status === 'active' ? '● Active' : '○ Coming Soon'}
-                        </text>
-                      </g>
-                    );
-                  })()
+                          {selectedCity.status === 'active' ? (
+                            <Button variant="cta" className="w-full" size="sm" asChild>
+                              <Link to="/pricing">
+                                Get a Quote
+                                <ChevronRight className="ml-1 h-4 w-4" />
+                              </Link>
+                            </Button>
+                          ) : (
+                            <Button variant="outline" className="w-full" size="sm" asChild>
+                              <a href="tel:+15106802150">
+                                <Phone className="mr-2 h-4 w-4" />
+                                Request Early Access
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      </Popup>
+                    )}
+                  </Map>
+                ) : (
+                  // Loading placeholder
+                  <div className="w-full h-full bg-muted/50 flex items-center justify-center">
+                    <div className="text-center">
+                      <MapPin className="h-10 w-10 text-muted-foreground mx-auto mb-3 animate-pulse" />
+                      <p className="text-sm text-muted-foreground">Loading map...</p>
+                    </div>
+                  </div>
                 )}
-              </svg>
+              </div>
 
               {/* Legend */}
               <div className="flex items-center justify-center gap-8 py-4 border-t border-border bg-muted/30">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-primary/40 border border-primary" />
+                  <div className="w-4 h-4 rounded-full bg-primary shadow-sm" />
                   <span className="text-sm text-foreground">Active Service</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-muted-foreground/15 border border-muted-foreground/40" />
+                  <div className="w-4 h-4 rounded-full bg-accent shadow-sm" />
                   <span className="text-sm text-foreground">Coming Soon</span>
                 </div>
               </div>
@@ -301,121 +368,44 @@ export const ServiceCoverageMapSection = () => {
 
           {/* Side Panel */}
           <div className="space-y-4">
-            {/* Selected Region Card */}
-            {selectedRegion ? (
-              <div className="bg-card rounded-xl border border-border p-5 shadow-lg animate-fade-in">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-bold text-lg text-foreground">{selectedRegion.name}</h3>
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-xs font-medium mt-1 ${
-                        selectedRegion.status === 'active' ? 'text-primary' : 'text-accent'
-                      }`}
-                    >
-                      {selectedRegion.status === 'active' ? (
-                        <>
-                          <CheckCircle2 className="h-3 w-3" /> Active Service
-                        </>
-                      ) : (
-                        <>
-                          <Clock className="h-3 w-3" /> Coming Soon
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setSelectedRegion(null)}
-                    className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="mb-4">
-                  <p className="text-xs text-muted-foreground mb-2">Cities served:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedRegion.cities.map((city) => (
-                      <span
-                        key={city}
-                        className="text-xs bg-muted px-2 py-1 rounded-full text-foreground"
-                      >
-                        {city}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {selectedRegion.status === 'active' ? (
-                  <div className="space-y-2">
-                    <Button variant="cta" className="w-full" size="sm" asChild>
-                      <Link to={`/areas#${selectedRegion.id}`}>
-                        Get Instant Quote
-                        <ChevronRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" className="w-full" size="sm" asChild>
-                      <a href="tel:+15106802150">
-                        <Phone className="mr-2 h-4 w-4" />
-                        Call (510) 680-2150
-                      </a>
-                    </Button>
-                  </div>
-                ) : (
-                  <Button variant="outline" className="w-full" size="sm" asChild>
-                    <a href="tel:+15106802150">
-                      <Phone className="mr-2 h-4 w-4" />
-                      Request Early Access
-                    </a>
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="bg-muted/50 rounded-xl border border-border/50 p-5 text-center">
-                <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">
-                  Click a region on the map to see details
-                </p>
-              </div>
-            )}
-
-            {/* Quick Links */}
+            {/* Quick Links - Active */}
             <div className="bg-card rounded-xl border border-border p-5">
               <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-primary" />
-                Active Regions ({activeRegions.length})
+                Active Regions ({activeLocations.length})
               </h4>
               <div className="space-y-1 mb-4">
-                {activeRegions.map((region) => (
+                {activeLocations.map(location => (
                   <button
-                    key={region.id}
-                    onClick={() => handleRegionClick(region)}
+                    key={location.id}
+                    onClick={() => setSelectedCity(location)}
                     className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
-                      selectedRegion?.id === region.id
+                      selectedCity?.id === location.id
                         ? 'bg-primary/10 text-primary font-medium'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
-                    {region.name}
+                    {location.name}
                   </button>
                 ))}
               </div>
 
               <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-accent" />
-                Expanding Soon ({comingSoonRegions.length})
+                Expanding Soon ({comingSoonLocations.length})
               </h4>
               <div className="space-y-1">
-                {comingSoonRegions.map((region) => (
+                {comingSoonLocations.map(location => (
                   <button
-                    key={region.id}
-                    onClick={() => handleRegionClick(region)}
+                    key={location.id}
+                    onClick={() => setSelectedCity(location)}
                     className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
-                      selectedRegion?.id === region.id
+                      selectedCity?.id === location.id
                         ? 'bg-accent/10 text-accent font-medium'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
-                    {region.name}
+                    {location.name}
                   </button>
                 ))}
               </div>
@@ -436,6 +426,30 @@ export const ServiceCoverageMapSection = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom popup styles */}
+      <style>{`
+        .mapboxgl-popup-content {
+          padding: 0 !important;
+          border-radius: 12px !important;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+          background: hsl(var(--card)) !important;
+          border: 1px solid hsl(var(--border)) !important;
+        }
+        .mapboxgl-popup-tip {
+          border-top-color: hsl(var(--card)) !important;
+        }
+        .mapboxgl-ctrl-group {
+          background: hsl(var(--card)) !important;
+          border: 1px solid hsl(var(--border)) !important;
+        }
+        .mapboxgl-ctrl-group button {
+          background: transparent !important;
+        }
+        .mapboxgl-ctrl-group button + button {
+          border-top: 1px solid hsl(var(--border)) !important;
+        }
+      `}</style>
     </section>
   );
 };
