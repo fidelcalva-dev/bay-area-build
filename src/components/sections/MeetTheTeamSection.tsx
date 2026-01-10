@@ -113,7 +113,7 @@ export const MeetTheTeamSection = () => {
               We're always looking for reliable drivers and operators.
             </span>
             <a
-              href="/contact"
+              href="/careers"
               className="text-sm font-medium text-primary hover:underline"
             >
               Join our team →
