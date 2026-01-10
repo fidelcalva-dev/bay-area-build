@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Layout } from "@/components/layout/Layout";
-import { SEOHead } from "@/components/seo/SEOHead";
 
 interface Project {
   id: string;
@@ -74,11 +73,10 @@ const GreenImpactMap = () => {
   const uniqueMaterials = [...new Set(projects.map(p => p.material))];
 
   return (
-    <Layout>
-      <SEOHead
-        title="Green Impact Map | Calsan Dumpsters"
-        description="See real recycling impact across California. Every dumpster we deliver helps divert material from landfills."
-      />
+    <Layout
+      title="Green Impact Map"
+      description="See real recycling impact across California. Every dumpster we deliver helps divert material from landfills."
+    >
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
         {/* Hero Section */}
