@@ -17,6 +17,10 @@ import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import PortalLogin from "./pages/portal/PortalLogin";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import ProjectDetail from "./pages/portal/ProjectDetail";
+import SustainabilityReport from "./pages/portal/SustainabilityReport";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +44,11 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/thank-you" element={<ThankYou />} />
+              {/* Green Halo Client Portal */}
+              <Route path="/portal" element={<PortalLogin />} />
+              <Route path="/portal/dashboard" element={<PortalDashboard />} />
+              <Route path="/portal/project/:projectId" element={<ProjectDetail />} />
+              <Route path="/portal/report" element={<SustainabilityReport />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
