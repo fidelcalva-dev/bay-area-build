@@ -1,42 +1,45 @@
 import { ClipboardCheck, Truck, HardHat, PhoneCall, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
-const steps = [
-  {
-    icon: ClipboardCheck,
-    number: '1',
-    title: 'Get a Quote',
-    description: 'Tell us your project type, location, and preferred size. Get instant pricing in seconds.',
-  },
-  {
-    icon: Truck,
-    number: '2',
-    title: 'We Deliver',
-    description: 'Same-day or scheduled delivery. We place the dumpster exactly where you need it.',
-  },
-  {
-    icon: HardHat,
-    number: '3',
-    title: 'Fill It Up',
-    description: 'Take your time—standard rental is 7 days. Load at your own pace.',
-  },
-  {
-    icon: PhoneCall,
-    number: '4',
-    title: 'We Haul Away',
-    description: 'Call or text when ready. We pick up within 1-3 business days.',
-  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function HowItWorksSection() {
+  const { t } = useLanguage();
+
+  const steps = [
+    {
+      icon: ClipboardCheck,
+      number: '1',
+      title: t('howItWorks.step1.title'),
+      description: t('howItWorks.step1.description'),
+    },
+    {
+      icon: Truck,
+      number: '2',
+      title: t('howItWorks.step2.title'),
+      description: t('howItWorks.step2.description'),
+    },
+    {
+      icon: HardHat,
+      number: '3',
+      title: t('howItWorks.step3.title'),
+      description: t('howItWorks.step3.description'),
+    },
+    {
+      icon: PhoneCall,
+      number: '4',
+      title: t('howItWorks.step4.title'),
+      description: t('howItWorks.step4.description'),
+    },
+  ];
+
   return (
     <section className="section-padding bg-muted">
       <div className="container-wide">
         <div className="text-center mb-10">
-          <h2 className="heading-lg text-foreground mb-3">How It Works</h2>
+          <h2 className="heading-lg text-foreground mb-3">{t('howItWorks.title')}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Renting a dumpster is easy. Four simple steps from quote to haul-away.
+            {t('howItWorks.subtitle')}
           </p>
         </div>
 
@@ -71,7 +74,7 @@ export function HowItWorksSection() {
         <div className="text-center">
           <Button asChild variant="cta" size="lg">
             <Link to="/#quote">
-              Get Your Instant Quote
+              {t('howItWorks.cta')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

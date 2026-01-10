@@ -27,13 +27,13 @@ export function FeaturesSection() {
     },
     {
       icon: Shield,
-      title: 'Google Guaranteed',
-      description: 'Protected by Google Local Services.',
+      title: t('features.googleGuaranteed'),
+      description: t('features.googleGuaranteedDesc'),
     },
     {
       icon: Leaf,
-      title: 'Eco-Friendly',
-      description: 'We recycle and dispose responsibly.',
+      title: t('features.ecoFriendly'),
+      description: t('features.ecoFriendlyDesc'),
     },
   ];
 
@@ -41,9 +41,9 @@ export function FeaturesSection() {
     <section className="section-padding bg-background">
       <div className="container-wide">
         <div className="text-center mb-12">
-          <h2 className="heading-lg text-foreground mb-4">Why Bay Area Trusts Us</h2>
+          <h2 className="heading-lg text-foreground mb-4">{t('features.title')}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Thousands of homeowners and contractors rely on Calsan Dumpsters Pro for reliable, hassle-free dumpster rentals.
+            {t('features.subtitle')}
           </p>
         </div>
 

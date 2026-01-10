@@ -66,7 +66,7 @@ export function FAQSection() {
         <div className="text-center mb-12">
           <h2 className="heading-lg text-foreground mb-4">{t('faq.title')}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about renting a dumpster. Can't find your answer? Call us!
+            {t('faq.subtitle')}
           </p>
         </div>
 
@@ -88,12 +88,12 @@ export function FAQSection() {
         </Accordion>
 
         <div className="mt-12 text-center">
-          <p className="text-muted-foreground mb-4">Still have questions?</p>
+          <p className="text-muted-foreground mb-4">{t('faq.moreQuestions')}</p>
           <a
             href="tel:+15106802150"
             className="text-lg font-semibold text-primary hover:underline"
           >
-            Call us at (510) 680-2150
+            {t('faq.callUs')} (510) 680-2150
           </a>
         </div>
       </div>

@@ -22,12 +22,12 @@ export function SizesPreviewSection() {
           <div>
             <h2 className="heading-lg text-foreground mb-4">{t('sizes.title')}</h2>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              From small cleanouts to major construction projects. Find the perfect size for your needs.
+              {t('sizes.subtitle')}
             </p>
           </div>
           <Button asChild variant="outline" size="lg">
             <Link to="/sizes">
-              View All Sizes
+              {t('sizes.viewAll')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -44,7 +44,7 @@ export function SizesPreviewSection() {
                   <Package className="w-8 h-8" />
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">From</div>
+                  <div className="text-sm text-muted-foreground">{t('sizes.from')}</div>
                   <div className="text-2xl font-bold text-foreground">${size.price}</div>
                 </div>
               </div>

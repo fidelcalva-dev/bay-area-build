@@ -9,9 +9,9 @@ export function HeroSection() {
   const { t } = useLanguage();
 
   const benefits = [
-    { icon: Clock, text: 'Same-Day Delivery' },
-    { icon: DollarSign, text: 'Transparent Pricing' },
-    { icon: Truck, text: 'On-Time Guaranteed' },
+    { icon: Clock, textKey: 'hero.benefit.sameDay' },
+    { icon: DollarSign, textKey: 'hero.benefit.transparent' },
+    { icon: Truck, textKey: 'hero.benefit.onTime' },
   ];
 
   return (
@@ -49,15 +49,15 @@ export function HeroSection() {
 
             {/* 3 Benefit Bullets */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-6 animate-slide-up">
-              {benefits.map(({ icon: Icon, text }) => (
+              {benefits.map(({ icon: Icon, textKey }) => (
                 <div
-                  key={text}
+                  key={textKey}
                   className="flex items-center gap-2"
                 >
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/20">
                     <Icon className="w-4 h-4 text-accent" />
                   </div>
-                  <span className="text-sm font-semibold text-primary-foreground">{text}</span>
+                  <span className="text-sm font-semibold text-primary-foreground">{t(textKey)}</span>
                 </div>
               ))}
             </div>
@@ -82,15 +82,15 @@ export function HeroSection() {
             <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-primary-foreground/10 animate-fade-in">
               <div className="text-center lg:text-left">
                 <div className="text-2xl md:text-3xl font-extrabold text-primary-foreground">9</div>
-                <div className="text-xs text-primary-foreground/70">Counties Served</div>
+                <div className="text-xs text-primary-foreground/70">{t('hero.stats.counties')}</div>
               </div>
               <div className="text-center lg:text-left">
                 <div className="text-2xl md:text-3xl font-extrabold text-primary-foreground">5K+</div>
-                <div className="text-xs text-primary-foreground/70">Happy Customers</div>
+                <div className="text-xs text-primary-foreground/70">{t('hero.stats.customers')}</div>
               </div>
               <div className="text-center lg:text-left">
                 <div className="text-2xl md:text-3xl font-extrabold text-primary-foreground">24hr</div>
-                <div className="text-xs text-primary-foreground/70">Delivery</div>
+                <div className="text-xs text-primary-foreground/70">{t('hero.stats.delivery')}</div>
               </div>
             </div>
 
