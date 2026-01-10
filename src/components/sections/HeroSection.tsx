@@ -1,12 +1,56 @@
-import { ArrowRight, Phone, CheckCircle, Shield, Star, Clock, Truck, DollarSign } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Phone, CheckCircle, Shield, Star, Clock, Truck, DollarSign, Zap, CalendarCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { InstantQuoteForm } from '@/components/forms/InstantQuoteForm';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
+// Delivery availability logic based on current time
+function getDeliveryAvailability(): { type: 'same-day' | 'next-day'; message: string; urgency: boolean } {
+  const now = new Date();
+  const hour = now.getHours();
+  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+  
+  // Same-day cutoff at 2 PM on weekdays
+  const isSameDayAvailable = hour < 14 && day >= 1 && day <= 5;
+  
+  // Weekend check
+  const isWeekend = day === 0 || day === 6;
+  
+  if (isSameDayAvailable) {
+    const hoursLeft = 14 - hour;
+    return {
+      type: 'same-day',
+      message: `Same-day delivery available — order within ${hoursLeft}hr${hoursLeft > 1 ? 's' : ''}`,
+      urgency: hoursLeft <= 2,
+    };
+  } else if (isWeekend) {
+    return {
+      type: 'next-day',
+      message: 'Order now for Monday delivery',
+      urgency: false,
+    };
+  } else {
+    return {
+      type: 'next-day',
+      message: 'Next-day delivery available',
+      urgency: false,
+    };
+  }
+}
+
 export function HeroSection() {
   const { t } = useLanguage();
+  const [delivery, setDelivery] = useState(getDeliveryAvailability);
+
+  // Update every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDelivery(getDeliveryAvailability());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const benefits = [
     { icon: Clock, textKey: 'hero.benefit.sameDay' },
@@ -60,6 +104,22 @@ export function HeroSection() {
                   <span className="text-sm font-semibold text-primary-foreground">{t(textKey)}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Delivery Availability Indicator */}
+            <div className="flex justify-center lg:justify-start mb-4 animate-fade-in">
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                delivery.type === 'same-day' 
+                  ? 'bg-green-500/20 text-green-300 border border-green-400/30' 
+                  : 'bg-blue-500/20 text-blue-300 border border-blue-400/30'
+              } ${delivery.urgency ? 'animate-pulse' : ''}`}>
+                {delivery.type === 'same-day' ? (
+                  <Zap className="w-4 h-4" />
+                ) : (
+                  <CalendarCheck className="w-4 h-4" />
+                )}
+                <span>{delivery.message}</span>
+              </div>
             </div>
 
             {/* CTAs - High Contrast */}
