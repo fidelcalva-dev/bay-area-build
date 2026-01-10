@@ -1,5 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { HeroSection } from '@/components/sections/HeroSection';
+import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
 import { TrustSection } from '@/components/sections/TrustSection';
 import { SizesPreviewSection } from '@/components/sections/SizesPreviewSection';
@@ -12,6 +13,7 @@ const Index = () => {
   return (
     <Layout>
       <HeroSection />
+      <HowItWorksSection />
       <FeaturesSection />
       <TrustSection />
       <SizesPreviewSection />
