@@ -12,6 +12,7 @@ import { ServiceCoverageMapSection } from '@/components/sections/ServiceCoverage
 import { MeetTheTeamSection } from '@/components/sections/MeetTheTeamSection';
 import { CityOperatorSection } from '@/components/sections/CityOperatorSection';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
+import { VideoTestimonialsSection } from '@/components/sections/VideoTestimonialsSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
 
@@ -30,6 +31,7 @@ const Index = () => {
       <MeetTheTeamSection />
       <CityOperatorSection />
       <ReviewsSection />
+      <VideoTestimonialsSection />
       <AreasPreviewSection />
       <FAQSection />
       <CTASection />
