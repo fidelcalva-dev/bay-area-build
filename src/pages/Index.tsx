@@ -2,7 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
-import { TrustSection } from '@/components/sections/TrustSection';
+import { GoogleGuaranteeSection } from '@/components/sections/GoogleGuaranteeSection';
 import { SizesPreviewSection } from '@/components/sections/SizesPreviewSection';
 import { AreasPreviewSection } from '@/components/sections/AreasPreviewSection';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
@@ -15,7 +15,7 @@ const Index = () => {
       <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />
-      <TrustSection />
+      <GoogleGuaranteeSection />
       <SizesPreviewSection />
       <ReviewsSection />
       <AreasPreviewSection />
