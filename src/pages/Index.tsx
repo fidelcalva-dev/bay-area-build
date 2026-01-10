@@ -7,6 +7,7 @@ import { RealWorkSection } from '@/components/sections/RealWorkSection';
 import { SizesPreviewSection } from '@/components/sections/SizesPreviewSection';
 import { AreasPreviewSection } from '@/components/sections/AreasPreviewSection';
 import { ServiceCoverageMapSection } from '@/components/sections/ServiceCoverageMapSection';
+import { MeetTheTeamSection } from '@/components/sections/MeetTheTeamSection';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -21,6 +22,7 @@ const Index = () => {
       <RealWorkSection />
       <SizesPreviewSection />
       <ServiceCoverageMapSection />
+      <MeetTheTeamSection />
       <ReviewsSection />
       <AreasPreviewSection />
       <FAQSection />
