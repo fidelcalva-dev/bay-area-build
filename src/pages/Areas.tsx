@@ -1,50 +1,15 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, MapPin, CheckCircle } from 'lucide-react';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
-
-const serviceAreas = [
-  {
-    county: 'Alameda County',
-    cities: ['Oakland', 'Fremont', 'Berkeley', 'Hayward', 'San Leandro', 'Alameda', 'Livermore', 'Pleasanton', 'Union City', 'Newark', 'Dublin', 'Emeryville', 'Albany', 'Piedmont'],
-  },
-  {
-    county: 'San Francisco',
-    cities: ['Downtown', 'Mission District', 'Sunset', 'Richmond', 'Marina', 'SOMA', 'Potrero Hill', 'Bayview', 'Noe Valley', 'Castro', 'Haight-Ashbury', 'Pacific Heights'],
-  },
-  {
-    county: 'Santa Clara County',
-    cities: ['San Jose', 'Sunnyvale', 'Santa Clara', 'Mountain View', 'Palo Alto', 'Milpitas', 'Cupertino', 'Campbell', 'Los Gatos', 'Saratoga', 'Gilroy', 'Morgan Hill'],
-  },
-  {
-    county: 'Contra Costa County',
-    cities: ['Concord', 'Richmond', 'Antioch', 'Walnut Creek', 'Pittsburg', 'San Ramon', 'Brentwood', 'Danville', 'Martinez', 'Pleasant Hill', 'Lafayette', 'Orinda', 'Moraga'],
-  },
-  {
-    county: 'San Mateo County',
-    cities: ['Daly City', 'San Mateo', 'Redwood City', 'South San Francisco', 'San Bruno', 'Burlingame', 'Foster City', 'Menlo Park', 'Pacifica', 'Half Moon Bay', 'Belmont', 'San Carlos'],
-  },
-  {
-    county: 'Marin County',
-    cities: ['San Rafael', 'Novato', 'Mill Valley', 'Sausalito', 'Corte Madera', 'Larkspur', 'Tiburon', 'Fairfax', 'San Anselmo', 'Ross', 'Kentfield', 'Stinson Beach'],
-  },
-  {
-    county: 'Napa County',
-    cities: ['Napa', 'Yountville', 'St. Helena', 'Calistoga', 'American Canyon', 'Angwin', 'Deer Park', 'Lake Berryessa'],
-  },
-  {
-    county: 'Solano County',
-    cities: ['Vallejo', 'Fairfield', 'Vacaville', 'Suisun City', 'Benicia', 'Dixon', 'Rio Vista', 'Travis AFB'],
-  },
-  {
-    county: 'Sonoma County',
-    cities: ['Santa Rosa', 'Petaluma', 'Rohnert Park', 'Windsor', 'Healdsburg', 'Sonoma', 'Cotati', 'Cloverdale', 'Sebastopol', 'Bodega Bay'],
-  },
-];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowRight, CheckCircle, MapPin, Phone } from 'lucide-react';
+import { CountySection } from '@/components/areas/CountySection';
+import { serviceAreas } from '@/data/serviceAreas';
 
 export default function Areas() {
+  const [activeCounty, setActiveCounty] = useState(serviceAreas[0].slug);
+
   return (
     <Layout
       title="Dumpster Rental Service Areas | SF Bay Area Coverage"
@@ -54,49 +19,70 @@ export default function Areas() {
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <h1 className="heading-xl mb-4">Service Areas</h1>
-            <p className="text-xl text-primary-foreground/85">
-              Serving 9 Bay Area counties with same-day delivery. Find dumpster rental service near you.
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm mb-4">
+              <MapPin className="w-4 h-4" />
+              9 Counties • 100+ Cities
+            </div>
+            <h1 className="heading-xl mb-4">Dumpster Rental Near You</h1>
+            <p className="text-xl text-primary-foreground/85 mb-6">
+              Serving the entire San Francisco Bay Area with same-day delivery. Select your county below to find service in your city.
             </p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild variant="cta" size="lg">
+                <Link to="/#quote">
+                  Get Instant Quote
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 hover:bg-white/20 text-primary-foreground">
+                <a href="tel:+15106802150">
+                  <Phone className="w-4 h-4" />
+                  (510) 680-2150
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Service Area Grid */}
+      {/* County Tabs Section */}
       <section className="section-padding bg-background">
         <div className="container-wide">
-          <div className="text-center mb-12">
-            <h2 className="heading-lg text-foreground mb-4">Dumpster Rental Near You</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We deliver roll-off dumpsters throughout the San Francisco Bay Area. Same-day service available in most locations.
+          <div className="text-center mb-8">
+            <h2 className="heading-lg text-foreground mb-3">Select Your County</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Click on your county to see all cities we serve, with unique local information and FAQs for each area.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {serviceAreas.map((area) => (
-              <div
-                key={area.county}
-                className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 hover:shadow-card-hover transition-all"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">{area.county}</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {area.cities.map((city) => (
-                    <span
-                      key={city}
-                      className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded hover:bg-primary/10 hover:text-primary transition-colors cursor-default"
+          <Tabs value={activeCounty} onValueChange={setActiveCounty} className="w-full">
+            {/* Scrollable Tab List */}
+            <div className="relative mb-8">
+              <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+                <TabsList className="inline-flex h-auto p-1 bg-muted rounded-xl gap-1 min-w-max">
+                  {serviceAreas.map((county) => (
+                    <TabsTrigger
+                      key={county.slug}
+                      value={county.slug}
+                      className="px-4 py-2.5 text-sm font-medium rounded-lg whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
                     >
-                      {city}
-                    </span>
+                      {county.name.replace(' County', '')}
+                    </TabsTrigger>
                   ))}
-                </div>
+                </TabsList>
               </div>
+              {/* Fade indicators */}
+              <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none md:hidden" />
+              <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
+            </div>
+
+            {/* Tab Content */}
+            {serviceAreas.map((county) => (
+              <TabsContent key={county.slug} value={county.slug} className="mt-0">
+                <CountySection county={county} />
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
         </div>
       </section>
 
@@ -137,6 +123,33 @@ export default function Areas() {
                 Or call <a href="tel:+15106802150" className="text-primary font-semibold">(510) 680-2150</a>
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Content */}
+      <section className="section-padding bg-background">
+        <div className="container-narrow">
+          <h2 className="heading-md text-foreground mb-6 text-center">
+            Bay Area Dumpster Rental Coverage
+          </h2>
+          <div className="prose prose-lg max-w-none text-muted-foreground">
+            <p>
+              Calsan Dumpsters Pro provides comprehensive roll-off dumpster rental service throughout the San Francisco Bay Area. 
+              Our service area spans nine counties: <strong>Alameda</strong>, <strong>Contra Costa</strong>, <strong>Santa Clara</strong>, 
+              <strong>San Francisco</strong>, <strong>San Mateo</strong>, <strong>Marin</strong>, <strong>Napa</strong>, <strong>Solano</strong>, 
+              and <strong>Sonoma</strong> counties.
+            </p>
+            <p>
+              Whether you're in Oakland, San Jose, San Francisco, or any of the 100+ cities we serve, you can count on same-day 
+              or next-day dumpster delivery. Our experienced drivers know the Bay Area roads and can navigate everything from 
+              downtown streets to hillside driveways.
+            </p>
+            <p>
+              Looking for "dumpster rental near me" in the Bay Area? You've found your local provider. We offer transparent pricing, 
+              flexible rental periods, and the full range of dumpster sizes from 8 to 40 yards. <strong>Hablamos español</strong> — 
+              our bilingual team is ready to help.
+            </p>
           </div>
         </div>
       </section>
