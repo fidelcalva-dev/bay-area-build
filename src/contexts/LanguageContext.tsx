@@ -32,6 +32,12 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.cta.order': 'Order Now',
     'hero.spanish': 'Hablamos Español',
     'hero.trust': 'Google Guaranteed',
+    'hero.benefit.sameDay': 'Same-Day Delivery',
+    'hero.benefit.transparent': 'Transparent Pricing',
+    'hero.benefit.onTime': 'On-Time Guaranteed',
+    'hero.stats.counties': 'Counties Served',
+    'hero.stats.customers': 'Happy Customers',
+    'hero.stats.delivery': 'Delivery',
     
     // Features
     'features.sameDay': 'Same-Day Delivery',
@@ -42,6 +48,29 @@ const translations: Record<Language, Record<string, string>> = {
     'features.onTimeDesc': 'We show up when we say we will.',
     'features.textUpdates': 'Text Updates',
     'features.textUpdatesDesc': 'Track your delivery via SMS.',
+    'features.title': 'Why Bay Area Trusts Us',
+    'features.subtitle': 'Thousands of homeowners and contractors rely on Calsan Dumpsters Pro for reliable, hassle-free dumpster rentals.',
+    'features.googleGuaranteed': 'Google Guaranteed',
+    'features.googleGuaranteedDesc': 'Protected by Google Local Services.',
+    'features.ecoFriendly': 'Eco-Friendly',
+    'features.ecoFriendlyDesc': 'We recycle and dispose responsibly.',
+    
+    // How It Works
+    'howItWorks.title': 'How It Works',
+    'howItWorks.subtitle': 'Renting a dumpster is easy. Four simple steps from quote to haul-away.',
+    'howItWorks.step1.title': 'Get a Quote',
+    'howItWorks.step1.description': 'Tell us your project type, location, and preferred size. Get instant pricing in seconds.',
+    'howItWorks.step2.title': 'We Deliver',
+    'howItWorks.step2.description': 'Same-day or scheduled delivery. We place the dumpster exactly where you need it.',
+    'howItWorks.step3.title': 'Fill It Up',
+    'howItWorks.step3.description': 'Take your time—standard rental is 7 days. Load at your own pace.',
+    'howItWorks.step4.title': 'We Haul Away',
+    'howItWorks.step4.description': 'Call or text when ready. We pick up within 1-3 business days.',
+    'howItWorks.cta': 'Get Your Instant Quote',
+    
+    // CTA Section
+    'ctaSection.title': 'Ready to Get Started?',
+    'ctaSection.subtitle': 'Book your dumpster in minutes. Same-day delivery available for orders placed before noon.',
     
     // CTA
     'cta.call': 'Call',
@@ -65,11 +94,13 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Sizes
     'sizes.title': 'Dumpster Sizes',
-    'sizes.subtitle': 'Choose the right size for your project',
+    'sizes.subtitle': 'From small cleanouts to major construction projects. Find the perfect size for your needs.',
     'sizes.perfectFor': 'Perfect for:',
     'sizes.dimensions': 'Dimensions:',
     'sizes.choose': 'Choose This Size',
     'sizes.yards': 'Yard',
+    'sizes.from': 'From',
+    'sizes.viewAll': 'View All Sizes',
     
     // Footer
     'footer.company': 'Calsan Dumpsters Pro',
@@ -91,6 +122,9 @@ const translations: Record<Language, Record<string, string>> = {
     
     // FAQ
     'faq.title': 'Frequently Asked Questions',
+    'faq.subtitle': 'Everything you need to know about our dumpster rental services.',
+    'faq.moreQuestions': 'Still have questions?',
+    'faq.callUs': 'Call us at',
     
     // Contact
     'contact.title': 'Contact Us',
@@ -117,12 +151,18 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.title': 'Alquiler de Contenedores Fácil',
     'hero.subtitle': 'Área de la Bahía de SF',
-    'hero.description': 'Entrega el mismo día. Precios transparentes. Servicio puntual. Sirviendo 9 condados del Área de la Bahía con contenedores confiables.',
+    'hero.description': 'Entrega el mismo día. Precios transparentes. Servicio puntual. Sirviendo 9 condados del Área de la Bahía.',
     'hero.cta.quote': 'Cotización Gratis',
     'hero.cta.call': 'Llamar Ahora',
     'hero.cta.order': 'Ordenar Ahora',
     'hero.spanish': 'Hablamos Español',
     'hero.trust': 'Garantizado por Google',
+    'hero.benefit.sameDay': 'Entrega el Mismo Día',
+    'hero.benefit.transparent': 'Precios Transparentes',
+    'hero.benefit.onTime': 'Puntualidad Garantizada',
+    'hero.stats.counties': 'Condados',
+    'hero.stats.customers': 'Clientes Felices',
+    'hero.stats.delivery': 'Entrega',
     
     // Features
     'features.sameDay': 'Entrega el Mismo Día',
@@ -133,6 +173,29 @@ const translations: Record<Language, Record<string, string>> = {
     'features.onTimeDesc': 'Llegamos cuando decimos.',
     'features.textUpdates': 'Actualizaciones por Texto',
     'features.textUpdatesDesc': 'Siga su entrega por SMS.',
+    'features.title': 'Por Qué el Área de la Bahía Confía en Nosotros',
+    'features.subtitle': 'Miles de propietarios y contratistas confían en Calsan Dumpsters Pro para alquileres confiables.',
+    'features.googleGuaranteed': 'Garantizado por Google',
+    'features.googleGuaranteedDesc': 'Protegido por Servicios Locales de Google.',
+    'features.ecoFriendly': 'Ecológico',
+    'features.ecoFriendlyDesc': 'Reciclamos y desechamos responsablemente.',
+    
+    // How It Works
+    'howItWorks.title': 'Cómo Funciona',
+    'howItWorks.subtitle': 'Alquilar un contenedor es fácil. Cuatro pasos simples desde la cotización hasta el retiro.',
+    'howItWorks.step1.title': 'Obtén una Cotización',
+    'howItWorks.step1.description': 'Cuéntanos tu proyecto, ubicación y tamaño preferido. Obtén precios al instante.',
+    'howItWorks.step2.title': 'Lo Entregamos',
+    'howItWorks.step2.description': 'Entrega el mismo día o programada. Colocamos el contenedor donde lo necesites.',
+    'howItWorks.step3.title': 'Llénalo',
+    'howItWorks.step3.description': 'Toma tu tiempo—el alquiler estándar es de 7 días. Carga a tu propio ritmo.',
+    'howItWorks.step4.title': 'Lo Retiramos',
+    'howItWorks.step4.description': 'Llama o envía un mensaje cuando estés listo. Recogemos en 1-3 días hábiles.',
+    'howItWorks.cta': 'Obtén Tu Cotización Gratis',
+    
+    // CTA Section
+    'ctaSection.title': '¿Listo para Empezar?',
+    'ctaSection.subtitle': 'Reserva tu contenedor en minutos. Entrega el mismo día para pedidos antes del mediodía.',
     
     // CTA
     'cta.call': 'Llamar',
@@ -156,11 +219,13 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Sizes
     'sizes.title': 'Tamaños de Contenedores',
-    'sizes.subtitle': 'Elija el tamaño adecuado para su proyecto',
+    'sizes.subtitle': 'Desde limpiezas pequeñas hasta grandes proyectos de construcción. Encuentra el tamaño perfecto.',
     'sizes.perfectFor': 'Perfecto para:',
     'sizes.dimensions': 'Dimensiones:',
     'sizes.choose': 'Elegir Este Tamaño',
     'sizes.yards': 'Yardas',
+    'sizes.from': 'Desde',
+    'sizes.viewAll': 'Ver Todos los Tamaños',
     
     // Footer
     'footer.company': 'Calsan Dumpsters Pro',
@@ -182,6 +247,9 @@ const translations: Record<Language, Record<string, string>> = {
     
     // FAQ
     'faq.title': 'Preguntas Frecuentes',
+    'faq.subtitle': 'Todo lo que necesita saber sobre nuestros servicios de alquiler de contenedores.',
+    'faq.moreQuestions': '¿Aún tiene preguntas?',
+    'faq.callUs': 'Llámenos al',
     
     // Contact
     'contact.title': 'Contáctenos',

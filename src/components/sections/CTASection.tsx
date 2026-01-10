@@ -10,9 +10,9 @@ export function CTASection() {
   return (
     <section className="section-padding bg-secondary text-secondary-foreground">
       <div className="container-narrow text-center">
-        <h2 className="heading-lg mb-4">Ready to Get Started?</h2>
+        <h2 className="heading-lg mb-4">{t('ctaSection.title')}</h2>
         <p className="text-lg text-secondary-foreground/80 max-w-2xl mx-auto mb-8">
-          Book your dumpster in minutes. Same-day delivery available for orders placed before noon.
+          {t('ctaSection.subtitle')}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
