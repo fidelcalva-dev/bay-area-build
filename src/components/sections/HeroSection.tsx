@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, CheckCircle, Shield, Star, Clock, Truck, DollarSign, Zap, CalendarCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { InstantQuoteForm } from '@/components/forms/InstantQuoteForm';
+import { InstantQuoteCalculator } from '@/components/forms/InstantQuoteCalculator';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
@@ -162,9 +162,9 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right - Quote Form */}
+          {/* Right - Quote Calculator */}
           <div className="animate-slide-up">
-            <InstantQuoteForm />
+            <InstantQuoteCalculator />
           </div>
         </div>
       </div>
