@@ -82,13 +82,15 @@ export const PRICING_ZONES: PricingZone[] = [
 ];
 
 // Dumpster Sizes with included tons by size
+// Rule: 10=1T, 20=2T, 30=3T, 40=4T (for general)
+// Heavy materials: all sizes get 10T included
 export const DUMPSTER_SIZES: DumpsterSize[] = [
   {
     id: 'size-6',
     value: 6,
     label: '6 Yard',
     basePrice: 325,
-    includedTons: 1.0,
+    includedTons: 10, // Heavy only
     description: 'Small cleanouts, bathroom remodel',
     dimensions: "10' × 4' × 3'",
     isHeavyOnly: true,
@@ -98,7 +100,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     value: 8,
     label: '8 Yard',
     basePrice: 365,
-    includedTons: 1.0,
+    includedTons: 10, // Heavy only
     description: 'Bathroom/kitchen demo',
     dimensions: "10' × 4' × 4'",
     isHeavyOnly: true,
@@ -108,7 +110,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     value: 10,
     label: '10 Yard',
     basePrice: 395,
-    includedTons: 1.0,
+    includedTons: 1.0, // General: 1T, Heavy: 10T handled in calculation
     description: 'Garage cleanout, deck removal',
     dimensions: "12' × 8' × 3.5'",
   },
