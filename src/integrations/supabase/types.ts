@@ -14,16 +14,434 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dumpster_sizes: {
+        Row: {
+          base_price: number
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          display_order: number
+          id: string
+          included_tons: number
+          is_active: boolean
+          is_heavy_only: boolean
+          label: string
+          size_value: number
+          updated_at: string
+        }
+        Insert: {
+          base_price: number
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          display_order?: number
+          id?: string
+          included_tons: number
+          is_active?: boolean
+          is_heavy_only?: boolean
+          label: string
+          size_value: number
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          display_order?: number
+          id?: string
+          included_tons?: number
+          is_active?: boolean
+          is_heavy_only?: boolean
+          label?: string
+          size_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      material_types: {
+        Row: {
+          allowed_sizes: number[]
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          price_adjustment: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          allowed_sizes?: number[]
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          price_adjustment?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          allowed_sizes?: number[]
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          price_adjustment?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      pricing_extras: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          price: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          price: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          price?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      pricing_zones: {
+        Row: {
+          base_multiplier: number
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          base_multiplier?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          base_multiplier?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rental_periods: {
+        Row: {
+          created_at: string
+          days: number
+          display_order: number
+          extra_cost: number
+          id: string
+          is_active: boolean
+          is_default: boolean
+          label: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          days: number
+          display_order?: number
+          extra_cost?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          label: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          days?: number
+          display_order?: number
+          extra_cost?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vendor_pricing: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          notes: string | null
+          size_id: string
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          size_id: string
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          size_id?: string
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_pricing_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "dumpster_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_pricing_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_zones: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean
+          vendor_id: string
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          vendor_id: string
+          zone_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          vendor_id?: string
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_zones_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_zones_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      zone_pricing: {
+        Row: {
+          created_at: string
+          id: string
+          is_available: boolean
+          price_override: number | null
+          size_id: string
+          updated_at: string
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          price_override?: number | null
+          size_id: string
+          updated_at?: string
+          zone_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          price_override?: number | null
+          size_id?: string
+          updated_at?: string
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zone_pricing_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "dumpster_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zone_pricing_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zone_zip_codes: {
+        Row: {
+          city_name: string | null
+          county: string | null
+          created_at: string
+          id: string
+          zip_code: string
+          zone_id: string
+        }
+        Insert: {
+          city_name?: string | null
+          county?: string | null
+          created_at?: string
+          id?: string
+          zip_code: string
+          zone_id: string
+        }
+        Update: {
+          city_name?: string | null
+          county?: string | null
+          created_at?: string
+          id?: string
+          zip_code?: string
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zone_zip_codes_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +568,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
