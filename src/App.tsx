@@ -17,6 +17,7 @@ import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
 import ThankYou from "./pages/ThankYou";
 import Quote from "./pages/Quote";
+import ContractorQuote from "./pages/ContractorQuote";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/careers" element={<Careers />} />
               <Route path="/thank-you" element={<ThankYou />} />
               <Route path="/quote" element={<Quote />} />
+              <Route path="/quote/contractor" element={<ContractorQuote />} />
               <Route path="/green-impact" element={<GreenImpactMap />} />
               <Route path="/green-halo" element={<GreenHalo />} />
               {/* Green Halo Client Portal */}
