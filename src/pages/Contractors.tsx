@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, HardHat, Truck, Clock, RefreshCw, Phone, CheckCircle } from 'lucide-react';
+import { ArrowRight, HardHat, Truck, Clock, RefreshCw, Phone, CheckCircle, BookOpen } from 'lucide-react';
+import { WeightEducation } from '@/components/quote/WeightEducation';
+import { DrivewayProtection, CityPermitHelper } from '@/components/education';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
@@ -145,7 +147,27 @@ export default function Contractors() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Educational Resources */}
+      <section className="section-padding bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium text-muted-foreground mb-4">
+              <BookOpen className="w-4 h-4" />
+              <span>Contractor Resources</span>
+            </div>
+            <h2 className="heading-lg text-foreground mb-3">Know Before You Rent</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Avoid surprises with our quick guides on weight limits, driveway protection, and permits.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <WeightEducation compact className="h-fit" />
+            <DrivewayProtection className="h-fit" />
+            <CityPermitHelper className="h-fit lg:col-span-1 md:col-span-2 lg:max-w-none" />
+          </div>
+        </div>
+      </section>
       <section className="section-padding bg-secondary text-secondary-foreground">
         <div className="container-narrow text-center">
           <h2 className="heading-lg mb-4">Ready to Partner Up?</h2>
