@@ -17,6 +17,13 @@ import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ZonesManager from "./pages/admin/ZonesManager";
+import PricingManager from "./pages/admin/PricingManager";
+import VendorsManager from "./pages/admin/VendorsManager";
+import ExtrasManager from "./pages/admin/ExtrasManager";
 import PortalLogin from "./pages/portal/PortalLogin";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ProjectDetail from "./pages/portal/ProjectDetail";
@@ -53,6 +60,15 @@ const App = () => (
               <Route path="/portal/dashboard" element={<PortalDashboard />} />
               <Route path="/portal/project/:projectId" element={<ProjectDetail />} />
               <Route path="/portal/report" element={<SustainabilityReport />} />
+              {/* Admin Panel */}
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/*" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="zones" element={<ZonesManager />} />
+                <Route path="pricing" element={<PricingManager />} />
+                <Route path="vendors" element={<VendorsManager />} />
+                <Route path="extras" element={<ExtrasManager />} />
+              </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
