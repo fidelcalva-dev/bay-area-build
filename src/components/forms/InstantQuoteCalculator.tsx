@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { 
   MessageCircle, Zap, MapPin, Package, Recycle, Calendar, 
   Home, HardHat, Building2, ChevronRight, Check, AlertCircle,
@@ -18,6 +18,8 @@ import {
   USER_TYPES,
   type QuoteResult,
 } from '@/lib/pricingEngine';
+import { supabase } from '@/integrations/supabase/client';
+import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 
 interface FormData {
   userType: string;
@@ -37,6 +39,9 @@ export function InstantQuoteCalculator() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState<'quote' | 'contact'>('quote');
+  const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
+  const [zoneData, setZoneData] = useState<{ id: string; name: string } | null>(null);
+  const [sizeData, setSizeData] = useState<{ id: string } | null>(null);
   
   const [formData, setFormData] = useState<FormData>({
     userType: 'homeowner',
@@ -94,6 +99,74 @@ export function InstantQuoteCalculator() {
     });
   }, [formData, isZipInArea, isZipValid]);
 
+  // Fetch zone and size IDs from database for vendor selection
+  useEffect(() => {
+    async function fetchZoneAndSize() {
+      if (!isZipInArea || !formData.zip) {
+        setZoneData(null);
+        setSizeData(null);
+        setVendorResult(null);
+        return;
+      }
+
+      try {
+        // Fetch zone by zip code
+        const { data: zipData } = await supabase
+          .from('zone_zip_codes')
+          .select('zone_id, pricing_zones(id, name)')
+          .eq('zip_code', formData.zip)
+          .maybeSingle();
+
+        if (zipData?.zone_id) {
+          setZoneData({
+            id: zipData.zone_id,
+            name: (zipData.pricing_zones as any)?.name || '',
+          });
+        } else {
+          setZoneData(null);
+        }
+
+        // Fetch size ID
+        const { data: sizeDbData } = await supabase
+          .from('dumpster_sizes')
+          .select('id')
+          .eq('size_value', parseInt(formData.size))
+          .eq('is_active', true)
+          .maybeSingle();
+
+        if (sizeDbData) {
+          setSizeData({ id: sizeDbData.id });
+        } else {
+          setSizeData(null);
+        }
+      } catch (err) {
+        console.error('Error fetching zone/size data:', err);
+      }
+    }
+
+    fetchZoneAndSize();
+  }, [formData.zip, formData.size, isZipInArea]);
+
+  // Select vendor when we have zone, size, and valid quote
+  useEffect(() => {
+    async function runVendorSelection() {
+      if (!zoneData?.id || !sizeData?.id || !quote.isValid) {
+        setVendorResult(null);
+        return;
+      }
+
+      const result = await selectVendorForQuote({
+        zoneId: zoneData.id,
+        sizeId: sizeData.id,
+        basePrice: quote.subtotal,
+      });
+
+      setVendorResult(result);
+    }
+
+    runVendorSelection();
+  }, [zoneData, sizeData, quote.isValid, quote.subtotal]);
+
   const toggleExtra = (extraId: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -126,37 +199,67 @@ export function InstantQuoteCalculator() {
     const selectedMat = MATERIAL_TYPES.find((m) => m.value === formData.material);
     const selectedRental = RENTAL_DAYS.find((r) => r.value === formData.rentalDays);
     const selectedExtras = EXTRAS.filter((e) => formData.extras.includes(e.id));
-
-    const payload = {
-      source: 'Instant Quote Calculator',
-      timestamp: new Date().toISOString(),
-      contact: {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-      },
-      quote: {
-        userType: formData.userType,
-        zip: formData.zip,
-        zone: zone?.name,
-        material: selectedMat?.label,
-        size: selectedSize?.label,
-        rentalDays: selectedRental?.label,
-        extras: selectedExtras.map((e) => e.label),
-        lineItems: quote.lineItems,
-        estimatedMin: quote.estimatedMin,
-        estimatedMax: quote.estimatedMax,
-        includedTons: quote.includedTons,
-      },
-    };
+    const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
 
     try {
-      // Send to HighLevel webhook (fire and forget pattern for demo)
-      // In production, you'd have the actual webhook URL
+      // Save quote to database with vendor selection
+      const saveResult = await saveQuote({
+        customerName: formData.name,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        userType: formData.userType,
+        zipCode: formData.zip,
+        zoneId: zoneData?.id,
+        sizeId: sizeData?.id,
+        materialType: formData.material,
+        rentalDays: formData.rentalDays,
+        extras: formData.extras,
+        subtotal: quote.subtotal,
+        estimatedMin: quote.estimatedMin,
+        estimatedMax: quote.estimatedMax,
+        discountPercent: (userTypeData?.discount || 0) * 100,
+        selectedVendorId: vendorResult?.selectedVendor?.vendorId,
+        vendorCost: vendorResult?.vendorCost || undefined,
+        margin: vendorResult?.margin || undefined,
+        isCalsanFulfillment: vendorResult?.isCalsanFulfillment ?? true,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save quote:', saveResult.error);
+      }
+
+      // Log for CRM integration
+      const payload = {
+        source: 'Instant Quote Calculator',
+        timestamp: new Date().toISOString(),
+        quoteId: saveResult.quoteId,
+        contact: {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+        },
+        quote: {
+          userType: formData.userType,
+          zip: formData.zip,
+          zone: zone?.name,
+          material: selectedMat?.label,
+          size: selectedSize?.label,
+          rentalDays: selectedRental?.label,
+          extras: selectedExtras.map((e) => e.label),
+          lineItems: quote.lineItems,
+          estimatedMin: quote.estimatedMin,
+          estimatedMax: quote.estimatedMax,
+          includedTons: quote.includedTons,
+        },
+        vendor: {
+          selectedVendor: vendorResult?.selectedVendor?.vendorName || 'Calsan (Self-fulfill)',
+          isCalsanFulfillment: vendorResult?.isCalsanFulfillment ?? true,
+          vendorCost: vendorResult?.vendorCost,
+          margin: vendorResult?.margin,
+        },
+      };
+
       console.log('Quote submission payload:', payload);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast({
         title: 'Quote Sent! 🎉',
