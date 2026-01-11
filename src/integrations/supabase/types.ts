@@ -170,6 +170,106 @@ export type Database = {
         }
         Relationships: []
       }
+      quotes: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          discount_percent: number | null
+          estimated_max: number
+          estimated_min: number
+          extras: string[] | null
+          id: string
+          is_calsan_fulfillment: boolean
+          margin: number | null
+          material_type: string
+          rental_days: number
+          selected_vendor_id: string | null
+          size_id: string | null
+          status: string
+          subtotal: number
+          updated_at: string
+          user_type: string
+          vendor_cost: number | null
+          zip_code: string
+          zone_id: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_percent?: number | null
+          estimated_max: number
+          estimated_min: number
+          extras?: string[] | null
+          id?: string
+          is_calsan_fulfillment?: boolean
+          margin?: number | null
+          material_type: string
+          rental_days?: number
+          selected_vendor_id?: string | null
+          size_id?: string | null
+          status?: string
+          subtotal: number
+          updated_at?: string
+          user_type?: string
+          vendor_cost?: number | null
+          zip_code: string
+          zone_id?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_percent?: number | null
+          estimated_max?: number
+          estimated_min?: number
+          extras?: string[] | null
+          id?: string
+          is_calsan_fulfillment?: boolean
+          margin?: number | null
+          material_type?: string
+          rental_days?: number
+          selected_vendor_id?: string | null
+          size_id?: string | null
+          status?: string
+          subtotal?: number
+          updated_at?: string
+          user_type?: string
+          vendor_cost?: number | null
+          zip_code?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_selected_vendor_id_fkey"
+            columns: ["selected_vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "dumpster_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_periods: {
         Row: {
           created_at: string
@@ -321,6 +421,7 @@ export type Database = {
           is_active: boolean
           name: string
           notes: string | null
+          priority_rank: number
           updated_at: string
         }
         Insert: {
@@ -332,6 +433,7 @@ export type Database = {
           is_active?: boolean
           name: string
           notes?: string | null
+          priority_rank?: number
           updated_at?: string
         }
         Update: {
@@ -343,6 +445,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           notes?: string | null
+          priority_rank?: number
           updated_at?: string
         }
         Relationships: []
