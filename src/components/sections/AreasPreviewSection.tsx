@@ -16,9 +16,9 @@ export function AreasPreviewSection() {
     <section className="section-padding bg-background">
       <div className="container-wide">
         <div className="text-center mb-12">
-          <h2 className="heading-lg text-foreground mb-4">Dumpster Rental Near You</h2>
+          <h2 className="heading-lg text-foreground mb-4">Proudly Serving Northern California</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Serving 9 Bay Area counties with same-day delivery available. Find service in your area.
+            9 Bay Area counties with same-day delivery available. Find service in your area.
           </p>
         </div>
 
