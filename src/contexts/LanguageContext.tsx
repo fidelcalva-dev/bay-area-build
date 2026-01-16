@@ -24,8 +24,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.getQuote': 'Get Instant Quote',
     
     // Hero
-    'hero.title': 'Dumpster Rental Made Easy',
-    'hero.subtitle': 'SF Bay Area',
+    'hero.title': 'Fast & Reliable Dumpster Rentals',
+    'hero.subtitle': 'in Northern California',
     'hero.description': 'Same-day delivery. Transparent pricing. On-time service. Serving 9 Bay Area counties with reliable roll-off dumpster rentals.',
     'hero.cta.quote': 'Get Instant Quote',
     'hero.cta.call': 'Call Now',
@@ -149,8 +149,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.getQuote': 'Cotización Gratis',
     
     // Hero
-    'hero.title': 'Alquiler de Contenedores Fácil',
-    'hero.subtitle': 'Área de la Bahía de SF',
+    'hero.title': 'Alquiler de Contenedores Rápido y Confiable',
+    'hero.subtitle': 'en el Norte de California',
     'hero.description': 'Entrega el mismo día. Precios transparentes. Servicio puntual. Sirviendo 9 condados del Área de la Bahía.',
     'hero.cta.quote': 'Cotización Gratis',
     'hero.cta.call': 'Llamar Ahora',
