@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Truck } from 'lucide-react';
+import { Menu, X, Phone, Truck, Instagram, Youtube, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { BUSINESS_INFO } from '@/lib/seo';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
@@ -59,6 +60,37 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 md:gap-3">
+            {/* Social Icons - Desktop only */}
+            <div className="hidden lg:flex items-center gap-1">
+              <a
+                href={BUSINESS_INFO.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href={BUSINESS_INFO.social.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <a
+                href={BUSINESS_INFO.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+            </div>
+
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
@@ -69,11 +101,11 @@ export function Header() {
 
             {/* Phone */}
             <a
-              href="tel:+15106802150"
+              href={`tel:${BUSINESS_INFO.phone.sales}`}
               className="hidden md:flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
             >
               <Phone className="w-4 h-4" />
-              <span>(510) 680-2150</span>
+              <span>{BUSINESS_INFO.phone.salesFormatted}</span>
             </a>
 
             {/* Order Now Button */}

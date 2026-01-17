@@ -32,9 +32,11 @@ export const BUSINESS_INFO = {
   social: {
     facebook: 'https://facebook.com/calsandumpsterspro',
     instagram: 'https://instagram.com/calsandumpsterspro',
-    twitter: 'https://twitter.com/calsandumpsters',
+    youtube: 'https://youtube.com/@calsandumpsterspro',
     yelp: 'https://yelp.com/biz/calsan-dumpsters-pro-oakland',
     google: 'https://g.page/calsan-dumpsters-pro',
+    bbb: 'https://www.bbb.org/us/ca/oakland/profile/dumpster-rental/calsan-dumpsters-pro-1116-123456',
+    googleGuarantee: 'https://support.google.com/google-ads/answer/7549288',
   },
   url: 'https://calsandumpsterspro.com',
 } as const;
