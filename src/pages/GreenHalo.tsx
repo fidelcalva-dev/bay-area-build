@@ -256,6 +256,128 @@ const GreenHalo = () => {
         </div>
       </section>
 
+      {/* What You Get - Reports, Receipts, Invoices */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-4">What You Get</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Complete Documentation & Reporting
+            </h2>
+            <p className="text-gray-600">
+              Every Green Halo project comes with comprehensive documentation for compliance, marketing, and record-keeping.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: FileText,
+                title: 'Weight Tickets',
+                description: 'Official scale tickets from certified facilities showing exact tonnage for each load.',
+                items: ['Certified facility stamps', 'Date & time records', 'Material classification'],
+              },
+              {
+                icon: Recycle,
+                title: 'Diversion Reports',
+                description: 'Detailed breakdown of materials diverted from landfills and recycling percentages.',
+                items: ['Material-by-material breakdown', 'Diversion rate calculations', 'Facility certifications'],
+              },
+              {
+                icon: BarChart3,
+                title: 'Environmental Impact',
+                description: 'Calculated environmental metrics showing your contribution to sustainability.',
+                items: ['CO₂ reduction equivalents', 'Trees saved calculations', 'Energy savings estimates'],
+              },
+              {
+                icon: FileText,
+                title: 'Invoices & Receipts',
+                description: 'Clear invoicing with sustainability data included for easy accounting and proof of service.',
+                items: ['Itemized service breakdown', 'Green Halo certification', 'Audit-ready format'],
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-emerald-600" />
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600 mb-4">{item.description}</p>
+                <ul className="space-y-2">
+                  {item.items.map((subItem) => (
+                    <li key={subItem} className="flex items-center gap-2 text-xs text-gray-500">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+                      {subItem}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Downloadable Reports Highlight */}
+          <div className="mt-12 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-100">
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Downloadable PDF Reports
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Get professional, branded sustainability reports that you can share with clients, 
+                  include in bids, or submit for LEED and compliance documentation.
+                </p>
+                <ul className="space-y-3 mb-6">
+                  {[
+                    'Project summary with all key metrics',
+                    'Material breakdown and diversion rates',
+                    'Environmental impact equivalencies',
+                    'Facility certifications and verification',
+                    'Custom branding options available',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-gray-700">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                  <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <Leaf className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900">Green Impact Report</p>
+                    <p className="text-xs text-gray-500">Project: Oak Street Renovation</p>
+                  </div>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Tonnage</span>
+                    <span className="font-semibold text-gray-900">12.4 tons</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Diversion Rate</span>
+                    <span className="font-semibold text-emerald-600">91%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">CO₂ Avoided</span>
+                    <span className="font-semibold text-gray-900">8.2 metric tons</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Trees Equivalent</span>
+                    <span className="font-semibold text-gray-900">47 trees</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-white">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Download Sample Report
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Dashboard Preview */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -303,12 +425,12 @@ const GreenHalo = () => {
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-4">Client Portal</Badge>
+              <Badge className="bg-amber-100 text-amber-700 border-0 mb-4">Coming Soon</Badge>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Real-Time Client Dashboard
+                Client Portal – Coming Q2 2026
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                Access your sustainability metrics anytime through our secure client portal. 
+                We're building a dedicated client portal where you can access your sustainability metrics anytime. 
                 Track projects, download reports, and monitor your environmental impact in real-time.
               </p>
               <ul className="space-y-4 mb-8">
@@ -325,10 +447,23 @@ const GreenHalo = () => {
                   </li>
                 ))}
               </ul>
-              <Link to="/portal">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-amber-900">Early Access Available</p>
+                    <p className="text-sm text-amber-700">
+                      Request early access to the client portal beta and be the first to track your impact.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Link to="/contact">
                 <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30">
                   <Eye className="w-5 h-5 mr-2" />
-                  Preview Dashboard
+                  Request Early Access
                 </Button>
               </Link>
             </div>
@@ -425,6 +560,56 @@ const GreenHalo = () => {
         </div>
       </section>
 
+      {/* Request Impact Report CTA */}
+      <section className="py-16 bg-gray-50 border-y border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-4">Free Report</Badge>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                  Request a Green Impact Report
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Already a customer? Request a detailed sustainability report for any of your past or current projects. 
+                  It's included with every Green Halo rental.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  {['PDF format for easy sharing', 'LEED-ready documentation', 'Typically delivered within 24-48 hours'].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-100">
+                <h4 className="font-semibold text-gray-900 mb-4">Request Your Report</h4>
+                <div className="space-y-4">
+                  <a 
+                    href="mailto:sustainability@calsandumpsters.com?subject=Green Impact Report Request"
+                    className="block"
+                  >
+                    <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
+                      <FileText className="w-4 h-4 mr-2" />
+                      Email Report Request
+                    </Button>
+                  </a>
+                  <a href="tel:+15106802150" className="block">
+                    <Button variant="outline" className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                      Call (510) 680-2150
+                    </Button>
+                  </a>
+                  <p className="text-xs text-center text-gray-500">
+                    Include your project address and rental dates
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="py-20 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -432,27 +617,27 @@ const GreenHalo = () => {
             <Leaf className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Activate Green Halo™ for Your Project
+            Activate Green Halo™ for Your Next Project
           </h2>
           <p className="text-xl text-emerald-100 mb-4">
             Join the growing network of sustainability-focused organizations.
           </p>
           <p className="text-emerald-200/80 mb-10 max-w-2xl mx-auto">
-            Get verified sustainability tracking, real-time dashboards, and certified reports 
-            that demonstrate your commitment to environmental responsibility.
+            Get verified sustainability tracking, certified reports, and documentation 
+            that demonstrates your commitment to environmental responsibility.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/contact">
+            <Link to="/pricing">
               <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50 shadow-lg">
-                Get Started
+                Get a Quote with Green Halo
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Link to="/pricing">
+            <a href="mailto:sustainability@calsandumpsters.com">
               <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                View Pricing
+                Contact Sustainability Team
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
