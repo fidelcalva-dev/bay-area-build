@@ -32,9 +32,11 @@ const DUMPSTER_IMAGES: Record<number, string> = {
   20: dumpster20yard,
   30: dumpster30yard,
   40: dumpster40yard,
+  50: dumpster40yard, // Use 40yd image for 50yd as placeholder
 };
 
-// Included tons by size as specified
+// Included tons by size as specified: 10=1, 20=2, 30=3, 40=4, 50=5
+// Heavy materials: 6/8/10 all get 10T
 const INCLUDED_TONS: Record<number, number> = {
   6: 10,  // Heavy materials - 10 tons
   8: 10,  // Heavy materials - 10 tons
@@ -42,6 +44,7 @@ const INCLUDED_TONS: Record<number, number> = {
   20: 2,
   30: 3,
   40: 4,
+  50: 5,
 };
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'contact' | 'success';
@@ -701,6 +704,11 @@ export function InstantQuoteCalculatorV3() {
                           <Weight className="w-3 h-3" />
                           {includedTons}T incl
                         </div>
+                        {size.dimensions && (
+                          <div className="mt-1 text-[10px] text-muted-foreground">
+                            Approx. {size.dimensions}
+                          </div>
+                        )}
                         <div className="mt-2 text-sm font-semibold text-foreground">${price}</div>
                       </div>
 

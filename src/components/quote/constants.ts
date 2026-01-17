@@ -82,7 +82,7 @@ export const PRICING_ZONES: PricingZone[] = [
 ];
 
 // Dumpster Sizes with included tons by size
-// Rule: 10=1T, 20=2T, 30=3T, 40=4T (for general)
+// Rule: 10=1T, 20=2T, 30=3T, 40=4T, 50=5T (for general)
 // Heavy materials: all sizes get 10T included
 export const DUMPSTER_SIZES: DumpsterSize[] = [
   {
@@ -115,15 +115,6 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     dimensions: "12' × 8' × 3.5'",
   },
   {
-    id: 'size-15',
-    value: 15,
-    label: '15 Yard',
-    basePrice: 445,
-    includedTons: 1.5,
-    description: 'Kitchen remodel, flooring',
-    dimensions: "16' × 7.5' × 4'",
-  },
-  {
     id: 'size-20',
     value: 20,
     label: '20 Yard',
@@ -151,6 +142,15 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     description: 'Commercial demo, large builds',
     dimensions: "22' × 8' × 8'",
   },
+  {
+    id: 'size-50',
+    value: 50,
+    label: '50 Yard',
+    basePrice: 795,
+    includedTons: 5.0,
+    description: 'Major commercial projects',
+    dimensions: "22' × 8' × 9'",
+  },
 ];
 
 // Material Types
@@ -161,7 +161,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
     icon: '🏠',
     description: 'Household, furniture, wood, drywall',
     priceAdjustment: 0,
-    allowedSizes: [10, 15, 20, 30, 40],
+    allowedSizes: [10, 20, 30, 40, 50],
   },
   {
     value: 'heavy',
