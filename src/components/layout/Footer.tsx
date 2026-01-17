@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS } from '@/lib/seo';
 
@@ -177,8 +177,49 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Trust Badges & Links */}
+        <div className="mt-12 pt-8 border-t border-secondary-foreground/10">
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+            {/* BBB Badge */}
+            <a
+              href={BUSINESS_INFO.social.bbb}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-foreground/5 rounded-lg border border-secondary-foreground/10 hover:bg-secondary-foreground/10 transition-colors"
+            >
+              <Award className="w-5 h-5 text-primary" />
+              <span className="text-sm font-medium">BBB A+ Accredited</span>
+              <ExternalLink className="w-3 h-3 text-secondary-foreground/50" />
+            </a>
+            
+            {/* Google Guarantee */}
+            <a
+              href={BUSINESS_INFO.social.googleGuarantee}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-foreground/5 rounded-lg border border-secondary-foreground/10 hover:bg-secondary-foreground/10 transition-colors"
+            >
+              <Shield className="w-5 h-5 text-accent" />
+              <span className="text-sm font-medium">Google Guaranteed</span>
+              <ExternalLink className="w-3 h-3 text-secondary-foreground/50" />
+            </a>
+
+            {/* Yelp */}
+            <a
+              href={BUSINESS_INFO.social.yelp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-foreground/5 rounded-lg border border-secondary-foreground/10 hover:bg-secondary-foreground/10 transition-colors"
+            >
+              <span className="text-lg">⭐</span>
+              <span className="text-sm font-medium">5.0 on Yelp</span>
+              <ExternalLink className="w-3 h-3 text-secondary-foreground/50" />
+            </a>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-secondary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-8 pt-8 border-t border-secondary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <p className="text-secondary-foreground/60 text-sm">
               © {currentYear} {BUSINESS_INFO.name}. {t('footer.rights')}
@@ -187,33 +228,45 @@ export function Footer() {
               {BUSINESS_INFO.address.full} • {BUSINESS_INFO.phone.salesFormatted}
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <a 
-              href={BUSINESS_INFO.social.facebook} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors"
-              aria-label="Facebook"
-            >
-              <Facebook className="w-5 h-5" />
-            </a>
+          
+          {/* Social Icons */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-secondary-foreground/50 mr-2">Follow us:</span>
             <a 
               href={BUSINESS_INFO.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors"
-              aria-label="Instagram"
+              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
+              aria-label="Follow us on Instagram"
             >
               <Instagram className="w-5 h-5" />
             </a>
             <a 
-              href={BUSINESS_INFO.social.twitter}
+              href={BUSINESS_INFO.social.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors"
-              aria-label="Twitter"
+              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
+              aria-label="Subscribe on YouTube"
             >
-              <Twitter className="w-5 h-5" />
+              <Youtube className="w-5 h-5" />
+            </a>
+            <a 
+              href={BUSINESS_INFO.social.facebook} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
+              aria-label="Like us on Facebook"
+            >
+              <Facebook className="w-5 h-5" />
+            </a>
+            <a 
+              href={BUSINESS_INFO.social.yelp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
+              aria-label="Review us on Yelp"
+            >
+              <span className="text-base">📍</span>
             </a>
           </div>
         </div>
