@@ -1,45 +1,43 @@
-import { Phone, MessageSquare, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Phone, MessageCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
+
+const TRASHLAB_URL = 'https://app.trashlab.com';
 
 export function MobileBottomBar() {
-  const { t } = useLanguage();
-
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       {/* Shadow overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent -top-4 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent -top-6 pointer-events-none" />
       
-      <div className="relative bg-card border-t-2 border-border shadow-2xl">
-        <div className="flex items-stretch divide-x divide-border">
+      <div className="relative bg-card border-t border-border shadow-2xl">
+        <div className="grid grid-cols-3 divide-x divide-border">
           {/* Quote - Primary CTA */}
-          <Link to="/#quote" className="flex-1">
-            <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[60px]">
+          <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer" className="block">
+            <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[56px]">
               <FileText className="w-5 h-5" />
-              <span className="text-xs font-bold">{t('cta.quote')}</span>
-            </Button>
-          </Link>
-          
-          {/* Call */}
-          <a href="tel:+15106802150" className="flex-1">
-            <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[60px] text-primary hover:bg-primary/5">
-              <Phone className="w-5 h-5" />
-              <span className="text-xs font-semibold">{t('cta.call')}</span>
+              <span className="text-xs font-bold">Quote</span>
             </Button>
           </a>
           
           {/* Text */}
-          <a href="sms:+15106802150" className="flex-1">
-            <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[60px] text-primary hover:bg-primary/5">
-              <MessageSquare className="w-5 h-5" />
-              <span className="text-xs font-semibold">{t('cta.text')}</span>
+          <a href="sms:+15106802150" className="block">
+            <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-xs font-semibold">Text</span>
+            </Button>
+          </a>
+          
+          {/* Call */}
+          <a href="tel:+15106802150" className="block">
+            <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
+              <Phone className="w-5 h-5" />
+              <span className="text-xs font-semibold">Call</span>
             </Button>
           </a>
         </div>
         
         {/* Safe area padding for notched phones */}
-        <div className="h-[env(safe-area-inset-bottom)]" />
+        <div className="h-[env(safe-area-inset-bottom)] bg-card" />
       </div>
     </div>
   );
