@@ -17,8 +17,8 @@ export function AreasPreviewSection() {
       <div className="container-wide">
         <div className="text-center mb-12">
           <h2 className="heading-lg text-foreground mb-4">Proudly Serving Northern California</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            9 Bay Area counties with same-day delivery available. Find service in your area.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            We proudly serve Oakland, San Jose, San Francisco, Concord, Walnut Creek, Richmond, Vallejo, Stockton, Modesto, Sacramento, and surrounding cities.
           </p>
         </div>
 
