@@ -94,8 +94,9 @@ export function QuoteBreakdown({ quote, compact = false }: QuoteBreakdownProps) 
 
       {/* Disclaimer */}
       <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
-        * Final price may vary based on actual weight. Prices include standard delivery & pickup 
-        within service area. Additional fees apply for blocked access or overweight loads.
+        <strong>Disclaimer:</strong> This is an estimated quote. Final price confirmed after disposal 
+        receipt based on actual weight. Prices include standard delivery & pickup within service area. 
+        Additional fees may apply for blocked access, overweight loads, or prohibited materials.
       </p>
     </div>
   );
