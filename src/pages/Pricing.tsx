@@ -1,18 +1,76 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban } from 'lucide-react';
+import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt } from 'lucide-react';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
 const pricingTiers = [
-  { size: 8, priceRange: '$350–$425', weightLimit: '1 ton', idealFor: 'Small cleanouts, bathroom remodels' },
-  { size: 10, priceRange: '$395–$475', weightLimit: '2 tons', idealFor: 'Single room renovation, garage cleanout' },
-  { size: 15, priceRange: '$445–$525', weightLimit: '2 tons', idealFor: 'Kitchen remodel, small roofing job' },
-  { size: 20, priceRange: '$495–$595', weightLimit: '3 tons', idealFor: 'Whole-house cleanout, medium construction' },
-  { size: 30, priceRange: '$595–$695', weightLimit: '4 tons', idealFor: 'Major renovation, commercial cleanout' },
-  { size: 40, priceRange: '$695–$825', weightLimit: '5 tons', idealFor: 'New construction, large demolition' },
+  { size: 10, startingAt: 395, priceRange: '$395–$475', weightLimit: '1 ton', idealFor: 'Small cleanouts, bathroom remodels', popular: false },
+  { size: 20, startingAt: 495, priceRange: '$495–$595', weightLimit: '2 tons', idealFor: 'Single room renovation, garage cleanout', popular: true },
+  { size: 30, startingAt: 595, priceRange: '$595–$695', weightLimit: '3 tons', idealFor: 'Whole-house cleanout, medium construction', popular: false },
+  { size: 40, startingAt: 695, priceRange: '$695–$825', weightLimit: '4 tons', idealFor: 'Major renovation, commercial cleanout', popular: false },
+  { size: 50, startingAt: 795, priceRange: '$795–$950', weightLimit: '5 tons', idealFor: 'New construction, large demolition', popular: false },
 ];
+
+const heavyMaterialTiers = [
+  { size: 6, startingAt: 395, priceRange: '$395–$475', weightLimit: '10 tons', idealFor: 'Small concrete or dirt removal' },
+  { size: 8, startingAt: 495, priceRange: '$495–$575', weightLimit: '10 tons', idealFor: 'Driveway or patio demolition' },
+  { size: 10, startingAt: 595, priceRange: '$595–$695', weightLimit: '10 tons', idealFor: 'Large concrete or foundation removal' },
+];
+
+const priceFactors = [
+  { 
+    icon: MapPin, 
+    title: 'Your Location (ZIP/Zone)', 
+    description: 'Pricing varies by distance from our service hub. Closer locations get the best rates.',
+    impact: 'Can add $0–$100 to base price'
+  },
+  { 
+    icon: Trash2, 
+    title: 'Debris Type', 
+    description: 'Standard debris (furniture, wood, drywall) vs. heavy materials (concrete, dirt, brick).',
+    impact: 'Heavy materials use dedicated sizes'
+  },
+  { 
+    icon: Weight, 
+    title: 'Weight (Tonnage)', 
+    description: 'Each size includes a weight allowance. Overages are charged per ton at the landfill.',
+    impact: '$75/ton over included limit'
+  },
+  { 
+    icon: Calendar, 
+    title: 'Rental Duration', 
+    description: 'Standard 7-day rental included. Need more time? Add extra days easily.',
+    impact: '$50/day after 7 days'
+  },
+  { 
+    icon: Boxes, 
+    title: 'Special Items', 
+    description: 'Mattresses, tires, appliances with freon require special handling and disposal.',
+    impact: '$25–$75 per special item'
+  },
+  { 
+    icon: Sparkles, 
+    title: 'Add-On Services', 
+    description: 'Same-day delivery, street permits, wait-time loading assistance.',
+    impact: 'Optional add-ons at checkout'
+  },
+];
+
+const exampleInvoice = {
+  projectDescription: '20 Yard Dumpster • General Debris • Oakland, CA (94612)',
+  lineItems: [
+    { label: '20 Yard Dumpster Base Price', amount: 525, type: 'base' as const },
+    { label: '7-Day Rental Period', amount: 0, type: 'included' as const },
+    { label: 'Delivery & Pickup', amount: 0, type: 'included' as const },
+    { label: '2 Tons Included', amount: 0, type: 'included' as const },
+    { label: '3 Extra Days', amount: 150, type: 'addition' as const },
+    { label: 'Mattress Disposal (x2)', amount: 50, type: 'addition' as const },
+  ],
+  subtotal: 725,
+  note: 'Weight overages (if any) billed after pickup at $75/ton'
+};
 
 const included = [
   { item: 'Up to 7 days rental period', detail: 'Plenty of time for most projects' },
@@ -136,45 +194,191 @@ export default function Pricing() {
             </div>
           </div>
 
-          {/* Pricing Grid with Ranges */}
+          {/* Starting At Price Blocks - General Debris */}
+          <div className="mb-12">
+            <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+              <Trash2 className="w-5 h-5 text-primary" />
+              General Debris Dumpsters
+            </h3>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {pricingTiers.map((tier) => (
+                <div 
+                  key={tier.size} 
+                  className={`relative bg-card rounded-2xl border p-5 hover:shadow-card-hover transition-all ${
+                    tier.popular ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/30'
+                  }`}
+                >
+                  {tier.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="text-center">
+                    <div className="text-3xl font-black text-foreground mb-1">{tier.size} Yard</div>
+                    <div className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Dumpster</div>
+                    
+                    <div className="mb-3">
+                      <div className="text-xs text-muted-foreground">Starting at</div>
+                      <div className="text-3xl font-extrabold text-primary">${tier.startingAt}</div>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground mb-2">
+                      <span className="font-medium text-foreground">{tier.weightLimit}</span> included
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{tier.idealFor}</p>
+
+                    <Button asChild variant="cta" size="sm" className="w-full">
+                      <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                        Get Quote
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Starting At Price Blocks - Heavy Materials */}
+          <div>
+            <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+              <Scale className="w-5 h-5 text-warning" />
+              Heavy Materials Dumpsters
+              <span className="text-sm font-normal text-muted-foreground">(Concrete, Dirt, Brick)</span>
+            </h3>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {heavyMaterialTiers.map((tier) => (
+                <div 
+                  key={`heavy-${tier.size}`} 
+                  className="bg-card rounded-2xl border border-warning/30 p-5 hover:shadow-card-hover transition-all"
+                >
+                  <div className="text-center">
+                    <div className="text-3xl font-black text-foreground mb-1">{tier.size} Yard</div>
+                    <div className="text-xs uppercase tracking-wide text-warning mb-3">Heavy Materials Only</div>
+                    
+                    <div className="mb-3">
+                      <div className="text-xs text-muted-foreground">Starting at</div>
+                      <div className="text-3xl font-extrabold text-primary">${tier.startingAt}</div>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground mb-2">
+                      <span className="font-medium text-foreground">{tier.weightLimit}</span> included
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground mb-4">{tier.idealFor}</p>
+
+                    <Button asChild variant="outline" size="sm" className="w-full border-warning/50 hover:bg-warning/10">
+                      <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                        Get Quote
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What Affects Your Price */}
+      <section className="section-padding bg-muted">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-foreground mb-4">What Affects Your Price?</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Your final quote depends on a few simple factors. Here's exactly how pricing is calculated.
+            </p>
+          </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pricingTiers.map((tier) => (
-              <div key={tier.size} className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 hover:shadow-card-hover transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
-                      <Package className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground">{tier.size} Yard</h3>
+            {priceFactors.map((factor) => (
+              <div key={factor.title} className="bg-card rounded-xl border border-border p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 flex-shrink-0">
+                    <factor.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground mb-1">{factor.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">{factor.description}</p>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full">
+                      <DollarSign className="w-3 h-3" />
+                      {factor.impact}
                     </div>
                   </div>
                 </div>
-                
-                <div className="mb-4">
-                  <span className="text-sm text-muted-foreground">Price range</span>
-                  <div className="text-3xl font-extrabold text-foreground">{tier.priceRange}</div>
-                </div>
-
-                <div className="space-y-2 mb-4 text-sm">
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Weight included:</span>
-                    <span className="font-medium text-foreground">{tier.weightLimit}</span>
-                  </div>
-                </div>
-
-                <p className="text-sm text-muted-foreground mb-6 pb-4 border-b border-border">
-                  <span className="font-medium text-foreground">Ideal for:</span> {tier.idealFor}
-                </p>
-
-                <Button asChild variant="cta" className="w-full">
-                  <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
-                    Order Now
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </Button>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Example Invoice Breakdown */}
+      <section className="section-padding bg-background">
+        <div className="container-wide">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="heading-lg text-foreground mb-4">Example Invoice</h2>
+              <p className="text-lg text-muted-foreground">
+                Here's what a typical invoice looks like—no surprises, complete transparency.
+              </p>
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-card">
+              {/* Invoice Header */}
+              <div className="bg-primary/5 border-b border-border px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <Receipt className="w-5 h-5 text-primary" />
+                  <div>
+                    <div className="font-bold text-foreground">Sample Quote</div>
+                    <div className="text-sm text-muted-foreground">{exampleInvoice.projectDescription}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Line Items */}
+              <div className="px-6 py-4 space-y-3">
+                {exampleInvoice.lineItems.map((item, index) => (
+                  <div 
+                    key={index} 
+                    className={`flex items-center justify-between py-2 ${
+                      item.type === 'base' ? 'border-b border-border' : ''
+                    }`}
+                  >
+                    <span className={`${item.type === 'base' ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
+                      {item.label}
+                    </span>
+                    <span className={`font-medium ${
+                      item.type === 'included' ? 'text-success' : 
+                      item.type === 'addition' ? 'text-foreground' : 
+                      'text-foreground'
+                    }`}>
+                      {item.type === 'included' ? 'Included' : `$${item.amount}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Total */}
+              <div className="bg-muted px-6 py-4 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold text-foreground">Estimated Total</span>
+                  <span className="text-2xl font-extrabold text-primary">${exampleInvoice.subtotal}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5" />
+                  {exampleInvoice.note}
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center mt-6">
+              <Button asChild variant="cta" size="lg">
+                <Link to="/#quote">
+                  Get Your Personalized Quote
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
