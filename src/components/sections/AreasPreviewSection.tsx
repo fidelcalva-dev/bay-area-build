@@ -55,8 +55,8 @@ export function AreasPreviewSection() {
         <div className="text-center">
           <p className="text-lg font-semibold text-foreground mb-4">Ready to get started?</p>
           <Button asChild variant="default" size="lg">
-            <Link to="/areas">
-              View All Service Areas
+            <Link to="/quote">
+              Get an Instant Dumpster Rental Quote
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
