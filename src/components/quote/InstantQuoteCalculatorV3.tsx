@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
-  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock,
-  HelpCircle, ArrowRight, Send, Bookmark
+  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,8 +13,11 @@ import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/l
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
 
-// Constants
-import { DUMPSTER_SIZES, MATERIAL_TYPES, USER_TYPES, RENTAL_PERIODS, EXTRAS, OVERAGE_COST_PER_TON } from './constants';
+// Database-powered pricing data hook
+import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
+
+// Fallback constants (used when DB is empty)
+import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST } from './constants';
 
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
@@ -33,18 +35,6 @@ const DUMPSTER_IMAGES: Record<number, string> = {
   30: dumpster30yard,
   40: dumpster40yard,
   50: dumpster40yard, // Use 40yd image for 50yd as placeholder
-};
-
-// Included tons by size as specified: 10=1, 20=2, 30=3, 40=4, 50=5
-// Heavy materials: 6/8/10 all get 10T
-const INCLUDED_TONS: Record<number, number> = {
-  6: 10,  // Heavy materials - 10 tons
-  8: 10,  // Heavy materials - 10 tons
-  10: 1,  // General: 1 ton, Heavy: 10 tons
-  20: 2,
-  30: 3,
-  40: 4,
-  50: 5,
 };
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'contact' | 'success';
@@ -66,6 +56,11 @@ interface ZoneResult {
 
 export function InstantQuoteCalculatorV3() {
   const { toast } = useToast();
+  
+  // Fetch pricing data from database (with fallback to constants)
+  const pricingData = usePricingData();
+  const { sizes: DUMPSTER_SIZES, materials: MATERIAL_TYPES, extras: EXTRAS, rentalPeriods: RENTAL_PERIODS } = pricingData;
+  
   const [step, setStep] = useState<Step>('zip');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
@@ -182,7 +177,7 @@ export function InstantQuoteCalculatorV3() {
     }
 
     // Determine included tons based on material type
-    const includedTons = formData.material === 'heavy' ? 10 : INCLUDED_TONS[formData.size] || 1;
+    const includedTons = calculateIncludedTons(formData.size, formData.material);
 
     // Base price with zone multiplier
     const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
@@ -699,7 +694,7 @@ export function InstantQuoteCalculatorV3() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {availableSizes.map((size) => {
-                  const includedTons = formData.material === 'heavy' ? 10 : INCLUDED_TONS[size.value] || 1;
+                  const includedTons = calculateIncludedTons(size.value, formData.material);
                   const image = DUMPSTER_IMAGES[size.value];
                   const price = Math.round(size.basePrice * (zoneResult?.multiplier || 1));
 
@@ -960,9 +955,9 @@ export function InstantQuoteCalculatorV3() {
               {/* Disclaimer */}
               <div className="bg-muted/30 px-4 py-3 border-t border-border">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  <strong>Note:</strong> Final price based on actual weight at disposal. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
-                  Prohibited items (hazmat, tires, batteries) may incur additional fees. 
-                  Price valid for 7 days.
+                  <strong>Disclaimer:</strong> This is an estimated quote. Final price confirmed after disposal receipt 
+                  based on actual weight. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
+                  Prohibited items may incur additional fees. Quote valid for 7 days.
                 </p>
               </div>
             </div>
