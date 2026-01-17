@@ -20,6 +20,9 @@ export function AreasPreviewSection() {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             We proudly serve Oakland, San Jose, San Francisco, Concord, Walnut Creek, Richmond, Vallejo, Stockton, Modesto, Sacramento, and surrounding cities.
           </p>
+          <p className="text-sm text-muted-foreground mt-3">
+            Not sure if we service your area? Request a quote and we'll confirm right away.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
