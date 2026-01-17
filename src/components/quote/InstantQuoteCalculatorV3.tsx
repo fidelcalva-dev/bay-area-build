@@ -395,7 +395,6 @@ export function InstantQuoteCalculatorV3() {
     } finally {
       setIsSubmitting(false);
     }
-    }
   };
 
   // SMS handler
