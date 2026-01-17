@@ -3,7 +3,10 @@ import { Package, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const dumpsterSizes = [
+  { name: '6 Yard', details: ['Heavy materials', 'Concrete & dirt', '6 tons included'] },
+  { name: '8 Yard', details: ['Heavy materials', 'Asphalt & brick', '8 tons included'] },
   { name: '10 Yard', details: ['Small projects', 'Garage cleanouts', '1 ton included'] },
+  { name: '12 Yard', details: ['Medium projects', 'Room remodel', '1.5 tons included'] },
   { name: '15 Yard', details: ['Medium projects', 'Bathroom remodel', '1.5 tons included'] },
   { name: '20 Yard', details: ['Most popular', 'Kitchen remodel', '2 tons included'] },
   { name: '30 Yard', details: ['Large projects', 'Full cleanouts', '3 tons included'] },
