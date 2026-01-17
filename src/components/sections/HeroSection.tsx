@@ -1,4 +1,4 @@
-import { ArrowRight, Phone, MessageCircle, Shield, Award, CheckCircle } from 'lucide-react';
+import { ArrowRight, Phone, MessageCircle, Shield, Award, CheckCircle, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
 
@@ -26,6 +26,25 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-6 md:py-10 lg:py-16">
           {/* Left Content - Conversion Optimized */}
           <div className="text-center lg:text-left">
+            {/* Star Rating - Above the Fold */}
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4 animate-fade-in">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-primary-foreground">5.0</span>
+                <span className="text-primary-foreground/70 text-sm">from</span>
+                <a 
+                  href="#reviews" 
+                  className="text-accent font-semibold text-sm hover:underline underline-offset-2"
+                >
+                  500+ reviews
+                </a>
+              </div>
+            </div>
+
             {/* Headline */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary-foreground mb-3 animate-slide-up leading-tight">
               Dumpster Rentals in the Bay Area
