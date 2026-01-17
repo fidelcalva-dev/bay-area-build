@@ -53,7 +53,8 @@ export function AreasPreviewSection() {
         </div>
 
         <div className="text-center">
-          <p className="text-lg font-semibold text-foreground mb-4">Ready to get started?</p>
+          <p className="text-lg font-semibold text-foreground mb-2">Ready to get started?</p>
+          <p className="text-sm text-muted-foreground mb-4">Simple. Fast. No obligation.</p>
           <Button asChild variant="default" size="lg">
             <Link to="/quote">
               Get an Instant Dumpster Rental Quote
