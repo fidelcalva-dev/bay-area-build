@@ -866,39 +866,74 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* Price Breakdown */}
-            <div className="bg-muted/50 rounded-xl p-4 space-y-2">
-              <h5 className="font-semibold text-foreground text-sm">Quote Breakdown</h5>
-              {quote.lineItems.map((item, i) => (
-                <div key={i} className="flex justify-between items-start text-sm">
-                  <div>
-                    <span className={cn(
-                      item.type === 'discount' ? 'text-success' : 'text-foreground'
-                    )}>
-                      {item.label}
-                    </span>
-                    {item.subLabel && (
-                      <div className="text-xs text-muted-foreground">{item.subLabel}</div>
-                    )}
-                  </div>
-                  <span className={cn(
-                    "font-medium shrink-0",
-                    item.type === 'discount' ? 'text-success' : 'text-foreground'
-                  )}>
-                    {item.type === 'discount' ? '-' : ''}${Math.abs(item.amount)}
-                  </span>
-                </div>
-              ))}
-              <div className="border-t border-border pt-2 mt-2 flex justify-between items-center">
-                <span className="font-bold text-foreground">Estimated Total</span>
-                <span className="text-xl font-bold text-foreground">
-                  ${quote.estimatedMin}
-                  <span className="text-sm font-medium text-muted-foreground">–${quote.estimatedMax}</span>
-                </span>
+            {/* Invoice-Style Price Breakdown */}
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="bg-muted/50 px-4 py-2.5 border-b border-border">
+                <h5 className="font-bold text-foreground text-sm flex items-center gap-2">
+                  📋 Quote Breakdown
+                </h5>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Includes {quote.includedTons}T • Overage: ${OVERAGE_COST_PER_TON}/ton
-              </p>
+              
+              <div className="p-4 space-y-3">
+                {/* Line Items */}
+                <div className="space-y-2">
+                  {quote.lineItems.map((item, i) => (
+                    <div key={i} className="flex justify-between items-start text-sm">
+                      <div className="flex-1">
+                        <span className={cn(
+                          "font-medium",
+                          item.type === 'discount' ? 'text-success' : 'text-foreground'
+                        )}>
+                          {item.label}
+                        </span>
+                        {item.subLabel && (
+                          <div className="text-xs text-muted-foreground">{item.subLabel}</div>
+                        )}
+                      </div>
+                      <span className={cn(
+                        "font-semibold shrink-0 tabular-nums",
+                        item.type === 'discount' ? 'text-success' : 'text-foreground'
+                      )}>
+                        {item.type === 'discount' ? '−' : ''}${Math.abs(item.amount).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-dashed border-border" />
+
+                {/* Estimated Total */}
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-bold text-foreground">Estimated Total</span>
+                    <div className="text-xs text-muted-foreground">7-day rental included</div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-foreground tabular-nums">
+                      ${quote.estimatedMin.toLocaleString()}
+                    </span>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      –${quote.estimatedMax.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Included Tonnage */}
+                <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 text-sm">
+                  <span className="text-muted-foreground">Included Weight</span>
+                  <span className="font-semibold text-primary">{quote.includedTons} ton{quote.includedTons !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+
+              {/* Disclaimer */}
+              <div className="bg-muted/30 px-4 py-3 border-t border-border">
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <strong>Note:</strong> Final price based on actual weight at disposal. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
+                  Prohibited items (hazmat, tires, batteries) may incur additional fees. 
+                  Price valid for 7 days.
+                </p>
+              </div>
             </div>
 
             <Button
