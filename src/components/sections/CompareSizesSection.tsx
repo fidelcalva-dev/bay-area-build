@@ -1,99 +1,15 @@
+// Compare Dumpster Sizes Section
+// Uses master data from shared-data.ts
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Star, ArrowRight, Package, Ruler, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
-
-const DUMPSTER_SIZES = [
-  {
-    yards: 8,
-    capacity: '2-3 pickup truck loads',
-    dimensions: "12' × 6' × 3.5'",
-    weight: '1 ton',
-    typicalUse: 'Small cleanouts & minor renovations',
-    recommendedProjects: [
-      'Bathroom remodel',
-      'Small garage cleanout',
-      'Deck removal (small)',
-      'Spring cleaning',
-    ],
-    popular: false,
-  },
-  {
-    yards: 10,
-    capacity: '3-4 pickup truck loads',
-    dimensions: "14' × 7' × 3.5'",
-    weight: '1.5 tons',
-    typicalUse: 'Medium cleanouts & single-room projects',
-    recommendedProjects: [
-      'Garage cleanout',
-      'Basement cleanout',
-      'Small kitchen remodel',
-      'Flooring removal',
-    ],
-    popular: false,
-  },
-  {
-    yards: 15,
-    capacity: '5-6 pickup truck loads',
-    dimensions: "16' × 7.5' × 4'",
-    weight: '2 tons',
-    typicalUse: 'Large cleanouts & multi-room renovations',
-    recommendedProjects: [
-      'Kitchen remodel',
-      'Flooring project (whole house)',
-      'Roof tear-off (small)',
-      'Estate cleanout',
-    ],
-    popular: false,
-  },
-  {
-    yards: 20,
-    capacity: '6-8 pickup truck loads',
-    dimensions: "22' × 7.5' × 4.5'",
-    weight: '3 tons',
-    typicalUse: 'Full renovations & construction projects',
-    recommendedProjects: [
-      'Full room renovation',
-      'Roofing project',
-      'Siding replacement',
-      'Large landscaping',
-    ],
-    popular: true,
-  },
-  {
-    yards: 30,
-    capacity: '9-12 pickup truck loads',
-    dimensions: "22' × 7.5' × 6'",
-    weight: '4 tons',
-    typicalUse: 'Major renovations & new construction',
-    recommendedProjects: [
-      'Major home renovation',
-      'New construction debris',
-      'Commercial cleanout',
-      'Large demolition',
-    ],
-    popular: false,
-  },
-  {
-    yards: 40,
-    capacity: '12-16 pickup truck loads',
-    dimensions: "22' × 8' × 8'",
-    weight: '5 tons',
-    typicalUse: 'Large construction & commercial projects',
-    recommendedProjects: [
-      'Commercial construction',
-      'Industrial cleanout',
-      'Large-scale demolition',
-      'Multi-unit renovation',
-    ],
-    popular: false,
-  },
-];
+import { DUMPSTER_SIZES_DATA, getGeneralSizes } from '@/lib/shared-data';
 
 export function CompareSizesSection() {
-  const { t } = useLanguage();
+  const generalSizes = getGeneralSizes();
   const [selectedSizes, setSelectedSizes] = useState<number[]>([10, 20, 30]);
 
   const toggleSize = (yards: number) => {
@@ -110,7 +26,7 @@ export function CompareSizesSection() {
     }
   };
 
-  const selectedDumpsters = DUMPSTER_SIZES.filter((d) => selectedSizes.includes(d.yards));
+  const selectedDumpsters = generalSizes.filter((d) => selectedSizes.includes(d.yards));
 
   return (
     <section className="section-padding bg-background">
@@ -125,7 +41,7 @@ export function CompareSizesSection() {
 
         {/* Size Selector Pills */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {DUMPSTER_SIZES.map((size) => (
+          {generalSizes.map((size) => (
             <button
               key={size.yards}
               onClick={() => toggleSize(size.yards)}
@@ -192,41 +108,41 @@ export function CompareSizesSection() {
                   <Ruler className="w-4 h-4" />
                   Capacity
                 </div>
-                <p className="text-foreground font-semibold">{dumpster.capacity}</p>
-                <p className="text-xs text-muted-foreground mt-1">Weight limit: {dumpster.weight}</p>
+                <p className="text-foreground font-semibold">{dumpster.loads}</p>
+                <p className="text-xs text-muted-foreground mt-1">Weight limit: {dumpster.includedTons} ton{dumpster.includedTons > 1 ? 's' : ''}</p>
               </div>
 
               {/* Typical Use */}
               <div className="mb-5">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
                   <Wrench className="w-4 h-4" />
-                  Typical Use
+                  Perfect For
                 </div>
-                <p className="text-foreground">{dumpster.typicalUse}</p>
-              </div>
-
-              {/* Recommended Projects */}
-              <div className="mb-6">
-                <p className="text-sm font-medium text-muted-foreground mb-3">Recommended Projects</p>
                 <ul className="space-y-2">
-                  {dumpster.recommendedProjects.map((project, index) => (
+                  {dumpster.useCases.slice(0, 4).map((useCase, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm text-foreground">
                       <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      {project}
+                      {useCase}
                     </li>
                   ))}
                 </ul>
               </div>
 
+              {/* Price */}
+              <div className="text-center mb-4">
+                <span className="text-sm text-muted-foreground">From </span>
+                <span className="text-2xl font-bold text-primary">${dumpster.priceFrom}</span>
+              </div>
+
               {/* CTA */}
               <Button
                 asChild
-                variant={dumpster.popular ? 'default' : 'outline'}
+                variant={dumpster.popular ? 'cta' : 'outline'}
                 className="w-full"
               >
-                <Link to={`/sizes#${dumpster.yards}-yard`}>
-                  Choose {dumpster.yards} Yard
-                  <ArrowRight className="w-4 h-4 ml-1" />
+                <Link to="/quote">
+                  Get Quote
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
             </div>
@@ -239,7 +155,7 @@ export function CompareSizesSection() {
           <Button asChild variant="outline" size="lg">
             <Link to="/sizes">
               View All Sizes & Pricing
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>
