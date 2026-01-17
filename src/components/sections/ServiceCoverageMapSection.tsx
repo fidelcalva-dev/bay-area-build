@@ -124,8 +124,9 @@ const serviceLocations: City[] = [
   },
 ];
 
-// Bay Area center for initial view
-const BAY_AREA_CENTER: [number, number] = [37.7, -122.2];
+// California center for initial view (shows entire state)
+const CALIFORNIA_CENTER: [number, number] = [37.0, -119.5];
+const CALIFORNIA_ZOOM = 6;
 
 // Tile layer configurations
 const TILE_LAYERS = {
@@ -139,28 +140,44 @@ const TILE_LAYERS = {
   },
 };
 
-// Create custom marker icons
+// Create custom marker icons with distinct styling
 const createIcon = (status: 'active' | 'coming-soon', isSelected: boolean) => {
   const isActive = status === 'active';
-  const baseColor = isActive ? 'hsl(var(--primary))' : 'hsl(var(--accent))';
-  const size = isSelected ? 40 : 32;
+  const size = isSelected ? 44 : 36;
+  
+  // Active: solid green with pulse | Coming Soon: orange/amber dashed outline
+  const activeStyles = `
+    background: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 71%, 45%));
+    border: 3px solid white;
+  `;
+  const comingSoonStyles = `
+    background: linear-gradient(135deg, hsl(38, 92%, 50%), hsl(32, 95%, 44%));
+    border: 3px dashed white;
+    opacity: 0.85;
+  `;
   
   return L.divIcon({
     className: 'custom-leaflet-marker',
     html: `
       <div class="marker-container ${isSelected ? 'selected' : ''}" style="width: ${size}px; height: ${size}px;">
-        ${isActive ? '<div class="marker-pulse"></div>' : ''}
-        <div class="marker-pin ${isActive ? 'active' : 'coming-soon'}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="${size * 0.5}" height="${size * 0.5}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
+        ${isActive ? '<div class="marker-pulse-active"></div>' : ''}
+        <div class="marker-pin-new" style="${isActive ? activeStyles : comingSoonStyles}">
+          ${isActive 
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="${size * 0.45}" height="${size * 0.45}" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/>
+              </svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" width="${size * 0.45}" height="${size * 0.45}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>`
+          }
         </div>
       </div>
     `,
     iconSize: [size, size],
-    iconAnchor: [size / 2, size],
-    popupAnchor: [0, -size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2],
   });
 };
 
@@ -255,8 +272,8 @@ export const ServiceCoverageMapSection = () => {
 
                 {isMapVisible ? (
                   <MapContainer
-                    center={BAY_AREA_CENTER}
-                    zoom={8}
+                    center={CALIFORNIA_CENTER}
+                    zoom={CALIFORNIA_ZOOM}
                     scrollWheelZoom={false}
                     className="h-full w-full"
                     style={{ background: 'hsl(var(--muted))' }}
@@ -359,12 +376,16 @@ export const ServiceCoverageMapSection = () => {
               {/* Legend */}
               <div className="flex items-center justify-center gap-8 py-4 border-t border-border bg-muted/30">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-primary shadow-sm" />
-                  <span className="text-sm text-foreground">Active Service</span>
+                  <div className="w-5 h-5 rounded-full shadow-sm flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 71%, 45%))' }}>
+                    <CheckCircle2 className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-sm text-foreground font-medium">Active Service</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-accent shadow-sm" />
-                  <span className="text-sm text-foreground">Coming Soon</span>
+                  <div className="w-5 h-5 rounded-full shadow-sm flex items-center justify-center border-2 border-dashed border-amber-500" style={{ background: 'linear-gradient(135deg, hsl(38, 92%, 50%), hsl(32, 95%, 44%))' }}>
+                    <Clock className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-sm text-foreground font-medium">Coming Soon</span>
                 </div>
               </div>
             </div>
@@ -449,35 +470,28 @@ export const ServiceCoverageMapSection = () => {
           z-index: 1000 !important;
         }
         
-        .marker-pin {
+        .marker-pin-new {
           width: 100%;
           height: 100%;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 3px solid white;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-          transition: transform 0.2s ease;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
         }
         
-        .marker-pin.active {
-          background: hsl(var(--primary));
+        .marker-pin-new:hover {
+          transform: scale(1.15);
+          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
         }
         
-        .marker-pin.coming-soon {
-          background: hsl(var(--accent));
-        }
-        
-        .marker-pin:hover {
-          transform: scale(1.1);
-        }
-        
-        .marker-pulse {
+        .marker-pulse-active {
           position: absolute;
-          inset: -4px;
+          inset: -6px;
           border-radius: 50%;
-          background: hsl(var(--primary));
+          background: hsl(142, 76%, 36%);
           opacity: 0.4;
           animation: leaflet-pulse 2s ease-out infinite;
         }
