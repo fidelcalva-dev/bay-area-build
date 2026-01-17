@@ -322,7 +322,9 @@ export function InstantQuoteCalculatorV3() {
 
     try {
       const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
+      const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
       
+      // Save to database
       const result = await saveQuote({
         customerName: formData.name,
         customerEmail: formData.email,
@@ -345,12 +347,41 @@ export function InstantQuoteCalculatorV3() {
       });
 
       if (result.success) {
+        // Send quote summary via SMS/email (fire and forget)
+        try {
+          const extrasLabels = formData.extras
+            .map((e) => {
+              const extra = EXTRAS.find((ex) => ex.id === e.id);
+              return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
+            })
+            .filter(Boolean) as string[];
+
+          await supabase.functions.invoke('send-quote-summary', {
+            body: {
+              customerName: formData.name,
+              customerEmail: formData.email,
+              customerPhone: formData.phone,
+              sizeLabel: sizeData?.label || `${formData.size} Yard`,
+              materialType: formData.material,
+              rentalDays: formData.rentalDays,
+              zipCode: formData.zip,
+              estimatedMin: quote.estimatedMin,
+              estimatedMax: quote.estimatedMax,
+              includedTons: quote.includedTons,
+              extras: extrasLabels,
+            },
+          });
+        } catch (notifyError) {
+          console.error('Failed to send notifications:', notifyError);
+          // Don't fail the whole flow if notifications fail
+        }
+
         setStep('success');
         toast({
           title: bookNow ? 'Booking Submitted! 🎉' : 'Quote Saved! 📧',
           description: bookNow 
             ? "We'll contact you within 15 minutes" 
-            : "Check your email for the quote details",
+            : "Check your email & phone for the quote details",
         });
       } else {
         throw new Error(result.error);
@@ -363,6 +394,7 @@ export function InstantQuoteCalculatorV3() {
       });
     } finally {
       setIsSubmitting(false);
+    }
     }
   };
 
@@ -936,16 +968,44 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            <Button
-              type="button"
-              variant="cta"
-              size="lg"
-              className="w-full h-14 text-base"
-              onClick={goNext}
-            >
-              Continue to Book
-              <ChevronRight className="w-5 h-5" />
-            </Button>
+            {/* Two CTAs */}
+            <div className="space-y-3">
+              {/* Primary: Save My Quote */}
+              <Button
+                type="button"
+                variant="cta"
+                size="lg"
+                className="w-full h-14 text-base"
+                onClick={goNext}
+              >
+                <Bookmark className="w-5 h-5" />
+                Save My Quote
+              </Button>
+
+              {/* Secondary: Confirm by Text */}
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full h-12 text-base"
+                onClick={() => {
+                  const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
+                  const materialLabel = formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris';
+                  const msg = encodeURIComponent(
+                    `Hi! I'd like to confirm my dumpster rental:\n\n` +
+                    `📦 ${sizeData?.label} (${materialLabel})\n` +
+                    `📍 ZIP: ${formData.zip}\n` +
+                    `📅 ${formData.rentalDays} day rental\n` +
+                    `💰 Est: $${quote.estimatedMin}–$${quote.estimatedMax}\n\n` +
+                    `Please confirm availability!`
+                  );
+                  window.open(`sms:+15106802150?body=${msg}`, '_blank');
+                }}
+              >
+                <MessageCircle className="w-5 h-5" />
+                Confirm by Text
+              </Button>
+            </div>
           </div>
         )}
 
