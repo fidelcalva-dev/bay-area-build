@@ -1,12 +1,14 @@
 import { Layout } from '@/components/layout/Layout';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
-import { Shield, Star, Clock, Phone, CheckCircle, Percent, Truck, Calendar, Users, Briefcase } from 'lucide-react';
+import { CheckCircle, Percent, Truck, Calendar, Users, Briefcase, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { TrustStrip, PhoneCTA, TRUST_BADGES } from '@/components/shared';
 
-const trustBadges = [
-  { icon: Shield, label: 'Licensed & Insured' },
-  { icon: Star, label: '4.9★ Contractor Reviews' },
-  { icon: Percent, label: '10% Contractor Discount' },
+// Custom contractor badges
+const contractorTrustBadges = [
+  TRUST_BADGES.licensedInsured,
+  { icon: TRUST_BADGES.reviews.icon, label: '4.9★ Contractor Reviews' },
+  TRUST_BADGES.contractorDiscount,
 ];
 
 const contractorBenefits = [
@@ -48,18 +50,12 @@ export default function ContractorQuote() {
                 Contractor Pricing
               </div>
 
-              {/* Trust Badges */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                {trustBadges.map((badge) => (
-                  <div
-                    key={badge.label}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-full text-sm font-medium text-foreground"
-                  >
-                    <badge.icon className="w-4 h-4 text-primary" />
-                    <span>{badge.label}</span>
-                  </div>
-                ))}
-              </div>
+              {/* Trust Badges - Using shared component with custom badges */}
+              <TrustStrip 
+                customBadges={contractorTrustBadges}
+                variant="muted"
+                className="mb-6"
+              />
 
               {/* Headline */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">

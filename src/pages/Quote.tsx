@@ -1,13 +1,7 @@
 import { Layout } from '@/components/layout/Layout';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
-import { Shield, Star, Clock, Phone, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-
-const trustBadges = [
-  { icon: Shield, label: 'Licensed & Insured' },
-  { icon: Star, label: '4.9★ (200+ Reviews)' },
-  { icon: Clock, label: 'Same-Day Available' },
-];
+import { CheckCircle } from 'lucide-react';
+import { TrustStrip, PhoneCTA } from '@/components/shared';
 
 const benefits = [
   'All-inclusive pricing — no hidden fees',
@@ -30,17 +24,11 @@ export default function Quote() {
             {/* Left - Value Proposition */}
             <div className="lg:sticky lg:top-24">
               {/* Trust Badges */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                {trustBadges.map((badge) => (
-                  <div
-                    key={badge.label}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary"
-                  >
-                    <badge.icon className="w-4 h-4" />
-                    <span>{badge.label}</span>
-                  </div>
-                ))}
-              </div>
+              <TrustStrip 
+                badges={['licensedInsured', 'fiveStarReviews', 'sameDayAvailable']}
+                variant="light"
+                className="mb-6"
+              />
 
               {/* Headline */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">
@@ -67,18 +55,7 @@ export default function Quote() {
               </div>
 
               {/* Phone CTA */}
-              <div className="bg-muted/50 rounded-xl p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Phone className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Prefer to talk?</p>
-                  <p className="font-semibold text-foreground">Call (510) 680-2150</p>
-                </div>
-                <Button asChild variant="outline" size="sm">
-                  <a href="tel:+15106802150">Call Now</a>
-                </Button>
-              </div>
+              <PhoneCTA variant="block" />
 
               {/* Spanish Support */}
               <p className="mt-6 text-sm text-muted-foreground flex items-center gap-2">

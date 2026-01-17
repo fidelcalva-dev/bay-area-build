@@ -1,20 +1,12 @@
-import { ArrowRight, Phone, MessageCircle, Shield, Award, CheckCircle, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
+import { TrustStrip, StarRating, CTAButtons } from '@/components/shared';
 
 export function HeroSection() {
   const benefits = [
     'Same-day delivery available',
     'Transparent pricing — no hidden fees',
     'On-time guarantee or it\'s free',
-  ];
-
-  const trustBadges = [
-    { icon: Shield, label: 'Google Guaranteed' },
-    { icon: Award, label: 'Licensed & Insured' },
-    { icon: CheckCircle, label: 'Hablamos Español' },
   ];
 
   return (
@@ -27,23 +19,12 @@ export function HeroSection() {
           {/* Left Content - Conversion Optimized */}
           <div className="text-center lg:text-left">
             {/* Star Rating - Above the Fold */}
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4 animate-fade-in">
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
-                ))}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-primary-foreground">5.0</span>
-                <span className="text-primary-foreground/70 text-sm">from</span>
-                <a 
-                  href="#reviews" 
-                  className="text-accent font-semibold text-sm hover:underline underline-offset-2"
-                >
-                  500+ reviews
-                </a>
-              </div>
-            </div>
+            <StarRating 
+              rating={5.0} 
+              reviews={500} 
+              variant="hero"
+              className="justify-center lg:justify-start mb-4 animate-fade-in" 
+            />
 
             {/* Headline */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary-foreground mb-3 animate-slide-up leading-tight">
@@ -62,41 +43,17 @@ export function HeroSection() {
             </ul>
 
             {/* CTAs - Primary + Secondary */}
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center lg:justify-start animate-slide-up mb-4">
-              <Button asChild variant="hero" size="lg" className="text-base">
-                <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
-                  Get Instant Quote
-                  <ArrowRight className="w-5 h-5 ml-1" />
-                </a>
-              </Button>
-              <div className="flex gap-2 justify-center">
-                <Button asChild variant="heroSecondary" size="lg" className="flex-1 sm:flex-none">
-                  <a href="sms:+15106802150">
-                    <MessageCircle className="w-4 h-4" />
-                    Text Us
-                  </a>
-                </Button>
-                <Button asChild variant="heroSecondary" size="lg" className="flex-1 sm:flex-none">
-                  <a href="tel:+15106802150">
-                    <Phone className="w-4 h-4" />
-                    Call Now
-                  </a>
-                </Button>
-              </div>
-            </div>
+            <CTAButtons 
+              variant="hero" 
+              className="justify-center lg:justify-start animate-slide-up mb-4" 
+            />
 
             {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 animate-fade-in">
-              {trustBadges.map(({ icon: Icon, label }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-1.5 px-2.5 py-1 bg-primary-foreground/10 backdrop-blur rounded-full text-xs md:text-sm text-primary-foreground/90"
-                >
-                  <Icon className="w-3.5 h-3.5 text-accent" />
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
+            <TrustStrip 
+              badges={['googleGuaranteed', 'licensedInsured', 'hablamosEspanol']}
+              variant="hero"
+              className="justify-center lg:justify-start animate-fade-in" 
+            />
           </div>
 
           {/* Right - Quote Calculator */}
