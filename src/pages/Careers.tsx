@@ -433,69 +433,134 @@ const Careers = () => {
         </div>
       </section>
 
-      {/* Owner Operators Highlight */}
+      {/* How the Operator Model Works */}
+      <section className="section-padding bg-background border-y border-border">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-semibold mb-4">
+              <Building2 className="w-4 h-4" />
+              The Calsan Operator Model
+            </div>
+            <h2 className="heading-lg text-foreground mb-4">
+              We Provide the Platform. You Run the Business.
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Our unique partnership model lets you focus on what you do best—hauling and customer service—while we handle the rest.
+            </p>
+          </div>
+
+          {/* Visual Comparison */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+            {/* What Calsan Provides */}
+            <div className="bg-primary/5 rounded-2xl p-8 border border-primary/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">What Calsan Provides</h3>
+                  <p className="text-sm text-muted-foreground">Your infrastructure partner</p>
+                </div>
+              </div>
+              <ul className="space-y-4">
+                {[
+                  { icon: Building2, title: 'Yard Access', desc: 'Use our yards for staging and storage' },
+                  { icon: Truck, title: 'Dumpster Fleet', desc: 'Brand new dumpsters in all sizes (6-50 yard)' },
+                  { icon: Users, title: 'Dispatch & CRM', desc: 'Full dispatch software and customer management' },
+                  { icon: DollarSign, title: 'Lead Generation', desc: 'Steady flow of customers from our marketing' },
+                  { icon: Shield, title: 'Brand & Insurance', desc: 'Operate under our established brand' },
+                  { icon: Handshake, title: 'Training & Support', desc: 'Operational training and ongoing support' },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <item.icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{item.title}</p>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* What You Provide */}
+            <div className="bg-accent/5 rounded-2xl p-8 border border-accent/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <Truck className="w-6 h-6 text-accent" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">What You Provide</h3>
+                  <p className="text-sm text-muted-foreground">Your local expertise</p>
+                </div>
+              </div>
+              <ul className="space-y-4">
+                {[
+                  { icon: Truck, title: 'Your Truck', desc: 'Roll-off truck (Class A/B CDL required)' },
+                  { icon: MapPin, title: 'Local Knowledge', desc: 'Know your streets, neighborhoods, and customers' },
+                  { icon: Clock, title: 'Reliable Service', desc: 'On-time deliveries and pickups' },
+                  { icon: Shield, title: 'Professionalism', desc: 'Clean appearance, courteous service' },
+                  { icon: Users, title: 'Customer Care', desc: 'Build relationships and earn repeat business' },
+                  { icon: CheckCircle2, title: 'Commitment', desc: 'Dedication to quality and growth' },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <item.icon className="w-4 h-4 text-accent" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{item.title}</p>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Result */}
+          <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-2xl p-8 border border-border text-center">
+            <h3 className="text-2xl font-bold text-foreground mb-4">= Your Own Business, With Full Support</h3>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+              Earn more than traditional employment while building equity in your own operation. 
+              Exclusive territories available in Sacramento, Stockton, Fresno, LA, San Diego, and more.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button
+                variant="cta"
+                size="lg"
+                onClick={() => openApplicationWithRole('owner-operators')}
+              >
+                Become an Operator
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <a href="mailto:partners@calsandumpsters.com">
+                  <Mail className="mr-2 h-5 w-5" />
+                  partners@calsandumpsters.com
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
       <section className="section-padding bg-secondary text-secondary-foreground">
         <div className="container-wide">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="text-accent font-semibold text-sm uppercase tracking-wider mb-2 block">
-                Local Operators Model
-              </span>
-              <h2 className="heading-lg mb-6">
-                Own Your Market. We'll Back You Up.
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Our Owner Operator program is designed for experienced professionals who want to build their own business with the support of an established brand.
-              </p>
-
-              <div className="space-y-4 mb-8">
-                {[
-                  { icon: Building2, text: 'We provide dumpsters, yard access, and equipment' },
-                  { icon: Truck, text: 'You handle local deliveries and pickups' },
-                  { icon: MapPin, text: 'Exclusive territory opportunities available' },
-                  { icon: Users, text: 'Full dispatch, CRM, and marketing support' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <span className="text-secondary-foreground">{item.text}</span>
-                  </div>
-                ))}
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              { value: '9', label: 'Bay Area Counties', sublabel: 'Currently Served' },
+              { value: '100+', label: 'Cities Active', sublabel: 'And Growing' },
+              { value: '6', label: 'New Markets', sublabel: 'Expansion Cities' },
+              { value: '$150K+', label: 'Earning Potential', sublabel: 'Top Operators' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-card/10 backdrop-blur rounded-xl p-6 text-center border border-border/20">
+                <div className="text-3xl md:text-4xl font-bold text-accent mb-1">{stat.value}</div>
+                <div className="font-semibold text-secondary-foreground">{stat.label}</div>
+                <div className="text-sm text-muted-foreground">{stat.sublabel}</div>
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  variant="cta"
-                  size="lg"
-                  onClick={() => openApplicationWithRole('owner-operators')}
-                >
-                  Partner With Us
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="lg" className="border-border" asChild>
-                  <a href="mailto:partners@calsandumpsters.com">
-                    <Mail className="mr-2 h-5 w-5" />
-                    Email Us
-                  </a>
-                </Button>
-              </div>
-            </div>
-
-            {/* Stats/Trust */}
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '9', label: 'Bay Area Counties' },
-                { value: '100+', label: 'Cities Served' },
-                { value: '6', label: 'Expansion Cities' },
-                { value: '$$$', label: 'Earning Potential' },
-              ].map((stat, i) => (
-                <div key={i} className="bg-card/10 backdrop-blur rounded-xl p-6 text-center border border-border/20">
-                  <div className="text-3xl md:text-4xl font-bold text-accent mb-2">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
