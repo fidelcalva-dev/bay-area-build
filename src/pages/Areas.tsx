@@ -6,14 +6,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, CheckCircle, MapPin, Phone } from 'lucide-react';
 import { CountySection } from '@/components/areas/CountySection';
 import { serviceAreas } from '@/data/serviceAreas';
+import { PAGE_SEO } from '@/lib/seo';
 
 export default function Areas() {
   const [activeCounty, setActiveCounty] = useState(serviceAreas[0].slug);
 
   return (
     <Layout
-      title="Dumpster Rental Service Areas | SF Bay Area Coverage"
-      description="Dumpster rental service in 9 Bay Area counties. Same-day delivery in Oakland, San Francisco, San Jose, and 100+ cities. Check your area."
+      title={PAGE_SEO.areas.title}
+      description={PAGE_SEO.areas.description}
+      canonical={PAGE_SEO.areas.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
