@@ -8,12 +8,28 @@ interface LayoutProps {
   children: ReactNode;
   title?: string;
   description?: string;
+  canonical?: string;
+  noindex?: boolean;
+  schema?: object | object[];
 }
 
-export function Layout({ children, title, description }: LayoutProps) {
+export function Layout({ 
+  children, 
+  title, 
+  description, 
+  canonical, 
+  noindex,
+  schema 
+}: LayoutProps) {
   return (
     <>
-      <SEOHead title={title} description={description} />
+      <SEOHead 
+        title={title} 
+        description={description} 
+        canonical={canonical}
+        noindex={noindex}
+        schema={schema}
+      />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1 pb-16 md:pb-0">{children}</main>

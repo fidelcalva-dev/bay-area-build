@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PAGE_SEO } from '@/lib/seo';
 
 const values = [
   {

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, HardHat, Truck, Clock, RefreshCw, Phone, CheckCircle, BookOpen } from 'lucide-react';
 import { WeightEducation } from '@/components/quote/WeightEducation';
 import { DrivewayProtection, CityPermitHelper } from '@/components/education';
+import { PAGE_SEO } from '@/lib/seo';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
@@ -44,8 +45,9 @@ const services = [
 export default function Contractors() {
   return (
     <Layout
-      title="Contractor Dumpster Services | Priority Delivery & Swaps"
-      description="Dumpster rental for contractors in SF Bay Area. Priority dispatch, fast swaps, multi-dumpster projects. Dedicated support for construction professionals."
+      title={PAGE_SEO.contractors.title}
+      description={PAGE_SEO.contractors.description}
+      canonical={PAGE_SEO.contractors.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

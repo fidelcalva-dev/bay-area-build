@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
+import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
   { name: 'Dumpster Sizes', slug: 'sizes' },
@@ -71,8 +72,9 @@ const blogPosts = [
 export default function Blog() {
   return (
     <Layout
-      title="Dumpster Rental Blog | Tips, Guides & News"
-      description="Expert tips on dumpster rental, sizing guides, permit information, and waste disposal best practices for Bay Area residents and contractors."
+      title={PAGE_SEO.blog.title}
+      description={PAGE_SEO.blog.description}
+      canonical={PAGE_SEO.blog.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

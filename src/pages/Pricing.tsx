@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt } from 'lucide-react';
+import { PAGE_SEO } from '@/lib/seo';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
@@ -141,8 +142,9 @@ const overageExplanations = [
 export default function Pricing() {
   return (
     <Layout 
-      title="Dumpster Rental Pricing | Transparent Rates"
-      description="Affordable dumpster rental prices in SF Bay Area. 8-40 yard dumpsters starting at $350. No hidden fees. Same-day delivery available."
+      title={PAGE_SEO.pricing.title}
+      description={PAGE_SEO.pricing.description}
+      canonical={PAGE_SEO.pricing.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

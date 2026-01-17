@@ -3,14 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { ReplacementForm } from '@/components/forms/ReplacementForm';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 export default function Contact() {
   const { t } = useLanguage();
 
   return (
     <Layout
-      title="Contact Calsan Dumpsters Pro | Get in Touch"
-      description="Contact us for dumpster rental in SF Bay Area. Call (510) 680-2150 for sales, text us, or email. Office in Oakland, CA. Hablamos Español."
+      title={PAGE_SEO.contact.title}
+      description={PAGE_SEO.contact.description}
+      canonical={PAGE_SEO.contact.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
