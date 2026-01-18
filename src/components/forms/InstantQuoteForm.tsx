@@ -11,9 +11,9 @@ const USER_TYPES = [
 
 const DUMPSTER_SIZES = [
   { value: '10', label: '10 yd', price: 395, desc: 'Garage cleanout' },
-  { value: '15', label: '15 yd', price: 445, desc: 'Kitchen remodel' },
   { value: '20', label: '20 yd', price: 495, desc: 'Full renovation', popular: true },
   { value: '30', label: '30 yd', price: 595, desc: 'Construction' },
+  { value: '40', label: '40 yd', price: 695, desc: 'Commercial demo' },
 ];
 
 const MATERIAL_TYPES = [

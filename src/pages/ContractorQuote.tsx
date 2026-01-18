@@ -260,7 +260,7 @@ function ContractorQuoteCalculator() {
     const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
     if (!sizeData || !material || !rental) return { lineItems: [], subtotal: 0, estimatedMin: 0, estimatedMax: 0, includedTons: 0, isValid: false };
 
-    const includedTons = formData.material === 'heavy' ? 10 : INCLUDED_TONS[formData.size] || 1;
+    const includedTons = INCLUDED_TONS[formData.size] || 1;
     const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
     lineItems.push({ label: `${sizeData.label} Dumpster`, subLabel: `${rental.label} rental • ${includedTons}T included`, amount: basePrice, type: 'base' });
 

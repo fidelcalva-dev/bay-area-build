@@ -26,13 +26,13 @@ export interface DumpsterSizeData {
 }
 
 export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
-  // Both Heavy and General (6 yard)
+  // Both Heavy and General (6 yard) - 6 × 12 × 2.25 = 162 cu ft / 27 = 6 cu yd
   {
     yards: 6,
-    dimensions: "10' L × 5' W × 3' H",
-    length: "10'",
-    width: "5'",
-    height: "3'",
+    dimensions: "12' L × 6' W × 2.25' H",
+    length: "12'",
+    width: "6'",
+    height: "2.25'",
     includedTons: 0.5,
     category: 'both',
     priceFrom: 325,
@@ -40,7 +40,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '1-2 pickup loads',
     description: 'Compact size for small jobs.',
   },
-  // Both Heavy and General (8 yard)
+  // Both Heavy and General (8 yard) - 6 × 12 × 3 = 216 cu ft / 27 = 8 cu yd
   {
     yards: 8,
     dimensions: "12' L × 6' W × 3' H",
@@ -55,13 +55,13 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     description: 'Popular for driveway and foundation work.',
     popular: true,
   },
-  // Both Heavy and General (10 yard)
+  // Both Heavy and General (10 yard) - 7.5 × 12 × 3 = 270 cu ft / 27 = 10 cu yd
   {
     yards: 10,
-    dimensions: "14' L × 7' W × 3.5' H",
-    length: "14'",
-    width: "7'",
-    height: "3.5'",
+    dimensions: "12' L × 7.5' W × 3' H",
+    length: "12'",
+    width: "7.5'",
+    height: "3'",
     includedTons: 1,
     category: 'both',
     priceFrom: 395,
@@ -69,12 +69,12 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '3-4 pickup loads',
     description: 'Versatile size for small to medium projects.',
   },
-  // General Debris Only (20 yard)
+  // General Debris Only (20 yard) - 7.5 × 18 × 4 = 540 cu ft / 27 = 20 cu yd
   {
     yards: 20,
-    dimensions: "22' L × 8' W × 4' H",
-    length: "22'",
-    width: "8'",
+    dimensions: "18' L × 7.5' W × 4' H",
+    length: "18'",
+    width: "7.5'",
     height: "4'",
     includedTons: 2,
     category: 'general',
@@ -84,11 +84,12 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     description: 'Our most popular size for home renovations.',
     popular: true,
   },
+  // General Debris Only (30 yard) - 7.5 × 18 × 6 = 810 cu ft / 27 = 30 cu yd
   {
     yards: 30,
-    dimensions: "22' L × 8' W × 6' H",
-    length: "22'",
-    width: "8'",
+    dimensions: "18' L × 7.5' W × 6' H",
+    length: "18'",
+    width: "7.5'",
     height: "6'",
     includedTons: 3,
     category: 'general',
@@ -97,12 +98,13 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '9-12 pickup loads',
     description: 'High walls for bulky items and major projects.',
   },
+  // General Debris Only (40 yard) - 7.5 × 24 × 6 = 1080 cu ft / 27 = 40 cu yd
   {
     yards: 40,
-    dimensions: "22' L × 8' W × 8' H",
-    length: "22'",
-    width: "8'",
-    height: "8'",
+    dimensions: "24' L × 7.5' W × 6' H",
+    length: "24'",
+    width: "7.5'",
+    height: "6'",
     includedTons: 4,
     category: 'general',
     priceFrom: 695,
@@ -110,12 +112,13 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '12-16 pickup loads',
     description: 'Commercial-grade capacity for large-scale projects.',
   },
+  // General Debris Only (50 yard) - 7.5 × 24 × 7.5 = 1350 cu ft / 27 = 50 cu yd
   {
     yards: 50,
-    dimensions: "22' L × 8' W × 9' H",
-    length: "22'",
-    width: "8'",
-    height: "9'",
+    dimensions: "24' L × 7.5' W × 7.5' H",
+    length: "24'",
+    width: "7.5'",
+    height: "7.5'",
     includedTons: 5,
     category: 'general',
     priceFrom: 795,

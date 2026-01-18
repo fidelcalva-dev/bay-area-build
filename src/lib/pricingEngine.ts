@@ -129,6 +129,8 @@ export const PRICING_ZONES: PricingZone[] = [
 
 // Dumpster Sizes with official included tons
 // 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+// Canonical dimensions (W × L × H in feet):
+// 6yd: 6×12×2.25, 8yd: 6×12×3, 10yd: 7.5×12×3, 20yd: 7.5×18×4, 30yd: 7.5×18×6, 40yd: 7.5×24×6, 50yd: 7.5×24×7.5
 export const DUMPSTER_SIZES: DumpsterSize[] = [
   {
     value: '6',
@@ -136,7 +138,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 325,
     includedTons: 0.5,
     description: 'Small cleanouts',
-    dimensions: "10' x 4' x 3'",
+    dimensions: "12' x 6' x 2.25'",
   },
   {
     value: '8',
@@ -144,7 +146,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 365,
     includedTons: 0.5,
     description: 'Bathroom remodel',
-    dimensions: "10' x 4' x 4'",
+    dimensions: "12' x 6' x 3'",
   },
   {
     value: '10',
@@ -152,7 +154,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 395,
     includedTons: 1,
     description: 'Garage cleanout',
-    dimensions: "12' x 8' x 3.5'",
+    dimensions: "12' x 7.5' x 3'",
   },
   {
     value: '20',
@@ -160,7 +162,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 495,
     includedTons: 2,
     description: 'Full renovation',
-    dimensions: "22' x 7.5' x 4.5'",
+    dimensions: "18' x 7.5' x 4'",
     popular: true,
   },
   {
@@ -169,7 +171,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 595,
     includedTons: 3,
     description: 'Major construction',
-    dimensions: "22' x 7.5' x 6'",
+    dimensions: "18' x 7.5' x 6'",
   },
   {
     value: '40',
@@ -177,7 +179,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 695,
     includedTons: 4,
     description: 'Commercial demo',
-    dimensions: "22' x 8' x 8'",
+    dimensions: "24' x 7.5' x 6'",
   },
   {
     value: '50',
@@ -185,7 +187,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 795,
     includedTons: 5,
     description: 'Major commercial',
-    dimensions: "22' x 8' x 9'",
+    dimensions: "24' x 7.5' x 7.5'",
   },
 ];
 
