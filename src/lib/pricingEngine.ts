@@ -1,4 +1,17 @@
 // Pricing Engine for Instant Quote Calculator
+// Derives from shared-data.ts MASTER source
+
+import { 
+  DUMPSTER_SIZES_DATA, 
+  getHeavySizes, 
+  getGeneralSizes,
+  PRICING_POLICIES,
+  OVERAGE_NOTE,
+  INCLUDED_TONS_BY_SIZE 
+} from './shared-data';
+
+// Re-export for convenience
+export { OVERAGE_NOTE, INCLUDED_TONS_BY_SIZE };
 
 export interface PricingZone {
   id: string;
@@ -127,71 +140,25 @@ export const PRICING_ZONES: PricingZone[] = [
   },
 ];
 
-// Dumpster Sizes with official included tons
-// 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
-// Canonical dimensions (W × L × H in feet):
-// 6yd: 6×12×2.25, 8yd: 6×12×3, 10yd: 7.5×12×3, 20yd: 7.5×18×4, 30yd: 7.5×18×6, 40yd: 7.5×24×6, 50yd: 7.5×24×7.5
-export const DUMPSTER_SIZES: DumpsterSize[] = [
-  {
-    value: '6',
-    label: '6 yd',
-    basePrice: 325,
-    includedTons: 0.5,
-    description: 'Small cleanouts',
-    dimensions: "12' x 6' x 2.25'",
-  },
-  {
-    value: '8',
-    label: '8 yd',
-    basePrice: 365,
-    includedTons: 0.5,
-    description: 'Bathroom remodel',
-    dimensions: "12' x 6' x 3'",
-  },
-  {
-    value: '10',
-    label: '10 yd',
-    basePrice: 395,
-    includedTons: 1,
-    description: 'Garage cleanout',
-    dimensions: "12' x 7.5' x 3'",
-  },
-  {
-    value: '20',
-    label: '20 yd',
-    basePrice: 495,
-    includedTons: 2,
-    description: 'Full renovation',
-    dimensions: "18' x 7.5' x 4'",
-    popular: true,
-  },
-  {
-    value: '30',
-    label: '30 yd',
-    basePrice: 595,
-    includedTons: 3,
-    description: 'Major construction',
-    dimensions: "18' x 7.5' x 6'",
-  },
-  {
-    value: '40',
-    label: '40 yd',
-    basePrice: 695,
-    includedTons: 4,
-    description: 'Commercial demo',
-    dimensions: "24' x 7.5' x 6'",
-  },
-  {
-    value: '50',
-    label: '50 yd',
-    basePrice: 795,
-    includedTons: 5,
-    description: 'Major commercial',
-    dimensions: "24' x 7.5' x 7.5'",
-  },
-];
+// ============================================================
+// DUMPSTER SIZES - Derived from MASTER shared-data.ts
+// ============================================================
 
-// Material Types
+export const DUMPSTER_SIZES: DumpsterSize[] = DUMPSTER_SIZES_DATA.map(size => ({
+  value: String(size.yards),
+  label: `${size.yards} yd`,
+  basePrice: size.priceFrom,
+  includedTons: size.includedTons,
+  description: size.description,
+  dimensions: size.dimensions,
+  popular: size.popular,
+  heavyOnly: size.category === 'heavy',
+}));
+
+// ============================================================
+// MATERIAL TYPES - Dynamically derived from MASTER data
+// ============================================================
+
 export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'general',
@@ -199,25 +166,25 @@ export const MATERIAL_TYPES: MaterialType[] = [
     icon: '🏠',
     description: 'Household items, furniture, general waste',
     priceAdjustment: 0,
-    allowedSizes: ['6', '8', '10', '20', '30', '40', '50'],
+    allowedSizes: getGeneralSizes().map(s => String(s.yards)),
   },
   {
     value: 'heavy',
     label: 'Heavy Materials',
     icon: '🪨',
     description: 'Concrete, dirt, brick, asphalt, rocks',
-    priceAdjustment: 150,
-    allowedSizes: ['6', '8', '10'],
+    priceAdjustment: PRICING_POLICIES.heavyMaterialSurcharge,
+    allowedSizes: getHeavySizes().map(s => String(s.yards)),
   },
 ];
 
-// Extra services
+// Extra services - derived from PRICING_POLICIES
 export const EXTRAS: Extra[] = [
   {
     id: 'same-day',
     label: 'Same-Day Delivery',
     description: 'Guaranteed same-day drop-off',
-    price: 75,
+    price: PRICING_POLICIES.sameDayDelivery,
     icon: '⚡',
   },
   {
@@ -231,14 +198,14 @@ export const EXTRAS: Extra[] = [
     id: 'mattress',
     label: 'Mattress Disposal',
     description: 'Per mattress (CA recycling fee)',
-    price: 50,
+    price: PRICING_POLICIES.mattressDisposal,
     icon: '🛏️',
   },
   {
     id: 'appliance',
     label: 'Appliance w/ Freon',
     description: 'Fridge, freezer, AC unit',
-    price: 75,
+    price: PRICING_POLICIES.applianceWithFreon,
     icon: '❄️',
   },
   {
@@ -254,15 +221,15 @@ export const EXTRAS: Extra[] = [
 export const RENTAL_DAYS = [
   { value: 3, label: '3 days', extraDays: 0, extraCost: 0 },
   { value: 7, label: '7 days', extraDays: 0, extraCost: 0, popular: true },
-  { value: 14, label: '14 days', extraDays: 7, extraCost: 350 },
-  { value: 21, label: '21 days', extraDays: 14, extraCost: 700 },
+  { value: 14, label: '14 days', extraDays: 7, extraCost: PRICING_POLICIES.extraDayCost * 7 },
+  { value: 21, label: '21 days', extraDays: 14, extraCost: PRICING_POLICIES.extraDayCost * 14 },
 ];
 
-// Extra day cost
-export const EXTRA_DAY_COST = 50;
+// Extra day cost - from PRICING_POLICIES
+export const EXTRA_DAY_COST = PRICING_POLICIES.extraDayCost;
 
-// Overage cost per ton
-export const OVERAGE_COST_PER_TON = 85;
+// Overage cost per ton - from PRICING_POLICIES
+export const OVERAGE_COST_PER_TON = PRICING_POLICIES.overagePerTonGeneral;
 
 // User types with discounts
 export const USER_TYPES = [

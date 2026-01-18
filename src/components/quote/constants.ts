@@ -1,5 +1,20 @@
 // Quote System Constants
+// Derived from shared-data.ts MASTER source
 import type { PricingZone, DumpsterSize, MaterialType, Extra, RentalPeriod, UserType, DebrisItem } from './types';
+import { 
+  DUMPSTER_SIZES_DATA, 
+  getHeavySizes, 
+  getGeneralSizes,
+  PRICING_POLICIES,
+  OVERAGE_NOTE as MASTER_OVERAGE_NOTE,
+  INCLUDED_TONS_BY_SIZE 
+} from '@/lib/shared-data';
+
+// Re-export overage note from master
+export const OVERAGE_NOTE = MASTER_OVERAGE_NOTE;
+
+// Re-export included tons lookup
+export { INCLUDED_TONS_BY_SIZE };
 
 // Service Zones - Bay Area coverage
 export const PRICING_ZONES: PricingZone[] = [
@@ -81,76 +96,29 @@ export const PRICING_ZONES: PricingZone[] = [
   },
 ];
 
-// Dumpster Sizes with included tons by size
-// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
-export const DUMPSTER_SIZES: DumpsterSize[] = [
-  {
-    id: 'size-6',
-    value: 6,
-    label: '6 Yard',
-    basePrice: 325,
-    includedTons: 0.5,
-    description: 'Small cleanouts, bathroom remodel',
-    dimensions: "12' × 6' × 2.25'",
-  },
-  {
-    id: 'size-8',
-    value: 8,
-    label: '8 Yard',
-    basePrice: 365,
-    includedTons: 0.5,
-    description: 'Bathroom/kitchen demo',
-    dimensions: "12' × 6' × 3'",
-  },
-  {
-    id: 'size-10',
-    value: 10,
-    label: '10 Yard',
-    basePrice: 395,
-    includedTons: 1,
-    description: 'Garage cleanout, deck removal',
-    dimensions: "12' × 7.5' × 3'",
-  },
-  {
-    id: 'size-20',
-    value: 20,
-    label: '20 Yard',
-    basePrice: 495,
-    includedTons: 2,
-    description: 'Full home renovation',
-    dimensions: "18' × 7.5' × 4'",
-    popular: true,
-  },
-  {
-    id: 'size-30',
-    value: 30,
-    label: '30 Yard',
-    basePrice: 595,
-    includedTons: 3,
-    description: 'Major construction, roofing',
-    dimensions: "18' × 7.5' × 6'",
-  },
-  {
-    id: 'size-40',
-    value: 40,
-    label: '40 Yard',
-    basePrice: 695,
-    includedTons: 4,
-    description: 'Commercial demo, large builds',
-    dimensions: "24' × 7.5' × 6'",
-  },
-  {
-    id: 'size-50',
-    value: 50,
-    label: '50 Yard',
-    basePrice: 795,
-    includedTons: 5,
-    description: 'Major commercial projects',
-    dimensions: "24' × 7.5' × 7.5'",
-  },
-];
+// ============================================================
+// DUMPSTER SIZES - Derived from MASTER shared-data.ts
+// ============================================================
+// Converts DUMPSTER_SIZES_DATA to the DumpsterSize format used by the calculator
 
-// Material Types
+export const DUMPSTER_SIZES: DumpsterSize[] = DUMPSTER_SIZES_DATA.map(size => ({
+  id: `size-${size.yards}`,
+  value: size.yards,
+  label: `${size.yards} Yard`,
+  basePrice: size.priceFrom,
+  includedTons: size.includedTons,
+  description: size.description,
+  dimensions: size.dimensions,
+  popular: size.popular,
+  isHeavyOnly: size.category === 'heavy',
+}));
+
+// ============================================================
+// MATERIAL TYPES - Dynamically derived from MASTER data
+// ============================================================
+// Heavy = sizes where category is 'heavy' or 'both' (6, 8, 10)
+// General = sizes where category is 'general' or 'both' (6, 8, 10, 20, 30, 40, 50)
+
 export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'general',
@@ -158,15 +126,15 @@ export const MATERIAL_TYPES: MaterialType[] = [
     icon: '🏠',
     description: 'Household, furniture, wood, drywall',
     priceAdjustment: 0,
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: getGeneralSizes().map(s => s.yards),
   },
   {
     value: 'heavy',
     label: 'Heavy Materials',
     icon: '🪨',
     description: 'Concrete, dirt, brick, asphalt',
-    priceAdjustment: 150,
-    allowedSizes: [6, 8, 10],
+    priceAdjustment: PRICING_POLICIES.heavyMaterialSurcharge,
+    allowedSizes: getHeavySizes().map(s => s.yards),
   },
 ];
 
@@ -312,13 +280,13 @@ export const DEBRIS_ITEMS: DebrisItem[] = [
   { id: 'tires', name: 'Tires (set of 4)', icon: '🛞', category: 'Misc', weightPerUnit: 100, volumePerUnit: 0.4, unit: 'set' },
 ];
 
-// Size recommendations based on volume
+// Size recommendations based on volume (using canonical sizes only)
 export const SIZE_RECOMMENDATIONS: { maxVolume: number; size: number }[] = [
   { maxVolume: 6, size: 6 },
   { maxVolume: 8, size: 8 },
   { maxVolume: 10, size: 10 },
-  { maxVolume: 15, size: 15 },
   { maxVolume: 20, size: 20 },
   { maxVolume: 30, size: 30 },
   { maxVolume: 40, size: 40 },
+  { maxVolume: 50, size: 50 },
 ];
