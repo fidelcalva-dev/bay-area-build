@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Truck, Instagram, Youtube, Facebook } from 'lucide-react';
+import { Menu, X, Phone, Truck, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
@@ -9,6 +9,7 @@ const TRASHLAB_URL = 'https://app.trashlab.com';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [contractorDropdownOpen, setContractorDropdownOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
 
@@ -18,13 +19,22 @@ export function Header() {
     { to: '/sizes', label: t('nav.sizes') },
     { to: '/areas', label: t('nav.areas') },
     { to: '/materials', label: t('nav.materials') },
-    { to: '/contractors', label: t('nav.contractors') },
+  ];
+
+  const contractorLinks = [
+    { to: '/contractors', label: 'Contractor Services', icon: HardHat },
+    { to: '/quote/contractor', label: 'Contractor Quote', icon: FileText },
+    { to: '/contractor-best-practices', label: 'Best Practices Guide', icon: BookOpen },
+  ];
+
+  const moreLinks = [
     { to: '/about', label: t('nav.about') },
     { to: '/contact', label: t('nav.contact') },
     { to: '/blog', label: t('nav.blog') },
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  const isContractorActive = contractorLinks.some(link => location.pathname === link.to);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 border-b border-border">
@@ -44,6 +54,57 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isActive(link.to)
+                    ? 'text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Contractors Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setContractorDropdownOpen(true)}
+              onMouseLeave={() => setContractorDropdownOpen(false)}
+            >
+              <button
+                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isContractorActive
+                    ? 'text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+              >
+                {t('nav.contractors')}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${contractorDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {contractorDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 w-56 bg-card border border-border rounded-xl shadow-lg py-2 z-50 animate-fade-in">
+                  {contractorLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                        isActive(link.to)
+                          ? 'text-primary bg-primary/5'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      <link.icon className="w-4 h-4" />
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {moreLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -131,6 +192,42 @@ export function Header() {
           <div className="lg:hidden border-t border-border bg-card py-4 animate-fade-in">
             <nav className="flex flex-col gap-1 mb-4">
               {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                    isActive(link.to)
+                      ? 'text-primary bg-primary/5'
+                      : 'text-foreground hover:bg-muted'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              {/* Contractors Section */}
+              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Contractors
+              </div>
+              {contractorLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                    isActive(link.to)
+                      ? 'text-primary bg-primary/5'
+                      : 'text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <link.icon className="w-4 h-4" />
+                  {link.label}
+                </Link>
+              ))}
+
+              {/* More Links */}
+              {moreLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
