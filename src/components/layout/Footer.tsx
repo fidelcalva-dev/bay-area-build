@@ -27,6 +27,12 @@ export function Footer() {
     { to: '/quote', label: 'Get Quote' },
   ];
 
+  const resourceLinks = [
+    { to: '/contractor-best-practices', label: 'Contractor Best Practices' },
+    { to: '/materials', label: 'Materials Guide' },
+    { to: '/sizes', label: 'Size Guide' },
+  ];
+
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container-wide section-padding">
@@ -122,6 +128,21 @@ export function Footer() {
                   <Link
                     to={link.to}
                     className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Resources subsection */}
+            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Resources</h5>
+            <ul className="space-y-2">
+              {resourceLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
                   >
                     {link.label}
                   </Link>
