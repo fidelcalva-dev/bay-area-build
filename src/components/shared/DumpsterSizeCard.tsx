@@ -4,20 +4,20 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Ruler, Weight, CheckCircle, Eye, EyeOff, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// 3D render imports
-import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
+// Photorealistic dumpster photo imports
+import dumpster6yard from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
 import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
-import dumpster8yard from '@/assets/dumpsters/dumpster-8yard.png';
+import dumpster8yard from '@/assets/dumpsters/dumpster-8yard-photo.jpg';
 import dumpster8yardDims from '@/assets/dumpsters/dumpster-8yard-dims.png';
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard.png';
+import dumpster10yard from '@/assets/dumpsters/dumpster-10yard-photo.jpg';
 import dumpster10yardDims from '@/assets/dumpsters/dumpster-10yard-dims.png';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard.png';
+import dumpster20yard from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
 import dumpster20yardDims from '@/assets/dumpsters/dumpster-20yard-dims.png';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard.png';
+import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
 import dumpster30yardDims from '@/assets/dumpsters/dumpster-30yard-dims.png';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard.png';
+import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
 import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
-import dumpster50yard from '@/assets/dumpsters/dumpster-50yard.png';
+import dumpster50yard from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
 import dumpster50yardDims from '@/assets/dumpsters/dumpster-50yard-dims.png';
 
 // Image map for dynamic loading
