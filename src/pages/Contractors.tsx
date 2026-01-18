@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, HardHat, Truck, Clock, RefreshCw, Phone, CheckCircle, BookOpen } from 'lucide-react';
 import { WeightEducation } from '@/components/quote/WeightEducation';
 import { DrivewayProtection, CityPermitHelper } from '@/components/education';
+import { ContractorTipsSection } from '@/components/sections/ContractorTipsSection';
 import { PAGE_SEO } from '@/lib/seo';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
@@ -148,6 +149,9 @@ export default function Contractors() {
           </div>
         </div>
       </section>
+
+      {/* Contractor Tips Quick Reference */}
+      <ContractorTipsSection variant="compact" />
 
       {/* Educational Resources */}
       <section className="section-padding bg-background">
