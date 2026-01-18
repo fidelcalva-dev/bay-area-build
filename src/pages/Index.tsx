@@ -5,6 +5,7 @@ import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
 import { GoogleGuaranteeSection } from '@/components/sections/GoogleGuaranteeSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
+import { ContractorTipsSection } from '@/components/sections/ContractorTipsSection';
 import { AreasPreviewSection } from '@/components/sections/AreasPreviewSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -112,6 +113,7 @@ const Index = () => {
       </Suspense>
       
       {/* Lightweight sections loaded normally */}
+      <ContractorTipsSection />
       <AreasPreviewSection />
       <FAQSection />
       <CTASection />
