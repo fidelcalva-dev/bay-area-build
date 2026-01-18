@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Scale, AlertTriangle, TrendingUp, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Scale, AlertTriangle, TrendingUp, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -224,6 +225,17 @@ export function WeightEducation({ className, compact = false, selectedSize, mate
             </ul>
           </div>
         </div>
+      </div>
+
+      {/* Link to Best Practices */}
+      <div className="p-4 border-t border-border bg-muted/30">
+        <Link 
+          to="/contractor-best-practices#weight" 
+          className="flex items-center justify-between text-sm text-primary hover:underline"
+        >
+          <span>📘 View Full Weight & Material Guidelines</span>
+          <ExternalLink className="w-4 h-4" />
+        </Link>
       </div>
     </div>
   );
