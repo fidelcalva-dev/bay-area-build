@@ -161,7 +161,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
     icon: '🏠',
     description: 'Household, furniture, wood, drywall',
     priceAdjustment: 0,
-    allowedSizes: [10, 20, 30, 40, 50],
+    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
   },
   {
     value: 'heavy',
