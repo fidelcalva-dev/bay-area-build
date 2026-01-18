@@ -80,15 +80,19 @@ export function QuoteBreakdown({ quote, compact = false }: QuoteBreakdownProps) 
       <div className="mt-3 pt-3 border-t border-border/60 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <Weight className="w-3 h-3" />
-          {quote.includedTons}T included
-        </span>
-        <span className="flex items-center gap-1">
-          <AlertCircle className="w-3 h-3" />
-          Overage: ${quote.overageCostPerTon}/ton
+          {quote.includedTons}T Included
         </span>
         <span className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />
           Extra days: ${quote.extraDayCost}/day
+        </span>
+      </div>
+      
+      {/* Overage note */}
+      <div className="mt-2 text-xs text-muted-foreground bg-muted/50 rounded-md px-2 py-1.5">
+        <span className="flex items-center gap-1">
+          <AlertCircle className="w-3 h-3 shrink-0" />
+          Overage billed per ton after disposal scale ticket (${quote.overageCostPerTon}/ton).
         </span>
       </div>
 

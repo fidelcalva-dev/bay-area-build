@@ -38,6 +38,7 @@ interface DumpsterSize {
 }
 
 // Heavy Materials sizes (6, 8, 10 yard) - for concrete, dirt, rock, asphalt
+// Note: Heavy materials use same included tons as general debris
 const heavyMaterialSizes: DumpsterSize[] = [
   {
     yards: 6,
@@ -45,7 +46,7 @@ const heavyMaterialSizes: DumpsterSize[] = [
     length: "10'",
     width: "5'",
     height: "3'",
-    includedTons: 10,
+    includedTons: 0.5,
     useCases: ['Concrete removal', 'Dirt & soil', 'Rock & gravel', 'Asphalt demolition'],
     loads: '~1-2 pickup loads',
     image: dumpster6yard,
@@ -58,7 +59,7 @@ const heavyMaterialSizes: DumpsterSize[] = [
     length: "12'",
     width: "6'",
     height: "3'",
-    includedTons: 10,
+    includedTons: 0.5,
     useCases: ['Foundation demo', 'Brick & block', 'Heavy construction', 'Driveway removal'],
     loads: '~2-3 pickup loads',
     image: dumpster8yard,
@@ -72,7 +73,7 @@ const heavyMaterialSizes: DumpsterSize[] = [
     length: "14'",
     width: "7'",
     height: "3.5'",
-    includedTons: 10,
+    includedTons: 1,
     useCases: ['Large concrete jobs', 'Mixed heavy debris', 'Commercial demo', 'Pool removal'],
     loads: '~3-4 pickup loads',
     image: dumpster10yard,
@@ -82,6 +83,7 @@ const heavyMaterialSizes: DumpsterSize[] = [
 ];
 
 // General Debris sizes (6, 8, 10, 20, 30, 40, 50 yard) - for household, construction, roofing
+// Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
 const generalDebrisSizes: DumpsterSize[] = [
   {
     yards: 6,
@@ -89,7 +91,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "10'",
     width: "5'",
     height: "3'",
-    includedTons: 1,
+    includedTons: 0.5,
     useCases: ['Small cleanouts', 'Single room', 'Yard debris', 'Light renovation'],
     loads: '~1-2 pickup loads',
     image: dumpster6yard,
@@ -102,7 +104,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "12'",
     width: "6'",
     height: "3'",
-    includedTons: 1,
+    includedTons: 0.5,
     useCases: ['Garage cleanouts', 'Bathroom remodel', 'Landscaping', 'Small deck removal'],
     loads: '~2-3 pickup loads',
     image: dumpster8yard,
@@ -115,7 +117,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "14'",
     width: "7'",
     height: "3.5'",
-    includedTons: 2,
+    includedTons: 1,
     useCases: ['Garage cleanouts', 'Small renovations', 'Deck removal', 'Moving cleanouts'],
     loads: '~3-4 pickup loads',
     image: dumpster10yard,
@@ -128,7 +130,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "22'",
     width: "8'",
     height: "4'",
-    includedTons: 3,
+    includedTons: 2,
     useCases: ['Full room renovations', 'Roofing projects', 'Large cleanouts', 'Construction debris'],
     loads: '~6-8 pickup loads',
     image: dumpster20yard,
@@ -142,7 +144,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "22'",
     width: "8'",
     height: "6'",
-    includedTons: 4,
+    includedTons: 3,
     useCases: ['Major renovations', 'New construction', 'Commercial cleanouts', 'Estate cleanouts'],
     loads: '~9-12 pickup loads',
     image: dumpster30yard,
@@ -155,7 +157,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "22'",
     width: "8'",
     height: "8'",
-    includedTons: 5,
+    includedTons: 4,
     useCases: ['Large construction sites', 'Commercial projects', 'Industrial waste', 'Major demolition'],
     loads: '~12-16 pickup loads',
     image: dumpster40yard,
@@ -168,7 +170,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     length: "22'",
     width: "8'",
     height: "9'",
-    includedTons: 6,
+    includedTons: 5,
     useCases: ['Largest projects', 'Industrial sites', 'Multi-building demo', 'Warehouses'],
     loads: '~16-20 pickup loads',
     image: dumpster50yard,

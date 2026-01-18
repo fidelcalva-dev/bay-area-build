@@ -5,8 +5,9 @@ import { BUSINESS_INFO, SERVICE_AREAS } from './seo';
 
 // ============================================================
 // DUMPSTER SIZES - Official inventory
-// Heavy Materials: 6, 8, 10 yard (all include 10 tons)
-// General Debris: 10, 20, 30, 40, 50 yard (tonnage scales with size)
+// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+// Heavy Materials: 6, 8, 10 yard only
+// General Debris: 6, 8, 10, 20, 30, 40, 50 yard
 // ============================================================
 
 export interface DumpsterSizeData {
@@ -25,49 +26,50 @@ export interface DumpsterSizeData {
 }
 
 export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
-  // Heavy Materials Only
+  // Both Heavy and General (6 yard)
   {
     yards: 6,
     dimensions: "10' L × 5' W × 3' H",
     length: "10'",
     width: "5'",
     height: "3'",
-    includedTons: 10,
-    category: 'heavy',
-    priceFrom: 395,
-    useCases: ['Concrete removal', 'Dirt & soil', 'Rock & gravel', 'Patio demo'],
+    includedTons: 0.5,
+    category: 'both',
+    priceFrom: 325,
+    useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
     loads: '1-2 pickup loads',
-    description: 'Compact size for small heavy material jobs.',
+    description: 'Compact size for small jobs.',
   },
+  // Both Heavy and General (8 yard)
   {
     yards: 8,
     dimensions: "12' L × 6' W × 3' H",
     length: "12'",
     width: "6'",
     height: "3'",
-    includedTons: 10,
-    category: 'heavy',
-    priceFrom: 495,
-    useCases: ['Foundation demo', 'Brick & block', 'Driveway removal'],
+    includedTons: 0.5,
+    category: 'both',
+    priceFrom: 365,
+    useCases: ['Foundation demo', 'Brick & block', 'Garage cleanouts', 'Bathroom remodel'],
     loads: '2-3 pickup loads',
-    description: 'Most popular for driveway and foundation work.',
+    description: 'Popular for driveway and foundation work.',
     popular: true,
   },
-  // Both Heavy and General
+  // Both Heavy and General (10 yard)
   {
     yards: 10,
     dimensions: "14' L × 7' W × 3.5' H",
     length: "14'",
     width: "7'",
     height: "3.5'",
-    includedTons: 1, // 1T general, 10T heavy (handled in display)
+    includedTons: 1,
     category: 'both',
     priceFrom: 395,
-    useCases: ['Garage cleanouts', 'Small renovations', 'Deck removal'],
+    useCases: ['Large concrete jobs', 'Small renovations', 'Deck removal'],
     loads: '3-4 pickup loads',
     description: 'Versatile size for small to medium projects.',
   },
-  // General Debris Only
+  // General Debris Only (20 yard)
   {
     yards: 20,
     dimensions: "22' L × 8' W × 4' H",
@@ -194,23 +196,23 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'Do you offer dumpsters for concrete and dirt?',
     questionEs: '¿Ofrecen contenedores para concreto y tierra?',
-    answer: 'Yes! We have dedicated heavy material dumpsters (6, 8, and 10 yard) with 10 tons included. Concrete and dirt cannot be mixed with other debris due to recycling requirements.',
-    answerEs: '¡Sí! Tenemos contenedores dedicados para materiales pesados (6, 8 y 10 yardas) con 10 toneladas incluidas.',
+    answer: 'Yes! We have heavy material dumpsters (6, 8, and 10 yard) specifically for concrete, dirt, rock, and asphalt. Included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T. Heavy materials cannot be mixed with other debris.',
+    answerEs: '¡Sí! Tenemos contenedores para materiales pesados (6, 8 y 10 yardas) específicamente para concreto, tierra, roca y asfalto.',
     category: 'materials',
   },
   // Contractor-focused FAQs
   {
     question: 'What is the difference between inert and general debris dumpsters?',
     questionEs: '¿Cuál es la diferencia entre contenedores para materiales inertes y escombros generales?',
-    answer: 'Inert dumpsters (5-10yd) are for heavy materials like concrete, dirt, brick, and asphalt only—pure loads with no trash. General debris dumpsters (10-50yd) are for mixed waste like wood, drywall, and packaging. Mixing trash with inert materials triggers reclassification and additional fees.',
-    answerEs: 'Los contenedores para materiales inertes (5-10yd) son solo para materiales pesados como concreto, tierra, ladrillo y asfalto—cargas puras sin basura. Los contenedores para escombros generales (10-50yd) son para residuos mixtos como madera, paneles de yeso y embalajes.',
+    answer: 'Inert dumpsters (6-10yd) are for heavy materials like concrete, dirt, brick, and asphalt only—pure loads with no trash. General debris dumpsters (6-50yd) are for mixed waste like wood, drywall, and packaging. Mixing trash with inert materials triggers reclassification and additional fees.',
+    answerEs: 'Los contenedores para materiales inertes (6-10yd) son solo para materiales pesados como concreto, tierra, ladrillo y asfalto—cargas puras sin basura.',
     category: 'materials',
   },
   {
     question: 'How does weight/overage billing work for contractors?',
     questionEs: '¿Cómo funciona la facturación por peso/exceso para contratistas?',
-    answer: 'General debris dumpsters include weight by size: 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T. Excess is billed at $85/ton. Inert (heavy material) dumpsters include 10 tons. Keep heavy and light materials separate to optimize costs.',
-    answerEs: 'Los contenedores para escombros generales incluyen peso por tamaño: 10yd=1T, 20yd=2T, etc. El exceso se factura a $85/tonelada. Los contenedores para materiales inertes incluyen 10 toneladas.',
+    answer: 'Each dumpster includes weight by size: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T. Overage is billed per ton after disposal scale ticket—$85/ton for general debris, $65/ton for heavy materials.',
+    answerEs: 'Cada contenedor incluye peso por tamaño: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, etc. El exceso se factura por tonelada después del boleto de báscula.',
     category: 'pricing',
   },
   {
@@ -258,6 +260,20 @@ export const PRICING_POLICIES = {
   sameDayDelivery: 100,
   streetPermitHelp: 125,
 } as const;
+
+// Standard overage note for display
+export const OVERAGE_NOTE = 'Overage billed per ton after disposal scale ticket.';
+
+// Official included tonnage by size (single source of truth)
+export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
+  6: 0.5,
+  8: 0.5,
+  10: 1,
+  20: 2,
+  30: 3,
+  40: 4,
+  50: 5,
+};
 
 // ============================================================
 // CONTACT INFO - Re-export from seo.ts for convenience
