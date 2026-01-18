@@ -81,8 +81,34 @@ const heavyMaterialSizes: DumpsterSize[] = [
   },
 ];
 
-// General Debris sizes (10, 20, 30, 40, 50 yard) - for household, construction, roofing
+// General Debris sizes (6, 8, 10, 20, 30, 40, 50 yard) - for household, construction, roofing
 const generalDebrisSizes: DumpsterSize[] = [
+  {
+    yards: 6,
+    dimensions: "10' L × 5' W × 3' H",
+    length: "10'",
+    width: "5'",
+    height: "3'",
+    includedTons: 1,
+    useCases: ['Small cleanouts', 'Single room', 'Yard debris', 'Light renovation'],
+    loads: '~1-2 pickup loads',
+    image: dumpster6yard,
+    imageDims: dumpster6yardDims,
+    description: 'Compact size ideal for small cleanouts and light yard debris removal.',
+  },
+  {
+    yards: 8,
+    dimensions: "12' L × 6' W × 3' H",
+    length: "12'",
+    width: "6'",
+    height: "3'",
+    includedTons: 1,
+    useCases: ['Garage cleanouts', 'Bathroom remodel', 'Landscaping', 'Small deck removal'],
+    loads: '~2-3 pickup loads',
+    image: dumpster8yard,
+    imageDims: dumpster8yardDims,
+    description: 'Perfect for garage cleanouts and small renovation projects.',
+  },
   {
     yards: 10,
     dimensions: "14' L × 7' W × 3.5' H",
@@ -94,6 +120,7 @@ const generalDebrisSizes: DumpsterSize[] = [
     loads: '~3-4 pickup loads',
     image: dumpster10yard,
     imageDims: dumpster10yardDims,
+    popular: true,
     description: 'Great starter size for single-room renovations and garage cleanouts.',
   },
   {

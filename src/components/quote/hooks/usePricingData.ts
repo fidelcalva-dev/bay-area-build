@@ -276,11 +276,13 @@ export function calculateIncludedTons(sizeValue: number, materialType: 'general'
 
   // General debris tonnage by size
   const tonsBySize: Record<number, number> = {
-    10: 1,
-    20: 2,
-    30: 3,
-    40: 4,
-    50: 5,
+    6: 1,
+    8: 1,
+    10: 2,
+    20: 3,
+    30: 4,
+    40: 5,
+    50: 6,
   };
 
   return tonsBySize[sizeValue] || 1;
