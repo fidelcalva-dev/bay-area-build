@@ -17,6 +17,7 @@ const Sizes = lazy(() => import("./pages/Sizes"));
 const Areas = lazy(() => import("./pages/Areas"));
 const Materials = lazy(() => import("./pages/Materials"));
 const Contractors = lazy(() => import("./pages/Contractors"));
+const ContractorBestPractices = lazy(() => import("./pages/ContractorBestPractices"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -81,6 +82,9 @@ const App = () => (
               } />
               <Route path="/contractors" element={
                 <Suspense fallback={<PageLoader />}><Contractors /></Suspense>
+              } />
+              <Route path="/contractor-best-practices" element={
+                <Suspense fallback={<PageLoader />}><ContractorBestPractices /></Suspense>
               } />
               <Route path="/about" element={
                 <Suspense fallback={<PageLoader />}><About /></Suspense>

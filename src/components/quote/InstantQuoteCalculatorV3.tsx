@@ -615,7 +615,15 @@ export function InstantQuoteCalculatorV3() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">What are you throwing away?</h4>
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="text-lg font-bold text-foreground">What are you throwing away?</h4>
+                <a 
+                  href="/contractor-best-practices#materials" 
+                  className="text-xs text-primary hover:underline"
+                >
+                  Best Practices →
+                </a>
+              </div>
               <p className="text-sm text-muted-foreground mb-4">This determines available dumpster sizes and pricing</p>
 
               <div className="grid gap-3">
@@ -645,7 +653,12 @@ export function InstantQuoteCalculatorV3() {
                         <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
                         {type.value === 'heavy' && (
                           <p className="text-xs text-primary mt-1 font-medium">
-                            10 tons included on all heavy material dumpsters
+                            ⚠️ Heavy loads require inert-only dumpsters (5yd/10yd). Pure loads only—no mixing!
+                          </p>
+                        )}
+                        {type.value === 'general' && formData.material === 'general' && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            ℹ️ Included tonnage scales with size. Overweight billed at $85/ton.
                           </p>
                         )}
                       </div>
@@ -949,6 +962,22 @@ export function InstantQuoteCalculatorV3() {
                 <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 text-sm">
                   <span className="text-muted-foreground">Included Weight</span>
                   <span className="font-semibold text-primary">{quote.includedTons} ton{quote.includedTons !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+
+              {/* Avoid Fees Checklist */}
+              <div className="bg-success/5 px-4 py-3 border-t border-success/20">
+                <p className="text-xs font-medium text-foreground mb-2">✅ Avoid Fees Checklist:</p>
+                <div className="grid grid-cols-3 gap-2 text-[10px] text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <span className="text-success">✓</span> Keep below rim
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-success">✓</span> Don't mix types
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-success">✓</span> Keep access clear
+                  </div>
                 </div>
               </div>
 

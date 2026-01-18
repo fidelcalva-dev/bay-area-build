@@ -141,6 +141,7 @@ export interface FAQItem {
 }
 
 export const MASTER_FAQS: FAQItem[] = [
+  // General FAQs
   {
     question: 'How quickly can I get a dumpster delivered?',
     questionEs: '¿Qué tan rápido pueden entregar un contenedor?',
@@ -195,6 +196,42 @@ export const MASTER_FAQS: FAQItem[] = [
     questionEs: '¿Ofrecen contenedores para concreto y tierra?',
     answer: 'Yes! We have dedicated heavy material dumpsters (6, 8, and 10 yard) with 10 tons included. Concrete and dirt cannot be mixed with other debris due to recycling requirements.',
     answerEs: '¡Sí! Tenemos contenedores dedicados para materiales pesados (6, 8 y 10 yardas) con 10 toneladas incluidas.',
+    category: 'materials',
+  },
+  // Contractor-focused FAQs
+  {
+    question: 'What is the difference between inert and general debris dumpsters?',
+    questionEs: '¿Cuál es la diferencia entre contenedores para materiales inertes y escombros generales?',
+    answer: 'Inert dumpsters (5-10yd) are for heavy materials like concrete, dirt, brick, and asphalt only—pure loads with no trash. General debris dumpsters (10-50yd) are for mixed waste like wood, drywall, and packaging. Mixing trash with inert materials triggers reclassification and additional fees.',
+    answerEs: 'Los contenedores para materiales inertes (5-10yd) son solo para materiales pesados como concreto, tierra, ladrillo y asfalto—cargas puras sin basura. Los contenedores para escombros generales (10-50yd) son para residuos mixtos como madera, paneles de yeso y embalajes.',
+    category: 'materials',
+  },
+  {
+    question: 'How does weight/overage billing work for contractors?',
+    questionEs: '¿Cómo funciona la facturación por peso/exceso para contratistas?',
+    answer: 'General debris dumpsters include weight by size: 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T. Excess is billed at $85/ton. Inert (heavy material) dumpsters include 10 tons. Keep heavy and light materials separate to optimize costs.',
+    answerEs: 'Los contenedores para escombros generales incluyen peso por tamaño: 10yd=1T, 20yd=2T, etc. El exceso se factura a $85/tonelada. Los contenedores para materiales inertes incluyen 10 toneladas.',
+    category: 'pricing',
+  },
+  {
+    question: 'What is the overfill policy and why does it matter?',
+    questionEs: '¿Cuál es la política de sobrecarga y por qué es importante?',
+    answer: 'Materials must not extend above the top of the dumpster walls. Overfilled dumpsters cannot be legally transported and require excess removal before pickup, potentially causing project delays and additional charges.',
+    answerEs: 'Los materiales no deben extenderse por encima de las paredes del contenedor. Los contenedores sobrecargados no pueden transportarse legalmente y requieren la eliminación del exceso antes de la recolección.',
+    category: 'general',
+  },
+  {
+    question: 'Do contractors need permits for street-placed dumpsters?',
+    questionEs: '¿Los contratistas necesitan permisos para contenedores en la calle?',
+    answer: 'Yes, if the dumpster must be placed on the street or public right-of-way, you\'ll need a permit from your city. Contractors are responsible for obtaining permits. We can point you in the right direction by city—see our City Permit Helper.',
+    answerEs: 'Sí, si el contenedor debe colocarse en la calle o vía pública, necesitará un permiso de su ciudad. Los contratistas son responsables de obtener los permisos.',
+    category: 'general',
+  },
+  {
+    question: 'What items are prohibited in dumpsters on job sites?',
+    questionEs: '¿Qué artículos están prohibidos en los contenedores de obra?',
+    answer: 'Prohibited: hazardous waste, batteries, medical waste, pressurized tanks, certain electronics/appliances. Some items (mattresses, appliances, tires) may be accepted with additional fees—always ask first. See our Materials page for the complete list.',
+    answerEs: 'Prohibidos: residuos peligrosos, baterías, desechos médicos, tanques presurizados, ciertos electrodomésticos. Algunos artículos pueden aceptarse con tarifas adicionales—siempre pregunte primero.',
     category: 'materials',
   },
 ];
