@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, Ruler, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Ruler, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Import photorealistic dumpster photos
@@ -120,7 +120,6 @@ const generalDebrisSizes: DumpsterSize[] = [
     loads: '~3-4 pickup loads',
     image: dumpster10yard,
     imageDims: dumpster10yardDims,
-    popular: true,
     description: 'Great starter size for single-room renovations and garage cleanouts.',
   },
   {
@@ -179,7 +178,6 @@ const generalDebrisSizes: DumpsterSize[] = [
 ];
 
 function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' | 'general' }) {
-  const [showDims, setShowDims] = useState(false);
   const isHeavy = variant === 'heavy';
   
   return (
@@ -199,28 +197,23 @@ function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' 
       {/* Image Section */}
       <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/30 to-muted/80 p-6">
         <img
-          src={showDims ? size.imageDims : size.image}
-          alt={`${size.yards} yard dumpster${showDims ? ' with dimensions' : ''}`}
+          src={size.image}
+          alt={`${size.yards} yard dumpster`}
           className="w-full h-full object-contain transition-all duration-500 group-hover:scale-105"
         />
-        
-        {/* Dimension Toggle */}
-        <button 
-          onClick={() => setShowDims(!showDims)}
-          className={`absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-            showDims 
-              ? 'bg-primary text-primary-foreground' 
-              : 'bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-background'
-          }`}
-        >
-          {showDims ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-          {showDims ? 'Hide Dims' : 'Show Dims'}
-        </button>
 
         {/* Size Badge */}
         <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-lg">
           <span className="text-2xl font-black text-foreground">{size.yards}</span>
           <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
+        </div>
+        
+        {/* Included Tons Badge */}
+        <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-lg flex items-center gap-1.5 ${
+          isHeavy ? 'bg-amber-500/90' : 'bg-primary/90'
+        } backdrop-blur-sm`}>
+          <Weight className="w-4 h-4 text-white" />
+          <span className="text-sm font-bold text-white">{size.includedTons}T Included</span>
         </div>
       </div>
 
@@ -231,35 +224,15 @@ function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' 
           {size.description}
         </p>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <Weight className={`w-4 h-4 ${isHeavy ? 'text-amber-500' : 'text-primary'}`} />
-              <span className="text-lg font-bold text-foreground">{size.includedTons}T</span>
-            </div>
-            <p className="text-xs text-muted-foreground">Included</p>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <Ruler className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">{size.height}</span>
-            </div>
-            <p className="text-xs text-muted-foreground">Height</p>
-          </div>
-        </div>
-
-        {/* Dimensions Bar */}
+        {/* Approx Dimensions Bar */}
         <div className="flex items-center gap-2 px-3 py-2.5 bg-muted/30 rounded-lg border border-border/50">
           <Ruler className="w-4 h-4 text-muted-foreground shrink-0" />
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">L</span>
+          <div className="flex items-center gap-1 text-sm">
+            <span className="text-xs text-muted-foreground">Approx.</span>
             <span className="font-medium text-foreground">{size.length}</span>
             <span className="text-muted-foreground">×</span>
-            <span className="text-muted-foreground">W</span>
             <span className="font-medium text-foreground">{size.width}</span>
             <span className="text-muted-foreground">×</span>
-            <span className="text-muted-foreground">H</span>
             <span className="font-medium text-foreground">{size.height}</span>
           </div>
         </div>
