@@ -127,47 +127,38 @@ export const PRICING_ZONES: PricingZone[] = [
   },
 ];
 
-// Dumpster Sizes with included tons
+// Dumpster Sizes with official included tons
+// 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
 export const DUMPSTER_SIZES: DumpsterSize[] = [
   {
     value: '6',
     label: '6 yd',
     basePrice: 325,
-    includedTons: 1.0,
+    includedTons: 0.5,
     description: 'Small cleanouts',
     dimensions: "10' x 4' x 3'",
-    heavyOnly: true,
   },
   {
     value: '8',
     label: '8 yd',
     basePrice: 365,
-    includedTons: 1.0,
+    includedTons: 0.5,
     description: 'Bathroom remodel',
     dimensions: "10' x 4' x 4'",
-    heavyOnly: true,
   },
   {
     value: '10',
     label: '10 yd',
     basePrice: 395,
-    includedTons: 1.0,
+    includedTons: 1,
     description: 'Garage cleanout',
     dimensions: "12' x 8' x 3.5'",
-  },
-  {
-    value: '15',
-    label: '15 yd',
-    basePrice: 445,
-    includedTons: 1.5,
-    description: 'Kitchen remodel',
-    dimensions: "16' x 7.5' x 4'",
   },
   {
     value: '20',
     label: '20 yd',
     basePrice: 495,
-    includedTons: 2.0,
+    includedTons: 2,
     description: 'Full renovation',
     dimensions: "22' x 7.5' x 4.5'",
     popular: true,
@@ -176,7 +167,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     value: '30',
     label: '30 yd',
     basePrice: 595,
-    includedTons: 3.0,
+    includedTons: 3,
     description: 'Major construction',
     dimensions: "22' x 7.5' x 6'",
   },
@@ -184,9 +175,17 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     value: '40',
     label: '40 yd',
     basePrice: 695,
-    includedTons: 4.0,
+    includedTons: 4,
     description: 'Commercial demo',
     dimensions: "22' x 8' x 8'",
+  },
+  {
+    value: '50',
+    label: '50 yd',
+    basePrice: 795,
+    includedTons: 5,
+    description: 'Major commercial',
+    dimensions: "22' x 8' x 9'",
   },
 ];
 
@@ -198,7 +197,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
     icon: '🏠',
     description: 'Household items, furniture, general waste',
     priceAdjustment: 0,
-    allowedSizes: ['10', '15', '20', '30', '40'],
+    allowedSizes: ['6', '8', '10', '20', '30', '40', '50'],
   },
   {
     value: 'heavy',

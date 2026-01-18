@@ -265,27 +265,23 @@ export async function getZonePricing(zoneId: string, sizeId: string): Promise<{
 }
 
 /**
- * Calculate included tons based on size and material type.
- * Heavy materials: 10T for all sizes (6/8/10)
- * General debris: 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+ * Calculate included tons based on size.
+ * Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+ * Same tonnage for both general debris and heavy materials.
  */
 export function calculateIncludedTons(sizeValue: number, materialType: 'general' | 'heavy'): number {
-  if (materialType === 'heavy') {
-    return 10; // All heavy material dumpsters include 10 tons
-  }
-
-  // General debris tonnage by size
+  // Official tonnage by size (same for all material types)
   const tonsBySize: Record<number, number> = {
-    6: 1,
-    8: 1,
-    10: 2,
-    20: 3,
-    30: 4,
-    40: 5,
-    50: 6,
+    6: 0.5,
+    8: 0.5,
+    10: 1,
+    20: 2,
+    30: 3,
+    40: 4,
+    50: 5,
   };
 
-  return tonsBySize[sizeValue] || 1;
+  return tonsBySize[sizeValue] || 0.5;
 }
 
 /**
