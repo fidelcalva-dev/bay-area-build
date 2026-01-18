@@ -15,9 +15,9 @@ const pricingTiers = [
 ];
 
 const heavyMaterialTiers = [
-  { size: 6, startingAt: 395, priceRange: '$395–$475', weightLimit: '10 tons', idealFor: 'Small concrete or dirt removal' },
-  { size: 8, startingAt: 495, priceRange: '$495–$575', weightLimit: '10 tons', idealFor: 'Driveway or patio demolition' },
-  { size: 10, startingAt: 595, priceRange: '$595–$695', weightLimit: '10 tons', idealFor: 'Large concrete or foundation removal' },
+  { size: 6, startingAt: 395, priceRange: '$395–$475', weightLimit: '0.5 ton', idealFor: 'Small concrete or dirt removal' },
+  { size: 8, startingAt: 495, priceRange: '$495–$575', weightLimit: '0.5 ton', idealFor: 'Driveway or patio demolition' },
+  { size: 10, startingAt: 595, priceRange: '$595–$695', weightLimit: '1 ton', idealFor: 'Large concrete or foundation removal' },
 ];
 
 const priceFactors = [

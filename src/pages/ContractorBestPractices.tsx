@@ -303,17 +303,18 @@ const BEST_PRACTICES_SECTIONS = [
         <div className="bg-muted/50 rounded-lg p-4">
           <h4 className="font-semibold text-foreground mb-3">Inert (Heavy Materials)</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><strong>5 yd:</strong> Small pads, trenches, walkways</li>
-            <li><strong>10 yd:</strong> Flatwork, masonry, tear-outs</li>
+            <li><strong>6 yd:</strong> Small pads, trenches, walkways (0.5T included)</li>
+            <li><strong>8 yd:</strong> Driveway removal, foundation work (0.5T included)</li>
+            <li><strong>10 yd:</strong> Flatwork, masonry, tear-outs (1T included)</li>
           </ul>
         </div>
         <div className="bg-muted/50 rounded-lg p-4">
           <h4 className="font-semibold text-foreground mb-3">General Debris</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><strong>10 yd:</strong> Small remodel, roofing, garage cleanout</li>
-            <li><strong>20 yd:</strong> Medium remodel, roofing projects</li>
-            <li><strong>30 yd:</strong> Large renovation, small demo</li>
-            <li><strong>40+ yd:</strong> Large demos, commercial projects</li>
+            <li><strong>6-10 yd:</strong> Small remodel, garage cleanout (0.5-1T included)</li>
+            <li><strong>20 yd:</strong> Medium remodel, roofing projects (2T included)</li>
+            <li><strong>30 yd:</strong> Large renovation, small demo (3T included)</li>
+            <li><strong>40-50 yd:</strong> Large demos, commercial projects (4-5T included)</li>
           </ul>
         </div>
         <Link 

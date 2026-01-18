@@ -5,11 +5,13 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const SIZE_DATA = [
-  { size: 10, tons: 1.0, color: 'from-emerald-500 to-emerald-600', fillPercent: 25, typical: 'Light debris, small cleanouts' },
-  { size: 15, tons: 1.5, color: 'from-teal-500 to-teal-600', fillPercent: 37.5, typical: 'Kitchen remodel, flooring' },
+  { size: 6, tons: 0.5, color: 'from-green-500 to-green-600', fillPercent: 12.5, typical: 'Small cleanouts, yard debris' },
+  { size: 8, tons: 0.5, color: 'from-emerald-500 to-emerald-600', fillPercent: 12.5, typical: 'Bathroom remodel, garage cleanout' },
+  { size: 10, tons: 1.0, color: 'from-teal-500 to-teal-600', fillPercent: 25, typical: 'Light debris, small cleanouts' },
   { size: 20, tons: 2.0, color: 'from-cyan-500 to-cyan-600', fillPercent: 50, typical: 'Roof tear-off, room addition' },
   { size: 30, tons: 3.0, color: 'from-blue-500 to-blue-600', fillPercent: 75, typical: 'Large renovation, estate cleanout' },
   { size: 40, tons: 4.0, color: 'from-indigo-500 to-indigo-600', fillPercent: 100, typical: 'Commercial projects, new construction' },
+  { size: 50, tons: 5.0, color: 'from-purple-500 to-purple-600', fillPercent: 125, typical: 'Industrial sites, warehouse cleanouts' },
 ];
 
 const HEAVY_SIZE_DATA = [

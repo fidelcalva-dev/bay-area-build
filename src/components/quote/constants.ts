@@ -91,7 +91,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 325,
     includedTons: 0.5,
     description: 'Small cleanouts, bathroom remodel',
-    dimensions: "10' × 4' × 3'",
+    dimensions: "12' × 6' × 2.25'",
   },
   {
     id: 'size-8',
@@ -100,7 +100,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 365,
     includedTons: 0.5,
     description: 'Bathroom/kitchen demo',
-    dimensions: "10' × 4' × 4'",
+    dimensions: "12' × 6' × 3'",
   },
   {
     id: 'size-10',
@@ -109,7 +109,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 395,
     includedTons: 1,
     description: 'Garage cleanout, deck removal',
-    dimensions: "12' × 8' × 3.5'",
+    dimensions: "12' × 7.5' × 3'",
   },
   {
     id: 'size-20',
@@ -118,7 +118,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 495,
     includedTons: 2,
     description: 'Full home renovation',
-    dimensions: "22' × 7.5' × 4.5'",
+    dimensions: "18' × 7.5' × 4'",
     popular: true,
   },
   {
@@ -128,7 +128,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 595,
     includedTons: 3,
     description: 'Major construction, roofing',
-    dimensions: "22' × 7.5' × 6'",
+    dimensions: "18' × 7.5' × 6'",
   },
   {
     id: 'size-40',
@@ -137,7 +137,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 695,
     includedTons: 4,
     description: 'Commercial demo, large builds',
-    dimensions: "22' × 8' × 8'",
+    dimensions: "24' × 7.5' × 6'",
   },
   {
     id: 'size-50',
@@ -146,7 +146,7 @@ export const DUMPSTER_SIZES: DumpsterSize[] = [
     basePrice: 795,
     includedTons: 5,
     description: 'Major commercial projects',
-    dimensions: "22' × 8' × 9'",
+    dimensions: "24' × 7.5' × 7.5'",
   },
 ];
 

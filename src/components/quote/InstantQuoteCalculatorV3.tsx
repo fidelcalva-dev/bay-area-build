@@ -701,7 +701,7 @@ export function InstantQuoteCalculatorV3() {
               <p className="text-sm text-muted-foreground mb-4">
                 {formData.material === 'heavy' 
                   ? 'Compact sizes for heavy materials (6-10 yard)'
-                  : 'Full range for general debris (10-40 yard)'
+                  : 'Full range for general debris (6-50 yard)'
                 }
               </p>
 

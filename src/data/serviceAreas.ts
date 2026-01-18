@@ -24,7 +24,7 @@ export const serviceAreas: CountyData[] = [
         highlights: ['Same-day delivery available', 'All Oakland neighborhoods served', 'Construction & renovation specialists'],
         faqs: [
           { question: 'Do I need a permit for a dumpster in Oakland?', answer: 'If placing the dumpster on a public street, you may need a street use permit from the City of Oakland. Dumpsters on private property typically don\'t require permits.' },
-          { question: 'What sizes are popular in Oakland?', answer: 'For Oakland homes, 10-15 yard dumpsters are most popular. Larger construction projects often use 20-30 yard containers.' },
+          { question: 'What sizes are popular in Oakland?', answer: 'For Oakland homes, 10-20 yard dumpsters are most popular. Larger construction projects often use 30-40 yard containers.' },
         ],
       },
       {
@@ -63,7 +63,7 @@ export const serviceAreas: CountyData[] = [
         description: 'San Leandro\'s mix of residential and industrial properties makes it ideal for our full range of dumpster sizes. From small garage cleanouts to large warehouse demolitions, we\'ve got you covered.',
         highlights: ['Residential & industrial service', 'Full size range available', 'Flexible rental periods'],
         faqs: [
-          { question: 'What\'s the most popular dumpster size in San Leandro?', answer: 'The 15-yard dumpster is popular for home projects. Industrial clients often need 30-40 yard containers.' },
+          { question: 'What\'s the most popular dumpster size in San Leandro?', answer: 'The 20-yard dumpster is popular for home projects. Industrial clients often need 30-40 yard containers.' },
           { question: 'How long can I keep the dumpster?', answer: 'Standard rental is 7 days. Extensions available at $50/day.' },
         ],
       },
@@ -120,7 +120,7 @@ export const serviceAreas: CountyData[] = [
         highlights: ['Narrow street navigation', 'Diverse project experience', 'Hablamos Español'],
         faqs: [
           { question: 'Do you have Spanish-speaking drivers for Mission?', answer: 'Sí, hablamos español. Many of our team members are bilingual for your convenience.' },
-          { question: 'What size works for Mission flats?', answer: 'For apartment/flat renovations, 10-15 yard dumpsters are most common due to space constraints.' },
+          { question: 'What size works for Mission flats?', answer: 'For apartment/flat renovations, 10-20 yard dumpsters are most common due to space constraints.' },
         ],
       },
       {
@@ -129,7 +129,7 @@ export const serviceAreas: CountyData[] = [
         description: 'The Sunset\'s row houses and residential character mean lots of home improvement projects. We\'re the go-to for Sunset homeowners tackling renovations, cleanouts, and landscaping.',
         highlights: ['Residential specialists', 'Row house experience', 'Neighborly service'],
         faqs: [
-          { question: 'Can dumpsters fit on Sunset driveways?', answer: 'Yes, our 10-15 yard dumpsters fit most Sunset driveways. We\'ll assess the best fit for your property.' },
+          { question: 'Can dumpsters fit on Sunset driveways?', answer: 'Yes, our 10-20 yard dumpsters fit most Sunset driveways. We\'ll assess the best fit for your property.' },
           { question: 'How do I avoid blocking neighbors?', answer: 'We position dumpsters carefully to maintain neighbor access. Garage placement is often ideal.' },
         ],
       },
@@ -291,7 +291,7 @@ export const serviceAreas: CountyData[] = [
         description: 'Pittsburg\'s revitalizing downtown and residential areas make it a growing market for dumpster service. We provide reliable, affordable options for all project types.',
         highlights: ['Revitalizing area coverage', 'Affordable rates', 'All project types'],
         faqs: [
-          { question: 'What sizes are available for Pittsburg?', answer: 'We offer our full range from 8 to 40 yards throughout Pittsburg.' },
+          { question: 'What sizes are available for Pittsburg?', answer: 'We offer our full range from 6 to 50 yards throughout Pittsburg.' },
           { question: 'How does pricing compare?', answer: 'Pittsburg is standard pricing, no extra charges. Get an instant quote online.' },
         ],
       },
