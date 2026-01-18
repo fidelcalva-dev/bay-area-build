@@ -17,7 +17,7 @@ import type { QuoteFormData, ExtraSelection } from './types';
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
 // Fallback constants (used when DB is empty)
-import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST } from './constants';
+import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE } from './constants';
 
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
@@ -653,7 +653,7 @@ export function InstantQuoteCalculatorV3() {
                         <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
                         {type.value === 'heavy' && (
                           <p className="text-xs text-primary mt-1 font-medium">
-                            ⚠️ Heavy loads require inert-only dumpsters (5yd/10yd). Pure loads only—no mixing!
+                            ⚠️ Heavy loads require inert-only dumpsters (6-10yd). Pure loads only—no mixing!
                           </p>
                         )}
                         {type.value === 'general' && formData.material === 'general' && (
@@ -963,6 +963,11 @@ export function InstantQuoteCalculatorV3() {
                   <span className="text-muted-foreground">Included Weight</span>
                   <span className="font-semibold text-primary">{quote.includedTons} ton{quote.includedTons !== 1 ? 's' : ''}</span>
                 </div>
+                
+                {/* Overage Note */}
+                <p className="text-xs text-muted-foreground text-center italic">
+                  {OVERAGE_NOTE}
+                </p>
               </div>
 
               {/* Avoid Fees Checklist */}
