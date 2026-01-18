@@ -43,6 +43,7 @@ const services = [
   'Industrial waste disposal',
 ];
 
+// Force rebuild - module import fix
 export default function Contractors() {
   return (
     <Layout
