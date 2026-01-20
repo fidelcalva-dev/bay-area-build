@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
-  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark
+  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -389,6 +389,9 @@ export function InstantQuoteCalculatorV3() {
         recommendationReason: smartRecommendation.recommendationReason,
         userSelectedSizeYards: formData.size,
         projectType: projectType || undefined,
+        // Confidence data
+        confidenceLevel: smartRecommendation.confidence,
+        confidenceNote: smartRecommendation.confidenceNote,
       });
 
       if (result.success) {
@@ -746,20 +749,31 @@ export function InstantQuoteCalculatorV3() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <h4 className="text-lg font-bold text-foreground">Choose your dumpster size</h4>
-                {projectType && (
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                {formData.material === 'heavy' 
+                  ? 'Compact sizes for heavy materials (6-10 yard)'
+                  : 'Full range for general debris (6-50 yard)'
+                }
+              </p>
+
+              {/* Confidence Meter - Always visible */}
+              <div className="mb-4 p-3 rounded-lg border bg-muted/30">
+                <div className="flex items-start gap-3">
                   <ConfidenceBadge 
                     confidence={smartRecommendation.confidence}
                     label={smartRecommendation.confidenceLabel}
                   />
-                )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground">{smartRecommendation.confidenceNote}</p>
+                  </div>
+                </div>
+                {/* Disclaimer */}
+                <p className="mt-2 text-[10px] text-muted-foreground flex items-center gap-1">
+                  <Info className="w-3 h-3 shrink-0" />
+                  Guidance only. Final capacity depends on how material is loaded.
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {projectType && smartRecommendation.reason}
-                {!projectType && (formData.material === 'heavy' 
-                  ? 'Compact sizes for heavy materials (6-10 yard)'
-                  : 'Full range for general debris (6-50 yard)'
-                )}
-              </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {availableSizes.map((size) => {
