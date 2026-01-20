@@ -764,23 +764,54 @@ export function InstantQuoteCalculatorV3() {
                   {zoneResult ? (
                     <>
                       {/* Service confirmation badge */}
-                      <div className="mt-3 p-3 rounded-lg bg-success/10 border border-success/20 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
-                          <Truck className="w-4 h-4 text-success" />
+                      <div className="mt-3 p-3 rounded-lg bg-success/10 border border-success/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+                            <Truck className="w-4 h-4 text-success" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            {/* City/County line */}
+                            <p className="font-medium text-foreground text-sm">
+                              {autoDetectZip.cityName || zoneResult.cityName || zoneResult.zoneName}
+                              {autoDetectZip.county && (
+                                <span className="text-muted-foreground font-normal">, {autoDetectZip.county}</span>
+                              )}
+                            </p>
+                            {/* Nearest yard */}
+                            {distanceCalc.distance && (
+                              <p className="text-xs text-success font-medium">
+                                ✓ Nearest: {distanceCalc.distance.yard.name}
+                              </p>
+                            )}
+                          </div>
+                          {distanceCalc.distance && (
+                            <div className="text-right flex-shrink-0">
+                              <span className="text-sm font-bold text-foreground">
+                                {distanceCalc.distance.distanceMiles.toFixed(1)} mi
+                              </span>
+                              {distanceCalc.distance.distanceMinutes && (
+                                <p className="text-[10px] text-muted-foreground">
+                                  ~{distanceCalc.distance.distanceMinutes} min
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-foreground text-sm">
-                            {zoneResult.cityName ? `${zoneResult.cityName}` : zoneResult.zoneName}
-                          </p>
-                          <p className="text-xs text-success font-medium">
-                            ✓ Nearest yard auto-selected
-                          </p>
-                        </div>
+                        
+                        {/* Availability messaging based on distance */}
                         {distanceCalc.distance && (
-                          <div className="text-right flex-shrink-0">
-                            <span className="text-sm font-bold text-foreground">
-                              {distanceCalc.distance.distanceMiles.toFixed(0)} mi
-                            </span>
+                          <div className="mt-2 pt-2 border-t border-success/20">
+                            <p className="text-xs text-muted-foreground">
+                              {distanceCalc.distance.distanceMiles <= 10 && (
+                                <span className="text-success">⚡ Same-day delivery may be available</span>
+                              )}
+                              {distanceCalc.distance.distanceMiles > 10 && distanceCalc.distance.distanceMiles <= 25 && (
+                                <span className="text-primary">📅 Next-day delivery likely</span>
+                              )}
+                              {distanceCalc.distance.distanceMiles > 25 && (
+                                <span className="text-warning">📞 Manual review recommended — we'll confirm by text</span>
+                              )}
+                            </p>
                           </div>
                         )}
                       </div>
