@@ -11,11 +11,19 @@ const DETECTION_STATUS_KEY = 'calsan_zip_detection_status';
 export type ZipSource = 'stored' | 'geolocation' | 'ip' | 'manual' | null;
 export type DetectionStatus = 'idle' | 'loading' | 'success' | 'denied' | 'error' | 'skipped';
 
+export interface LocationDetails {
+  cityName: string | null;
+  county: string | null;
+  state: string | null;
+}
+
 export interface AutoDetectZipState {
   zip: string | null;
   source: ZipSource;
   status: DetectionStatus;
   cityName: string | null;
+  county: string | null;
+  state: string | null;
   isLoading: boolean;
   permissionState: PermissionState | null;
   error: string | null;
@@ -29,8 +37,13 @@ interface UseAutoDetectZipReturn extends AutoDetectZipState {
   saveZip: (zip: string) => void;
 }
 
-// Reverse geocode coordinates to get ZIP code
-async function reverseGeocodeToZip(lat: number, lng: number): Promise<{ zip: string | null; cityName: string | null }> {
+// Reverse geocode coordinates to get ZIP code, city, county, state
+async function reverseGeocodeToZip(lat: number, lng: number): Promise<{
+  zip: string | null;
+  cityName: string | null;
+  county: string | null;
+  state: string | null;
+}> {
   try {
     // Use Nominatim for reverse geocoding (free, no API key)
     const response = await fetch(
@@ -43,16 +56,24 @@ async function reverseGeocodeToZip(lat: number, lng: number): Promise<{ zip: str
     const data = await response.json();
     const zip = data.address?.postcode || null;
     const cityName = data.address?.city || data.address?.town || data.address?.village || null;
+    // Nominatim returns county as "county" in address details
+    const county = data.address?.county || null;
+    const state = data.address?.state || null;
     
-    return { zip, cityName };
+    return { zip, cityName, county, state };
   } catch (error) {
     console.error('Reverse geocoding error:', error);
-    return { zip: null, cityName: null };
+    return { zip: null, cityName: null, county: null, state: null };
   }
 }
 
 // IP-based location lookup (no permission needed)
-async function getZipFromIP(): Promise<{ zip: string | null; cityName: string | null }> {
+async function getZipFromIP(): Promise<{
+  zip: string | null;
+  cityName: string | null;
+  county: string | null;
+  state: string | null;
+}> {
   try {
     // Use ipapi.co for IP-based geolocation (free tier: 1000 requests/day)
     const response = await fetch('https://ipapi.co/json/', {
@@ -63,18 +84,20 @@ async function getZipFromIP(): Promise<{ zip: string | null; cityName: string | 
     
     const data = await response.json();
     
-    // Verify it's in the US and in California
+    // Verify it's in the US
     if (data.country_code !== 'US') {
-      return { zip: null, cityName: null };
+      return { zip: null, cityName: null, county: null, state: null };
     }
     
     return {
       zip: data.postal || null,
       cityName: data.city || null,
+      county: data.region ? `${data.region} County` : null, // ipapi returns region name
+      state: data.region_code || null,
     };
   } catch (error) {
     console.error('IP lookup error:', error);
-    return { zip: null, cityName: null };
+    return { zip: null, cityName: null, county: null, state: null };
   }
 }
 
@@ -116,6 +139,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
     source: null,
     status: 'idle',
     cityName: null,
+    county: null,
+    state: null,
     isLoading: false,
     permissionState: null,
     error: null,
@@ -153,7 +178,7 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
     
     try {
       const position = await getGeolocation();
-      const { zip, cityName } = await reverseGeocodeToZip(
+      const { zip, cityName, county, state: stateName } = await reverseGeocodeToZip(
         position.coords.latitude,
         position.coords.longitude
       );
@@ -163,6 +188,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
           ...prev,
           zip,
           cityName,
+          county,
+          state: stateName,
           source: 'geolocation',
           status: 'success',
           isLoading: false,
@@ -177,6 +204,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
             ...prev,
             zip: ipResult.zip,
             cityName: ipResult.cityName,
+            county: ipResult.county,
+            state: ipResult.state,
             source: 'ip',
             status: 'success',
             isLoading: false,
@@ -209,6 +238,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
             ...prev,
             zip: ipResult.zip,
             cityName: ipResult.cityName,
+            county: ipResult.county,
+            state: ipResult.state,
             source: 'ip',
             status: 'success',
           }));
@@ -258,6 +289,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
           ...prev,
           zip: ipResult.zip,
           cityName: ipResult.cityName,
+          county: ipResult.county,
+          state: ipResult.state,
           source: 'ip',
           status: 'success',
           isLoading: false,
@@ -280,6 +313,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
         ...prev,
         zip: ipResult.zip,
         cityName: ipResult.cityName,
+        county: ipResult.county,
+        state: ipResult.state,
         source: 'ip',
         status: 'success',
         isLoading: false,
@@ -301,6 +336,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
       source: zip.length === 5 ? 'manual' : null,
       status: zip.length === 5 ? 'success' : 'idle',
       cityName: null,
+      county: null,
+      state: null,
     }));
   }, []);
 
@@ -320,6 +357,8 @@ export function useAutoDetectZip(): UseAutoDetectZipReturn {
       source: null,
       status: 'skipped',
       cityName: null,
+      county: null,
+      state: null,
       isLoading: false,
       permissionState: null,
       error: null,
