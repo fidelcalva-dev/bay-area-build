@@ -44,8 +44,22 @@ const handler = async (req: Request): Promise<Response> => {
       extras,
     } = data;
 
-    const materialLabel = materialType === 'heavy' ? 'Heavy Materials' : 'General Debris';
+    const materialLabel = materialType === 'heavy' ? 'Heavy Materials (Flat Fee)' : 'General Debris';
     const extrasText = extras.length > 0 ? extras.join(', ') : 'None';
+    
+    // Determine the correct overage message based on material and size
+    const sizeValue = parseInt(sizeLabel) || 20;
+    const isHeavy = materialType === 'heavy';
+    const isSmallGeneral = !isHeavy && sizeValue <= 10;
+    
+    let overageNote = '';
+    if (isHeavy) {
+      overageNote = 'Heavy material dumpsters are FLAT FEE—disposal included with no extra weight charges.';
+    } else if (isSmallGeneral) {
+      overageNote = 'Overage charged at $30 per additional yard.';
+    } else {
+      overageNote = 'Overage charged at $165/ton after disposal scale ticket.';
+    }
 
     // Send Email via Resend REST API
     let emailResult = null;
@@ -103,10 +117,17 @@ const handler = async (req: Request): Promise<Response> => {
                     <span class="label">Delivery ZIP</span>
                     <span class="value">${zipCode}</span>
                   </div>
+                  ${isHeavy ? `
+                  <div class="detail-row">
+                    <span class="label">Pricing</span>
+                    <span class="value" style="color: #16a34a;">Flat Fee – Disposal Included</span>
+                  </div>
+                  ` : `
                   <div class="detail-row">
                     <span class="label">Included Weight</span>
                     <span class="value">${includedTons} ton${includedTons !== 1 ? 's' : ''}</span>
                   </div>
+                  `}
                   <div class="detail-row">
                     <span class="label">Extras</span>
                     <span class="value">${extrasText}</span>
@@ -114,8 +135,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
 
                 <p style="font-size: 14px; color: #6b7280;">
-                  <strong>Note:</strong> Final price based on actual weight at disposal. 
-                  Overage charged at $85/ton. This quote is valid for 7 days.
+                  <strong>Note:</strong> ${overageNote} This quote is valid for 7 days.
                 </p>
 
                 <div style="text-align: center;">
@@ -162,15 +182,23 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
       try {
-        const smsBody = 
-          `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
-          `📦 ${sizeLabel} (${materialLabel})\n` +
-          `📍 ZIP: ${zipCode}\n` +
-          `📅 ${rentalDays}-day rental\n` +
-          `⚖️ ${includedTons}T included\n` +
-          `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
-          `Book now: app.trashlab.com\n` +
-          `Questions? Reply to this text or call (510) 680-2150`;
+        const smsBody = isHeavy
+          ? `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
+            `📦 ${sizeLabel} (${materialLabel})\n` +
+            `📍 ZIP: ${zipCode}\n` +
+            `📅 ${rentalDays}-day rental\n` +
+            `✅ FLAT FEE – Disposal Included\n` +
+            `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
+            `Book now: app.trashlab.com\n` +
+            `Questions? Reply to this text or call (510) 680-2150`
+          : `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
+            `📦 ${sizeLabel} (${materialLabel})\n` +
+            `📍 ZIP: ${zipCode}\n` +
+            `📅 ${rentalDays}-day rental\n` +
+            `⚖️ ${includedTons}T included\n` +
+            `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
+            `Book now: app.trashlab.com\n` +
+            `Questions? Reply to this text or call (510) 680-2150`;
 
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);

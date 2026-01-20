@@ -784,13 +784,13 @@ export function InstantQuoteCalculatorV3() {
                         </div>
                         <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
                         {type.value === 'heavy' && (
-                          <p className="text-xs text-primary mt-1 font-medium">
-                            ⚠️ Heavy loads require inert-only dumpsters (6-10yd). Pure loads only—no mixing!
+                          <p className="text-xs text-success mt-1 font-medium">
+                            ✓ Flat fee pricing—disposal included with no extra weight charges.
                           </p>
                         )}
                         {type.value === 'general' && formData.material === 'general' && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            ℹ️ Included tonnage scales with size. Overweight billed at $85/ton.
+                            ℹ️ Sizes 20-50yd: $165/ton overage. Sizes 6-10yd: $30/yard overage.
                           </p>
                         )}
                       </div>

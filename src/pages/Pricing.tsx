@@ -25,12 +25,12 @@ const pricingTiers = PLAN_A_PRICING
     popular: p.size === 20,
   }));
 
-// Heavy material pricing from v56
+// Heavy material pricing from v56 - FLAT FEE (no weight limit displayed)
 const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   size: p.size,
   startingAt: p.basePrice,
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
-  weightLimit: `${p.includedTons} ton`,
+  weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
 }));
 
@@ -62,12 +62,12 @@ const priceFactors = [
   },
   { 
     icon: Weight, 
-    title: 'Weight (Tonnage)', 
-    description: 'Each size includes a weight allowance. Overages are charged per ton at the landfill.',
-    impact: `$${PRICING_POLICIES.overagePerTonGeneral}/ton over included limit`
+    title: 'Weight & Overage', 
+    description: 'Heavy materials: FLAT FEE (no weight overage). General debris 20-50yd: $165/ton. General debris 6-10yd: $30/yard.',
+    impact: 'Varies by material & size'
   },
   { 
-    icon: Calendar, 
+    icon: Calendar,
     title: 'Rental Duration', 
     description: 'Standard 7-day rental included. Need more time? Add extra days easily.',
     impact: `$${PRICING_POLICIES.extraDayCost}/day after 7 days`
@@ -158,11 +158,11 @@ const overageExplanations = [
     tip: 'Most projects finish within 7 days, but larger renovations often need 10-14 days.'
   },
   {
-    title: 'Overweight Charges',
+    title: 'Overage Charges (General Debris)',
     icon: Scale,
-    rate: `$${PRICING_POLICIES.overagePerTonGeneral}/ton`,
-    description: `Each dumpster size includes a weight allowance. If your load exceeds the limit, you'll be charged $${PRICING_POLICIES.overagePerTonGeneral} for each additional ton. We weigh every load at the landfill.`,
-    tip: 'Heavy materials like concrete and dirt fill up weight limits fast—consider a dedicated "dirt" dumpster.'
+    rate: 'Varies by size',
+    description: `General debris 20-50yd: $${PRICING_POLICIES.overagePerTonGeneral}/ton overage after included weight. General debris 6-10yd: $${PRICING_POLICIES.overagePerYardSmall}/yard overage. Heavy material dumpsters: FLAT FEE—no overage charges.`,
+    tip: 'For heavy materials (concrete, dirt, brick), choose a dedicated heavy material dumpster for flat fee pricing with no weight worries.'
   },
 ];
 
@@ -290,8 +290,8 @@ export default function Pricing() {
                       <div className="text-3xl font-extrabold text-primary">${tier.startingAt}</div>
                     </div>
 
-                    <div className="text-xs text-muted-foreground mb-2">
-                      <span className="font-medium text-foreground">{tier.weightLimit}</span> included
+                    <div className="text-xs text-success font-medium mb-2">
+                      {tier.weightLimit} – Disposal Included
                     </div>
                     
                     <p className="text-xs text-muted-foreground mb-4">{tier.idealFor}</p>
@@ -542,17 +542,17 @@ export default function Pricing() {
       {/* Transparent Disclaimer */}
       <section className="py-8 bg-background">
         <div className="container-wide space-y-4">
-          <div className="flex items-start gap-4 p-6 bg-warning/5 rounded-xl border border-warning/20">
-            <AlertTriangle className="w-6 h-6 text-warning flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-4 p-6 bg-success/5 rounded-xl border border-success/20">
+            <CheckCircle className="w-6 h-6 text-success flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-foreground mb-2">Landfill Fees & Heavy Loads</h4>
+              <h4 className="font-bold text-foreground mb-2">Heavy Material Pricing (Concrete, Dirt, Brick)</h4>
               <p className="text-muted-foreground mb-3">
-                Our pricing includes standard landfill disposal fees for typical household and construction debris. However, exceptionally heavy loads (like concrete-only dumpsters) may incur additional landfill fees that vary by facility.
+                Heavy material dumpsters (6, 8, 10 yard) are priced as a <strong>FLAT FEE</strong>. Disposal is included with no extra weight charges.
               </p>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• <span className="font-medium text-foreground">Heavy material surcharge:</span> $100 flat fee for concrete, dirt, brick, asphalt</li>
-                <li>• <span className="font-medium text-foreground">Weight overages:</span> $75/ton over your included weight limit</li>
-                <li>• <span className="font-medium text-foreground">Mixed loads:</span> If heavy materials exceed 25% of the load, the surcharge applies</li>
+                <li>• <span className="font-medium text-success">Flat fee pricing:</span> No overage charges for heavy materials</li>
+                <li>• <span className="font-medium text-foreground">Pure loads only:</span> Concrete, dirt, brick, asphalt—no mixing with trash</li>
+                <li>• <span className="font-medium text-foreground">Reclassification warning:</span> If trash/debris is mixed in, load may be reclassified and different rates apply</li>
               </ul>
             </div>
           </div>
