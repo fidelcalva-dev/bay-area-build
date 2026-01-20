@@ -17,7 +17,7 @@ import type { QuoteFormData, ExtraSelection } from './types';
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
 // Fallback constants (used when DB is empty)
-import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE } from './constants';
+import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING_ZONES } from './constants';
 
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
@@ -81,7 +81,7 @@ export function InstantQuoteCalculatorV3() {
     address: '',
   });
 
-  // Lookup zone from database
+  // Lookup zone from database with fallback to constants
   const lookupZone = useCallback(async (zip: string) => {
     if (zip.length !== 5) {
       setZoneResult(null);
@@ -90,6 +90,7 @@ export function InstantQuoteCalculatorV3() {
 
     setIsCheckingZip(true);
     try {
+      // First try database lookup
       const { data, error } = await supabase
         .from('zone_zip_codes')
         .select(`
@@ -100,18 +101,46 @@ export function InstantQuoteCalculatorV3() {
         .eq('zip_code', zip)
         .maybeSingle();
 
-      if (error || !data || !(data.zone as any)?.is_active) {
-        setZoneResult(null);
-      } else {
+      if (!error && data && (data.zone as any)?.is_active) {
         setZoneResult({
           zoneId: data.zone_id,
           zoneName: (data.zone as any).name,
           cityName: data.city_name || undefined,
           multiplier: Number((data.zone as any).base_multiplier),
         });
+        return;
       }
+
+      // Fallback to constants if DB has no data
+      for (const zone of PRICING_ZONES) {
+        if (zone.zipCodes.includes(zip)) {
+          setZoneResult({
+            zoneId: zone.id,
+            zoneName: zone.name,
+            cityName: undefined,
+            multiplier: zone.baseMultiplier,
+          });
+          return;
+        }
+      }
+
+      // ZIP not found in either source
+      setZoneResult(null);
     } catch (err) {
       console.error('Zone lookup error:', err);
+      
+      // Fallback to constants on error
+      for (const zone of PRICING_ZONES) {
+        if (zone.zipCodes.includes(zip)) {
+          setZoneResult({
+            zoneId: zone.id,
+            zoneName: zone.name,
+            cityName: undefined,
+            multiplier: zone.baseMultiplier,
+          });
+          return;
+        }
+      }
       setZoneResult(null);
     } finally {
       setIsCheckingZip(false);
