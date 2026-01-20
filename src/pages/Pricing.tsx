@@ -3,22 +3,49 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt } from 'lucide-react';
 import { PAGE_SEO } from '@/lib/seo';
+import { 
+  PLAN_A_PRICING, 
+  HEAVY_MATERIAL_PRICING, 
+  PRICING_POLICIES,
+  OVERAGE_NOTE,
+  INCLUDED_TONS_BY_SIZE 
+} from '@/lib/shared-data';
 
 const TRASHLAB_URL = 'https://app.trashlab.com';
 
-const pricingTiers = [
-  { size: 10, startingAt: 395, priceRange: '$395–$475', weightLimit: '1 ton', idealFor: 'Small cleanouts, bathroom remodels', popular: false },
-  { size: 20, startingAt: 495, priceRange: '$495–$595', weightLimit: '2 tons', idealFor: 'Single room renovation, garage cleanout', popular: true },
-  { size: 30, startingAt: 595, priceRange: '$595–$695', weightLimit: '3 tons', idealFor: 'Whole-house cleanout, medium construction', popular: false },
-  { size: 40, startingAt: 695, priceRange: '$695–$825', weightLimit: '4 tons', idealFor: 'Major renovation, commercial cleanout', popular: false },
-  { size: 50, startingAt: 795, priceRange: '$795–$950', weightLimit: '5 tons', idealFor: 'New construction, large demolition', popular: false },
-];
+// Derived from v56 shared-data.ts (Plan A pricing)
+const pricingTiers = PLAN_A_PRICING
+  .filter(p => p.category === 'general' || p.size >= 20)  // Show 10+ for general
+  .map(p => ({
+    size: p.size,
+    startingAt: p.basePrice,
+    priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
+    weightLimit: `${p.includedTons} ton${p.includedTons > 1 ? 's' : ''}`,
+    idealFor: getIdealFor(p.size, false),
+    popular: p.size === 20,
+  }));
 
-const heavyMaterialTiers = [
-  { size: 6, startingAt: 395, priceRange: '$395–$475', weightLimit: '0.5 ton', idealFor: 'Small concrete or dirt removal' },
-  { size: 8, startingAt: 495, priceRange: '$495–$575', weightLimit: '0.5 ton', idealFor: 'Driveway or patio demolition' },
-  { size: 10, startingAt: 595, priceRange: '$595–$695', weightLimit: '1 ton', idealFor: 'Large concrete or foundation removal' },
-];
+// Heavy material pricing from v56
+const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
+  size: p.size,
+  startingAt: p.basePrice,
+  priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
+  weightLimit: `${p.includedTons} ton`,
+  idealFor: getIdealFor(p.size, true),
+}));
+
+function getIdealFor(size: number, isHeavy: boolean): string {
+  if (isHeavy) {
+    if (size === 6) return 'Small concrete or dirt removal';
+    if (size === 8) return 'Driveway or patio demolition';
+    return 'Large concrete or foundation removal';
+  }
+  if (size === 10) return 'Small cleanouts, bathroom remodels';
+  if (size === 20) return 'Single room renovation, garage cleanout';
+  if (size === 30) return 'Whole-house cleanout, medium construction';
+  if (size === 40) return 'Major renovation, commercial cleanout';
+  return 'New construction, large demolition';
+}
 
 const priceFactors = [
   { 
@@ -31,25 +58,25 @@ const priceFactors = [
     icon: Trash2, 
     title: 'Debris Type', 
     description: 'Standard debris (furniture, wood, drywall) vs. heavy materials (concrete, dirt, brick).',
-    impact: 'Heavy materials use dedicated sizes'
+    impact: 'Heavy materials use dedicated sizes (6-10yd)'
   },
   { 
     icon: Weight, 
     title: 'Weight (Tonnage)', 
     description: 'Each size includes a weight allowance. Overages are charged per ton at the landfill.',
-    impact: '$75/ton over included limit'
+    impact: `$${PRICING_POLICIES.overagePerTonGeneral}/ton over included limit`
   },
   { 
     icon: Calendar, 
     title: 'Rental Duration', 
     description: 'Standard 7-day rental included. Need more time? Add extra days easily.',
-    impact: '$50/day after 7 days'
+    impact: `$${PRICING_POLICIES.extraDayCost}/day after 7 days`
   },
   { 
     icon: Boxes, 
     title: 'Special Items', 
     description: 'Mattresses, tires, appliances with freon require special handling and disposal.',
-    impact: '$25–$75 per special item'
+    impact: `$${PRICING_POLICIES.tireDisposal}–$${PRICING_POLICIES.applianceWithFreon} per special item`
   },
   { 
     icon: Sparkles, 
@@ -62,15 +89,15 @@ const priceFactors = [
 const exampleInvoice = {
   projectDescription: '20 Yard Dumpster • General Debris • Oakland, CA (94612)',
   lineItems: [
-    { label: '20 Yard Dumpster Base Price', amount: 525, type: 'base' as const },
+    { label: '20 Yard Dumpster Base Price', amount: 620, type: 'base' as const },
     { label: '7-Day Rental Period', amount: 0, type: 'included' as const },
     { label: 'Delivery & Pickup', amount: 0, type: 'included' as const },
     { label: '2 Tons Included', amount: 0, type: 'included' as const },
-    { label: '3 Extra Days', amount: 150, type: 'addition' as const },
-    { label: 'Mattress Disposal (x2)', amount: 50, type: 'addition' as const },
+    { label: '3 Extra Days', amount: PRICING_POLICIES.extraDayCost * 3, type: 'addition' as const },
+    { label: 'Mattress Disposal (x2)', amount: PRICING_POLICIES.mattressDisposal, type: 'addition' as const },
   ],
-  subtotal: 725,
-  note: 'Weight overages (if any) billed after pickup at $75/ton'
+  subtotal: 620 + (PRICING_POLICIES.extraDayCost * 3) + PRICING_POLICIES.mattressDisposal,
+  note: `${OVERAGE_NOTE} ($${PRICING_POLICIES.overagePerTonGeneral}/ton)`
 };
 
 const included = [
@@ -84,11 +111,11 @@ const included = [
 
 const notIncluded = [
   { item: 'Hazardous materials', detail: 'Paint, chemicals, batteries, etc.' },
-  { item: 'Appliances with freon', detail: 'AC units, refrigerators need special handling' },
-  { item: 'Tires and mattresses', detail: 'Additional fees apply if included' },
-  { item: 'Heavy materials (concrete, dirt, brick)', detail: '$100 surcharge applies' },
-  { item: 'Extra rental days beyond 7', detail: '$50/day after initial period' },
-  { item: 'Weight overages', detail: '$75/ton over your weight limit' },
+  { item: 'Appliances with freon', detail: `$${PRICING_POLICIES.applianceWithFreon} per unit` },
+  { item: 'Tires and mattresses', detail: `$${PRICING_POLICIES.tireDisposal}–$${PRICING_POLICIES.mattressDisposal} per item` },
+  { item: 'Heavy materials in general dumpster', detail: `$${PRICING_POLICIES.heavyMaterialSurcharge} surcharge applies` },
+  { item: 'Extra rental days beyond 7', detail: `$${PRICING_POLICIES.extraDayCost}/day after initial period` },
+  { item: 'Weight overages', detail: `$${PRICING_POLICIES.overagePerTonGeneral}/ton over your weight limit` },
 ];
 
 const materialTypes = [
@@ -110,7 +137,7 @@ const materialTypes = [
     name: 'Heavy Materials', 
     icon: Scale, 
     items: ['Concrete', 'Asphalt', 'Brick', 'Dirt', 'Rocks', 'Sand'],
-    fee: '+$100 flat surcharge',
+    fee: `+$${PRICING_POLICIES.heavyMaterialSurcharge} flat surcharge`,
     color: 'text-warning'
   },
   { 
@@ -126,15 +153,15 @@ const overageExplanations = [
   {
     title: 'Extra Rental Days',
     icon: Calendar,
-    rate: '$50/day',
-    description: 'Need more time? No problem. After your 7-day rental period, each additional day is just $50. We\'ll send you a reminder before your rental period ends.',
+    rate: `$${PRICING_POLICIES.extraDayCost}/day`,
+    description: `Need more time? No problem. After your 7-day rental period, each additional day is just $${PRICING_POLICIES.extraDayCost}. We'll send you a reminder before your rental period ends.`,
     tip: 'Most projects finish within 7 days, but larger renovations often need 10-14 days.'
   },
   {
     title: 'Overweight Charges',
     icon: Scale,
-    rate: '$75/ton',
-    description: 'Each dumpster size includes a weight allowance. If your load exceeds the limit, you\'ll be charged $75 for each additional ton. We weigh every load at the landfill.',
+    rate: `$${PRICING_POLICIES.overagePerTonGeneral}/ton`,
+    description: `Each dumpster size includes a weight allowance. If your load exceeds the limit, you'll be charged $${PRICING_POLICIES.overagePerTonGeneral} for each additional ton. We weigh every load at the landfill.`,
     tip: 'Heavy materials like concrete and dirt fill up weight limits fast—consider a dedicated "dirt" dumpster.'
   },
 ];
