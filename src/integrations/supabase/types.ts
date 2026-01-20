@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      distance_brackets: {
+        Row: {
+          bracket_name: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          max_miles: number | null
+          min_miles: number
+          price_adjustment: number
+          requires_review: boolean
+        }
+        Insert: {
+          bracket_name: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          max_miles?: number | null
+          min_miles?: number
+          price_adjustment?: number
+          requires_review?: boolean
+        }
+        Update: {
+          bracket_name?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          max_miles?: number | null
+          min_miles?: number
+          price_adjustment?: number
+          requires_review?: boolean
+        }
+        Relationships: []
+      }
       dumpster_sizes: {
         Row: {
           base_price: number
@@ -178,12 +214,16 @@ export type Database = {
           converted_at: string | null
           created_at: string
           customer_email: string | null
+          customer_lat: number | null
+          customer_lng: number | null
           customer_name: string | null
           customer_phone: string | null
           delivery_address: string | null
           delivery_lat: number | null
           delivery_lng: number | null
           discount_percent: number | null
+          distance_bracket: string | null
+          distance_miles: number | null
           estimated_max: number
           estimated_min: number
           extras: string[] | null
@@ -207,6 +247,8 @@ export type Database = {
           user_selected_size_yards: number | null
           user_type: string
           vendor_cost: number | null
+          yard_id: string | null
+          yard_name: string | null
           zip_code: string
           zone_id: string | null
         }
@@ -217,12 +259,16 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
           discount_percent?: number | null
+          distance_bracket?: string | null
+          distance_miles?: number | null
           estimated_max: number
           estimated_min: number
           extras?: string[] | null
@@ -246,6 +292,8 @@ export type Database = {
           user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
+          yard_id?: string | null
+          yard_name?: string | null
           zip_code: string
           zone_id?: string | null
         }
@@ -256,12 +304,16 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
           discount_percent?: number | null
+          distance_bracket?: string | null
+          distance_miles?: number | null
           estimated_max?: number
           estimated_min?: number
           extras?: string[] | null
@@ -285,6 +337,8 @@ export type Database = {
           user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
+          yard_id?: string | null
+          yard_name?: string | null
           zip_code?: string
           zone_id?: string | null
         }
@@ -488,6 +542,48 @@ export type Database = {
           name?: string
           notes?: string | null
           priority_rank?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      yards: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          latitude: number
+          longitude: number
+          market: string
+          name: string
+          priority_rank: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude: number
+          longitude: number
+          market: string
+          name: string
+          priority_rank?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number
+          longitude?: number
+          market?: string
+          name?: string
+          priority_rank?: number
+          slug?: string
           updated_at?: string
         }
         Relationships: []

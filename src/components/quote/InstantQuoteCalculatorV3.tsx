@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
-  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info
+  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,9 @@ import type { QuoteFormData, ExtraSelection } from './types';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
+// Distance-based pricing hook
+import { useDistanceCalculation } from './hooks/useDistanceCalculation';
+
 // Fallback constants (used when DB is empty)
 import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING_ZONES } from './constants';
 
@@ -26,6 +29,10 @@ import { QuoteOrderFlow } from './QuoteOrderFlow';
 import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, WhyThisSize, getSmartRecommendation } from './SmartRecommendation';
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
 import { DeliveryFeasibility } from './DeliveryFeasibility';
+
+// Lazy load the distance map to avoid issues with Leaflet
+const DistanceMap = lazy(() => import('./DistanceMap').then(m => ({ default: m.DistanceMap })));
+const DistanceMapLoading = lazy(() => import('./DistanceMap').then(m => ({ default: m.DistanceMapLoading })));
 
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
@@ -77,6 +84,7 @@ export function InstantQuoteCalculatorV3() {
   const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [quoteSaved, setQuoteSaved] = useState(false);
+  const [showDistanceMap, setShowDistanceMap] = useState(false);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -90,6 +98,9 @@ export function InstantQuoteCalculatorV3() {
     email: '',
     address: '',
   });
+
+  // Distance-based pricing calculation
+  const distanceCalc = useDistanceCalculation(formData.zip);
 
   // Project type for smart recommendations
   const [projectType, setProjectType] = useState<string | null>(null);
@@ -255,6 +266,16 @@ export function InstantQuoteCalculatorV3() {
       });
     }
 
+    // Distance-based adjustment
+    if (distanceCalc.distance && distanceCalc.distance.priceAdjustment > 0) {
+      lineItems.push({
+        label: 'Distance Adjustment',
+        subLabel: `${distanceCalc.distance.distanceMiles.toFixed(1)} mi from ${distanceCalc.distance.yard.name}`,
+        amount: distanceCalc.distance.priceAdjustment,
+        type: 'addition',
+      });
+    }
+
     // Extras
     for (const extraSel of formData.extras) {
       const extra = EXTRAS.find((e) => e.id === extraSel.id);
@@ -289,7 +310,7 @@ export function InstantQuoteCalculatorV3() {
     const estimatedMax = subtotal + Math.round(subtotal * 0.08);
 
     return { lineItems, subtotal, estimatedMin, estimatedMax, includedTons, isValid: true };
-  }, [formData, zoneResult]);
+  }, [formData, zoneResult, distanceCalc.distance]);
 
   // Run vendor selection
   useEffect(() => {
@@ -623,12 +644,41 @@ export function InstantQuoteCalculatorV3() {
               {formData.zip.length === 5 && !isCheckingZip && (
                 <>
                   {zoneResult ? (
-                    <DeliveryFeasibility 
-                      zoneName={zoneResult.zoneName}
-                      cityName={zoneResult.cityName}
-                      isServiceable={true}
-                      className="mt-3"
-                    />
+                    <>
+                      <DeliveryFeasibility 
+                        zoneName={zoneResult.zoneName}
+                        cityName={zoneResult.cityName}
+                        isServiceable={true}
+                        className="mt-3"
+                      />
+                      
+                      {/* Distance Map */}
+                      {distanceCalc.distance && distanceCalc.geocoding && (
+                        <div className="mt-4">
+                          <Suspense fallback={
+                            <div className="h-48 bg-muted/50 rounded-xl animate-pulse flex items-center justify-center">
+                              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                            </div>
+                          }>
+                            <DistanceMap
+                              customerLat={distanceCalc.geocoding.lat}
+                              customerLng={distanceCalc.geocoding.lng}
+                              yard={distanceCalc.distance.yard}
+                              distanceMiles={distanceCalc.distance.distanceMiles}
+                              distanceMinutes={distanceCalc.distance.distanceMinutes}
+                              requiresReview={distanceCalc.distance.requiresReview}
+                            />
+                          </Suspense>
+                        </div>
+                      )}
+                      
+                      {distanceCalc.isLoading && (
+                        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Calculating distance...
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="mt-3 p-3 rounded-lg flex items-start gap-3 bg-destructive/10 border border-destructive/30">
                       <MapPin className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
