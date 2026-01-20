@@ -23,7 +23,7 @@ import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING
 import { QuoteOrderFlow } from './QuoteOrderFlow';
 
 // Smart Recommendation Features
-import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, getSmartRecommendation } from './SmartRecommendation';
+import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, getSmartRecommendation } from './SmartRecommendation';
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
 import { DeliveryFeasibility } from './DeliveryFeasibility';
 
@@ -781,13 +781,13 @@ export function InstantQuoteCalculatorV3() {
                       
                       {/* Popular Badge (only if not showing recommended) */}
                       {size.popular && !(projectType !== null && size.value === smartRecommendation.recommendedSize) && (
-                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full whitespace-nowrap">
+                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full whitespace-nowrap z-10">
                           POPULAR
                         </span>
                       )}
 
                       {image && (
-                        <div className="aspect-[4/3] bg-muted/50 rounded-lg mb-2 p-2">
+                        <div className="aspect-[4/3] bg-muted/50 rounded-lg mb-2 p-2 mt-2">
                           <img src={image} alt={size.label} className="w-full h-full object-contain" />
                         </div>
                       )}
@@ -805,6 +805,11 @@ export function InstantQuoteCalculatorV3() {
                           </div>
                         )}
                         <div className="mt-2 text-sm font-semibold text-foreground">${price}</div>
+                        
+                        {/* Show reason under recommended card */}
+                        {projectType !== null && size.value === smartRecommendation.recommendedSize && (
+                          <RecommendationReason reason={smartRecommendation.recommendationReason} />
+                        )}
                       </div>
 
                       {formData.size === size.value && (
