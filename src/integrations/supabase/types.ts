@@ -172,11 +172,15 @@ export type Database = {
       }
       quotes: {
         Row: {
+          company_name: string | null
           converted_at: string | null
           created_at: string
           customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
+          delivery_address: string | null
+          delivery_lat: number | null
+          delivery_lng: number | null
           discount_percent: number | null
           estimated_max: number
           estimated_min: number
@@ -185,6 +189,10 @@ export type Database = {
           is_calsan_fulfillment: boolean
           margin: number | null
           material_type: string
+          placement_lat: number | null
+          placement_lng: number | null
+          placement_notes: string | null
+          placement_type: string | null
           rental_days: number
           selected_vendor_id: string | null
           size_id: string | null
@@ -197,11 +205,15 @@ export type Database = {
           zone_id: string | null
         }
         Insert: {
+          company_name?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_lat?: number | null
+          delivery_lng?: number | null
           discount_percent?: number | null
           estimated_max: number
           estimated_min: number
@@ -210,6 +222,10 @@ export type Database = {
           is_calsan_fulfillment?: boolean
           margin?: number | null
           material_type: string
+          placement_lat?: number | null
+          placement_lng?: number | null
+          placement_notes?: string | null
+          placement_type?: string | null
           rental_days?: number
           selected_vendor_id?: string | null
           size_id?: string | null
@@ -222,11 +238,15 @@ export type Database = {
           zone_id?: string | null
         }
         Update: {
+          company_name?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_lat?: number | null
+          delivery_lng?: number | null
           discount_percent?: number | null
           estimated_max?: number
           estimated_min?: number
@@ -235,6 +255,10 @@ export type Database = {
           is_calsan_fulfillment?: boolean
           margin?: number | null
           material_type?: string
+          placement_lat?: number | null
+          placement_lng?: number | null
+          placement_notes?: string | null
+          placement_type?: string | null
           rental_days?: number
           selected_vendor_id?: string | null
           size_id?: string | null
