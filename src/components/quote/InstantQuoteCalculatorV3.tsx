@@ -700,54 +700,58 @@ export function InstantQuoteCalculatorV3() {
                 </div>
               )}
               
-              {/* Use location button (when no ZIP detected and permission not denied) */}
-              {!formData.zip && !autoDetectZip.isLoading && autoDetectZip.permissionState !== 'denied' && autoDetectZip.source !== 'stored' && (
-                <button
-                  type="button"
-                  onClick={() => autoDetectZip.requestGeolocation()}
-                  className="mb-3 w-full p-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-                >
-                  <Navigation className="w-4 h-4" />
-                  Use my location to autofill ZIP
-                </button>
-              )}
-              
-              <div className="relative">
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={5}
-                  placeholder="94607"
-                  value={formData.zip}
-                  onChange={(e) => {
-                    const newZip = e.target.value.replace(/\D/g, '');
-                    setFormData((prev) => ({ ...prev, zip: newZip }));
-                    // Save to storage when manually entering a complete ZIP
-                    if (newZip.length === 5) {
-                      autoDetectZip.saveZip(newZip);
-                    }
-                  }}
-                  className={cn(
-                    "text-xl h-14 text-center font-mono font-bold tracking-[0.3em] border-2",
-                    formData.zip.length === 5 && !isCheckingZip && (
-                      zoneResult ? "border-success bg-success/5 focus:border-success" : "border-destructive bg-destructive/5"
-                    )
+              {/* ZIP input with inline location button */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={5}
+                    placeholder="94607"
+                    value={formData.zip}
+                    onChange={(e) => {
+                      const newZip = e.target.value.replace(/\D/g, '');
+                      setFormData((prev) => ({ ...prev, zip: newZip }));
+                      // Save to storage when manually entering a complete ZIP
+                      if (newZip.length === 5) {
+                        autoDetectZip.saveZip(newZip);
+                      }
+                    }}
+                    className={cn(
+                      "text-xl h-14 text-center font-mono font-bold tracking-[0.3em] border-2",
+                      formData.zip.length === 5 && !isCheckingZip && (
+                        zoneResult ? "border-success bg-success/5 focus:border-success" : "border-destructive bg-destructive/5"
+                      )
+                    )}
+                  />
+                  {isCheckingZip && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    </div>
                   )}
-                />
-                {isCheckingZip && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  </div>
-                )}
-                {formData.zip.length === 5 && !isCheckingZip && zoneResult && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <CheckCircle className="w-5 h-5 text-success" />
-                  </div>
+                  {formData.zip.length === 5 && !isCheckingZip && zoneResult && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <CheckCircle className="w-5 h-5 text-success" />
+                    </div>
+                  )}
+                </div>
+                
+                {/* Use my location button - only shows when no ZIP and not loading */}
+                {!formData.zip && !autoDetectZip.isLoading && autoDetectZip.permissionState !== 'denied' && (
+                  <button
+                    type="button"
+                    onClick={() => autoDetectZip.requestGeolocation()}
+                    className="h-14 px-4 rounded-lg bg-muted/50 border-2 border-border hover:border-primary/30 hover:bg-muted transition-colors flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground whitespace-nowrap"
+                    title="Use my location"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    <span className="hidden sm:inline">Use my location</span>
+                  </button>
                 )}
               </div>
               
-              {/* Privacy note */}
+              {/* Privacy note - shown after geolocation is used */}
               {autoDetectZip.source === 'geolocation' && (
                 <p className="mt-2 text-[10px] text-muted-foreground text-center">
                   🔒 Location used only to suggest ZIP for pricing accuracy
