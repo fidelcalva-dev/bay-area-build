@@ -1,13 +1,15 @@
 import { ArrowRight, Phone, MessageCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { BUSINESS_INFO } from '@/lib/seo';
+import { CTA_LINKS } from '@/lib/shared-data';
 
-// Canonical CTA configuration
+// Canonical CTA configuration - derived from shared data
 export const CTA_CONFIG = {
-  phone: '+15106802150',
-  phoneFormatted: '(510) 680-2150',
-  quoteUrl: 'https://app.trashlab.com',
-  smsNumber: '+15106802150',
+  phone: BUSINESS_INFO.phone.sales,
+  phoneFormatted: BUSINESS_INFO.phone.salesFormatted,
+  quoteUrl: CTA_LINKS.trashlab,
+  smsNumber: BUSINESS_INFO.phone.sales,
 } as const;
 
 interface CTAButtonsProps {

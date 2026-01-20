@@ -8,10 +8,9 @@ import {
   HEAVY_MATERIAL_PRICING, 
   PRICING_POLICIES,
   OVERAGE_NOTE,
-  INCLUDED_TONS_BY_SIZE 
+  INCLUDED_TONS_BY_SIZE,
+  CTA_LINKS
 } from '@/lib/shared-data';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
 
 // Derived from v56 shared-data.ts (Plan A pricing)
 const pricingTiers = PLAN_A_PRICING
@@ -258,7 +257,7 @@ export default function Pricing() {
                     <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{tier.idealFor}</p>
 
                     <Button asChild variant="cta" size="sm" className="w-full">
-                      <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                      <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                         Get Quote
                       </a>
                     </Button>
@@ -297,7 +296,7 @@ export default function Pricing() {
                     <p className="text-xs text-muted-foreground mb-4">{tier.idealFor}</p>
 
                     <Button asChild variant="outline" size="sm" className="w-full border-warning/50 hover:bg-warning/10">
-                      <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                      <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                         Get Quote
                       </a>
                     </Button>

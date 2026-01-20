@@ -1,7 +1,7 @@
 import { Phone, MessageCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
+import { BUSINESS_INFO } from '@/lib/seo';
+import { CTA_LINKS } from '@/lib/shared-data';
 
 export function MobileBottomBar() {
   return (
@@ -12,7 +12,7 @@ export function MobileBottomBar() {
       <div className="relative bg-card border-t border-border shadow-2xl">
         <div className="grid grid-cols-3 divide-x divide-border">
           {/* Quote - Primary CTA */}
-          <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer" className="block">
+          <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer" className="block">
             <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[56px]">
               <FileText className="w-5 h-5" />
               <span className="text-xs font-bold">Quote</span>
@@ -20,7 +20,7 @@ export function MobileBottomBar() {
           </a>
           
           {/* Text */}
-          <a href="sms:+15106802150" className="block">
+          <a href={`sms:${BUSINESS_INFO.phone.sales}`} className="block">
             <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
               <MessageCircle className="w-5 h-5" />
               <span className="text-xs font-semibold">Text</span>
@@ -28,7 +28,7 @@ export function MobileBottomBar() {
           </a>
           
           {/* Call */}
-          <a href="tel:+15106802150" className="block">
+          <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="block">
             <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
               <Phone className="w-5 h-5" />
               <span className="text-xs font-semibold">Call</span>
