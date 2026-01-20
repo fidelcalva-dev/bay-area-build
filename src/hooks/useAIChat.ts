@@ -34,27 +34,32 @@ export interface CapturedLead {
   email?: string;
 }
 
-interface UseAIChatOptions {
+export interface UseAIChatOptions {
   initialContext?: ChatContext;
 }
 
-export function useAIChat(options: UseAIChatOptions = {}) {
+export function useAIChat(options?: UseAIChatOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [context, setContext] = useState<ChatContext>(options.initialContext || {});
+  const [context, setContext] = useState<ChatContext>(() => options?.initialContext || {});
   const [capturedLead, setCapturedLead] = useState<CapturedLead>({});
   const [isLeadCaptured, setIsLeadCaptured] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  
+  // Track initial context reference for updates
+  const initialContextRef = useRef(options?.initialContext);
 
-  // Update context when external context changes
+  // Update context when external context changes (compare by value, not reference)
   useEffect(() => {
-    if (options.initialContext) {
+    const newContext = options?.initialContext;
+    if (newContext && JSON.stringify(newContext) !== JSON.stringify(initialContextRef.current)) {
+      initialContextRef.current = newContext;
       setContext(prev => ({
         ...prev,
-        ...options.initialContext,
+        ...newContext,
       }));
     }
-  }, [options.initialContext]);
+  }, [options?.initialContext]);
 
   // Parse quick replies from message content
   const parseQuickReplies = (content: string): { cleanContent: string; quickReplies: string[] } => {
@@ -320,7 +325,7 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   // Reset chat
   const resetChat = useCallback(() => {
     setMessages([]);
-    setContext(options.initialContext || {});
+    setContext(options?.initialContext || {});
     setCapturedLead({});
     setIsLeadCaptured(false);
   }, [options.initialContext]);
