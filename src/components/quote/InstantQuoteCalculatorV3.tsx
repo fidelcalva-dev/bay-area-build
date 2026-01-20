@@ -19,6 +19,9 @@ import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } fro
 // Fallback constants (used when DB is empty)
 import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING_ZONES } from './constants';
 
+// Quote Order Flow (Lead Capture → Address → Map Pin → Continue)
+import { QuoteOrderFlow } from './QuoteOrderFlow';
+
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
 import dumpster8yard from '@/assets/dumpsters/dumpster-8yard.png';
@@ -37,14 +40,14 @@ const DUMPSTER_IMAGES: Record<number, string> = {
   50: dumpster40yard, // Use 40yd image for 50yd as placeholder
 };
 
-type Step = 'zip' | 'material' | 'size' | 'options' | 'contact' | 'success';
+type Step = 'zip' | 'material' | 'size' | 'options' | 'order' | 'success';
 
 const STEPS: { key: Step; label: string; icon: React.ReactNode }[] = [
   { key: 'zip', label: 'Location', icon: <MapPin className="w-4 h-4" /> },
   { key: 'material', label: 'Material', icon: <Package className="w-4 h-4" /> },
   { key: 'size', label: 'Size', icon: <Weight className="w-4 h-4" /> },
   { key: 'options', label: 'Options', icon: <Calendar className="w-4 h-4" /> },
-  { key: 'contact', label: 'Contact', icon: <User className="w-4 h-4" /> },
+  { key: 'order', label: 'Order', icon: <CheckCircle className="w-4 h-4" /> },
 ];
 
 interface ZoneResult {
@@ -302,18 +305,18 @@ export function InstantQuoteCalculatorV3() {
       case 'material': return true;
       case 'size': return true;
       case 'options': return true;
-      case 'contact': return formData.name && formData.phone && formData.email;
+      case 'order': return true;
       default: return false;
     }
-  }, [step, zoneResult, formData]);
+  }, [step, zoneResult]);
 
   const goNext = () => {
     const nextSteps: Record<Step, Step> = {
       zip: 'material',
       material: 'size',
       size: 'options',
-      options: 'contact',
-      contact: 'success',
+      options: 'order',
+      order: 'success',
       success: 'success',
     };
     setStep(nextSteps[step]);
@@ -325,8 +328,8 @@ export function InstantQuoteCalculatorV3() {
       material: 'zip',
       size: 'material',
       options: 'size',
-      contact: 'options',
-      success: 'contact',
+      order: 'options',
+      success: 'order',
     };
     setStep(prevSteps[step]);
   };
@@ -1066,151 +1069,27 @@ export function InstantQuoteCalculatorV3() {
           </div>
         )}
 
-        {/* Step 5: Contact */}
-        {step === 'contact' && (
-          <div className="space-y-5">
-            <button
-              type="button"
-              onClick={goBack}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-
-            {/* Quote Summary Card */}
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3 text-success" />
-                    Your Quote
-                  </div>
-                  <div className="text-2xl font-bold text-foreground">
-                    ${quote.estimatedMin}
-                    <span className="text-base font-medium text-muted-foreground">–${quote.estimatedMax}</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-semibold text-foreground">
-                    {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {RENTAL_PERIODS.find((r) => r.value === formData.rentalDays)?.label} rental
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground">Contact Information</h4>
-              
-              <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Full Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  className="pl-11 h-12 text-base"
-                />
-              </div>
-
-              <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="tel"
-                  placeholder="Phone Number"
-                  value={formData.phone}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                  className="pl-11 h-12 text-base"
-                />
-              </div>
-
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  className="pl-11 h-12 text-base"
-                />
-              </div>
-
-              <div className="relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Delivery Address (optional)"
-                  value={formData.address || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
-                  className="pl-11 h-12 text-base"
-                />
-              </div>
-            </div>
-
-            {/* CTAs */}
-            <div className="space-y-3 pt-2">
-              <Button
-                type="button"
-                variant="cta"
-                size="lg"
-                className="w-full h-14 text-base gap-2"
-                onClick={() => handleSaveQuote(true)}
-                disabled={isSubmitting || !canGoNext}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    Book Now
-                  </>
-                )}
-              </Button>
-
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-1.5 h-11"
-                  onClick={() => handleSaveQuote(false)}
-                  disabled={!canGoNext || isSubmitting}
-                >
-                  <Bookmark className="w-4 h-4" />
-                  <span className="hidden sm:inline">Save</span>
-                </Button>
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-1.5 h-11"
-                  onClick={handleTextQuote}
-                  disabled={!formData.name}
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span className="hidden sm:inline">Text</span>
-                </Button>
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-1.5 h-11"
-                  asChild
-                >
-                  <a href="tel:+15106802150">
-                    <Phone className="w-4 h-4" />
-                    <span className="hidden sm:inline">Call</span>
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
+        {/* Step 5: Order Flow (Lead Capture → Address → Map Pin → Continue) */}
+        {step === 'order' && (
+          <QuoteOrderFlow
+            quoteSummary={{
+              sizeLabel: DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label || `${formData.size} Yard`,
+              materialType: formData.material,
+              rentalDays: formData.rentalDays,
+              zipCode: formData.zip,
+              estimatedMin: quote.estimatedMin,
+              estimatedMax: quote.estimatedMax,
+              includedTons: quote.includedTons,
+              subtotal: quote.subtotal,
+            }}
+            initialContact={{
+              name: formData.name,
+              phone: formData.phone,
+              email: formData.email,
+            }}
+            onComplete={() => setStep('success')}
+            onBack={goBack}
+          />
         )}
 
         {/* Success */}
