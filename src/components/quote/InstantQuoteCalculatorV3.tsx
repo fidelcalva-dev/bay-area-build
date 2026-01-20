@@ -45,13 +45,14 @@ const DUMPSTER_IMAGES: Record<number, string> = {
   50: dumpster40yard, // Use 40yd image for 50yd as placeholder
 };
 
-type Step = 'zip' | 'material' | 'size' | 'options' | 'order' | 'success';
+type Step = 'zip' | 'material' | 'size' | 'options' | 'save' | 'order' | 'success';
 
 const STEPS: { key: Step; label: string; icon: React.ReactNode }[] = [
   { key: 'zip', label: 'Location', icon: <MapPin className="w-4 h-4" /> },
   { key: 'material', label: 'Material', icon: <Package className="w-4 h-4" /> },
   { key: 'size', label: 'Size', icon: <Weight className="w-4 h-4" /> },
   { key: 'options', label: 'Options', icon: <Calendar className="w-4 h-4" /> },
+  { key: 'save', label: 'Save', icon: <Bookmark className="w-4 h-4" /> },
   { key: 'order', label: 'Order', icon: <CheckCircle className="w-4 h-4" /> },
 ];
 
@@ -75,6 +76,7 @@ export function InstantQuoteCalculatorV3() {
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
+  const [quoteSaved, setQuoteSaved] = useState(false);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -318,6 +320,7 @@ export function InstantQuoteCalculatorV3() {
       case 'material': return true;
       case 'size': return true;
       case 'options': return true;
+      case 'save': return true;
       case 'order': return true;
       default: return false;
     }
@@ -328,7 +331,8 @@ export function InstantQuoteCalculatorV3() {
       zip: 'material',
       material: 'size',
       size: 'options',
-      options: 'order',
+      options: 'save',
+      save: 'order',
       order: 'success',
       success: 'success',
     };
@@ -341,18 +345,19 @@ export function InstantQuoteCalculatorV3() {
       material: 'zip',
       size: 'material',
       options: 'size',
-      order: 'options',
+      save: 'options',
+      order: 'save',
       success: 'order',
     };
     setStep(prevSteps[step]);
   };
 
-  // Handle save quote
-  const handleSaveQuote = async (bookNow = false) => {
-    if (!formData.name || !formData.phone || !formData.email) {
+  // Handle save quote (for lead capture)
+  const handleSaveQuote = async () => {
+    if (!formData.name || !formData.phone) {
       toast({
         title: 'Missing Information',
-        description: 'Please fill in all contact fields',
+        description: 'Please enter your name and phone number',
         variant: 'destructive',
       });
       return;
@@ -363,11 +368,17 @@ export function InstantQuoteCalculatorV3() {
     try {
       const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
       const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
+      const extrasLabels = formData.extras
+        .map((e) => {
+          const extra = EXTRAS.find((ex) => ex.id === e.id);
+          return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
+        })
+        .filter(Boolean) as string[];
       
       // Save to database
       const result = await saveQuote({
         customerName: formData.name,
-        customerEmail: formData.email,
+        customerEmail: formData.email || undefined,
         customerPhone: formData.phone,
         userType: formData.userType,
         zipCode: formData.zip,
@@ -395,19 +406,12 @@ export function InstantQuoteCalculatorV3() {
       });
 
       if (result.success) {
-        // Send quote summary via SMS/email (fire and forget)
+        // Send SMS/email notification (fire and forget)
         try {
-          const extrasLabels = formData.extras
-            .map((e) => {
-              const extra = EXTRAS.find((ex) => ex.id === e.id);
-              return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
-            })
-            .filter(Boolean) as string[];
-
           await supabase.functions.invoke('send-quote-summary', {
             body: {
               customerName: formData.name,
-              customerEmail: formData.email,
+              customerEmail: formData.email || '',
               customerPhone: formData.phone,
               sizeLabel: sizeData?.label || `${formData.size} Yard`,
               materialType: formData.material,
@@ -421,15 +425,38 @@ export function InstantQuoteCalculatorV3() {
           });
         } catch (notifyError) {
           console.error('Failed to send notifications:', notifyError);
-          // Don't fail the whole flow if notifications fail
         }
 
-        setStep('success');
+        // Send to HighLevel webhook (fire and forget)
+        try {
+          await supabase.functions.invoke('highlevel-webhook', {
+            body: {
+              name: formData.name,
+              phone: formData.phone,
+              email: formData.email || undefined,
+              quoteId: result.quoteId || 'unknown',
+              zipCode: formData.zip,
+              zoneName: zoneResult?.zoneName,
+              wasteType: formData.material,
+              recommendedSizeYards: smartRecommendation.recommendedSize,
+              userSelectedSizeYards: formData.size,
+              includedTons: quote.includedTons,
+              estimatedMin: quote.estimatedMin,
+              estimatedMax: quote.estimatedMax,
+              selectedExtras: extrasLabels,
+              projectType: projectType || undefined,
+              confidenceLevel: smartRecommendation.confidence,
+              tags: ['Quote Saved', 'Resume Later', formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris'],
+            },
+          });
+        } catch (hlError) {
+          console.error('Failed to send to HighLevel:', hlError);
+        }
+
+        setQuoteSaved(true);
         toast({
-          title: bookNow ? 'Booking Submitted! 🎉' : 'Quote Saved! 📧',
-          description: bookNow 
-            ? "We'll contact you within 15 minutes" 
-            : "Check your email & phone for the quote details",
+          title: 'Quote Saved! ✅',
+          description: "We've texted you the quote details",
         });
       } else {
         throw new Error(result.error);
@@ -1097,7 +1124,7 @@ export function InstantQuoteCalculatorV3() {
 
             {/* Two CTAs */}
             <div className="space-y-3">
-              {/* Primary: Save My Quote */}
+              {/* Primary: Continue to Save */}
               <Button
                 type="button"
                 variant="cta"
@@ -1106,7 +1133,7 @@ export function InstantQuoteCalculatorV3() {
                 onClick={goNext}
               >
                 <Bookmark className="w-5 h-5" />
-                Save My Quote
+                Save & Text Me This Quote
               </Button>
 
               {/* Secondary: Confirm by Text */}
@@ -1130,13 +1157,182 @@ export function InstantQuoteCalculatorV3() {
                 }}
               >
                 <MessageCircle className="w-5 h-5" />
-                Confirm by Text
+                Quick Text Instead
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 5: Order Flow (Lead Capture → Address → Map Pin → Continue) */}
+        {/* Step 5: Save & Resume (Lead Capture) */}
+        {step === 'save' && (
+          <div className="space-y-5">
+            <button
+              type="button"
+              onClick={goBack}
+              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </button>
+
+            {!quoteSaved ? (
+              <>
+                {/* Header */}
+                <div className="text-center">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <MessageCircle className="w-7 h-7 text-primary" />
+                  </div>
+                  <h4 className="text-lg font-bold text-foreground">Save & Text Me This Quote</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    We'll text you the quote details so you can resume anytime
+                  </p>
+                </div>
+
+                {/* Mini Quote Summary */}
+                <div className="bg-muted/50 rounded-xl p-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-semibold text-foreground">
+                        {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}
+                        {' '}({formData.material === 'heavy' ? 'Heavy' : 'General'})
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formData.rentalDays} days • {quote.includedTons}T included
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-bold text-foreground">
+                        ${quote.estimatedMin}–${quote.estimatedMax}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lead Capture Form */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      <User className="w-4 h-4 inline mr-1.5" />
+                      Your Name *
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="John Smith"
+                      value={formData.name}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      <Phone className="w-4 h-4 inline mr-1.5" />
+                      Phone Number *
+                    </label>
+                    <Input
+                      type="tel"
+                      placeholder="(510) 555-1234"
+                      value={formData.phone}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      <Mail className="w-4 h-4 inline mr-1.5" />
+                      Email <span className="text-muted-foreground font-normal">(optional)</span>
+                    </label>
+                    <Input
+                      type="email"
+                      placeholder="you@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                      className="h-12"
+                    />
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <Button
+                  type="button"
+                  variant="cta"
+                  size="lg"
+                  className="w-full h-14 text-base"
+                  onClick={handleSaveQuote}
+                  disabled={isSubmitting || !formData.name || !formData.phone}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      Save & Text Me
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  By saving, you agree to receive SMS messages about your quote. 
+                  Msg & data rates may apply.
+                </p>
+              </>
+            ) : (
+              /* Quote Saved State */
+              <div className="text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-success" />
+                </div>
+                
+                <h4 className="text-xl font-bold text-foreground mb-2">Quote Saved! ✅</h4>
+                <p className="text-muted-foreground mb-6">
+                  Check your phone — we've texted you the details.
+                </p>
+
+                {/* Mini Quote Summary */}
+                <div className="bg-muted/50 rounded-xl p-4 text-left mb-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-semibold text-foreground">
+                        {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}
+                        {' '}({formData.material === 'heavy' ? 'Heavy' : 'General'})
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formData.rentalDays} days • {quote.includedTons}T included • ZIP {formData.zip}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-foreground">
+                        ${quote.estimatedMin}–${quote.estimatedMax}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Continue Order CTA */}
+                <Button
+                  type="button"
+                  variant="cta"
+                  size="lg"
+                  className="w-full h-14 text-base"
+                  onClick={goNext}
+                >
+                  Continue Order
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+
+                <p className="text-sm text-muted-foreground mt-4">
+                  Not ready yet? No problem — click the link in your text anytime to continue.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 6: Order Flow (Address → Map Pin → Continue) */}
         {step === 'order' && (
           <QuoteOrderFlow
             quoteSummary={{
@@ -1206,6 +1402,8 @@ export function InstantQuoteCalculatorV3() {
                     address: '',
                   });
                   setZoneResult(null);
+                  setQuoteSaved(false);
+                  setProjectType(null);
                 }}
               >
                 Get Another Quote
