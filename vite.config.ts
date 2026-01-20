@@ -13,10 +13,19 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force single React instance for react-leaflet
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "react-leaflet", "leaflet"],
   },
   optimizeDeps: {
     include: ["react", "react-dom", "leaflet", "react-leaflet"],
+    exclude: [],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/leaflet/, /react-leaflet/, /node_modules/],
+    },
   },
 }));
