@@ -54,13 +54,13 @@ const DUMPSTER_IMAGES: Record<number, string> = {
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'save' | 'order' | 'success';
 
-const STEPS: { key: Step; label: string; icon: React.ReactNode }[] = [
-  { key: 'zip', label: 'Location', icon: <MapPin className="w-4 h-4" /> },
-  { key: 'material', label: 'Material', icon: <Package className="w-4 h-4" /> },
-  { key: 'size', label: 'Size', icon: <Weight className="w-4 h-4" /> },
-  { key: 'options', label: 'Options', icon: <Calendar className="w-4 h-4" /> },
-  { key: 'save', label: 'Save', icon: <Bookmark className="w-4 h-4" /> },
-  { key: 'order', label: 'Order', icon: <CheckCircle className="w-4 h-4" /> },
+const STEPS: { key: Step; label: string; shortLabel: string; icon: React.ReactNode }[] = [
+  { key: 'zip', label: 'Location', shortLabel: '01', icon: <MapPin className="w-3.5 h-3.5" /> },
+  { key: 'material', label: 'Material', shortLabel: '02', icon: <Package className="w-3.5 h-3.5" /> },
+  { key: 'size', label: 'Size', shortLabel: '03', icon: <Weight className="w-3.5 h-3.5" /> },
+  { key: 'options', label: 'Options', shortLabel: '04', icon: <Calendar className="w-3.5 h-3.5" /> },
+  { key: 'save', label: 'Save', shortLabel: '05', icon: <Bookmark className="w-3.5 h-3.5" /> },
+  { key: 'order', label: 'Order', shortLabel: '06', icon: <CheckCircle className="w-3.5 h-3.5" /> },
 ];
 
 interface ZoneResult {
@@ -542,46 +542,59 @@ export function InstantQuoteCalculatorV3() {
   }, [formData.material]);
 
   return (
-    <div className="bg-card rounded-2xl shadow-card overflow-hidden border border-border" id="quote-calculator">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary via-primary to-primary/80 px-5 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <Zap className="w-6 h-6 text-primary-foreground" />
+    <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border" id="quote-calculator">
+      {/* Header - Modern System Style */}
+      <div className="bg-foreground px-5 py-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+              <Zap className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-background">Quick Quote</h3>
+              <p className="text-xs text-background/60">~60 seconds</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-bold text-lg text-primary-foreground">Instant Quote Calculator</h3>
-            <p className="text-sm text-primary-foreground/80">All-inclusive pricing • Book in 60 seconds</p>
+          {/* Live status indicator */}
+          <div className="flex items-center gap-2 px-2.5 py-1 bg-success/20 rounded-full">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+            </span>
+            <span className="text-xs font-medium text-success">Live pricing</span>
           </div>
         </div>
 
-        {/* Progress Steps */}
+        {/* Progress Steps - Modern numbered style */}
         {step !== 'success' && (
-          <div className="flex items-center gap-1 mt-4 overflow-x-auto pb-1">
+          <div className="flex items-center mt-4">
             {STEPS.map((s, i) => (
-              <div key={s.key} className="flex items-center">
+              <div key={s.key} className="flex items-center flex-1 last:flex-none">
                 <button
                   type="button"
                   onClick={() => i < stepIndex && setStep(s.key)}
                   disabled={i > stepIndex}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                    "relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all",
                     step === s.key
-                      ? "bg-white text-primary"
+                      ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-foreground"
                       : i < stepIndex
-                      ? "bg-white/20 text-white hover:bg-white/30 cursor-pointer"
-                      : "bg-white/10 text-white/50 cursor-not-allowed"
+                      ? "bg-success text-success-foreground cursor-pointer"
+                      : "bg-background/10 text-background/40 cursor-not-allowed"
                   )}
+                  title={s.label}
                 >
                   {i < stepIndex ? (
-                    <CheckCircle className="w-3.5 h-3.5" />
+                    <CheckCircle className="w-4 h-4" />
                   ) : (
-                    s.icon
+                    s.shortLabel
                   )}
-                  <span className="hidden sm:inline">{s.label}</span>
                 </button>
                 {i < STEPS.length - 1 && (
-                  <ChevronRight className="w-4 h-4 text-white/40 mx-1 shrink-0" />
+                  <div className={cn(
+                    "flex-1 h-0.5 mx-1",
+                    i < stepIndex ? "bg-success" : "bg-background/10"
+                  )} />
                 )}
               </div>
             ))}
@@ -594,9 +607,11 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 1: ZIP */}
         {step === 'zip' && (
           <div className="space-y-5">
-            {/* User Type Pills */}
+            {/* User Type Selection - Compact chips */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Who are you?</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-foreground">I am a...</label>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {USER_TYPES.map((type) => (
                   <button
@@ -604,17 +619,17 @@ export function InstantQuoteCalculatorV3() {
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, userType: type.value }))}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all",
+                      "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all",
                       formData.userType === type.value
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-input bg-background text-muted-foreground hover:border-primary/50"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                     )}
                   >
-                    <span>{type.icon}</span>
+                    <span className="text-base">{type.icon}</span>
                     <span>{type.label}</span>
-                    {type.discount > 0 && (
-                      <span className="px-1.5 py-0.5 bg-accent text-accent-foreground text-xs rounded-full font-bold">
-                        {type.discount * 100}% OFF
+                    {type.discount > 0 && formData.userType === type.value && (
+                      <span className="px-1.5 py-0.5 bg-success text-success-foreground text-[10px] rounded font-bold">
+                        -{type.discount * 100}%
                       </span>
                     )}
                   </button>
@@ -622,11 +637,11 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* ZIP Input */}
+            {/* ZIP Input - Clean system style */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                <MapPin className="w-4 h-4 inline mr-1.5" />
-                Delivery ZIP Code
+              <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-primary" />
+                Delivery ZIP
               </label>
               <div className="relative">
                 <Input
@@ -634,41 +649,61 @@ export function InstantQuoteCalculatorV3() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={5}
-                  placeholder="Enter 5-digit ZIP"
+                  placeholder="94607"
                   value={formData.zip}
                   onChange={(e) => setFormData((prev) => ({ ...prev, zip: e.target.value.replace(/\D/g, '') }))}
                   className={cn(
-                    "text-lg h-14 text-center font-semibold tracking-widest",
+                    "text-xl h-14 text-center font-mono font-bold tracking-[0.3em] border-2",
                     formData.zip.length === 5 && !isCheckingZip && (
-                      zoneResult ? "border-success bg-success/5" : "border-destructive bg-destructive/5"
+                      zoneResult ? "border-success bg-success/5 focus:border-success" : "border-destructive bg-destructive/5"
                     )
                   )}
                 />
                 {isCheckingZip && (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  </div>
+                )}
+                {formData.zip.length === 5 && !isCheckingZip && zoneResult && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <CheckCircle className="w-5 h-5 text-success" />
                   </div>
                 )}
               </div>
 
-              {/* Zone Result */}
+              {/* Zone Result - Status card */}
               {formData.zip.length === 5 && !isCheckingZip && (
                 <>
                   {zoneResult ? (
                     <>
-                      <DeliveryFeasibility 
-                        zoneName={zoneResult.zoneName}
-                        cityName={zoneResult.cityName}
-                        isServiceable={true}
-                        className="mt-3"
-                      />
+                      {/* Service confirmation badge */}
+                      <div className="mt-3 p-3 rounded-lg bg-success/10 border border-success/20 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+                          <Truck className="w-4 h-4 text-success" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground text-sm">
+                            {zoneResult.cityName ? `${zoneResult.cityName}` : zoneResult.zoneName}
+                          </p>
+                          <p className="text-xs text-success font-medium">
+                            ✓ Nearest yard auto-selected
+                          </p>
+                        </div>
+                        {distanceCalc.distance && (
+                          <div className="text-right flex-shrink-0">
+                            <span className="text-sm font-bold text-foreground">
+                              {distanceCalc.distance.distanceMiles.toFixed(0)} mi
+                            </span>
+                          </div>
+                        )}
+                      </div>
                       
                       {/* Distance Map */}
                       {distanceCalc.distance && distanceCalc.geocoding && (
-                        <div className="mt-4">
+                        <div className="mt-3">
                           <Suspense fallback={
-                            <div className="h-48 bg-muted/50 rounded-xl animate-pulse flex items-center justify-center">
-                              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                            <div className="h-40 bg-muted/50 rounded-lg animate-pulse flex items-center justify-center">
+                              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                             </div>
                           }>
                             <DistanceMap
@@ -684,19 +719,21 @@ export function InstantQuoteCalculatorV3() {
                       )}
                       
                       {distanceCalc.isLoading && (
-                        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Calculating distance...
+                          <span>Calculating distance...</span>
                         </div>
                       )}
                     </>
                   ) : (
-                    <div className="mt-3 p-3 rounded-lg flex items-start gap-3 bg-destructive/10 border border-destructive/30">
-                      <MapPin className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-foreground">Outside our service area</p>
-                        <p className="text-sm text-muted-foreground">
-                          Call us at (510) 680-2150 — we may still be able to help!
+                    <div className="mt-3 p-3 rounded-lg flex items-center gap-3 bg-destructive/10 border border-destructive/20">
+                      <div className="w-8 h-8 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-4 h-4 text-destructive" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground text-sm">Outside service area</p>
+                        <p className="text-xs text-muted-foreground">
+                          Call <a href="tel:+15106802150" className="text-primary underline">(510) 680-2150</a>
                         </p>
                       </div>
                     </div>
@@ -705,31 +742,31 @@ export function InstantQuoteCalculatorV3() {
               )}
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-3 pt-2">
+            {/* Feature indicators - Horizontal compact */}
+            <div className="flex flex-wrap gap-2">
               {[
-                { icon: <Shield className="w-4 h-4" />, label: 'Licensed & Insured' },
-                { icon: <Clock className="w-4 h-4" />, label: 'Same-Day Available' },
-                { icon: <Sparkles className="w-4 h-4" />, label: 'No Hidden Fees' },
+                { icon: <Shield className="w-3.5 h-3.5" />, label: 'Licensed & Insured' },
+                { icon: <Clock className="w-3.5 h-3.5" />, label: 'Same-Day' },
+                { icon: <Sparkles className="w-3.5 h-3.5" />, label: 'All-Inclusive' },
               ].map((badge) => (
-                <div key={badge.label} className="flex flex-col items-center gap-1 text-center p-2 bg-muted/50 rounded-lg">
-                  <div className="text-primary">{badge.icon}</div>
-                  <span className="text-xs text-muted-foreground">{badge.label}</span>
+                <div key={badge.label} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/50 rounded-lg border border-border">
+                  <span className="text-primary">{badge.icon}</span>
+                  <span className="text-xs text-muted-foreground font-medium">{badge.label}</span>
                 </div>
               ))}
             </div>
 
-            {/* Next Button */}
+            {/* Next Button - System style */}
             <Button
               type="button"
               variant="cta"
               size="lg"
-              className="w-full h-14 text-base"
+              className="w-full h-12 text-sm font-semibold group"
               onClick={goNext}
               disabled={!canGoNext}
             >
-              Continue
-              <ChevronRight className="w-5 h-5" />
+              Continue to material
+              <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
           </div>
         )}
@@ -737,26 +774,19 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 2: Material Type */}
         {step === 'material' && (
           <div className="space-y-5">
+            {/* Back button - minimal */}
             <button
               type="button"
               onClick={goBack}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
               Back
             </button>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <h4 className="text-lg font-bold text-foreground">What are you throwing away?</h4>
-                <a 
-                  href="/contractor-best-practices#materials" 
-                  className="text-xs text-primary hover:underline"
-                >
-                  Best Practices →
-                </a>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">This determines available dumpster sizes and pricing</p>
+              <h4 className="text-base font-bold text-foreground mb-1">Material type</h4>
+              <p className="text-xs text-muted-foreground mb-4">Determines size options and pricing</p>
 
               <div className="grid gap-3">
                 {MATERIAL_TYPES.map((type) => (
@@ -765,38 +795,46 @@ export function InstantQuoteCalculatorV3() {
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, material: type.value }))}
                     className={cn(
-                      "p-4 rounded-xl border-2 text-left transition-all",
+                      "p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden",
                       formData.material === type.value
                         ? "border-primary bg-primary/5"
-                        : "border-input bg-background hover:border-primary/50"
+                        : "border-border bg-background hover:border-primary/30"
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <span className="text-3xl">{type.icon}</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
+                      <div className="text-2xl">{type.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
                           <h5 className="font-semibold text-foreground">{type.label}</h5>
                           {type.value === 'heavy' && (
-                            <span className="text-xs px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-full font-medium">
-                              +$150
+                            <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded font-medium">
+                              6-10 yd only
                             </span>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
-                        {type.value === 'heavy' && (
-                          <p className="text-xs text-success mt-1 font-medium">
-                            ✓ Flat fee pricing—disposal included with no extra weight charges.
-                          </p>
+                        {type.value === 'heavy' && formData.material === 'heavy' && (
+                          <div className="mt-2 flex items-center gap-1.5 text-xs text-success font-medium">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            Flat fee — disposal included
+                          </div>
                         )}
                         {type.value === 'general' && formData.material === 'general' && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            ℹ️ Sizes 20-50yd: $165/ton overage. Sizes 6-10yd: $30/yard overage.
-                          </p>
+                          <div className="mt-2 text-xs text-muted-foreground">
+                            <span className="font-medium">Overage:</span> $165/ton (20+yd) or $30/yard (6-10yd)
+                          </div>
                         )}
                       </div>
-                      {formData.material === type.value && (
-                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                      )}
+                      <div className={cn(
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
+                        formData.material === type.value
+                          ? "border-primary bg-primary"
+                          : "border-muted-foreground/30"
+                      )}>
+                        {formData.material === type.value && (
+                          <CheckCircle className="w-3.5 h-3.5 text-primary-foreground" />
+                        )}
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -807,11 +845,11 @@ export function InstantQuoteCalculatorV3() {
               type="button"
               variant="cta"
               size="lg"
-              className="w-full h-14 text-base"
+              className="w-full h-12 text-sm font-semibold group"
               onClick={goNext}
             >
-              Continue
-              <ChevronRight className="w-5 h-5" />
+              Continue to size
+              <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
           </div>
         )}
@@ -819,12 +857,13 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 3: Size Selection */}
         {step === 'size' && (
           <div className="space-y-5">
+            {/* Back button - minimal */}
             <button
               type="button"
               onClick={goBack}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
               Back
             </button>
 
@@ -836,32 +875,23 @@ export function InstantQuoteCalculatorV3() {
             />
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <h4 className="text-lg font-bold text-foreground">Choose your dumpster size</h4>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h4 className="text-base font-bold text-foreground mb-1">Select size</h4>
+              <p className="text-xs text-muted-foreground mb-3">
                 {formData.material === 'heavy' 
-                  ? 'Compact sizes for heavy materials (6-10 yard)'
-                  : 'Full range for general debris (6-50 yard)'
+                  ? '6-10 yard for heavy materials'
+                  : '6-50 yard available'
                 }
               </p>
 
-              {/* Confidence Meter - Always visible */}
-              <div className="mb-4 p-3 rounded-lg border bg-muted/30">
-                <div className="flex items-start gap-3">
+              {/* Confidence Meter - Compact */}
+              <div className="mb-4 p-3 rounded-lg border border-border bg-muted/30">
+                <div className="flex items-center gap-3">
                   <ConfidenceBadge 
                     confidence={smartRecommendation.confidence}
                     label={smartRecommendation.confidenceLabel}
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">{smartRecommendation.confidenceNote}</p>
-                  </div>
+                  <p className="text-xs text-foreground flex-1">{smartRecommendation.confidenceNote}</p>
                 </div>
-                {/* Disclaimer */}
-                <p className="mt-2 text-[10px] text-muted-foreground flex items-center gap-1">
-                  <Info className="w-3 h-3 shrink-0" />
-                  Guidance only. Final capacity depends on how material is loaded.
-                </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -969,11 +999,11 @@ export function InstantQuoteCalculatorV3() {
               type="button"
               variant="cta"
               size="lg"
-              className="w-full h-14 text-base"
+              className="w-full h-12 text-sm font-semibold group"
               onClick={goNext}
             >
-              Continue
-              <ChevronRight className="w-5 h-5" />
+              Continue to options
+              <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
           </div>
         )}
@@ -981,19 +1011,20 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 4: Options (Rental + Extras) */}
         {step === 'options' && (
           <div className="space-y-5">
+            {/* Back button - minimal */}
             <button
               type="button"
               onClick={goBack}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
               Back
             </button>
 
-            {/* Rental Duration */}
+            {/* Rental Duration - Compact */}
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Rental Duration</h4>
-              <p className="text-sm text-muted-foreground mb-3">Standard 7-day rental included</p>
+              <h4 className="text-base font-bold text-foreground mb-1">Rental period</h4>
+              <p className="text-xs text-muted-foreground mb-3">7-day standard included</p>
 
               <div className="grid grid-cols-4 gap-2">
                 {RENTAL_PERIODS.map((period) => (
@@ -1002,31 +1033,31 @@ export function InstantQuoteCalculatorV3() {
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, rentalDays: period.value }))}
                     className={cn(
-                      "relative py-3 px-2 rounded-xl border-2 text-center transition-all",
+                      "relative py-2.5 px-2 rounded-lg border text-center transition-all",
                       formData.rentalDays === period.value
-                        ? "border-primary bg-primary/5"
-                        : "border-input bg-background hover:border-primary/50"
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-background hover:border-primary/30"
                     )}
                   >
                     {period.popular && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-accent text-accent-foreground text-[9px] font-bold rounded-full">
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-success text-success-foreground text-[9px] font-bold rounded">
                         STD
                       </span>
                     )}
-                    <div className="text-lg font-bold text-foreground">{period.value}</div>
-                    <div className="text-xs text-muted-foreground">days</div>
+                    <div className="text-base font-bold text-foreground">{period.value}</div>
+                    <div className="text-[10px] text-muted-foreground">days</div>
                     {period.extraCost > 0 && (
-                      <div className="text-xs text-primary mt-1">+${period.extraCost}</div>
+                      <div className="text-[10px] text-primary mt-0.5 font-medium">+${period.extraCost}</div>
                     )}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Extras */}
+            {/* Extras - Cleaner cards */}
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Add Extras</h4>
-              <p className="text-sm text-muted-foreground mb-3">Optional services and fees</p>
+              <h4 className="text-base font-bold text-foreground mb-1">Add-ons</h4>
+              <p className="text-xs text-muted-foreground mb-3">Optional services</p>
 
               <div className="space-y-2">
                 {EXTRAS.map((extra) => {
@@ -1090,12 +1121,14 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* Invoice-Style Price Breakdown */}
+            {/* Quote Breakdown - Cleaner invoice style */}
             <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="bg-muted/50 px-4 py-2.5 border-b border-border">
-                <h5 className="font-bold text-foreground text-sm flex items-center gap-2">
-                  📋 Quote Breakdown
-                </h5>
+              <div className="bg-foreground px-4 py-2.5 flex items-center justify-between">
+                <h5 className="font-bold text-background text-sm">Quote summary</h5>
+                <div className="flex items-center gap-1.5 text-xs text-background/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  Live estimate
+                </div>
               </div>
               
               <div className="p-4 space-y-3">
@@ -1111,11 +1144,11 @@ export function InstantQuoteCalculatorV3() {
                           {item.label}
                         </span>
                         {item.subLabel && (
-                          <div className="text-xs text-muted-foreground">{item.subLabel}</div>
+                          <div className="text-[11px] text-muted-foreground">{item.subLabel}</div>
                         )}
                       </div>
                       <span className={cn(
-                        "font-semibold shrink-0 tabular-nums",
+                        "font-semibold shrink-0 tabular-nums text-sm",
                         item.type === 'discount' ? 'text-success' : 'text-foreground'
                       )}>
                         {item.type === 'discount' ? '−' : ''}${Math.abs(item.amount).toLocaleString()}
@@ -1130,44 +1163,31 @@ export function InstantQuoteCalculatorV3() {
                 {/* Estimated Total */}
                 <div className="flex justify-between items-center">
                   <div>
-                    <span className="font-bold text-foreground">Estimated Total</span>
-                    <div className="text-xs text-muted-foreground">7-day rental included</div>
+                    <span className="font-bold text-foreground text-sm">Estimated Total</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-foreground tabular-nums">
+                    <span className="text-xl font-bold text-foreground tabular-nums">
                       ${quote.estimatedMin.toLocaleString()}
                     </span>
-                    <span className="text-sm font-medium text-muted-foreground">
+                    <span className="text-sm text-muted-foreground">
                       –${quote.estimatedMax.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                {/* Included Tonnage */}
-                <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 text-sm">
-                  <span className="text-muted-foreground">Included Weight</span>
-                  <span className="font-semibold text-primary">{quote.includedTons} ton{quote.includedTons !== 1 ? 's' : ''}</span>
+                {/* Included info row */}
+                <div className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2 text-xs">
+                  <span className="text-muted-foreground">{formData.rentalDays}-day rental • {quote.includedTons}T included</span>
+                  <CheckCircle className="w-3.5 h-3.5 text-success" />
                 </div>
-                
-                {/* Overage Note */}
-                <p className="text-xs text-muted-foreground text-center italic">
-                  {OVERAGE_NOTE}
-                </p>
               </div>
 
-              {/* Avoid Fees Checklist */}
-              <div className="bg-success/5 px-4 py-3 border-t border-success/20">
-                <p className="text-xs font-medium text-foreground mb-2">✅ Avoid Fees Checklist:</p>
-                <div className="grid grid-cols-3 gap-2 text-[10px] text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <span className="text-success">✓</span> Keep below rim
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-success">✓</span> Don't mix types
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-success">✓</span> Keep access clear
-                  </div>
+              {/* Tips footer */}
+              <div className="bg-success/5 px-4 py-2.5 border-t border-success/20">
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>✓ Below rim</span>
+                  <span>✓ No mixing</span>
+                  <span>✓ Clear access</span>
                 </div>
               </div>
             </div>
@@ -1175,35 +1195,25 @@ export function InstantQuoteCalculatorV3() {
             {/* Educational Micro-Copy */}
             <EducationalMicroCopy />
 
-            {/* Disclaimer */}
-            <div className="bg-muted/30 px-4 py-3 rounded-lg border border-border">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                <strong>Disclaimer:</strong> This is an estimated quote. Final price confirmed after disposal receipt 
-                based on actual weight. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
-                Prohibited items may incur additional fees. Quote valid for 7 days.
-              </p>
-            </div>
-
-            {/* Two CTAs */}
-            <div className="space-y-3">
-              {/* Primary: Continue to Save */}
+            {/* CTAs - System style */}
+            <div className="space-y-2">
               <Button
                 type="button"
                 variant="cta"
                 size="lg"
-                className="w-full h-14 text-base"
+                className="w-full h-12 text-sm font-semibold group"
                 onClick={goNext}
               >
-                <Bookmark className="w-5 h-5" />
-                Save & Text Me This Quote
+                <Bookmark className="w-4 h-4" />
+                Save & text me this quote
+                <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
               </Button>
 
-              {/* Secondary: Confirm by Text */}
               <Button
                 type="button"
                 variant="outline"
-                size="lg"
-                className="w-full h-12 text-base"
+                size="default"
+                className="w-full text-sm"
                 onClick={() => {
                   const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
                   const materialLabel = formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris';
@@ -1218,8 +1228,8 @@ export function InstantQuoteCalculatorV3() {
                   window.open(`sms:+15106802150?body=${msg}`, '_blank');
                 }}
               >
-                <MessageCircle className="w-5 h-5" />
-                Quick Text Instead
+                <MessageCircle className="w-4 h-4" />
+                Text us instead
               </Button>
             </div>
           </div>
