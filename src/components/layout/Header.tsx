@@ -45,7 +45,7 @@ export function Header() {
             <img 
               src={logoCalsan} 
               alt="Calsan Dumpsters Pro" 
-              className="h-10 md:h-12 w-auto"
+              className="h-14 md:h-16 w-auto"
             />
           </Link>
 
