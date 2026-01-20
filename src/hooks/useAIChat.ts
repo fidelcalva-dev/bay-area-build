@@ -328,7 +328,7 @@ export function useAIChat(options?: UseAIChatOptions) {
     setContext(options?.initialContext || {});
     setCapturedLead({});
     setIsLeadCaptured(false);
-  }, [options.initialContext]);
+  }, [options?.initialContext]);
 
   // Initialize with context-aware welcome message
   const initializeChat = useCallback(() => {
