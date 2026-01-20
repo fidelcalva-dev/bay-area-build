@@ -23,7 +23,7 @@ import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING
 import { QuoteOrderFlow } from './QuoteOrderFlow';
 
 // Smart Recommendation Features
-import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, getSmartRecommendation } from './SmartRecommendation';
+import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, WhyThisSize, getSmartRecommendation } from './SmartRecommendation';
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
 import { DeliveryFeasibility } from './DeliveryFeasibility';
 
@@ -826,6 +826,14 @@ export function InstantQuoteCalculatorV3() {
                   );
                 })}
               </div>
+
+              {/* Why This Size - Expandable explanation */}
+              <WhyThisSize
+                projectType={projectType}
+                materialType={formData.material}
+                recommendedSize={smartRecommendation.recommendedSize}
+                selectedSize={formData.size}
+              />
 
               {/* Selected size details */}
               {formData.size && (
