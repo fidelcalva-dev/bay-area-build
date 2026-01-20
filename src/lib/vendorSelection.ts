@@ -172,6 +172,9 @@ export async function saveQuote(params: {
   recommendationReason?: string;
   userSelectedSizeYards?: number;
   projectType?: string;
+  // Confidence fields
+  confidenceLevel?: string;
+  confidenceNote?: string;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -200,6 +203,9 @@ export async function saveQuote(params: {
         recommendation_reason: params.recommendationReason,
         user_selected_size_yards: params.userSelectedSizeYards,
         project_type: params.projectType,
+        // Confidence fields
+        confidence_level: params.confidenceLevel,
+        confidence_note: params.confidenceNote,
       })
       .select('id')
       .single();

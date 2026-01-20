@@ -173,6 +173,8 @@ export type Database = {
       quotes: {
         Row: {
           company_name: string | null
+          confidence_level: string | null
+          confidence_note: string | null
           converted_at: string | null
           created_at: string
           customer_email: string | null
@@ -210,6 +212,8 @@ export type Database = {
         }
         Insert: {
           company_name?: string | null
+          confidence_level?: string | null
+          confidence_note?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
@@ -247,6 +251,8 @@ export type Database = {
         }
         Update: {
           company_name?: string | null
+          confidence_level?: string | null
+          confidence_note?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null

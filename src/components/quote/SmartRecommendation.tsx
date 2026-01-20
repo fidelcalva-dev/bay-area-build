@@ -396,6 +396,11 @@ export function ConfidenceBadge({ confidence, label, className }: ConfidenceBadg
       text: 'text-destructive', 
       icon: <AlertTriangle className="w-3.5 h-3.5" /> 
     },
+    overkill: { 
+      bg: 'bg-blue-500/10 border-blue-500/30', 
+      text: 'text-blue-600 dark:text-blue-400', 
+      icon: <Sparkles className="w-3.5 h-3.5" /> 
+    },
   };
 
   const style = styles[confidence];
