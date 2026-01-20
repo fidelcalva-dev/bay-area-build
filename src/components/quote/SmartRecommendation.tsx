@@ -137,14 +137,123 @@ export const PROJECT_TYPES: ProjectType[] = [
 // SMART RECOMMENDATION LOGIC
 // ============================================================
 
-export type ConfidenceLevel = 'safe' | 'tight' | 'overflow';
+export type ConfidenceLevel = 'safe' | 'tight' | 'overflow' | 'overkill';
 
 export interface SmartRecommendationResult {
   recommendedSize: number;
   recommendationReason: string;
   confidence: ConfidenceLevel;
   confidenceLabel: string;
+  confidenceNote: string; // Detailed one-line explanation
   reason: string; // Display reason for UI
+}
+
+/**
+ * Detailed confidence assessment based on size + material + project type
+ * 
+ * GENERAL DEBRIS RULES:
+ * - 6/8 -> Might be tight unless project_type is "small cleanup"
+ * - 10 -> Safe for small jobs; Might be tight for remodel/roofing
+ * - 20 -> Safe for remodel/roofing
+ * - 30 -> Safe for large renovation/demo
+ * - 40/50 -> Safe for large demo/commercial; "Overkill for small jobs" note
+ * 
+ * HEAVY MATERIAL RULES:
+ * - 6 -> Safe for small heavy; Might be tight for medium heavy
+ * - 8 -> Safe default heavy
+ * - 10 -> Safe for large heavy
+ */
+function getConfidenceAssessment(
+  selectedSize: number,
+  projectType: string | null,
+  materialType: 'general' | 'heavy'
+): { confidence: ConfidenceLevel; confidenceLabel: string; confidenceNote: string } {
+  const project = projectType ? PROJECT_TYPES.find(p => p.id === projectType) : null;
+  const isSmallProject = project?.id === 'garage' || project?.id === 'landscaping';
+  const isMediumProject = project?.id === 'remodel' || project?.id === 'roofing-small';
+  const isLargeProject = project?.id === 'demo' || project?.id === 'roofing-large';
+  const isVeryLargeProject = project?.id === 'commercial';
+  
+  // Heavy material confidence rules
+  if (materialType === 'heavy') {
+    const isSmallHeavy = project?.id === 'concrete-small';
+    const isMediumHeavy = project?.id === 'concrete-medium';
+    const isLargeHeavy = project?.id === 'concrete-large';
+    
+    if (selectedSize === 6) {
+      if (isSmallHeavy || !projectType) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Good for small concrete/dirt jobs like patios or walkways' };
+      } else if (isMediumHeavy) {
+        return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Medium jobs may need 8 yards — pure concrete is heavy' };
+      } else {
+        return { confidence: 'overflow', confidenceLabel: 'Risk of overflow', confidenceNote: 'Large heavy jobs typically need 8-10 yards' };
+      }
+    } else if (selectedSize === 8) {
+      // 8 yard is the safe default for heavy
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Most popular for heavy materials — handles most jobs well' };
+    } else if (selectedSize === 10) {
+      if (isSmallHeavy) {
+        return { confidence: 'overkill', confidenceLabel: 'Extra capacity', confidenceNote: 'Plenty of room for small jobs — gives you a buffer' };
+      }
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Maximum capacity for heavy materials — great for large jobs' };
+    }
+  }
+  
+  // General debris confidence rules
+  if (materialType === 'general') {
+    if (selectedSize === 6 || selectedSize === 8) {
+      if (isSmallProject) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Good for small cleanups with light materials' };
+      } else if (isMediumProject || isLargeProject) {
+        return { confidence: 'overflow', confidenceLabel: 'Risk of overflow', confidenceNote: 'Remodels and roofing typically need 20+ yards' };
+      } else {
+        return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Small capacity — best for light, small-scale jobs only' };
+      }
+    } else if (selectedSize === 10) {
+      if (isSmallProject || !projectType) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Great for garage cleanouts and small projects' };
+      } else if (isMediumProject) {
+        return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Remodels often need 20 yards — consider sizing up' };
+      } else if (isLargeProject || isVeryLargeProject) {
+        return { confidence: 'overflow', confidenceLabel: 'Risk of overflow', confidenceNote: 'Demo and large projects need 30+ yards' };
+      }
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Good mid-size option for general debris' };
+    } else if (selectedSize === 20) {
+      if (isSmallProject) {
+        return { confidence: 'overkill', confidenceLabel: 'Extra capacity', confidenceNote: 'More than needed for small jobs, but no overflow risk' };
+      } else if (isMediumProject || !projectType) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Perfect for remodels, roofing, and mid-size cleanouts' };
+      } else if (isLargeProject) {
+        return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Large demo often needs 30 yards — watch your fill level' };
+      } else if (isVeryLargeProject) {
+        return { confidence: 'overflow', confidenceLabel: 'Risk of overflow', confidenceNote: 'Commercial jobs typically need 40+ yards' };
+      }
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Most popular size — fits most home projects' };
+    } else if (selectedSize === 30) {
+      if (isSmallProject) {
+        return { confidence: 'overkill', confidenceLabel: 'Overkill', confidenceNote: 'Much larger than needed for small jobs — consider 10-20 yard' };
+      } else if (isMediumProject) {
+        return { confidence: 'overkill', confidenceLabel: 'Extra capacity', confidenceNote: 'Generous for remodels — gives you room to spare' };
+      } else if (isLargeProject || !projectType) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Ideal for large renovations and demo projects' };
+      } else if (isVeryLargeProject) {
+        return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Commercial jobs may need 40+ yards' };
+      }
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Great for large projects with mixed debris' };
+    } else if (selectedSize === 40 || selectedSize === 50) {
+      if (isSmallProject || isMediumProject) {
+        return { confidence: 'overkill', confidenceLabel: 'Overkill', confidenceNote: 'Far larger than typical home projects need' };
+      } else if (isLargeProject) {
+        return { confidence: 'overkill', confidenceLabel: 'Extra capacity', confidenceNote: 'Extra room for large demo — minimizes swap-outs' };
+      } else if (isVeryLargeProject || !projectType) {
+        return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Maximum capacity for commercial and large-scale projects' };
+      }
+      return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Best for commercial or very large construction projects' };
+    }
+  }
+  
+  // Default fallback
+  return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Should handle your project well' };
 }
 
 /**
@@ -185,29 +294,23 @@ export function getSmartRecommendation(
     recommendedSize = Math.min(recommendedSize, 10);
   }
 
-  // Determine confidence based on user selection vs recommendation
-  let confidence: ConfidenceLevel = 'safe';
-  let confidenceLabel = 'Safe choice';
-  let reason = recommendationReason;
+  // Get detailed confidence assessment
+  const { confidence, confidenceLabel, confidenceNote } = getConfidenceAssessment(
+    selectedSize,
+    projectType,
+    materialType
+  );
 
-  if (selectedSize >= recommendedSize) {
-    confidence = 'safe';
-    confidenceLabel = 'Safe choice';
-    reason = project 
+  // Build display reason
+  let reason = recommendationReason;
+  if (project) {
+    reason = confidence === 'safe' 
       ? `Good fit for ${project.label.toLowerCase()}` 
-      : recommendationReason;
-  } else if (selectedSize >= recommendedSize - 10 && selectedSize > 0) {
-    confidence = 'tight';
-    confidenceLabel = 'Might be tight';
-    reason = project 
-      ? `Might be tight for ${project.label.toLowerCase()} — consider ${recommendedSize} yard` 
-      : 'Consider sizing up for safety margin';
-  } else if (selectedSize > 0) {
-    confidence = 'overflow';
-    confidenceLabel = 'Risk of overflow';
-    reason = project 
-      ? `${project.label} often needs ${recommendedSize}+ yards` 
-      : `We recommend ${recommendedSize} yard for this type of project`;
+      : confidence === 'tight'
+      ? `Might be tight for ${project.label.toLowerCase()}`
+      : confidence === 'overflow'
+      ? `${project.label} often needs more capacity`
+      : `Extra room for ${project.label.toLowerCase()}`;
   }
 
   return {
@@ -215,6 +318,7 @@ export function getSmartRecommendation(
     recommendationReason,
     confidence,
     confidenceLabel,
+    confidenceNote,
     reason,
   };
 }
