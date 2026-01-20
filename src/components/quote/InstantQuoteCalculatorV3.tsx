@@ -22,6 +22,11 @@ import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING
 // Quote Order Flow (Lead Capture → Address → Map Pin → Continue)
 import { QuoteOrderFlow } from './QuoteOrderFlow';
 
+// Smart Recommendation Features
+import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, getSmartRecommendation } from './SmartRecommendation';
+import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
+import { DeliveryFeasibility } from './DeliveryFeasibility';
+
 // Dumpster images
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
 import dumpster8yard from '@/assets/dumpsters/dumpster-8yard.png';
@@ -83,6 +88,14 @@ export function InstantQuoteCalculatorV3() {
     email: '',
     address: '',
   });
+
+  // Project type for smart recommendations
+  const [projectType, setProjectType] = useState<string | null>(null);
+
+  // Smart recommendation based on project type and material
+  const smartRecommendation = useMemo(() => {
+    return getSmartRecommendation(formData.size, projectType, formData.material);
+  }, [formData.size, projectType, formData.material]);
 
   // Lookup zone from database with fallback to constants
   const lookupZone = useCallback(async (zip: string) => {
@@ -572,26 +585,16 @@ export function InstantQuoteCalculatorV3() {
 
               {/* Zone Result */}
               {formData.zip.length === 5 && !isCheckingZip && (
-                <div className={cn(
-                  "mt-3 p-3 rounded-lg flex items-start gap-3",
-                  zoneResult 
-                    ? "bg-success/10 border border-success/30" 
-                    : "bg-destructive/10 border border-destructive/30"
-                )}>
+                <>
                   {zoneResult ? (
-                    <>
-                      <CheckCircle className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-foreground">
-                          {zoneResult.cityName ? `${zoneResult.cityName} — We're in your area!` : "We service your area!"}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {zoneResult.zoneName} • Same-day delivery available
-                        </p>
-                      </div>
-                    </>
+                    <DeliveryFeasibility 
+                      zoneName={zoneResult.zoneName}
+                      cityName={zoneResult.cityName}
+                      isServiceable={true}
+                      className="mt-3"
+                    />
                   ) : (
-                    <>
+                    <div className="mt-3 p-3 rounded-lg flex items-start gap-3 bg-destructive/10 border border-destructive/30">
                       <MapPin className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-foreground">Outside our service area</p>
@@ -599,9 +602,9 @@ export function InstantQuoteCalculatorV3() {
                           Call us at (510) 680-2150 — we may still be able to help!
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
-                </div>
+                </>
               )}
             </div>
 
@@ -728,13 +731,29 @@ export function InstantQuoteCalculatorV3() {
               Back
             </button>
 
+            {/* Project Type Selector */}
+            <ProjectTypeSelector 
+              value={projectType}
+              onChange={setProjectType}
+              materialType={formData.material}
+            />
+
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Choose your dumpster size</h4>
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="text-lg font-bold text-foreground">Choose your dumpster size</h4>
+                {projectType && (
+                  <ConfidenceBadge 
+                    confidence={smartRecommendation.confidence}
+                    label={smartRecommendation.confidenceLabel}
+                  />
+                )}
+              </div>
               <p className="text-sm text-muted-foreground mb-4">
-                {formData.material === 'heavy' 
+                {projectType && smartRecommendation.reason}
+                {!projectType && (formData.material === 'heavy' 
                   ? 'Compact sizes for heavy materials (6-10 yard)'
                   : 'Full range for general debris (6-50 yard)'
-                }
+                )}
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -753,10 +772,15 @@ export function InstantQuoteCalculatorV3() {
                         formData.size === size.value
                           ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                           : "border-input bg-background hover:border-primary/50",
-                        size.popular && "ring-1 ring-accent/50"
+                        size.popular && "ring-1 ring-accent/50",
+                        projectType && size.value === smartRecommendation.recommendedSize && "ring-2 ring-primary/50"
                       )}
                     >
-                      {size.popular && (
+                      {/* Recommended Badge (when project type is selected) */}
+                      <RecommendedBadge isRecommended={projectType !== null && size.value === smartRecommendation.recommendedSize} />
+                      
+                      {/* Popular Badge (only if not showing recommended) */}
+                      {size.popular && !(projectType !== null && size.value === smartRecommendation.recommendedSize) && (
                         <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full whitespace-nowrap">
                           POPULAR
                         </span>
@@ -808,6 +832,14 @@ export function InstantQuoteCalculatorV3() {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Weight Visualization */}
+                  <WeightVisualization 
+                    includedTons={calculateIncludedTons(formData.size, formData.material)}
+                    materialType={formData.material}
+                    projectType={projectType}
+                    className="mt-3"
+                  />
                 </div>
               )}
             </div>
@@ -1017,15 +1049,18 @@ export function InstantQuoteCalculatorV3() {
                   </div>
                 </div>
               </div>
+            </div>
+            
+            {/* Educational Micro-Copy */}
+            <EducationalMicroCopy />
 
-              {/* Disclaimer */}
-              <div className="bg-muted/30 px-4 py-3 border-t border-border">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  <strong>Disclaimer:</strong> This is an estimated quote. Final price confirmed after disposal receipt 
-                  based on actual weight. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
-                  Prohibited items may incur additional fees. Quote valid for 7 days.
-                </p>
-              </div>
+            {/* Disclaimer */}
+            <div className="bg-muted/30 px-4 py-3 rounded-lg border border-border">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong>Disclaimer:</strong> This is an estimated quote. Final price confirmed after disposal receipt 
+                based on actual weight. Overage charged at ${OVERAGE_COST_PER_TON}/ton. 
+                Prohibited items may incur additional fees. Quote valid for 7 days.
+              </p>
             </div>
 
             {/* Two CTAs */}
