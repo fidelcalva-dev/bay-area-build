@@ -384,6 +384,11 @@ export function InstantQuoteCalculatorV3() {
         vendorCost: vendorResult?.vendorCost || undefined,
         margin: vendorResult?.margin || undefined,
         isCalsanFulfillment: vendorResult?.isCalsanFulfillment ?? true,
+        // Smart recommendation data
+        recommendedSizeYards: smartRecommendation.recommendedSize,
+        recommendationReason: smartRecommendation.recommendationReason,
+        userSelectedSizeYards: formData.size,
+        projectType: projectType || undefined,
       });
 
       if (result.success) {

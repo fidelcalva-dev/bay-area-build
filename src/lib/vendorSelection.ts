@@ -167,6 +167,11 @@ export async function saveQuote(params: {
   vendorCost?: number;
   margin?: number;
   isCalsanFulfillment: boolean;
+  // Smart recommendation fields
+  recommendedSizeYards?: number;
+  recommendationReason?: string;
+  userSelectedSizeYards?: number;
+  projectType?: string;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -190,6 +195,11 @@ export async function saveQuote(params: {
         vendor_cost: params.vendorCost,
         margin: params.margin,
         is_calsan_fulfillment: params.isCalsanFulfillment,
+        // Smart recommendation fields
+        recommended_size_yards: params.recommendedSizeYards,
+        recommendation_reason: params.recommendationReason,
+        user_selected_size_yards: params.userSelectedSizeYards,
+        project_type: params.projectType,
       })
       .select('id')
       .single();
