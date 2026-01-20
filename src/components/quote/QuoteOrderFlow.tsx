@@ -1,7 +1,7 @@
 // Quote Order Flow - Multi-step lead capture after quote
 // Step 1: Save Quote (contact) → Step 2: Address → Step 3: Map Pin → Step 4: Continue Order
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, lazy, Suspense } from 'react';
 import { 
   User, MapPin, Navigation, ExternalLink, ChevronLeft, ChevronRight,
   Loader2, CheckCircle, Phone, Building2, Mail, Briefcase, Home
@@ -12,7 +12,21 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { AddressInput } from './steps/AddressInput';
-import { PlacementMap } from './steps/PlacementMap';
+
+// Lazy load the map component to avoid react-leaflet causing multiple React instances
+const PlacementMap = lazy(() => import('./steps/PlacementMap').then(m => ({ default: m.PlacementMap })));
+
+// Loading fallback for map
+function MapLoadingFallback() {
+  return (
+    <div className="flex items-center justify-center h-64 bg-muted/50 rounded-xl border border-border">
+      <div className="text-center space-y-2">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+        <p className="text-sm text-muted-foreground">Loading map...</p>
+      </div>
+    </div>
+  );
+}
 
 type OrderStep = 'save' | 'address' | 'pin' | 'continue';
 
@@ -497,12 +511,14 @@ export function QuoteOrderFlow({
             Back
           </button>
 
-          <PlacementMap
-            addressLat={address.lat}
-            addressLng={address.lng}
-            onPlacementConfirmed={handlePlacementConfirmed}
-            value={placement}
-          />
+          <Suspense fallback={<MapLoadingFallback />}>
+            <PlacementMap
+              addressLat={address.lat}
+              addressLng={address.lng}
+              onPlacementConfirmed={handlePlacementConfirmed}
+              value={placement}
+            />
+          </Suspense>
 
           <Button
             type="button"
