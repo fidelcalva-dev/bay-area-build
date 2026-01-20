@@ -41,6 +41,73 @@ export const BUSINESS_INFO = {
   url: 'https://calsandumpsterspro.com',
 } as const;
 
+// ============================================================
+// OPERATIONAL YARDS - Canonical Source of Truth
+// ============================================================
+export interface OperationalYard {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  lat: number;
+  lng: number;
+  directionsUrl: string;
+  note: string;
+  isActive: boolean;
+}
+
+export const OPERATIONAL_YARDS: OperationalYard[] = [
+  {
+    id: 'oakland',
+    name: 'Oakland Yard',
+    address: '1000 46th Ave, Oakland, CA 94601',
+    city: 'Oakland',
+    state: 'CA',
+    zip: '94601',
+    lat: 37.7692,
+    lng: -122.2189,
+    directionsUrl: 'https://maps.app.goo.gl/?q=1000+46th+Ave,+Oakland,+CA',
+    note: 'Serves North/East Bay',
+    isActive: true,
+  },
+  {
+    id: 'sanjose',
+    name: 'San Jose Yard',
+    address: '2071 Ringwood Ave, San Jose, CA 95131',
+    city: 'San Jose',
+    state: 'CA',
+    zip: '95131',
+    lat: 37.3861,
+    lng: -121.9187,
+    directionsUrl: 'https://maps.app.goo.gl/83A528whCrgMyadQ7?g_st=ic',
+    note: 'Serves South Bay',
+    isActive: true,
+  },
+];
+
+// Helper to get yard by ID
+export const getYardById = (id: string) => OPERATIONAL_YARDS.find(y => y.id === id);
+
+// Helper to get nearest yard (simple lat/lng comparison)
+export const getNearestYard = (lat: number, lng: number) => {
+  let nearest = OPERATIONAL_YARDS[0];
+  let minDist = Infinity;
+  
+  for (const yard of OPERATIONAL_YARDS) {
+    const dist = Math.sqrt(
+      Math.pow(yard.lat - lat, 2) + Math.pow(yard.lng - lng, 2)
+    );
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = yard;
+    }
+  }
+  
+  return nearest;
+};
+
 export const SERVICE_AREAS = [
   'Alameda County',
   'San Francisco County',
@@ -139,6 +206,11 @@ export const PAGE_SEO = {
     title: 'Thank You | Quote Submitted',
     description: 'Your dumpster rental quote has been submitted. We will contact you shortly.',
     canonical: '/thank-you',
+  },
+  locations: {
+    title: 'Locations | Oakland & San Jose Yards',
+    description: 'Visit our operational yards in Oakland and San Jose. Same-day dumpster delivery across the Bay Area. Get directions to our nearest location.',
+    canonical: '/locations',
   },
 } as const;
 
