@@ -89,7 +89,7 @@ export function SizesPreviewSection() {
             <div>
               <span className="font-semibold text-foreground">Need a dumpster for concrete, dirt, or rock?</span>
               <span className="text-muted-foreground ml-2">
-                We offer dedicated 6, 8, and 10 yard heavy material dumpsters with 10 tons included.
+                We offer dedicated 6, 8, and 10 yard heavy material dumpsters (0.5T–1T included).
               </span>
               <Link to="/sizes" className="text-primary font-medium ml-2 hover:underline">
                 View heavy material sizes →
