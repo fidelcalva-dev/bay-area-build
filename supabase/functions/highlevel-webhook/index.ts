@@ -27,6 +27,14 @@ interface HighLevelContactData {
   project_type?: string;
   confidence_level?: string;
   tags: string[];
+  // Distance-based pricing fields
+  yard_name?: string;
+  distance_miles?: number;
+  distance_bracket?: string;
+  // Placement fields
+  placement_type?: 'driveway' | 'street';
+  placement_notes?: string;
+  delivery_address?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -63,6 +71,14 @@ const handler = async (req: Request): Promise<Response> => {
       project_type,
       confidence_level,
       tags,
+      // Distance-based pricing fields
+      yard_name,
+      distance_miles,
+      distance_bracket,
+      // Placement fields
+      placement_type,
+      placement_notes,
+      delivery_address,
     } = data;
 
     console.log(`Processing ${event} from ${page}`);
@@ -87,6 +103,16 @@ const handler = async (req: Request): Promise<Response> => {
     if (zone_name) customFields.zone = zone_name;
     if (project_type) customFields.project_type = project_type;
     if (confidence_level) customFields.confidence_level = confidence_level;
+    
+    // Distance-based pricing fields
+    if (yard_name) customFields.yard_name = yard_name;
+    if (distance_miles !== undefined) customFields.distance_miles = `${distance_miles.toFixed(1)} miles`;
+    if (distance_bracket) customFields.distance_bracket = distance_bracket;
+    
+    // Placement fields
+    if (placement_type) customFields.placement_type = placement_type === 'street' ? 'Street (permit may be required)' : 'Driveway';
+    if (placement_notes) customFields.placement_notes = placement_notes;
+    if (delivery_address) customFields.delivery_address = delivery_address;
 
     // First, try to find existing contact by phone
     const searchUrl = `https://services.leadconnectorhq.com/contacts/search/duplicates`;
@@ -170,17 +196,32 @@ const handler = async (req: Request): Promise<Response> => {
     // Add opportunity/note with quote details
     if (contactId) {
       try {
+        // Build note body with all available information
+        let noteBody = `Quote ${event === 'placement_confirmed' ? 'Placement Confirmed' : 'Saved'}:\n` +
+          `• Size: ${selected_size} yard (Recommended: ${recommended_size} yard)\n` +
+          `• Material: ${waste_type === 'heavy' ? 'Heavy' : 'General'}\n` +
+          `• ZIP: ${zip}\n` +
+          `• Estimate: ${estimated_total}\n` +
+          `• Included: ${included_tons} ton${included_tons !== 1 ? 's' : ''}\n` +
+          `• Extras: ${extras || 'None'}\n`;
+        
+        // Add distance info if available
+        if (yard_name && distance_miles !== undefined) {
+          noteBody += `• Nearest Yard: ${yard_name}\n`;
+          noteBody += `• Distance: ${distance_miles.toFixed(1)} miles\n`;
+          if (distance_bracket) noteBody += `• Bracket: ${distance_bracket}\n`;
+        }
+        
+        // Add placement info if available
+        if (delivery_address) noteBody += `• Address: ${delivery_address}\n`;
+        if (placement_type) noteBody += `• Placement: ${placement_type === 'street' ? 'Street' : 'Driveway'}\n`;
+        if (placement_notes) noteBody += `• Notes: ${placement_notes}\n`;
+        
+        noteBody += `• Quote ID: ${quote_id}\n• Source: ${page}`;
+        
         const notePayload = {
           contactId,
-          body: `Quote Saved:\n` +
-            `• Size: ${selected_size} yard (Recommended: ${recommended_size} yard)\n` +
-            `• Material: ${waste_type === 'heavy' ? 'Heavy' : 'General'}\n` +
-            `• ZIP: ${zip}\n` +
-            `• Estimate: ${estimated_total}\n` +
-            `• Included: ${included_tons} ton${included_tons !== 1 ? 's' : ''}\n` +
-            `• Extras: ${extras || 'None'}\n` +
-            `• Quote ID: ${quote_id}\n` +
-            `• Source: ${page}`,
+          body: noteBody,
         };
 
         const noteUrl = `https://services.leadconnectorhq.com/contacts/${contactId}/notes`;

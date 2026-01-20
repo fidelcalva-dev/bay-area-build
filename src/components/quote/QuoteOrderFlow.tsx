@@ -4,7 +4,7 @@
 import { useState, useCallback, lazy, Suspense } from 'react';
 import { 
   User, MapPin, Navigation, ExternalLink, ChevronLeft, ChevronRight,
-  Loader2, CheckCircle, Phone, Building2, Mail, Briefcase, Home
+  Loader2, CheckCircle, Phone, Building2, Mail, Briefcase, Home, Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { AddressInput } from './steps/AddressInput';
+import type { Yard } from '@/lib/distanceService';
 
 // Lazy load the map component to avoid react-leaflet causing multiple React instances
 const PlacementMap = lazy(() => import('./steps/PlacementMap').then(m => ({ default: m.PlacementMap })));
@@ -72,12 +73,20 @@ interface PlacementResult {
   notes: string;
 }
 
+interface DistanceInfo {
+  yard: Yard;
+  distanceMiles: number;
+  distanceBracket?: string;
+}
+
 interface QuoteOrderFlowProps {
   quoteId?: string;
   quoteSummary: QuoteSummary;
   initialContact?: Partial<ContactInfo>;
   onComplete: () => void;
   onBack: () => void;
+  // Distance-based pricing info
+  distanceInfo?: DistanceInfo | null;
 }
 
 export function QuoteOrderFlow({ 
@@ -85,7 +94,8 @@ export function QuoteOrderFlow({
   quoteSummary, 
   initialContact,
   onComplete,
-  onBack 
+  onBack,
+  distanceInfo,
 }: QuoteOrderFlowProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<OrderStep>('save');
@@ -227,6 +237,34 @@ export function QuoteOrderFlow({
             status: 'pinned',
           })
           .eq('id', savedQuoteId);
+
+        // Send placement confirmed event to HighLevel
+        await supabase.functions.invoke('highlevel-webhook', {
+          body: {
+            event: 'placement_confirmed',
+            quote_id: savedQuoteId,
+            name: contact.name,
+            phone: contact.phone,
+            email: contact.email || undefined,
+            zip: quoteSummary.zipCode,
+            waste_type: quoteSummary.materialType,
+            recommended_size: 0,
+            selected_size: parseInt(quoteSummary.sizeLabel) || 0,
+            included_tons: quoteSummary.includedTons,
+            estimated_total: `$${quoteSummary.estimatedMin} - $${quoteSummary.estimatedMax}`,
+            extras: '',
+            page: 'quote_order_flow',
+            tags: ['Placement Confirmed', placementResult.placementType === 'street' ? 'Street Placement' : 'Driveway'],
+            // Distance info
+            yard_name: distanceInfo?.yard.name,
+            distance_miles: distanceInfo?.distanceMiles,
+            distance_bracket: distanceInfo?.distanceBracket,
+            // Placement info
+            placement_type: placementResult.placementType,
+            placement_notes: placementResult.notes,
+            delivery_address: address?.formattedAddress,
+          },
+        });
       } catch (error) {
         console.error('Placement save error:', error);
       }
@@ -517,6 +555,8 @@ export function QuoteOrderFlow({
               addressLng={address.lng}
               onPlacementConfirmed={handlePlacementConfirmed}
               value={placement}
+              yard={distanceInfo?.yard}
+              distanceMiles={distanceInfo?.distanceMiles}
             />
           </Suspense>
 
