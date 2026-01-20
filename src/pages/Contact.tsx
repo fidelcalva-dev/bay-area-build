@@ -82,7 +82,7 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {/* Address */}
+                {/* Address - Links to Locations */}
                 <div className="bg-card rounded-2xl border border-border p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
@@ -90,10 +90,16 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-foreground mb-2">{t('contact.address')}</h3>
-                      <p className="text-foreground">
-                        1930 12th Ave #201<br />
-                        Oakland, CA 94606
+                      <p className="text-foreground mb-2">
+                        {BUSINESS_INFO.address.street}<br />
+                        {BUSINESS_INFO.address.city}, {BUSINESS_INFO.address.state} {BUSINESS_INFO.address.zip}
                       </p>
+                      <a 
+                        href="/locations" 
+                        className="text-sm text-primary hover:underline"
+                      >
+                        View all locations →
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -135,18 +141,21 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Locations CTA */}
       <section className="bg-muted py-12">
-        <div className="container-wide">
-          <div className="bg-card rounded-2xl border border-border overflow-hidden">
-            <div className="aspect-video bg-muted flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Map embed placeholder</p>
-                <p className="text-sm text-muted-foreground">1930 12th Ave #201, Oakland, CA 94606</p>
-              </div>
-            </div>
-          </div>
+        <div className="container-wide text-center">
+          <MapPin className="w-10 h-10 text-primary mx-auto mb-4" />
+          <h2 className="heading-md text-foreground mb-2">Visit Our Yards</h2>
+          <p className="text-muted-foreground mb-6">
+            Two operational yards serving the entire Bay Area
+          </p>
+          <a 
+            href="/locations" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            <MapPin className="w-4 h-4" />
+            View Locations & Get Directions
+          </a>
         </div>
       </section>
     </Layout>

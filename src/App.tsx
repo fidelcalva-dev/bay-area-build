@@ -27,6 +27,7 @@ const Quote = lazy(() => import("./pages/Quote"));
 const ContractorQuote = lazy(() => import("./pages/ContractorQuote"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
+const Locations = lazy(() => import("./pages/Locations"));
 
 // Portal pages (rarely accessed)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
@@ -112,6 +113,9 @@ const App = () => (
               } />
               <Route path="/green-halo" element={
                 <Suspense fallback={<PageLoader />}><GreenHalo /></Suspense>
+              } />
+              <Route path="/locations" element={
+                <Suspense fallback={<PageLoader />}><Locations /></Suspense>
               } />
               
               {/* Green Halo Client Portal */}

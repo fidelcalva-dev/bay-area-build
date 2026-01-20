@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink } from 'lucide-react';
+import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { BUSINESS_INFO, SERVICE_AREAS } from '@/lib/seo';
+import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -12,6 +12,7 @@ export function Footer() {
     { to: '/sizes', label: t('nav.sizes') },
     { to: '/areas', label: t('nav.areas') },
     { to: '/materials', label: t('nav.materials') },
+    { to: '/locations', label: 'Locations' },
   ];
 
   const serviceLinks = [
@@ -182,8 +183,37 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Service Areas */}
+        {/* Operational Yards */}
         <div className="mt-12 pt-8 border-t border-secondary-foreground/10">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-bold text-lg">Operational Yards</h4>
+            <Link to="/locations" className="text-sm text-primary hover:underline flex items-center gap-1">
+              View all locations
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            {OPERATIONAL_YARDS.map((yard) => (
+              <div key={yard.id} className="bg-secondary-foreground/5 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Truck className="w-4 h-4 text-primary" />
+                  <span className="font-medium text-sm">{yard.name}</span>
+                </div>
+                <p className="text-xs text-secondary-foreground/70 mb-2">{yard.address}</p>
+                <a
+                  href={yard.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  <Navigation className="w-3 h-3" />
+                  Get Directions
+                </a>
+              </div>
+            ))}
+          </div>
+          
+          {/* Service Areas */}
           <h4 className="font-bold text-lg mb-4">Service Areas</h4>
           <div className="flex flex-wrap gap-2">
             {SERVICE_AREAS.map((county) => (
