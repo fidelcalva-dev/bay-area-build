@@ -1,5 +1,4 @@
-// Quote System Exports
-export { InstantQuoteCalculatorV2 } from './InstantQuoteCalculatorV2';
+// Quote System Exports - V3 is the canonical calculator
 export { InstantQuoteCalculatorV3 } from './InstantQuoteCalculatorV3';
 export { WeightEducation } from './WeightEducation';
 export { QuoteBreakdown } from './QuoteBreakdown';
