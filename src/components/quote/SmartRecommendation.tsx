@@ -2,8 +2,8 @@
 // Automatically recommends dumpster size based on Waste Type + Project Type
 // This is advisory, not a guarantee
 
-import { useMemo } from 'react';
-import { Sparkles, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Sparkles, AlertTriangle, CheckCircle, Info, HelpCircle, ChevronDown, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ============================================================
@@ -340,5 +340,132 @@ export function RecommendationReason({ reason, className }: RecommendationReason
     )}>
       {reason}
     </p>
+  );
+}
+
+// ============================================================
+// WHY THIS SIZE - Expandable explanation section
+// ============================================================
+
+interface WhyThisSizeProps {
+  projectType: string | null;
+  materialType: 'general' | 'heavy';
+  recommendedSize: number;
+  selectedSize: number;
+  className?: string;
+}
+
+export function WhyThisSize({ 
+  projectType, 
+  materialType, 
+  recommendedSize, 
+  selectedSize,
+  className 
+}: WhyThisSizeProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const project = projectType ? PROJECT_TYPES.find(p => p.id === projectType) : null;
+  
+  // Don't show if no project type selected
+  if (!projectType || !project) return null;
+
+  const isRecommendedSelected = selectedSize === recommendedSize;
+  const isSmallerThanRecommended = selectedSize < recommendedSize;
+
+  // Build explanation based on project type
+  const getDetailedExplanation = () => {
+    const lines: string[] = [];
+    
+    // Project-specific reasoning
+    if (project) {
+      lines.push(`**${project.label}** projects typically generate a specific volume and weight of debris.`);
+      
+      if (materialType === 'heavy') {
+        lines.push(`Heavy materials like concrete, dirt, and brick are limited to **6, 8, or 10 yard** dumpsters due to weight restrictions.`);
+        lines.push(`We recommend **${recommendedSize} yards** based on typical ${project.label.toLowerCase()} project scope.`);
+      } else {
+        // General debris explanations by project type
+        switch (project.id) {
+          case 'garage':
+            lines.push(`Garage cleanouts vary widely—a single-car garage with boxes usually fits in 10 yards, while a packed 2-car garage may need 20.`);
+            break;
+          case 'remodel':
+            lines.push(`Kitchen and bathroom remodels typically generate drywall, cabinets, flooring, and fixtures. 20 yards handles most single-room remodels.`);
+            break;
+          case 'roofing-small':
+            lines.push(`Small roofs (under 20 squares) typically fit in 20 yards. Shingles are heavy—watch your tonnage limit.`);
+            break;
+          case 'roofing-large':
+            lines.push(`Large roofs (20+ squares) need 30 yards for volume. Remember: shingles weigh 250-350 lbs per square.`);
+            break;
+          case 'demo':
+            lines.push(`Demolition creates bulky, mixed debris. Interior demo usually needs 30 yards; structural demo may need 40.`);
+            break;
+          case 'commercial':
+            lines.push(`Commercial and large-scale projects benefit from 40-50 yard containers to minimize swap-outs and trips.`);
+            break;
+          case 'landscaping':
+            lines.push(`Yard waste (branches, sod, brush) is bulky but light. 10-20 yards usually works unless you're removing trees.`);
+            break;
+          default:
+            lines.push(`Based on typical project scope, **${recommendedSize} yards** should handle your debris.`);
+        }
+      }
+    }
+
+    // Add guidance based on selection vs recommendation
+    if (isSmallerThanRecommended) {
+      lines.push(`⚠️ **Sizing tip:** You selected ${selectedSize} yards, which is smaller than our recommendation. This works if your project is small-scale, but you risk needing a second haul.`);
+    } else if (!isRecommendedSelected && selectedSize > recommendedSize) {
+      lines.push(`✓ **Good call:** Going larger than recommended gives you a safety buffer and avoids overflow fees.`);
+    }
+
+    // Weight reminder
+    lines.push(`💡 **Weight matters:** Each size includes a tonnage allowance. Overages are billed at $85-$110/ton, so estimate weight carefully.`);
+
+    return lines;
+  };
+
+  const explanationLines = getDetailedExplanation();
+
+  return (
+    <div className={cn("mt-3", className)}>
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+      >
+        <HelpCircle className="w-4 h-4" />
+        <span>Why {recommendedSize} yards?</span>
+        <ChevronDown className={cn(
+          "w-4 h-4 transition-transform",
+          isExpanded && "rotate-180"
+        )} />
+      </button>
+      
+      {isExpanded && (
+        <div className="mt-3 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2 text-sm text-foreground">
+          {explanationLines.map((line, idx) => (
+            <p key={idx} className="leading-relaxed" dangerouslySetInnerHTML={{ 
+              __html: line
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/⚠️/g, '<span class="text-amber-600">⚠️</span>')
+                .replace(/✓/g, '<span class="text-success">✓</span>')
+                .replace(/💡/g, '<span>💡</span>')
+            }} />
+          ))}
+          
+          <div className="pt-2 border-t border-primary/10 mt-3">
+            <a 
+              href="/contractor-best-practices#materials" 
+              className="text-xs text-primary hover:underline flex items-center gap-1"
+            >
+              <BookOpen className="w-3 h-3" />
+              Learn more in our Contractor Best Practices guide →
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
