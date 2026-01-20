@@ -158,15 +158,15 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'What happens if I go over the weight limit?',
     questionEs: '¿Qué pasa si excedo el límite de peso?',
-    answer: 'Each dumpster size has a weight limit. If you exceed it, you\'ll be charged $85/ton for general debris or $65/ton for heavy materials. We weigh every load at the landfill.',
-    answerEs: 'Cada tamaño de contenedor tiene un límite de peso. Si lo excede, se le cobrará $85/tonelada para escombros generales o $65/tonelada para materiales pesados.',
+    answer: 'Each dumpster size has a weight limit. If you exceed it, you\'ll be charged $165/ton for general debris or $165/ton for heavy materials. We weigh every load at the landfill.',
+    answerEs: 'Cada tamaño de contenedor tiene un límite de peso. Si lo excede, se le cobrará $165/tonelada para escombros generales o $165/tonelada para materiales pesados.',
     category: 'pricing',
   },
   {
     question: 'Can I keep the dumpster longer than 7 days?',
     questionEs: '¿Puedo quedarme el contenedor más de 7 días?',
-    answer: 'Yes! The standard rental is 7 days, but you can extend as needed. Extra days are $50 per day. Just let us know before your rental period ends.',
-    answerEs: '¡Sí! El alquiler estándar es de 7 días, pero puede extenderlo según sea necesario. Los días adicionales cuestan $50 por día.',
+    answer: 'Yes! The standard rental is 7 days, but you can extend as needed. Extra days are $35 per day. Just let us know before your rental period ends.',
+    answerEs: '¡Sí! El alquiler estándar es de 7 días, pero puede extenderlo según sea necesario. Los días adicionales cuestan $35 por día.',
     category: 'pricing',
   },
   {
@@ -215,8 +215,8 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'How does weight/overage billing work for contractors?',
     questionEs: '¿Cómo funciona la facturación por peso/exceso para contratistas?',
-    answer: 'Each dumpster includes weight by size: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T. Overage is billed per ton after disposal scale ticket—$85/ton for general debris, $65/ton for heavy materials.',
-    answerEs: 'Cada contenedor incluye peso por tamaño: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, etc. El exceso se factura por tonelada después del boleto de báscula.',
+    answer: 'Each dumpster includes weight by size: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T. Overage is billed per ton after disposal scale ticket—$165/ton for general debris, $165/ton for heavy materials.',
+    answerEs: 'Cada contenedor incluye peso por tamaño: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, etc. El exceso se factura por tonelada después del boleto de báscula—$165/tonelada.',
     category: 'pricing',
   },
   {

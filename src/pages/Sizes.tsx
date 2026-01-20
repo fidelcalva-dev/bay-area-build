@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Ruler, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
 
 // Import photorealistic dumpster photos
 import dumpster6yard from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
@@ -22,6 +23,17 @@ import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
 import dumpster50yard from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
 import dumpster50yardDims from '@/assets/dumpsters/dumpster-50yard-dims.png';
 
+// Image mapping by yard size
+const DUMPSTER_IMAGES: Record<number, { photo: string; dims: string }> = {
+  6: { photo: dumpster6yard, dims: dumpster6yardDims },
+  8: { photo: dumpster8yard, dims: dumpster8yardDims },
+  10: { photo: dumpster10yard, dims: dumpster10yardDims },
+  20: { photo: dumpster20yard, dims: dumpster20yardDims },
+  30: { photo: dumpster30yard, dims: dumpster30yardDims },
+  40: { photo: dumpster40yard, dims: dumpster40yardDims },
+  50: { photo: dumpster50yard, dims: dumpster50yardDims },
+};
+
 interface DumpsterSize {
   yards: number;
   dimensions: string;
@@ -37,149 +49,36 @@ interface DumpsterSize {
   description: string;
 }
 
-// Heavy Materials sizes (6, 8, 10 yard) - for concrete, dirt, rock, asphalt
-// Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T (same as general debris)
-// Canonical dimensions (W × L × H): 6yd: 6×12×2.25, 8yd: 6×12×3, 10yd: 7.5×12×3
-const heavyMaterialSizes: DumpsterSize[] = [
-  {
-    yards: 6,
-    dimensions: "12' L × 6' W × 2.25' H",
-    length: "12'",
-    width: "6'",
-    height: "2.25'",
-    includedTons: 0.5,
-    useCases: ['Concrete removal', 'Dirt & soil', 'Rock & gravel', 'Asphalt demolition'],
-    loads: '~1-2 pickup loads',
-    image: dumpster6yard,
-    imageDims: dumpster6yardDims,
-    description: 'Compact size perfect for small heavy material jobs like patio removal or dirt haul-away.',
-  },
-  {
-    yards: 8,
-    dimensions: "12' L × 6' W × 3' H",
-    length: "12'",
-    width: "6'",
-    height: "3'",
-    includedTons: 0.5,
-    useCases: ['Foundation demo', 'Brick & block', 'Heavy construction', 'Driveway removal'],
-    loads: '~2-3 pickup loads',
-    image: dumpster8yard,
-    imageDims: dumpster8yardDims,
-    popular: true,
-    description: 'Most popular for driveway and foundation work. Fits in standard parking spaces.',
-  },
-  {
-    yards: 10,
-    dimensions: "12' L × 7.5' W × 3' H",
-    length: "12'",
-    width: "7.5'",
-    height: "3'",
-    includedTons: 1,
-    useCases: ['Large concrete jobs', 'Mixed heavy debris', 'Commercial demo', 'Pool removal'],
-    loads: '~3-4 pickup loads',
-    image: dumpster10yard,
-    imageDims: dumpster10yardDims,
-    description: 'Maximum capacity for heavy materials. Ideal for pool demos and major concrete work.',
-  },
-];
+// Build display arrays from canonical DUMPSTER_SIZES_DATA
+const heavyMaterialSizes: DumpsterSize[] = getHeavySizes().map(size => ({
+  yards: size.yards,
+  dimensions: size.dimensions,
+  length: size.length || '',
+  width: size.width || '',
+  height: size.height || '',
+  includedTons: size.includedTons,
+  useCases: size.useCases,
+  loads: size.loads || '',
+  image: DUMPSTER_IMAGES[size.yards]?.photo || '',
+  imageDims: DUMPSTER_IMAGES[size.yards]?.dims || '',
+  popular: size.popular,
+  description: size.description,
+}));
 
-// General Debris sizes (6, 8, 10, 20, 30, 40, 50 yard) - for household, construction, roofing
-// Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
-// Canonical dimensions (W × L × H): 6yd: 6×12×2.25, 8yd: 6×12×3, 10yd: 7.5×12×3, 20yd: 7.5×18×4, 30yd: 7.5×18×6, 40yd: 7.5×24×6, 50yd: 7.5×24×7.5
-const generalDebrisSizes: DumpsterSize[] = [
-  {
-    yards: 6,
-    dimensions: "12' L × 6' W × 2.25' H",
-    length: "12'",
-    width: "6'",
-    height: "2.25'",
-    includedTons: 0.5,
-    useCases: ['Small cleanouts', 'Single room', 'Yard debris', 'Light renovation'],
-    loads: '~1-2 pickup loads',
-    image: dumpster6yard,
-    imageDims: dumpster6yardDims,
-    description: 'Compact size ideal for small cleanouts and light yard debris removal.',
-  },
-  {
-    yards: 8,
-    dimensions: "12' L × 6' W × 3' H",
-    length: "12'",
-    width: "6'",
-    height: "3'",
-    includedTons: 0.5,
-    useCases: ['Garage cleanouts', 'Bathroom remodel', 'Landscaping', 'Small deck removal'],
-    loads: '~2-3 pickup loads',
-    image: dumpster8yard,
-    imageDims: dumpster8yardDims,
-    description: 'Perfect for garage cleanouts and small renovation projects.',
-  },
-  {
-    yards: 10,
-    dimensions: "12' L × 7.5' W × 3' H",
-    length: "12'",
-    width: "7.5'",
-    height: "3'",
-    includedTons: 1,
-    useCases: ['Garage cleanouts', 'Small renovations', 'Deck removal', 'Moving cleanouts'],
-    loads: '~3-4 pickup loads',
-    image: dumpster10yard,
-    imageDims: dumpster10yardDims,
-    description: 'Great starter size for single-room renovations and garage cleanouts.',
-  },
-  {
-    yards: 20,
-    dimensions: "18' L × 7.5' W × 4' H",
-    length: "18'",
-    width: "7.5'",
-    height: "4'",
-    includedTons: 2,
-    useCases: ['Full room renovations', 'Roofing projects', 'Large cleanouts', 'Construction debris'],
-    loads: '~6-8 pickup loads',
-    image: dumpster20yard,
-    imageDims: dumpster20yardDims,
-    popular: true,
-    description: 'Our most popular size. Perfect for most home renovation and roofing projects.',
-  },
-  {
-    yards: 30,
-    dimensions: "18' L × 7.5' W × 6' H",
-    length: "18'",
-    width: "7.5'",
-    height: "6'",
-    includedTons: 3,
-    useCases: ['Major renovations', 'New construction', 'Commercial cleanouts', 'Estate cleanouts'],
-    loads: '~9-12 pickup loads',
-    image: dumpster30yard,
-    imageDims: dumpster30yardDims,
-    description: 'High walls for bulky items. Ideal for whole-house cleanouts and major renovations.',
-  },
-  {
-    yards: 40,
-    dimensions: "24' L × 7.5' W × 6' H",
-    length: "24'",
-    width: "7.5'",
-    height: "6'",
-    includedTons: 4,
-    useCases: ['Large construction sites', 'Commercial projects', 'Industrial waste', 'Major demolition'],
-    loads: '~12-16 pickup loads',
-    image: dumpster40yard,
-    imageDims: dumpster40yardDims,
-    description: 'Commercial-grade capacity for large-scale construction and demolition projects.',
-  },
-  {
-    yards: 50,
-    dimensions: "24' L × 7.5' W × 7.5' H",
-    length: "24'",
-    width: "7.5'",
-    height: "7.5'",
-    includedTons: 5,
-    useCases: ['Largest projects', 'Industrial sites', 'Multi-building demo', 'Warehouses'],
-    loads: '~16-20 pickup loads',
-    image: dumpster50yard,
-    imageDims: dumpster50yardDims,
-    description: 'Maximum volume for the largest jobs. Ideal for industrial and warehouse cleanouts.',
-  },
-];
+const generalDebrisSizes: DumpsterSize[] = getGeneralSizes().map(size => ({
+  yards: size.yards,
+  dimensions: size.dimensions,
+  length: size.length || '',
+  width: size.width || '',
+  height: size.height || '',
+  includedTons: size.includedTons,
+  useCases: size.useCases,
+  loads: size.loads || '',
+  image: DUMPSTER_IMAGES[size.yards]?.photo || '',
+  imageDims: DUMPSTER_IMAGES[size.yards]?.dims || '',
+  popular: size.popular,
+  description: size.description,
+}));
 
 function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' | 'general' }) {
   const isHeavy = variant === 'heavy';
@@ -276,6 +175,9 @@ function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' 
 export default function Sizes() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('general');
+
+  // Use canonical pricing from PRICING_POLICIES
+  const overageRate = PRICING_POLICIES.overagePerTonGeneral;
 
   return (
     <Layout
@@ -396,7 +298,7 @@ export default function Sizes() {
         </div>
       </section>
 
-      {/* Weight Info Banner */}
+      {/* Weight Info Banner - Now using canonical PRICING_POLICIES */}
       <section className="py-8 bg-accent/10 border-y border-accent/20">
         <div className="container-wide">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
@@ -406,7 +308,7 @@ export default function Sizes() {
               </div>
               <div>
                 <p className="font-semibold text-foreground">Overage charges apply beyond included tonnage</p>
-                <p className="text-sm text-muted-foreground">$85/ton for general debris • $65/ton for heavy materials</p>
+                <p className="text-sm text-muted-foreground">${overageRate}/ton after included weight</p>
               </div>
             </div>
             <Button asChild variant="outline" size="sm">
