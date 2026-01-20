@@ -25,6 +25,7 @@ export interface DumpsterSizeData {
   popular?: boolean;
 }
 
+// Pricing data derived from v56 spreadsheet (Plan A base prices)
 export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
   // Both Heavy and General (6 yard) - 6 × 12 × 2.25 = 162 cu ft / 27 = 6 cu yd
   {
@@ -35,7 +36,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 325,
+    priceFrom: 390,  // v56 Plan A base
     useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
     loads: '1-2 pickup loads',
     description: 'Compact size for small jobs.',
@@ -49,7 +50,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "3'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 365,
+    priceFrom: 460,  // v56 Plan A base
     useCases: ['Foundation demo', 'Brick & block', 'Garage cleanouts', 'Bathroom remodel'],
     loads: '2-3 pickup loads',
     description: 'Popular for driveway and foundation work.',
@@ -64,7 +65,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "3'",
     includedTons: 1,
     category: 'both',
-    priceFrom: 395,
+    priceFrom: 580,  // v56 Plan A base
     useCases: ['Large concrete jobs', 'Small renovations', 'Deck removal'],
     loads: '3-4 pickup loads',
     description: 'Versatile size for small to medium projects.',
@@ -78,7 +79,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "4'",
     includedTons: 2,
     category: 'general',
-    priceFrom: 495,
+    priceFrom: 620,  // v56 Plan A base
     useCases: ['Full room renovations', 'Roofing projects', 'Large cleanouts'],
     loads: '6-8 pickup loads',
     description: 'Our most popular size for home renovations.',
@@ -93,7 +94,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 3,
     category: 'general',
-    priceFrom: 595,
+    priceFrom: 770,  // v56 Plan A base
     useCases: ['Major renovations', 'New construction', 'Estate cleanouts'],
     loads: '9-12 pickup loads',
     description: 'High walls for bulky items and major projects.',
@@ -107,7 +108,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 4,
     category: 'general',
-    priceFrom: 695,
+    priceFrom: 895,  // v56 Plan A base
     useCases: ['Commercial projects', 'Large demolition', 'Industrial waste'],
     loads: '12-16 pickup loads',
     description: 'Commercial-grade capacity for large-scale projects.',
@@ -121,7 +122,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "7.5'",
     includedTons: 5,
     category: 'general',
-    priceFrom: 795,
+    priceFrom: 1135,  // v56 Plan A base
     useCases: ['Largest projects', 'Industrial sites', 'Warehouse cleanouts'],
     loads: '16-20 pickup loads',
     description: 'Maximum volume for the largest jobs.',
@@ -249,25 +250,41 @@ export const getFAQsForSchema = (count = 4) =>
   }));
 
 // ============================================================
-// PRICING POLICIES - Single source of truth
+// PRICING POLICIES - Single source of truth (from v56 spreadsheet)
 // ============================================================
 
 export const PRICING_POLICIES = {
-  extraDayCost: 50,
-  overagePerTonGeneral: 85,
-  overagePerTonHeavy: 65,
-  heavyMaterialSurcharge: 150,
-  standardRentalDays: 7,
+  // Rental fees (v56 Page 14)
+  extraDayCost: 35,  // Updated from v56
+  tripFee: 250,  // Blocked access / dead run
+  sameDayDelivery: 100,
+  relocationFee: 125,
+  cancellation24h: 100,
+  wrongMaterialsCleaning: 300,
+  
+  // Overweight rates (v56 Page 12) - varies by customer type
+  overagePerTonGeneral: 165,  // Standard rate from v56
+  overagePerTonHeavy: 165,    // Lowboy rate 
+  overagePerTonHomeowner: 165,  // Range: $135-$200
+  overagePerTonContractor: 135,  // Preferred rate
+  overagePerTonBusiness: 145,
+  
+  // Special items
   mattressDisposal: 50,
   applianceWithFreon: 75,
-  sameDayDelivery: 100,
-  streetPermitHelp: 125,
+  tireDisposal: 25,
+  
+  // Rental period
+  standardRentalDays: 7,
+  
+  // Surcharges
+  heavyMaterialSurcharge: 100,  // Flat surcharge for heavy in general container
 } as const;
 
 // Standard overage note for display
 export const OVERAGE_NOTE = 'Overage billed per ton after disposal scale ticket.';
 
-// Official included tonnage by size (single source of truth)
+// Official included tonnage by size (single source of truth - v56 Page 15)
 export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   6: 0.5,
   8: 0.5,
@@ -276,6 +293,77 @@ export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   30: 3,
   40: 4,
   50: 5,
+};
+
+// ============================================================
+// V56 BASE PRICING (Plan A - Homeowner all-in pricing)
+// ============================================================
+
+export interface V56PricingTier {
+  size: number;
+  basePrice: number;
+  priceRangeLow: number;
+  priceRangeHigh: number;
+  includedTons: number;
+  category: 'heavy' | 'general' | 'both';
+}
+
+// Plan A pricing (General Debris - includes tons)
+export const PLAN_A_PRICING: V56PricingTier[] = [
+  { size: 6, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 8, basePrice: 460, priceRangeLow: 460, priceRangeHigh: 550, includedTons: 0.5, category: 'both' },
+  { size: 10, basePrice: 580, priceRangeLow: 580, priceRangeHigh: 675, includedTons: 1, category: 'both' },
+  { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
+  { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
+  { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
+  { size: 50, basePrice: 1135, priceRangeLow: 1135, priceRangeHigh: 1350, includedTons: 5, category: 'general' },
+];
+
+// Heavy Material / Lowboy pricing (6, 8, 10 only)
+export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
+  { size: 6, basePrice: 490, priceRangeLow: 490, priceRangeHigh: 600, includedTons: 0.5, category: 'heavy' },
+  { size: 8, basePrice: 550, priceRangeLow: 550, priceRangeHigh: 675, includedTons: 0.5, category: 'heavy' },
+  { size: 10, basePrice: 600, priceRangeLow: 600, priceRangeHigh: 750, includedTons: 1, category: 'heavy' },
+];
+
+// Helper to get pricing by size and category
+export const getPricingBySize = (size: number, isHeavy: boolean = false) => {
+  if (isHeavy) {
+    return HEAVY_MATERIAL_PRICING.find(p => p.size === size);
+  }
+  return PLAN_A_PRICING.find(p => p.size === size);
+};
+
+// Get general debris pricing (for Pricing page)
+export const getGeneralDebrisPricing = () => 
+  PLAN_A_PRICING.filter(p => p.category === 'general' || p.category === 'both');
+
+// Get heavy material pricing (for Pricing page)  
+export const getHeavyMaterialPricing = () => HEAVY_MATERIAL_PRICING;
+
+// ============================================================
+// TRUCKING RATES (v56 Page 7)
+// ============================================================
+
+export const TRUCKING_RATES = {
+  endDump: { hourlyRate: 175, minHours: 4, capacity: '18-22 tons / up to 20 CY' },
+  tenWheeler: { hourlyRate: 155, minHours: 4, capacity: '10-12 tons' },
+  superTen: { hourlyRate: 175, minHours: 4, capacity: '14-16 tons', dumpFeeSeparate: true },
+  highSideTrailer: { hourlyRate: 195, minHours: 4, capacity: '18-20 tons / 70-80 CY' },
+} as const;
+
+// ============================================================
+// MARKET/ZONE DEFINITIONS (v56 Pages 17-18)
+// ============================================================
+
+export type MarketZone = 'OAK' | 'SJ' | 'TRACY' | 'CENTRAL' | 'SAC';
+
+export const MARKET_ZONES: Record<MarketZone, { name: string; baseMultiplier: number }> = {
+  OAK: { name: 'Oakland / East Bay', baseMultiplier: 1.0 },
+  SJ: { name: 'San Jose / South Bay', baseMultiplier: 1.05 },
+  TRACY: { name: 'Tracy / Stockton', baseMultiplier: 0.95 },
+  CENTRAL: { name: 'Central Valley', baseMultiplier: 1.1 },
+  SAC: { name: 'Sacramento Region', baseMultiplier: 1.15 },
 };
 
 // ============================================================

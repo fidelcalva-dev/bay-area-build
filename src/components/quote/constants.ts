@@ -138,14 +138,14 @@ export const MATERIAL_TYPES: MaterialType[] = [
   },
 ];
 
-// Extra services with quantities
+// Extra services with quantities - prices from v56
 export const EXTRAS: Extra[] = [
   {
     id: 'extra-days',
     value: 'extra-days',
     label: 'Extra Days',
     description: 'Beyond standard rental',
-    price: 50,
+    price: PRICING_POLICIES.extraDayCost,
     icon: '📅',
     allowQuantity: true,
     maxQuantity: 14,
@@ -155,7 +155,7 @@ export const EXTRAS: Extra[] = [
     value: 'extra-tons',
     label: 'Extra Tons',
     description: 'Pre-purchase overage',
-    price: 85,
+    price: PRICING_POLICIES.overagePerTonGeneral,
     icon: '⚖️',
     allowQuantity: true,
     maxQuantity: 5,
@@ -165,7 +165,7 @@ export const EXTRAS: Extra[] = [
     value: 'permit',
     label: 'Street Permit',
     description: 'We handle city permit',
-    price: 125,
+    price: PRICING_POLICIES.relocationFee,
     icon: '📋',
     allowQuantity: false,
   },
@@ -174,7 +174,7 @@ export const EXTRAS: Extra[] = [
     value: 'mattress',
     label: 'Mattress Disposal',
     description: 'CA recycling fee',
-    price: 50,
+    price: PRICING_POLICIES.mattressDisposal,
     icon: '🛏️',
     allowQuantity: true,
     maxQuantity: 4,
@@ -184,7 +184,7 @@ export const EXTRAS: Extra[] = [
     value: 'appliance',
     label: 'Appliance w/ Freon',
     description: 'Fridge, freezer, AC',
-    price: 75,
+    price: PRICING_POLICIES.applianceWithFreon,
     icon: '❄️',
     allowQuantity: true,
     maxQuantity: 4,
@@ -194,7 +194,7 @@ export const EXTRAS: Extra[] = [
     value: 'same-day',
     label: 'Same-Day Delivery',
     description: 'Guaranteed today',
-    price: 100,
+    price: PRICING_POLICIES.sameDayDelivery,
     icon: '⚡',
     allowQuantity: false,
   },
@@ -203,21 +203,21 @@ export const EXTRAS: Extra[] = [
     value: 'trip-fee',
     label: 'Dry Run / Trip Fee',
     description: 'If blocked on pickup',
-    price: 150,
+    price: PRICING_POLICIES.tripFee,
     icon: '🚛',
     allowQuantity: false,
   },
 ];
 
-// Rental periods
+// Rental periods - using v56 extra day cost
 export const RENTAL_PERIODS: RentalPeriod[] = [
   { value: 3, label: '3 days', extraDays: 0, extraCost: 0 },
   { value: 7, label: '7 days', extraDays: 0, extraCost: 0, popular: true },
-  { value: 14, label: '14 days', extraDays: 7, extraCost: 350 },
-  { value: 21, label: '21 days', extraDays: 14, extraCost: 700 },
+  { value: 14, label: '14 days', extraDays: 7, extraCost: PRICING_POLICIES.extraDayCost * 7 },
+  { value: 21, label: '21 days', extraDays: 14, extraCost: PRICING_POLICIES.extraDayCost * 14 },
 ];
 
-// User types with discounts
+// User types with discounts (v56 customer types)
 export const USER_TYPES: UserType[] = [
   { 
     value: 'homeowner', 
@@ -242,9 +242,9 @@ export const USER_TYPES: UserType[] = [
   },
 ];
 
-// Pricing constants
-export const EXTRA_DAY_COST = 50;
-export const OVERAGE_COST_PER_TON = 85;
+// Pricing constants - from v56 PRICING_POLICIES
+export const EXTRA_DAY_COST = PRICING_POLICIES.extraDayCost;
+export const OVERAGE_COST_PER_TON = PRICING_POLICIES.overagePerTonGeneral;
 
 // Debris items for weight estimator
 export const DEBRIS_ITEMS: DebrisItem[] = [
