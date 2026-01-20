@@ -1,5 +1,5 @@
-// AI Chat Widget State Management Hook
-import { useState, useCallback, useRef } from 'react';
+// AI Chat Widget State Management Hook (Context-Aware)
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ChatMessage {
@@ -11,10 +11,21 @@ export interface ChatMessage {
 }
 
 export interface ChatContext {
+  // Basic context
   zip?: string;
   material?: 'general' | 'heavy';
   size?: number;
   projectType?: string;
+  // Location intelligence context
+  city?: string;
+  county?: string;
+  state?: string;
+  nearestYard?: string;
+  distanceMiles?: number;
+  distanceMinutes?: number;
+  // Quote context
+  recommendedSize?: number;
+  estimatedTotal?: string;
 }
 
 export interface CapturedLead {
@@ -23,13 +34,27 @@ export interface CapturedLead {
   email?: string;
 }
 
-export function useAIChat() {
+interface UseAIChatOptions {
+  initialContext?: ChatContext;
+}
+
+export function useAIChat(options: UseAIChatOptions = {}) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [context, setContext] = useState<ChatContext>({});
+  const [context, setContext] = useState<ChatContext>(options.initialContext || {});
   const [capturedLead, setCapturedLead] = useState<CapturedLead>({});
   const [isLeadCaptured, setIsLeadCaptured] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Update context when external context changes
+  useEffect(() => {
+    if (options.initialContext) {
+      setContext(prev => ({
+        ...prev,
+        ...options.initialContext,
+      }));
+    }
+  }, [options.initialContext]);
 
   // Parse quick replies from message content
   const parseQuickReplies = (content: string): { cleanContent: string; quickReplies: string[] } => {
@@ -230,8 +255,12 @@ export function useAIChat() {
           phone: lead.phone,
           email: lead.email,
           zip: context.zip,
+          city: context.city,
+          county: context.county,
+          nearest_yard: context.nearestYard,
+          distance_miles: context.distanceMiles,
           waste_type: context.material,
-          recommended_size: context.size,
+          recommended_size: context.recommendedSize || context.size,
           included_tons: context.size ? getTonnage(context.size) : undefined,
           project_type: context.projectType,
           conversation_transcript: transcript,
@@ -257,8 +286,12 @@ export function useAIChat() {
           phone,
           email: capturedLead.email,
           zip: context.zip,
+          city: context.city,
+          county: context.county,
+          nearest_yard: context.nearestYard,
+          distance_miles: context.distanceMiles,
           waste_type: context.material,
-          recommended_size: context.size,
+          recommended_size: context.recommendedSize || context.size,
           project_type: context.projectType,
           notes: bestTime ? `Best time to call: ${bestTime}` : undefined,
           conversation_transcript: transcript,
@@ -270,6 +303,14 @@ export function useAIChat() {
     }
   }, [messages, context, capturedLead]);
 
+  // Update context externally (e.g., from quote calculator)
+  const updateContext = useCallback((newContext: Partial<ChatContext>) => {
+    setContext(prev => ({
+      ...prev,
+      ...newContext,
+    }));
+  }, []);
+
   // Cancel current request
   const cancelRequest = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -279,29 +320,35 @@ export function useAIChat() {
   // Reset chat
   const resetChat = useCallback(() => {
     setMessages([]);
-    setContext({});
+    setContext(options.initialContext || {});
     setCapturedLead({});
     setIsLeadCaptured(false);
-  }, []);
+  }, [options.initialContext]);
 
-  // Initialize with welcome message
+  // Initialize with context-aware welcome message
   const initializeChat = useCallback(() => {
     if (messages.length === 0) {
+      // Build context-aware welcome message
+      let welcomeMessage = "Hey there! 👋 I'm here to help you get the right dumpster, fast.";
+      
+      if (context.zip && context.nearestYard) {
+        welcomeMessage = `Hey there! 👋 I see you're in ZIP ${context.zip}${context.county ? ` (${context.county})` : ''}. Your nearest yard is ${context.nearestYard}${context.distanceMiles ? `, about ${context.distanceMiles.toFixed(1)} miles away` : ''}.`;
+        welcomeMessage += "\n\nAre you dumping **Heavy materials** (concrete, dirt, soil) or **General debris** (mixed junk, remodel waste)?";
+      } else {
+        welcomeMessage += " What can I help you with today?";
+      }
+
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "Hey there! 👋 I'm here to help you get the right dumpster, fast. What can I help you with today?",
+        content: welcomeMessage,
         timestamp: new Date(),
-        quickReplies: [
-          'Get an instant quote',
-          'Help me choose a size',
-          'Heavy materials (concrete/dirt)',
-          'Contractor questions',
-          'Talk to a human',
-        ],
+        quickReplies: context.zip 
+          ? ['Heavy materials (concrete/dirt)', 'General debris (mixed)', 'Help me choose']
+          : ['Get an instant quote', 'Help me choose a size', 'Heavy materials (concrete/dirt)', 'Contractor questions', 'Talk to a human'],
       }]);
     }
-  }, [messages.length]);
+  }, [messages.length, context]);
 
   return {
     messages,
@@ -312,6 +359,7 @@ export function useAIChat() {
     sendMessage,
     captureLead,
     requestCallback,
+    updateContext,
     cancelRequest,
     resetChat,
     initializeChat,
