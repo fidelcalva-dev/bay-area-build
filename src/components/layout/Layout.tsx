@@ -1,8 +1,11 @@
-import { ReactNode } from 'react';
+import { ReactNode, lazy, Suspense } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileBottomBar } from './MobileBottomBar';
 import { SEOHead } from '@/components/seo/SEOHead';
+
+// Lazy load AI chat widget to avoid impacting initial load
+const AIChatWidget = lazy(() => import('@/components/chat/AIChatWidget'));
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,6 +14,7 @@ interface LayoutProps {
   canonical?: string;
   noindex?: boolean;
   schema?: object | object[];
+  hideChat?: boolean;
 }
 
 export function Layout({ 
@@ -19,7 +23,8 @@ export function Layout({
   description, 
   canonical, 
   noindex,
-  schema 
+  schema,
+  hideChat = false,
 }: LayoutProps) {
   return (
     <>
@@ -35,6 +40,13 @@ export function Layout({
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <Footer />
         <MobileBottomBar />
+        
+        {/* AI Chat Widget */}
+        {!hideChat && (
+          <Suspense fallback={null}>
+            <AIChatWidget />
+          </Suspense>
+        )}
       </div>
     </>
   );

@@ -1,0 +1,200 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const HIGHLEVEL_API_KEY = Deno.env.get("HIGHLEVEL_API_KEY");
+const HIGHLEVEL_LOCATION_ID = Deno.env.get("HIGHLEVEL_LOCATION_ID");
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+interface AIChatLeadData {
+  name: string;
+  phone: string;
+  email?: string;
+  zip?: string;
+  waste_type?: "general" | "heavy";
+  recommended_size?: number;
+  included_tons?: number;
+  preferred_date?: string;
+  project_type?: string;
+  notes?: string;
+  conversation_transcript?: string;
+  needs_human_followup?: boolean;
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (!HIGHLEVEL_API_KEY || !HIGHLEVEL_LOCATION_ID) {
+    console.log("HighLevel credentials not configured, skipping lead capture");
+    return new Response(
+      JSON.stringify({ success: true, message: "Lead saved locally (CRM not configured)" }),
+      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+    );
+  }
+
+  try {
+    const data: AIChatLeadData = await req.json();
+    const {
+      name,
+      phone,
+      email,
+      zip,
+      waste_type,
+      recommended_size,
+      included_tons,
+      preferred_date,
+      project_type,
+      notes,
+      conversation_transcript,
+      needs_human_followup,
+    } = data;
+
+    console.log("Processing AI chat lead:", name, phone);
+
+    // Format phone for HighLevel (E.164)
+    const formattedPhone = phone.replace(/\D/g, "");
+    const e164Phone = formattedPhone.length === 10 ? `+1${formattedPhone}` : `+${formattedPhone}`;
+
+    // Build custom fields
+    const customFields: Record<string, string> = {
+      source: "AI Chat Widget",
+    };
+
+    if (zip) customFields.zip_code = zip;
+    if (waste_type) customFields.waste_type = waste_type === "heavy" ? "Heavy Materials" : "General Debris";
+    if (recommended_size) customFields.recommended_size = `${recommended_size} yard`;
+    if (included_tons !== undefined) customFields.included_tons = `${included_tons} tons`;
+    if (preferred_date) customFields.preferred_date = preferred_date;
+    if (project_type) customFields.project_type = project_type;
+    if (notes) customFields.notes = notes;
+
+    // Build tags
+    const tags = ["AI Chat Lead"];
+    if (waste_type === "heavy") tags.push("Heavy Materials");
+    if (needs_human_followup) tags.push("Needs Human Follow-up");
+    if (project_type) tags.push(project_type);
+
+    // Search for existing contact
+    const searchUrl = `https://services.leadconnectorhq.com/contacts/search/duplicates`;
+    const searchResponse = await fetch(searchUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${HIGHLEVEL_API_KEY}`,
+        "Content-Type": "application/json",
+        Version: "2021-07-28",
+      },
+      body: JSON.stringify({
+        locationId: HIGHLEVEL_LOCATION_ID,
+        phone: e164Phone,
+      }),
+    });
+
+    let contactId: string | null = null;
+
+    if (searchResponse.ok) {
+      const searchResult = await searchResponse.json();
+      if (searchResult.contacts && searchResult.contacts.length > 0) {
+        contactId = searchResult.contacts[0].id;
+        console.log("Found existing contact:", contactId);
+      }
+    }
+
+    // Contact payload
+    const contactPayload: Record<string, any> = {
+      locationId: HIGHLEVEL_LOCATION_ID,
+      name,
+      phone: e164Phone,
+      tags,
+      customFields: Object.entries(customFields).map(([key, value]) => ({
+        key,
+        field_value: value,
+      })),
+    };
+
+    if (email) {
+      contactPayload.email = email;
+    }
+
+    let result;
+
+    if (contactId) {
+      // Update existing contact
+      const updateUrl = `https://services.leadconnectorhq.com/contacts/${contactId}`;
+      const updateResponse = await fetch(updateUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${HIGHLEVEL_API_KEY}`,
+          "Content-Type": "application/json",
+          Version: "2021-07-28",
+        },
+        body: JSON.stringify(contactPayload),
+      });
+      result = await updateResponse.json();
+      console.log("Updated contact:", result);
+    } else {
+      // Create new contact
+      const createUrl = `https://services.leadconnectorhq.com/contacts/`;
+      const createResponse = await fetch(createUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${HIGHLEVEL_API_KEY}`,
+          "Content-Type": "application/json",
+          Version: "2021-07-28",
+        },
+        body: JSON.stringify(contactPayload),
+      });
+      result = await createResponse.json();
+      contactId = result.contact?.id;
+      console.log("Created contact:", result);
+    }
+
+    // Add conversation transcript as a note
+    if (contactId && conversation_transcript) {
+      try {
+        const notePayload = {
+          contactId,
+          body: `AI Chat Conversation:\n\n${conversation_transcript}`,
+        };
+
+        const noteUrl = `https://services.leadconnectorhq.com/contacts/${contactId}/notes`;
+        await fetch(noteUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${HIGHLEVEL_API_KEY}`,
+            "Content-Type": "application/json",
+            Version: "2021-07-28",
+          },
+          body: JSON.stringify(notePayload),
+        });
+        console.log("Added conversation transcript to contact");
+      } catch (noteError) {
+        console.error("Error adding note:", noteError);
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        contactId,
+        action: contactId ? "updated" : "created",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  } catch (error: any) {
+    console.error("Error in ai-chat-lead function:", error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+});
