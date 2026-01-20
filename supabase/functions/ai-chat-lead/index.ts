@@ -13,6 +13,10 @@ interface AIChatLeadData {
   phone: string;
   email?: string;
   zip?: string;
+  city?: string;
+  county?: string;
+  nearest_yard?: string;
+  distance_miles?: number;
   waste_type?: "general" | "heavy";
   recommended_size?: number;
   included_tons?: number;
@@ -43,6 +47,10 @@ serve(async (req) => {
       phone,
       email,
       zip,
+      city,
+      county,
+      nearest_yard,
+      distance_miles,
       waste_type,
       recommended_size,
       included_tons,
@@ -65,6 +73,10 @@ serve(async (req) => {
     };
 
     if (zip) customFields.zip_code = zip;
+    if (city) customFields.city = city;
+    if (county) customFields.county = county;
+    if (nearest_yard) customFields.nearest_yard = nearest_yard;
+    if (distance_miles !== undefined) customFields.distance_miles = `${distance_miles.toFixed(1)} miles`;
     if (waste_type) customFields.waste_type = waste_type === "heavy" ? "Heavy Materials" : "General Debris";
     if (recommended_size) customFields.recommended_size = `${recommended_size} yard`;
     if (included_tons !== undefined) customFields.included_tons = `${included_tons} tons`;
@@ -77,6 +89,7 @@ serve(async (req) => {
     if (waste_type === "heavy") tags.push("Heavy Materials");
     if (needs_human_followup) tags.push("Needs Human Follow-up");
     if (project_type) tags.push(project_type);
+    if (city) tags.push(`City: ${city}`);
 
     // Search for existing contact
     const searchUrl = `https://services.leadconnectorhq.com/contacts/search/duplicates`;

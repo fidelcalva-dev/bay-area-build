@@ -111,12 +111,21 @@ function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' 
           <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
         </div>
         
-        {/* Included Tons Badge */}
+        {/* Pricing Badge - Different for Heavy vs General */}
         <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-lg flex items-center gap-1.5 ${
-          isHeavy ? 'bg-amber-500/90' : 'bg-primary/90'
+          isHeavy ? 'bg-success/90' : 'bg-primary/90'
         } backdrop-blur-sm`}>
-          <Weight className="w-4 h-4 text-white" />
-          <span className="text-sm font-bold text-white">{size.includedTons}T Included</span>
+          {isHeavy ? (
+            <>
+              <CheckCircle className="w-4 h-4 text-white" />
+              <span className="text-sm font-bold text-white">Flat Fee</span>
+            </>
+          ) : (
+            <>
+              <Weight className="w-4 h-4 text-white" />
+              <span className="text-sm font-bold text-white">{size.includedTons}T Included</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -270,7 +279,7 @@ export default function Sizes() {
                 <h2 className="heading-lg text-foreground mb-3">For Concrete, Dirt, Rock & Asphalt</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Compact sizes designed for heavy materials. Reinforced construction for dense loads.
-                  <span className="font-semibold text-foreground"> Same tonnage included as general debris</span> (6yd=0.5T, 8yd=0.5T, 10yd=1T).
+                  <span className="font-semibold text-success"> FLAT FEE pricing—disposal included with no extra weight charges.</span>
                 </p>
               </div>
 
@@ -281,11 +290,25 @@ export default function Sizes() {
               </div>
 
               {/* Heavy Materials Note */}
-              <div className="mt-8 p-5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl max-w-2xl mx-auto">
+              <div className="mt-8 p-5 bg-success/10 border border-success/30 rounded-xl max-w-2xl mx-auto">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground mb-1">Flat Fee Pricing – No Weight Worries</p>
+                    <p className="text-sm text-muted-foreground">
+                      Heavy material dumpsters (6/8/10 yard) are FLAT FEE. Disposal is included with no extra weight charges.
+                      If trash or debris is mixed in, the load may be reclassified and additional charges may apply.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Heavy Materials Only Warning */}
+              <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl max-w-2xl mx-auto">
                 <div className="flex items-start gap-3">
                   <Weight className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-foreground mb-1">Heavy Materials Only</p>
+                    <p className="font-semibold text-foreground mb-1">Heavy Materials Only – No Mixing</p>
                     <p className="text-sm text-muted-foreground">
                       These dumpsters are specifically for concrete, dirt, rock, brick, and asphalt. 
                       Mixing with general debris is not allowed due to recycling requirements.
@@ -307,8 +330,10 @@ export default function Sizes() {
                 <Weight className="w-6 h-6 text-accent-foreground" />
               </div>
               <div>
-                <p className="font-semibold text-foreground">Overage charges apply beyond included tonnage</p>
-                <p className="text-sm text-muted-foreground">${overageRate}/ton after included weight</p>
+                <p className="font-semibold text-foreground">Overage Rules by Material Type</p>
+                <p className="text-sm text-muted-foreground">
+                  Heavy: Flat Fee (no overage) • General 6-10yd: $30/yard • General 20-50yd: ${overageRate}/ton
+                </p>
               </div>
             </div>
             <Button asChild variant="outline" size="sm">
