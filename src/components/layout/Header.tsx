@@ -4,8 +4,7 @@ import { Menu, X, Phone, Truck, Instagram, Youtube, Facebook, ChevronDown, HardH
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
+import { CTA_LINKS } from '@/lib/shared-data';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -171,7 +170,7 @@ export function Header() {
 
             {/* Order Now Button */}
             <Button asChild variant="cta" size="default" className="hidden sm:inline-flex">
-              <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+              <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                 {t('nav.orderNow')}
               </a>
             </Button>
@@ -250,7 +249,7 @@ export function Header() {
                 {language === 'en' ? '🇪🇸 Cambiar a Español' : '🇺🇸 Switch to English'}
               </button>
               <Button asChild variant="cta" size="lg" className="w-full">
-                <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                   {t('nav.orderNow')}
                 </a>
               </Button>

@@ -116,7 +116,7 @@ export const PRICING_ZONES: PricingZone[] = [
   {
     id: 'zone-2',
     name: 'Extended Bay Area',
-    baseMultiplier: 1.1,
+    baseMultiplier: 1.15,
     zipCodes: [
       // Marin
       '94901', '94903', '94904', '94912', '94913', '94914', '94915', '94920', '94924', '94925',
