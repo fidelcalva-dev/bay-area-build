@@ -1,4 +1,4 @@
-import { Shield, Award, Star, ExternalLink, CheckCircle } from 'lucide-react';
+import { Shield, Award, Star, ExternalLink } from 'lucide-react';
 import { BUSINESS_INFO } from '@/lib/seo';
 
 const trustBadges = [
@@ -7,9 +7,8 @@ const trustBadges = [
     icon: Shield,
     title: 'Google Guaranteed',
     subtitle: 'Verified Local Service',
-    description: 'Google screens our background, licenses & insurance. If you\'re not satisfied, Google may reimburse up to $2,000.',
+    description: 'Background-checked, licensed, and insured. Google may reimburse up to $2,000 if unsatisfied.',
     link: BUSINESS_INFO.social.googleGuarantee,
-    linkText: 'Learn about Google Guarantee',
     featured: true,
   },
   {
@@ -17,9 +16,8 @@ const trustBadges = [
     icon: Award,
     title: 'BBB A+ Rating',
     subtitle: 'Accredited Business',
-    description: 'Accredited by the Better Business Bureau with an A+ rating for trust, transparency, and customer service.',
+    description: 'Trusted by the Better Business Bureau for transparency and customer service.',
     link: BUSINESS_INFO.social.bbb,
-    linkText: 'View BBB Profile',
     featured: false,
   },
   {
@@ -27,103 +25,81 @@ const trustBadges = [
     icon: Star,
     title: '5.0 on Yelp',
     subtitle: '200+ Reviews',
-    description: 'Real customers, real reviews. See what Oakland and Bay Area customers say about their dumpster rental experience.',
+    description: 'Real customers, real reviews from across the Bay Area.',
     link: BUSINESS_INFO.social.yelp,
-    linkText: 'Read Yelp Reviews',
     featured: false,
   },
 ];
 
+const stats = [
+  { value: '500+', label: '5-Star Reviews' },
+  { value: '15+', label: 'Years in Business' },
+  { value: '98%', label: 'Would Recommend' },
+  { value: '9', label: 'Counties Served' },
+];
+
 export function TrustBadgesSection() {
   return (
-    <section className="section-padding bg-card border-y border-border">
+    <section className="py-16 md:py-24 bg-card border-y border-border">
       <div className="container-wide">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-6">
-            <CheckCircle className="w-4 h-4" />
-            <span>Trusted & Verified</span>
+        {/* Header - Minimal */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            Trust verified
           </div>
-          <h2 className="heading-lg text-foreground mb-4">
-            Why Customers Choose Us
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            Industry-leading certifications
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Backed by industry-leading certifications and hundreds of 5-star reviews from Bay Area customers.
-          </p>
         </div>
 
-        {/* Trust Badges Grid */}
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        {/* Trust Badges - Compact grid */}
+        <div className="grid md:grid-cols-3 gap-4 lg:gap-6 mb-10">
           {trustBadges.map((badge) => (
-            <div
+            <a
               key={badge.id}
-              className={`relative p-6 lg:p-8 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+              href={badge.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group relative p-5 lg:p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
                 badge.featured
-                  ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/10'
-                  : 'bg-background border-border'
+                  ? 'bg-primary/5 border-primary/20'
+                  : 'bg-background border-border hover:border-primary/20'
               }`}
             >
-              {/* Featured Label */}
               {badge.featured && (
-                <div className="absolute -top-3 left-6 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                <div className="absolute -top-2.5 left-5 px-2.5 py-0.5 bg-primary text-primary-foreground text-xs font-bold rounded-full">
                   Featured
                 </div>
               )}
 
-              {/* Icon */}
-              <div
-                className={`flex items-center justify-center w-14 h-14 rounded-xl mb-5 ${
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                   badge.featured
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-primary'
-                }`}
-              >
-                <badge.icon className="w-7 h-7" />
+                }`}>
+                  <badge.icon className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-foreground mb-0.5">{badge.title}</h3>
+                  <p className="text-xs text-muted-foreground mb-2">{badge.subtitle}</p>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{badge.description}</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
               </div>
-
-              {/* Content */}
-              <h3 className="text-xl font-bold text-foreground mb-1">
-                {badge.title}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                {badge.subtitle}
-              </p>
-              <p className="text-foreground/80 text-sm leading-relaxed mb-5">
-                {badge.description}
-              </p>
-
-              {/* Link */}
-              <a
-                href={badge.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline underline-offset-2"
-              >
-                {badge.linkText}
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
+            </a>
           ))}
         </div>
 
-        {/* Stats Row */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          <div className="text-center p-6 bg-muted/50 rounded-xl">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">500+</div>
-            <div className="text-sm text-muted-foreground">5-Star Reviews</div>
-          </div>
-          <div className="text-center p-6 bg-muted/50 rounded-xl">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">15+</div>
-            <div className="text-sm text-muted-foreground">Years in Business</div>
-          </div>
-          <div className="text-center p-6 bg-muted/50 rounded-xl">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">98%</div>
-            <div className="text-sm text-muted-foreground">Would Recommend</div>
-          </div>
-          <div className="text-center p-6 bg-muted/50 rounded-xl">
-            <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">9</div>
-            <div className="text-sm text-muted-foreground">Counties Served</div>
-          </div>
+        {/* Stats Row - Clean numbers */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="text-center p-5 bg-muted/50 rounded-xl">
+              <div className="text-2xl lg:text-3xl font-bold text-primary mb-0.5">{stat.value}</div>
+              <div className="text-sm text-muted-foreground">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

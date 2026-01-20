@@ -1,66 +1,75 @@
-// Sizes Preview Section - Shows dumpster sizes with consistent data
-// Uses master data from shared-data.ts
-
+// Sizes Preview Section - Modern system-style
 import { Link } from 'react-router-dom';
-import { ArrowRight, Weight } from 'lucide-react';
+import { ArrowRight, Truck, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { DUMPSTER_SIZES_DATA, CTA_LINKS, getOverageInfo } from '@/lib/shared-data';
+import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { DumpsterSizeCard } from '@/components/shared/DumpsterSizeCard';
 
-// Show the most popular sizes for preview (general debris only)
+// Show the most popular sizes for preview
 const PREVIEW_SIZES = DUMPSTER_SIZES_DATA.filter(s => 
   [10, 20, 30, 40].includes(s.yards) && (s.category === 'general' || s.category === 'both')
 );
 
 export function SizesPreviewSection() {
-  const { t } = useLanguage();
-
   return (
-    <section className="section-padding bg-muted">
+    <section className="py-16 md:py-24 bg-muted/50">
       <div className="container-wide">
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
-            <h2 className="heading-lg text-foreground mb-3">{t('sizes.title')}</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              From small cleanouts to major construction projects.
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
+              <Truck className="w-3.5 h-3.5" />
+              Dumpster sizes
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Choose your size
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Smart recommendation included in quote flow.
             </p>
           </div>
-          <Button asChild variant="outline" size="lg">
+          <Button asChild variant="outline" size="default" className="group">
             <Link to="/sizes">
-              View All Sizes
-              <ArrowRight className="w-4 h-4" />
+              View all sizes
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Size Cards Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {PREVIEW_SIZES.map((size) => (
             <DumpsterSizeCard
               key={size.yards}
               size={size}
               variant="preview"
               category="general"
-              ctaLink="/sizes"
-              ctaLabel={`Choose ${size.yards} Yard`}
+              ctaLink="/#quote"
+              ctaLabel={`Get quote`}
             />
           ))}
         </div>
 
         {/* Heavy Materials Callout */}
-        <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl">
-          <div className="flex items-center gap-3">
-            <Weight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+        <div className="mt-6 p-4 bg-card border border-border rounded-xl flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+              <Weight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
             <div>
-              <span className="font-semibold text-foreground">Need a dumpster for concrete, dirt, or rock?</span>
-              <span className="text-muted-foreground ml-2">
-                We offer dedicated 6, 8, and 10 yard heavy material dumpsters with flat fee pricing—disposal included.
+              <span className="font-semibold text-foreground">Heavy materials?</span>
+              <span className="text-muted-foreground text-sm ml-2">
+                Concrete, dirt, brick → 6/8/10 yard with flat fee pricing.
               </span>
-              <Link to="/sizes" className="text-primary font-medium ml-2 hover:underline">
-                View heavy material sizes →
-              </Link>
             </div>
           </div>
+          <Link 
+            to="/sizes" 
+            className="text-primary text-sm font-medium hover:underline flex items-center gap-1"
+          >
+            View options
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
     </section>
