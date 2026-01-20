@@ -175,6 +175,13 @@ export async function saveQuote(params: {
   // Confidence fields
   confidenceLevel?: string;
   confidenceNote?: string;
+  // Distance-based pricing fields
+  customerLat?: number;
+  customerLng?: number;
+  yardId?: string;
+  yardName?: string;
+  distanceMiles?: number;
+  distanceBracket?: string;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -206,6 +213,13 @@ export async function saveQuote(params: {
         // Confidence fields
         confidence_level: params.confidenceLevel,
         confidence_note: params.confidenceNote,
+        // Distance-based pricing fields
+        customer_lat: params.customerLat,
+        customer_lng: params.customerLng,
+        yard_id: params.yardId,
+        yard_name: params.yardName,
+        distance_miles: params.distanceMiles,
+        distance_bracket: params.distanceBracket,
       })
       .select('id')
       .single();

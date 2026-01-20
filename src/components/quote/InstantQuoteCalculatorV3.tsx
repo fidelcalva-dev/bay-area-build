@@ -424,6 +424,13 @@ export function InstantQuoteCalculatorV3() {
         // Confidence data
         confidenceLevel: smartRecommendation.confidence,
         confidenceNote: smartRecommendation.confidenceNote,
+        // Distance-based pricing data
+        customerLat: distanceCalc.geocoding?.lat,
+        customerLng: distanceCalc.geocoding?.lng,
+        yardId: distanceCalc.distance?.yard.id,
+        yardName: distanceCalc.distance?.yard.name,
+        distanceMiles: distanceCalc.distance?.distanceMiles,
+        distanceBracket: distanceCalc.distance?.bracket?.bracketName,
       });
 
       if (result.success) {
@@ -469,6 +476,10 @@ export function InstantQuoteCalculatorV3() {
               project_type: projectType || undefined,
               confidence_level: smartRecommendation.confidence,
               tags: ['Quote Saved', 'Resume Later', formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris'],
+              // Distance-based pricing data
+              yard_name: distanceCalc.distance?.yard.name,
+              distance_miles: distanceCalc.distance?.distanceMiles,
+              distance_bracket: distanceCalc.distance?.bracket?.bracketName,
             },
           });
         } catch (hlError) {
