@@ -10,26 +10,22 @@ const corsHeaders = {
 };
 
 interface HighLevelContactData {
-  // Contact info
+  event: string;
+  quote_id: string;
   name: string;
   phone: string;
   email?: string;
-  
-  // Quote data
-  quoteId: string;
-  zipCode: string;
-  zoneName?: string;
-  wasteType: 'general' | 'heavy';
-  recommendedSizeYards: number;
-  userSelectedSizeYards: number;
-  includedTons: number;
-  estimatedMin: number;
-  estimatedMax: number;
-  selectedExtras: string[];
-  projectType?: string;
-  confidenceLevel?: string;
-  
-  // Tags
+  zip: string;
+  waste_type: 'general' | 'heavy';
+  recommended_size: number;
+  selected_size: number;
+  included_tons: number;
+  estimated_total: string;
+  extras: string;
+  page: string;
+  zone_name?: string;
+  project_type?: string;
+  confidence_level?: string;
   tags: string[];
 }
 
@@ -50,23 +46,26 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const data: HighLevelContactData = await req.json();
     const {
+      event,
+      quote_id,
       name,
       phone,
       email,
-      quoteId,
-      zipCode,
-      zoneName,
-      wasteType,
-      recommendedSizeYards,
-      userSelectedSizeYards,
-      includedTons,
-      estimatedMin,
-      estimatedMax,
-      selectedExtras,
-      projectType,
-      confidenceLevel,
+      zip,
+      waste_type,
+      recommended_size,
+      selected_size,
+      included_tons,
+      estimated_total,
+      extras,
+      page,
+      zone_name,
+      project_type,
+      confidence_level,
       tags,
     } = data;
+
+    console.log(`Processing ${event} from ${page}`);
 
     // Format phone number for HighLevel (E.164 format)
     const formattedPhone = phone.replace(/\D/g, '');
@@ -74,19 +73,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Build custom fields
     const customFields: Record<string, string> = {
-      quote_id: quoteId,
-      zip_code: zipCode,
-      waste_type: wasteType === 'heavy' ? 'Heavy Materials' : 'General Debris',
-      recommended_size: `${recommendedSizeYards} yard`,
-      selected_size: `${userSelectedSizeYards} yard`,
-      included_tons: `${includedTons} ton${includedTons !== 1 ? 's' : ''}`,
-      estimated_total: `$${estimatedMin} - $${estimatedMax}`,
-      extras: selectedExtras.length > 0 ? selectedExtras.join(', ') : 'None',
+      quote_id: quote_id,
+      zip_code: zip,
+      waste_type: waste_type === 'heavy' ? 'Heavy Materials' : 'General Debris',
+      recommended_size: `${recommended_size} yard`,
+      selected_size: `${selected_size} yard`,
+      included_tons: `${included_tons} ton${included_tons !== 1 ? 's' : ''}`,
+      estimated_total: estimated_total,
+      extras: extras || 'None',
+      source_page: page,
     };
 
-    if (zoneName) customFields.zone = zoneName;
-    if (projectType) customFields.project_type = projectType;
-    if (confidenceLevel) customFields.confidence_level = confidenceLevel;
+    if (zone_name) customFields.zone = zone_name;
+    if (project_type) customFields.project_type = project_type;
+    if (confidence_level) customFields.confidence_level = confidence_level;
 
     // First, try to find existing contact by phone
     const searchUrl = `https://services.leadconnectorhq.com/contacts/search/duplicates`;
@@ -173,13 +173,14 @@ const handler = async (req: Request): Promise<Response> => {
         const notePayload = {
           contactId,
           body: `Quote Saved:\n` +
-            `• Size: ${userSelectedSizeYards} yard (Recommended: ${recommendedSizeYards} yard)\n` +
-            `• Material: ${wasteType === 'heavy' ? 'Heavy' : 'General'}\n` +
-            `• ZIP: ${zipCode}\n` +
-            `• Estimate: $${estimatedMin} - $${estimatedMax}\n` +
-            `• Included: ${includedTons} ton${includedTons !== 1 ? 's' : ''}\n` +
-            `• Extras: ${selectedExtras.length > 0 ? selectedExtras.join(', ') : 'None'}\n` +
-            `• Quote ID: ${quoteId}`,
+            `• Size: ${selected_size} yard (Recommended: ${recommended_size} yard)\n` +
+            `• Material: ${waste_type === 'heavy' ? 'Heavy' : 'General'}\n` +
+            `• ZIP: ${zip}\n` +
+            `• Estimate: ${estimated_total}\n` +
+            `• Included: ${included_tons} ton${included_tons !== 1 ? 's' : ''}\n` +
+            `• Extras: ${extras || 'None'}\n` +
+            `• Quote ID: ${quote_id}\n` +
+            `• Source: ${page}`,
         };
 
         const noteUrl = `https://services.leadconnectorhq.com/contacts/${contactId}/notes`;
