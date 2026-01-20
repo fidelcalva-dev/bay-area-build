@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Truck, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText } from 'lucide-react';
+import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { CTA_LINKS } from '@/lib/shared-data';
+import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,14 +41,12 @@ export function Header() {
       <div className="container-wide">
         <div className="flex h-16 md:h-20 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-              <Truck className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground leading-tight">Calsan</span>
-              <span className="text-xs text-muted-foreground leading-tight">Dumpsters Pro</span>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logoCalsan} 
+              alt="Calsan Dumpsters Pro" 
+              className="h-10 md:h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
