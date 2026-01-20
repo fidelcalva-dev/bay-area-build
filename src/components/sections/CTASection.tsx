@@ -1,28 +1,19 @@
-// CTA Section - Standardized call-to-action
-// Uses canonical CTAButtons component for consistency
-
-import { useLanguage } from '@/contexts/LanguageContext';
-import { CTAButtons, CTA_CONFIG } from '@/components/shared';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { CTA_CONFIG } from '@/components/shared';
 
 interface CTASectionProps {
-  /** Custom headline */
   title?: string;
-  /** Custom subtitle */
   subtitle?: string;
-  /** Background variant */
   variant?: 'primary' | 'secondary' | 'dark';
-  /** Show only primary CTA */
-  primaryOnly?: boolean;
 }
 
 export function CTASection({ 
-  title, 
-  subtitle, 
-  variant = 'secondary',
-  primaryOnly = false 
+  title = 'Ready to get started?', 
+  subtitle = 'Get an instant estimate in 60 seconds. Same-day delivery available.',
+  variant = 'secondary'
 }: CTASectionProps) {
-  const { t } = useLanguage();
-
   const bgClass = {
     primary: 'bg-primary text-primary-foreground',
     secondary: 'bg-secondary text-secondary-foreground',
@@ -30,24 +21,33 @@ export function CTASection({
   }[variant];
 
   return (
-    <section className={`section-padding ${bgClass}`}>
+    <section className={`py-16 md:py-20 ${bgClass}`}>
       <div className="container-narrow text-center">
-        <h2 className="heading-lg mb-4">
-          {title || t('ctaSection.title')}
+        {/* Headline */}
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3">
+          {title}
         </h2>
-        <p className={`text-lg max-w-2xl mx-auto mb-8 opacity-80`}>
-          {subtitle || t('ctaSection.subtitle')}
+        <p className="text-lg opacity-70 max-w-xl mx-auto mb-8">
+          {subtitle}
         </p>
 
-        <CTAButtons 
-          variant="section" 
-          showText={!primaryOnly}
-          showCall={!primaryOnly}
-          className="justify-center mb-8" 
-        />
+        {/* CTAs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
+          <Button asChild variant="cta" size="lg" className="group">
+            <Link to="/#quote">
+              Get instant estimate
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="bg-transparent border-current hover:bg-white/10">
+            <a href={`tel:${CTA_CONFIG.phone}`}>
+              Call {CTA_CONFIG.phoneFormatted}
+            </a>
+          </Button>
+        </div>
 
-        <p className="opacity-60">
-          🇪🇸 Hablamos Español • {CTA_CONFIG.phoneFormatted}
+        <p className="text-sm opacity-50">
+          🇪🇸 Hablamos Español
         </p>
       </div>
     </section>
