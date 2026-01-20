@@ -37,7 +37,7 @@ export function Header() {
   const isContractorActive = contractorLinks.some(link => location.pathname === link.to);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-card border-b border-border">
       <div className="container-wide">
         <div className="flex h-16 md:h-20 items-center justify-between">
           {/* Logo */}
