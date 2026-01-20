@@ -193,12 +193,16 @@ export type Database = {
           placement_lng: number | null
           placement_notes: string | null
           placement_type: string | null
+          project_type: string | null
+          recommendation_reason: string | null
+          recommended_size_yards: number | null
           rental_days: number
           selected_vendor_id: string | null
           size_id: string | null
           status: string
           subtotal: number
           updated_at: string
+          user_selected_size_yards: number | null
           user_type: string
           vendor_cost: number | null
           zip_code: string
@@ -226,12 +230,16 @@ export type Database = {
           placement_lng?: number | null
           placement_notes?: string | null
           placement_type?: string | null
+          project_type?: string | null
+          recommendation_reason?: string | null
+          recommended_size_yards?: number | null
           rental_days?: number
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal: number
           updated_at?: string
+          user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
           zip_code: string
@@ -259,12 +267,16 @@ export type Database = {
           placement_lng?: number | null
           placement_notes?: string | null
           placement_type?: string | null
+          project_type?: string | null
+          recommendation_reason?: string | null
+          recommended_size_yards?: number | null
           rental_days?: number
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal?: number
           updated_at?: string
+          user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
           zip_code?: string
