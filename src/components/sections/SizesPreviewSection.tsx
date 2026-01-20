@@ -1,9 +1,9 @@
-// Sizes Preview Section - Modern system-style
 import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { DumpsterSizeCard } from '@/components/shared/DumpsterSizeCard';
+import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 
 // Show the most popular sizes for preview
 const PREVIEW_SIZES = DUMPSTER_SIZES_DATA.filter(s => 
@@ -15,7 +15,7 @@ export function SizesPreviewSection() {
     <section className="py-16 md:py-24 bg-muted/50">
       <div className="container-wide">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+        <AnimatedSection className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
               <Truck className="w-3.5 h-3.5" />
@@ -34,24 +34,25 @@ export function SizesPreviewSection() {
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
-        </div>
+        </AnimatedSection>
 
         {/* Size Cards Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <StaggeredContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {PREVIEW_SIZES.map((size) => (
-            <DumpsterSizeCard
-              key={size.yards}
-              size={size}
-              variant="preview"
-              category="general"
-              ctaLink="/#quote"
-              ctaLabel={`Get quote`}
-            />
+            <AnimatedItem key={size.yards} variant="fadeUp">
+              <DumpsterSizeCard
+                size={size}
+                variant="preview"
+                category="general"
+                ctaLink="/#quote"
+                ctaLabel={`Get quote`}
+              />
+            </AnimatedItem>
           ))}
-        </div>
+        </StaggeredContainer>
 
         {/* Heavy Materials Callout */}
-        <div className="mt-6 p-4 bg-card border border-border rounded-xl flex flex-col sm:flex-row sm:items-center gap-4">
+        <AnimatedSection delay={0.3} className="mt-6 p-4 bg-card border border-border rounded-xl flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex items-center gap-3 flex-1">
             <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
               <Weight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
@@ -70,7 +71,7 @@ export function SizesPreviewSection() {
             View options
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
