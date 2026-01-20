@@ -529,8 +529,14 @@ export function WhyThisSize({
       lines.push(`✓ **Good call:** Going larger than recommended gives you a safety buffer and avoids overflow fees.`);
     }
 
-    // Weight reminder
-    lines.push(`💡 **Weight matters:** Each size includes a tonnage allowance. Overages are billed at $85-$110/ton, so estimate weight carefully.`);
+    // Weight reminder - different for heavy vs general
+    if (materialType === 'heavy') {
+      lines.push(`💡 **Flat fee pricing:** Heavy material dumpsters include disposal with no extra weight charges. Just keep the load pure (no trash).`);
+    } else if (selectedSize <= 10) {
+      lines.push(`💡 **Overage info:** If you exceed capacity, overage is $30 per additional yard.`);
+    } else {
+      lines.push(`💡 **Weight matters:** Sizes 20-50yd include tonnage allowance. Overages are billed at $165/ton after the scale ticket.`);
+    }
 
     return lines;
   };

@@ -65,18 +65,26 @@ const BEST_PRACTICES_SECTIONS = [
   {
     id: 'weight',
     number: 2,
-    title: 'Understand weight rules',
-    subtitle: 'And how to avoid extra charges',
+    title: 'Understand weight & overage rules',
+    subtitle: 'Different rules for heavy vs general',
     icon: Scale,
     content: (
       <div className="space-y-4">
         <ul className="space-y-3 text-muted-foreground">
           <li className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Package className="w-4 h-4 text-primary" />
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+              <Package className="w-4 h-4 text-success" />
             </div>
             <div>
-              <span className="font-medium text-foreground">Inert dumpsters:</span> For heavy materials when clean/uncontaminated. 10 tons included.
+              <span className="font-medium text-foreground">Heavy/Inert dumpsters (6-10yd):</span> <span className="text-success font-semibold">FLAT FEE</span> — Disposal included with no extra weight charges. Pure loads only (concrete, dirt, brick, asphalt).
+            </div>
+          </li>
+          <li className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Scale className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <span className="font-medium text-foreground">General debris (20-50yd):</span> Includes weight by size (20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T). Overage: <span className="font-semibold">$165/ton</span> after scale ticket.
             </div>
           </li>
           <li className="flex items-start gap-3">
@@ -84,13 +92,13 @@ const BEST_PRACTICES_SECTIONS = [
               <Scale className="w-4 h-4 text-accent" />
             </div>
             <div>
-              <span className="font-medium text-foreground">General debris:</span> Includes weight by size (10yd=1T, 20yd=2T, etc.); excess billed per ton.
+              <span className="font-medium text-foreground">General debris (6-10yd):</span> Overage: <span className="font-semibold">$30 per additional yard</span> (not per ton).
             </div>
           </li>
         </ul>
-        <div className="p-3 bg-muted rounded-lg">
-          <p className="text-sm text-muted-foreground">
-            <strong>Note:</strong> If inert load contains trash, it may be treated as general debris and billed accordingly.
+        <div className="p-3 bg-warning/10 border border-warning/30 rounded-lg">
+          <p className="text-sm text-warning-foreground">
+            <strong>Note:</strong> If inert/heavy load contains trash, it may be reclassified and different rates apply.
           </p>
         </div>
       </div>
@@ -300,21 +308,22 @@ const BEST_PRACTICES_SECTIONS = [
     icon: Ruler,
     content: (
       <div className="space-y-4">
-        <div className="bg-muted/50 rounded-lg p-4">
-          <h4 className="font-semibold text-foreground mb-3">Inert (Heavy Materials)</h4>
+        <div className="bg-success/5 border border-success/30 rounded-lg p-4">
+          <h4 className="font-semibold text-foreground mb-1">Inert (Heavy Materials) — FLAT FEE</h4>
+          <p className="text-xs text-success mb-3">Disposal included, no extra weight charges</p>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><strong>6 yd:</strong> Small pads, trenches, walkways (0.5T included)</li>
-            <li><strong>8 yd:</strong> Driveway removal, foundation work (0.5T included)</li>
-            <li><strong>10 yd:</strong> Flatwork, masonry, tear-outs (1T included)</li>
+            <li><strong>6 yd:</strong> Small pads, trenches, walkways</li>
+            <li><strong>8 yd:</strong> Driveway removal, foundation work</li>
+            <li><strong>10 yd:</strong> Flatwork, masonry, tear-outs</li>
           </ul>
         </div>
         <div className="bg-muted/50 rounded-lg p-4">
           <h4 className="font-semibold text-foreground mb-3">General Debris</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><strong>6-10 yd:</strong> Small remodel, garage cleanout (0.5-1T included)</li>
-            <li><strong>20 yd:</strong> Medium remodel, roofing projects (2T included)</li>
-            <li><strong>30 yd:</strong> Large renovation, small demo (3T included)</li>
-            <li><strong>40-50 yd:</strong> Large demos, commercial projects (4-5T included)</li>
+            <li><strong>6-10 yd:</strong> Small remodel, garage cleanout <span className="text-xs text-muted-foreground">(overage: $30/yard)</span></li>
+            <li><strong>20 yd:</strong> Medium remodel, roofing projects <span className="text-xs text-muted-foreground">(2T included, overage: $165/ton)</span></li>
+            <li><strong>30 yd:</strong> Large renovation, small demo <span className="text-xs text-muted-foreground">(3T included, overage: $165/ton)</span></li>
+            <li><strong>40-50 yd:</strong> Large demos, commercial projects <span className="text-xs text-muted-foreground">(4-5T included, overage: $165/ton)</span></li>
           </ul>
         </div>
         <Link 

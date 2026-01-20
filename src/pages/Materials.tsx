@@ -25,12 +25,12 @@ const prohibited = [
 const specialRules = [
   {
     title: 'Concrete & Dirt Rules',
-    description: 'Concrete and clean dirt require a dedicated dumpster. Cannot be mixed with other materials. Has specific weight limits and pricing.',
+    description: 'Concrete and clean dirt require a dedicated 6/8/10-yard dumpster. FLAT FEE pricing—disposal included with no extra weight charges. Cannot be mixed with other materials.',
     icon: AlertTriangle,
   },
   {
-    title: 'Overweight Fees',
-    description: 'Each dumpster has a weight limit. Exceeding the limit results in $75/ton overage fee. We\'ll always notify you before pickup.',
+    title: 'Overage Fees',
+    description: 'General debris 20-50yd: $165/ton overage. General debris 6-10yd: $30 per additional yard overage. Heavy material dumpsters: No overage—flat fee includes disposal.',
     icon: Info,
   },
   {
