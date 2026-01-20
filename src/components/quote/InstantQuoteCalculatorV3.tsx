@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
-  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck
+  CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
+  Navigation, X, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 
@@ -98,6 +100,23 @@ export function InstantQuoteCalculatorV3() {
     email: '',
     address: '',
   });
+
+  // Auto-detect ZIP functionality
+  const autoDetectZip = useAutoDetectZip();
+  
+  // Trigger auto-detection on mount
+  useEffect(() => {
+    if (!formData.zip && autoDetectZip.status === 'idle') {
+      autoDetectZip.detectZip();
+    }
+  }, []);
+  
+  // Sync auto-detected ZIP to form
+  useEffect(() => {
+    if (autoDetectZip.zip && autoDetectZip.zip.length === 5 && !formData.zip) {
+      setFormData(prev => ({ ...prev, zip: autoDetectZip.zip! }));
+    }
+  }, [autoDetectZip.zip]);
 
   // Distance-based pricing calculation
   const distanceCalc = useDistanceCalculation(formData.zip);
@@ -637,12 +656,62 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* ZIP Input - Clean system style */}
+            {/* ZIP Input - Clean system style with auto-detect */}
             <div>
               <label className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
                 Delivery ZIP
               </label>
+              
+              {/* Auto-detect status banner */}
+              {autoDetectZip.isLoading && (
+                <div className="mb-3 p-2.5 rounded-lg bg-primary/5 border border-primary/20 flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Detecting your location...</span>
+                </div>
+              )}
+              
+              {/* Detected ZIP banner */}
+              {formData.zip.length === 5 && autoDetectZip.source && autoDetectZip.source !== 'manual' && (
+                <div className="mb-3 p-2.5 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Navigation className="w-4 h-4 text-primary" />
+                    <span className="text-sm text-foreground">
+                      {autoDetectZip.source === 'stored' ? (
+                        <>Last used: <span className="font-mono font-bold">{formData.zip}</span></>
+                      ) : autoDetectZip.source === 'geolocation' ? (
+                        <>Detected: <span className="font-mono font-bold">{formData.zip}</span>{autoDetectZip.cityName && <span className="text-muted-foreground"> ({autoDetectZip.cityName})</span>}</>
+                      ) : (
+                        <>Suggested: <span className="font-mono font-bold">{formData.zip}</span></>
+                      )}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, zip: '' }));
+                      autoDetectZip.clearStoredZip();
+                    }}
+                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                  >
+                    <X className="w-3 h-3" />
+                    Not my ZIP?
+                  </button>
+                </div>
+              )}
+              
+              {/* Use location button (when no ZIP detected and permission not denied) */}
+              {!formData.zip && !autoDetectZip.isLoading && autoDetectZip.permissionState !== 'denied' && autoDetectZip.source !== 'stored' && (
+                <button
+                  type="button"
+                  onClick={() => autoDetectZip.requestGeolocation()}
+                  className="mb-3 w-full p-2.5 rounded-lg bg-muted/50 border border-border hover:border-primary/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Use my location to autofill ZIP
+                </button>
+              )}
+              
               <div className="relative">
                 <Input
                   type="text"
@@ -651,7 +720,14 @@ export function InstantQuoteCalculatorV3() {
                   maxLength={5}
                   placeholder="94607"
                   value={formData.zip}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, zip: e.target.value.replace(/\D/g, '') }))}
+                  onChange={(e) => {
+                    const newZip = e.target.value.replace(/\D/g, '');
+                    setFormData((prev) => ({ ...prev, zip: newZip }));
+                    // Save to storage when manually entering a complete ZIP
+                    if (newZip.length === 5) {
+                      autoDetectZip.saveZip(newZip);
+                    }
+                  }}
                   className={cn(
                     "text-xl h-14 text-center font-mono font-bold tracking-[0.3em] border-2",
                     formData.zip.length === 5 && !isCheckingZip && (
@@ -670,6 +746,13 @@ export function InstantQuoteCalculatorV3() {
                   </div>
                 )}
               </div>
+              
+              {/* Privacy note */}
+              {autoDetectZip.source === 'geolocation' && (
+                <p className="mt-2 text-[10px] text-muted-foreground text-center">
+                  🔒 Location used only to suggest ZIP for pricing accuracy
+                </p>
+              )}
 
               {/* Zone Result - Status card */}
               {formData.zip.length === 5 && !isCheckingZip && (
@@ -726,14 +809,14 @@ export function InstantQuoteCalculatorV3() {
                       )}
                     </>
                   ) : (
-                    <div className="mt-3 p-3 rounded-lg flex items-center gap-3 bg-destructive/10 border border-destructive/20">
-                      <div className="w-8 h-8 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-4 h-4 text-destructive" />
+                    <div className="mt-3 p-3 rounded-lg flex items-center gap-3 bg-amber-500/10 border border-amber-500/20">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-4 h-4 text-amber-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-foreground text-sm">Outside service area</p>
+                        <p className="font-medium text-foreground text-sm">We may still help</p>
                         <p className="text-xs text-muted-foreground">
-                          Call <a href="tel:+15106802150" className="text-primary underline">(510) 680-2150</a>
+                          Enter your ZIP to confirm service availability
                         </p>
                       </div>
                     </div>
