@@ -183,7 +183,7 @@ export const EXTRAS: Extra[] = [
   {
     id: 'same-day',
     label: 'Same-Day Delivery',
-    description: 'Guaranteed same-day drop-off',
+    description: 'Priority dispatch (subject to availability)',
     price: PRICING_POLICIES.sameDayDelivery,
     icon: 'zap',
   },
