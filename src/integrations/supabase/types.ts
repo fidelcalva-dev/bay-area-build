@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      approval_requests: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          reason: string | null
+          request_type: string
+          requested_by: string
+          requested_value: Json | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          reason?: string | null
+          request_type: string
+          requested_by: string
+          requested_value?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          reason?: string | null
+          request_type?: string
+          requested_by?: string
+          requested_value?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -311,6 +356,66 @@ export type Database = {
           },
         ]
       }
+      driver_payouts: {
+        Row: {
+          base_payout: number
+          bonus: number | null
+          created_at: string
+          driver_id: string
+          id: string
+          job_type: string
+          mileage_payout: number | null
+          notes: string | null
+          order_id: string
+          paid_at: string | null
+          status: string
+          total_payout: number | null
+        }
+        Insert: {
+          base_payout?: number
+          bonus?: number | null
+          created_at?: string
+          driver_id: string
+          id?: string
+          job_type: string
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id: string
+          paid_at?: string | null
+          status?: string
+          total_payout?: number | null
+        }
+        Update: {
+          base_payout?: number
+          bonus?: number | null
+          created_at?: string
+          driver_id?: string
+          id?: string
+          job_type?: string
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id?: string
+          paid_at?: string | null
+          status?: string
+          total_payout?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_payouts_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_payouts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drivers: {
         Row: {
           assigned_yard_id: string | null
@@ -321,6 +426,8 @@ export type Database = {
           is_owner_operator: boolean
           license_number: string | null
           name: string
+          payout_rate_per_job: number | null
+          payout_rate_per_mile: number | null
           phone: string
           truck_type: string | null
           updated_at: string
@@ -335,6 +442,8 @@ export type Database = {
           is_owner_operator?: boolean
           license_number?: string | null
           name: string
+          payout_rate_per_job?: number | null
+          payout_rate_per_mile?: number | null
           phone: string
           truck_type?: string | null
           updated_at?: string
@@ -349,6 +458,8 @@ export type Database = {
           is_owner_operator?: boolean
           license_number?: string | null
           name?: string
+          payout_rate_per_job?: number | null
+          payout_rate_per_mile?: number | null
           phone?: string
           truck_type?: string | null
           updated_at?: string
@@ -1083,6 +1194,92 @@ export type Database = {
         }
         Relationships: []
       }
+      role_permissions: {
+        Row: {
+          action: string
+          conditions: Json | null
+          created_at: string
+          id: string
+          resource: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          action: string
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          resource: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          action?: string
+          conditions?: Json | null
+          created_at?: string
+          id?: string
+          resource?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
+      sales_leads: {
+        Row: {
+          assigned_to: string | null
+          company_name: string | null
+          converted_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          lead_source: string | null
+          lead_status: string
+          next_followup_at: string | null
+          notes: string | null
+          quote_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          company_name?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          lead_source?: string | null
+          lead_status?: string
+          next_followup_at?: string | null
+          notes?: string | null
+          quote_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          company_name?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          lead_source?: string | null
+          lead_status?: string
+          next_followup_at?: string | null
+          notes?: string | null
+          quote_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_leads_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_receipts: {
         Row: {
           created_at: string
@@ -1300,6 +1497,50 @@ export type Database = {
             columns: ["zone_id"]
             isOneToOne: false
             referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          driver_id: string | null
+          id: string
+          phone: string | null
+          preferred_role: Database["public"]["Enums"]["app_role"] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          driver_id?: string | null
+          id?: string
+          phone?: string | null
+          preferred_role?: Database["public"]["Enums"]["app_role"] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          driver_id?: string | null
+          id?: string
+          phone?: string | null
+          preferred_role?: Database["public"]["Enums"]["app_role"] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
             referencedColumns: ["id"]
           },
         ]
