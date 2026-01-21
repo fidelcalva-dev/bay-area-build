@@ -66,7 +66,8 @@ serve(async (req) => {
       );
     }
 
-    // Call Google Routes API with truck parameters
+    // Call Google Routes API with traffic-aware routing
+    // Note: vehicleInfo requires Routes Preferred API (paid), using standard DRIVE mode
     const routeRequest = {
       origin: {
         location: {
@@ -85,15 +86,7 @@ serve(async (req) => {
         avoidTolls: false,
         avoidHighways: false,
         avoidFerries: true,
-        vehicleInfo: {
-          emissionType: 'DIESEL',
-          heightMeters: TRUCK_DIMENSIONS.heightMeters,
-          widthMeters: TRUCK_DIMENSIONS.widthMeters,
-          lengthMeters: TRUCK_DIMENSIONS.lengthMeters,
-          weightKg: TRUCK_DIMENSIONS.weightKg,
-        }
       },
-      extraComputations: ['TRAFFIC_ON_POLYLINE'],
       languageCode: 'en-US',
       units: 'IMPERIAL',
     };
