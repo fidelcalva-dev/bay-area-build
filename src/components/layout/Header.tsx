@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText, Globe } from 'lucide-react';
+import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText, Globe, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
@@ -174,6 +174,14 @@ export function Header() {
               <span>{BUSINESS_INFO.phone.salesFormatted}</span>
             </a>
 
+            {/* Login Button */}
+            <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+              <Link to="/admin/login">
+                <LogIn className="w-4 h-4 mr-1.5" />
+                Login
+              </Link>
+            </Button>
+
             {/* Order Now Button */}
             <Button asChild variant="cta" size="default" className="hidden sm:inline-flex">
               <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
@@ -255,6 +263,12 @@ export function Header() {
                 <Globe className="w-4 h-4" />
                 {language === 'en' ? 'Cambiar a Español' : 'Switch to English'}
               </button>
+              <Button asChild variant="outline" size="lg" className="w-full">
+                <Link to="/admin/login" onClick={() => setIsMenuOpen(false)}>
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Link>
+              </Button>
               <Button asChild variant="cta" size="lg" className="w-full">
                 <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                   {t('nav.orderNow')}
