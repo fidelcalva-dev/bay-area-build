@@ -1,9 +1,37 @@
 import { useState, useMemo } from 'react';
-import { X, HelpCircle, Package, ArrowRight, Minus, Plus, AlertTriangle } from 'lucide-react';
+import { 
+  X, HelpCircle, Package, ArrowRight, Minus, Plus, AlertTriangle,
+  Sofa, Bed, Archive, Square, Armchair, Refrigerator, Flame, LayoutPanelTop,
+  Cuboid, RectangleHorizontal, Home, Mountain, TreePine, Leaf,
+  Monitor, Circle, type LucideIcon
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DEBRIS_ITEMS, DUMPSTER_SIZES, SIZE_RECOMMENDATIONS } from './constants';
 import type { DebrisItem } from './types';
+
+// Icon mapping for debris items (using Lucide icons)
+const DEBRIS_ICON_MAP: Record<string, LucideIcon> = {
+  'sofa': Sofa,
+  'bed': Bed,
+  'archive': Archive,
+  'square': Square,
+  'armchair': Armchair,
+  'refrigerator': Refrigerator,
+  'washing-machine': Refrigerator, // fallback
+  'utensils': Refrigerator, // fallback
+  'flame': Flame,
+  'layout-panel-top': LayoutPanelTop,
+  'cuboid': Cuboid,
+  'rectangle-horizontal': RectangleHorizontal,
+  'home': Home,
+  'mountain': Mountain,
+  'tree-pine': TreePine,
+  'leaf': Leaf,
+  'package': Package,
+  'monitor': Monitor,
+  'circle': Circle,
+};
 
 interface DebrisEstimatorProps {
   isOpen: boolean;
@@ -144,7 +172,14 @@ export function DebrisEstimator({ isOpen, onClose, onSelectSize }: DebrisEstimat
                       )}
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">{item.icon}</span>
+                        {(() => {
+                          const IconComponent = DEBRIS_ICON_MAP[item.icon] || Package;
+                          return (
+                            <div className="w-8 h-8 rounded-full bg-muted/80 border border-border/50 flex items-center justify-center shrink-0">
+                              <IconComponent className="w-4 h-4 text-foreground/70" strokeWidth={2} />
+                            </div>
+                          );
+                        })()}
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
                           <div className="text-[10px] text-muted-foreground">

@@ -3,8 +3,23 @@
 // This is advisory, not a guarantee
 
 import { useState, useMemo } from 'react';
-import { Sparkles, AlertTriangle, CheckCircle, Info, HelpCircle, ChevronDown, BookOpen } from 'lucide-react';
+import { 
+  Sparkles, AlertTriangle, CheckCircle, Info, HelpCircle, ChevronDown, BookOpen,
+  Warehouse, Hammer, Home, Construction, Building2, TreePine, HardHat, type LucideIcon
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Icon mapping for project types (using Lucide icons)
+const PROJECT_ICON_MAP: Record<string, LucideIcon> = {
+  'warehouse': Warehouse,
+  'hammer': Hammer,
+  'home': Home,
+  'construction': Construction,
+  'boom-box': Construction, // fallback for demo
+  'building-2': Building2,
+  'tree-pine': TreePine,
+  'hard-hat': HardHat,
+};
 
 // ============================================================
 // PROJECT TYPE DEFINITIONS
@@ -27,13 +42,13 @@ export interface ProjectType {
   description: string;
 }
 
-// Project types with specific size recommendations per spec
+// Project types with specific size recommendations per spec (using Lucide icon names)
 export const PROJECT_TYPES: ProjectType[] = [
   // General Debris Projects
   { 
     id: 'garage', 
     label: 'Garage Cleanout', 
-    icon: '🏠', 
+    icon: 'warehouse', 
     generalSizeSmall: 10, 
     generalSizeLarge: 20,
     allowsGeneral: true,
@@ -43,7 +58,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'remodel', 
     label: 'Remodel', 
-    icon: '🔨', 
+    icon: 'hammer', 
     generalSizeSmall: 20, 
     generalSizeLarge: 20,
     allowsGeneral: true,
@@ -53,7 +68,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'roofing-small', 
     label: 'Roofing (Small)', 
-    icon: '🏠', 
+    icon: 'home', 
     generalSizeSmall: 20, 
     generalSizeLarge: 20,
     allowsGeneral: true,
@@ -63,7 +78,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'roofing-large', 
     label: 'Roofing (Large)', 
-    icon: '🏗️', 
+    icon: 'construction', 
     generalSizeSmall: 30, 
     generalSizeLarge: 30,
     allowsGeneral: true,
@@ -73,7 +88,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'demo', 
     label: 'Demo / Full Cleanout', 
-    icon: '💥', 
+    icon: 'boom-box', 
     generalSizeSmall: 30, 
     generalSizeLarge: 40,
     allowsGeneral: true,
@@ -83,7 +98,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'commercial', 
     label: 'Commercial / Very Large', 
-    icon: '🏢', 
+    icon: 'building-2', 
     generalSizeSmall: 40, 
     generalSizeLarge: 50,
     allowsGeneral: true,
@@ -93,7 +108,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'landscaping', 
     label: 'Landscaping', 
-    icon: '🌳', 
+    icon: 'tree-pine', 
     generalSizeSmall: 10, 
     generalSizeLarge: 20,
     allowsGeneral: true,
@@ -104,7 +119,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'concrete-small', 
     label: 'Concrete / Soil (Small)', 
-    icon: '🪨', 
+    icon: 'hard-hat', 
     heavySizeSmall: 6, 
     heavySizeLarge: 6,
     allowsGeneral: false,
@@ -114,7 +129,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'concrete-medium', 
     label: 'Concrete / Soil (Medium)', 
-    icon: '🪨', 
+    icon: 'hard-hat', 
     heavySizeSmall: 8, 
     heavySizeLarge: 8,
     allowsGeneral: false,
@@ -124,7 +139,7 @@ export const PROJECT_TYPES: ProjectType[] = [
   { 
     id: 'concrete-large', 
     label: 'Concrete / Soil (Large)', 
-    icon: '🪨', 
+    icon: 'hard-hat', 
     heavySizeSmall: 10, 
     heavySizeLarge: 10,
     allowsGeneral: false,
@@ -347,22 +362,25 @@ export function ProjectTypeSelector({ value, onChange, materialType }: ProjectTy
         What's your project? <span className="text-muted-foreground font-normal">(helps us recommend a size)</span>
       </label>
       <div className="flex flex-wrap gap-2">
-        {availableProjects.map((project) => (
-          <button
-            key={project.id}
-            type="button"
-            onClick={() => onChange(value === project.id ? null : project.id)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-all",
-              value === project.id
-                ? "border-primary bg-primary/10 text-primary font-medium"
-                : "border-input bg-background text-muted-foreground hover:border-primary/50"
-            )}
-          >
-            <span>{project.icon}</span>
-            <span>{project.label}</span>
-          </button>
-        ))}
+        {availableProjects.map((project) => {
+          const IconComponent = PROJECT_ICON_MAP[project.icon] || HardHat;
+          return (
+            <button
+              key={project.id}
+              type="button"
+              onClick={() => onChange(value === project.id ? null : project.id)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-all",
+                value === project.id
+                  ? "border-primary bg-primary/10 text-primary font-medium"
+                  : "border-input bg-background text-muted-foreground hover:border-primary/50"
+              )}
+            >
+              <IconComponent className="w-4 h-4" strokeWidth={2} />
+              <span>{project.label}</span>
+            </button>
+          );
+        })}
       </div>
       {value && (
         <p className="text-xs text-muted-foreground">

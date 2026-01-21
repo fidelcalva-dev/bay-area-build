@@ -163,7 +163,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'general',
     label: 'General Debris',
-    icon: '🏠',
+    icon: 'trash-2',
     description: 'Household items, furniture, general waste',
     priceAdjustment: 0,
     allowedSizes: getGeneralSizes().map(s => String(s.yards)),
@@ -171,49 +171,49 @@ export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'heavy',
     label: 'Heavy Materials',
-    icon: '🪨',
+    icon: 'hard-hat',
     description: 'Concrete, dirt, brick, asphalt, rocks',
     priceAdjustment: PRICING_POLICIES.heavyMaterialSurcharge,
     allowedSizes: getHeavySizes().map(s => String(s.yards)),
   },
 ];
 
-// Extra services - derived from PRICING_POLICIES
+// Extra services - derived from PRICING_POLICIES (using Lucide icon names)
 export const EXTRAS: Extra[] = [
   {
     id: 'same-day',
     label: 'Same-Day Delivery',
     description: 'Guaranteed same-day drop-off',
     price: PRICING_POLICIES.sameDayDelivery,
-    icon: '⚡',
+    icon: 'zap',
   },
   {
     id: 'weekend',
     label: 'Weekend Delivery',
     description: 'Saturday or Sunday delivery',
     price: 50,
-    icon: '📅',
+    icon: 'calendar',
   },
   {
     id: 'mattress',
     label: 'Mattress Disposal',
     description: 'Per mattress (CA recycling fee)',
     price: PRICING_POLICIES.mattressDisposal,
-    icon: '🛏️',
+    icon: 'bed',
   },
   {
     id: 'appliance',
     label: 'Appliance w/ Freon',
     description: 'Fridge, freezer, AC unit',
     price: PRICING_POLICIES.applianceWithFreon,
-    icon: '❄️',
+    icon: 'refrigerator',
   },
   {
     id: 'tires',
     label: 'Tire Disposal (up to 4)',
     description: 'Passenger car tires',
     price: 40,
-    icon: '🛞',
+    icon: 'circle',
   },
 ];
 
@@ -231,11 +231,11 @@ export const EXTRA_DAY_COST = PRICING_POLICIES.extraDayCost;
 // Overage cost per ton - from PRICING_POLICIES
 export const OVERAGE_COST_PER_TON = PRICING_POLICIES.overagePerTonGeneral;
 
-// User types with discounts
+// User types with discounts (using Lucide icon names)
 export const USER_TYPES = [
-  { value: 'homeowner', label: 'Homeowner', discount: 0, icon: '🏠' },
-  { value: 'contractor', label: 'Contractor', discount: 0.1, icon: '🔨' },
-  { value: 'business', label: 'Business', discount: 0.05, icon: '🏢' },
+  { value: 'homeowner', label: 'Homeowner', discount: 0, icon: 'home' },
+  { value: 'contractor', label: 'Contractor', discount: 0.1, icon: 'hard-hat' },
+  { value: 'business', label: 'Business', discount: 0.05, icon: 'building-2' },
 ];
 
 // Get zone by ZIP code

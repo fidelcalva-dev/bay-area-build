@@ -93,7 +93,7 @@ export function usePricingData() {
           ? materialsResult.data.map((m) => ({
               value: m.value as 'general' | 'heavy',
               label: m.label,
-              icon: m.icon || (m.value === 'heavy' ? '🪨' : '🏠'),
+              icon: m.icon || (m.value === 'heavy' ? 'hard-hat' : 'trash-2'),
               description: m.description || '',
               priceAdjustment: m.price_adjustment,
               allowedSizes: m.allowed_sizes || [],
