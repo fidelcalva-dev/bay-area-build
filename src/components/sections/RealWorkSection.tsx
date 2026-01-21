@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Play, Truck, Clock, Shield, MapPin, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Truck, Clock, Shield, MapPin, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-// Import real work images
-import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
-import jobSite1 from '@/assets/real-work/job-site-1.jpg';
-import fleetYard from '@/assets/real-work/fleet-yard.jpg';
-import workerAction from '@/assets/real-work/worker-action.jpg';
-import pickupComplete from '@/assets/real-work/pickup-complete.jpg';
-import heavyMaterials from '@/assets/real-work/heavy-materials.jpg';
+// Import real work images (user-provided)
+import realWork1 from '@/assets/real-work/real-work-1.jpeg';
+import realWork2 from '@/assets/real-work/real-work-2.jpeg';
+import realWork3 from '@/assets/real-work/real-work-3.jpeg';
+import realWork4 from '@/assets/real-work/real-work-4.jpeg';
+import realWork5 from '@/assets/real-work/real-work-5.jpeg';
+import realWork6 from '@/assets/real-work/real-work-6.jpeg';
 
 const galleryImages = [
-  { id: 1, src: truckDelivery, alt: 'Dumpster delivery', label: 'Same-Day Delivery' },
-  { id: 2, src: fleetYard, alt: 'Fleet yard', label: 'Our Fleet' },
-  { id: 3, src: workerAction, alt: 'Team at work', label: 'Professional Team' },
-  { id: 4, src: jobSite1, alt: 'Job site', label: 'Job Site' },
-  { id: 5, src: pickupComplete, alt: 'Pickup complete', label: 'Pickup Complete' },
-  { id: 6, src: heavyMaterials, alt: 'Heavy materials', label: 'Heavy Materials' },
+  { id: 1, src: realWork4, alt: 'Roll-off truck in the yard', label: 'Local Fleet' },
+  { id: 2, src: realWork6, alt: 'Dumpsters staged near an overpass', label: 'Ready to Deliver' },
+  { id: 3, src: realWork3, alt: 'Dumpsters staged at a job site', label: 'On-Site Service' },
+  { id: 4, src: realWork2, alt: 'Dumpsters at our yard', label: 'Stocked & Scheduled' },
+  { id: 5, src: realWork1, alt: '30-yard dumpster placed along a driveway', label: 'Careful Placement' },
+  { id: 6, src: realWork5, alt: 'Dumpsters staged outdoors', label: 'Equipment on Hand' },
 ];
 
 const stats = [
