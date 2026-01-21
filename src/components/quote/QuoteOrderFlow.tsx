@@ -190,7 +190,7 @@ export function QuoteOrderFlow({
       }
 
       toast({
-        title: 'Quote Saved! ✅',
+        title: 'Quote Saved!',
         description: 'Your information has been saved.',
       });
       

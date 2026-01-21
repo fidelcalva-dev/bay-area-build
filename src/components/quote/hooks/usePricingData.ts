@@ -107,7 +107,7 @@ export function usePricingData() {
               label: e.label,
               description: e.description || '',
               price: e.price,
-              icon: e.icon || '📦',
+              icon: e.icon || 'package',
               allowQuantity: e.value.includes('days') || e.value.includes('tons') || e.value === 'mattress' || e.value === 'appliance',
               maxQuantity: e.value.includes('days') ? 14 : e.value.includes('tons') ? 5 : 4,
             }))

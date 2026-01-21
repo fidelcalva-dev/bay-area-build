@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText } from 'lucide-react';
+import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
@@ -159,9 +159,10 @@ export function Header() {
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
-              className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-md transition-colors"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-md transition-colors"
             >
-              {language === 'en' ? '🇪🇸 ES' : '🇺🇸 EN'}
+              <Globe className="w-3.5 h-3.5" />
+              {language === 'en' ? 'ES' : 'EN'}
             </button>
 
             {/* Phone */}
@@ -251,7 +252,8 @@ export function Header() {
                 onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
                 className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-muted-foreground border border-border rounded-lg"
               >
-                {language === 'en' ? '🇪🇸 Cambiar a Español' : '🇺🇸 Switch to English'}
+                <Globe className="w-4 h-4" />
+                {language === 'en' ? 'Cambiar a Español' : 'Switch to English'}
               </button>
               <Button asChild variant="cta" size="lg" className="w-full">
                 <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
