@@ -123,7 +123,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'general',
     label: 'General Debris',
-    icon: '🏠',
+    icon: 'trash-2',
     description: 'Household, furniture, wood, drywall',
     priceAdjustment: 0,
     allowedSizes: getGeneralSizes().map(s => s.yards),
@@ -131,7 +131,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
   {
     value: 'heavy',
     label: 'Heavy Materials',
-    icon: '🪨',
+    icon: 'hard-hat',
     description: 'Concrete, dirt, brick, asphalt',
     priceAdjustment: PRICING_POLICIES.heavyMaterialSurcharge,
     allowedSizes: getHeavySizes().map(s => s.yards),
