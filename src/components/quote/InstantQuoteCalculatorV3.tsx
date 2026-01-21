@@ -3,7 +3,7 @@ import {
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
   Navigation, X, RefreshCw, Home, HardHat, Building2, Scale, FileText, Bed, Refrigerator,
-  AlertCircle, Calculator, type LucideIcon
+  AlertCircle, Calculator, Trash2, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,9 @@ import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggeste
 
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
+
+// Heavy Material Sub-Classification
+import { HeavyMaterialSelector, type HeavyClassificationResult } from './HeavyMaterialSelector';
 
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
@@ -145,6 +148,9 @@ export function InstantQuoteCalculatorV3() {
   const [prepurchasedExtraTons, setPrepurchasedExtraTons] = useState(0);
   const [prePurchaseSuggested, setPrePurchaseSuggested] = useState(false);
   const [prePurchaseSkipped, setPrePurchaseSkipped] = useState(false);
+  
+  // Heavy material sub-classification state
+  const [heavyClassification, setHeavyClassification] = useState<HeavyClassificationResult | null>(null);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -1036,57 +1042,103 @@ export function InstantQuoteCalculatorV3() {
               <p className="text-xs text-muted-foreground mb-4">Determines size options and pricing</p>
 
               <div className="grid gap-3">
-                {MATERIAL_TYPES.map((type) => (
-                  <button
-                    key={type.value}
-                    type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, material: type.value }))}
-                    className={cn(
-                      "p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden",
-                      formData.material === type.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-background hover:border-primary/30"
-                    )}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">{type.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h5 className="font-semibold text-foreground">{type.label}</h5>
-                          {type.value === 'heavy' && (
-                            <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded font-medium">
-                              6-10 yd only
-                            </span>
+                {MATERIAL_TYPES.map((type) => {
+                  // Use Lucide SVG icons based on material type
+                  const IconComponent = type.value === 'heavy' ? HardHat : Trash2;
+                  
+                  return (
+                    <button
+                      key={type.value}
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({ ...prev, material: type.value }));
+                        // Reset heavy classification when switching material types
+                        if (type.value !== 'heavy') {
+                          setHeavyClassification(null);
+                        }
+                      }}
+                      className={cn(
+                        "p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden",
+                        formData.material === type.value
+                          ? "border-primary bg-primary/5"
+                          : "border-border bg-background hover:border-primary/30"
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Lucide SVG Icon in circular container */}
+                        <div className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors",
+                          formData.material === type.value
+                            ? "bg-primary/10 border-primary/20"
+                            : "bg-muted/80 border-border/50"
+                        )}>
+                          <IconComponent 
+                            className={cn(
+                              "w-5 h-5 transition-colors",
+                              formData.material === type.value ? "text-primary" : "text-foreground/70"
+                            )}
+                            strokeWidth={2}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-semibold text-foreground">{type.label}</h5>
+                            {type.value === 'heavy' && (
+                              <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded font-medium">
+                                6-10 yd only
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
+                          {type.value === 'heavy' && formData.material === 'heavy' && (
+                            <div className="mt-2 flex items-center gap-1.5 text-xs text-success font-medium">
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Flat fee — disposal included
+                            </div>
+                          )}
+                          {type.value === 'general' && formData.material === 'general' && (
+                            <div className="mt-2 text-xs text-muted-foreground">
+                              <span className="font-medium">Overage:</span> $165/ton (20+yd) or $30/yard (6-10yd)
+                            </div>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-0.5">{type.description}</p>
-                        {type.value === 'heavy' && formData.material === 'heavy' && (
-                          <div className="mt-2 flex items-center gap-1.5 text-xs text-success font-medium">
-                            <CheckCircle className="w-3.5 h-3.5" />
-                            Flat fee — disposal included
-                          </div>
-                        )}
-                        {type.value === 'general' && formData.material === 'general' && (
-                          <div className="mt-2 text-xs text-muted-foreground">
-                            <span className="font-medium">Overage:</span> $165/ton (20+yd) or $30/yard (6-10yd)
-                          </div>
-                        )}
+                        <div className={cn(
+                          "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
+                          formData.material === type.value
+                            ? "border-primary bg-primary"
+                            : "border-muted-foreground/30"
+                        )}>
+                          {formData.material === type.value && (
+                            <CheckCircle className="w-3.5 h-3.5 text-primary-foreground" />
+                          )}
+                        </div>
                       </div>
-                      <div className={cn(
-                        "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
-                        formData.material === type.value
-                          ? "border-primary bg-primary"
-                          : "border-muted-foreground/30"
-                      )}>
-                        {formData.material === type.value && (
-                          <CheckCircle className="w-3.5 h-3.5 text-primary-foreground" />
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
+            {/* Heavy Material Sub-Classification (only when heavy is selected) */}
+            {formData.material === 'heavy' && (
+              <div className="p-4 rounded-xl bg-muted/30 border border-border">
+                <h5 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <HardHat className="w-4 h-4 text-primary" strokeWidth={2} />
+                  Heavy material details
+                </h5>
+                <HeavyMaterialSelector
+                  selectedSize={formData.size <= 10 ? (formData.size as 6 | 8 | 10) : 10}
+                  cityId="oakland"
+                  onClassificationChange={(result) => {
+                    setHeavyClassification(result);
+                    // If reclassified to mixed, switch material to general
+                    if (result.reclassifiedToMixed) {
+                      setFormData(prev => ({ ...prev, material: 'general' }));
+                    }
+                  }}
+                />
+              </div>
+            )}
 
             {/* Estimator Button */}
             <button
@@ -1104,8 +1156,11 @@ export function InstantQuoteCalculatorV3() {
               size="lg"
               className="w-full h-12 text-sm font-semibold group"
               onClick={goNext}
+              disabled={formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed}
             >
-              Continue to size
+              {formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed
+                ? 'Complete classification above'
+                : 'Continue to size'}
               <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
 
