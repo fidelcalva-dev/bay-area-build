@@ -84,8 +84,8 @@ const useCases = [
 const GreenHalo = () => {
   return (
     <Layout
-      title="Green Halo™ Sustainability Program"
-      description="Track your recycling impact with verified data. Real-time dashboards, sustainability reports, and environmental certifications for your projects."
+      title="Green Halo™ – Recycling Support Program"
+      description="Track recycling documentation for your projects. Weight tickets, diversion reports, and sustainability data available upon request."
     >
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white pt-24 pb-20">
@@ -98,123 +98,124 @@ const GreenHalo = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <Badge className="bg-emerald-500/20 text-emerald-200 border-emerald-400/30 mb-6">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Sustainability Tracking
+              <Recycle className="w-3 h-3 mr-1" />
+              Recycling Support
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Green Halo™
             </h1>
             <p className="text-xl md:text-2xl text-emerald-100 mb-4">
-              Know exactly where your waste goes.
+              Recycling Documentation & Diversion Support
             </p>
             <p className="text-lg text-emerald-200/80 mb-10 max-w-2xl mx-auto">
-              Our proprietary sustainability tracking system provides verified data on every 
-              ton diverted from landfills, complete with real-time dashboards and certified reports.
+              We work with licensed transfer stations that recycle construction and demolition 
+              materials whenever possible. Request recycling documentation for qualifying projects.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/contact">
                 <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50 shadow-lg shadow-black/20">
-                  Activate Green Halo
+                  Request Documentation
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Link to="/green-impact">
+              <Link to="/quote">
                 <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  View Impact Map
+                  Get a Quote
                 </Button>
               </Link>
             </div>
           </div>
 
-          {/* Hero Stats */}
+          {/* What We Provide - NOT fake stats */}
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold">89%</p>
-              <p className="text-emerald-200 text-sm mt-1">Avg. Diversion Rate</p>
+              <FileText className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
+              <p className="text-emerald-200 text-sm">Weight Tickets</p>
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold">2.5K+</p>
-              <p className="text-emerald-200 text-sm mt-1">Tons Tracked</p>
+              <BarChart3 className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
+              <p className="text-emerald-200 text-sm">Diversion Reports</p>
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold">500+</p>
-              <p className="text-emerald-200 text-sm mt-1">Projects Certified</p>
+              <Building2 className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
+              <p className="text-emerald-200 text-sm">WMP Compliance</p>
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold">7K</p>
-              <p className="text-emerald-200 text-sm mt-1">Trees Equivalent</p>
+              <Shield className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
+              <p className="text-emerald-200 text-sm">Facility Verified</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* What is Green Halo */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-4">About the Program</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0 mb-4">About the Program</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
                 What is Green Halo™?
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                Green Halo is Calsan's proprietary sustainability tracking system that provides 
-                complete transparency into your waste management impact. Every load is tracked, 
-                weighed, and verified through our certified facility partners.
+              <p className="text-lg text-muted-foreground mb-6">
+                Green Halo is our recycling documentation program that provides transparency 
+                into where your materials go. We deliver to licensed transfer stations that 
+                sort and recycle construction and demolition materials per local regulations.
               </p>
-              <p className="text-gray-600 mb-8">
-                Unlike traditional dumpster services that simply haul and dump, Green Halo ensures 
-                maximum material recovery and provides you with verified documentation of your 
-                environmental contribution.
+              <p className="text-muted-foreground mb-8">
+                For qualifying projects, we provide weight tickets, diversion documentation, 
+                and facility information for WMP (Waste Management Plan) compliance.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 {features.map((feature) => (
                   <div key={feature.title} className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="w-5 h-5 text-emerald-600" />
+                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{feature.title}</h4>
-                      <p className="text-sm text-gray-500">{feature.description}</p>
+                      <h4 className="font-semibold text-foreground">{feature.title}</h4>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-100">
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-3xl p-8 border border-emerald-100 dark:border-emerald-800/50">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
                     <Leaf className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">Green Halo™ Certified</h3>
-                    <p className="text-sm text-gray-500">Verified Sustainability Partner</p>
+                    <h3 className="font-bold text-foreground">Green Halo™</h3>
+                    <p className="text-sm text-muted-foreground">Recycling Support Program</p>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-white rounded-xl p-4 shadow-sm">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">Diversion Rate</span>
-                      <span className="font-bold text-emerald-600">92%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full w-[92%] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
-                    </div>
+                  <div className="bg-card rounded-xl p-4 shadow-sm border border-border">
+                    <h4 className="font-medium text-foreground mb-3">What You Receive</h4>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        Weight tickets from certified facilities
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        Material type documentation
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        Facility information for WMP
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        Diversion summaries upon request
+                      </li>
+                    </ul>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-                      <TreePine className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">127</p>
-                      <p className="text-xs text-gray-500">Trees Saved</p>
-                    </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm text-center">
-                      <Recycle className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">45.8t</p>
-                      <p className="text-xs text-gray-500">Recycled</p>
-                    </div>
-                  </div>
+                  <p className="text-xs text-muted-foreground italic">
+                    Diversion rates vary by material type and facility capabilities.
+                  </p>
                 </div>
               </div>
             </div>

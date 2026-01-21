@@ -22,6 +22,9 @@ const ServiceCoverageMapSection = lazy(() =>
 const ReviewsSection = lazy(() => 
   import('@/components/sections/ReviewsSection').then(mod => ({ default: mod.ReviewsSection }))
 );
+const RecyclingCommitmentSection = lazy(() => 
+  import('@/components/sections/RecyclingCommitmentSection').then(mod => ({ default: mod.RecyclingCommitmentSection }))
+);
 
 // Minimal loading fallback
 const SectionLoader = () => (
@@ -45,7 +48,7 @@ const Index = () => {
       <HowItWorksSection />
       <FeaturesSection />
       
-      {/* Social proof */}
+      {/* Social proof - verified credentials */}
       <TrustBadgesSection />
       
       {/* Lazy-loaded sections */}
@@ -61,8 +64,14 @@ const Index = () => {
         <ServiceCoverageMapSection />
       </Suspense>
       
+      {/* Verified customer reviews */}
       <Suspense fallback={<SectionLoader />}>
         <ReviewsSection />
+      </Suspense>
+      
+      {/* Environmental commitment - accurate messaging */}
+      <Suspense fallback={<SectionLoader />}>
+        <RecyclingCommitmentSection />
       </Suspense>
       
       {/* FAQ + CTA */}
