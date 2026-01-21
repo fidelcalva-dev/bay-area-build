@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Move, AlertTriangle, CheckCircle, FileText, Truck, Navigation } from 'lucide-react';
+import { MapPin, Move, AlertTriangle, CheckCircle, FileText, Truck, Navigation, Home, Route } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
@@ -340,7 +340,16 @@ export function PlacementMap({
               : "border-input bg-background hover:border-primary/50"
           )}
         >
-          <div className="text-2xl mb-1">🏠</div>
+          <div className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 transition-colors",
+            "bg-muted/80 border border-border/50",
+            placementType === 'driveway' && "bg-primary/10 border-primary/20"
+          )}>
+            <Home className={cn(
+              "w-5 h-5 transition-colors",
+              placementType === 'driveway' ? "text-primary" : "text-foreground/70"
+            )} strokeWidth={2} />
+          </div>
           <div className="font-medium text-foreground text-sm">Driveway</div>
           <div className="text-xs text-muted-foreground">Private property</div>
         </button>
@@ -355,7 +364,16 @@ export function PlacementMap({
               : "border-input bg-background hover:border-primary/50"
           )}
         >
-          <div className="text-2xl mb-1">🛣️</div>
+          <div className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 transition-colors",
+            "bg-muted/80 border border-border/50",
+            placementType === 'street' && "bg-primary/10 border-primary/20"
+          )}>
+            <Route className={cn(
+              "w-5 h-5 transition-colors",
+              placementType === 'street' ? "text-primary" : "text-foreground/70"
+            )} strokeWidth={2} />
+          </div>
           <div className="font-medium text-foreground text-sm">Street</div>
           <div className="text-xs text-muted-foreground">Public right-of-way</div>
         </button>

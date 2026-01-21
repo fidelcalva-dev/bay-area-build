@@ -146,7 +146,7 @@ export const EXTRAS: Extra[] = [
     label: 'Extra Days',
     description: 'Beyond standard rental',
     price: PRICING_POLICIES.extraDayCost,
-    icon: '📅',
+    icon: 'calendar',
     allowQuantity: true,
     maxQuantity: 14,
   },
@@ -156,7 +156,7 @@ export const EXTRAS: Extra[] = [
     label: 'Extra Tons',
     description: 'Pre-purchase overage',
     price: PRICING_POLICIES.overagePerTonGeneral,
-    icon: '⚖️',
+    icon: 'scale',
     allowQuantity: true,
     maxQuantity: 5,
   },
@@ -166,7 +166,7 @@ export const EXTRAS: Extra[] = [
     label: 'Street Permit',
     description: 'We handle city permit',
     price: PRICING_POLICIES.relocationFee,
-    icon: '📋',
+    icon: 'file-text',
     allowQuantity: false,
   },
   {
@@ -175,7 +175,7 @@ export const EXTRAS: Extra[] = [
     label: 'Mattress Disposal',
     description: 'CA recycling fee',
     price: PRICING_POLICIES.mattressDisposal,
-    icon: '🛏️',
+    icon: 'bed',
     allowQuantity: true,
     maxQuantity: 4,
   },
@@ -185,7 +185,7 @@ export const EXTRAS: Extra[] = [
     label: 'Appliance w/ Freon',
     description: 'Fridge, freezer, AC',
     price: PRICING_POLICIES.applianceWithFreon,
-    icon: '❄️',
+    icon: 'refrigerator',
     allowQuantity: true,
     maxQuantity: 4,
   },
@@ -195,7 +195,7 @@ export const EXTRAS: Extra[] = [
     label: 'Same-Day Delivery',
     description: 'Guaranteed today',
     price: PRICING_POLICIES.sameDayDelivery,
-    icon: '⚡',
+    icon: 'zap',
     allowQuantity: false,
   },
   {
@@ -204,7 +204,7 @@ export const EXTRAS: Extra[] = [
     label: 'Dry Run / Trip Fee',
     description: 'If blocked on pickup',
     price: PRICING_POLICIES.tripFee,
-    icon: '🚛',
+    icon: 'truck',
     allowQuantity: false,
   },
 ];
@@ -223,21 +223,21 @@ export const USER_TYPES: UserType[] = [
     value: 'homeowner', 
     label: 'Homeowner', 
     discount: 0, 
-    icon: '🏠',
+    icon: 'home',
     benefits: ['No hidden fees', 'Same-day available', 'Flexible scheduling'],
   },
   { 
     value: 'contractor', 
     label: 'Contractor', 
     discount: 0.10, 
-    icon: '🔨',
+    icon: 'hard-hat',
     benefits: ['10% off all rentals', 'Priority scheduling', 'Net-30 available'],
   },
   { 
     value: 'business', 
     label: 'Business', 
     discount: 0.05, 
-    icon: '🏢',
+    icon: 'building-2',
     benefits: ['5% off all rentals', 'Recurring service', 'Dedicated support'],
   },
 ];
@@ -246,38 +246,38 @@ export const USER_TYPES: UserType[] = [
 export const EXTRA_DAY_COST = PRICING_POLICIES.extraDayCost;
 export const OVERAGE_COST_PER_TON = PRICING_POLICIES.overagePerTonGeneral;
 
-// Debris items for weight estimator
+// Debris items for weight estimator (using Lucide icon names)
 export const DEBRIS_ITEMS: DebrisItem[] = [
   // Furniture
-  { id: 'sofa', name: 'Sofa/Couch', icon: '🛋️', category: 'Furniture', weightPerUnit: 200, volumePerUnit: 0.8, unit: 'each' },
-  { id: 'mattress', name: 'Mattress', icon: '🛏️', category: 'Furniture', weightPerUnit: 100, volumePerUnit: 0.5, unit: 'each' },
-  { id: 'dresser', name: 'Dresser', icon: '🪑', category: 'Furniture', weightPerUnit: 150, volumePerUnit: 0.4, unit: 'each' },
-  { id: 'table', name: 'Table', icon: '🪑', category: 'Furniture', weightPerUnit: 80, volumePerUnit: 0.3, unit: 'each' },
-  { id: 'chairs', name: 'Chairs (set of 4)', icon: '🪑', category: 'Furniture', weightPerUnit: 60, volumePerUnit: 0.3, unit: 'set' },
+  { id: 'sofa', name: 'Sofa/Couch', icon: 'sofa', category: 'Furniture', weightPerUnit: 200, volumePerUnit: 0.8, unit: 'each' },
+  { id: 'mattress', name: 'Mattress', icon: 'bed', category: 'Furniture', weightPerUnit: 100, volumePerUnit: 0.5, unit: 'each' },
+  { id: 'dresser', name: 'Dresser', icon: 'archive', category: 'Furniture', weightPerUnit: 150, volumePerUnit: 0.4, unit: 'each' },
+  { id: 'table', name: 'Table', icon: 'square', category: 'Furniture', weightPerUnit: 80, volumePerUnit: 0.3, unit: 'each' },
+  { id: 'chairs', name: 'Chairs (set of 4)', icon: 'armchair', category: 'Furniture', weightPerUnit: 60, volumePerUnit: 0.3, unit: 'set' },
   
   // Appliances
-  { id: 'fridge', name: 'Refrigerator', icon: '❄️', category: 'Appliances', weightPerUnit: 250, volumePerUnit: 0.6, unit: 'each' },
-  { id: 'washer', name: 'Washer/Dryer', icon: '🧺', category: 'Appliances', weightPerUnit: 200, volumePerUnit: 0.4, unit: 'each' },
-  { id: 'dishwasher', name: 'Dishwasher', icon: '🍽️', category: 'Appliances', weightPerUnit: 100, volumePerUnit: 0.3, unit: 'each' },
-  { id: 'stove', name: 'Stove/Oven', icon: '🔥', category: 'Appliances', weightPerUnit: 200, volumePerUnit: 0.4, unit: 'each' },
+  { id: 'fridge', name: 'Refrigerator', icon: 'refrigerator', category: 'Appliances', weightPerUnit: 250, volumePerUnit: 0.6, unit: 'each' },
+  { id: 'washer', name: 'Washer/Dryer', icon: 'washing-machine', category: 'Appliances', weightPerUnit: 200, volumePerUnit: 0.4, unit: 'each' },
+  { id: 'dishwasher', name: 'Dishwasher', icon: 'utensils', category: 'Appliances', weightPerUnit: 100, volumePerUnit: 0.3, unit: 'each' },
+  { id: 'stove', name: 'Stove/Oven', icon: 'flame', category: 'Appliances', weightPerUnit: 200, volumePerUnit: 0.4, unit: 'each' },
   
   // Construction
-  { id: 'drywall', name: 'Drywall (per sheet)', icon: '🧱', category: 'Construction', weightPerUnit: 60, volumePerUnit: 0.1, unit: 'sheet' },
-  { id: 'lumber', name: 'Lumber (per 10 boards)', icon: '🪵', category: 'Construction', weightPerUnit: 150, volumePerUnit: 0.5, unit: 'bundle' },
-  { id: 'carpet', name: 'Carpet (per 100 sqft)', icon: '🟫', category: 'Construction', weightPerUnit: 100, volumePerUnit: 0.3, unit: '100sqft' },
-  { id: 'shingles', name: 'Roofing Shingles (per square)', icon: '🏠', category: 'Construction', weightPerUnit: 250, volumePerUnit: 0.3, unit: 'square' },
-  { id: 'cabinets', name: 'Cabinets (per unit)', icon: '🗄️', category: 'Construction', weightPerUnit: 80, volumePerUnit: 0.3, unit: 'each' },
+  { id: 'drywall', name: 'Drywall (per sheet)', icon: 'layout-panel-top', category: 'Construction', weightPerUnit: 60, volumePerUnit: 0.1, unit: 'sheet' },
+  { id: 'lumber', name: 'Lumber (per 10 boards)', icon: 'cuboid', category: 'Construction', weightPerUnit: 150, volumePerUnit: 0.5, unit: 'bundle' },
+  { id: 'carpet', name: 'Carpet (per 100 sqft)', icon: 'rectangle-horizontal', category: 'Construction', weightPerUnit: 100, volumePerUnit: 0.3, unit: '100sqft' },
+  { id: 'shingles', name: 'Roofing Shingles (per square)', icon: 'home', category: 'Construction', weightPerUnit: 250, volumePerUnit: 0.3, unit: 'square' },
+  { id: 'cabinets', name: 'Cabinets (per unit)', icon: 'archive', category: 'Construction', weightPerUnit: 80, volumePerUnit: 0.3, unit: 'each' },
   
   // Yard/Outdoor
-  { id: 'dirt', name: 'Dirt (cubic yard)', icon: '🟤', category: 'Heavy', weightPerUnit: 2200, volumePerUnit: 1.0, unit: 'cuyd' },
-  { id: 'concrete', name: 'Concrete (cubic yard)', icon: '⬜', category: 'Heavy', weightPerUnit: 4000, volumePerUnit: 1.0, unit: 'cuyd' },
-  { id: 'branches', name: 'Tree Branches (pickup load)', icon: '🌿', category: 'Yard', weightPerUnit: 300, volumePerUnit: 2.0, unit: 'load' },
-  { id: 'grass', name: 'Grass/Sod (per 100 sqft)', icon: '🌱', category: 'Yard', weightPerUnit: 150, volumePerUnit: 0.5, unit: '100sqft' },
+  { id: 'dirt', name: 'Dirt (cubic yard)', icon: 'mountain', category: 'Heavy', weightPerUnit: 2200, volumePerUnit: 1.0, unit: 'cuyd' },
+  { id: 'concrete', name: 'Concrete (cubic yard)', icon: 'square', category: 'Heavy', weightPerUnit: 4000, volumePerUnit: 1.0, unit: 'cuyd' },
+  { id: 'branches', name: 'Tree Branches (pickup load)', icon: 'tree-pine', category: 'Yard', weightPerUnit: 300, volumePerUnit: 2.0, unit: 'load' },
+  { id: 'grass', name: 'Grass/Sod (per 100 sqft)', icon: 'leaf', category: 'Yard', weightPerUnit: 150, volumePerUnit: 0.5, unit: '100sqft' },
   
   // Miscellaneous
-  { id: 'boxes', name: 'Moving Boxes (per 10)', icon: '📦', category: 'Misc', weightPerUnit: 50, volumePerUnit: 0.5, unit: 'bundle' },
-  { id: 'electronics', name: 'Electronics/TVs', icon: '📺', category: 'Misc', weightPerUnit: 50, volumePerUnit: 0.2, unit: 'each' },
-  { id: 'tires', name: 'Tires (set of 4)', icon: '🛞', category: 'Misc', weightPerUnit: 100, volumePerUnit: 0.4, unit: 'set' },
+  { id: 'boxes', name: 'Moving Boxes (per 10)', icon: 'package', category: 'Misc', weightPerUnit: 50, volumePerUnit: 0.5, unit: 'bundle' },
+  { id: 'electronics', name: 'Electronics/TVs', icon: 'monitor', category: 'Misc', weightPerUnit: 50, volumePerUnit: 0.2, unit: 'each' },
+  { id: 'tires', name: 'Tires (set of 4)', icon: 'circle', category: 'Misc', weightPerUnit: 100, volumePerUnit: 0.4, unit: 'set' },
 ];
 
 // Size recommendations based on volume (using canonical sizes only)
