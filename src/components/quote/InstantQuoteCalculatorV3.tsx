@@ -320,28 +320,40 @@ export function InstantQuoteCalculatorV3() {
     }
 
     // Determine included tons based on material type
-    const includedTons = calculateIncludedTons(formData.size, formData.material);
+    // Green Halo general materials also use flat-fee pricing (specialized facility)
+    const isGreenHaloMaterial = formData.material === 'general' && generalClassification?.isGreenHalo;
+    const isFlatFeePricing = formData.material === 'heavy' || isGreenHaloMaterial;
+    const includedTons = isFlatFeePricing ? 0 : calculateIncludedTons(formData.size, formData.material);
 
     // Base price with zone multiplier
     const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
-    const isHeavyMaterial = formData.material === 'heavy';
     
     lineItems.push({
       label: `${sizeData.label} Dumpster`,
-      subLabel: isHeavyMaterial 
+      subLabel: isFlatFeePricing 
         ? `${rental.label} rental • Flat fee pricing`
         : `${rental.label} rental • ${includedTons}T included`,
       amount: basePrice,
       type: 'base',
     });
 
-    // Heavy material surcharge - renamed to flat-fee when applicable
+    // Heavy material surcharge
     if (material.priceAdjustment > 0) {
       lineItems.push({
-        label: isHeavyMaterial ? 'Heavy Materials (flat-fee pricing)' : 'Heavy Material Surcharge',
-        subLabel: isHeavyMaterial ? 'Disposal included, no weight charges' : 'Concrete, dirt, rock, asphalt',
+        label: formData.material === 'heavy' ? 'Heavy Materials (flat-fee pricing)' : 'Heavy Material Surcharge',
+        subLabel: formData.material === 'heavy' ? 'Disposal included, no weight charges' : 'Concrete, dirt, rock, asphalt',
         amount: material.priceAdjustment,
         type: 'addition',
+      });
+    }
+
+    // Green Halo flat-fee indicator (no additional charge, just informational)
+    if (isGreenHaloMaterial) {
+      lineItems.push({
+        label: 'Green Halo™ (flat-fee pricing)',
+        subLabel: 'Specialized recycling facility — no weight charges',
+        amount: 0,
+        type: 'info',
       });
     }
 
@@ -379,8 +391,8 @@ export function InstantQuoteCalculatorV3() {
       }
     }
 
-    // Pre-purchased extra tons (only for general debris 20+)
-    if (prepurchasedExtraTons > 0 && formData.material === 'general' && formData.size >= 20) {
+    // Pre-purchased extra tons (only for general debris 20+ that is NOT Green Halo)
+    if (prepurchasedExtraTons > 0 && formData.material === 'general' && formData.size >= 20 && !isGreenHaloMaterial) {
       const prepurchaseCost = Math.round(prepurchasedExtraTons * DEFAULT_EXTRA_TON_PRICING.prepurchaseRate);
       lineItems.push({
         label: 'Pre-purchased Extra Tons',
@@ -410,7 +422,7 @@ export function InstantQuoteCalculatorV3() {
     const estimatedMax = subtotal + Math.round(subtotal * 0.08);
 
     return { lineItems, subtotal, estimatedMin, estimatedMax, includedTons, isValid: true };
-  }, [formData, zoneResult, distanceCalc.distance]);
+  }, [formData, zoneResult, distanceCalc.distance, generalClassification?.isGreenHalo, prepurchasedExtraTons]);
 
   // Run vendor selection
   useEffect(() => {
