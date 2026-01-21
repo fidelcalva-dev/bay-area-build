@@ -12,7 +12,7 @@ export const TRUST_BADGES = {
   sameDayAvailable: { icon: Clock, label: 'Same-Day Available' },
   noHiddenFees: { icon: Sparkles, label: 'No Hidden Fees' },
   // Special badges
-  contractorDiscount: { icon: Percent, label: '10% Contractor Discount' },
+  contractorDiscount: { icon: Percent, label: 'Contractor Programs' },
   fiveStarReviews: { icon: Star, label: '4.9★ (200+ Verified)' }, // Actual rating + verified count
 } as const;
 

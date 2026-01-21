@@ -231,11 +231,14 @@ export const EXTRA_DAY_COST = PRICING_POLICIES.extraDayCost;
 // Overage cost per ton - from PRICING_POLICIES
 export const OVERAGE_COST_PER_TON = PRICING_POLICIES.overagePerTonGeneral;
 
-// User types with discounts (using Lucide icon names)
+// User types - NO AUTOMATIC DISCOUNTS (volume-based only)
+// Discounts require prepaid/contracted volume commitment - see contractorDiscounts.ts
 export const USER_TYPES = [
   { value: 'homeowner', label: 'Homeowner', discount: 0, icon: 'home' },
-  { value: 'contractor', label: 'Contractor', discount: 0.1, icon: 'hard-hat' },
-  { value: 'business', label: 'Business', discount: 0.05, icon: 'building-2' },
+  { value: 'contractor', label: 'Contractor', discount: 0, icon: 'hard-hat' },
+  { value: 'business', label: 'Business', discount: 0, icon: 'building-2' },
+  { value: 'preferred_contractor', label: 'Preferred Contractor', discount: 0, icon: 'award' },
+  { value: 'wholesaler_broker', label: 'Wholesaler/Broker', discount: 0, icon: 'handshake' },
 ];
 
 // Get zone by ZIP code

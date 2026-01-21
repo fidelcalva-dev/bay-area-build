@@ -212,8 +212,8 @@ export const PAGE_SEO = {
     canonical: '/quote',
   },
   contractorQuote: {
-    title: 'Contractor Quote | 10% Discount',
-    description: 'Special contractor pricing with 10% discount. Get your quote for volume dumpster rental with priority service.',
+    title: 'Contractor Quote | Volume Programs',
+    description: 'Exclusive contractor volume programs with discounts up to 10%. Priority scheduling, Net-30 terms, and dedicated support for Bay Area contractors.',
     canonical: '/quote/contractor',
   },
   greenHalo: {

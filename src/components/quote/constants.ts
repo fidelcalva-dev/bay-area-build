@@ -218,7 +218,8 @@ export const RENTAL_PERIODS: RentalPeriod[] = [
   { value: 21, label: '21 days', extraDays: 14, extraCost: PRICING_POLICIES.extraDayCost * 14 },
 ];
 
-// User types with discounts (v56 customer types)
+// User types - NO AUTOMATIC DISCOUNTS (volume-based only)
+// Discounts require prepaid/contracted volume commitment
 export const USER_TYPES: UserType[] = [
   { 
     value: 'homeowner', 
@@ -230,16 +231,30 @@ export const USER_TYPES: UserType[] = [
   { 
     value: 'contractor', 
     label: 'Contractor', 
-    discount: 0.10, 
+    discount: 0, // Volume-based only - see contractorDiscounts.ts
     icon: 'hard-hat',
-    benefits: ['10% off all rentals', 'Priority scheduling', 'Net-30 available'],
+    benefits: ['Volume programs available', 'Priority scheduling', 'Net-30 available'],
   },
   { 
     value: 'business', 
     label: 'Business', 
-    discount: 0.05, 
+    discount: 0, // Volume-based only - see contractorDiscounts.ts
     icon: 'building-2',
-    benefits: ['5% off all rentals', 'Recurring service', 'Dedicated support'],
+    benefits: ['Volume programs available', 'Recurring service', 'Dedicated support'],
+  },
+  { 
+    value: 'preferred_contractor', 
+    label: 'Preferred Contractor', 
+    discount: 0, // Volume-based only
+    icon: 'award',
+    benefits: ['Volume programs available', 'Priority dispatch', 'Dedicated account rep'],
+  },
+  { 
+    value: 'wholesaler_broker', 
+    label: 'Wholesaler/Broker', 
+    discount: 0, // Volume-based only, requires approval
+    icon: 'handshake',
+    benefits: ['Volume programs available', 'Custom agreements', 'Multi-site support'],
   },
 ];
 

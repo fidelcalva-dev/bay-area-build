@@ -222,6 +222,7 @@ export type Database = {
           delivery_address: string | null
           delivery_lat: number | null
           delivery_lng: number | null
+          discount_cap_applied: boolean | null
           discount_percent: number | null
           distance_bracket: string | null
           distance_miles: number | null
@@ -251,6 +252,7 @@ export type Database = {
           recommendation_reason: string | null
           recommended_size_yards: number | null
           rental_days: number
+          requires_discount_approval: boolean | null
           route_calculated_at: string | null
           route_polyline: string | null
           routing_provider: string | null
@@ -266,6 +268,11 @@ export type Database = {
           user_selected_size_yards: number | null
           user_type: string
           vendor_cost: number | null
+          volume_agreement_id: string | null
+          volume_commitment_count: number | null
+          volume_discount_pct: number | null
+          volume_validity_end: string | null
+          volume_validity_start: string | null
           yard_id: string | null
           yard_name: string | null
           zip_code: string
@@ -286,6 +293,7 @@ export type Database = {
           delivery_address?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
+          discount_cap_applied?: boolean | null
           discount_percent?: number | null
           distance_bracket?: string | null
           distance_miles?: number | null
@@ -315,6 +323,7 @@ export type Database = {
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          requires_discount_approval?: boolean | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -330,6 +339,11 @@ export type Database = {
           user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
+          volume_agreement_id?: string | null
+          volume_commitment_count?: number | null
+          volume_discount_pct?: number | null
+          volume_validity_end?: string | null
+          volume_validity_start?: string | null
           yard_id?: string | null
           yard_name?: string | null
           zip_code: string
@@ -350,6 +364,7 @@ export type Database = {
           delivery_address?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
+          discount_cap_applied?: boolean | null
           discount_percent?: number | null
           distance_bracket?: string | null
           distance_miles?: number | null
@@ -379,6 +394,7 @@ export type Database = {
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          requires_discount_approval?: boolean | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -394,6 +410,11 @@ export type Database = {
           user_selected_size_yards?: number | null
           user_type?: string
           vendor_cost?: number | null
+          volume_agreement_id?: string | null
+          volume_commitment_count?: number | null
+          volume_discount_pct?: number | null
+          volume_validity_end?: string | null
+          volume_validity_start?: string | null
           yard_id?: string | null
           yard_name?: string | null
           zip_code?: string

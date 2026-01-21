@@ -288,6 +288,22 @@ export const PRICING_POLICIES = {
 } as const;
 
 // ============================================================
+// CONTRACTOR VOLUME DISCOUNT TIERS (CONSERVATIVE)
+// ============================================================
+// Discounts ONLY apply with prepaid or contracted volume commitment
+// NO automatic discounts for contractors
+
+export const VOLUME_DISCOUNT_TIERS = [
+  { min: 3, max: 5, discountPct: 0.03, label: '3-5 services' },
+  { min: 6, max: 10, discountPct: 0.05, label: '6-10 services' },
+  { min: 11, max: 20, discountPct: 0.07, label: '11-20 services' },
+  { min: 21, max: Infinity, discountPct: 0.10, label: '20+ services' },
+] as const;
+
+export const MAX_DISCOUNT_PCT = 0.10; // 10% cap
+export const WHOLESALER_APPROVAL_THRESHOLD = 0.07; // 7%+ requires manual approval
+
+// ============================================================
 // OVERAGE RULES BY MATERIAL AND SIZE
 // ============================================================
 
