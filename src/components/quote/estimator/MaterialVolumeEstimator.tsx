@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { 
-  X, ArrowRight, ArrowLeft, Ruler, Box, Move3D, Hash, Calculator,
+  X, ArrowRight, ArrowLeft, Ruler, Box, Move3D, Hash, Calculator, Zap,
   Package, Home, Square, TreePine, HardHat, Mountain, Leaf, Wrench, Refrigerator,
   CheckCircle, AlertTriangle, Info, Sparkles, Weight, Scale, type LucideIcon
 } from 'lucide-react';
@@ -17,6 +17,7 @@ import {
   INCLUDED_TONS,
 } from './constants';
 import { useEstimatorCalculation } from './useEstimatorCalculation';
+import { PresetSelector } from './PresetSelector';
 import type { MaterialCategory, InputMethod, EstimatorInputs, EstimatorData, ConfidenceLevel } from './types';
 
 // Icon mapping
@@ -46,7 +47,7 @@ interface MaterialVolumeEstimatorProps {
   initialMaterial?: 'general' | 'heavy';
 }
 
-type WizardStep = 'category' | 'method' | 'input' | 'result';
+type WizardStep = 'presets' | 'category' | 'method' | 'input' | 'result';
 
 export function MaterialVolumeEstimator({ 
   isOpen, 
@@ -57,7 +58,7 @@ export function MaterialVolumeEstimator({
   const { language, t } = useLanguage();
   const isSpanish = language === 'es';
   
-  const [step, setStep] = useState<WizardStep>('category');
+  const [step, setStep] = useState<WizardStep>('presets');
   const [inputs, setInputs] = useState<EstimatorInputs>({
     category: null,
     inputMethod: null,
@@ -89,7 +90,7 @@ export function MaterialVolumeEstimator({
   
   // Reset wizard
   const resetWizard = () => {
-    setStep('category');
+    setStep('presets');
     setInputs({ category: null, inputMethod: null });
   };
   
@@ -108,6 +109,9 @@ export function MaterialVolumeEstimator({
   // Handle back navigation
   const goBack = () => {
     switch (step) {
+      case 'category':
+        setStep('presets');
+        break;
       case 'method':
         setStep('category');
         setInputs(prev => ({ ...prev, category: null }));
@@ -120,6 +124,13 @@ export function MaterialVolumeEstimator({
         setStep('input');
         break;
     }
+  };
+  
+  // Handle preset selection (direct from PresetSelector)
+  const handlePresetSelect = (size: number, isHeavy: boolean, estimatorData: EstimatorData) => {
+    onSelectSize(size, isHeavy, estimatorData);
+    onClose();
+    resetWizard();
   };
   
   // Handle use recommended size
@@ -186,7 +197,7 @@ export function MaterialVolumeEstimator({
         {/* Header */}
         <div className="sticky top-0 z-10 bg-foreground px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {step !== 'category' && (
+            {step !== 'presets' && (
               <button
                 type="button"
                 onClick={goBack}
@@ -196,13 +207,21 @@ export function MaterialVolumeEstimator({
               </button>
             )}
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Calculator className="w-4 h-4 text-primary-foreground" />
+              {step === 'presets' ? (
+                <Zap className="w-4 h-4 text-primary-foreground" />
+              ) : (
+                <Calculator className="w-4 h-4 text-primary-foreground" />
+              )}
             </div>
             <div>
               <h3 className="font-semibold text-background">
-                {isSpanish ? 'Estimador de Volumen' : 'Volume Estimator'}
+                {step === 'presets' 
+                  ? (isSpanish ? 'Estimador Rápido' : 'Quick Estimator')
+                  : (isSpanish ? 'Estimador de Volumen' : 'Volume Estimator')
+                }
               </h3>
               <p className="text-xs text-background/60">
+                {step === 'presets' && (isSpanish ? 'Selecciona tu tipo de proyecto' : 'Select your project type')}
                 {step === 'category' && (isSpanish ? 'Paso 1: Tipo de material' : 'Step 1: Material type')}
                 {step === 'method' && (isSpanish ? 'Paso 2: Método de entrada' : 'Step 2: Input method')}
                 {step === 'input' && (isSpanish ? 'Paso 3: Medidas' : 'Step 3: Measurements')}
@@ -221,6 +240,15 @@ export function MaterialVolumeEstimator({
         
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4">
+          {/* Presets View (Default) */}
+          {step === 'presets' && (
+            <PresetSelector
+              isSpanish={isSpanish}
+              onSelectPreset={handlePresetSelect}
+              onSwitchToManual={() => setStep('category')}
+            />
+          )}
+          
           {/* Step 1: Category Selection */}
           {step === 'category' && (
             <div className="space-y-3">
