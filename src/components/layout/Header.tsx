@@ -175,10 +175,10 @@ export function Header() {
             </a>
 
             {/* Login Button */}
-            <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+            <Button asChild variant="outline" size="sm" className="inline-flex">
               <Link to="/admin/login">
-                <LogIn className="w-4 h-4 mr-1.5" />
-                Login
+                <LogIn className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Login</span>
               </Link>
             </Button>
 
