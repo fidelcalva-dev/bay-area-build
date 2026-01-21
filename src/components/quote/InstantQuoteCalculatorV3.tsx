@@ -3,7 +3,7 @@ import {
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
   Navigation, X, RefreshCw, Home, HardHat, Building2, Scale, FileText, Bed, Refrigerator,
-  AlertCircle, type LucideIcon
+  AlertCircle, Calculator, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,9 @@ import { QuoteOrderFlow } from './QuoteOrderFlow';
 import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, WhyThisSize, getSmartRecommendation } from './SmartRecommendation';
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
 import { DeliveryFeasibility } from './DeliveryFeasibility';
+
+// Material Volume & Weight Estimator
+import { MaterialVolumeEstimator, type EstimatorData } from './estimator';
 
 // Lazy load the distance map to avoid issues with Leaflet
 const DistanceMap = lazy(() => import('./DistanceMap').then(m => ({ default: m.DistanceMap })));
@@ -132,6 +135,8 @@ export function InstantQuoteCalculatorV3() {
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [quoteSaved, setQuoteSaved] = useState(false);
   const [showDistanceMap, setShowDistanceMap] = useState(false);
+  const [showEstimator, setShowEstimator] = useState(false);
+  const [estimatorData, setEstimatorData] = useState<EstimatorData | null>(null);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -1035,6 +1040,16 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
+            {/* Estimator Button */}
+            <button
+              type="button"
+              onClick={() => setShowEstimator(true)}
+              className="w-full p-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all flex items-center justify-center gap-2 text-sm font-medium text-primary"
+            >
+              <Calculator className="w-4 h-4" />
+              Estimate my debris volume (optional)
+            </button>
+
             <Button
               type="button"
               variant="cta"
@@ -1045,6 +1060,23 @@ export function InstantQuoteCalculatorV3() {
               Continue to size
               <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
+
+            {/* Material Volume Estimator Modal */}
+            <MaterialVolumeEstimator
+              isOpen={showEstimator}
+              onClose={() => setShowEstimator(false)}
+              initialMaterial={formData.material}
+              onSelectSize={(size, isHeavy, data) => {
+                setFormData(prev => ({ 
+                  ...prev, 
+                  size,
+                  material: isHeavy ? 'heavy' : 'general'
+                }));
+                setEstimatorData(data);
+                setShowEstimator(false);
+                goNext(); // Go to size step with pre-selected size
+              }}
+            />
           </div>
         )}
 
