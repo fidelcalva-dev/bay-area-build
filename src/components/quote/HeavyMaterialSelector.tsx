@@ -1,8 +1,12 @@
 // Heavy Material Sub-Classification Selector
-// Two-question flow: 1) Clean single material? 2) Any trash mixed in?
+// Two-question flow: 1) Trash? 2) Single material? 3) Which type?
+// Uses Lucide SVG icons exclusively - NO emojis
 
-import { useState, useMemo } from 'react';
-import { Check, AlertTriangle, Info, ChevronRight, Trash2, Scale, HardHat } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { 
+  Check, AlertTriangle, Trash2, Scale, HardHat, CheckCircle, 
+  CircleOff, Shuffle, Mountain, Grip, Landmark
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
   HEAVY_MATERIAL_CATEGORIES, 
@@ -95,7 +99,7 @@ export function HeavyMaterialSelector({
   }, [isCleanSingleType, hasTrash, selectedMaterialType, selectedSize, cityId]);
 
   // Notify parent of changes
-  useMemo(() => {
+  useEffect(() => {
     onClassificationChange(classification);
   }, [classification, onClassificationChange]);
 
@@ -103,7 +107,7 @@ export function HeavyMaterialSelector({
   const renderTrashQuestion = () => (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Trash2 className="w-4 h-4 text-amber-500" />
+        <Trash2 className="w-4 h-4 text-amber-500" strokeWidth={2} />
         <span className="text-sm font-medium text-foreground">
           Is there any trash mixed in?
         </span>
@@ -123,12 +127,14 @@ export function HeavyMaterialSelector({
               : "border-border bg-background hover:border-success/50"
           )}
         >
-          <div className="text-2xl mb-1">✓</div>
+          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-success/10 flex items-center justify-center">
+            <CircleOff className="w-5 h-5 text-success" strokeWidth={2} />
+          </div>
           <div className="font-semibold text-foreground text-sm">No Trash</div>
           <div className="text-xs text-muted-foreground">Clean heavy only</div>
           {hasTrash === false && (
             <div className="mt-2 flex items-center justify-center gap-1 text-xs text-success">
-              <Check className="w-3 h-3" />
+              <CheckCircle className="w-3 h-3" />
               Flat fee eligible
             </div>
           )}
@@ -144,7 +150,9 @@ export function HeavyMaterialSelector({
               : "border-border bg-background hover:border-amber-500/50"
           )}
         >
-          <div className="text-2xl mb-1">⚠️</div>
+          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-amber-500/10 flex items-center justify-center">
+            <Trash2 className="w-5 h-5 text-amber-500" strokeWidth={2} />
+          </div>
           <div className="font-semibold text-foreground text-sm">Yes, Trash</div>
           <div className="text-xs text-muted-foreground">Mixed with debris</div>
           {hasTrash === true && (
@@ -162,7 +170,7 @@ export function HeavyMaterialSelector({
   const renderCleanTypeQuestion = () => (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Scale className="w-4 h-4 text-primary" />
+        <Scale className="w-4 h-4 text-primary" strokeWidth={2} />
         <span className="text-sm font-medium text-foreground">
           Is your heavy material clean and separated into ONE type?
         </span>
@@ -179,7 +187,9 @@ export function HeavyMaterialSelector({
               : "border-border bg-background hover:border-primary/50"
           )}
         >
-          <div className="text-2xl mb-1">🪨</div>
+          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-primary/10 flex items-center justify-center">
+            <Mountain className="w-5 h-5 text-primary" strokeWidth={2} />
+          </div>
           <div className="font-semibold text-foreground text-sm">Yes</div>
           <div className="text-xs text-muted-foreground">Single material type</div>
         </button>
@@ -197,7 +207,9 @@ export function HeavyMaterialSelector({
               : "border-border bg-background hover:border-amber-500/50"
           )}
         >
-          <div className="text-2xl mb-1">🔀</div>
+          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-amber-500/10 flex items-center justify-center">
+            <Shuffle className="w-5 h-5 text-amber-500" strokeWidth={2} />
+          </div>
           <div className="font-semibold text-foreground text-sm">No</div>
           <div className="text-xs text-muted-foreground">Multiple heavy types</div>
           {isCleanSingleType === false && (
@@ -212,7 +224,7 @@ export function HeavyMaterialSelector({
   const renderMaterialTypeQuestion = () => (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <HardHat className="w-4 h-4 text-primary" />
+        <HardHat className="w-4 h-4 text-primary" strokeWidth={2} />
         <span className="text-sm font-medium text-foreground">
           Which type of heavy material?
         </span>
@@ -224,16 +236,18 @@ export function HeavyMaterialSelector({
           type="button"
           onClick={() => setSelectedMaterialType('base')}
           className={cn(
-            "p-3 rounded-xl border-2 text-left transition-all",
+            "p-4 rounded-xl border-2 text-left transition-all",
             selectedMaterialType === 'base'
               ? "border-success bg-success/5"
               : "border-border bg-background hover:border-success/50"
           )}
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🪨</span>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+              <Mountain className="w-5 h-5 text-foreground/70" strokeWidth={2} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold text-foreground">Base Materials</span>
                 {selectedMaterialType === 'base' && (
                   <span className="px-1.5 py-0.5 bg-success text-success-foreground text-[10px] rounded font-bold">
@@ -246,7 +260,7 @@ export function HeavyMaterialSelector({
               </div>
             </div>
             {selectedMaterialType === 'base' && (
-              <Check className="w-5 h-5 text-success" />
+              <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
             )}
           </div>
         </button>
@@ -256,16 +270,18 @@ export function HeavyMaterialSelector({
           type="button"
           onClick={() => setSelectedMaterialType('plus_200')}
           className={cn(
-            "p-3 rounded-xl border-2 text-left transition-all",
+            "p-4 rounded-xl border-2 text-left transition-all",
             selectedMaterialType === 'plus_200'
               ? "border-primary bg-primary/5"
               : "border-border bg-background hover:border-primary/50"
           )}
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🧱</span>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+              <Grip className="w-5 h-5 text-foreground/70" strokeWidth={2} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold text-foreground">Specialty Materials</span>
                 <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">
                   +$200
@@ -276,7 +292,7 @@ export function HeavyMaterialSelector({
               </div>
             </div>
             {selectedMaterialType === 'plus_200' && (
-              <Check className="w-5 h-5 text-primary" />
+              <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
             )}
           </div>
         </button>
@@ -326,8 +342,9 @@ export function HeavyMaterialSelector({
           </div>
         )}
         {priceResult.savingsMessage && (
-          <div className="mt-2 text-xs text-success font-medium">
-            💰 {priceResult.savingsMessage}
+          <div className="mt-2 text-xs text-success font-medium flex items-center gap-1">
+            <Landmark className="w-3 h-3" />
+            {priceResult.savingsMessage}
           </div>
         )}
       </div>
