@@ -535,9 +535,9 @@ const Careers = () => {
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <a href="mailto:partners@calsandumpsters.com">
+                <a href="mailto:partners@calsandumpsterspro.com">
                   <Mail className="mr-2 h-5 w-5" />
-                  partners@calsandumpsters.com
+                  partners@calsandumpsterspro.com
                 </a>
               </Button>
             </div>

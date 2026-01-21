@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, CheckCircle, MapPin, Phone } from 'lucide-react';
 import { CountySection } from '@/components/areas/CountySection';
 import { serviceAreas } from '@/data/serviceAreas';
-import { PAGE_SEO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 export default function Areas() {
   const [activeCounty, setActiveCounty] = useState(serviceAreas[0].slug);
@@ -37,9 +37,9 @@ export default function Areas() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 hover:bg-white/20 text-primary-foreground">
-                <a href="tel:+15106802150">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="w-4 h-4" />
-                  (510) 680-2150
+                  {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
             </div>

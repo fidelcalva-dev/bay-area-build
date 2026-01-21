@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout/Layout";
+import { BUSINESS_INFO } from "@/lib/seo";
 
 const features = [
   {
@@ -588,7 +589,7 @@ const GreenHalo = () => {
                 <h4 className="font-semibold text-gray-900 mb-4">Request Your Report</h4>
                 <div className="space-y-4">
                   <a 
-                    href="mailto:sustainability@calsandumpsters.com?subject=Green Impact Report Request"
+                    href="mailto:sustainability@calsandumpsterspro.com?subject=Green Impact Report Request"
                     className="block"
                   >
                     <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
@@ -596,9 +597,9 @@ const GreenHalo = () => {
                       Email Report Request
                     </Button>
                   </a>
-                  <a href="tel:+15106802150" className="block">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="block">
                     <Button variant="outline" className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                      Call (510) 680-2150
+                      Call {BUSINESS_INFO.phone.salesFormatted}
                     </Button>
                   </a>
                   <p className="text-xs text-center text-gray-500">
@@ -634,7 +635,7 @@ const GreenHalo = () => {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <a href="mailto:sustainability@calsandumpsters.com">
+            <a href="mailto:sustainability@calsandumpsterspro.com">
               <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
                 Contact Sustainability Team
               </Button>

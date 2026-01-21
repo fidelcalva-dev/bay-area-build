@@ -43,8 +43,8 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-foreground mb-2">{t('contact.phone')}</h3>
-                      <a href="tel:+15106802150" className="text-2xl font-bold text-primary hover:underline">
-                        (510) 680-2150
+                      <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-2xl font-bold text-primary hover:underline">
+                        {BUSINESS_INFO.phone.salesFormatted}
                       </a>
                       <p className="text-sm text-muted-foreground mt-1">Main sales line</p>
                     </div>
@@ -59,8 +59,8 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-foreground mb-2">{t('contact.support')}</h3>
-                      <a href="tel:+14158465621" className="text-2xl font-bold text-primary hover:underline">
-                        (415) 846-5621
+                      <a href={`tel:${BUSINESS_INFO.phone.support}`} className="text-2xl font-bold text-primary hover:underline">
+                        {BUSINESS_INFO.phone.supportFormatted}
                       </a>
                       <p className="text-sm text-muted-foreground mt-1">Existing customers & support</p>
                     </div>
@@ -75,8 +75,8 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-foreground mb-2">{t('contact.email')}</h3>
-                      <a href="mailto:contact@calsandumpsterspro.com" className="text-lg font-semibold text-primary hover:underline break-all">
-                        contact@calsandumpsterspro.com
+                      <a href={`mailto:${BUSINESS_INFO.email}`} className="text-lg font-semibold text-primary hover:underline break-all">
+                        {BUSINESS_INFO.email}
                       </a>
                     </div>
                   </div>
