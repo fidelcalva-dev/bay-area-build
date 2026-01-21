@@ -23,7 +23,7 @@ export default function ThankYou() {
             <p className="text-xl text-muted-foreground mb-8">
               {type === 'replacement'
                 ? 'Your pickup/replacement request has been received. We\'ll contact you shortly to confirm.'
-                : 'Your quote request has been received. We\'ll reach out within 1 hour during business hours.'}
+                : 'Your quote request has been received. We\'ll reach out within 15 minutes during business hours (6AM–9PM daily). After-hours messages will be answered first thing next business window.'}
             </p>
 
             {/* Estimate Display */}

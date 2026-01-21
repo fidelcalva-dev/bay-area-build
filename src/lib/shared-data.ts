@@ -521,6 +521,57 @@ export const RECYCLING_SUPPORT_SERVICE: RecyclingSupportService = {
 };
 
 // ============================================================
+// OPERATIONAL HOURS - Customer Service & Delivery Windows
+// ============================================================
+
+export const OPERATIONAL_HOURS = {
+  customerService: {
+    days: 'Monday – Sunday',
+    hours: '6:00 AM – 9:00 PM',
+    displayText: 'Customer Service available 6:00 AM – 9:00 PM, Monday through Sunday.',
+    displayTextEs: 'Servicio al Cliente disponible 6:00 AM – 9:00 PM, Lunes a Domingo.',
+    channels: ['Phone', 'SMS', 'Website Chat', 'Email'],
+  },
+  operations: {
+    standardDays: 'Monday – Friday',
+    weekendDays: 'Saturday & Sunday',
+    weekendType: 'special_request' as const,
+    weekendNote: 'Weekend delivery and pickup available by special request. Subject to availability and may include additional fees.',
+    weekendNoteEs: 'Entrega y recogida de fin de semana disponible por solicitud especial. Sujeto a disponibilidad y puede incluir cargos adicionales.',
+    timeWindows: [
+      { id: 'morning', label: 'Morning', hours: '7:00 AM – 11:00 AM' },
+      { id: 'midday', label: 'Midday', hours: '11:00 AM – 3:00 PM' },
+      { id: 'afternoon', label: 'Afternoon', hours: '3:00 PM – 6:00 PM' },
+    ],
+    windowNote: 'Deliveries and pickups are scheduled in estimated time windows, not exact times.',
+    windowNoteEs: 'Las entregas y recogidas se programan en ventanas de tiempo estimadas, no en horarios exactos.',
+  },
+  afterHours: {
+    message: 'Messages and emails received after hours will be answered the next business window.',
+    messageEs: 'Los mensajes y correos electrónicos recibidos fuera de horario serán respondidos en la próxima ventana de atención.',
+    smsAutoReply: 'Thanks for reaching out! Our team is currently offline (6am–9pm). We\'ve received your message and will respond as soon as we\'re back.',
+    smsAutoReplyEs: '¡Gracias por contactarnos! Nuestro equipo está fuera de línea (6am–9pm). Hemos recibido su mensaje y responderemos tan pronto como volvamos.',
+  },
+  timezone: 'America/Los_Angeles',
+} as const;
+
+// Helper to check if currently within business hours
+export function isWithinBusinessHours(): boolean {
+  const now = new Date();
+  // Get Pacific time (simplified - doesn't account for DST perfectly)
+  const pstOffset = -8;
+  const utcHour = now.getUTCHours();
+  const pstHour = (utcHour + pstOffset + 24) % 24;
+  return pstHour >= 6 && pstHour < 21;
+}
+
+// Helper to check if a date is a weekend
+export function isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
+}
+
+// ============================================================
 // CONTACT INFO - Re-export from seo.ts for convenience
 // ============================================================
 

@@ -104,18 +104,49 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {/* Hours */}
+                {/* Customer Service Hours */}
                 <div className="bg-card rounded-2xl border border-border p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
                       <Clock className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-foreground mb-2">Business Hours</h3>
-                      <p className="text-foreground">
-                        Monday - Saturday: 7:00 AM - 6:00 PM<br />
-                        Sunday: Closed
+                      <h3 className="font-bold text-foreground mb-2">Customer Service Hours</h3>
+                      <p className="text-foreground mb-2">
+                        Monday – Sunday: 6:00 AM – 9:00 PM
                       </p>
+                      <p className="text-sm text-muted-foreground">
+                        Messages and emails received after hours will be answered the next business window.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Operations / Delivery Hours */}
+                <div className="bg-card rounded-2xl border border-border p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 text-accent">
+                      <Clock className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-foreground mb-2">Delivery & Pickup</h3>
+                      <p className="text-foreground mb-2">
+                        <strong>Monday – Friday:</strong> Standard service
+                      </p>
+                      <div className="text-sm text-muted-foreground mb-3">
+                        <p className="font-medium mb-1">Estimated Arrival Windows:</p>
+                        <ul className="list-disc list-inside space-y-0.5">
+                          <li>Morning: 7:00 AM – 11:00 AM</li>
+                          <li>Midday: 11:00 AM – 3:00 PM</li>
+                          <li>Afternoon: 3:00 PM – 6:00 PM</li>
+                        </ul>
+                      </div>
+                      <div className="bg-accent/10 rounded-lg p-3 text-sm">
+                        <p className="font-medium text-foreground">🗓️ Weekend Service</p>
+                        <p className="text-muted-foreground">
+                          Available by special request. Subject to availability and may include additional fees.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

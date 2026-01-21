@@ -174,10 +174,17 @@ export function Footer() {
                   {BUSINESS_INFO.phone.supportFormatted}
                 </a>
               </li>
-              <li className="text-secondary-foreground/60 text-sm">
-                <p className="font-medium text-secondary-foreground/80">Hours</p>
-                <p>{BUSINESS_INFO.hours.days}</p>
-                <p>{BUSINESS_INFO.hours.hours}</p>
+              <li className="text-secondary-foreground/60 text-sm space-y-2">
+                <div>
+                  <p className="font-medium text-secondary-foreground/80">Customer Service</p>
+                  <p>{BUSINESS_INFO.hours.customerService.days}</p>
+                  <p>{BUSINESS_INFO.hours.customerService.hours}</p>
+                </div>
+                <div className="pt-1 border-t border-secondary-foreground/10">
+                  <p className="font-medium text-secondary-foreground/80">Delivery & Pickup</p>
+                  <p>{BUSINESS_INFO.hours.operations.days}</p>
+                  <p className="text-xs italic">{BUSINESS_INFO.hours.operations.weekendNote}</p>
+                </div>
               </li>
             </ul>
           </div>

@@ -73,7 +73,10 @@ export default function Quote() {
                   🔒 Your information is secure and never shared
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  We'll contact you within 15 minutes during business hours
+                  We'll contact you within 15 minutes during business hours (6AM–9PM daily)
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  After-hours messages answered next business window
                 </p>
               </div>
             </div>
