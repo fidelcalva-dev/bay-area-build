@@ -65,6 +65,12 @@ const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 // Driver App
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
 
+// Sales Portal
+const SalesLayout = lazy(() => import("./pages/sales/SalesLayout"));
+const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
+const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
+const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
+
 const queryClient = new QueryClient();
 
 // Page loading fallback
@@ -229,6 +235,21 @@ const App = () => (
               <Route path="/driver" element={
                 <Suspense fallback={<PageLoader />}><DriverApp /></Suspense>
               } />
+
+              {/* Sales Portal */}
+              <Route path="/sales" element={
+                <Suspense fallback={<PageLoader />}><SalesLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><SalesDashboard /></Suspense>
+                } />
+                <Route path="leads" element={
+                  <Suspense fallback={<PageLoader />}><SalesLeads /></Suspense>
+                } />
+                <Route path="quotes" element={
+                  <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>
+                } />
+              </Route>
               
               <Route path="*" element={<NotFound />} />
             </Routes>
