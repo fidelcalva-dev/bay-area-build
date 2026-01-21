@@ -1,8 +1,21 @@
-import { Shield, CheckCircle, Award, BadgeCheck, Users, Clock, Truck, Phone } from 'lucide-react';
+import { Shield, CheckCircle, Award, BadgeCheck, Users, Clock, Truck, Phone, LucideIcon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { REVIEW_STATS } from '@/data/reviews';
+import { IconCircle } from '@/components/shared/IconCircle';
 
-const certifications = [
+interface Certification {
+  icon: LucideIcon;
+  title: string;
+  subtitle: string;
+  description: string;
+}
+
+interface GuaranteePoint {
+  icon: LucideIcon;
+  text: string;
+}
+
+const certifications: Certification[] = [
   {
     icon: Shield,
     title: 'Google Guaranteed',
@@ -29,7 +42,7 @@ const certifications = [
   },
 ];
 
-const guaranteePoints = [
+const guaranteePoints: GuaranteePoint[] = [
   { icon: Clock, text: 'Same-day delivery available' },
   { icon: Truck, text: 'On-time guaranteed or discount' },
   { icon: Phone, text: 'Real human support, always' },
@@ -55,7 +68,7 @@ export function GoogleGuaranteeSection() {
           <div className="text-center lg:text-left">
             {/* Premium Badge */}
             <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary-foreground/15 backdrop-blur-sm rounded-full text-sm font-semibold mb-8 border border-primary-foreground/20">
-              <Shield className="w-5 h-5 text-accent" />
+              <Shield className="w-5 h-5 text-accent" strokeWidth={2} />
               <span>{t('trust.guarantee')}</span>
             </div>
 
@@ -63,7 +76,7 @@ export function GoogleGuaranteeSection() {
             <div className="relative inline-block mb-8">
               <div className="w-40 h-40 md:w-48 md:h-48 mx-auto lg:mx-0 rounded-full bg-primary-foreground/10 backdrop-blur-sm border-4 border-primary-foreground/30 flex items-center justify-center relative">
                 <div className="absolute inset-3 rounded-full bg-gradient-to-br from-accent to-accent/80 flex flex-col items-center justify-center shadow-lg">
-                  <Shield className="w-12 h-12 md:w-14 md:h-14 text-accent-foreground mb-1" />
+                  <Shield className="w-12 h-12 md:w-14 md:h-14 text-accent-foreground mb-1" strokeWidth={2} />
                   <span className="text-[10px] md:text-xs font-bold text-accent-foreground uppercase tracking-wider">Google</span>
                   <span className="text-xs md:text-sm font-extrabold text-accent-foreground uppercase">Guaranteed</span>
                 </div>
@@ -80,18 +93,18 @@ export function GoogleGuaranteeSection() {
               {t('trust.guaranteeDesc')}
             </p>
 
-            {/* Guarantee Points */}
+            {/* Guarantee Points with IconCircle */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {guaranteePoints.map((point) => (
                 <div key={point.text} className="flex items-center gap-3 bg-primary-foreground/5 rounded-xl px-4 py-3 border border-primary-foreground/10">
-                  <point.icon className="w-5 h-5 text-accent flex-shrink-0" />
+                  <point.icon className="w-5 h-5 text-accent flex-shrink-0" strokeWidth={2} />
                   <span className="text-sm text-primary-foreground/90 font-medium">{point.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right - Certification Grid */}
+          {/* Right - Certification Grid with IconCircle */}
           <div className="grid grid-cols-2 gap-4 md:gap-6">
             {certifications.map((cert, index) => (
               <div
@@ -102,12 +115,13 @@ export function GoogleGuaranteeSection() {
                     : 'bg-primary-foreground/5'
                 }`}
               >
-                <div className={`flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl mb-4 transition-colors ${
+                {/* Icon Container - Consistent circular style */}
+                <div className={`flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full mb-4 transition-colors border ${
                   index === 0 
-                    ? 'bg-accent text-accent-foreground' 
-                    : 'bg-primary-foreground/10 group-hover:bg-primary-foreground/15'
+                    ? 'bg-accent text-accent-foreground border-accent/50' 
+                    : 'bg-primary-foreground/10 border-primary-foreground/20 group-hover:bg-primary-foreground/15'
                 }`}>
-                  <cert.icon className="w-7 h-7 md:w-8 md:h-8" />
+                  <cert.icon className="w-7 h-7 md:w-8 md:h-8" strokeWidth={2} />
                 </div>
                 <h4 className="font-bold text-lg md:text-xl mb-1">{cert.title}</h4>
                 <p className="text-sm text-primary-foreground/70 mb-2">{cert.subtitle}</p>
