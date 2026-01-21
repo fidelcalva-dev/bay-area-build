@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
-  Navigation, X, RefreshCw
+  Navigation, X, RefreshCw, Home, HardHat, Building2, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,6 +74,16 @@ function OfficeStatusLine() {
     </>
   );
 }
+
+// Icon mapping for user types (using canonical Lucide icons)
+const USER_TYPE_ICONS: Record<string, LucideIcon> = {
+  'home': Home,
+  'hard-hat': HardHat,
+  'building-2': Building2,
+  'homeowner': Home,
+  'contractor': HardHat,
+  'business': Building2,
+};
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'save' | 'order' | 'success';
 
@@ -647,33 +657,38 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 1: ZIP */}
         {step === 'zip' && (
           <div className="space-y-5">
-            {/* User Type Selection - Compact chips */}
+            {/* User Type Selection - Compact chips with SVG icons */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-foreground">I am a...</label>
               </div>
               <div className="flex flex-wrap gap-2">
-                {USER_TYPES.map((type) => (
-                  <button
-                    key={type.value}
-                    type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, userType: type.value }))}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all",
-                      formData.userType === type.value
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
-                    )}
-                  >
-                    <span className="text-base">{type.icon}</span>
-                    <span>{type.label}</span>
-                    {type.discount > 0 && formData.userType === type.value && (
-                      <span className="px-1.5 py-0.5 bg-success text-success-foreground text-[10px] rounded font-bold">
-                        -{type.discount * 100}%
-                      </span>
-                    )}
-                  </button>
-                ))}
+                {USER_TYPES.map((type) => {
+                  const IconComponent = USER_TYPE_ICONS[type.icon] || USER_TYPE_ICONS[type.value] || Home;
+                  const isSelected = formData.userType === type.value;
+                  
+                  return (
+                    <button
+                      key={type.value}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, userType: type.value }))}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all",
+                        isSelected
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <IconComponent className="w-4 h-4" strokeWidth={2} />
+                      <span>{type.label}</span>
+                      {type.discount > 0 && isSelected && (
+                        <span className="px-1.5 py-0.5 bg-success text-success-foreground text-[10px] rounded font-bold">
+                          -{type.discount * 100}%
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

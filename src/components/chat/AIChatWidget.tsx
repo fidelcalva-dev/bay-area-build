@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   MessageCircle, X, Send, User, Bot, Loader2, Phone, 
-  ChevronRight, Minimize2, ArrowRight
+  ChevronRight, Minimize2, ArrowRight, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -166,8 +166,9 @@ function QuoteCTA({ context, onClick }: { context: ChatContext; onClick: () => v
     <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
       <p className="text-sm font-medium text-foreground mb-2">Ready for your instant quote?</p>
       {context.zip && (
-        <p className="text-xs text-muted-foreground mb-2">
-          📍 {context.zip} • {context.material === 'heavy' ? 'Heavy Materials' : 'General Debris'}
+        <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+          <MapPin className="w-3 h-3" />
+          {context.zip} • {context.material === 'heavy' ? 'Heavy Materials' : 'General Debris'}
           {context.size && ` • ${context.size} yard`}
         </p>
       )}

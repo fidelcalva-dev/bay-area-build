@@ -1,4 +1,8 @@
-import { Plus, Minus, Check } from 'lucide-react';
+import { 
+  Plus, Minus, Check,
+  Calendar, Scale, FileText, Bed, Refrigerator, Zap, Truck,
+  type LucideIcon, Package
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EXTRAS } from '@/components/quote/constants';
 import type { ExtraSelection } from '@/components/quote/types';
@@ -7,6 +11,18 @@ interface ExtrasSelectorProps {
   value: ExtraSelection[];
   onChange: (extras: ExtraSelection[]) => void;
 }
+
+// Icon mapping for extras (using canonical Lucide icons)
+const EXTRAS_ICON_MAP: Record<string, LucideIcon> = {
+  'calendar': Calendar,
+  'scale': Scale,
+  'file-text': FileText,
+  'bed': Bed,
+  'refrigerator': Refrigerator,
+  'zap': Zap,
+  'truck': Truck,
+  'package': Package,
+};
 
 export function ExtrasSelector({ value, onChange }: ExtrasSelectorProps) {
   const getQuantity = (id: string) => {
@@ -63,6 +79,7 @@ export function ExtrasSelector({ value, onChange }: ExtrasSelectorProps) {
         {EXTRAS.map((extra) => {
           const qty = getQuantity(extra.id);
           const isSelected = qty > 0;
+          const IconComponent = EXTRAS_ICON_MAP[extra.icon] || Package;
           
           return (
             <div
@@ -75,12 +92,23 @@ export function ExtrasSelector({ value, onChange }: ExtrasSelectorProps) {
               )}
             >
               <div className="flex items-start gap-3">
+                {/* Icon in circular container - matches site-wide icon system */}
                 <button
                   type="button"
                   onClick={() => toggleExtra(extra.id)}
-                  className="text-2xl shrink-0"
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                    "bg-muted/80 border border-border/50",
+                    isSelected && "bg-primary/10 border-primary/20"
+                  )}
                 >
-                  {extra.icon}
+                  <IconComponent 
+                    className={cn(
+                      "w-5 h-5 transition-colors",
+                      isSelected ? "text-primary" : "text-foreground/70"
+                    )}
+                    strokeWidth={2}
+                  />
                 </button>
                 
                 <div className="flex-1 min-w-0">
