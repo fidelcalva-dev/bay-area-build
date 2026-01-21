@@ -344,6 +344,23 @@ export function GeneralMaterialSelector({
                   </div>
                 </div>
 
+                {/* Green Halo info for all user types */}
+                {'greenHalo' in category && category.greenHalo && (
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <div className="flex items-start gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-emerald-800 font-medium">
+                          Green Halo™ — City Compliance Ready
+                        </p>
+                        <p className="text-xs text-emerald-700 mt-1">
+                          100% clean loads qualify for diversion documentation. Ideal for homeowner permits, builder compliance, and contractor LEED projects.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Roofing weight warning */}
                 {category.weightWarning && selectedSize >= 20 && (
                   <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
