@@ -259,6 +259,7 @@ export async function saveQuote(params: {
         truck_duration_max: params.truckDurationMax,
         route_polyline: params.routePolyline,
         routing_provider: params.routingProvider,
+        route_calculated_at: params.routingProvider ? new Date().toISOString() : undefined,
         // Pre-purchase extra tons
         pre_purchase_suggested: params.prePurchaseSuggested,
         suggested_extra_tons: params.suggestedExtraTons,
