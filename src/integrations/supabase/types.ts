@@ -230,10 +230,15 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased: number | null
           extras: string[] | null
+          green_halo_category: string | null
+          green_halo_dump_fee: number | null
+          green_halo_dump_fee_per_ton: number | null
+          green_halo_handling_fee: number | null
           heavy_material_class: string | null
           heavy_material_increment: number | null
           id: string
           is_calsan_fulfillment: boolean
+          is_green_halo: boolean | null
           is_trash_contaminated: boolean | null
           margin: number | null
           material_type: string
@@ -301,10 +306,15 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          green_halo_category?: string | null
+          green_halo_dump_fee?: number | null
+          green_halo_dump_fee_per_ton?: number | null
+          green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
           heavy_material_increment?: number | null
           id?: string
           is_calsan_fulfillment?: boolean
+          is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
           margin?: number | null
           material_type: string
@@ -372,10 +382,15 @@ export type Database = {
           estimated_min?: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          green_halo_category?: string | null
+          green_halo_dump_fee?: number | null
+          green_halo_dump_fee_per_ton?: number | null
+          green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
           heavy_material_increment?: number | null
           id?: string
           is_calsan_fulfillment?: boolean
+          is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
           margin?: number | null
           material_type?: string
