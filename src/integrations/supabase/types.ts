@@ -14,6 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          after_data: Json | null
+          before_data: Json | null
+          changes_summary: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action: string
+          after_data?: Json | null
+          before_data?: Json | null
+          changes_summary?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action?: string
+          after_data?: Json | null
+          before_data?: Json | null
+          changes_summary?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: []
+      }
+      config_settings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          is_locked: boolean | null
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          billing_address: string | null
+          billing_email: string | null
+          billing_phone: string | null
+          company_name: string | null
+          created_at: string
+          customer_type: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
+          company_name?: string | null
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
+          company_name?: string | null
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       distance_brackets: {
         Row: {
           bracket_name: string
@@ -49,6 +175,53 @@ export type Database = {
           requires_review?: boolean
         }
         Relationships: []
+      }
+      documents: {
+        Row: {
+          created_at: string
+          doc_type: string
+          file_name: string | null
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          notes: string | null
+          order_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          doc_type: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          order_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          order_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dumpster_sizes: {
         Row: {
@@ -137,6 +310,159 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          customer_id: string
+          email_marketing: boolean | null
+          email_orders: boolean | null
+          email_quotes: boolean | null
+          email_receipts: boolean | null
+          id: string
+          sms_marketing: boolean | null
+          sms_orders: boolean | null
+          sms_reminders: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          email_marketing?: boolean | null
+          email_orders?: boolean | null
+          email_quotes?: boolean | null
+          email_receipts?: boolean | null
+          id?: string
+          sms_marketing?: boolean | null
+          sms_orders?: boolean | null
+          sms_reminders?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          email_marketing?: boolean | null
+          email_orders?: boolean | null
+          email_quotes?: boolean | null
+          email_receipts?: boolean | null
+          id?: string
+          sms_marketing?: boolean | null
+          sms_orders?: boolean | null
+          sms_reminders?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: true
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          actual_delivery_at: string | null
+          actual_pickup_at: string | null
+          assigned_driver_id: string | null
+          assigned_yard_id: string | null
+          created_at: string
+          customer_id: string | null
+          driver_notes: string | null
+          dump_ticket_url: string | null
+          final_total: number | null
+          id: string
+          internal_notes: string | null
+          invoice_url: string | null
+          payment_status: string | null
+          pickup_photo_url: string | null
+          placement_confirmed: boolean | null
+          placement_locked: boolean | null
+          placement_photo_url: string | null
+          quote_id: string | null
+          scheduled_delivery_date: string | null
+          scheduled_delivery_window: string | null
+          scheduled_pickup_date: string | null
+          scheduled_pickup_window: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          driver_notes?: string | null
+          dump_ticket_url?: string | null
+          final_total?: number | null
+          id?: string
+          internal_notes?: string | null
+          invoice_url?: string | null
+          payment_status?: string | null
+          pickup_photo_url?: string | null
+          placement_confirmed?: boolean | null
+          placement_locked?: boolean | null
+          placement_photo_url?: string | null
+          quote_id?: string | null
+          scheduled_delivery_date?: string | null
+          scheduled_delivery_window?: string | null
+          scheduled_pickup_date?: string | null
+          scheduled_pickup_window?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          driver_notes?: string | null
+          dump_ticket_url?: string | null
+          final_total?: number | null
+          id?: string
+          internal_notes?: string | null
+          invoice_url?: string | null
+          payment_status?: string | null
+          pickup_photo_url?: string | null
+          placement_confirmed?: boolean | null
+          placement_locked?: boolean | null
+          placement_photo_url?: string | null
+          quote_id?: string | null
+          scheduled_delivery_date?: string | null
+          scheduled_delivery_window?: string | null
+          scheduled_pickup_date?: string | null
+          scheduled_pickup_window?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing_extras: {
         Row: {
           created_at: string
@@ -215,6 +541,7 @@ export type Database = {
           converted_at: string | null
           created_at: string
           customer_email: string | null
+          customer_id: string | null
           customer_lat: number | null
           customer_lng: number | null
           customer_name: string | null
@@ -296,6 +623,7 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_id?: string | null
           customer_lat?: number | null
           customer_lng?: number | null
           customer_name?: string | null
@@ -377,6 +705,7 @@ export type Database = {
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_id?: string | null
           customer_lat?: number | null
           customer_lng?: number | null
           customer_name?: string | null
@@ -451,6 +780,13 @@ export type Database = {
           zone_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quotes_selected_vendor_id_fkey"
             columns: ["selected_vendor_id"]
@@ -586,6 +922,72 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          photo_url: string | null
+          preferred_date: string | null
+          preferred_window: string | null
+          request_type: string
+          resolution_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          photo_url?: string | null
+          preferred_date?: string | null
+          preferred_window?: string | null
+          request_type: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          photo_url?: string | null
+          preferred_date?: string | null
+          preferred_window?: string | null
+          request_type?: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -933,6 +1335,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
