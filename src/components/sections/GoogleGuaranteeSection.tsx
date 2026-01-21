@@ -1,5 +1,6 @@
 import { Shield, CheckCircle, Award, BadgeCheck, Users, Clock, Truck, Phone } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { REVIEW_STATS } from '@/data/reviews';
 
 const certifications = [
   {
@@ -12,7 +13,7 @@ const certifications = [
     icon: Award,
     title: 'BBB A+ Rating',
     subtitle: 'Accredited Business',
-    description: '10+ years of excellence',
+    description: 'Oakland HQ accredited',
   },
   {
     icon: BadgeCheck,
@@ -22,8 +23,8 @@ const certifications = [
   },
   {
     icon: Users,
-    title: '500+ Reviews',
-    subtitle: '5.0 Star Average',
+    title: `${REVIEW_STATS.totalReviews}+ Reviews`,
+    subtitle: `${REVIEW_STATS.averageRating}★ Average`,
     description: 'Verified customer reviews',
   },
 ];
@@ -116,23 +117,18 @@ export function GoogleGuaranteeSection() {
           </div>
         </div>
 
-        {/* Partners / Affiliations Bar */}
+        {/* Verification Note */}
         <div className="border-t border-primary-foreground/10 pt-12">
-          <p className="text-center text-sm text-primary-foreground/60 uppercase tracking-widest font-medium mb-8">
-            Trusted by Industry Leaders
+          <p className="text-center text-sm text-primary-foreground/60 max-w-xl mx-auto">
+            All certifications are publicly verifiable. 
+            <a href="https://www.bbb.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary-foreground ml-1">
+              Verify on BBB
+            </a>
+            <span className="mx-2">•</span>
+            <a href="https://www.google.com/search?q=calsan+dumpsters+pro" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary-foreground">
+              View on Google
+            </a>
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16 opacity-70">
-            {/* Partner Logos - Placeholder badges */}
-            {['HomeAdvisor', 'Angi', 'Yelp', 'Thumbtack', 'NextDoor'].map((partner) => (
-              <div 
-                key={partner} 
-                className="flex items-center gap-2 px-6 py-3 bg-primary-foreground/10 rounded-xl border border-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors"
-              >
-                <CheckCircle className="w-4 h-4 text-accent" />
-                <span className="font-semibold text-sm md:text-base">{partner}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

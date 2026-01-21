@@ -21,7 +21,7 @@ const galleryImages = [
 
 const stats = [
   { value: '15+', label: 'Years', icon: Clock },
-  { value: '50+', label: 'Trucks', icon: Truck },
+  { value: '2', label: 'Yards', icon: Truck },
   { value: '9', label: 'Counties', icon: MapPin },
   { value: '100%', label: 'Local', icon: Shield },
 ];

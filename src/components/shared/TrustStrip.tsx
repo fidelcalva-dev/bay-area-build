@@ -90,8 +90,8 @@ interface StarRatingProps {
  * Use this for consistent star display
  */
 export function StarRating({ 
-  rating = 5.0, 
-  reviews = 500,
+  rating = 4.9, 
+  reviews = 200,
   variant = 'hero',
   showLink = true,
   className 

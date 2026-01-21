@@ -268,8 +268,8 @@ export function generateLocalBusinessSchema() {
     },
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "500",
+      "ratingValue": "4.9",
+      "reviewCount": "200",
       "bestRating": "5",
       "worstRating": "1"
     }
