@@ -53,6 +53,10 @@ const ExtrasManager = lazy(() => import("./pages/admin/ExtrasManager"));
 const VolumeCommitmentsManager = lazy(() => import("./pages/admin/VolumeCommitmentsManager"));
 const YardsManager = lazy(() => import("./pages/admin/YardsManager"));
 const ConfigManager = lazy(() => import("./pages/admin/ConfigManager"));
+const ConfigIndex = lazy(() => import("./pages/admin/ConfigIndex"));
+const HeavyPricingManager = lazy(() => import("./pages/admin/HeavyPricingManager"));
+const MixedRulesManager = lazy(() => import("./pages/admin/MixedRulesManager"));
+const WarningsCapsManager = lazy(() => import("./pages/admin/WarningsCapsManager"));
 const OrdersManager = lazy(() => import("./pages/admin/OrdersManager"));
 const CustomersManager = lazy(() => import("./pages/admin/CustomersManager"));
 const AuditLogsPage = lazy(() => import("./pages/admin/AuditLogsPage"));
@@ -63,6 +67,14 @@ const DispatchCalendar = lazy(() => import("./pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
+
+// CS Portal
+const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
+const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
+const CSOrders = lazy(() => import("./pages/cs/CSOrders"));
+const CSRequests = lazy(() => import("./pages/cs/CSRequests"));
+const CSTemplates = lazy(() => import("./pages/cs/CSTemplates"));
+const CSMessages = lazy(() => import("./pages/cs/CSMessages"));
 
 // Driver App
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));

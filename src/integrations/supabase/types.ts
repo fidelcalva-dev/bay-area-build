@@ -309,6 +309,42 @@ export type Database = {
         }
         Relationships: []
       }
+      distance_caps: {
+        Row: {
+          action: string
+          bracket_name: string
+          created_at: string
+          id: string
+          is_active: boolean
+          max_miles: number | null
+          message: string | null
+          min_miles: number
+          surcharge_amount: number | null
+        }
+        Insert: {
+          action?: string
+          bracket_name: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_miles?: number | null
+          message?: string | null
+          min_miles?: number
+          surcharge_amount?: number | null
+        }
+        Update: {
+          action?: string
+          bracket_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_miles?: number | null
+          message?: string | null
+          min_miles?: number
+          surcharge_amount?: number | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           created_at: string
@@ -700,6 +736,66 @@ export type Database = {
         }
         Relationships: []
       }
+      message_history: {
+        Row: {
+          channel: string
+          created_at: string
+          customer_id: string | null
+          customer_phone: string | null
+          direction: string
+          external_id: string | null
+          id: string
+          message_body: string
+          order_id: string | null
+          sent_by: string | null
+          status: string
+          template_key: string | null
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_phone?: string | null
+          direction: string
+          external_id?: string | null
+          id?: string
+          message_body: string
+          order_id?: string | null
+          sent_by?: string | null
+          status?: string
+          template_key?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_phone?: string | null
+          direction?: string
+          external_id?: string | null
+          id?: string
+          message_body?: string
+          order_id?: string | null
+          sent_by?: string | null
+          status?: string
+          template_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_history_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           created_at: string
@@ -1054,11 +1150,14 @@ export type Database = {
           green_halo_handling_fee: number | null
           heavy_material_class: string | null
           heavy_material_increment: number | null
+          highlevel_contact_id: string | null
+          highlevel_tags: string[] | null
           id: string
           is_calsan_fulfillment: boolean
           is_green_halo: boolean | null
           is_trash_contaminated: boolean | null
           is_weekend_delivery: boolean | null
+          last_synced_at: string | null
           margin: number | null
           material_type: string
           original_material_type: string | null
@@ -1139,11 +1238,14 @@ export type Database = {
           green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
           heavy_material_increment?: number | null
+          highlevel_contact_id?: string | null
+          highlevel_tags?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
+          last_synced_at?: string | null
           margin?: number | null
           material_type: string
           original_material_type?: string | null
@@ -1224,11 +1326,14 @@ export type Database = {
           green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
           heavy_material_increment?: number | null
+          highlevel_contact_id?: string | null
+          highlevel_tags?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
+          last_synced_at?: string | null
           margin?: number | null
           material_type?: string
           original_material_type?: string | null
@@ -1512,6 +1617,7 @@ export type Database = {
       }
       service_requests: {
         Row: {
+          assigned_to: string | null
           created_at: string
           customer_id: string | null
           id: string
@@ -1520,14 +1626,18 @@ export type Database = {
           photo_url: string | null
           preferred_date: string | null
           preferred_window: string | null
+          priority: string | null
           request_type: string
           resolution_notes: string | null
+          response_sent_at: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          source: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          assigned_to?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
@@ -1536,14 +1646,18 @@ export type Database = {
           photo_url?: string | null
           preferred_date?: string | null
           preferred_window?: string | null
+          priority?: string | null
           request_type: string
           resolution_notes?: string | null
+          response_sent_at?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          assigned_to?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
@@ -1552,10 +1666,13 @@ export type Database = {
           photo_url?: string | null
           preferred_date?: string | null
           preferred_window?: string | null
+          priority?: string | null
           request_type?: string
           resolution_notes?: string | null
+          response_sent_at?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
         }
@@ -1594,6 +1711,42 @@ export type Database = {
           id?: string
           size_yards?: number
           volume_factor?: number
+        }
+        Relationships: []
+      }
+      sms_templates: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          template_body: string
+          template_key: string
+          template_name: string
+          updated_at: string
+          variables: string[] | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          template_body: string
+          template_key: string
+          template_name: string
+          updated_at?: string
+          variables?: string[] | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          template_body?: string
+          template_key?: string
+          template_name?: string
+          updated_at?: string
+          variables?: string[] | null
         }
         Relationships: []
       }
