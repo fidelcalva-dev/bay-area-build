@@ -1704,6 +1704,8 @@ export type Database = {
         | "dispatcher"
         | "finance"
         | "driver"
+        | "sales"
+        | "owner_operator"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
@@ -1842,6 +1844,8 @@ export const Constants = {
         "dispatcher",
         "finance",
         "driver",
+        "sales",
+        "owner_operator",
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
