@@ -7,7 +7,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const { user, isAdmin, isLoading, signIn, signUp } = useAdminAuth();
+  const { user, isLoading, signIn, signUp, canAccessAdmin } = useAdminAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,11 +22,12 @@ export default function AdminLogin() {
     );
   }
 
-  if (user && isAdmin) {
+  // Redirect authenticated users with admin access to dashboard
+  if (user && canAccessAdmin()) {
     return <Navigate to="/admin" replace />;
   }
 
-  if (user && !isAdmin) {
+  if (user && !canAccessAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30">
         <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8 text-center">
