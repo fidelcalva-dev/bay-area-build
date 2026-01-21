@@ -1,11 +1,9 @@
 import { motion, Variants } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Zap, MapPin, Clock, Home, HardHat, ArrowRight } from 'lucide-react';
+import { Phone, MessageSquare, Star, Shield, Award } from 'lucide-react';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
-import { TrustStrip, StarRating } from '@/components/shared';
 import { Button } from '@/components/ui/button';
+import { BUSINESS_INFO } from '@/lib/shared-data';
 
-// Animation variants with proper typing
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } }
@@ -29,137 +27,82 @@ const scaleIn: Variants = {
   visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } }
 };
 
-export function HeroSection() {
-  const systemFeatures = [
-    { icon: MapPin, label: 'Nearest yard auto-selected' },
-    { icon: Zap, label: 'Instant ZIP-based estimate' },
-    { icon: Clock, label: 'Same-day available' },
-  ];
+const TRUST_ITEMS = [
+  { icon: Star, label: '4.9★ Google Reviews' },
+  { icon: Shield, label: 'BBB A+ (Oakland HQ)' },
+  { icon: Award, label: 'Licensed & Insured' },
+];
 
+export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
       {/* Modern gradient background */}
       <div className="absolute inset-0 gradient-hero" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--accent)/0.15)_0%,_transparent_50%)]" />
       
-      {/* Subtle grid pattern for tech feel */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(to right, hsl(var(--primary-foreground)) 1px, transparent 1px),
-                            linear-gradient(to bottom, hsl(var(--primary-foreground)) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }}
-      />
-      
       <div className="container-wide relative">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center py-8 md:py-12 lg:py-20">
-          {/* Left Content - System-First Messaging */}
+          {/* Left Content - Simplified */}
           <motion.div 
             className="text-center lg:text-left space-y-6"
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
           >
-            {/* Micro-indicator */}
-            <motion.div 
-              variants={fadeIn}
-              className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-foreground/10 backdrop-blur-sm rounded-full border border-primary-foreground/10"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-              </span>
-              <span className="text-xs font-medium text-primary-foreground/80">
-                Dispatch available now
-              </span>
-            </motion.div>
-
-            {/* Headline - Tech-style */}
+            {/* H1 - Clear value prop */}
             <motion.div variants={fadeInUp}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                Dumpster logistics
-                <span className="block text-accent mt-1">made simple</span>
+                ZIP-Based Dumpster Rentals
+                <span className="block text-accent mt-1">with Local Yards</span>
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-primary-foreground/70 max-w-lg">
-                Enter your ZIP. Get an instant estimate. Schedule delivery. 
-                <span className="text-primary-foreground font-medium"> That's it.</span>
+              <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
+                Instant estimates · Nearest yard selected · No exact-time promises
               </p>
             </motion.div>
 
-            {/* Segmented Entry - Homeowner vs Contractor */}
-            <motion.div variants={fadeInUp} className="pt-2">
-              <p className="text-sm text-primary-foreground/60 mb-3">Choose your path:</p>
-              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0">
-                <a 
-                  href="#quote"
-                  className="flex-1 flex items-center gap-3 p-4 bg-primary-foreground/10 backdrop-blur-sm rounded-xl border border-primary-foreground/20 hover:bg-primary-foreground/20 hover:border-accent/50 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center group-hover:bg-accent transition-colors">
-                    <Home className="w-5 h-5 text-accent group-hover:text-primary-foreground transition-colors" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-primary-foreground">Homeowner</p>
-                    <p className="text-xs text-primary-foreground/60">One-time project</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-primary-foreground/40 ml-auto group-hover:text-accent transition-colors" />
+            {/* 2 CTAs Only */}
+            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0">
+              <Button 
+                asChild
+                variant="cta" 
+                size="lg"
+                className="flex-1 text-lg font-bold shadow-lg"
+              >
+                <a href="#quote">
+                  Get Instant Quote
                 </a>
-                
-                <Link 
-                  to="/contractors"
-                  className="flex-1 flex items-center gap-3 p-4 bg-primary-foreground/10 backdrop-blur-sm rounded-xl border border-primary-foreground/20 hover:bg-primary-foreground/20 hover:border-accent/50 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center group-hover:bg-accent transition-colors">
-                    <HardHat className="w-5 h-5 text-accent group-hover:text-primary-foreground transition-colors" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-primary-foreground">Contractor</p>
-                    <p className="text-xs text-primary-foreground/60">Volume programs</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-primary-foreground/40 ml-auto group-hover:text-accent transition-colors" />
-                </Link>
-              </div>
+              </Button>
+              
+              <Button 
+                asChild
+                variant="outline" 
+                size="lg"
+                className="flex-1 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              >
+                <a href={`sms:${BUSINESS_INFO.phone.sales}`}>
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                  Text Us
+                </a>
+              </Button>
             </motion.div>
 
-            {/* System Features - Inline indicators */}
-            <motion.div 
-              variants={staggerContainer}
-              className="flex flex-wrap justify-center lg:justify-start gap-3"
-            >
-              {systemFeatures.map(({ icon: Icon, label }) => (
-                <motion.div 
-                  key={label}
-                  variants={fadeInUp}
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-primary-foreground/5 backdrop-blur-sm rounded-lg border border-primary-foreground/10 text-sm"
-                >
-                  <Icon className="w-4 h-4 text-accent" />
-                  <span className="text-primary-foreground/90 font-medium">{label}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Star Rating - Subtle */}
+            {/* Trust Strip - Single Line */}
             <motion.div variants={fadeIn} className="pt-2">
-              <StarRating 
-                rating={4.9} 
-                reviews={200} 
-                variant="hero"
-                className="justify-center lg:justify-start" 
-              />
-            </motion.div>
-
-            {/* Trust Strip - Compact */}
-            <motion.div variants={fadeIn}>
-              <TrustStrip 
-                badges={['googleGuaranteed', 'licensedInsured', 'hablamosEspanol']}
-                variant="hero"
-                size="sm"
-                className="justify-center lg:justify-start" 
-              />
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4">
+                {TRUST_ITEMS.map(({ icon: Icon, label }) => (
+                  <div 
+                    key={label}
+                    className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/80"
+                  >
+                    <Icon className="w-4 h-4 text-accent" />
+                    <span>{label}</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </motion.div>
 
-          {/* Right - Quote Calculator with system styling */}
+          {/* Right - Quote Calculator */}
           <motion.div 
             id="quote"
             initial="hidden"
@@ -167,7 +110,6 @@ export function HeroSection() {
             variants={scaleIn}
             className="relative"
           >
-            {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary-foreground/10 rounded-full blur-3xl" />
             
