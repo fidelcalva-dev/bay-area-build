@@ -227,6 +227,7 @@ export type Database = {
           distance_miles: number | null
           estimated_max: number
           estimated_min: number
+          extra_tons_prepurchased: number | null
           extras: string[] | null
           id: string
           is_calsan_fulfillment: boolean
@@ -236,6 +237,10 @@ export type Database = {
           placement_lng: number | null
           placement_notes: string | null
           placement_type: string | null
+          pre_purchase_suggested: boolean | null
+          prepurchase_city_rate: number | null
+          prepurchase_discount_pct: number | null
+          prepurchase_rate: number | null
           project_type: string | null
           receipt_sent_at: string | null
           recommendation_reason: string | null
@@ -248,6 +253,7 @@ export type Database = {
           size_id: string | null
           status: string
           subtotal: number
+          suggested_extra_tons: number | null
           truck_distance_miles: number | null
           truck_duration_max: number | null
           truck_duration_min: number | null
@@ -280,6 +286,7 @@ export type Database = {
           distance_miles?: number | null
           estimated_max: number
           estimated_min: number
+          extra_tons_prepurchased?: number | null
           extras?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
@@ -289,6 +296,10 @@ export type Database = {
           placement_lng?: number | null
           placement_notes?: string | null
           placement_type?: string | null
+          pre_purchase_suggested?: boolean | null
+          prepurchase_city_rate?: number | null
+          prepurchase_discount_pct?: number | null
+          prepurchase_rate?: number | null
           project_type?: string | null
           receipt_sent_at?: string | null
           recommendation_reason?: string | null
@@ -301,6 +312,7 @@ export type Database = {
           size_id?: string | null
           status?: string
           subtotal: number
+          suggested_extra_tons?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
@@ -333,6 +345,7 @@ export type Database = {
           distance_miles?: number | null
           estimated_max?: number
           estimated_min?: number
+          extra_tons_prepurchased?: number | null
           extras?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
@@ -342,6 +355,10 @@ export type Database = {
           placement_lng?: number | null
           placement_notes?: string | null
           placement_type?: string | null
+          pre_purchase_suggested?: boolean | null
+          prepurchase_city_rate?: number | null
+          prepurchase_discount_pct?: number | null
+          prepurchase_rate?: number | null
           project_type?: string | null
           receipt_sent_at?: string | null
           recommendation_reason?: string | null
@@ -354,6 +371,7 @@ export type Database = {
           size_id?: string | null
           status?: string
           subtotal?: number
+          suggested_extra_tons?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
@@ -436,9 +454,12 @@ export type Database = {
           overage_charge: number | null
           overage_rate: number | null
           overage_tons: number | null
+          prepurchase_applied_tons: number | null
+          prepurchased_tons: number | null
           pricing_rule: string | null
           quote_id: string
           sms_sent_at: string | null
+          standard_overage_tons: number | null
           ticket_date: string | null
           ticket_number: string | null
           ticket_url: string | null
@@ -454,9 +475,12 @@ export type Database = {
           overage_charge?: number | null
           overage_rate?: number | null
           overage_tons?: number | null
+          prepurchase_applied_tons?: number | null
+          prepurchased_tons?: number | null
           pricing_rule?: string | null
           quote_id: string
           sms_sent_at?: string | null
+          standard_overage_tons?: number | null
           ticket_date?: string | null
           ticket_number?: string | null
           ticket_url?: string | null
@@ -472,9 +496,12 @@ export type Database = {
           overage_charge?: number | null
           overage_rate?: number | null
           overage_tons?: number | null
+          prepurchase_applied_tons?: number | null
+          prepurchased_tons?: number | null
           pricing_rule?: string | null
           quote_id?: string
           sms_sent_at?: string | null
+          standard_overage_tons?: number | null
           ticket_date?: string | null
           ticket_number?: string | null
           ticket_url?: string | null

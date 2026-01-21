@@ -15,6 +15,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 import { getOverageInfo } from '@/lib/shared-data';
 
+// Extra Tons Pre-Purchase
+import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggestedExtraTons, DEFAULT_EXTRA_TON_PRICING } from './ExtraTonsRecommendation';
+
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
 
@@ -137,6 +140,11 @@ export function InstantQuoteCalculatorV3() {
   const [showDistanceMap, setShowDistanceMap] = useState(false);
   const [showEstimator, setShowEstimator] = useState(false);
   const [estimatorData, setEstimatorData] = useState<EstimatorData | null>(null);
+  
+  // Pre-purchase extra tons state
+  const [prepurchasedExtraTons, setPrepurchasedExtraTons] = useState(0);
+  const [prePurchaseSuggested, setPrePurchaseSuggested] = useState(false);
+  const [prePurchaseSkipped, setPrePurchaseSkipped] = useState(false);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -363,6 +371,17 @@ export function InstantQuoteCalculatorV3() {
       }
     }
 
+    // Pre-purchased extra tons (only for general debris 20+)
+    if (prepurchasedExtraTons > 0 && formData.material === 'general' && formData.size >= 20) {
+      const prepurchaseCost = Math.round(prepurchasedExtraTons * DEFAULT_EXTRA_TON_PRICING.prepurchaseRate);
+      lineItems.push({
+        label: 'Pre-purchased Extra Tons',
+        subLabel: `${prepurchasedExtraTons}T × $${DEFAULT_EXTRA_TON_PRICING.prepurchaseRate.toFixed(2)} (5% off)`,
+        amount: prepurchaseCost,
+        type: 'addition',
+      });
+    }
+
     // Calculate subtotal before discount
     const subtotalBeforeDiscount = lineItems.reduce((sum, item) => sum + item.amount, 0);
 
@@ -504,6 +523,13 @@ export function InstantQuoteCalculatorV3() {
         yardName: distanceCalc.distance?.yard.name,
         distanceMiles: distanceCalc.distance?.distanceMiles,
         distanceBracket: distanceCalc.distance?.bracket?.bracketName,
+        // Pre-purchase extra tons
+        prePurchaseSuggested: prePurchaseSuggested,
+        suggestedExtraTons: getSuggestedExtraTons(smartRecommendation.confidence),
+        extraTonsPrepurchased: prepurchasedExtraTons,
+        prepurchaseDiscountPct: DEFAULT_EXTRA_TON_PRICING.discountPct,
+        prepurchaseRate: prepurchasedExtraTons > 0 ? DEFAULT_EXTRA_TON_PRICING.prepurchaseRate : undefined,
+        prepurchaseCityRate: DEFAULT_EXTRA_TON_PRICING.standardRate,
       });
 
       if (result.success) {
@@ -1279,6 +1305,22 @@ export function InstantQuoteCalculatorV3() {
                 ))}
               </div>
             </div>
+
+            {/* Extra Tons Pre-Purchase Recommendation */}
+            {!prePurchaseSkipped && (
+              <ExtraTonsRecommendation
+                materialType={formData.material}
+                sizeYards={formData.size}
+                confidence={smartRecommendation.confidence}
+                confidenceLabel={smartRecommendation.confidenceLabel}
+                onAddExtraTons={(tons) => {
+                  setPrepurchasedExtraTons(tons);
+                  setPrePurchaseSuggested(true);
+                }}
+                onSkip={() => setPrePurchaseSkipped(true)}
+                currentExtraTons={prepurchasedExtraTons}
+              />
+            )}
 
             {/* Extras - Cleaner cards with SVG icons */}
             <div>
