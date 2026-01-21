@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
-  Navigation, X, RefreshCw, Home, HardHat, Building2, type LucideIcon
+  Navigation, X, RefreshCw, Home, HardHat, Building2, Scale, FileText, Bed, Refrigerator,
+  AlertCircle, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
+import { getOverageInfo } from '@/lib/shared-data';
 
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
@@ -83,6 +85,18 @@ const USER_TYPE_ICONS: Record<string, LucideIcon> = {
   'homeowner': Home,
   'contractor': HardHat,
   'business': Building2,
+};
+
+// Icon mapping for extras (canonical Lucide icons)
+const EXTRAS_ICON_MAP: Record<string, LucideIcon> = {
+  'calendar': Calendar,
+  'scale': Scale,
+  'file-text': FileText,
+  'bed': Bed,
+  'refrigerator': Refrigerator,
+  'zap': Zap,
+  'truck': Truck,
+  'package': Package,
 };
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'save' | 'order' | 'success';
@@ -289,18 +303,22 @@ export function InstantQuoteCalculatorV3() {
 
     // Base price with zone multiplier
     const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
+    const isHeavyMaterial = formData.material === 'heavy';
+    
     lineItems.push({
       label: `${sizeData.label} Dumpster`,
-      subLabel: `${rental.label} rental • ${includedTons}T included`,
+      subLabel: isHeavyMaterial 
+        ? `${rental.label} rental • Flat fee pricing`
+        : `${rental.label} rental • ${includedTons}T included`,
       amount: basePrice,
       type: 'base',
     });
 
-    // Heavy material surcharge
+    // Heavy material surcharge - renamed to flat-fee when applicable
     if (material.priceAdjustment > 0) {
       lineItems.push({
-        label: 'Heavy Material Surcharge',
-        subLabel: 'Concrete, dirt, rock, asphalt',
+        label: isHeavyMaterial ? 'Heavy Materials (flat-fee pricing)' : 'Heavy Material Surcharge',
+        subLabel: isHeavyMaterial ? 'Disposal included, no weight charges' : 'Concrete, dirt, rock, asphalt',
         amount: material.priceAdjustment,
         type: 'addition',
       });
@@ -590,6 +608,28 @@ export function InstantQuoteCalculatorV3() {
     const material = MATERIAL_TYPES.find((m) => m.value === formData.material);
     return DUMPSTER_SIZES.filter((s) => material?.allowedSizes.includes(s.value));
   }, [formData.material]);
+
+  // Filtered extras based on material and size (visibility rules)
+  // Heavy: Hide "Extra Tons" entirely
+  // Mixed 6/8/10: Hide "Extra Tons"
+  // Mixed 20+: Show "Extra Tons" (optional pre-purchase)
+  const filteredExtras = useMemo(() => {
+    const isHeavy = formData.material === 'heavy';
+    const isSmallGeneral = formData.material === 'general' && formData.size <= 10;
+    
+    return EXTRAS.filter(extra => {
+      // Hide extra-tons for heavy materials and small general debris
+      if (extra.id === 'extra-tons') {
+        return !isHeavy && !isSmallGeneral;
+      }
+      return true;
+    });
+  }, [formData.material, formData.size]);
+
+  // Get overage info for current selection
+  const overageInfo = useMemo(() => {
+    return getOverageInfo(formData.material, formData.size);
+  }, [formData.material, formData.size]);
 
   return (
     <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border" id="quote-calculator">
@@ -1208,15 +1248,41 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* Extras - Cleaner cards */}
+            {/* Extras - Cleaner cards with SVG icons */}
             <div>
               <h4 className="text-base font-bold text-foreground mb-1">Add-ons</h4>
               <p className="text-xs text-muted-foreground mb-3">Optional services</p>
 
+              {/* Material-specific overage note */}
+              <div className={cn(
+                "mb-3 text-xs rounded-lg px-3 py-2 flex items-center gap-2",
+                formData.material === 'heavy' 
+                  ? "bg-success/10 text-success border border-success/20" 
+                  : "bg-muted/50 text-muted-foreground border border-border"
+              )}>
+                {formData.material === 'heavy' ? (
+                  <>
+                    <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Heavy materials are flat-fee. No extra weight charges.</span>
+                  </>
+                ) : formData.size <= 10 ? (
+                  <>
+                    <Info className="w-3.5 h-3.5 shrink-0" />
+                    <span>Overage is billed at $30 per additional yard for 6–10 yard mixed debris.</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Overage billed per ton after disposal scale ticket ($165/ton).</span>
+                  </>
+                )}
+              </div>
+
               <div className="space-y-2">
-                {EXTRAS.map((extra) => {
+                {filteredExtras.map((extra) => {
                   const qty = getExtraQuantity(extra.id);
                   const isSelected = qty > 0;
+                  const IconComponent = EXTRAS_ICON_MAP[extra.icon] || Package;
 
                   return (
                     <div
@@ -1227,7 +1293,20 @@ export function InstantQuoteCalculatorV3() {
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{extra.icon}</span>
+                        {/* Icon in circular container */}
+                        <div className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                          "bg-muted/80 border border-border/50",
+                          isSelected && "bg-primary/10 border-primary/20"
+                        )}>
+                          <IconComponent 
+                            className={cn(
+                              "w-5 h-5 transition-colors",
+                              isSelected ? "text-primary" : "text-foreground/70"
+                            )}
+                            strokeWidth={2}
+                          />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <span className="font-medium text-foreground">{extra.label}</span>
@@ -1288,27 +1367,34 @@ export function InstantQuoteCalculatorV3() {
               <div className="p-4 space-y-3">
                 {/* Line Items */}
                 <div className="space-y-2">
-                  {quote.lineItems.map((item, i) => (
-                    <div key={i} className="flex justify-between items-start text-sm">
-                      <div className="flex-1">
+                  {quote.lineItems.map((item, i) => {
+                    // Fix "Heavy Material Surcharge" label when using flat-fee
+                    const displayLabel = item.label === 'Heavy Material Surcharge' && formData.material === 'heavy'
+                      ? 'Heavy Materials (flat-fee pricing)'
+                      : item.label;
+                    
+                    return (
+                      <div key={i} className="flex justify-between items-start text-sm">
+                        <div className="flex-1">
+                          <span className={cn(
+                            "font-medium",
+                            item.type === 'discount' ? 'text-success' : 'text-foreground'
+                          )}>
+                            {displayLabel}
+                          </span>
+                          {item.subLabel && (
+                            <div className="text-[11px] text-muted-foreground">{item.subLabel}</div>
+                          )}
+                        </div>
                         <span className={cn(
-                          "font-medium",
+                          "font-semibold shrink-0 tabular-nums text-sm",
                           item.type === 'discount' ? 'text-success' : 'text-foreground'
                         )}>
-                          {item.label}
+                          {item.type === 'discount' ? '−' : ''}${Math.abs(item.amount).toLocaleString()}
                         </span>
-                        {item.subLabel && (
-                          <div className="text-[11px] text-muted-foreground">{item.subLabel}</div>
-                        )}
                       </div>
-                      <span className={cn(
-                        "font-semibold shrink-0 tabular-nums text-sm",
-                        item.type === 'discount' ? 'text-success' : 'text-foreground'
-                      )}>
-                        {item.type === 'discount' ? '−' : ''}${Math.abs(item.amount).toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Divider */}
@@ -1329,19 +1415,38 @@ export function InstantQuoteCalculatorV3() {
                   </div>
                 </div>
 
-                {/* Included info row */}
+                {/* Included info row - different for heavy vs general */}
                 <div className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2 text-xs">
-                  <span className="text-muted-foreground">{formData.rentalDays}-day rental • {quote.includedTons}T included</span>
+                  {formData.material === 'heavy' ? (
+                    <span className="text-success font-medium flex items-center gap-1">
+                      <Package className="w-3 h-3" />
+                      Flat fee — disposal included, no weight charges
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {formData.rentalDays}-day rental • {quote.includedTons}T included
+                    </span>
+                  )}
                   <CheckCircle className="w-3.5 h-3.5 text-success" />
                 </div>
+
+                {/* Overage disclaimer - only for general debris */}
+                {formData.material === 'general' && (
+                  <div className="text-[10px] text-muted-foreground bg-muted/30 rounded px-2 py-1.5">
+                    {formData.size <= 10 
+                      ? 'Overage: $30 per additional yard'
+                      : 'Included tons + overage per ton after scale ticket'
+                    }
+                  </div>
+                )}
               </div>
 
               {/* Tips footer */}
               <div className="bg-success/5 px-4 py-2.5 border-t border-success/20">
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                  <span>✓ Below rim</span>
-                  <span>✓ No mixing</span>
-                  <span>✓ Clear access</span>
+                  <span className="flex items-center gap-1"><CheckCircle className="w-2.5 h-2.5" /> Below rim</span>
+                  <span className="flex items-center gap-1"><CheckCircle className="w-2.5 h-2.5" /> No mixing</span>
+                  <span className="flex items-center gap-1"><CheckCircle className="w-2.5 h-2.5" /> Clear access</span>
                 </div>
               </div>
             </div>
@@ -1423,7 +1528,10 @@ export function InstantQuoteCalculatorV3() {
                         {' '}({formData.material === 'heavy' ? 'Heavy' : 'General'})
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {formData.rentalDays} days • {quote.includedTons}T included
+                        {formData.material === 'heavy' 
+                          ? `${formData.rentalDays} days • Flat fee – disposal included`
+                          : `${formData.rentalDays} days • ${quote.includedTons}T included`
+                        }
                       </div>
                     </div>
                     <div className="text-right">
