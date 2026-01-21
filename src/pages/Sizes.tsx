@@ -357,7 +357,7 @@ export default function Sizes() {
             <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
               Our team can help you choose the right dumpster for your project. Call us for a free consultation or get an instant quote online.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <Button asChild variant="cta" size="lg">
                 <Link to="/pricing" className="gap-2">
                   Get Instant Quote
@@ -371,6 +371,11 @@ export default function Sizes() {
                 </a>
               </Button>
             </div>
+            <Button asChild variant="link" size="sm" className="text-muted-foreground">
+              <Link to="/capacity-guide">
+                View Capacity & Scenarios Guide →
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

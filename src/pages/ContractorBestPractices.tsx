@@ -449,10 +449,11 @@ export default function ContractorBestPractices() {
         <div className="container-wide">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-xl font-bold text-foreground mb-6">Related Resources</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {[
                 { to: '/pricing', label: 'Pricing', desc: 'Transparent rates' },
                 { to: '/sizes', label: 'Dumpster Sizes', desc: 'Find your fit' },
+                { to: '/capacity-guide', label: 'Capacity Guide', desc: 'Pickup loads & scenarios' },
                 { to: '/areas', label: 'Service Areas', desc: 'Bay Area coverage' },
                 { to: '/green-halo', label: 'Green Halo™', desc: 'Sustainability tracking' },
               ].map((link) => (
