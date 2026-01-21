@@ -2,13 +2,14 @@ import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
   Home, Loader2, Percent, Warehouse, Settings, 
-  Package, FileText, Truck
+  Package, FileText, Truck, Calendar, Receipt, 
+  Boxes, UserCog, MapPinned, Banknote, AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { cn } from '@/lib/utils';
 
-// Navigation items grouped by section
+// Navigation items grouped by section - Full CRM Navigation
 const navSections = [
   {
     title: 'Overview',
@@ -20,7 +21,18 @@ const navSections = [
     title: 'Operations',
     items: [
       { path: '/admin/orders', label: 'Orders', icon: Package },
+      { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
+      { path: '/admin/inventory', label: 'Inventory', icon: Boxes },
       { path: '/admin/customers', label: 'Customers', icon: Users },
+      { path: '/admin/drivers', label: 'Drivers', icon: Truck },
+    ],
+  },
+  {
+    title: 'Finance',
+    items: [
+      { path: '/admin/tickets', label: 'Tickets & Receipts', icon: Receipt },
+      { path: '/admin/city-rates', label: 'City Rates', icon: Banknote },
+      { path: '/admin/toll-surcharges', label: 'Toll Surcharges', icon: MapPinned },
     ],
   },
   {
@@ -43,6 +55,7 @@ const navSections = [
   {
     title: 'System',
     items: [
+      { path: '/admin/users', label: 'User Management', icon: UserCog },
       { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
     ],
   },
