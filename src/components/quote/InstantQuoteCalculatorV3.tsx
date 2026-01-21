@@ -23,7 +23,7 @@ import type { QuoteFormData, ExtraSelection } from './types';
 
 // Heavy Material Sub-Classification
 import { HeavyMaterialSelector, type HeavyClassificationResult } from './HeavyMaterialSelector';
-
+import { calculateHeavyPrice, type HeavyMaterialClass } from '@/lib/heavyPricing';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
@@ -1207,27 +1207,66 @@ export function InstantQuoteCalculatorV3() {
               <h4 className="text-base font-bold text-foreground mb-1">Select size</h4>
               <p className="text-xs text-muted-foreground mb-3">
                 {formData.material === 'heavy' 
-                  ? '6-10 yard for heavy materials'
+                  ? '6-10 yard for heavy materials — flat-fee pricing'
                   : '6-50 yard available'
                 }
               </p>
 
-              {/* Confidence Meter - Compact */}
-              <div className="mb-4 p-3 rounded-lg border border-border bg-muted/30">
-                <div className="flex items-center gap-3">
-                  <ConfidenceBadge 
-                    confidence={smartRecommendation.confidence}
-                    label={smartRecommendation.confidenceLabel}
-                  />
-                  <p className="text-xs text-foreground flex-1">{smartRecommendation.confidenceNote}</p>
+              {/* Heavy Material Classification Summary */}
+              {formData.material === 'heavy' && heavyClassification?.materialClass && (
+                <div className="mb-4 p-3 rounded-lg bg-success/10 border border-success/20">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-foreground">
+                        {heavyClassification.materialClass === 'base' && 'Base Heavy Materials'}
+                        {heavyClassification.materialClass === 'plus_200' && 'Specialty Heavy (+$200)'}
+                        {heavyClassification.materialClass === 'mixed_heavy' && 'Mixed Heavy (+$300)'}
+                      </span>
+                      <span className="text-xs text-success ml-2">
+                        Flat fee — no weight charges
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Confidence Meter - Compact (hidden for heavy since pricing is flat) */}
+              {formData.material !== 'heavy' && (
+                <div className="mb-4 p-3 rounded-lg border border-border bg-muted/30">
+                  <div className="flex items-center gap-3">
+                    <ConfidenceBadge 
+                      confidence={smartRecommendation.confidence}
+                      label={smartRecommendation.confidenceLabel}
+                    />
+                    <p className="text-xs text-foreground flex-1">{smartRecommendation.confidenceNote}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {availableSizes.map((size) => {
                   const includedTons = calculateIncludedTons(size.value, formData.material);
                   const image = DUMPSTER_IMAGES[size.value];
-                  const price = Math.round(size.basePrice * (zoneResult?.multiplier || 1));
+                  
+                  // Calculate price based on material type
+                  const isHeavyWithClass = formData.material === 'heavy' && heavyClassification?.materialClass;
+                  let displayPrice: number;
+                  let isFlatFee = false;
+                  
+                  if (isHeavyWithClass && [6, 8, 10].includes(size.value)) {
+                    // Use heavy pricing calculation
+                    const heavyPrice = calculateHeavyPrice(
+                      size.value as 6 | 8 | 10, 
+                      heavyClassification.materialClass as HeavyMaterialClass,
+                      'oakland'
+                    );
+                    displayPrice = heavyPrice.roundedPrice;
+                    isFlatFee = true;
+                  } else {
+                    // Standard pricing with zone multiplier
+                    displayPrice = Math.round(size.basePrice * (zoneResult?.multiplier || 1));
+                  }
 
                   return (
                     <button
@@ -1262,16 +1301,40 @@ export function InstantQuoteCalculatorV3() {
                       <div className="text-center">
                         <div className="text-2xl font-bold text-foreground">{size.value}</div>
                         <div className="text-xs text-muted-foreground uppercase">yard</div>
-                        <div className="flex items-center justify-center gap-1 mt-1 text-xs text-primary font-medium">
-                          <Weight className="w-3 h-3" />
-                          {includedTons}T incl
-                        </div>
+                        
+                        {/* Weight info - different for heavy vs general */}
+                        {isFlatFee ? (
+                          <div className="flex items-center justify-center gap-1 mt-1 text-xs text-success font-medium">
+                            <CheckCircle className="w-3 h-3" />
+                            Flat fee
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1 mt-1 text-xs text-primary font-medium">
+                            <Weight className="w-3 h-3" />
+                            {includedTons}T incl
+                          </div>
+                        )}
+                        
                         {size.dimensions && (
                           <div className="mt-1 text-[10px] text-muted-foreground">
                             Approx. {size.dimensions}
                           </div>
                         )}
-                        <div className="mt-2 text-sm font-semibold text-foreground">${price}</div>
+                        
+                        {/* Price display */}
+                        <div className={cn(
+                          "mt-2 text-sm font-semibold",
+                          isFlatFee ? "text-success" : "text-foreground"
+                        )}>
+                          ${displayPrice}
+                        </div>
+                        
+                        {/* Heavy material increment badge */}
+                        {isFlatFee && heavyClassification?.increment && heavyClassification.increment > 0 && (
+                          <div className="mt-1 text-[10px] text-amber-600 font-medium">
+                            +${heavyClassification.increment} specialty
+                          </div>
+                        )}
                         
                         {/* Show reason under recommended card */}
                         {projectType !== null && size.value === smartRecommendation.recommendedSize && (
