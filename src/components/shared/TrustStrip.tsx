@@ -2,17 +2,18 @@ import { Shield, Award, CheckCircle, Star, Clock, Users, Percent, Sparkles, Luci
 import { cn } from '@/lib/utils';
 
 // Canonical trust badge definitions
+// All claims must be verifiable - update numbers based on actual data
 export const TRUST_BADGES = {
   // Core badges
   googleGuaranteed: { icon: Shield, label: 'Google Guaranteed' },
   licensedInsured: { icon: Award, label: 'Licensed & Insured' },
   hablamosEspanol: { icon: CheckCircle, label: 'Hablamos Español' },
-  reviews: { icon: Star, label: '500+ Reviews' },
+  reviews: { icon: Star, label: '200+ Reviews' }, // Use actual verified count
   sameDayAvailable: { icon: Clock, label: 'Same-Day Available' },
   noHiddenFees: { icon: Sparkles, label: 'No Hidden Fees' },
   // Special badges
   contractorDiscount: { icon: Percent, label: '10% Contractor Discount' },
-  fiveStarReviews: { icon: Star, label: '4.9★ (200+ Reviews)' },
+  fiveStarReviews: { icon: Star, label: '4.9★ (200+ Verified)' }, // Actual rating + verified count
 } as const;
 
 export type TrustBadgeKey = keyof typeof TRUST_BADGES;

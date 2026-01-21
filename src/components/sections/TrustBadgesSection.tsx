@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
-import { Shield, Award, Star, ExternalLink } from 'lucide-react';
+import { Shield, Award, Star, ExternalLink, CheckCircle } from 'lucide-react';
 import { BUSINESS_INFO } from '@/lib/seo';
+import { REVIEW_STATS, REVIEW_LINKS } from '@/data/reviews';
+import { COMPANY_FACTS, CERTIFICATION_LINKS } from '@/data/trustSignals';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 
 const trustBadges = [
@@ -9,35 +11,35 @@ const trustBadges = [
     icon: Shield,
     title: 'Google Guaranteed',
     subtitle: 'Verified Local Service',
-    description: 'Background-checked, licensed, and insured. Google may reimburse up to $2,000 if unsatisfied.',
-    link: BUSINESS_INFO.social.googleGuarantee,
+    description: 'Background-checked, licensed, and insured through Google Local Services.',
+    link: CERTIFICATION_LINKS.googleGuarantee,
     featured: true,
   },
   {
     id: 'bbb',
     icon: Award,
-    title: 'BBB A+ Rating',
-    subtitle: 'Accredited Business',
-    description: 'Trusted by the Better Business Bureau for transparency and customer service.',
-    link: BUSINESS_INFO.social.bbb,
+    title: 'BBB Accredited',
+    subtitle: 'Oakland HQ',
+    description: 'Better Business Bureau accredited for transparency and service.',
+    link: CERTIFICATION_LINKS.bbb,
     featured: false,
   },
   {
-    id: 'yelp',
+    id: 'reviews',
     icon: Star,
-    title: '5.0 on Yelp',
-    subtitle: '200+ Reviews',
-    description: 'Real customers, real reviews from across the Bay Area.',
-    link: BUSINESS_INFO.social.yelp,
+    title: `${REVIEW_STATS.averageRating}★ Average`,
+    subtitle: `${REVIEW_STATS.totalReviews}+ Verified Reviews`,
+    description: 'Real reviews from verified customers on Google and Facebook.',
+    link: REVIEW_LINKS.googleProfile,
     featured: false,
   },
 ];
 
 const stats = [
-  { value: '500+', label: '5-Star Reviews' },
-  { value: '15+', label: 'Years in Business' },
-  { value: '98%', label: 'Would Recommend' },
-  { value: '9', label: 'Counties Served' },
+  { value: `${REVIEW_STATS.totalReviews}+`, label: 'Verified Reviews' },
+  { value: `${COMPANY_FACTS.yearsInBusiness}+`, label: 'Years in Business' },
+  { value: `${COMPANY_FACTS.recommendationRate}%`, label: 'Would Recommend' },
+  { value: `${COMPANY_FACTS.countiesServed}`, label: 'Counties Served' },
 ];
 
 export function TrustBadgesSection() {
@@ -47,12 +49,15 @@ export function TrustBadgesSection() {
         {/* Header - Minimal */}
         <AnimatedSection className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-            Trust verified
+            <CheckCircle className="w-3.5 h-3.5" />
+            Verified credentials
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Industry-leading certifications
+            Why Customers Trust Calsan
           </h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-lg mx-auto">
+            All credentials are publicly verifiable. Click any badge to confirm.
+          </p>
         </AnimatedSection>
 
         {/* Trust Badges - Compact grid */}
