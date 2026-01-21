@@ -189,6 +189,12 @@ export async function saveQuote(params: {
   prepurchaseDiscountPct?: number;
   prepurchaseRate?: number;
   prepurchaseCityRate?: number;
+  // Heavy material classification fields
+  heavyMaterialClass?: string;
+  heavyMaterialIncrement?: number;
+  isTrashContaminated?: boolean;
+  reclassifiedToMixed?: boolean;
+  originalMaterialType?: string;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -234,6 +240,12 @@ export async function saveQuote(params: {
         prepurchase_discount_pct: params.prepurchaseDiscountPct,
         prepurchase_rate: params.prepurchaseRate,
         prepurchase_city_rate: params.prepurchaseCityRate,
+        // Heavy material classification
+        heavy_material_class: params.heavyMaterialClass,
+        heavy_material_increment: params.heavyMaterialIncrement,
+        is_trash_contaminated: params.isTrashContaminated,
+        reclassified_to_mixed: params.reclassifiedToMixed,
+        original_material_type: params.originalMaterialType,
       })
       .select('id')
       .single();
