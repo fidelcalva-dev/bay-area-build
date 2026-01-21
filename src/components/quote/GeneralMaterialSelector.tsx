@@ -4,13 +4,22 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { 
-  CheckCircle, Home, Hammer, Leaf, Package, Sofa, Archive, 
-  Recycle, AlertCircle, Scale, Info
+  CheckCircle, Home, Hammer, Leaf, Package, Archive, 
+  Recycle, AlertCircle, Scale, Info, TreePine, Wrench,
+  LayoutGrid, Cylinder, Square, Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // General debris categories with overage info
 export const GENERAL_DEBRIS_CATEGORIES = [
+  {
+    id: 'mixed_cd',
+    label: 'Mixed C&D Debris',
+    description: 'Construction & demolition mix',
+    icon: Layers,
+    densityHint: 'Medium-heavy',
+    examples: ['Drywall + Lumber', 'Flooring mix', 'Demo debris', 'Remodel waste'],
+  },
   {
     id: 'household',
     label: 'Household/Junk',
@@ -18,31 +27,6 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     icon: Home,
     densityHint: 'Light-medium',
     examples: ['Furniture', 'Appliances', 'Boxes', 'Toys', 'Clothes'],
-  },
-  {
-    id: 'construction',
-    label: 'Construction/Remodel',
-    description: 'Drywall, lumber, flooring, cabinets',
-    icon: Hammer,
-    densityHint: 'Medium-heavy',
-    examples: ['Drywall', 'Lumber', 'Carpet', 'Cabinets', 'Fixtures'],
-  },
-  {
-    id: 'roofing',
-    label: 'Roofing',
-    description: 'Shingles, underlayment, flashing',
-    icon: Home,
-    densityHint: 'Heavy',
-    examples: ['Asphalt shingles', 'Wood shakes', 'Felt paper', 'Flashing'],
-    weightWarning: true,
-  },
-  {
-    id: 'yard',
-    label: 'Yard Waste',
-    description: 'Branches, grass, shrubs, leaves',
-    icon: Leaf,
-    densityHint: 'Light-medium',
-    examples: ['Branches', 'Grass clippings', 'Shrubs', 'Leaves', 'Sod'],
   },
   {
     id: 'cleanout',
@@ -53,12 +37,83 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     examples: ['Storage items', 'Old furniture', 'Misc. junk', 'Decor'],
   },
   {
-    id: 'mixed',
-    label: 'Mixed Debris',
-    description: 'Combination of multiple categories',
+    id: 'construction',
+    label: 'Construction/Remodel',
+    description: 'Drywall, lumber, flooring, cabinets',
+    icon: Hammer,
+    densityHint: 'Medium-heavy',
+    examples: ['Drywall', 'Lumber', 'Carpet', 'Cabinets', 'Fixtures'],
+  },
+  {
+    id: 'roofing_only',
+    label: 'Roofing Only (100% Clean)',
+    description: 'Asphalt shingles only — recyclable',
+    icon: Home,
+    densityHint: 'Heavy',
+    examples: ['Asphalt shingles', 'Felt paper', 'Flashing'],
+    weightWarning: true,
+    recyclable: true,
+  },
+  {
+    id: 'wood_clean',
+    label: 'Clean Wood & Tree Waste',
+    description: 'Untreated lumber, branches, tree debris',
+    icon: TreePine,
+    densityHint: 'Light-medium',
+    examples: ['Lumber', 'Branches', 'Tree stumps', 'Pallets', 'Plywood'],
+    recyclable: true,
+  },
+  {
+    id: 'yard',
+    label: 'Yard/Green Waste',
+    description: 'Grass, shrubs, leaves, landscaping',
+    icon: Leaf,
+    densityHint: 'Light',
+    examples: ['Grass clippings', 'Shrubs', 'Leaves', 'Sod', 'Dirt (small qty)'],
+  },
+  {
+    id: 'metal',
+    label: 'Metal (100% Clean)',
+    description: 'Scrap metal, pipes, fixtures',
+    icon: Wrench,
+    densityHint: 'Heavy',
+    examples: ['Steel', 'Aluminum', 'Copper', 'Pipes', 'Fixtures'],
+    recyclable: true,
+  },
+  {
+    id: 'cardboard',
+    label: 'Cardboard & Paper',
+    description: 'Boxes, packaging, paper products',
     icon: Package,
+    densityHint: 'Very light',
+    examples: ['Cardboard boxes', 'Packaging', 'Office paper', 'Magazines'],
+    recyclable: true,
+  },
+  {
+    id: 'plastic',
+    label: 'Plastic (100% Clean)',
+    description: 'Plastic containers, packaging, materials',
+    icon: Cylinder,
+    densityHint: 'Very light',
+    examples: ['Plastic bins', 'Packaging', 'PVC', 'Containers'],
+    recyclable: true,
+  },
+  {
+    id: 'drywall',
+    label: 'Drywall Only (100% Clean)',
+    description: 'Sheetrock, gypsum board only',
+    icon: Square,
+    densityHint: 'Medium',
+    examples: ['Sheetrock', 'Gypsum board', 'Drywall scraps'],
+    recyclable: true,
+  },
+  {
+    id: 'mixed',
+    label: 'Mixed/Other Debris',
+    description: 'Combination of multiple categories',
+    icon: LayoutGrid,
     densityHint: 'Varies',
-    examples: ['Multiple types above', 'Demo + Junk', 'Remodel debris'],
+    examples: ['Multiple types above', 'Demo + Junk', 'Various materials'],
   },
 ];
 
@@ -71,6 +126,7 @@ export interface GeneralClassificationResult {
   category: string | null;
   densityHint: string | null;
   hasWeightWarning: boolean;
+  isRecyclable: boolean;
   isComplete: boolean;
 }
 
@@ -87,6 +143,7 @@ export function GeneralMaterialSelector({
         category: null,
         densityHint: null,
         hasWeightWarning: false,
+        isRecyclable: false,
         isComplete: false,
       };
     }
@@ -96,6 +153,7 @@ export function GeneralMaterialSelector({
       category: selectedCategory,
       densityHint: category?.densityHint || null,
       hasWeightWarning: category?.weightWarning || false,
+      isRecyclable: category?.recyclable || false,
       isComplete: true,
     };
   }, [selectedCategory]);
@@ -139,10 +197,11 @@ export function GeneralMaterialSelector({
           This helps us ensure you get the right size and pricing
         </p>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           {GENERAL_DEBRIS_CATEGORIES.map((category) => {
             const IconComponent = category.icon;
             const isSelected = selectedCategory === category.id;
+            const isRecyclable = 'recyclable' in category && category.recyclable;
             
             return (
               <button
@@ -150,7 +209,7 @@ export function GeneralMaterialSelector({
                 type="button"
                 onClick={() => setSelectedCategory(category.id)}
                 className={cn(
-                  "p-3 rounded-xl border-2 text-left transition-all relative",
+                  "p-2.5 rounded-xl border-2 text-left transition-all relative",
                   isSelected
                     ? "border-primary bg-primary/5"
                     : "border-border bg-background hover:border-primary/50"
@@ -158,7 +217,7 @@ export function GeneralMaterialSelector({
               >
                 <div className="flex items-start gap-2">
                   <div className={cn(
-                    "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0",
+                    "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
                     isSelected ? "bg-primary/10" : "bg-muted"
                   )}>
                     <IconComponent 
@@ -170,27 +229,35 @@ export function GeneralMaterialSelector({
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-foreground text-sm leading-tight">
+                    <div className="font-semibold text-foreground text-xs leading-tight">
                       {category.label}
                     </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">
+                    <div className="text-[9px] text-muted-foreground mt-0.5 line-clamp-1">
                       {category.description}
                     </div>
                   </div>
                 </div>
                 
                 {isSelected && (
-                  <div className="absolute top-2 right-2">
-                    <CheckCircle className="w-4 h-4 text-primary" />
+                  <div className="absolute top-1.5 right-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   </div>
                 )}
                 
-                {category.weightWarning && (
-                  <div className="mt-2 flex items-center gap-1 text-[10px] text-amber-600">
-                    <AlertCircle className="w-3 h-3" />
-                    Heavy — watch tonnage
-                  </div>
-                )}
+                <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+                  {isRecyclable && (
+                    <span className="inline-flex items-center gap-0.5 text-[9px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                      <Recycle className="w-2.5 h-2.5" />
+                      Recyclable
+                    </span>
+                  )}
+                  {category.weightWarning && (
+                    <span className="inline-flex items-center gap-0.5 text-[9px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+                      <AlertCircle className="w-2.5 h-2.5" />
+                      Heavy
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}
