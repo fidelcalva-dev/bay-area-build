@@ -5,9 +5,8 @@ import { ArrowRight, HardHat, Truck, Clock, RefreshCw, Phone, CheckCircle, BookO
 import { WeightEducation } from '@/components/quote/WeightEducation';
 import { DrivewayProtection, CityPermitHelper } from '@/components/education';
 import { ContractorTipsSection } from '@/components/sections/ContractorTipsSection';
-import { PAGE_SEO } from '@/lib/seo';
-
-const TRASHLAB_URL = 'https://app.trashlab.com';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { CTA_LINKS } from '@/lib/shared-data';
 
 const benefits = [
   {
@@ -66,13 +65,13 @@ export default function Contractors() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild variant="hero" size="xl">
-                  <a href="tel:+15106802150">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                     Call Contractor Line
                     <Phone className="w-5 h-5" />
                   </a>
                 </Button>
                 <Button asChild variant="heroSecondary" size="xl">
-                  <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
+                  <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                     Order Now
                     <ArrowRight className="w-5 h-5" />
                   </a>
@@ -137,13 +136,13 @@ export default function Contractors() {
               </p>
               <div className="space-y-4">
                 <Button asChild variant="cta" size="lg" className="w-full">
-                  <a href="tel:+15106802150">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                     <Phone className="w-4 h-4" />
-                    (510) 680-2150
+                    {BUSINESS_INFO.phone.salesFormatted}
                   </a>
                 </Button>
                 <p className="text-sm text-muted-foreground text-center">
-                  Or email <a href="mailto:contact@calsandumpsterspro.com" className="text-primary font-semibold">contact@calsandumpsterspro.com</a>
+                  Or email <a href={`mailto:${BUSINESS_INFO.email}`} className="text-primary font-semibold">{BUSINESS_INFO.email}</a>
                 </p>
               </div>
             </div>
@@ -182,8 +181,8 @@ export default function Contractors() {
             Join hundreds of Bay Area contractors who trust Calsan Dumpsters Pro for reliable waste removal.
           </p>
           <Button asChild variant="cta" size="xl">
-            <a href="tel:+15106802150">
-              Call Now: (510) 680-2150
+            <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+              Call Now: {BUSINESS_INFO.phone.salesFormatted}
             </a>
           </Button>
         </div>

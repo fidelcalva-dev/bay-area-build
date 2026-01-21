@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
-import { PAGE_SEO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 import { 
   PLAN_A_PRICING, 
   HEAVY_MATERIAL_PRICING, 
@@ -758,8 +758,8 @@ export default function Pricing() {
               </Link>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
-              <a href="tel:+15106802150">
-                Call (510) 680-2150
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                Call {BUSINESS_INFO.phone.salesFormatted}
               </a>
             </Button>
           </div>
