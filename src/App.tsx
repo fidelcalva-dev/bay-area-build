@@ -31,7 +31,12 @@ const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
 const Locations = lazy(() => import("./pages/Locations"));
 
-// Portal pages (rarely accessed)
+// Customer Portal pages (SMS OTP auth)
+const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
+const CustomerDashboard = lazy(() => import("./pages/portal/CustomerDashboard"));
+const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
+
+// Green Halo Portal pages (separate)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
 const PortalDashboard = lazy(() => import("./pages/portal/PortalDashboard"));
 const ProjectDetail = lazy(() => import("./pages/portal/ProjectDetail"));
@@ -130,17 +135,28 @@ const App = () => (
                 <Suspense fallback={<PageLoader />}><Locations /></Suspense>
               } />
               
-              {/* Green Halo Client Portal */}
+              {/* Customer Portal (SMS OTP Auth) */}
               <Route path="/portal" element={
-                <Suspense fallback={<PageLoader />}><PortalLogin /></Suspense>
+                <Suspense fallback={<PageLoader />}><CustomerLogin /></Suspense>
               } />
               <Route path="/portal/dashboard" element={
+                <Suspense fallback={<PageLoader />}><CustomerDashboard /></Suspense>
+              } />
+              <Route path="/portal/order/:orderId" element={
+                <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+              } />
+
+              {/* Green Halo Client Portal */}
+              <Route path="/green-halo/portal" element={
+                <Suspense fallback={<PageLoader />}><PortalLogin /></Suspense>
+              } />
+              <Route path="/green-halo/portal/dashboard" element={
                 <Suspense fallback={<PageLoader />}><PortalDashboard /></Suspense>
               } />
-              <Route path="/portal/project/:projectId" element={
+              <Route path="/green-halo/portal/project/:projectId" element={
                 <Suspense fallback={<PageLoader />}><ProjectDetail /></Suspense>
               } />
-              <Route path="/portal/report" element={
+              <Route path="/green-halo/portal/report" element={
                 <Suspense fallback={<PageLoader />}><SustainabilityReport /></Suspense>
               } />
               

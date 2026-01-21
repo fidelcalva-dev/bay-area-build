@@ -98,6 +98,44 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_sessions: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          expires_at: string
+          id: string
+          last_active_at: string
+          phone: string
+          session_token: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at: string
+          id?: string
+          last_active_at?: string
+          phone: string
+          session_token: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          last_active_at?: string
+          phone?: string
+          session_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           billing_address: string | null
@@ -109,6 +147,7 @@ export type Database = {
           id: string
           is_active: boolean
           notes: string | null
+          phone: string | null
           updated_at: string
           user_id: string
         }
@@ -122,6 +161,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
+          phone?: string | null
           updated_at?: string
           user_id: string
         }
@@ -135,6 +175,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           notes?: string | null
+          phone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -462,6 +503,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      phone_otps: {
+        Row: {
+          attempts: number
+          code_hash: string
+          cooldown_until: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          cooldown_until?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          cooldown_until?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          verified_at?: string | null
+        }
+        Relationships: []
       }
       pricing_extras: {
         Row: {
