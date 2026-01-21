@@ -347,13 +347,34 @@ export function InstantQuoteCalculatorV3() {
       });
     }
 
-    // Green Halo flat-fee indicator (no additional charge, just informational)
+    // Green Halo pricing: Flat fee + Dump fee + Handling fee
     if (isGreenHaloMaterial) {
+      // Dump fee estimate based on size (variable $75-250/ton, use mid-range estimate)
+      const estimatedTons = formData.size <= 10 ? 1 : (formData.size <= 20 ? 2 : formData.size <= 30 ? 3 : 4);
+      const dumpFeePerTon = 150; // Mid-range estimate ($75-250)
+      const dumpFeeEstimate = Math.round(estimatedTons * dumpFeePerTon);
+      
       lineItems.push({
-        label: 'Green Halo™ (flat-fee pricing)',
-        subLabel: 'Specialized recycling facility — no weight charges',
+        label: 'Green Halo™ Recycling Facility',
+        subLabel: 'Specialized facility for compliance documentation',
         amount: 0,
         type: 'info',
+      });
+      
+      lineItems.push({
+        label: 'Estimated Dump Fee',
+        subLabel: `~${estimatedTons}T × $${dumpFeePerTon}/ton (actual varies $75-250/ton)`,
+        amount: dumpFeeEstimate,
+        type: 'addition',
+      });
+      
+      // Handling fee (recommended additional)
+      const handlingFee = 150; // Mid-range of $100-200
+      lineItems.push({
+        label: 'Green Halo Handling Fee',
+        subLabel: 'Processing & compliance documentation',
+        amount: handlingFee,
+        type: 'addition',
       });
     }
 
