@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
+import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler } from 'lucide-react';
+import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 
 const allowed = [
   { category: 'Household Junk', items: ['Furniture', 'Appliances (without freon)', 'Clothing & textiles', 'Books & paper', 'Toys', 'General household items'] },
@@ -38,6 +39,17 @@ const specialRules = [
     description: 'Materials must not extend above the top of the dumpster walls. Overfilled dumpsters cannot be transported safely.',
     icon: AlertTriangle,
   },
+];
+
+// Pickup truck load estimates
+const PICKUP_LOADS_QUICK = [
+  { yards: 6, loads: '2–3' },
+  { yards: 8, loads: '3–4' },
+  { yards: 10, loads: '4–5' },
+  { yards: 20, loads: '6–8' },
+  { yards: 30, loads: '9–12' },
+  { yards: 40, loads: '12–16' },
+  { yards: 50, loads: '16–20' },
 ];
 
 export default function Materials() {
@@ -116,8 +128,56 @@ export default function Materials() {
         </div>
       </section>
 
+      {/* Capacity Quick Reference */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
+                <Truck className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="heading-lg text-foreground">Capacity Quick Reference</h2>
+                <p className="text-sm text-muted-foreground">How many pickup truck loads fit in each dumpster</p>
+              </div>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/capacity-guide">
+                Full Capacity Guide
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 divide-x divide-border">
+              {PICKUP_LOADS_QUICK.map((item) => {
+                const sizeData = DUMPSTER_SIZES_DATA.find(s => s.yards === item.yards);
+                return (
+                  <div key={item.yards} className="p-4 text-center hover:bg-muted/30 transition-colors">
+                    <div className="text-2xl font-black text-foreground">{item.yards}</div>
+                    <div className="text-xs text-muted-foreground mb-2">YARD</div>
+                    <div className="text-lg font-bold text-primary">{item.loads}</div>
+                    <div className="text-xs text-muted-foreground">loads</div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="px-4 py-3 bg-muted/30 border-t border-border">
+              <p className="text-xs text-muted-foreground flex items-center gap-2">
+                <Info className="w-4 h-4 shrink-0" />
+                Based on standard 6-ft bed pickup, loaded to the top. 
+                <Link to="/capacity-guide" className="text-primary hover:underline ml-1">
+                  See full scenarios guide →
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Special Rules */}
-      <section className="section-padding bg-muted">
+      <section className="section-padding bg-background">
         <div className="container-wide">
           <h2 className="heading-lg text-foreground mb-8">Special Rules & Fees</h2>
 
@@ -149,8 +209,8 @@ export default function Materials() {
               </a>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
-              <Link to="/sizes">
-                View Dumpster Sizes
+              <Link to="/capacity-guide">
+                Capacity & Scenarios Guide
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
