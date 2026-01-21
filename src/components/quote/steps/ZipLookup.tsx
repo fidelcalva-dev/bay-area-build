@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Check, AlertCircle, Navigation, Clock } from 'lucide-react';
+import { MapPin, Check, AlertCircle, Navigation, Clock, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PricingZone } from '@/components/quote/types';
 
@@ -86,7 +86,10 @@ export function ZipLookup({ value, onChange, zone }: ZipLookupProps) {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-success font-medium mt-1">✓ Same-day delivery available</p>
+                <p className="text-xs text-success font-medium mt-1 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  Same-day delivery available
+                </p>
               </div>
             </>
           ) : (

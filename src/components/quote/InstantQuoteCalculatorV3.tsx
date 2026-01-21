@@ -881,8 +881,9 @@ export function InstantQuoteCalculatorV3() {
               
               {/* Privacy note - shown after geolocation is used */}
               {autoDetectZip.source === 'geolocation' && (
-                <p className="mt-2 text-[10px] text-muted-foreground text-center">
-                  🔒 Location used only to suggest ZIP for pricing accuracy
+                <p className="mt-2 text-[10px] text-muted-foreground text-center flex items-center justify-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  Location used only to suggest ZIP for pricing accuracy
                 </p>
               )}
 
