@@ -240,6 +240,7 @@ export type Database = {
           is_calsan_fulfillment: boolean
           is_green_halo: boolean | null
           is_trash_contaminated: boolean | null
+          is_weekend_delivery: boolean | null
           margin: number | null
           material_type: string
           original_material_type: string | null
@@ -248,6 +249,8 @@ export type Database = {
           placement_notes: string | null
           placement_type: string | null
           pre_purchase_suggested: boolean | null
+          preferred_delivery_date: string | null
+          preferred_delivery_window: string | null
           prepurchase_city_rate: number | null
           prepurchase_discount_pct: number | null
           prepurchase_rate: number | null
@@ -261,11 +264,13 @@ export type Database = {
           route_calculated_at: string | null
           route_polyline: string | null
           routing_provider: string | null
+          scheduling_notes: string | null
           selected_vendor_id: string | null
           size_id: string | null
           status: string
           subtotal: number
           suggested_extra_tons: number | null
+          suggested_pickup_date: string | null
           truck_distance_miles: number | null
           truck_duration_max: number | null
           truck_duration_min: number | null
@@ -316,6 +321,7 @@ export type Database = {
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
+          is_weekend_delivery?: boolean | null
           margin?: number | null
           material_type: string
           original_material_type?: string | null
@@ -324,6 +330,8 @@ export type Database = {
           placement_notes?: string | null
           placement_type?: string | null
           pre_purchase_suggested?: boolean | null
+          preferred_delivery_date?: string | null
+          preferred_delivery_window?: string | null
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
@@ -337,11 +345,13 @@ export type Database = {
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
+          scheduling_notes?: string | null
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal: number
           suggested_extra_tons?: number | null
+          suggested_pickup_date?: string | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
@@ -392,6 +402,7 @@ export type Database = {
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
           is_trash_contaminated?: boolean | null
+          is_weekend_delivery?: boolean | null
           margin?: number | null
           material_type?: string
           original_material_type?: string | null
@@ -400,6 +411,8 @@ export type Database = {
           placement_notes?: string | null
           placement_type?: string | null
           pre_purchase_suggested?: boolean | null
+          preferred_delivery_date?: string | null
+          preferred_delivery_window?: string | null
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
@@ -413,11 +426,13 @@ export type Database = {
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
+          scheduling_notes?: string | null
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal?: number
           suggested_extra_tons?: number | null
+          suggested_pickup_date?: string | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
