@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { HeroSection } from '@/components/sections/HeroSection';
+import { ServiceGuaranteeSection } from '@/components/sections/ServiceGuaranteeSection';
 import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
@@ -45,6 +46,10 @@ const Index = () => {
     >
       {/* Critical above-the-fold */}
       <HeroSection />
+      
+      {/* Service Guarantee - immediately after hero */}
+      <ServiceGuaranteeSection />
+      
       <HowItWorksSection />
       <FeaturesSection />
       

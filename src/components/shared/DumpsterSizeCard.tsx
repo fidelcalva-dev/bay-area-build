@@ -102,12 +102,17 @@ export function DumpsterSizeCard({
           )}
         </div>
 
-        <h3 className="text-2xl font-bold text-foreground mb-1">{size.yards} Yard</h3>
+        <h3 className="text-2xl font-bold text-foreground mb-2">{size.yards} Yard</h3>
 
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-          <Weight className="w-4 h-4" />
-          <span>
-            {size.includedTons}T included • {size.loads}
+        {/* Enhanced badges with tons + pickup truck loads */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-md text-xs font-medium text-primary">
+            <Weight className="w-3 h-3" />
+            {size.includedTons}T included
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-xs font-medium text-muted-foreground">
+            <Ruler className="w-3 h-3" />
+            ≈ {size.loads}
           </span>
         </div>
 

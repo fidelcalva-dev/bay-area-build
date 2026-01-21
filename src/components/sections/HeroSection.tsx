@@ -1,7 +1,9 @@
 import { motion, Variants } from 'framer-motion';
-import { Zap, MapPin, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Zap, MapPin, Clock, Home, HardHat, ArrowRight } from 'lucide-react';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
 import { TrustStrip, StarRating } from '@/components/shared';
+import { Button } from '@/components/ui/button';
 
 // Animation variants with proper typing
 const fadeInUp: Variants = {
@@ -83,6 +85,40 @@ export function HeroSection() {
                 Enter your ZIP. Get an instant estimate. Schedule delivery. 
                 <span className="text-primary-foreground font-medium"> That's it.</span>
               </p>
+            </motion.div>
+
+            {/* Segmented Entry - Homeowner vs Contractor */}
+            <motion.div variants={fadeInUp} className="pt-2">
+              <p className="text-sm text-primary-foreground/60 mb-3">Choose your path:</p>
+              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto lg:mx-0">
+                <a 
+                  href="#quote"
+                  className="flex-1 flex items-center gap-3 p-4 bg-primary-foreground/10 backdrop-blur-sm rounded-xl border border-primary-foreground/20 hover:bg-primary-foreground/20 hover:border-accent/50 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center group-hover:bg-accent transition-colors">
+                    <Home className="w-5 h-5 text-accent group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-primary-foreground">Homeowner</p>
+                    <p className="text-xs text-primary-foreground/60">One-time project</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-primary-foreground/40 ml-auto group-hover:text-accent transition-colors" />
+                </a>
+                
+                <Link 
+                  to="/contractors"
+                  className="flex-1 flex items-center gap-3 p-4 bg-primary-foreground/10 backdrop-blur-sm rounded-xl border border-primary-foreground/20 hover:bg-primary-foreground/20 hover:border-accent/50 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center group-hover:bg-accent transition-colors">
+                    <HardHat className="w-5 h-5 text-accent group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-primary-foreground">Contractor</p>
+                    <p className="text-xs text-primary-foreground/60">Volume programs</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-primary-foreground/40 ml-auto group-hover:text-accent transition-colors" />
+                </Link>
+              </div>
             </motion.div>
 
             {/* System Features - Inline indicators */}
