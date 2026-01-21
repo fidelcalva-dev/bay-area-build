@@ -25,13 +25,20 @@ const pricingTiers = PLAN_A_PRICING
     popular: p.size === 20,
   }));
 
-// Heavy material pricing from v56 - FLAT FEE (no weight limit displayed)
+// Heavy material pricing from v56 - PROPORTIONAL PRICING (Flat Fee)
+// Base 10yd = $638, 8yd = 0.8×, 6yd = 0.6×
+// +$200 for specialty materials, +$300 for mixed heavy
+import { getHeavyPricingDisplay } from '@/lib/shared-data';
+
+const heavyPricingDisplay = getHeavyPricingDisplay();
+
 const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   size: p.size,
   startingAt: p.basePrice,
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
   weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
+  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 6 ? '40% less than 10 yd' : null,
 }));
 
 function getIdealFor(size: number, isHeavy: boolean): string {
@@ -270,12 +277,17 @@ export default function Pricing() {
 
           {/* Starting At Price Blocks - Heavy Materials */}
           <div>
-            <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-foreground mb-2 flex items-center gap-2">
               <Scale className="w-5 h-5 text-warning" />
               Heavy Materials Dumpsters
-              <span className="text-sm font-normal text-muted-foreground">(Concrete, Dirt, Brick)</span>
+              <span className="text-sm font-normal text-muted-foreground">(Concrete, Dirt, Brick, Asphalt, Tile)</span>
             </h3>
-            <div className="grid sm:grid-cols-3 gap-4">
+            <p className="text-sm text-muted-foreground mb-6">
+              Proportional pricing: 10 yd is base rate; 8 yd = 20% less; 6 yd = 40% less. All sizes include disposal.
+            </p>
+            
+            {/* Size cards */}
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
               {heavyMaterialTiers.map((tier) => (
                 <div 
                   key={`heavy-${tier.size}`} 
@@ -287,12 +299,18 @@ export default function Pricing() {
                     
                     <div className="mb-3">
                       <div className="text-xs text-muted-foreground">Starting at</div>
-                      <div className="text-3xl font-extrabold text-primary">${tier.startingAt}</div>
+                      <div className="text-3xl font-extrabold text-primary">${Math.round(tier.startingAt)}</div>
                     </div>
 
                     <div className="text-xs text-success font-medium mb-2">
                       {tier.weightLimit} – Disposal Included
                     </div>
+                    
+                    {tier.savingsNote && (
+                      <div className="text-xs text-amber-600 font-medium mb-2">
+                        💰 {tier.savingsNote}
+                      </div>
+                    )}
                     
                     <p className="text-xs text-muted-foreground mb-4">{tier.idealFor}</p>
 
@@ -304,6 +322,65 @@ export default function Pricing() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Heavy material sub-classification table */}
+            <div className="bg-amber-500/5 border border-warning/20 rounded-xl p-5">
+              <h4 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                <Info className="w-4 h-4 text-warning" />
+                Heavy Material Pricing by Type
+              </h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-warning/20">
+                      <th className="text-left py-2 text-muted-foreground font-medium">Material Type</th>
+                      <th className="text-center py-2 text-muted-foreground font-medium">10 yd</th>
+                      <th className="text-center py-2 text-muted-foreground font-medium">8 yd</th>
+                      <th className="text-center py-2 text-muted-foreground font-medium">6 yd</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-warning/10">
+                      <td className="py-3">
+                        <div className="font-medium text-foreground">Base Materials</div>
+                        <div className="text-xs text-muted-foreground">Clean concrete, soil, sand, gravel</div>
+                      </td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[10]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[8]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[6]}</td>
+                    </tr>
+                    <tr className="border-b border-warning/10">
+                      <td className="py-3">
+                        <div className="font-medium text-foreground flex items-center gap-2">
+                          +$200 Materials
+                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$200</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">Brick, asphalt, tile, roofing gravel, rock/stone</div>
+                      </td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[10]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[8]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[6]}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3">
+                        <div className="font-medium text-foreground flex items-center gap-2">
+                          Mixed Heavy
+                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$300</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">Any mix of heavy materials (concrete + soil, etc.)</div>
+                      </td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[10]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[8]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[6]}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-muted-foreground mt-4 flex items-start gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <span><strong>Important:</strong> If trash or C&D debris is mixed with heavy materials, the load is reclassified as general debris and billed by weight ($165/ton overage). Flat-fee pricing only applies to clean, uncontaminated heavy materials.</span>
+              </p>
             </div>
           </div>
         </div>

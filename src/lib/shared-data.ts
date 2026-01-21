@@ -378,11 +378,68 @@ export const PLAN_A_PRICING: V56PricingTier[] = [
   { size: 50, basePrice: 1135, priceRangeLow: 1135, priceRangeHigh: 1350, includedTons: 5, category: 'general' },
 ];
 
-// Heavy Material / Lowboy pricing (6, 8, 10 only)
+// ============================================================
+// HEAVY MATERIAL PRICING CANON (Proportional 10→8→6)
+// Base 10yd = $638, 8yd = 0.8×, 6yd = 0.6×
+// ============================================================
+
+// Heavy base rate for Oakland/San Jose (used as default)
+export const HEAVY_BASE_10YD = 638;
+
+// Size factors for proportional pricing
+export const HEAVY_SIZE_FACTORS: Record<number, number> = {
+  10: 1.0,
+  8: 0.8,
+  6: 0.6,
+};
+
+// Material class increments (applied to base BEFORE factor)
+export const HEAVY_INCREMENTS = {
+  base: 0,       // Clean concrete, soil, sand, gravel
+  plus_200: 200, // Brick, asphalt, tile, roofing gravel, rock/stone
+  mixed_heavy: 300, // Mix of heavy materials (no trash)
+} as const;
+
+export type HeavyMaterialClass = keyof typeof HEAVY_INCREMENTS;
+
+// Calculate heavy price: (BASE + increment) × factor
+export function calculateHeavyMaterialPrice(
+  size: 6 | 8 | 10,
+  materialClass: HeavyMaterialClass = 'base',
+  baseRate: number = HEAVY_BASE_10YD
+): number {
+  const increment = HEAVY_INCREMENTS[materialClass];
+  const factor = HEAVY_SIZE_FACTORS[size] || 1.0;
+  return Math.round((baseRate + increment) * factor * 100) / 100;
+}
+
+// Heavy Material / Lowboy pricing (6, 8, 10 only) - Base materials pricing
+// Note: These are BASE prices. +$200 and +$300 are applied on top via proportional calc
 export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
-  { size: 6, basePrice: 490, priceRangeLow: 490, priceRangeHigh: 600, includedTons: 0.5, category: 'heavy' },
-  { size: 8, basePrice: 550, priceRangeLow: 550, priceRangeHigh: 675, includedTons: 0.5, category: 'heavy' },
-  { size: 10, basePrice: 600, priceRangeLow: 600, priceRangeHigh: 750, includedTons: 1, category: 'heavy' },
+  { 
+    size: 6, 
+    basePrice: calculateHeavyMaterialPrice(6, 'base'), // 638 × 0.6 = 382.80
+    priceRangeLow: Math.round(calculateHeavyMaterialPrice(6, 'base')), 
+    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(6, 'mixed_heavy')), 
+    includedTons: 0, // FLAT FEE - no tons displayed
+    category: 'heavy' 
+  },
+  { 
+    size: 8, 
+    basePrice: calculateHeavyMaterialPrice(8, 'base'), // 638 × 0.8 = 510.40
+    priceRangeLow: Math.round(calculateHeavyMaterialPrice(8, 'base')), 
+    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(8, 'mixed_heavy')), 
+    includedTons: 0, 
+    category: 'heavy' 
+  },
+  { 
+    size: 10, 
+    basePrice: calculateHeavyMaterialPrice(10, 'base'), // 638 × 1.0 = 638.00
+    priceRangeLow: Math.round(calculateHeavyMaterialPrice(10, 'base')), 
+    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(10, 'mixed_heavy')), 
+    includedTons: 0, 
+    category: 'heavy' 
+  },
 ];
 
 // Helper to get pricing by size and category
@@ -399,6 +456,39 @@ export const getGeneralDebrisPricing = () =>
 
 // Get heavy material pricing (for Pricing page)  
 export const getHeavyMaterialPricing = () => HEAVY_MATERIAL_PRICING;
+
+// Get detailed heavy pricing table for display
+export function getHeavyPricingDisplay() {
+  return {
+    base: {
+      label: 'Base Materials',
+      description: 'Clean concrete, soil, sand, gravel',
+      prices: {
+        10: Math.round(calculateHeavyMaterialPrice(10, 'base')),
+        8: Math.round(calculateHeavyMaterialPrice(8, 'base')),
+        6: Math.round(calculateHeavyMaterialPrice(6, 'base')),
+      },
+    },
+    plus_200: {
+      label: '+$200 Materials',
+      description: 'Brick, asphalt, tile, roofing gravel, rock/stone',
+      prices: {
+        10: Math.round(calculateHeavyMaterialPrice(10, 'plus_200')),
+        8: Math.round(calculateHeavyMaterialPrice(8, 'plus_200')),
+        6: Math.round(calculateHeavyMaterialPrice(6, 'plus_200')),
+      },
+    },
+    mixed_heavy: {
+      label: '+$300 Mixed Heavy',
+      description: 'Mix of heavy materials (concrete + soil, etc.)',
+      prices: {
+        10: Math.round(calculateHeavyMaterialPrice(10, 'mixed_heavy')),
+        8: Math.round(calculateHeavyMaterialPrice(8, 'mixed_heavy')),
+        6: Math.round(calculateHeavyMaterialPrice(6, 'mixed_heavy')),
+      },
+    },
+  };
+}
 
 // ============================================================
 // TRUCKING RATES (v56 Page 7)

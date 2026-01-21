@@ -229,10 +229,14 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased: number | null
           extras: string[] | null
+          heavy_material_class: string | null
+          heavy_material_increment: number | null
           id: string
           is_calsan_fulfillment: boolean
+          is_trash_contaminated: boolean | null
           margin: number | null
           material_type: string
+          original_material_type: string | null
           placement_lat: number | null
           placement_lng: number | null
           placement_notes: string | null
@@ -243,6 +247,7 @@ export type Database = {
           prepurchase_rate: number | null
           project_type: string | null
           receipt_sent_at: string | null
+          reclassified_to_mixed: boolean | null
           recommendation_reason: string | null
           recommended_size_yards: number | null
           rental_days: number
@@ -288,10 +293,14 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          heavy_material_class?: string | null
+          heavy_material_increment?: number | null
           id?: string
           is_calsan_fulfillment?: boolean
+          is_trash_contaminated?: boolean | null
           margin?: number | null
           material_type: string
+          original_material_type?: string | null
           placement_lat?: number | null
           placement_lng?: number | null
           placement_notes?: string | null
@@ -302,6 +311,7 @@ export type Database = {
           prepurchase_rate?: number | null
           project_type?: string | null
           receipt_sent_at?: string | null
+          reclassified_to_mixed?: boolean | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
@@ -347,10 +357,14 @@ export type Database = {
           estimated_min?: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          heavy_material_class?: string | null
+          heavy_material_increment?: number | null
           id?: string
           is_calsan_fulfillment?: boolean
+          is_trash_contaminated?: boolean | null
           margin?: number | null
           material_type?: string
+          original_material_type?: string | null
           placement_lat?: number | null
           placement_lng?: number | null
           placement_notes?: string | null
@@ -361,6 +375,7 @@ export type Database = {
           prepurchase_rate?: number | null
           project_type?: string | null
           receipt_sent_at?: string | null
+          reclassified_to_mixed?: boolean | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
@@ -449,6 +464,7 @@ export type Database = {
           created_at: string
           email_sent_at: string | null
           facility_name: string | null
+          heavy_material_class: string | null
           id: string
           included_tons: number | null
           overage_charge: number | null
@@ -465,11 +481,13 @@ export type Database = {
           ticket_url: string | null
           total_tons: number
           updated_at: string
+          was_reclassified: boolean | null
         }
         Insert: {
           created_at?: string
           email_sent_at?: string | null
           facility_name?: string | null
+          heavy_material_class?: string | null
           id?: string
           included_tons?: number | null
           overage_charge?: number | null
@@ -486,11 +504,13 @@ export type Database = {
           ticket_url?: string | null
           total_tons: number
           updated_at?: string
+          was_reclassified?: boolean | null
         }
         Update: {
           created_at?: string
           email_sent_at?: string | null
           facility_name?: string | null
+          heavy_material_class?: string | null
           id?: string
           included_tons?: number | null
           overage_charge?: number | null
@@ -507,6 +527,7 @@ export type Database = {
           ticket_url?: string | null
           total_tons?: number
           updated_at?: string
+          was_reclassified?: boolean | null
         }
         Relationships: [
           {
