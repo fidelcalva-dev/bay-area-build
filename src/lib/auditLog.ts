@@ -30,6 +30,10 @@ export type EntityType =
   | 'yards'
   | 'user_roles'
   | 'service_receipt'
+  | 'service_request'
+  | 'sms_templates'
+  | 'message_history'
+  | 'volume_commitment'
   | 'approval_request';
 
 interface AuditLogParams {
