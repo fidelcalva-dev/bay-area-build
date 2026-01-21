@@ -62,6 +62,53 @@ export type Database = {
         }
         Relationships: []
       }
+      city_rates: {
+        Row: {
+          city_name: string
+          created_at: string
+          extra_ton_rate_prepay: number | null
+          extra_ton_rate_standard: number
+          heavy_base_10yd: number
+          id: string
+          is_active: boolean
+          prepay_discount_pct: number
+          updated_at: string
+          zone_id: string | null
+        }
+        Insert: {
+          city_name: string
+          created_at?: string
+          extra_ton_rate_prepay?: number | null
+          extra_ton_rate_standard?: number
+          heavy_base_10yd?: number
+          id?: string
+          is_active?: boolean
+          prepay_discount_pct?: number
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Update: {
+          city_name?: string
+          created_at?: string
+          extra_ton_rate_prepay?: number | null
+          extra_ton_rate_standard?: number
+          heavy_base_10yd?: number
+          id?: string
+          is_active?: boolean
+          prepay_discount_pct?: number
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_rates_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config_settings: {
         Row: {
           category: string
@@ -264,6 +311,59 @@ export type Database = {
           },
         ]
       }
+      drivers: {
+        Row: {
+          assigned_yard_id: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          is_owner_operator: boolean
+          license_number: string | null
+          name: string
+          phone: string
+          truck_type: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          assigned_yard_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          is_owner_operator?: boolean
+          license_number?: string | null
+          name: string
+          phone: string
+          truck_type?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          assigned_yard_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          is_owner_operator?: boolean
+          license_number?: string | null
+          name?: string
+          phone?: string
+          truck_type?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dumpster_sizes: {
         Row: {
           base_price: number
@@ -306,6 +406,39 @@ export type Database = {
           label?: string
           size_value?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      heavy_material_rules: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          increment_amount: number
+          is_active: boolean
+          material_class: string
+          material_list: string[]
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          increment_amount?: number
+          is_active?: boolean
+          material_class: string
+          material_list?: string[]
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          increment_amount?: number
+          is_active?: boolean
+          material_class?: string
+          material_list?: string[]
         }
         Relationships: []
       }
@@ -409,23 +542,30 @@ export type Database = {
           assigned_yard_id: string | null
           created_at: string
           customer_id: string | null
+          delivery_completed_at: string | null
+          delivery_started_at: string | null
           driver_notes: string | null
+          driver_notes_internal: string | null
           dump_ticket_url: string | null
           final_total: number | null
           id: string
           internal_notes: string | null
           invoice_url: string | null
           payment_status: string | null
+          pickup_completed_at: string | null
           pickup_photo_url: string | null
+          pickup_started_at: string | null
           placement_confirmed: boolean | null
           placement_locked: boolean | null
           placement_photo_url: string | null
           quote_id: string | null
+          route_notes: string | null
           scheduled_delivery_date: string | null
           scheduled_delivery_window: string | null
           scheduled_pickup_date: string | null
           scheduled_pickup_window: string | null
           status: string
+          text_before_arrival: boolean | null
           updated_at: string
         }
         Insert: {
@@ -435,23 +575,30 @@ export type Database = {
           assigned_yard_id?: string | null
           created_at?: string
           customer_id?: string | null
+          delivery_completed_at?: string | null
+          delivery_started_at?: string | null
           driver_notes?: string | null
+          driver_notes_internal?: string | null
           dump_ticket_url?: string | null
           final_total?: number | null
           id?: string
           internal_notes?: string | null
           invoice_url?: string | null
           payment_status?: string | null
+          pickup_completed_at?: string | null
           pickup_photo_url?: string | null
+          pickup_started_at?: string | null
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
           quote_id?: string | null
+          route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           status?: string
+          text_before_arrival?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -461,23 +608,30 @@ export type Database = {
           assigned_yard_id?: string | null
           created_at?: string
           customer_id?: string | null
+          delivery_completed_at?: string | null
+          delivery_started_at?: string | null
           driver_notes?: string | null
+          driver_notes_internal?: string | null
           dump_ticket_url?: string | null
           final_total?: number | null
           id?: string
           internal_notes?: string | null
           invoice_url?: string | null
           payment_status?: string | null
+          pickup_completed_at?: string | null
           pickup_photo_url?: string | null
+          pickup_started_at?: string | null
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
           quote_id?: string | null
+          route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           status?: string
+          text_before_arrival?: boolean | null
           updated_at?: string
         }
         Relationships: [
@@ -608,6 +762,7 @@ export type Database = {
       }
       quotes: {
         Row: {
+          city_rate_id: string | null
           company_name: string | null
           completed_at: string | null
           confidence_level: string | null
@@ -627,6 +782,7 @@ export type Database = {
           discount_percent: number | null
           distance_bracket: string | null
           distance_miles: number | null
+          driver_id: string | null
           estimated_max: number
           estimated_min: number
           extra_tons_prepurchased: number | null
@@ -672,6 +828,7 @@ export type Database = {
           subtotal: number
           suggested_extra_tons: number | null
           suggested_pickup_date: string | null
+          toll_surcharge: number | null
           truck_distance_miles: number | null
           truck_duration_max: number | null
           truck_duration_min: number | null
@@ -690,6 +847,7 @@ export type Database = {
           zone_id: string | null
         }
         Insert: {
+          city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
           confidence_level?: string | null
@@ -709,6 +867,7 @@ export type Database = {
           discount_percent?: number | null
           distance_bracket?: string | null
           distance_miles?: number | null
+          driver_id?: string | null
           estimated_max: number
           estimated_min: number
           extra_tons_prepurchased?: number | null
@@ -754,6 +913,7 @@ export type Database = {
           subtotal: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          toll_surcharge?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
@@ -772,6 +932,7 @@ export type Database = {
           zone_id?: string | null
         }
         Update: {
+          city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
           confidence_level?: string | null
@@ -791,6 +952,7 @@ export type Database = {
           discount_percent?: number | null
           distance_bracket?: string | null
           distance_miles?: number | null
+          driver_id?: string | null
           estimated_max?: number
           estimated_min?: number
           extra_tons_prepurchased?: number | null
@@ -836,6 +998,7 @@ export type Database = {
           subtotal?: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          toll_surcharge?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
           truck_duration_min?: number | null
@@ -1062,6 +1225,81 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      size_volume_factors: {
+        Row: {
+          created_at: string
+          id: string
+          size_yards: number
+          volume_factor: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          size_yards: number
+          volume_factor?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          size_yards?: number
+          volume_factor?: number
+        }
+        Relationships: []
+      }
+      toll_surcharges: {
+        Row: {
+          applies_to_delivery: boolean
+          applies_to_pickup: boolean
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          origin_yard_id: string | null
+          surcharge_amount: number
+          updated_at: string
+          zone_id: string | null
+        }
+        Insert: {
+          applies_to_delivery?: boolean
+          applies_to_pickup?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          origin_yard_id?: string | null
+          surcharge_amount?: number
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Update: {
+          applies_to_delivery?: boolean
+          applies_to_pickup?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          origin_yard_id?: string | null
+          surcharge_amount?: number
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "toll_surcharges_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "toll_surcharges_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
             referencedColumns: ["id"]
           },
         ]
@@ -1324,6 +1562,39 @@ export type Database = {
         }
         Relationships: []
       }
+      zip_warnings: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          max_distance_miles: number | null
+          requires_approval: boolean
+          warning_message: string
+          warning_type: string
+          zip_code: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_distance_miles?: number | null
+          requires_approval?: boolean
+          warning_message: string
+          warning_type: string
+          zip_code: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_distance_miles?: number | null
+          requires_approval?: boolean
+          warning_message?: string
+          warning_type?: string
+          zip_code?: string
+        }
+        Relationships: []
+      }
       zone_pricing: {
         Row: {
           created_at: string
@@ -1432,6 +1703,7 @@ export type Database = {
         | "customer"
         | "dispatcher"
         | "finance"
+        | "driver"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
@@ -1569,6 +1841,7 @@ export const Constants = {
         "customer",
         "dispatcher",
         "finance",
+        "driver",
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
