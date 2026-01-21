@@ -355,7 +355,10 @@ export function GeneralMaterialSelector({
                           Green Halo™ — City Compliance Ready
                         </p>
                         <p className="text-xs text-emerald-700 mt-1">
-                          100% clean loads qualify for diversion documentation. Ideal for homeowner permits, builder compliance, and contractor LEED projects.
+                          {category.id === 'mixed_cd' 
+                            ? 'All C&D loads go to licensed transfer stations with state-mandated diversion rates. Documentation available for permits and compliance.'
+                            : '100% clean loads qualify for diversion documentation. Ideal for homeowner permits, builder compliance, and contractor LEED projects.'
+                          }
                         </p>
                       </div>
                     </div>
