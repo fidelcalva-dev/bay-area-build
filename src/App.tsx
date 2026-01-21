@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Critical pages loaded immediately
 import Index from "./pages/Index";
@@ -64,10 +65,11 @@ const PageLoader = () => (
 );
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <TooltipProvider>
+  <ErrorBoundary>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -191,6 +193,7 @@ const App = () => (
       </LanguageProvider>
     </QueryClientProvider>
   </HelmetProvider>
+</ErrorBoundary>
 );
 
 export default App;
