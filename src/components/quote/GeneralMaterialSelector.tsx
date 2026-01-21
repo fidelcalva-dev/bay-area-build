@@ -134,6 +134,7 @@ export interface GeneralClassificationResult {
   densityHint: string | null;
   hasWeightWarning: boolean;
   isRecyclable: boolean;
+  isGreenHalo: boolean; // Green Halo materials use flat-fee pricing (separate facility)
   isComplete: boolean;
 }
 
@@ -151,16 +152,19 @@ export function GeneralMaterialSelector({
         densityHint: null,
         hasWeightWarning: false,
         isRecyclable: false,
+        isGreenHalo: false,
         isComplete: false,
       };
     }
 
     const category = GENERAL_DEBRIS_CATEGORIES.find(c => c.id === selectedCategory);
+    const isGreenHalo = 'greenHalo' in category! && category!.greenHalo === true;
     return {
       category: selectedCategory,
       densityHint: category?.densityHint || null,
       hasWeightWarning: category?.weightWarning || false,
       isRecyclable: category?.recyclable || false,
+      isGreenHalo,
       isComplete: true,
     };
   }, [selectedCategory]);
@@ -170,8 +174,17 @@ export function GeneralMaterialSelector({
     onClassificationChange(classification);
   }, [classification, onClassificationChange]);
 
-  // Get overage info based on size
+  // Get overage info based on size and Green Halo status
   const getOverageInfo = () => {
+    // Green Halo materials use flat-fee pricing (transported to specialized facility)
+    if (classification.isGreenHalo) {
+      return {
+        type: 'flat',
+        rate: 'Flat fee',
+        unit: 'no weight charges',
+        note: 'Green Halo materials are transported to specialized recycling facilities — flat-fee pricing applies',
+      };
+    }
     if (selectedSize <= 10) {
       return {
         type: 'capacity',
