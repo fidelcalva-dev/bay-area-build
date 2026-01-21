@@ -182,6 +182,13 @@ export async function saveQuote(params: {
   yardName?: string;
   distanceMiles?: number;
   distanceBracket?: string;
+  // Pre-purchase extra tons fields
+  prePurchaseSuggested?: boolean;
+  suggestedExtraTons?: number;
+  extraTonsPrepurchased?: number;
+  prepurchaseDiscountPct?: number;
+  prepurchaseRate?: number;
+  prepurchaseCityRate?: number;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -220,6 +227,13 @@ export async function saveQuote(params: {
         yard_name: params.yardName,
         distance_miles: params.distanceMiles,
         distance_bracket: params.distanceBracket,
+        // Pre-purchase extra tons
+        pre_purchase_suggested: params.prePurchaseSuggested,
+        suggested_extra_tons: params.suggestedExtraTons,
+        extra_tons_prepurchased: params.extraTonsPrepurchased,
+        prepurchase_discount_pct: params.prepurchaseDiscountPct,
+        prepurchase_rate: params.prepurchaseRate,
+        prepurchase_city_rate: params.prepurchaseCityRate,
       })
       .select('id')
       .single();

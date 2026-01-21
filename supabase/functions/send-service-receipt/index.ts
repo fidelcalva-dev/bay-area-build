@@ -47,25 +47,30 @@ function determinePricingRule(materialType: string, sizeValue: number): string {
 function calculateOverage(
   pricingRule: string,
   totalTons: number,
-  includedTons: number
-): { overageTons: number; overageCharge: number } {
+  includedTons: number,
+  prepurchasedTons: number = 0
+): { overageTons: number; overageCharge: number; prepurchaseAppliedTons: number; standardOverageTons: number } {
   // Heavy flat-fee: no overage
   if (pricingRule === 'heavy_flat') {
-    return { overageTons: 0, overageCharge: 0 };
+    return { overageTons: 0, overageCharge: 0, prepurchaseAppliedTons: 0, standardOverageTons: 0 };
   }
 
   // Mixed 6/8/10: per-yard overage (not calculated here, done manually)
   if (pricingRule === 'mixed_small') {
-    return { overageTons: 0, overageCharge: 0 };
+    return { overageTons: 0, overageCharge: 0, prepurchaseAppliedTons: 0, standardOverageTons: 0 };
   }
 
-  // Mixed 20+: per-ton overage
-  const overageTons = Math.max(0, totalTons - includedTons);
-  const overageCharge = overageTons * OVERAGE_RATE_PER_TON;
+  // Mixed 20+: per-ton overage with pre-purchase applied first
+  const rawOverage = Math.max(0, totalTons - includedTons);
+  const prepurchaseAppliedTons = Math.min(prepurchasedTons, rawOverage);
+  const standardOverageTons = Math.max(0, rawOverage - prepurchaseAppliedTons);
+  const overageCharge = standardOverageTons * OVERAGE_RATE_PER_TON;
   
   return { 
-    overageTons: Math.round(overageTons * 100) / 100, 
-    overageCharge: Math.round(overageCharge * 100) / 100 
+    overageTons: Math.round(rawOverage * 100) / 100, 
+    overageCharge: Math.round(overageCharge * 100) / 100,
+    prepurchaseAppliedTons: Math.round(prepurchaseAppliedTons * 100) / 100,
+    standardOverageTons: Math.round(standardOverageTons * 100) / 100,
   };
 }
 

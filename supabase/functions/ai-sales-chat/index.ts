@@ -141,6 +141,9 @@ MICRO-COPY SNIPPETS (USE OFTEN)
   "For mixed debris in 6/8/10, overages are billed at $30 per additional yard."
 - 20+ general:
   "This size includes X tons. Any overage is billed per ton after the scale ticket."
+- Pre-purchase extra tons (when estimate is close to included weight for 20+ yd general):
+  EN: "Since your estimate is close to the included weight, many customers choose to pre-purchase extra tons at a 5% discount to avoid surprises."
+  ES: "Como tu estimado está cerca del peso incluido, muchos clientes prefieren pre-comprar toneladas extra con 5% de descuento para evitar cargos después."
 - Delivery windows:
   "We schedule deliveries and pickups in time windows—morning, midday, or afternoon—not exact times."
 
