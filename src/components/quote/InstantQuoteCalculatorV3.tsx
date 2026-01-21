@@ -127,6 +127,13 @@ interface ZoneResult {
   multiplier: number;
 }
 
+// Calculate Green Halo dump fee based on size (estimate tons × $150/ton mid-range)
+function calculateGreenHaloDumpFee(sizeYards: number): number {
+  const estimatedTons = sizeYards <= 10 ? 1 : (sizeYards <= 20 ? 2 : sizeYards <= 30 ? 3 : 4);
+  const dumpFeePerTon = 150; // Mid-range estimate ($75-250)
+  return Math.round(estimatedTons * dumpFeePerTon);
+}
+
 export function InstantQuoteCalculatorV3() {
   const { toast } = useToast();
   
@@ -571,6 +578,12 @@ export function InstantQuoteCalculatorV3() {
         prepurchaseDiscountPct: DEFAULT_EXTRA_TON_PRICING.discountPct,
         prepurchaseRate: prepurchasedExtraTons > 0 ? DEFAULT_EXTRA_TON_PRICING.prepurchaseRate : undefined,
         prepurchaseCityRate: DEFAULT_EXTRA_TON_PRICING.standardRate,
+        // Green Halo pricing data
+        isGreenHalo: generalClassification?.isGreenHalo || false,
+        greenHaloCategory: generalClassification?.isGreenHalo ? generalClassification.category || undefined : undefined,
+        greenHaloDumpFee: generalClassification?.isGreenHalo ? calculateGreenHaloDumpFee(formData.size) : undefined,
+        greenHaloHandlingFee: generalClassification?.isGreenHalo ? 150 : undefined,
+        greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? 150 : undefined,
       });
 
       if (result.success) {

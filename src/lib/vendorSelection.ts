@@ -203,6 +203,12 @@ export async function saveQuote(params: {
   volumeValidityStart?: Date;
   volumeValidityEnd?: Date;
   requiresDiscountApproval?: boolean;
+  // Green Halo pricing fields
+  isGreenHalo?: boolean;
+  greenHaloCategory?: string;
+  greenHaloDumpFee?: number;
+  greenHaloHandlingFee?: number;
+  greenHaloDumpFeePerTon?: number;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -262,6 +268,12 @@ export async function saveQuote(params: {
         volume_validity_start: params.volumeValidityStart?.toISOString(),
         volume_validity_end: params.volumeValidityEnd?.toISOString(),
         requires_discount_approval: params.requiresDiscountApproval || false,
+        // Green Halo pricing fields
+        is_green_halo: params.isGreenHalo || false,
+        green_halo_category: params.greenHaloCategory,
+        green_halo_dump_fee: params.greenHaloDumpFee,
+        green_halo_handling_fee: params.greenHaloHandlingFee,
+        green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
       })
       .select('id')
       .single();
