@@ -21,8 +21,9 @@ import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggeste
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
 
-// Heavy Material Sub-Classification
+// Material Sub-Classification
 import { HeavyMaterialSelector, type HeavyClassificationResult } from './HeavyMaterialSelector';
+import { GeneralMaterialSelector, type GeneralClassificationResult } from './GeneralMaterialSelector';
 import { calculateHeavyPrice, type HeavyMaterialClass } from '@/lib/heavyPricing';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
@@ -149,8 +150,9 @@ export function InstantQuoteCalculatorV3() {
   const [prePurchaseSuggested, setPrePurchaseSuggested] = useState(false);
   const [prePurchaseSkipped, setPrePurchaseSkipped] = useState(false);
   
-  // Heavy material sub-classification state
+  // Material sub-classification state
   const [heavyClassification, setHeavyClassification] = useState<HeavyClassificationResult | null>(null);
+  const [generalClassification, setGeneralClassification] = useState<GeneralClassificationResult | null>(null);
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -1052,9 +1054,12 @@ export function InstantQuoteCalculatorV3() {
                       type="button"
                       onClick={() => {
                         setFormData((prev) => ({ ...prev, material: type.value }));
-                        // Reset heavy classification when switching material types
+                        // Reset classifications when switching material types
                         if (type.value !== 'heavy') {
                           setHeavyClassification(null);
+                        }
+                        if (type.value !== 'general') {
+                          setGeneralClassification(null);
                         }
                       }}
                       className={cn(
@@ -1140,6 +1145,22 @@ export function InstantQuoteCalculatorV3() {
               </div>
             )}
 
+            {/* General Material Sub-Classification (only when general is selected) */}
+            {formData.material === 'general' && (
+              <div className="p-4 rounded-xl bg-muted/30 border border-border">
+                <h5 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Trash2 className="w-4 h-4 text-primary" strokeWidth={2} />
+                  Debris details
+                </h5>
+                <GeneralMaterialSelector
+                  selectedSize={formData.size}
+                  onClassificationChange={(result) => {
+                    setGeneralClassification(result);
+                  }}
+                />
+              </div>
+            )}
+
             {/* Estimator Button */}
             <button
               type="button"
@@ -1156,10 +1177,14 @@ export function InstantQuoteCalculatorV3() {
               size="lg"
               className="w-full h-12 text-sm font-semibold group"
               onClick={goNext}
-              disabled={formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed}
+              disabled={
+                (formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed) ||
+                (formData.material === 'general' && !generalClassification?.isComplete)
+              }
             >
-              {formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed
-                ? 'Complete classification above'
+              {(formData.material === 'heavy' && !heavyClassification?.materialClass && !heavyClassification?.reclassifiedToMixed) ||
+               (formData.material === 'general' && !generalClassification?.isComplete)
+                ? 'Select debris type above'
                 : 'Continue to size'}
               <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
