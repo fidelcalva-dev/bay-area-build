@@ -942,7 +942,13 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "customer"
+        | "dispatcher"
+        | "finance"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
@@ -1073,7 +1079,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "customer",
+        "dispatcher",
+        "finance",
+      ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
