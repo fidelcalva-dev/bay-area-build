@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   ArrowRight, 
   Truck, 
@@ -17,150 +17,150 @@ import {
   MessageSquare,
   Calculator
 } from 'lucide-react';
-import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, getOverageInfo } from '@/lib/shared-data';
+import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { BUSINESS_INFO } from '@/lib/seo';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Pickup truck load estimates by size
 const PICKUP_TRUCK_LOADS = [
-  { yards: 6, loads: '2–3', note: 'Small cleanouts' },
-  { yards: 8, loads: '3–4', note: 'Medium projects' },
-  { yards: 10, loads: '4–5', note: 'Room renovations' },
-  { yards: 20, loads: '6–8', note: 'Larger remodels' },
-  { yards: 30, loads: '9–12', note: 'Major renovations' },
-  { yards: 40, loads: '12–16', note: 'Commercial scale' },
-  { yards: 50, loads: '16–20', note: 'Maximum capacity' },
+  { yards: 6, loads: '2–3', noteKey: 'pickup.note6' },
+  { yards: 8, loads: '3–4', noteKey: 'pickup.note8' },
+  { yards: 10, loads: '4–5', noteKey: 'pickup.note10' },
+  { yards: 20, loads: '6–8', noteKey: 'pickup.note20' },
+  { yards: 30, loads: '9–12', noteKey: 'pickup.note30' },
+  { yards: 40, loads: '12–16', noteKey: 'pickup.note40' },
+  { yards: 50, loads: '16–20', noteKey: 'pickup.note50' },
 ];
 
-// Homeowner scenarios
+// Scenario definitions with translation keys
 const HOMEOWNER_SCENARIOS = [
   {
-    title: 'Garage Cleanout (1-2 Car)',
+    titleKey: 'scenario.garage',
     icon: Home,
     recommended: ['10 yd', '20 yd'],
-    why: 'Years of accumulated items, old furniture, and boxes typically fill 10-20 cubic yards.',
-    weightNote: 'Light materials—standard pricing applies.',
+    whyKey: 'scenario.garageWhy',
+    weightNoteKey: 'scenario.garageWeight',
   },
   {
-    title: 'Bathroom Remodel',
+    titleKey: 'scenario.bathroom',
     icon: Home,
     recommended: ['10 yd', '20 yd'],
-    why: 'Demolition debris including tile, fixtures, drywall, and cabinetry.',
-    weightNote: 'Tile and fixtures add weight. Dispose of old toilets and sinks.',
+    whyKey: 'scenario.bathroomWhy',
+    weightNoteKey: 'scenario.bathroomWeight',
   },
   {
-    title: 'Kitchen Remodel',
+    titleKey: 'scenario.kitchen',
     icon: Home,
     recommended: ['20 yd'],
-    why: 'Cabinets, countertops, flooring, appliances, and drywall require more space.',
-    weightNote: 'Countertops (granite/marble) are heavy—separate if possible.',
+    whyKey: 'scenario.kitchenWhy',
+    weightNoteKey: 'scenario.kitchenWeight',
   },
   {
-    title: 'Small Deck Removal',
+    titleKey: 'scenario.deck',
     icon: Home,
     recommended: ['10 yd', '20 yd'],
-    why: 'Treated lumber, railings, and hardware from a typical residential deck.',
-    weightNote: 'Treated wood is heavier when wet.',
+    whyKey: 'scenario.deckWhy',
+    weightNoteKey: 'scenario.deckWeight',
   },
   {
-    title: 'Roof Tear-Off (Single Layer)',
+    titleKey: 'scenario.roof',
     icon: Home,
     recommended: ['10 yd', '20 yd'],
-    why: 'Shingles are heavy. A typical home (~15-20 squares) fills 10-20 yards.',
-    weightNote: 'Roofing is weight-limited. Ask about number of "squares" (100 sf each).',
+    whyKey: 'scenario.roofWhy',
+    weightNoteKey: 'scenario.roofWeight',
   },
   {
-    title: 'Yard Cleanup / Green Waste',
+    titleKey: 'scenario.yard',
     icon: Home,
     recommended: ['10 yd', '20 yd'],
-    why: 'Branches, brush, leaves, and debris from landscaping projects.',
-    weightNote: 'Green waste is light when dry, heavy when wet.',
+    whyKey: 'scenario.yardWhy',
+    weightNoteKey: 'scenario.yardWeight',
   },
 ];
 
-// Contractor scenarios
 const CONTRACTOR_SCENARIOS = [
   {
-    title: 'Small Demo (1 Room + Drywall/Wood)',
+    titleKey: 'scenario.smallDemo',
     icon: HardHat,
     recommended: ['20 yd'],
-    why: 'Single room demolition with drywall, framing lumber, and finishes.',
-    weightNote: 'Standard mixed debris pricing.',
+    whyKey: 'scenario.smallDemoWhy',
+    weightNoteKey: 'scenario.smallDemoWeight',
   },
   {
-    title: 'Full Remodel (Multiple Rooms)',
+    titleKey: 'scenario.fullRemodel',
     icon: HardHat,
     recommended: ['30 yd'],
-    why: 'Multi-room renovation with cabinets, flooring, fixtures, and framing.',
-    weightNote: 'May need multiple pulls for large projects.',
+    whyKey: 'scenario.fullRemodelWhy',
+    weightNoteKey: 'scenario.fullRemodelWeight',
   },
   {
-    title: 'Light Demo / Renovation + Framing',
+    titleKey: 'scenario.lightDemo',
     icon: HardHat,
     recommended: ['30 yd', '40 yd'],
-    why: 'Tenant improvements with significant lumber and drywall.',
-    weightNote: 'Lumber is bulky but relatively light.',
+    whyKey: 'scenario.lightDemoWhy',
+    weightNoteKey: 'scenario.lightDemoWeight',
   },
   {
-    title: 'Commercial Cleanout / TI',
+    titleKey: 'scenario.commercial',
     icon: HardHat,
     recommended: ['40 yd', '50 yd'],
-    why: 'Office buildouts, retail spaces, and warehouse cleanouts require maximum capacity.',
-    weightNote: 'Watch for weight limits on mixed loads.',
+    whyKey: 'scenario.commercialWhy',
+    weightNoteKey: 'scenario.commercialWeight',
   },
   {
-    title: 'Concrete / Dirt (HEAVY)',
+    titleKey: 'scenario.concrete',
     icon: HardHat,
     recommended: ['6 yd', '8 yd', '10 yd'],
-    why: 'FLAT FEE pricing for pure heavy material loads. Weight not a concern.',
-    weightNote: 'HEAVY ONLY: Must be clean loads (no trash). 6/8/10 yard ONLY.',
+    whyKey: 'scenario.concreteWhy',
+    weightNoteKey: 'scenario.concreteWeight',
     isHeavy: true,
   },
 ];
 
-// Business scenarios
 const BUSINESS_SCENARIOS = [
   {
-    title: 'Retail / Office Cleanout',
+    titleKey: 'scenario.retail',
     icon: Building2,
     recommended: ['20 yd', '30 yd'],
-    why: 'Furniture, fixtures, equipment, and general office waste.',
-    weightNote: 'Metal fixtures and equipment add weight.',
+    whyKey: 'scenario.retailWhy',
+    weightNoteKey: 'scenario.retailWeight',
   },
   {
-    title: 'Property Management Turnover',
+    titleKey: 'scenario.property',
     icon: Building2,
     recommended: ['20 yd', '30 yd'],
-    why: 'Unit turnovers with furniture, appliances, and renovation debris.',
-    weightNote: 'Multiple turnovers may need scheduled pickups.',
+    whyKey: 'scenario.propertyWhy',
+    weightNoteKey: 'scenario.propertyWeight',
   },
   {
-    title: 'Ongoing Construction Projects',
+    titleKey: 'scenario.ongoing',
     icon: Building2,
     recommended: ['30 yd', '40 yd', '50 yd'],
-    why: 'Continuous debris from active job sites.',
-    weightNote: 'Ask about contractor program for volume discounts.',
+    whyKey: 'scenario.ongoingWhy',
+    weightNoteKey: 'scenario.ongoingWeight',
     hasContractorCTA: true,
   },
 ];
 
 // Concrete slab capacity reference
 const CONCRETE_CAPACITY = [
-  { size: 10, slab4in: '150–250 sq ft', slab6in: '100–170 sq ft' },
-  { size: 8, slab4in: '120–200 sq ft', slab6in: '80–140 sq ft' },
-  { size: 6, slab4in: '90–150 sq ft', slab6in: '60–110 sq ft' },
+  { size: 10, slab4in: '150–250 sq ft', slab6in: '100–170 sq ft', slab4inEs: '150–250 pies²', slab6inEs: '100–170 pies²' },
+  { size: 8, slab4in: '120–200 sq ft', slab6in: '80–140 sq ft', slab4inEs: '120–200 pies²', slab6inEs: '80–140 pies²' },
+  { size: 6, slab4in: '90–150 sq ft', slab6in: '60–110 sq ft', slab4inEs: '90–150 pies²', slab6inEs: '60–110 pies²' },
 ];
 
 interface ScenarioCardProps {
-  title: string;
+  titleKey: string;
   icon: React.ComponentType<{ className?: string }>;
   recommended: string[];
-  why: string;
-  weightNote: string;
+  whyKey: string;
+  weightNoteKey: string;
   isHeavy?: boolean;
   hasContractorCTA?: boolean;
+  t: (key: string) => string;
 }
 
-function ScenarioCard({ title, icon: Icon, recommended, why, weightNote, isHeavy, hasContractorCTA }: ScenarioCardProps) {
+function ScenarioCard({ titleKey, icon: Icon, recommended, whyKey, weightNoteKey, isHeavy, hasContractorCTA, t }: ScenarioCardProps) {
   return (
     <Card className={`h-full transition-all hover:shadow-md ${isHeavy ? 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''}`}>
       <CardHeader className="pb-3">
@@ -171,7 +171,7 @@ function ScenarioCard({ title, icon: Icon, recommended, why, weightNote, isHeavy
             <Icon className="w-5 h-5" />
           </div>
           <div className="flex-1">
-            <CardTitle className="text-base font-semibold">{title}</CardTitle>
+            <CardTitle className="text-base font-semibold">{t(titleKey)}</CardTitle>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {recommended.map((size) => (
                 <span
@@ -190,15 +190,15 @@ function ScenarioCard({ title, icon: Icon, recommended, why, weightNote, isHeavy
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-2">
-        <p className="text-sm text-muted-foreground">{why}</p>
+        <p className="text-sm text-muted-foreground">{t(whyKey)}</p>
         <div className="flex items-start gap-2 pt-1">
           <Weight className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground italic">{weightNote}</p>
+          <p className="text-xs text-muted-foreground italic">{t(weightNoteKey)}</p>
         </div>
         {hasContractorCTA && (
           <Button asChild variant="link" size="sm" className="px-0 h-auto text-primary">
             <Link to="/contractors">
-              Ask about contractor program
+              {t('capacity.askContractor')}
               <ArrowRight className="w-3 h-3 ml-1" />
             </Link>
           </Button>
@@ -209,13 +209,16 @@ function ScenarioCard({ title, icon: Icon, recommended, why, weightNote, isHeavy
 }
 
 export default function CapacityGuide() {
+  const { t, language } = useLanguage();
   const overageGeneral = PRICING_POLICIES.overagePerTonGeneral;
   const overageYard = PRICING_POLICIES.overagePerYardSmall;
 
   return (
     <Layout
-      title="Dumpster Capacity Guide | How Much Fits in Each Size"
-      description="Real-world dumpster capacity estimates for common projects. Pickup truck loads, homeowner scenarios, contractor scenarios, and concrete slab capacity guide."
+      title={language === 'es' ? 'Guía de Capacidad de Dumpster | ¿Cuánto Cabe en Cada Tamaño?' : 'Dumpster Capacity Guide | How Much Fits in Each Size'}
+      description={language === 'es' 
+        ? 'Estimados reales de capacidad de dumpster para proyectos comunes. Cargas de pickup, escenarios de propietarios, contratistas y guía de concreto.'
+        : 'Real-world dumpster capacity estimates for common projects. Pickup truck loads, homeowner scenarios, contractor scenarios, and concrete slab capacity guide.'}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
@@ -223,16 +226,15 @@ export default function CapacityGuide() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm font-medium mb-4">
               <Ruler className="w-4 h-4" />
-              Real-World Capacity Guide
+              {t('capacity.badge')}
             </div>
-            <h1 className="heading-xl mb-4">How Much Fits in Each Dumpster?</h1>
+            <h1 className="heading-xl mb-4">{t('capacity.title')}</h1>
             <p className="text-xl text-primary-foreground/85 mb-6">
-              These are real-world estimates based on common projects in the Bay Area. 
-              Actual capacity varies by material type, how it's loaded, and moisture weight.
+              {t('capacity.subtitle')}
             </p>
             <Button asChild variant="cta" size="xl">
               <Link to="/pricing">
-                Get Instant Quote by ZIP
+                {t('capacity.ctaZip')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
@@ -248,8 +250,8 @@ export default function CapacityGuide() {
               <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="heading-lg text-foreground">Pickup Truck Loads</h2>
-              <p className="text-sm text-muted-foreground">How many standard 6-ft bed pickup loads fit in each dumpster</p>
+              <h2 className="heading-lg text-foreground">{t('capacity.pickupTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('capacity.pickupSubtitle')}</p>
             </div>
           </div>
 
@@ -258,10 +260,10 @@ export default function CapacityGuide() {
               <table className="w-full text-left">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-6 py-4 text-sm font-semibold text-foreground">Dumpster Size</th>
-                    <th className="px-6 py-4 text-sm font-semibold text-foreground">Pickup Loads</th>
-                    <th className="px-6 py-4 text-sm font-semibold text-foreground hidden sm:table-cell">Typical Use</th>
-                    <th className="px-6 py-4 text-sm font-semibold text-foreground hidden md:table-cell">Dimensions</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-foreground">{t('capacity.dumpsterSize')}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-foreground">{t('capacity.pickupLoads')}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-foreground hidden sm:table-cell">{t('capacity.typicalUse')}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-foreground hidden md:table-cell">{t('capacity.dimensions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -271,14 +273,14 @@ export default function CapacityGuide() {
                       <tr key={item.yards} className="hover:bg-muted/30 transition-colors">
                         <td className="px-6 py-4">
                           <span className="font-bold text-foreground text-lg">{item.yards}</span>
-                          <span className="text-muted-foreground ml-1">yard</span>
+                          <span className="text-muted-foreground ml-1">{t('capacity.yard')}</span>
                         </td>
                         <td className="px-6 py-4">
                           <span className="font-semibold text-primary">{item.loads}</span>
-                          <span className="text-muted-foreground ml-1">loads</span>
+                          <span className="text-muted-foreground ml-1">{t('capacity.loads')}</span>
                         </td>
                         <td className="px-6 py-4 text-sm text-muted-foreground hidden sm:table-cell">
-                          {item.note}
+                          {t(item.noteKey)}
                         </td>
                         <td className="px-6 py-4 text-sm text-muted-foreground hidden md:table-cell">
                           {sizeData?.dimensions || '—'}
@@ -292,7 +294,7 @@ export default function CapacityGuide() {
             <div className="px-6 py-3 bg-muted/30 border-t border-border">
               <p className="text-xs text-muted-foreground flex items-center gap-2">
                 <Info className="w-4 h-4 shrink-0" />
-                Pickup load estimates assume a standard 6-ft bed pickup, loaded to the top of the bed.
+                {t('capacity.pickupNote')}
               </p>
             </div>
           </div>
@@ -307,14 +309,14 @@ export default function CapacityGuide() {
               <Home className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="heading-lg text-foreground">Common Homeowner Scenarios</h2>
-              <p className="text-sm text-muted-foreground">Estimated dumpster sizes for typical home projects</p>
+              <h2 className="heading-lg text-foreground">{t('capacity.homeownerTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('capacity.homeownerSubtitle')}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {HOMEOWNER_SCENARIOS.map((scenario) => (
-              <ScenarioCard key={scenario.title} {...scenario} />
+              <ScenarioCard key={scenario.titleKey} {...scenario} t={t} />
             ))}
           </div>
         </div>
@@ -328,14 +330,14 @@ export default function CapacityGuide() {
               <HardHat className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="heading-lg text-foreground">Contractor Scenarios</h2>
-              <p className="text-sm text-muted-foreground">Professional project estimates with weight considerations</p>
+              <h2 className="heading-lg text-foreground">{t('capacity.contractorTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('capacity.contractorSubtitle')}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {CONTRACTOR_SCENARIOS.map((scenario) => (
-              <ScenarioCard key={scenario.title} {...scenario} />
+              <ScenarioCard key={scenario.titleKey} {...scenario} t={t} />
             ))}
           </div>
         </div>
@@ -349,14 +351,14 @@ export default function CapacityGuide() {
               <Building2 className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="heading-lg text-foreground">Business Scenarios</h2>
-              <p className="text-sm text-muted-foreground">Commercial and property management projects</p>
+              <h2 className="heading-lg text-foreground">{t('capacity.businessTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('capacity.businessSubtitle')}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {BUSINESS_SCENARIOS.map((scenario) => (
-              <ScenarioCard key={scenario.title} {...scenario} />
+              <ScenarioCard key={scenario.titleKey} {...scenario} t={t} />
             ))}
           </div>
         </div>
@@ -370,49 +372,49 @@ export default function CapacityGuide() {
               <Weight className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="heading-lg text-foreground">Concrete & Heavy Material Quick Math</h2>
-              <p className="text-sm text-muted-foreground">Weight-limited capacity for slabs and heavy loads</p>
+              <h2 className="heading-lg text-foreground">{t('capacity.concreteTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('capacity.concreteSubtitle')}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Weight Reference */}
             <div className="bg-card border border-border rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Concrete Weight Reference</h3>
+              <h3 className="text-lg font-bold text-foreground mb-4">{t('capacity.concreteWeightRef')}</h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-foreground">4-inch slab</span>
-                    <span className="text-muted-foreground ml-2">≈ ~50 lb per square foot (estimate)</span>
+                    <span className="font-semibold text-foreground">{t('capacity.slab4in')}</span>
+                    <span className="text-muted-foreground ml-2">{t('capacity.slab4inWeight')}</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-foreground">6-inch slab</span>
-                    <span className="text-muted-foreground ml-2">≈ ~75 lb per square foot (estimate)</span>
+                    <span className="font-semibold text-foreground">{t('capacity.slab6in')}</span>
+                    <span className="text-muted-foreground ml-2">{t('capacity.slab6inWeight')}</span>
                   </div>
                 </li>
               </ul>
 
               <div className="mt-6 pt-6 border-t border-border">
-                <h4 className="font-semibold text-foreground mb-3">Practical Capacity by Dumpster</h4>
+                <h4 className="font-semibold text-foreground mb-3">{t('capacity.practicalCapacity')}</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left py-2 font-medium text-muted-foreground">Size</th>
-                        <th className="text-left py-2 font-medium text-muted-foreground">4" Slab</th>
-                        <th className="text-left py-2 font-medium text-muted-foreground">6" Slab</th>
+                        <th className="text-left py-2 font-medium text-muted-foreground">{t('capacity.size')}</th>
+                        <th className="text-left py-2 font-medium text-muted-foreground">4" {language === 'es' ? 'Losa' : 'Slab'}</th>
+                        <th className="text-left py-2 font-medium text-muted-foreground">6" {language === 'es' ? 'Losa' : 'Slab'}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {CONCRETE_CAPACITY.map((row) => (
                         <tr key={row.size} className="border-b border-border/50">
                           <td className="py-2 font-semibold text-foreground">{row.size} yd</td>
-                          <td className="py-2 text-muted-foreground">{row.slab4in}</td>
-                          <td className="py-2 text-muted-foreground">{row.slab6in}</td>
+                          <td className="py-2 text-muted-foreground">{language === 'es' ? row.slab4inEs : row.slab4in}</td>
+                          <td className="py-2 text-muted-foreground">{language === 'es' ? row.slab6inEs : row.slab6in}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -423,24 +425,24 @@ export default function CapacityGuide() {
 
             {/* House Demo Estimate */}
             <div className="bg-card border border-border rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">House Demolition Estimates</h3>
+              <h3 className="text-lg font-bold text-foreground mb-4">{t('capacity.demoTitle')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                For a typical 1,200 sq ft Bay Area house demolition:
+                {t('capacity.demoSubtitle')}
               </p>
               
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-foreground">Wood-frame demo (no foundation)</span>
-                    <p className="text-sm text-muted-foreground">Roughly ~30–60 tons (range)</p>
+                    <span className="font-semibold text-foreground">{t('capacity.demoWoodFrame')}</span>
+                    <p className="text-sm text-muted-foreground">{t('capacity.demoWoodFrameWeight')}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-foreground">With foundation/concrete included</span>
-                    <p className="text-sm text-muted-foreground">Roughly ~60–120 tons (range)</p>
+                    <span className="font-semibold text-foreground">{t('capacity.demoWithFoundation')}</span>
+                    <p className="text-sm text-muted-foreground">{t('capacity.demoWithFoundationWeight')}</p>
                   </div>
                 </li>
               </ul>
@@ -449,8 +451,7 @@ export default function CapacityGuide() {
                 <div className="flex items-start gap-2">
                   <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                   <p className="text-xs text-muted-foreground">
-                    Actual weight varies heavily by materials, plaster vs drywall, roof layers, and foundation type. 
-                    Large demo projects typically require multiple dumpster pulls.
+                    {t('capacity.demoNote')}
                   </p>
                 </div>
               </div>
@@ -462,11 +463,10 @@ export default function CapacityGuide() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-foreground mb-1">Heavy Material Disclaimer</p>
+                <p className="font-semibold text-foreground mb-1">{t('capacity.heavyDisclaimer')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Concrete is weight-limited. These ranges depend on thickness, rebar, moisture, and access. 
-                  We'll recommend the safest option for your project. Heavy material dumpsters (6/8/10yd) are 
-                  <span className="font-semibold text-amber-700 dark:text-amber-300"> FLAT FEE—disposal included with no extra weight charges.</span>
+                  {t('capacity.heavyDisclaimerText')}
+                  <span className="font-semibold text-amber-700 dark:text-amber-300">{t('capacity.flatFeeNote')}</span>
                 </p>
               </div>
             </div>
@@ -478,7 +478,7 @@ export default function CapacityGuide() {
       <section className="section-padding bg-muted/50">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto">
-            <h2 className="heading-md text-center text-foreground mb-8">Disposal & Pricing Rules</h2>
+            <h2 className="heading-md text-center text-foreground mb-8">{t('capacity.pricingRulesTitle')}</h2>
             
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="divide-y divide-border">
@@ -488,10 +488,9 @@ export default function CapacityGuide() {
                     <Weight className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Heavy Materials (6/8/10 yd)</h3>
+                    <h3 className="font-semibold text-foreground">{t('capacity.heavyMaterialsTitle')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      <span className="text-success font-semibold">FLAT FEE pricing.</span> Disposal included with no extra weight charges. 
-                      Concrete, dirt, rock, brick, asphalt only—no mixing with trash.
+                      {t('capacity.heavyMaterialsDesc')}
                     </p>
                   </div>
                 </div>
@@ -502,10 +501,9 @@ export default function CapacityGuide() {
                     <Ruler className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Mixed Debris (6/8/10 yd)</h3>
+                    <h3 className="font-semibold text-foreground">{t('capacity.mixed610Title')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Overage billed at <span className="font-semibold">${overageYard} per additional yard</span>. 
-                      Capacity-based billing for small mixed loads.
+                      {t('capacity.mixed610Desc')}
                     </p>
                   </div>
                 </div>
@@ -516,9 +514,9 @@ export default function CapacityGuide() {
                     <Calculator className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Mixed Debris (20/30/40/50 yd)</h3>
+                    <h3 className="font-semibold text-foreground">{t('capacity.mixed20Title')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Included tons by size (2-5T). Overage billed <span className="font-semibold">${overageGeneral}/ton after scale ticket</span>.
+                      {t('capacity.mixed20Desc')}
                     </p>
                   </div>
                 </div>
@@ -529,9 +527,9 @@ export default function CapacityGuide() {
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Keep loads below rim</h3>
+                    <h3 className="font-semibold text-foreground">{t('capacity.keepBelowRim')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Materials must not extend above the top of the dumpster walls. Do not mix prohibited materials.
+                      {t('capacity.keepBelowRimDesc')}
                     </p>
                   </div>
                 </div>
@@ -544,27 +542,27 @@ export default function CapacityGuide() {
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
-          <h2 className="heading-lg mb-4">Not Sure What Size You Need?</h2>
+          <h2 className="heading-lg mb-4">{t('capacity.ctaTitle')}</h2>
           <p className="text-lg text-primary-foreground/80 mb-8 max-w-lg mx-auto">
-            Enter your ZIP and material type—we'll recommend the safest, most cost-effective option.
+            {t('capacity.ctaSubtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
               <Link to="/pricing">
-                Get Instant Quote
+                {t('nav.getQuote')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
               <a href={`sms:${BUSINESS_INFO.phone.sales.replace('+1-', '+1')}`}>
                 <MessageSquare className="w-5 h-5" />
-                Text Us
+                {t('capacity.textUs')}
               </a>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                 <Phone className="w-5 h-5" />
-                Call Now
+                {t('capacity.callNow')}
               </a>
             </Button>
           </div>
