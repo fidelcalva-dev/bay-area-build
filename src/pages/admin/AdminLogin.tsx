@@ -7,11 +7,12 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const { user, isAdmin, isLoading, signIn } = useAdminAuth();
+  const { user, isAdmin, isLoading, signIn, signUp } = useAdminAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
 
   if (isLoading) {
     return (
@@ -33,8 +34,11 @@ export default function AdminLogin() {
             <Shield className="w-8 h-8 text-destructive" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-4">
             You don't have admin privileges. Contact the administrator to request access.
+          </p>
+          <p className="text-sm text-muted-foreground mb-6">
+            Your account: <strong>{user.email}</strong>
           </p>
           <Button variant="outline" onClick={() => window.location.href = '/'}>
             Return to Home
@@ -48,14 +52,29 @@ export default function AdminLogin() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const { error } = await signIn(email, password);
-
-    if (error) {
-      toast({
-        title: 'Login Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
+    if (mode === 'signup') {
+      const { error } = await signUp(email, password);
+      if (error) {
+        toast({
+          title: 'Signup Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Account Created',
+          description: 'Your account has been created. Contact admin to get access.',
+        });
+      }
+    } else {
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({
+          title: 'Login Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      }
     }
 
     setIsSubmitting(false);
@@ -68,8 +87,14 @@ export default function AdminLogin() {
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
-          <p className="text-muted-foreground mt-2">Sign in to access the pricing admin panel</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            {mode === 'login' ? 'Admin Login' : 'Create Account'}
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            {mode === 'login' 
+              ? 'Sign in to access the pricing admin panel' 
+              : 'Create an account to request admin access'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,6 +119,7 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               className="pl-10 py-3 h-auto"
               required
+              minLength={6}
             />
           </div>
 
@@ -106,19 +132,30 @@ export default function AdminLogin() {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                Signing in...
+                {mode === 'login' ? 'Signing in...' : 'Creating account...'}
               </>
             ) : (
-              'Sign In'
+              mode === 'login' ? 'Sign In' : 'Create Account'
             )}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          <a href="/" className="text-primary hover:underline">
-            ← Back to website
-          </a>
-        </p>
+        <div className="text-center mt-6 space-y-2">
+          <button
+            type="button"
+            onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+            className="text-sm text-primary hover:underline"
+          >
+            {mode === 'login' 
+              ? "Don't have an account? Sign up" 
+              : 'Already have an account? Sign in'}
+          </button>
+          <p className="text-sm text-muted-foreground">
+            <a href="/" className="text-primary hover:underline">
+              ← Back to website
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
