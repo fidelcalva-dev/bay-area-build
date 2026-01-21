@@ -686,39 +686,60 @@ export function InstantQuoteCalculatorV3() {
           </div>
         </div>
 
-        {/* Progress Steps - Modern numbered style */}
+        {/* Progress Steps - Modern numbered style with Step X of 6 indicator */}
         {step !== 'success' && (
-          <div className="flex items-center mt-4">
-            {STEPS.map((s, i) => (
-              <div key={s.key} className="flex items-center flex-1 last:flex-none">
-                <button
-                  type="button"
-                  onClick={() => i < stepIndex && setStep(s.key)}
-                  disabled={i > stepIndex}
-                  className={cn(
-                    "relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all",
-                    step === s.key
-                      ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-foreground"
-                      : i < stepIndex
-                      ? "bg-success text-success-foreground cursor-pointer"
-                      : "bg-background/10 text-background/40 cursor-not-allowed"
+          <div className="mt-4">
+            {/* Step indicator text */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-background/60">
+                Step {stepIndex + 1} of {STEPS.length}
+              </span>
+              <span className="text-xs font-semibold text-background">
+                {STEPS[stepIndex]?.label}
+              </span>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="relative h-1.5 bg-background/10 rounded-full overflow-hidden mb-3">
+              <div 
+                className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }}
+              />
+            </div>
+
+            {/* Step dots */}
+            <div className="flex items-center">
+              {STEPS.map((s, i) => (
+                <div key={s.key} className="flex items-center flex-1 last:flex-none">
+                  <button
+                    type="button"
+                    onClick={() => i < stepIndex && setStep(s.key)}
+                    disabled={i > stepIndex}
+                    className={cn(
+                      "relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all",
+                      step === s.key
+                        ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-foreground"
+                        : i < stepIndex
+                        ? "bg-success text-success-foreground cursor-pointer"
+                        : "bg-background/10 text-background/40 cursor-not-allowed"
+                    )}
+                    title={s.label}
+                  >
+                    {i < stepIndex ? (
+                      <CheckCircle className="w-4 h-4" />
+                    ) : (
+                      s.shortLabel
+                    )}
+                  </button>
+                  {i < STEPS.length - 1 && (
+                    <div className={cn(
+                      "flex-1 h-0.5 mx-1",
+                      i < stepIndex ? "bg-success" : "bg-background/10"
+                    )} />
                   )}
-                  title={s.label}
-                >
-                  {i < stepIndex ? (
-                    <CheckCircle className="w-4 h-4" />
-                  ) : (
-                    s.shortLabel
-                  )}
-                </button>
-                {i < STEPS.length - 1 && (
-                  <div className={cn(
-                    "flex-1 h-0.5 mx-1",
-                    i < stepIndex ? "bg-success" : "bg-background/10"
-                  )} />
-                )}
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
