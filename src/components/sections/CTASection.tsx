@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { CTA_CONFIG } from '@/components/shared';
@@ -46,8 +46,9 @@ export function CTASection({
           </Button>
         </div>
 
-        <p className="text-sm opacity-50">
-          🇪🇸 Hablamos Español
+        <p className="text-sm opacity-50 flex items-center justify-center gap-2">
+          <MessageCircle className="w-4 h-4" />
+          Hablamos Español
         </p>
       </div>
     </section>

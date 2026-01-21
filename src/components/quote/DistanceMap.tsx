@@ -13,7 +13,7 @@ import 'leaflet/dist/leaflet.css';
 // CUSTOM ICONS
 // ============================================================
 
-// Yard icon (green truck marker)
+// Yard icon (green truck marker) - SVG inline
 const createYardIcon = () => {
   return L.divIcon({
     className: 'custom-yard-marker',
@@ -30,7 +30,7 @@ const createYardIcon = () => {
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         border: 3px solid white;
       ">
-        <span style="transform: rotate(45deg); font-size: 18px;">🚛</span>
+        <svg style="transform: rotate(45deg); width: 20px; height: 20px; color: white;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 13.52 9H12V18"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
       </div>
     `,
     iconSize: [40, 40],
@@ -39,7 +39,7 @@ const createYardIcon = () => {
   });
 };
 
-// Customer icon (orange pin marker)
+// Customer icon (orange pin marker) - SVG inline
 const createCustomerIcon = () => {
   return L.divIcon({
     className: 'custom-customer-marker',
@@ -56,7 +56,7 @@ const createCustomerIcon = () => {
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         border: 3px solid white;
       ">
-        <span style="transform: rotate(45deg); font-size: 18px;">📍</span>
+        <svg style="transform: rotate(45deg); width: 20px; height: 20px; color: white;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
       </div>
     `,
     iconSize: [40, 40],

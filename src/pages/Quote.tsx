@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, MessageCircle } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 
 const benefits = [
@@ -59,7 +59,8 @@ export default function Quote() {
 
               {/* Spanish Support */}
               <p className="mt-6 text-sm text-muted-foreground flex items-center gap-2">
-                🇪🇸 <span>Hablamos español — llámenos para ayuda en español</span>
+                <MessageCircle className="w-4 h-4 text-primary" />
+                <span>Hablamos español — llámenos para ayuda en español</span>
               </p>
             </div>
 

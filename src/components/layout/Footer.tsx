@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation, Star } from 'lucide-react';
+import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation, Star, Globe, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
@@ -90,7 +90,8 @@ export function Footer() {
             </div>
 
             <div className="flex items-center gap-2 px-3 py-2 bg-primary/20 rounded-lg text-sm font-medium text-primary-foreground w-fit">
-              🇪🇸 Hablamos Español
+              <MessageCircle className="w-4 h-4" />
+              Hablamos Español
             </div>
           </div>
 
@@ -274,7 +275,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-foreground/5 rounded-lg border border-secondary-foreground/10 hover:bg-secondary-foreground/10 transition-colors"
             >
-              <span className="text-lg">⭐</span>
+              <Star className="w-5 h-5 fill-accent text-accent" />
               <span className="text-sm font-medium">5.0 on Yelp</span>
               <ExternalLink className="w-3 h-3 text-secondary-foreground/50" />
             </a>

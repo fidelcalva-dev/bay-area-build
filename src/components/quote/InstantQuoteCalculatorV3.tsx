@@ -647,7 +647,7 @@ export function InstantQuoteCalculatorV3() {
 
         setQuoteSaved(true);
         toast({
-          title: 'Quote Saved! ✅',
+          title: 'Quote Saved!',
           description: "We've texted you the quote details",
         });
       } else {
@@ -1921,7 +1921,7 @@ export function InstantQuoteCalculatorV3() {
                   <CheckCircle className="w-8 h-8 text-success" />
                 </div>
                 
-                <h4 className="text-xl font-bold text-foreground mb-2">Quote Saved! ✅</h4>
+                <h4 className="text-xl font-bold text-foreground mb-2">Quote Saved!</h4>
                 <p className="text-muted-foreground mb-6">
                   Check your phone — we've texted you the details.
                 </p>

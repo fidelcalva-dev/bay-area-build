@@ -1,9 +1,10 @@
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageSquare, MessageCircle } from 'lucide-react';
 import { ReplacementForm } from '@/components/forms/ReplacementForm';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { IconCircle } from '@/components/shared/IconCircle';
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -154,7 +155,7 @@ export default function Contact() {
                 {/* Spanish Support */}
                 <div className="bg-accent/10 rounded-2xl border border-accent/20 p-6">
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">🇪🇸</span>
+                    <IconCircle icon={MessageCircle} size="lg" variant="accent" />
                     <div>
                       <h3 className="font-bold text-foreground">Hablamos Español</h3>
                       <p className="text-muted-foreground">Bilingual support available</p>

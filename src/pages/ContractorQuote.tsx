@@ -334,7 +334,7 @@ function ContractorQuoteCalculator() {
       });
       if (result.success) {
         setStep('success');
-        toast({ title: bookNow ? 'Booking Submitted! 🎉' : 'Quote Saved! 📧', description: bookNow ? "We'll contact you within 15 minutes" : "Check your email for the quote details" });
+        toast({ title: bookNow ? 'Booking Submitted!' : 'Quote Saved!', description: bookNow ? "We'll contact you within 15 minutes" : "Check your email for the quote details" });
       } else throw new Error(result.error);
     } catch {
       toast({ title: 'Submission Error', description: 'Please try again or call us directly', variant: 'destructive' });
