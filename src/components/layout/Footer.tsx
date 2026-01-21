@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
+import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -173,6 +174,10 @@ export function Footer() {
                 >
                   {BUSINESS_INFO.phone.supportFormatted}
                 </a>
+              </li>
+              {/* Live Office Status */}
+              <li>
+                <OfficeStatusIndicator variant="default" className="mb-2" />
               </li>
               <li className="text-secondary-foreground/60 text-sm space-y-2">
                 <div>

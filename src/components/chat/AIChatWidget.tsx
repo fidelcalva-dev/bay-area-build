@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useAIChat, type ChatMessage, type ChatContext } from '@/hooks/useAIChat';
+import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { useNavigate } from 'react-router-dom';
 
 // ============================================================
@@ -190,6 +191,9 @@ export function AIChatWidget() {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
+  // Office status for dynamic messaging
+  const officeStatus = useOfficeStatus();
+  
   const {
     messages,
     isLoading,
@@ -278,8 +282,22 @@ export function AIChatWidget() {
           </div>
           <div>
             <h4 className="font-semibold text-sm">Calsan Assistant</h4>
-            <p className="text-xs text-primary-foreground/70">
-              {isLoading ? 'Typing...' : 'Online'}
+            <p className="text-xs text-primary-foreground/70 flex items-center gap-1.5">
+              {isLoading ? (
+                'Typing...'
+              ) : (
+                <>
+                  <span 
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      officeStatus.isOpen 
+                        ? "bg-green-400 shadow-[0_0_4px_rgba(74,222,128,0.6)]" 
+                        : "bg-amber-400"
+                    )} 
+                  />
+                  {officeStatus.isOpen ? 'Live support' : 'After hours'}
+                </>
+              )}
             </p>
           </div>
         </div>
