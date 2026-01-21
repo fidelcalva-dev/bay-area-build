@@ -40,6 +40,10 @@ export interface GeocodingResult {
 export interface DistanceResult {
   distanceMiles: number;
   distanceMinutes?: number;
+  durationTrafficMin?: number;
+  durationTrafficMax?: number;
+  polyline?: string; // Encoded polyline from truck routing
+  routingProvider?: 'google_routes' | 'haversine_fallback';
   yard: Yard;
   bracket: DistanceBracket | null;
   priceAdjustment: number;
@@ -405,6 +409,7 @@ export function getDistanceBracket(
 
 /**
  * Calculate complete distance info for a customer location
+ * Uses truck-aware routing when available
  */
 export async function calculateDistanceInfo(
   customerLat: number,
@@ -423,19 +428,60 @@ export async function calculateDistanceInfo(
   const nearestResult = findNearestYard(customerLat, customerLng, yards);
   if (!nearestResult) return null;
 
-  const { yard, distance } = nearestResult;
-  const bracket = getDistanceBracket(distance, brackets);
+  const { yard, distance: haversineDistance } = nearestResult;
+  
+  // Try truck-aware routing via edge function
+  let truckRoute: {
+    distanceMiles: number;
+    durationMinutes: number;
+    durationTrafficMin: number;
+    durationTrafficMax: number;
+    polyline: string;
+    provider: 'google_routes' | 'haversine_fallback';
+  } | null = null;
 
-  // Estimate driving time (rough: 2 min per mile in Bay Area traffic)
-  const estimatedMinutes = Math.round(distance * 2.5);
+  try {
+    const response = await supabase.functions.invoke('truck-route', {
+      body: {
+        originLat: yard.latitude,
+        originLng: yard.longitude,
+        destinationLat: customerLat,
+        destinationLng: customerLng,
+        yardName: yard.name,
+      },
+    });
+
+    if (response.data?.success) {
+      truckRoute = {
+        distanceMiles: response.data.distanceMiles,
+        durationMinutes: response.data.durationMinutes,
+        durationTrafficMin: response.data.durationTrafficMin,
+        durationTrafficMax: response.data.durationTrafficMax,
+        polyline: response.data.polyline || '',
+        provider: response.data.provider,
+      };
+    }
+  } catch (error) {
+    console.error('Truck route API error, using Haversine fallback:', error);
+  }
+
+  // Use truck route data if available, otherwise Haversine fallback
+  const finalDistance = truckRoute?.distanceMiles ?? Math.round(haversineDistance * 100) / 100;
+  const finalMinutes = truckRoute?.durationMinutes ?? Math.round(haversineDistance * 2.5);
+  
+  const bracket = getDistanceBracket(finalDistance, brackets);
 
   return {
-    distanceMiles: Math.round(distance * 100) / 100,
-    distanceMinutes: estimatedMinutes,
+    distanceMiles: finalDistance,
+    distanceMinutes: finalMinutes,
+    durationTrafficMin: truckRoute?.durationTrafficMin ?? Math.round(finalMinutes * 0.85),
+    durationTrafficMax: truckRoute?.durationTrafficMax ?? Math.round(finalMinutes * 1.25),
+    polyline: truckRoute?.polyline,
+    routingProvider: truckRoute?.provider ?? 'haversine_fallback',
     yard,
     bracket,
     priceAdjustment: bracket?.priceAdjustment || 0,
-    requiresReview: bracket?.requiresReview || distance > 25,
+    requiresReview: bracket?.requiresReview || finalDistance > 25,
   };
 }
 
