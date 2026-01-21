@@ -139,6 +139,7 @@ export const MATERIAL_TYPES: MaterialType[] = [
 ];
 
 // Extra services with quantities - prices from v56
+// NOTE: extra-tons is conditionally shown based on material type and size
 export const EXTRAS: Extra[] = [
   {
     id: 'extra-days',
@@ -153,8 +154,8 @@ export const EXTRAS: Extra[] = [
   {
     id: 'extra-tons',
     value: 'extra-tons',
-    label: 'Extra Tons',
-    description: 'Pre-purchase overage',
+    label: 'Pre-purchase Extra Tons',
+    description: 'Optional — confirmed after scale ticket',
     price: PRICING_POLICIES.overagePerTonGeneral,
     icon: 'scale',
     allowQuantity: true,
@@ -164,7 +165,7 @@ export const EXTRAS: Extra[] = [
     id: 'permit',
     value: 'permit',
     label: 'Street Permit',
-    description: 'We handle city permit',
+    description: 'Permit assistance (if required)',
     price: PRICING_POLICIES.relocationFee,
     icon: 'file-text',
     allowQuantity: false,
@@ -193,7 +194,7 @@ export const EXTRAS: Extra[] = [
     id: 'same-day',
     value: 'same-day',
     label: 'Same-Day Delivery',
-    description: 'Guaranteed today',
+    description: 'Priority dispatch (subject to availability)',
     price: PRICING_POLICIES.sameDayDelivery,
     icon: 'zap',
     allowQuantity: false,
@@ -202,7 +203,7 @@ export const EXTRAS: Extra[] = [
     id: 'trip-fee',
     value: 'trip-fee',
     label: 'Dry Run / Trip Fee',
-    description: 'If blocked on pickup',
+    description: 'Applies if blocked on delivery or pickup',
     price: PRICING_POLICIES.tripFee,
     icon: 'truck',
     allowQuantity: false,
