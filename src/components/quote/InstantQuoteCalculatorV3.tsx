@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
+import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 
@@ -53,6 +54,26 @@ const DUMPSTER_IMAGES: Record<number, string> = {
   40: dumpster40yard,
   50: dumpster40yard, // Use 40yd image for 50yd as placeholder
 };
+
+// Office Status inline component for the save step
+function OfficeStatusLine() {
+  const officeStatus = useOfficeStatus();
+  return (
+    <>
+      <span 
+        className={cn(
+          "w-2 h-2 rounded-full shrink-0",
+          officeStatus.isOpen 
+            ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]" 
+            : "bg-amber-500"
+        )} 
+      />
+      <span className={officeStatus.isOpen ? "text-green-600" : "text-amber-600"}>
+        Customer Service is currently {officeStatus.isOpen ? 'Open' : 'After Hours'}
+      </span>
+    </>
+  );
+}
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'save' | 'order' | 'success';
 
@@ -1464,6 +1485,11 @@ export function InstantQuoteCalculatorV3() {
                     </>
                   )}
                 </Button>
+
+                {/* Office Status */}
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <OfficeStatusLine />
+                </div>
 
                 <p className="text-xs text-muted-foreground text-center">
                   By saving, you agree to receive SMS messages about your quote. 

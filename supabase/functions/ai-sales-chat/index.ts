@@ -203,8 +203,24 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Check if currently within office hours (6 AM - 9 PM Pacific)
+    const now = new Date();
+    const month = now.getMonth();
+    const isDST = month >= 2 && month <= 10; // March to November
+    const offset = isDST ? -7 : -8; // PDT or PST
+    const pacificHour = (now.getUTCHours() + offset + 24) % 24;
+    const isOfficeOpen = pacificHour >= 6 && pacificHour < 21;
+
     // Build context-aware system message
     let contextualPrompt = SYSTEM_PROMPT;
+
+    // Add office status context
+    contextualPrompt += `\n\n---\nCURRENT OFFICE STATUS:\noffice_status: ${isOfficeOpen ? 'OPEN' : 'AFTER_HOURS'}\ncurrent_pacific_time: ${pacificHour}:00`;
+    if (isOfficeOpen) {
+      contextualPrompt += `\nThe office is currently OPEN. You can say: "Our team is online right now if you want to talk to a dispatcher."`;
+    } else {
+      contextualPrompt += `\nThe office is currently CLOSED (after hours). Say: "Our team is offline right now, but you can text or email us and we'll follow up as soon as we're back (6am–9pm)." Do NOT promise immediate live response.`;
+    }
 
     // Add auto-detected context section
     if (context) {

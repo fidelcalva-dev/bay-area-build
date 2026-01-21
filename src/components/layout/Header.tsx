@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { CTA_LINKS } from '@/lib/shared-data';
+import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 export function Header() {
@@ -119,6 +120,11 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 md:gap-3">
+            {/* Office Status - Desktop only */}
+            <div className="hidden xl:block">
+              <OfficeStatusIndicator variant="badge" />
+            </div>
+
             {/* Social Icons - Desktop only */}
             <div className="hidden lg:flex items-center gap-1">
               <a
