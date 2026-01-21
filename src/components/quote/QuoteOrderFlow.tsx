@@ -1,10 +1,11 @@
 // Quote Order Flow - Multi-step lead capture after quote
-// Step 1: Save Quote (contact) → Step 2: Address → Step 3: Map Pin → Step 4: Continue Order
+// Step 1: Save Quote (contact) → Step 2: Address → Step 3: Map Pin → Step 4: Schedule → Step 5: Continue
 
 import { useState, useCallback, lazy, Suspense } from 'react';
+import { format } from 'date-fns';
 import { 
   User, MapPin, Navigation, ExternalLink, ChevronLeft, ChevronRight,
-  Loader2, CheckCircle, Phone, Building2, Mail, Briefcase, Home, Truck
+  Loader2, CheckCircle, Phone, Building2, Mail, Briefcase, Home, Truck, Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { AddressInput } from './steps/AddressInput';
+import { SchedulingStep, type SchedulingResult } from './steps/SchedulingStep';
 import type { Yard } from '@/lib/distanceService';
 
 // Lazy load the map component to avoid react-leaflet causing multiple React instances
@@ -29,12 +31,13 @@ function MapLoadingFallback() {
   );
 }
 
-type OrderStep = 'save' | 'address' | 'pin' | 'continue';
+type OrderStep = 'save' | 'address' | 'pin' | 'schedule' | 'continue';
 
 const ORDER_STEPS: { key: OrderStep; label: string; icon: React.ReactNode }[] = [
   { key: 'save', label: 'Save Quote', icon: <User className="w-4 h-4" /> },
   { key: 'address', label: 'Address', icon: <MapPin className="w-4 h-4" /> },
   { key: 'pin', label: 'Pin Location', icon: <Navigation className="w-4 h-4" /> },
+  { key: 'schedule', label: 'Schedule', icon: <Calendar className="w-4 h-4" /> },
   { key: 'continue', label: 'Continue', icon: <ExternalLink className="w-4 h-4" /> },
 ];
 
@@ -113,6 +116,7 @@ export function QuoteOrderFlow({
 
   const [address, setAddress] = useState<AddressResult | null>(null);
   const [placement, setPlacement] = useState<PlacementResult | null>(null);
+  const [scheduling, setScheduling] = useState<SchedulingResult | null>(null);
 
   // Step navigation
   const stepIndex = ORDER_STEPS.findIndex(s => s.key === step);
@@ -125,10 +129,12 @@ export function QuoteOrderFlow({
         return address !== null;
       case 'pin':
         return placement !== null;
+      case 'schedule':
+        return scheduling !== null;
       default:
         return true;
     }
-  }, [step, contact, address, placement]);
+  }, [step, contact, address, placement, scheduling]);
 
   // Save contact info to database
   const handleSaveQuote = async () => {
@@ -267,6 +273,28 @@ export function QuoteOrderFlow({
         });
       } catch (error) {
         console.error('Placement save error:', error);
+      }
+    }
+  };
+
+  // Save scheduling to database
+  const handleSchedulingConfirmed = async (schedulingResult: SchedulingResult) => {
+    setScheduling(schedulingResult);
+    
+    if (savedQuoteId) {
+      try {
+        await supabase
+          .from('quotes')
+          .update({
+            preferred_delivery_date: format(schedulingResult.deliveryDate, 'yyyy-MM-dd'),
+            preferred_delivery_window: schedulingResult.deliveryWindow,
+            suggested_pickup_date: format(schedulingResult.pickupDate, 'yyyy-MM-dd'),
+            is_weekend_delivery: schedulingResult.isWeekendDelivery,
+            status: 'scheduled',
+          })
+          .eq('id', savedQuoteId);
+      } catch (error) {
+        console.error('Scheduling save error:', error);
       }
     }
   };
@@ -565,8 +593,40 @@ export function QuoteOrderFlow({
             variant="cta"
             size="lg"
             className="w-full h-14 text-base"
-            onClick={() => setStep('continue')}
+            onClick={() => setStep('schedule')}
             disabled={!placement}
+          >
+            Continue to Schedule
+            <ChevronRight className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+
+      {/* Step 4: Schedule */}
+      {step === 'schedule' && (
+        <div className="space-y-4">
+          <button
+            type="button"
+            onClick={() => setStep('pin')}
+            className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
+
+          <SchedulingStep
+            rentalDays={quoteSummary.rentalDays}
+            onSchedulingConfirmed={handleSchedulingConfirmed}
+            value={scheduling}
+          />
+
+          <Button
+            type="button"
+            variant="cta"
+            size="lg"
+            className="w-full h-14 text-base"
+            onClick={() => setStep('continue')}
+            disabled={!scheduling}
           >
             Continue to Checkout
             <ChevronRight className="w-5 h-5" />
@@ -574,12 +634,12 @@ export function QuoteOrderFlow({
         </div>
       )}
 
-      {/* Step 4: Continue Order */}
+      {/* Step 5: Continue Order */}
       {step === 'continue' && (
         <div className="space-y-4">
           <button
             type="button"
-            onClick={() => setStep('pin')}
+            onClick={() => setStep('schedule')}
             className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -622,6 +682,31 @@ export function QuoteOrderFlow({
                 {placement?.placementType}
               </span>
             </div>
+            {scheduling && (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Delivery</span>
+                  <span className="font-medium text-foreground">
+                    {format(scheduling.deliveryDate, 'EEE, MMM d')}
+                    {scheduling.isWeekendDelivery && (
+                      <span className="ml-1 text-warning text-xs">(Special)</span>
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Time Window</span>
+                  <span className="font-medium text-foreground capitalize">
+                    {scheduling.deliveryWindow}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Pickup</span>
+                  <span className="font-medium text-foreground">
+                    {format(scheduling.pickupDate, 'EEE, MMM d')}
+                  </span>
+                </div>
+              </>
+            )}
             <div className="border-t border-border pt-3 flex justify-between">
               <span className="font-semibold text-foreground">Estimated Total</span>
               <span className="font-bold text-lg text-foreground">
