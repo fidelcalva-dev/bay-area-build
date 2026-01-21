@@ -145,10 +145,10 @@ export function BeforeAfterGallerySection() {
         {/* Stats */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
           {[
-            { value: '5,000+', label: 'Projects Completed' },
+            { value: '1,000+', label: 'Projects Completed' },
             { value: '98%', label: 'Customer Satisfaction' },
             { value: '24hr', label: 'Average Turnaround' },
-            { value: '60%', label: 'Materials Recycled' },
+            { value: '9', label: 'Counties Served' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-2xl md:text-3xl font-extrabold text-foreground">

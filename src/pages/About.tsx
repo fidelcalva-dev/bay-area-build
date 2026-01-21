@@ -31,9 +31,9 @@ const values = [
 
 const stats = [
   { value: '9', label: 'Counties Served' },
-  { value: '500+', label: 'Happy Customers' },
+  { value: '200+', label: 'Happy Customers' },
   { value: '24hr', label: 'Delivery Available' },
-  { value: '6', label: 'Dumpster Sizes' },
+  { value: '7', label: 'Dumpster Sizes' },
 ];
 
 const fleetGallery = [

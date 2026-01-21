@@ -148,7 +148,7 @@ export const VideoTestimonialsSection = () => {
         {/* CTA */}
         <div className="text-center mt-10">
           <p className="text-muted-foreground mb-4">
-            Join 500+ happy customers in the Bay Area
+            Join 200+ happy customers in the Bay Area
           </p>
           <Button variant="outline" size="lg" asChild>
             <a

@@ -24,7 +24,7 @@ const milestones: MilestoneData[] = [
     title: 'East Bay Expansion',
     regions: ['San Jose', 'Palo Alto', 'Concord', 'Walnut Creek', 'Richmond'],
     status: 'completed',
-    highlight: '500+ projects completed',
+    highlight: 'Expanded to South Bay',
   },
   {
     year: '2024',

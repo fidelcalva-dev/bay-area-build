@@ -105,8 +105,8 @@ export function HeroSection() {
             {/* Star Rating - Subtle */}
             <motion.div variants={fadeIn} className="pt-2">
               <StarRating 
-                rating={5.0} 
-                reviews={500} 
+                rating={4.9} 
+                reviews={200} 
                 variant="hero"
                 className="justify-center lg:justify-start" 
               />
