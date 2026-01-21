@@ -704,6 +704,78 @@ export type Database = {
         }
         Relationships: []
       }
+      volume_commitments: {
+        Row: {
+          agreement_id: string | null
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
+          approved_by: string | null
+          commitment_type: Database["public"]["Enums"]["commitment_type"]
+          created_at: string
+          created_by: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          customer_type: string
+          discount_pct: number
+          id: string
+          notes: string | null
+          payment_ref: string | null
+          service_count_committed: number
+          services_remaining: number
+          updated_at: string
+          validity_end_date: string
+          validity_start_date: string
+          volume_tier: Database["public"]["Enums"]["volume_tier"]
+        }
+        Insert: {
+          agreement_id?: string | null
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          commitment_type: Database["public"]["Enums"]["commitment_type"]
+          created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          customer_type: string
+          discount_pct: number
+          id?: string
+          notes?: string | null
+          payment_ref?: string | null
+          service_count_committed: number
+          services_remaining: number
+          updated_at?: string
+          validity_end_date: string
+          validity_start_date: string
+          volume_tier: Database["public"]["Enums"]["volume_tier"]
+        }
+        Update: {
+          agreement_id?: string | null
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
+          commitment_type?: Database["public"]["Enums"]["commitment_type"]
+          created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          customer_type?: string
+          discount_pct?: number
+          id?: string
+          notes?: string | null
+          payment_ref?: string | null
+          service_count_committed?: number
+          services_remaining?: number
+          updated_at?: string
+          validity_end_date?: string
+          validity_start_date?: string
+          volume_tier?: Database["public"]["Enums"]["volume_tier"]
+        }
+        Relationships: []
+      }
       yards: {
         Row: {
           address: string | null
@@ -841,6 +913,9 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      approval_status: "pending" | "approved" | "rejected"
+      commitment_type: "prepaid" | "contracted"
+      volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -969,6 +1044,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      approval_status: ["pending", "approved", "rejected"],
+      commitment_type: ["prepaid", "contracted"],
+      volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
 } as const

@@ -44,6 +44,7 @@ const ZonesManager = lazy(() => import("./pages/admin/ZonesManager"));
 const PricingManager = lazy(() => import("./pages/admin/PricingManager"));
 const VendorsManager = lazy(() => import("./pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("./pages/admin/ExtrasManager"));
+const VolumeCommitmentsManager = lazy(() => import("./pages/admin/VolumeCommitmentsManager"));
 
 const queryClient = new QueryClient();
 
@@ -157,6 +158,9 @@ const App = () => (
                 } />
                 <Route path="extras" element={
                   <Suspense fallback={<PageLoader />}><ExtrasManager /></Suspense>
+                } />
+                <Route path="volume-commitments" element={
+                  <Suspense fallback={<PageLoader />}><VolumeCommitmentsManager /></Suspense>
                 } />
               </Route>
               

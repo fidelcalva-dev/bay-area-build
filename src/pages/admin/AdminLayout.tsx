@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
-  Home, Loader2, ChevronDown 
+  Home, Loader2, ChevronDown, Percent
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -13,6 +13,7 @@ const navItems = [
   { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
   { path: '/admin/vendors', label: 'Vendors & Partners', icon: Users },
   { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
+  { path: '/admin/volume-commitments', label: 'Volume Commitments', icon: Percent },
 ];
 
 export default function AdminLayout() {
