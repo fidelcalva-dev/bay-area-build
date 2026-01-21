@@ -19,6 +19,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     icon: Layers,
     densityHint: 'Medium-heavy',
     examples: ['Drywall + Lumber', 'Flooring mix', 'Demo debris', 'Remodel waste'],
+    greenHalo: true,
   },
   {
     id: 'household',
