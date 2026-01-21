@@ -1,11 +1,12 @@
 // Address Input Step with Geocoding
-// Uses OpenStreetMap Nominatim for free geocoding
+// Uses Edge Function proxy to avoid CORS issues
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { MapPin, Loader2, CheckCircle, Search, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AddressSuggestion {
   display_name: string;
@@ -46,7 +47,7 @@ export function AddressInput({ initialZip, onAddressConfirmed, value }: AddressI
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Debounced search using OpenStreetMap Nominatim
+  // Debounced search using Edge Function proxy
   const searchAddress = useCallback(async (searchQuery: string) => {
     if (searchQuery.length < 5) {
       setSuggestions([]);
@@ -57,26 +58,19 @@ export function AddressInput({ initialZip, onAddressConfirmed, value }: AddressI
     setError(null);
 
     try {
-      // Add state context for Bay Area
-      const searchWithContext = `${searchQuery}, California, USA`;
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchWithContext)}&addressdetails=1&limit=5&countrycodes=us`;
-      
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'CALSAN-Dumpsters/1.0'
-        }
+      const { data, error: fnError } = await supabase.functions.invoke('geocode-address', {
+        body: { query: searchQuery }
       });
 
-      if (!response.ok) {
-        throw new Error('Address lookup failed');
+      if (fnError) {
+        throw fnError;
       }
 
-      const data: AddressSuggestion[] = await response.json();
-      setSuggestions(data.filter(s => 
-        s.address?.state?.toLowerCase().includes('california') ||
-        s.display_name.toLowerCase().includes('california')
-      ));
+      if (data?.results) {
+        setSuggestions(data.results);
+      } else {
+        setSuggestions([]);
+      }
     } catch (err) {
       console.error('Address search error:', err);
       setError('Address lookup unavailable. Please enter manually.');
@@ -126,20 +120,16 @@ export function AddressInput({ initialZip, onAddressConfirmed, value }: AddressI
 
     setIsSearching(true);
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=1&countrycodes=us`;
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'CALSAN-Dumpsters/1.0'
-        }
+      const { data, error: fnError } = await supabase.functions.invoke('geocode-address', {
+        body: { query }
       });
-      const data: AddressSuggestion[] = await response.json();
 
-      if (data.length > 0) {
-        selectSuggestion(data[0]);
+      if (fnError) throw fnError;
+
+      if (data?.results?.length > 0) {
+        selectSuggestion(data.results[0]);
       } else {
         // Fallback: Use the entered address without geocoding
-        // This isn't ideal but allows the flow to continue
         setError('Could not verify address. Please double-check it.');
         const fallbackResult: AddressResult = {
           formattedAddress: query,
