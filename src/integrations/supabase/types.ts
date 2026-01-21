@@ -239,10 +239,16 @@ export type Database = {
           recommendation_reason: string | null
           recommended_size_yards: number | null
           rental_days: number
+          route_calculated_at: string | null
+          route_polyline: string | null
+          routing_provider: string | null
           selected_vendor_id: string | null
           size_id: string | null
           status: string
           subtotal: number
+          truck_distance_miles: number | null
+          truck_duration_max: number | null
+          truck_duration_min: number | null
           updated_at: string
           user_selected_size_yards: number | null
           user_type: string
@@ -284,10 +290,16 @@ export type Database = {
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          route_calculated_at?: string | null
+          route_polyline?: string | null
+          routing_provider?: string | null
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal: number
+          truck_distance_miles?: number | null
+          truck_duration_max?: number | null
+          truck_duration_min?: number | null
           updated_at?: string
           user_selected_size_yards?: number | null
           user_type?: string
@@ -329,10 +341,16 @@ export type Database = {
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          route_calculated_at?: string | null
+          route_polyline?: string | null
+          routing_provider?: string | null
           selected_vendor_id?: string | null
           size_id?: string | null
           status?: string
           subtotal?: number
+          truck_distance_miles?: number | null
+          truck_duration_max?: number | null
+          truck_duration_min?: number | null
           updated_at?: string
           user_selected_size_yards?: number | null
           user_type?: string
