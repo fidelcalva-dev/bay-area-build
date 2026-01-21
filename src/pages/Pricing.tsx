@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt } from 'lucide-react';
+import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
 import { PAGE_SEO } from '@/lib/seo';
 import { 
   PLAN_A_PRICING, 
@@ -9,7 +9,8 @@ import {
   PRICING_POLICIES,
   OVERAGE_NOTE,
   INCLUDED_TONS_BY_SIZE,
-  CTA_LINKS
+  CTA_LINKS,
+  RECYCLING_SUPPORT_SERVICE
 } from '@/lib/shared-data';
 
 // Derived from v56 shared-data.ts (Plan A pricing)
@@ -534,6 +535,103 @@ export default function Pricing() {
                 </ul>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recycling & Diversion Support Service */}
+      <section className="section-padding bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600/10 rounded-full text-sm font-medium text-green-700 dark:text-green-400 mb-4">
+              <Recycle className="w-4 h-4" />
+              {RECYCLING_SUPPORT_SERVICE.category}
+            </div>
+            <h2 className="heading-lg text-foreground mb-4">{RECYCLING_SUPPORT_SERVICE.displayName}</h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              {RECYCLING_SUPPORT_SERVICE.description}
+            </p>
+          </div>
+
+          {/* Important Note */}
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 mb-8 max-w-3xl mx-auto">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-800 dark:text-amber-300">
+                <strong>Important:</strong> {RECYCLING_SUPPORT_SERVICE.importantNote}
+              </p>
+            </div>
+          </div>
+
+          {/* Service Components Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {RECYCLING_SUPPORT_SERVICE.components.map((component, index) => {
+              const icons = [Settings2, Truck, ClipboardList, FileText];
+              const Icon = icons[index] || Recycle;
+              return (
+                <div key={component.id} className="bg-card rounded-2xl border border-green-200 dark:border-green-800/50 p-6">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-600/10 mb-4">
+                    <Icon className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-1">{component.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{component.description}</p>
+                  <ul className="space-y-2">
+                    {component.items.map((item, idx) => (
+                      <li key={idx} className="text-sm text-foreground flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pricing Display */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-2xl border border-green-200 dark:border-green-800/50 p-8 max-w-3xl mx-auto mb-8">
+            <div className="text-center mb-6">
+              <div className="text-sm text-muted-foreground mb-2">Pricing</div>
+              <div className="text-3xl font-extrabold text-foreground mb-2">
+                {RECYCLING_SUPPORT_SERVICE.pricingDisplay.label}
+              </div>
+              <p className="text-muted-foreground">
+                {RECYCLING_SUPPORT_SERVICE.pricingDisplay.note}
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              {RECYCLING_SUPPORT_SERVICE.pricingDisplay.structures.map((structure, idx) => (
+                <span key={idx} className="px-4 py-2 bg-card rounded-full text-sm font-medium text-foreground border border-green-200 dark:border-green-800">
+                  {structure}
+                </span>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Button asChild variant="cta" size="lg" className="bg-green-600 hover:bg-green-700">
+                <Link to={CTA_LINKS.recyclingSupport}>
+                  Request Recycling Support
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Disclaimers */}
+          <div className="max-w-2xl mx-auto">
+            <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">Important Disclaimers</h4>
+            <div className="space-y-2">
+              {RECYCLING_SUPPORT_SERVICE.disclaimers.map((disclaimer, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  {disclaimer}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-center text-muted-foreground mt-4 italic">
+              {RECYCLING_SUPPORT_SERVICE.integrationNote}
+            </p>
           </div>
         </div>
       </section>

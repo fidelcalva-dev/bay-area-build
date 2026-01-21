@@ -426,6 +426,101 @@ export const MARKET_ZONES: Record<MarketZone, { name: string; baseMultiplier: nu
 };
 
 // ============================================================
+// RECYCLING & DIVERSION SUPPORT SERVICE (Green Halo™)
+// Sustainability / Compliance Services
+// ============================================================
+
+export interface RecyclingServiceComponent {
+  id: string;
+  title: string;
+  description: string;
+  items: string[];
+}
+
+export interface RecyclingSupportService {
+  name: string;
+  displayName: string;
+  category: string;
+  description: string;
+  importantNote: string;
+  components: RecyclingServiceComponent[];
+  pricingDisplay: {
+    type: 'request-based';
+    label: string;
+    note: string;
+    structures: string[];
+  };
+  disclaimers: string[];
+  integrationNote: string;
+}
+
+export const RECYCLING_SUPPORT_SERVICE: RecyclingSupportService = {
+  name: 'recycling_diversion_support',
+  displayName: 'Recycling & Diversion Support',
+  category: 'Sustainability / Compliance Services',
+  description: 'Calsan provides recycling-focused hauling coordination and diversion support for businesses and projects that are required or committed to recycling. This service supports compliance, separation, hauling coordination, and basic recycling/diversion reporting.',
+  importantNote: 'Calsan does NOT operate recycling facilities. Calsan works with licensed transfer stations and approved facilities that are required to sort and recycle construction and demolition materials when possible.',
+  components: [
+    {
+      id: 'setup_assessment',
+      title: 'Setup & Assessment',
+      description: 'One-time project evaluation',
+      items: [
+        'Review waste streams',
+        'Identify recycling/diversion requirements (WMP, city rules, ESG)',
+        'Recommend container strategy by material',
+      ],
+    },
+    {
+      id: 'container_coordination',
+      title: 'Container Strategy & Coordination',
+      description: 'Multi-material logistics',
+      items: [
+        'Multiple dumpsters by material type (as needed)',
+        'Scheduling and coordination of pickups',
+        'Material routing to correct facilities',
+      ],
+    },
+    {
+      id: 'tracking',
+      title: 'Recycling & Diversion Tracking',
+      description: 'Documentation collection',
+      items: [
+        'Collection of weight tickets',
+        'Basic tracking by material type',
+        'Diversion summaries when required',
+      ],
+    },
+    {
+      id: 'reporting',
+      title: 'Reporting & Documentation',
+      description: 'Compliance support',
+      items: [
+        'Recycling/diversion summary report',
+        'Weight ticket copies',
+        'Support documentation for WMP or inspections',
+      ],
+    },
+  ],
+  pricingDisplay: {
+    type: 'request-based',
+    label: 'Based on Project Scope',
+    note: 'Pricing is customized based on project size, material types, and reporting requirements.',
+    structures: [
+      'One-time setup fee',
+      'Monthly support',
+      'Per-project reporting fee',
+    ],
+  },
+  disclaimers: [
+    'Recycling rates depend on material type and facility processes',
+    'Diversion percentages are not guaranteed',
+    'Final results depend on proper material separation and facility sorting',
+  ],
+  integrationNote: 'This service is NOT part of the Quick Quote calculator. This service is requested separately via "Request Recycling Support". Dumpster pricing rules remain unchanged.',
+};
+
+// ============================================================
 // CONTACT INFO - Re-export from seo.ts for convenience
 // ============================================================
 
@@ -439,4 +534,5 @@ export const CTA_LINKS = {
   text: `sms:${BUSINESS_INFO.phone.sales}`,
   email: `mailto:${BUSINESS_INFO.email}`,
   trashlab: 'https://app.trashlab.com',
+  recyclingSupport: '/contact?service=recycling-support',
 } as const;
