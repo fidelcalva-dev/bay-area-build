@@ -209,6 +209,7 @@ export type Database = {
       quotes: {
         Row: {
           company_name: string | null
+          completed_at: string | null
           confidence_level: string | null
           confidence_note: string | null
           converted_at: string | null
@@ -236,6 +237,7 @@ export type Database = {
           placement_notes: string | null
           placement_type: string | null
           project_type: string | null
+          receipt_sent_at: string | null
           recommendation_reason: string | null
           recommended_size_yards: number | null
           rental_days: number
@@ -260,6 +262,7 @@ export type Database = {
         }
         Insert: {
           company_name?: string | null
+          completed_at?: string | null
           confidence_level?: string | null
           confidence_note?: string | null
           converted_at?: string | null
@@ -287,6 +290,7 @@ export type Database = {
           placement_notes?: string | null
           placement_type?: string | null
           project_type?: string | null
+          receipt_sent_at?: string | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
@@ -311,6 +315,7 @@ export type Database = {
         }
         Update: {
           company_name?: string | null
+          completed_at?: string | null
           confidence_level?: string | null
           confidence_note?: string | null
           converted_at?: string | null
@@ -338,6 +343,7 @@ export type Database = {
           placement_notes?: string | null
           placement_type?: string | null
           project_type?: string | null
+          receipt_sent_at?: string | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
@@ -419,6 +425,71 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      service_receipts: {
+        Row: {
+          created_at: string
+          email_sent_at: string | null
+          facility_name: string | null
+          id: string
+          included_tons: number | null
+          overage_charge: number | null
+          overage_rate: number | null
+          overage_tons: number | null
+          pricing_rule: string | null
+          quote_id: string
+          sms_sent_at: string | null
+          ticket_date: string | null
+          ticket_number: string | null
+          ticket_url: string | null
+          total_tons: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_sent_at?: string | null
+          facility_name?: string | null
+          id?: string
+          included_tons?: number | null
+          overage_charge?: number | null
+          overage_rate?: number | null
+          overage_tons?: number | null
+          pricing_rule?: string | null
+          quote_id: string
+          sms_sent_at?: string | null
+          ticket_date?: string | null
+          ticket_number?: string | null
+          ticket_url?: string | null
+          total_tons: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_sent_at?: string | null
+          facility_name?: string | null
+          id?: string
+          included_tons?: number | null
+          overage_charge?: number | null
+          overage_rate?: number | null
+          overage_tons?: number | null
+          pricing_rule?: string | null
+          quote_id?: string
+          sms_sent_at?: string | null
+          ticket_date?: string | null
+          ticket_number?: string | null
+          ticket_url?: string | null
+          total_tons?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_receipts_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
