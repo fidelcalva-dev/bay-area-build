@@ -45,6 +45,11 @@ const PricingManager = lazy(() => import("./pages/admin/PricingManager"));
 const VendorsManager = lazy(() => import("./pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("./pages/admin/ExtrasManager"));
 const VolumeCommitmentsManager = lazy(() => import("./pages/admin/VolumeCommitmentsManager"));
+const YardsManager = lazy(() => import("./pages/admin/YardsManager"));
+const ConfigManager = lazy(() => import("./pages/admin/ConfigManager"));
+const OrdersManager = lazy(() => import("./pages/admin/OrdersManager"));
+const CustomersManager = lazy(() => import("./pages/admin/CustomersManager"));
+const AuditLogsPage = lazy(() => import("./pages/admin/AuditLogsPage"));
 
 const queryClient = new QueryClient();
 
@@ -138,14 +143,23 @@ const App = () => (
               } />
               
               {/* Admin Panel */}
-              <Route path="/admin" element={
+              <Route path="/admin/login" element={
                 <Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>
               } />
-              <Route path="/admin/*" element={
+              <Route path="/admin" element={
                 <Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>
               }>
-                <Route path="dashboard" element={
+                <Route index element={
                   <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>
+                } />
+                <Route path="orders" element={
+                  <Suspense fallback={<PageLoader />}><OrdersManager /></Suspense>
+                } />
+                <Route path="customers" element={
+                  <Suspense fallback={<PageLoader />}><CustomersManager /></Suspense>
+                } />
+                <Route path="yards" element={
+                  <Suspense fallback={<PageLoader />}><YardsManager /></Suspense>
                 } />
                 <Route path="zones" element={
                   <Suspense fallback={<PageLoader />}><ZonesManager /></Suspense>
@@ -159,8 +173,14 @@ const App = () => (
                 <Route path="extras" element={
                   <Suspense fallback={<PageLoader />}><ExtrasManager /></Suspense>
                 } />
+                <Route path="config" element={
+                  <Suspense fallback={<PageLoader />}><ConfigManager /></Suspense>
+                } />
                 <Route path="volume-commitments" element={
                   <Suspense fallback={<PageLoader />}><VolumeCommitmentsManager /></Suspense>
+                } />
+                <Route path="audit-logs" element={
+                  <Suspense fallback={<PageLoader />}><AuditLogsPage /></Suspense>
                 } />
               </Route>
               

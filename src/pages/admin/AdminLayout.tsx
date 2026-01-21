@@ -1,23 +1,55 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
-  Home, Loader2, ChevronDown, Percent
+  Home, Loader2, Percent, Warehouse, Settings, 
+  Package, FileText, Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { path: '/admin', label: 'Dashboard', icon: Home, end: true },
-  { path: '/admin/zones', label: 'ZIP-to-Zone Mapping', icon: MapPin },
-  { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
-  { path: '/admin/vendors', label: 'Vendors & Partners', icon: Users },
-  { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
-  { path: '/admin/volume-commitments', label: 'Volume Commitments', icon: Percent },
+// Navigation items grouped by section
+const navSections = [
+  {
+    title: 'Overview',
+    items: [
+      { path: '/admin', label: 'Dashboard', icon: Home, end: true },
+    ],
+  },
+  {
+    title: 'Operations',
+    items: [
+      { path: '/admin/orders', label: 'Orders', icon: Package },
+      { path: '/admin/customers', label: 'Customers', icon: Users },
+    ],
+  },
+  {
+    title: 'Configuration',
+    items: [
+      { path: '/admin/yards', label: 'Yard Manager', icon: Warehouse },
+      { path: '/admin/zones', label: 'ZIP-to-Zone', icon: MapPin },
+      { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
+      { path: '/admin/vendors', label: 'Vendors', icon: Truck },
+      { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
+      { path: '/admin/config', label: 'Business Rules', icon: Settings },
+    ],
+  },
+  {
+    title: 'Programs',
+    items: [
+      { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
+    ],
+  },
 ];
 
 export default function AdminLayout() {
-  const { user, isAdmin, isLoading, signOut } = useAdminAuth();
+  const { user, isLoading, signOut, canAccessAdmin } = useAdminAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -32,7 +64,7 @@ export default function AdminLayout() {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (!isAdmin) {
+  if (!canAccessAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30">
         <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8 text-center">
@@ -59,7 +91,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-card border-r border-border flex flex-col">
+      <aside className="w-64 bg-card border-r border-border flex flex-col overflow-y-auto">
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
@@ -67,35 +99,44 @@ export default function AdminLayout() {
             </div>
             <div>
               <h1 className="font-bold text-foreground">Admin Panel</h1>
-              <p className="text-xs text-muted-foreground">Pricing Management</p>
+              <p className="text-xs text-muted-foreground">Operations & Config</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.end 
-              ? location.pathname === item.path 
-              : location.pathname.startsWith(item.path);
-            
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.end}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                )}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </NavLink>
-            );
-          })}
+        <nav className="flex-1 p-4 space-y-6">
+          {navSections.map((section) => (
+            <div key={section.title}>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
+                {section.title}
+              </p>
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = item.end
+                    ? location.pathname === item.path
+                    : location.pathname.startsWith(item.path) && item.path !== '/admin';
+
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      end={item.end}
+                      className={cn(
+                        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {item.label}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         <div className="p-4 border-t border-border">
