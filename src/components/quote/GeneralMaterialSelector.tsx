@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { 
   CheckCircle, Home, Hammer, Leaf, Package, Archive, 
   Recycle, AlertCircle, Scale, Info, TreePine, Wrench,
-  LayoutGrid, Cylinder, Square, Layers
+  LayoutGrid, Cylinder, Square, Layers, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -53,6 +53,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     examples: ['Asphalt shingles', 'Felt paper', 'Flashing'],
     weightWarning: true,
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'wood_clean',
@@ -62,6 +63,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     densityHint: 'Light-medium',
     examples: ['Lumber', 'Branches', 'Tree stumps', 'Pallets', 'Plywood'],
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'yard',
@@ -79,6 +81,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     densityHint: 'Heavy',
     examples: ['Steel', 'Aluminum', 'Copper', 'Pipes', 'Fixtures'],
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'cardboard',
@@ -88,6 +91,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     densityHint: 'Very light',
     examples: ['Cardboard boxes', 'Packaging', 'Office paper', 'Magazines'],
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'plastic',
@@ -97,6 +101,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     densityHint: 'Very light',
     examples: ['Plastic bins', 'Packaging', 'PVC', 'Containers'],
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'drywall',
@@ -106,6 +111,7 @@ export const GENERAL_DEBRIS_CATEGORIES = [
     densityHint: 'Medium',
     examples: ['Sheetrock', 'Gypsum board', 'Drywall scraps'],
     recyclable: true,
+    greenHalo: true,
   },
   {
     id: 'mixed',
@@ -245,7 +251,13 @@ export function GeneralMaterialSelector({
                 )}
                 
                 <div className="mt-1.5 flex items-center gap-1 flex-wrap">
-                  {isRecyclable && (
+                  {'greenHalo' in category && category.greenHalo && (
+                    <span className="inline-flex items-center gap-0.5 text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                      <ShieldCheck className="w-2.5 h-2.5" />
+                      Green Halo™
+                    </span>
+                  )}
+                  {isRecyclable && !('greenHalo' in category && category.greenHalo) && (
                     <span className="inline-flex items-center gap-0.5 text-[9px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
                       <Recycle className="w-2.5 h-2.5" />
                       Recyclable
