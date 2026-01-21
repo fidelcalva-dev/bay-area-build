@@ -108,7 +108,10 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.quickLinks': 'Quick Links',
     'footer.services': 'Services',
     'footer.contact': 'Contact Us',
-    'footer.hours': 'Hours: Mon-Sat 7AM-6PM',
+    'footer.hours': 'Customer Service: Mon-Sun 6AM-9PM',
+    'footer.operations': 'Delivery: Mon-Fri by time window',
+    'footer.weekend': 'Weekend service by special request',
+    'footer.afterHours': 'After-hours messages answered next business window',
     'footer.rights': 'All rights reserved.',
     
     // Trust
@@ -233,7 +236,10 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.quickLinks': 'Enlaces Rápidos',
     'footer.services': 'Servicios',
     'footer.contact': 'Contáctenos',
-    'footer.hours': 'Horario: Lun-Sáb 7AM-6PM',
+    'footer.hours': 'Servicio al Cliente: Lun-Dom 6AM-9PM',
+    'footer.operations': 'Entregas: Lun-Vie por ventana de tiempo',
+    'footer.weekend': 'Servicio de fin de semana por solicitud especial',
+    'footer.afterHours': 'Mensajes fuera de horario respondidos en la próxima ventana',
     'footer.rights': 'Todos los derechos reservados.',
     
     // Trust

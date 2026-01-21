@@ -25,9 +25,33 @@ export const BUSINESS_INFO = {
     longitude: -122.2369,
   },
   hours: {
-    days: 'Monday - Saturday',
-    hours: '7:00 AM - 6:00 PM',
+    // Customer Service Hours
+    customerService: {
+      days: 'Monday - Sunday',
+      hours: '6:00 AM - 9:00 PM',
+      displayText: 'Customer Service: 6:00 AM – 9:00 PM, Monday through Sunday',
+      displayTextEs: 'Servicio al Cliente: 6:00 AM – 9:00 PM, Lunes a Domingo',
+    },
+    // Operations/Delivery Windows
+    operations: {
+      days: 'Monday - Friday',
+      weekendNote: 'Weekend service available by special request',
+      weekendNoteEs: 'Servicio de fin de semana disponible por solicitud especial',
+      timeWindows: [
+        { name: 'Morning', hours: '7:00 AM – 11:00 AM' },
+        { name: 'Midday', hours: '11:00 AM – 3:00 PM' },
+        { name: 'Afternoon', hours: '3:00 PM – 6:00 PM' },
+      ],
+    },
+    // After-hours messaging
+    afterHours: {
+      message: 'Messages and emails received after hours will be answered the next business window.',
+      messageEs: 'Los mensajes y correos electrónicos recibidos fuera de horario serán respondidos en la próxima ventana de atención.',
+    },
     timezone: 'America/Los_Angeles',
+    // Legacy fields for backwards compatibility
+    days: 'Monday - Sunday',
+    hours: '6:00 AM - 9:00 PM',
   },
   social: {
     facebook: 'https://facebook.com/calsandumpsterspro',
@@ -250,9 +274,9 @@ export function generateLocalBusinessSchema() {
     "paymentAccepted": "Cash, Credit Card, Check",
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      "opens": "07:00",
-      "closes": "18:00"
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "06:00",
+      "closes": "21:00"
     },
     "sameAs": Object.values(BUSINESS_INFO.social),
     "hasOfferCatalog": {

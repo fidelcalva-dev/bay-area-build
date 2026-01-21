@@ -182,6 +182,17 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
       try {
+        // Check if currently within business hours (6AM-9PM Pacific)
+        const now = new Date();
+        const pstOffset = -8; // PST offset (simplified; doesn't account for DST)
+        const utcHour = now.getUTCHours();
+        const pstHour = (utcHour + pstOffset + 24) % 24;
+        const isBusinessHours = pstHour >= 6 && pstHour < 21;
+        
+        const afterHoursNote = !isBusinessHours 
+          ? '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!' 
+          : '';
+
         const smsBody = isHeavy
           ? `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
             `📦 ${sizeLabel} (${materialLabel})\n` +
@@ -190,7 +201,8 @@ const handler = async (req: Request): Promise<Response> => {
             `✅ FLAT FEE – Disposal Included\n` +
             `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
             `Book now: app.trashlab.com\n` +
-            `Questions? Reply to this text or call (510) 680-2150`
+            `Questions? Reply to this text or call (510) 680-2150` +
+            afterHoursNote
           : `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
             `📦 ${sizeLabel} (${materialLabel})\n` +
             `📍 ZIP: ${zipCode}\n` +
@@ -198,7 +210,8 @@ const handler = async (req: Request): Promise<Response> => {
             `⚖️ ${includedTons}T included\n` +
             `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
             `Book now: app.trashlab.com\n` +
-            `Questions? Reply to this text or call (510) 680-2150`;
+            `Questions? Reply to this text or call (510) 680-2150` +
+            afterHoursNote;
 
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
