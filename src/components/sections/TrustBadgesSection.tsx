@@ -1,11 +1,22 @@
 import { motion } from 'framer-motion';
-import { Shield, Award, Star, ExternalLink, CheckCircle } from 'lucide-react';
+import { Shield, Award, Star, ExternalLink, CheckCircle, LucideIcon } from 'lucide-react';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { REVIEW_STATS, REVIEW_LINKS } from '@/data/reviews';
 import { COMPANY_FACTS, CERTIFICATION_LINKS } from '@/data/trustSignals';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
+import { IconCircle } from '@/components/shared/IconCircle';
 
-const trustBadges = [
+interface TrustBadge {
+  id: string;
+  icon: LucideIcon;
+  title: string;
+  subtitle: string;
+  description: string;
+  link: string;
+  featured: boolean;
+}
+
+const trustBadges: TrustBadge[] = [
   {
     id: 'google',
     icon: Shield,
@@ -49,7 +60,7 @@ export function TrustBadgesSection() {
         {/* Header - Minimal */}
         <AnimatedSection className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
-            <CheckCircle className="w-3.5 h-3.5" />
+            <CheckCircle className="w-3.5 h-3.5" strokeWidth={2} />
             Verified credentials
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
@@ -60,7 +71,7 @@ export function TrustBadgesSection() {
           </p>
         </AnimatedSection>
 
-        {/* Trust Badges - Compact grid */}
+        {/* Trust Badges - Compact grid with IconCircle */}
         <StaggeredContainer className="grid md:grid-cols-3 gap-4 lg:gap-6 mb-10">
           {trustBadges.map((badge) => (
             <AnimatedItem key={badge.id} variant="fadeUp">
@@ -83,19 +94,20 @@ export function TrustBadgesSection() {
                 )}
 
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  {/* Consistent IconCircle styling */}
+                  <div className={`flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0 border ${
                     badge.featured
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-primary'
-                  }`}>
-                    <badge.icon className="w-6 h-6" />
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-muted/80 text-primary border-border/50 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary'
+                  } transition-colors duration-200`}>
+                    <badge.icon className="w-6 h-6" strokeWidth={2} />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-foreground mb-0.5">{badge.title}</h3>
                     <p className="text-xs text-muted-foreground mb-2">{badge.subtitle}</p>
                     <p className="text-sm text-foreground/70 leading-relaxed">{badge.description}</p>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                  <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" strokeWidth={2} />
                 </div>
               </motion.a>
             </AnimatedItem>

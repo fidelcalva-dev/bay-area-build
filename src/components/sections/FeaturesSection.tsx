@@ -1,8 +1,15 @@
 import { motion } from 'framer-motion';
-import { Truck, DollarSign, MessageSquare, Shield, Zap, MapPin } from 'lucide-react';
+import { Truck, DollarSign, MessageSquare, Shield, Zap, MapPin, LucideIcon } from 'lucide-react';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
+import { IconCircle } from '@/components/shared/IconCircle';
 
-const features = [
+interface Feature {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const features: Feature[] = [
   {
     icon: Zap,
     title: 'Instant estimates',
@@ -53,7 +60,7 @@ export function FeaturesSection() {
           </p>
         </AnimatedSection>
 
-        {/* Features Grid - Clean cards */}
+        {/* Features Grid - Clean cards with IconCircle */}
         <StaggeredContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {features.map((feature) => (
             <AnimatedItem key={feature.title} variant="fadeUp">
@@ -67,9 +74,12 @@ export function FeaturesSection() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200">
-                    <feature.icon className="w-5 h-5 text-primary group-hover:text-primary-foreground transition-colors duration-200" />
-                  </div>
+                  <IconCircle 
+                    icon={feature.icon} 
+                    size="md" 
+                    variant="primary" 
+                    hoverEffect 
+                  />
                   <div>
                     <h3 className="font-bold text-foreground mb-1">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>

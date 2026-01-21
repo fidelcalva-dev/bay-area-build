@@ -1,10 +1,19 @@
 import { motion } from 'framer-motion';
-import { MapPin, Truck, Trash2, CheckCircle, ArrowRight } from 'lucide-react';
+import { MapPin, Truck, Trash2, CheckCircle, ArrowRight, LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
+import { IconCircle } from '@/components/shared/IconCircle';
 
-const steps = [
+interface Step {
+  icon: LucideIcon;
+  number: string;
+  title: string;
+  description: string;
+  status: string;
+}
+
+const steps: Step[] = [
   {
     icon: MapPin,
     number: '01',
@@ -74,9 +83,14 @@ export function HowItWorksSection() {
                       {step.number}
                     </div>
                     
-                    {/* Icon */}
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200">
-                      <step.icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors duration-200" />
+                    {/* Icon with IconCircle */}
+                    <div className="mb-4">
+                      <IconCircle 
+                        icon={step.icon} 
+                        size="lg" 
+                        variant="primary" 
+                        hoverEffect 
+                      />
                     </div>
                     
                     {/* Content */}
@@ -93,7 +107,7 @@ export function HowItWorksSection() {
                   {/* Arrow connector (mobile hidden) */}
                   {index < steps.length - 1 && (
                     <div className="absolute top-1/2 -right-4 z-20 hidden md:block">
-                      <ArrowRight className="w-6 h-6 text-muted-foreground/30" />
+                      <ArrowRight className="w-6 h-6 text-muted-foreground/30" strokeWidth={2} />
                     </div>
                   )}
                 </div>
@@ -107,7 +121,7 @@ export function HowItWorksSection() {
           <Button asChild variant="default" size="lg" className="group">
             <Link to="/#quote">
               Get instant estimate
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
             </Link>
           </Button>
         </AnimatedSection>

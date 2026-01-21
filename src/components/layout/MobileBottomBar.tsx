@@ -14,7 +14,7 @@ export function MobileBottomBar() {
           {/* Quote - Primary CTA */}
           <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer" className="block">
             <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[56px]">
-              <FileText className="w-5 h-5" />
+              <FileText className="w-5 h-5" strokeWidth={2} />
               <span className="text-xs font-bold">Quote</span>
             </Button>
           </a>
@@ -22,7 +22,7 @@ export function MobileBottomBar() {
           {/* Text */}
           <a href={`sms:${BUSINESS_INFO.phone.sales}`} className="block">
             <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-5 h-5" strokeWidth={2} />
               <span className="text-xs font-semibold">Text</span>
             </Button>
           </a>
@@ -30,7 +30,7 @@ export function MobileBottomBar() {
           {/* Call */}
           <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="block">
             <Button variant="mobileBar" className="w-full h-full rounded-none min-h-[56px] text-foreground hover:bg-muted">
-              <Phone className="w-5 h-5" />
+              <Phone className="w-5 h-5" strokeWidth={2} />
               <span className="text-xs font-semibold">Call</span>
             </Button>
           </a>

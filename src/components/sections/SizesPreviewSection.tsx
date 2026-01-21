@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { DumpsterSizeCard } from '@/components/shared/DumpsterSizeCard';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
+import { IconCircle } from '@/components/shared/IconCircle';
 
 // Show the most popular sizes for preview
 const PREVIEW_SIZES = DUMPSTER_SIZES_DATA.filter(s => 
@@ -18,7 +19,7 @@ export function SizesPreviewSection() {
         <AnimatedSection className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
-              <Truck className="w-3.5 h-3.5" />
+              <Truck className="w-3.5 h-3.5" strokeWidth={2} />
               Dumpster sizes
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
@@ -31,7 +32,7 @@ export function SizesPreviewSection() {
           <Button asChild variant="outline" size="default" className="group">
             <Link to="/sizes">
               View all sizes
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
             </Link>
           </Button>
         </AnimatedSection>
@@ -51,12 +52,14 @@ export function SizesPreviewSection() {
           ))}
         </StaggeredContainer>
 
-        {/* Heavy Materials Callout */}
+        {/* Heavy Materials Callout with IconCircle */}
         <AnimatedSection delay={0.3} className="mt-6 p-4 bg-card border border-border rounded-xl flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex items-center gap-3 flex-1">
-            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-              <Weight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            </div>
+            <IconCircle 
+              icon={Weight} 
+              size="md" 
+              variant="warning" 
+            />
             <div>
               <span className="font-semibold text-foreground">Heavy materials?</span>
               <span className="text-muted-foreground text-sm ml-2">
@@ -69,7 +72,7 @@ export function SizesPreviewSection() {
             className="text-primary text-sm font-medium hover:underline flex items-center gap-1"
           >
             View options
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
           </Link>
         </AnimatedSection>
       </div>
