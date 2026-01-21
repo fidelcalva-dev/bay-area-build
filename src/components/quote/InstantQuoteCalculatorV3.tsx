@@ -571,6 +571,12 @@ export function InstantQuoteCalculatorV3() {
         yardName: distanceCalc.distance?.yard.name,
         distanceMiles: distanceCalc.distance?.distanceMiles,
         distanceBracket: distanceCalc.distance?.bracket?.bracketName,
+        // Truck-aware routing data
+        truckDistanceMiles: distanceCalc.distance?.routingProvider === 'google_routes' ? distanceCalc.distance?.distanceMiles : undefined,
+        truckDurationMin: distanceCalc.distance?.durationTrafficMin,
+        truckDurationMax: distanceCalc.distance?.durationTrafficMax,
+        routePolyline: distanceCalc.distance?.polyline,
+        routingProvider: distanceCalc.distance?.routingProvider,
         // Pre-purchase extra tons
         prePurchaseSuggested: prePurchaseSuggested,
         suggestedExtraTons: getSuggestedExtraTons(smartRecommendation.confidence),
@@ -1013,6 +1019,10 @@ export function InstantQuoteCalculatorV3() {
                               yard={distanceCalc.distance.yard}
                               distanceMiles={distanceCalc.distance.distanceMiles}
                               distanceMinutes={distanceCalc.distance.distanceMinutes}
+                              durationTrafficMin={distanceCalc.distance.durationTrafficMin}
+                              durationTrafficMax={distanceCalc.distance.durationTrafficMax}
+                              polyline={distanceCalc.distance.polyline}
+                              routingProvider={distanceCalc.distance.routingProvider}
                               requiresReview={distanceCalc.distance.requiresReview}
                             />
                           </Suspense>

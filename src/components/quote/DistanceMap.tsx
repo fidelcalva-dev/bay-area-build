@@ -91,8 +91,47 @@ interface DistanceMapProps {
   yard: Yard;
   distanceMiles: number;
   distanceMinutes?: number;
+  durationTrafficMin?: number;
+  durationTrafficMax?: number;
+  polyline?: string; // Encoded polyline from truck routing
+  routingProvider?: 'google_routes' | 'haversine_fallback';
   requiresReview?: boolean;
   className?: string;
+}
+
+// Decode Google polyline to array of [lat, lng]
+function decodePolyline(encoded: string): [number, number][] {
+  const poly: [number, number][] = [];
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < encoded.length) {
+    let b;
+    let shift = 0;
+    let result = 0;
+    do {
+      b = encoded.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+    const dlat = result & 1 ? ~(result >> 1) : result >> 1;
+    lat += dlat;
+
+    shift = 0;
+    result = 0;
+    do {
+      b = encoded.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+    const dlng = result & 1 ? ~(result >> 1) : result >> 1;
+    lng += dlng;
+
+    poly.push([lat / 1e5, lng / 1e5]);
+  }
+
+  return poly;
 }
 
 export function DistanceMap({
@@ -101,6 +140,10 @@ export function DistanceMap({
   yard,
   distanceMiles,
   distanceMinutes,
+  durationTrafficMin,
+  durationTrafficMax,
+  polyline,
+  routingProvider,
   requiresReview = false,
   className,
 }: DistanceMapProps) {
@@ -111,14 +154,21 @@ export function DistanceMap({
     return L.latLngBounds(corner1, corner2);
   }, [yard.latitude, yard.longitude, customerLat, customerLng]);
 
-  // Line between yard and customer
-  const linePositions: [number, number][] = [
-    [yard.latitude, yard.longitude],
-    [customerLat, customerLng],
-  ];
+  // Decode polyline if available, otherwise use straight line
+  const routePositions: [number, number][] = useMemo(() => {
+    if (polyline && polyline.length > 0) {
+      return decodePolyline(polyline);
+    }
+    // Fallback to straight line
+    return [
+      [yard.latitude, yard.longitude],
+      [customerLat, customerLng],
+    ];
+  }, [polyline, yard.latitude, yard.longitude, customerLat, customerLng]);
 
+  const isActualRoute = polyline && polyline.length > 0;
+  
   // Determine status color
-  const statusColor = requiresReview ? 'orange' : 'green';
   const lineColor = requiresReview ? '#f97316' : '#22c55e';
 
   return (
@@ -145,15 +195,26 @@ export function DistanceMap({
             <span className="font-semibold text-foreground">
               {distanceMiles.toFixed(1)} miles
             </span>
-            {distanceMinutes && (
+            {durationTrafficMin && durationTrafficMax ? (
               <span className="text-sm text-muted-foreground">
-                (~{distanceMinutes} min drive)
+                ({durationTrafficMin}–{durationTrafficMax} min)
+              </span>
+            ) : distanceMinutes ? (
+              <span className="text-sm text-muted-foreground">
+                (~{distanceMinutes} min)
+              </span>
+            ) : null}
+          </div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">
+              from {yard.name}
+            </p>
+            {routingProvider === 'google_routes' && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                Truck route
               </span>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">
-            from {yard.name}
-          </p>
         </div>
       </div>
 
@@ -198,13 +259,13 @@ export function DistanceMap({
             </Popup>
           </Marker>
 
-          {/* Line connecting the two */}
+          {/* Route polyline (actual truck route or straight line fallback) */}
           <Polyline
-            positions={linePositions}
+            positions={routePositions}
             color={lineColor}
-            weight={3}
-            opacity={0.7}
-            dashArray="8, 8"
+            weight={isActualRoute ? 4 : 3}
+            opacity={isActualRoute ? 0.85 : 0.7}
+            dashArray={isActualRoute ? undefined : '8, 8'}
           />
         </MapContainer>
       </div>

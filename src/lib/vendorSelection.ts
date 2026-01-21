@@ -182,6 +182,12 @@ export async function saveQuote(params: {
   yardName?: string;
   distanceMiles?: number;
   distanceBracket?: string;
+  // Truck-aware routing fields
+  truckDistanceMiles?: number;
+  truckDurationMin?: number;
+  truckDurationMax?: number;
+  routePolyline?: string;
+  routingProvider?: string;
   // Pre-purchase extra tons fields
   prePurchaseSuggested?: boolean;
   suggestedExtraTons?: number;
@@ -247,6 +253,12 @@ export async function saveQuote(params: {
         yard_name: params.yardName,
         distance_miles: params.distanceMiles,
         distance_bracket: params.distanceBracket,
+        // Truck-aware routing
+        truck_distance_miles: params.truckDistanceMiles,
+        truck_duration_min: params.truckDurationMin,
+        truck_duration_max: params.truckDurationMax,
+        route_polyline: params.routePolyline,
+        routing_provider: params.routingProvider,
         // Pre-purchase extra tons
         pre_purchase_suggested: params.prePurchaseSuggested,
         suggested_extra_tons: params.suggestedExtraTons,

@@ -79,7 +79,7 @@ export function useDistanceCalculation(zip: string) {
           return;
         }
 
-        // Find nearest yard
+        // Find nearest yard (Haversine for initial selection)
         const nearestResult = findNearestYard(
           geocoding.lat,
           geocoding.lng,
@@ -97,19 +97,60 @@ export function useDistanceCalculation(zip: string) {
           return;
         }
 
-        const { yard, distance } = nearestResult;
-        const bracket = getDistanceBracket(distance, state.brackets);
+        const { yard, distance: haversineDistance } = nearestResult;
+        
+        // Try truck-aware routing via edge function
+        let truckRoute: {
+          distanceMiles: number;
+          durationMinutes: number;
+          durationTrafficMin: number;
+          durationTrafficMax: number;
+          polyline: string;
+          provider: 'google_routes' | 'haversine_fallback';
+        } | null = null;
 
-        // Estimate driving time
-        const estimatedMinutes = Math.round(distance * 2.5);
+        try {
+          const { supabase } = await import('@/integrations/supabase/client');
+          const response = await supabase.functions.invoke('truck-route', {
+            body: {
+              originLat: yard.latitude,
+              originLng: yard.longitude,
+              destinationLat: geocoding.lat,
+              destinationLng: geocoding.lng,
+              yardName: yard.name,
+            },
+          });
+
+          if (response.data?.success) {
+            truckRoute = {
+              distanceMiles: response.data.distanceMiles,
+              durationMinutes: response.data.durationMinutes,
+              durationTrafficMin: response.data.durationTrafficMin,
+              durationTrafficMax: response.data.durationTrafficMax,
+              polyline: response.data.polyline || '',
+              provider: response.data.provider,
+            };
+          }
+        } catch (routeError) {
+          console.error('Truck route API error, using Haversine fallback:', routeError);
+        }
+
+        // Use truck route data if available, otherwise Haversine fallback
+        const finalDistance = truckRoute?.distanceMiles ?? Math.round(haversineDistance * 100) / 100;
+        const finalMinutes = truckRoute?.durationMinutes ?? Math.round(haversineDistance * 2.5);
+        const bracket = getDistanceBracket(finalDistance, state.brackets);
 
         const distanceResult: DistanceResult = {
-          distanceMiles: Math.round(distance * 100) / 100,
-          distanceMinutes: estimatedMinutes,
+          distanceMiles: finalDistance,
+          distanceMinutes: finalMinutes,
+          durationTrafficMin: truckRoute?.durationTrafficMin ?? Math.round(finalMinutes * 0.85),
+          durationTrafficMax: truckRoute?.durationTrafficMax ?? Math.round(finalMinutes * 1.25),
+          polyline: truckRoute?.polyline,
+          routingProvider: truckRoute?.provider ?? 'haversine_fallback',
           yard,
           bracket,
           priceAdjustment: bracket?.priceAdjustment || 0,
-          requiresReview: bracket?.requiresReview || distance > 25,
+          requiresReview: bracket?.requiresReview || finalDistance > 25,
         };
 
         setState(prev => ({
