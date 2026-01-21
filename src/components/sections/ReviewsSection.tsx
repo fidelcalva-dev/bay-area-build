@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Star, ChevronLeft, ChevronRight, ExternalLink, Quote, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { VERIFIED_REVIEWS, REVIEW_STATS, REVIEW_LINKS, type CustomerReview } from '@/data/reviews';
+import { GoogleIcon, FacebookIcon } from '@/components/shared/BrandIcons';
 
 export function ReviewsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -139,21 +140,23 @@ interface ReviewCardProps {
 }
 
 function ReviewCard({ review }: ReviewCardProps) {
-  const sourceLabel = review.source === 'google' ? 'Google Review' : 'Facebook Review';
-  const sourceColor = review.source === 'google' ? 'bg-blue-500' : 'bg-blue-600';
+  const isGoogle = review.source === 'google';
+  const SourceIcon = isGoogle ? GoogleIcon : FacebookIcon;
+  const sourceLabel = isGoogle ? 'Google' : 'Facebook';
 
   return (
     <div className="relative bg-card rounded-2xl p-5 border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300">
       {/* Quote decoration */}
       <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" />
 
-      {/* Source Badge */}
+      {/* Source Badge with Brand Icon */}
       <div className="flex items-center gap-2 mb-3">
-        <span className={`text-xs font-medium text-white px-2 py-0.5 rounded-full ${sourceColor}`}>
-          {sourceLabel}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-card border border-border px-2.5 py-1 rounded-full shadow-sm">
+          <SourceIcon size={14} />
+          <span className="text-foreground">{sourceLabel}</span>
         </span>
         {review.verified && (
-          <span className="inline-flex items-center gap-1 text-xs text-primary font-medium">
+          <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-950/30 px-2 py-0.5 rounded-full">
             <CheckCircle className="w-3 h-3" />
             Verified
           </span>
