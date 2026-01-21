@@ -553,6 +553,111 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory: {
+        Row: {
+          available_count: number
+          created_at: string
+          id: string
+          in_use_count: number
+          low_stock_threshold: number
+          maintenance_count: number
+          reserved_count: number
+          size_id: string
+          total_count: number
+          updated_at: string
+          yard_id: string
+        }
+        Insert: {
+          available_count?: number
+          created_at?: string
+          id?: string
+          in_use_count?: number
+          low_stock_threshold?: number
+          maintenance_count?: number
+          reserved_count?: number
+          size_id: string
+          total_count?: number
+          updated_at?: string
+          yard_id: string
+        }
+        Update: {
+          available_count?: number
+          created_at?: string
+          id?: string
+          in_use_count?: number
+          low_stock_threshold?: number
+          maintenance_count?: number
+          reserved_count?: number
+          size_id?: string
+          total_count?: number
+          updated_at?: string
+          yard_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "dumpster_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          inventory_id: string
+          movement_type: string
+          notes: string | null
+          order_id: string | null
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_id: string
+          movement_type: string
+          notes?: string | null
+          order_id?: string | null
+          quantity?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inventory_id?: string
+          movement_type?: string
+          notes?: string | null
+          order_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -661,6 +766,7 @@ export type Database = {
           final_total: number | null
           id: string
           internal_notes: string | null
+          inventory_id: string | null
           invoice_url: string | null
           payment_status: string | null
           pickup_completed_at: string | null
@@ -694,6 +800,7 @@ export type Database = {
           final_total?: number | null
           id?: string
           internal_notes?: string | null
+          inventory_id?: string | null
           invoice_url?: string | null
           payment_status?: string | null
           pickup_completed_at?: string | null
@@ -727,6 +834,7 @@ export type Database = {
           final_total?: number | null
           id?: string
           internal_notes?: string | null
+          inventory_id?: string | null
           invoice_url?: string | null
           payment_status?: string | null
           pickup_completed_at?: string | null
@@ -758,6 +866,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "inventory"
             referencedColumns: ["id"]
           },
           {
@@ -870,6 +985,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      quote_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          quote_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          quote_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          quote_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_events_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quotes: {
         Row: {

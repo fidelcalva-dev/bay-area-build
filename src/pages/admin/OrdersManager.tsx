@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { 
   Package, Truck, Calendar, MapPin, DollarSign, 
-  Loader2, Search, Filter, Eye, ChevronDown 
+  Loader2, Search, Filter, Eye, ChevronDown, Plus, RefreshCw
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { logStatusChange } from '@/lib/auditLog';
+import { OrderDetailDialog } from './OrderDetailDialog';
 import {
   Select,
   SelectContent,
@@ -76,6 +78,8 @@ export default function OrdersManager() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -307,7 +311,7 @@ export default function OrdersManager() {
                   {order.final_total ? `$${order.final_total.toFixed(2)}` : '-'}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedOrderId(order.id); setDetailOpen(true); }}>
                     <Eye className="w-4 h-4" />
                   </Button>
                 </TableCell>
@@ -323,6 +327,13 @@ export default function OrdersManager() {
           </TableBody>
         </Table>
       </div>
+
+      <OrderDetailDialog 
+        orderId={selectedOrderId}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onUpdate={fetchOrders}
+      />
     </div>
   );
 }

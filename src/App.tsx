@@ -61,6 +61,8 @@ const CityRatesManager = lazy(() => import("./pages/admin/CityRatesManager"));
 const DriversManager = lazy(() => import("./pages/admin/DriversManager"));
 const DispatchCalendar = lazy(() => import("./pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
+const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
+const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 
 // Driver App
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
@@ -228,6 +230,12 @@ const App = () => (
                 } />
                 <Route path="tickets" element={
                   <Suspense fallback={<PageLoader />}><TicketsManager /></Suspense>
+                } />
+                <Route path="inventory" element={
+                  <Suspense fallback={<PageLoader />}><InventoryManager /></Suspense>
+                } />
+                <Route path="users" element={
+                  <Suspense fallback={<PageLoader />}><UsersManager /></Suspense>
                 } />
               </Route>
 
