@@ -195,6 +195,14 @@ export async function saveQuote(params: {
   isTrashContaminated?: boolean;
   reclassifiedToMixed?: boolean;
   originalMaterialType?: string;
+  // Volume commitment discount fields
+  volumeCommitmentCount?: number;
+  volumeDiscountPct?: number;
+  discountCapApplied?: boolean;
+  volumeAgreementId?: string;
+  volumeValidityStart?: Date;
+  volumeValidityEnd?: Date;
+  requiresDiscountApproval?: boolean;
 }): Promise<{ success: boolean; quoteId?: string; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -246,6 +254,14 @@ export async function saveQuote(params: {
         is_trash_contaminated: params.isTrashContaminated,
         reclassified_to_mixed: params.reclassifiedToMixed,
         original_material_type: params.originalMaterialType,
+        // Volume commitment discount fields
+        volume_commitment_count: params.volumeCommitmentCount || 0,
+        volume_discount_pct: params.volumeDiscountPct || 0,
+        discount_cap_applied: params.discountCapApplied || false,
+        volume_agreement_id: params.volumeAgreementId,
+        volume_validity_start: params.volumeValidityStart?.toISOString(),
+        volume_validity_end: params.volumeValidityEnd?.toISOString(),
+        requires_discount_approval: params.requiresDiscountApproval || false,
       })
       .select('id')
       .single();

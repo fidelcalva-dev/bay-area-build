@@ -12,19 +12,19 @@ const contractorTrustBadges = [
 ];
 
 const contractorBenefits = [
-  { icon: Percent, text: '10% off every rental — automatic' },
+  { icon: Percent, text: 'Volume discounts with commitment (up to 10%)' },
   { icon: Calendar, text: 'Priority scheduling & same-day available' },
   { icon: Truck, text: 'Reliable on-time delivery & pickup' },
   { icon: Users, text: 'Dedicated account support' },
   { icon: Briefcase, text: 'Net-30 terms available' },
-  { icon: CheckCircle, text: 'Volume discounts for recurring jobs' },
+  { icon: CheckCircle, text: 'Custom programs for recurring jobs' },
 ];
 
 const testimonials = [
   {
     name: 'Mike R.',
     company: 'MR Construction',
-    quote: 'CALSAN is our go-to. On time, every time. The 10% discount adds up fast.',
+    quote: 'CALSAN is our go-to. On time, every time. The volume program saves us thousands.',
   },
   {
     name: 'Sarah L.',
@@ -36,8 +36,8 @@ const testimonials = [
 export default function ContractorQuote() {
   return (
     <Layout
-      title="Contractor Dumpster Rentals | 10% Off | CALSAN"
-      description="Exclusive contractor pricing on roll-off dumpster rentals. 10% automatic discount, priority scheduling, Net-30 terms. Serving Bay Area contractors."
+      title="Contractor Dumpster Rentals | Volume Programs | CALSAN"
+      description="Exclusive contractor programs on roll-off dumpster rentals. Volume discounts up to 10%, priority scheduling, Net-30 terms. Serving Bay Area contractors."
     >
       <section className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-orange-500/5 via-background to-muted">
         <div className="container-wide py-8 lg:py-12">
@@ -60,7 +60,7 @@ export default function ContractorQuote() {
               {/* Headline */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">
                 Built for Contractors.
-                <span className="block text-primary mt-1">10% Off Every Rental.</span>
+                <span className="block text-primary mt-1">Volume Programs Available.</span>
               </h1>
 
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
@@ -116,11 +116,11 @@ export default function ContractorQuote() {
 
             {/* Right - Calculator with pre-selected contractor */}
             <div className="lg:pt-0">
-              {/* Pre-selection notice */}
+              {/* Volume program notice */}
               <div className="bg-accent/10 border border-accent/30 rounded-xl p-3 mb-4 flex items-center gap-3">
                 <Percent className="w-5 h-5 text-accent-foreground shrink-0" />
                 <p className="text-sm text-foreground">
-                  <span className="font-semibold">10% contractor discount</span> automatically applied
+                  <span className="font-semibold">Contractor programs available</span> with volume commitment
                 </p>
               </div>
 
