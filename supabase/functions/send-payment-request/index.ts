@@ -88,12 +88,13 @@ Deno.serve(async (req) => {
     // Build payment link - this will be a page that auto-submits to the hosted form
     const paymentLink = `${origin}/portal/pay/${paymentId}?token=${encodeURIComponent(token)}`;
 
-    // Format message
+    // Format message with standardized legal copy
     const formattedAmount = amount.toFixed(2);
     const greeting = customerName ? `Hi ${customerName.split(" ")[0]}` : "Hi";
     const noteText = note ? `\n\n${note}` : "";
+    const paymentDisclaimer = "Payment is required before or at the time of service unless approved.";
     
-    const smsMessage = `${greeting}, your Calsan ${paymentType} payment of $${formattedAmount} is ready. Pay securely here: ${paymentLink}${noteText}`;
+    const smsMessage = `${greeting}, your Calsan ${paymentType} payment of $${formattedAmount} is ready. Pay securely here: ${paymentLink}${noteText}\n\n${paymentDisclaimer}`;
 
     // Send SMS if enabled
     let smsSent = false;
@@ -173,12 +174,17 @@ Deno.serve(async (req) => {
                       Pay $${formattedAmount} Now
                     </a>
                   </div>
+                  <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 16px 0; font-size: 14px;">
+                    <strong>Payment Terms:</strong> Payment is required before or at the time of service unless approved.
+                    Post-service charges, including overages and reclassification, are billed after disposal based on scale tickets.
+                  </div>
                   <p style="color: #6b7280; font-size: 14px;">
                     This is a secure payment link. Your card information is protected by Authorize.Net.
                   </p>
                   <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
                   <p style="color: #9ca3af; font-size: 12px;">
-                    Calsan Dumpsters | Bay Area's Trusted Dumpster Service
+                    Calsan Dumpsters | Bay Area's Trusted Dumpster Service<br>
+                    Photos, scale tickets, and receipts available through the customer portal constitute final documentation.
                   </p>
                 </div>
               `,
