@@ -6,11 +6,22 @@ import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLef
 import { Link } from 'react-router-dom';
 import { PAGE_SEO } from '@/lib/seo';
 
+// Import real work photos
+import realWork1 from '@/assets/real-work/real-work-1.jpeg';
+import realWork2 from '@/assets/real-work/real-work-2.jpeg';
+import realWork3 from '@/assets/real-work/real-work-3.jpeg';
+import realWork4 from '@/assets/real-work/real-work-4.jpeg';
+import realWork5 from '@/assets/real-work/real-work-5.jpeg';
+import realWork6 from '@/assets/real-work/real-work-6.jpeg';
+import fleetYard from '@/assets/real-work/fleet-yard.jpg';
+import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
+import workerAction from '@/assets/real-work/worker-action.jpg';
+
 const values = [
   {
     icon: Truck,
     title: 'Reliability First',
-    description: 'We show up when we say we will. On-time delivery and pickup, every time.',
+    description: 'We show up when we say we will. Reliable delivery and pickup, every time.',
   },
   {
     icon: Leaf,
@@ -37,21 +48,20 @@ const stats = [
 ];
 
 const fleetGallery = [
-  { id: 1, caption: 'Truck Fleet', category: 'trucks' },
-  { id: 2, caption: 'Roll-Off Dumpsters', category: 'dumpsters' },
-  { id: 3, caption: 'Yard Operations', category: 'yard' },
-  { id: 4, caption: 'Loading Bay', category: 'yard' },
-  { id: 5, caption: 'Delivery Truck', category: 'trucks' },
-  { id: 6, caption: '20-Yard Containers', category: 'dumpsters' },
-  { id: 7, caption: 'Dispatch Center', category: 'yard' },
-  { id: 8, caption: 'Heavy-Duty Equipment', category: 'trucks' },
-  { id: 9, caption: 'Clean Dumpster Lineup', category: 'dumpsters' },
+  { id: 1, caption: 'Fleet Yard', image: fleetYard },
+  { id: 2, caption: 'Truck Delivery', image: truckDelivery },
+  { id: 3, caption: 'Worker Action', image: workerAction },
+  { id: 4, caption: 'Job Site', image: realWork1 },
+  { id: 5, caption: 'Heavy Materials', image: realWork2 },
+  { id: 6, caption: 'Branded Fleet', image: realWork3 },
+  { id: 7, caption: 'Live Delivery', image: realWork4 },
+  { id: 8, caption: 'Pickup Complete', image: realWork5 },
+  { id: 9, caption: 'Team at Work', image: realWork6 },
 ];
 
 export default function About() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [videoOpen, setVideoOpen] = useState(false);
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -128,106 +138,47 @@ export default function About() {
             </p>
           </div>
 
-          {/* Video + Grid Layout */}
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
-            {/* Yard Tour Video */}
-            <div 
-              className="lg:col-span-1 aspect-video lg:aspect-auto lg:row-span-2 bg-muted/20 rounded-2xl overflow-hidden cursor-pointer group border border-background/10 relative"
-              onClick={() => setVideoOpen(true)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center">
-                <div className="text-center p-4">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <Play className="w-7 h-7 md:w-8 md:h-8 text-primary-foreground ml-1" fill="currentColor" />
-                  </div>
-                  <p className="text-background font-semibold text-sm md:text-base">
-                    Yard Tour Video
-                  </p>
-                  <p className="text-background/60 text-xs mt-1">
-                    See our operations
-                  </p>
+          {/* Photo Gallery Grid */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+            {fleetGallery.map((image, index) => (
+              <div
+                key={image.id}
+                className="aspect-square rounded-xl overflow-hidden cursor-pointer group border border-background/10 hover:border-primary/50 transition-all duration-300 relative"
+                onClick={() => openLightbox(index)}
+              >
+                <img 
+                  src={image.image} 
+                  alt={image.caption}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                
+                {/* Caption overlay */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                  <span className="text-[10px] md:text-xs text-background/90 font-medium">
+                    {image.caption}
+                  </span>
                 </div>
-              </div>
-              <div className="absolute bottom-3 left-3 right-3">
-                <div className="bg-background/10 backdrop-blur-sm rounded-lg px-3 py-1.5 text-center">
-                  <span className="text-[10px] text-background/70">
-                    📹 Replace with yard tour video
+
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300 flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-background font-medium text-sm">
+                    View
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Photo Gallery Grid */}
-            <div className="lg:col-span-2 grid grid-cols-3 gap-3 md:gap-4">
-              {fleetGallery.map((image, index) => (
-                <div
-                  key={image.id}
-                  className="aspect-square bg-muted/20 rounded-xl overflow-hidden cursor-pointer group border border-background/10 hover:border-primary/50 transition-all duration-300 relative"
-                  onClick={() => openLightbox(index)}
-                >
-                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center">
-                    <div className="text-center p-2">
-                      <div className="w-8 h-8 bg-background/20 rounded-full flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                        <span className="text-xs">📷</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Caption overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                    <span className="text-[10px] md:text-xs text-background/90 font-medium">
-                      {image.caption}
-                    </span>
-                  </div>
-
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300 flex items-center justify-center">
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity text-background font-medium text-sm">
-                      View
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
-
-          <p className="text-center text-background/50 text-sm">
-            ⚠️ Replace placeholders with real yard and fleet photos
-          </p>
         </div>
-
-        {/* Video Modal */}
-        <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
-          <DialogContent className="max-w-4xl p-0 bg-black border-none">
-            <div className="aspect-video bg-foreground flex items-center justify-center">
-              <div className="text-center text-background p-8">
-                <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p className="text-xl font-bold mb-2">Yard Tour Video</p>
-                <p className="text-base opacity-80 mb-1">Calsan Dumpsters Pro</p>
-                <p className="text-sm opacity-50">
-                  Replace with YouTube/Vimeo embed
-                </p>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
 
         {/* Lightbox Modal */}
         <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
           <DialogContent className="max-w-5xl p-0 bg-black/95 border-none">
             <div className="relative aspect-video flex items-center justify-center">
-              {/* Image placeholder */}
-              <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-6xl mb-4">📷</div>
-                  <p className="text-lg font-medium mb-2">
-                    {fleetGallery[currentImageIndex]?.caption}
-                  </p>
-                  <p className="text-sm opacity-70">
-                    Image placeholder - replace with real photo
-                  </p>
-                </div>
-              </div>
+              <img 
+                src={fleetGallery[currentImageIndex]?.image} 
+                alt={fleetGallery[currentImageIndex]?.caption}
+                className="max-w-full max-h-full object-contain"
+              />
 
               {/* Navigation */}
               <Button

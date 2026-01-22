@@ -30,6 +30,8 @@ const ContractorQuote = lazy(() => import("./pages/ContractorQuote"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
 const Locations = lazy(() => import("./pages/Locations"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
@@ -198,6 +200,12 @@ const App = () => (
               } />
               <Route path="/locations" element={
                 <Suspense fallback={<PageLoader />}><Locations /></Suspense>
+              } />
+              <Route path="/terms" element={
+                <Suspense fallback={<PageLoader />}><Terms /></Suspense>
+              } />
+              <Route path="/privacy" element={
+                <Suspense fallback={<PageLoader />}><Privacy /></Suspense>
               } />
               
               {/* Customer Portal (SMS OTP Auth) */}

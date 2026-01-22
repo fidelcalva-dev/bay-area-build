@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { useToast } from "@/hooks/use-toast";
+import { BUSINESS_INFO } from "@/lib/seo";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 type Step = "phone" | "otp";
@@ -117,11 +118,11 @@ const CustomerLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -161,9 +162,9 @@ const CustomerLogin = () => {
                       placeholder="(555) 123-4567"
                       value={phone}
                       onChange={handlePhoneChange}
-                      className="pl-10 border-gray-200 focus:border-amber-500 focus:ring-amber-500"
-                      autoComplete="tel"
-                    />
+                    className="pl-10 border-border focus:border-primary focus:ring-primary"
+                    autoComplete="tel"
+                  />
                   </div>
                 </div>
 
@@ -174,7 +175,7 @@ const CustomerLogin = () => {
                 <Button 
                   type="submit" 
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/30"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg shadow-primary/30"
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -215,7 +216,7 @@ const CustomerLogin = () => {
                 <Button 
                   type="submit" 
                   disabled={isLoading || otp.length !== 6}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/30"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg shadow-primary/30"
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -243,7 +244,7 @@ const CustomerLogin = () => {
                     type="button"
                     onClick={handleResendCode}
                     disabled={isLoading}
-                    className="text-amber-600 hover:text-amber-700 font-medium"
+                    className="text-primary hover:text-primary/80 font-medium"
                   >
                     Resend code
                   </button>
@@ -251,11 +252,11 @@ const CustomerLogin = () => {
               </form>
             )}
 
-            <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-500">
+            <div className="mt-6 pt-6 border-t border-border text-center">
+              <p className="text-sm text-muted-foreground">
                 Need help?{" "}
-                <a href="tel:+15101234567" className="text-amber-600 hover:text-amber-700 font-medium">
-                  Call (510) 123-4567
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary hover:text-primary/80 font-medium">
+                  Call {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </p>
             </div>

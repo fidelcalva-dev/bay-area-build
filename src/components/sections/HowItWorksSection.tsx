@@ -41,7 +41,7 @@ const steps: Step[] = [
     number: '04',
     title: 'We handle pickup',
     description: 'Text when done',
-    status: 'On-time guarantee',
+    status: 'Reliable service',
   },
 ];
 

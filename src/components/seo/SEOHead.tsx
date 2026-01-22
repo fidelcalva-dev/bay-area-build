@@ -8,6 +8,7 @@ interface SEOHeadProps {
   type?: string;
   noindex?: boolean;
   schema?: object | object[];
+  ogImage?: string;
 }
 
 const DEFAULT_TITLE = `${BUSINESS_INFO.name} | Dumpster Rental SF Bay Area | Same-Day Delivery`;
@@ -19,10 +20,12 @@ export function SEOHead({
   canonical,
   type = 'website',
   noindex = false,
-  schema
+  schema,
+  ogImage = '/og-image.jpg'
 }: SEOHeadProps) {
   const fullTitle = title ? `${title} | ${BUSINESS_INFO.name}` : DEFAULT_TITLE;
   const canonicalUrl = canonical ? `${BUSINESS_INFO.url}${canonical}` : undefined;
+  const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
   // Always include LocalBusiness schema
   const localBusinessSchema = generateLocalBusinessSchema();
@@ -50,14 +53,14 @@ export function SEOHead({
       <meta property="og:description" content={description} />
       <meta property="og:site_name" content={BUSINESS_INFO.name} />
       {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-      <meta property="og:image" content={`${BUSINESS_INFO.url}/og-image.jpg`} />
+      <meta property="og:image" content={ogImageUrl} />
       <meta property="og:locale" content="en_US" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${BUSINESS_INFO.url}/og-image.jpg`} />
+      <meta name="twitter:image" content={ogImageUrl} />
       
       {/* Geo Tags */}
       <meta name="geo.region" content="US-CA" />

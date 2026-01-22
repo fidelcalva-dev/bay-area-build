@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { BUSINESS_INFO } from "@/lib/seo";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 interface Order {
@@ -112,8 +113,8 @@ const CustomerDashboard = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -142,11 +143,11 @@ const CustomerDashboard = () => {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-6 text-primary-foreground">
           <h1 className="text-2xl font-bold mb-1">
             Welcome{session?.customer?.company_name ? `, ${session.customer.company_name}` : ""}!
           </h1>
-          <p className="text-amber-100">
+          <p className="text-primary-foreground/80">
             {activeOrders.length > 0 
               ? `You have ${activeOrders.length} active order${activeOrders.length > 1 ? "s" : ""}`
               : "No active orders right now"
@@ -157,26 +158,26 @@ const CustomerDashboard = () => {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
-            <a href="tel:+15101234567">
-              <Phone className="w-5 h-5 text-amber-600" />
+            <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+              <Phone className="w-5 h-5 text-primary" />
               <span className="text-sm">Call Support</span>
             </a>
           </Button>
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
             <Link to="/quote">
-              <Package className="w-5 h-5 text-amber-600" />
+              <Package className="w-5 h-5 text-primary" />
               <span className="text-sm">New Order</span>
             </Link>
           </Button>
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
             <Link to="/portal/orders">
-              <ClipboardList className="w-5 h-5 text-amber-600" />
+              <ClipboardList className="w-5 h-5 text-primary" />
               <span className="text-sm">All Orders</span>
             </Link>
           </Button>
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
             <Link to="/portal/documents">
-              <Image className="w-5 h-5 text-amber-600" />
+              <Image className="w-5 h-5 text-primary" />
               <span className="text-sm">Documents</span>
             </Link>
           </Button>
