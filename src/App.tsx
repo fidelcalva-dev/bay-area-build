@@ -111,6 +111,9 @@ const FinanceInvoiceDetail = lazy(() => import("./pages/finance/FinanceInvoiceDe
 const FinancePayments = lazy(() => import("./pages/finance/FinancePayments"));
 const FinancePaymentDetail = lazy(() => import("./pages/finance/FinancePaymentDetail"));
 const FinancePaymentActions = lazy(() => import("./pages/finance/FinancePaymentActions"));
+const ARAgingDashboard = lazy(() => import("./pages/finance/ARAgingDashboard"));
+const ARAgingInvoices = lazy(() => import("./pages/finance/ARAgingInvoices"));
+const ARAgingCustomers = lazy(() => import("./pages/finance/ARAgingCustomers"));
 
 // Payment redirect page
 const PaymentRedirect = lazy(() => import("./pages/portal/PaymentRedirect"));
@@ -374,6 +377,15 @@ const App = () => (
                 } />
                 <Route path="payment-actions" element={
                   <Suspense fallback={<PageLoader />}><FinancePaymentActions /></Suspense>
+                } />
+                <Route path="ar-aging" element={
+                  <Suspense fallback={<PageLoader />}><ARAgingDashboard /></Suspense>
+                } />
+                <Route path="ar-aging/invoices" element={
+                  <Suspense fallback={<PageLoader />}><ARAgingInvoices /></Suspense>
+                } />
+                <Route path="ar-aging/customers" element={
+                  <Suspense fallback={<PageLoader />}><ARAgingCustomers /></Suspense>
                 } />
               </Route>
 
