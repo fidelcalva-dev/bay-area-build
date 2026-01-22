@@ -102,6 +102,8 @@ const FinanceDashboard = lazy(() => import("./pages/finance/FinanceDashboard"));
 const FinanceInvoices = lazy(() => import("./pages/finance/FinanceInvoices"));
 const FinanceInvoiceDetail = lazy(() => import("./pages/finance/FinanceInvoiceDetail"));
 const FinancePayments = lazy(() => import("./pages/finance/FinancePayments"));
+const FinancePaymentDetail = lazy(() => import("./pages/finance/FinancePaymentDetail"));
+const FinancePaymentActions = lazy(() => import("./pages/finance/FinancePaymentActions"));
 
 // Payment redirect page
 const PaymentRedirect = lazy(() => import("./pages/portal/PaymentRedirect"));
@@ -341,6 +343,12 @@ const App = () => (
                 } />
                 <Route path="payments" element={
                   <Suspense fallback={<PageLoader />}><FinancePayments /></Suspense>
+                } />
+                <Route path="payments/:paymentId" element={
+                  <Suspense fallback={<PageLoader />}><FinancePaymentDetail /></Suspense>
+                } />
+                <Route path="payment-actions" element={
+                  <Suspense fallback={<PageLoader />}><FinancePaymentActions /></Suspense>
                 } />
               </Route>
 

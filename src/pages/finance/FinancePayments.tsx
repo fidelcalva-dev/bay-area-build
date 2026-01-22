@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   CreditCard, Search, Filter, Loader2, RefreshCw,
   CheckCircle2, XCircle, Clock, ChevronLeft, ChevronRight
@@ -33,6 +34,7 @@ interface Payment {
 }
 
 export default function FinancePayments() {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -195,7 +197,11 @@ export default function FinancePayments() {
                   </thead>
                   <tbody>
                     {filteredPayments.map((payment) => (
-                      <tr key={payment.id} className="border-b last:border-b-0 hover:bg-muted/50">
+                      <tr 
+                        key={payment.id} 
+                        className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer"
+                        onClick={() => navigate(`/finance/payments/${payment.id}`)}
+                      >
                         <td className="py-3 px-2 text-sm">
                           {new Date(payment.created_at).toLocaleDateString()}
                           <br />
