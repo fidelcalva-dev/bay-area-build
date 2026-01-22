@@ -3519,6 +3519,11 @@ export type Database = {
         | "driver"
         | "sales"
         | "owner_operator"
+        | "system_admin"
+        | "ops_admin"
+        | "finance_admin"
+        | "sales_admin"
+        | "read_only_admin"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
@@ -3684,6 +3689,11 @@ export const Constants = {
         "driver",
         "sales",
         "owner_operator",
+        "system_admin",
+        "ops_admin",
+        "finance_admin",
+        "sales_admin",
+        "read_only_admin",
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
