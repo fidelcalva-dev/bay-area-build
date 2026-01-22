@@ -90,65 +90,101 @@ const CustomerOrderDetail = () => {
     }
   }, [authLoading, isAuthenticated, navigate]);
 
-  useEffect(() => {
-    async function fetchOrder() {
-      if (!orderId || !session?.phone) return;
+  // Fetch order data
+  const fetchOrder = async () => {
+    if (!orderId || !session?.phone) return;
 
-      try {
-        const { data, error } = await supabase
-          .from("orders")
-          .select(`
-            *,
-            quotes (
-              id,
-              zip_code,
-              material_type,
-              delivery_address,
-              placement_type,
-              placement_notes,
-              size_id,
-              yard_name,
-              distance_miles,
-              subtotal,
-              estimated_min,
-              estimated_max,
-              rental_days,
-              extras,
-              customer_phone,
-              customer_email
-            )
-          `)
-          .eq("id", orderId)
-          .single();
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          *,
+          quotes (
+            id,
+            zip_code,
+            material_type,
+            delivery_address,
+            placement_type,
+            placement_notes,
+            size_id,
+            yard_name,
+            distance_miles,
+            subtotal,
+            estimated_min,
+            estimated_max,
+            rental_days,
+            extras,
+            customer_phone,
+            customer_email
+          )
+        `)
+        .eq("id", orderId)
+        .single();
 
-        if (error) {
-          console.error("Error fetching order:", error);
-          toast({
-            title: "Error",
-            description: "Could not load order details",
-            variant: "destructive",
-          });
-        } else {
-          // Verify phone ownership
-          const phoneDigits = session.phone.replace(/\D/g, "");
-          const quotePhone = (data.quotes as any)?.customer_phone?.replace(/\D/g, "") || "";
-          if (!quotePhone.includes(phoneDigits) && !phoneDigits.includes(quotePhone.slice(-10))) {
-            navigate("/portal/dashboard");
-            return;
-          }
-          setOrder(data as OrderDetails);
+      if (error) {
+        console.error("Error fetching order:", error);
+        toast({
+          title: "Error",
+          description: "Could not load order details",
+          variant: "destructive",
+        });
+      } else {
+        // Verify phone ownership
+        const phoneDigits = session.phone.replace(/\D/g, "");
+        const quotePhone = (data.quotes as any)?.customer_phone?.replace(/\D/g, "") || "";
+        if (!quotePhone.includes(phoneDigits) && !phoneDigits.includes(quotePhone.slice(-10))) {
+          navigate("/portal/dashboard");
+          return;
         }
-      } catch (err) {
-        console.error("Failed to fetch order:", err);
-      } finally {
-        setIsLoading(false);
+        setOrder(data as OrderDetails);
       }
+    } catch (err) {
+      console.error("Failed to fetch order:", err);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
+  useEffect(() => {
     if (session) {
       fetchOrder();
     }
   }, [orderId, session, navigate, toast]);
+
+  // Subscribe to realtime updates for instant payment status changes
+  useEffect(() => {
+    if (!orderId) return;
+
+    const channel = supabase
+      .channel(`order-${orderId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `id=eq.${orderId}`,
+        },
+        (payload) => {
+          console.log('Order updated via realtime:', payload);
+          // Update the order state with new payment info
+          setOrder((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              payment_status: payload.new.payment_status,
+              amount_paid: payload.new.amount_paid,
+              balance_due: payload.new.balance_due,
+            };
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orderId]);
 
   const handlePickupRequest = async () => {
     if (!order) return;
@@ -433,8 +469,9 @@ const CustomerOrderDetail = () => {
           customerEmail={order.quotes?.customer_email || undefined}
           customerPhone={order.quotes?.customer_phone || undefined}
           onSuccess={() => {
-            // Refresh order data
-            window.location.reload();
+            // Realtime will handle the update automatically
+            // Just refresh the order data to be sure
+            fetchOrder();
           }}
         />
 
