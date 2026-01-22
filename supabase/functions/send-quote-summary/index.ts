@@ -21,7 +21,106 @@ interface QuoteSummaryRequest {
   estimatedMax: number;
   includedTons: number;
   extras: string[];
+  language?: 'en' | 'es';
 }
+
+// Bilingual templates
+const templates = {
+  en: {
+    emailSubject: (size: string) => `Your Dumpster Quote - ${size}`,
+    emailGreeting: (name: string) => `Hi ${name},`,
+    emailThanks: "Thanks for requesting a quote! Here's your personalized estimate:",
+    estimatedTotal: "Estimated Total",
+    dumpsterSize: "Dumpster Size",
+    materialType: "Material Type",
+    rentalPeriod: "Rental Period",
+    deliveryZip: "Delivery ZIP",
+    pricing: "Pricing",
+    flatFee: "Flat Fee – Disposal Included",
+    includedWeight: "Included Weight",
+    extras: "Extras",
+    none: "None",
+    bookNow: "Book Now →",
+    note: "Note:",
+    validDays: "This quote is valid for 7 days.",
+    questions: "Questions? Call us at",
+    orText: "or text us anytime.",
+    days: "days",
+    ton: "ton",
+    tons: "tons",
+    heavyMaterials: "Heavy Materials (Flat Fee)",
+    generalDebris: "General Debris",
+    overageHeavy: "Heavy material dumpsters are FLAT FEE—disposal included with no extra weight charges.",
+    overageYard: (rate: number) => `Overage charged at $${rate} per additional yard.`,
+    overageTon: (rate: number) => `Overage charged at $${rate}/ton after disposal scale ticket.`,
+    smsHeavy: (name: string, size: string, zip: string, days: number, min: number, max: number) =>
+      `Hi ${name}! Your Calsan Dumpsters quote:\n\n` +
+      `📦 ${size} (Heavy Materials)\n` +
+      `📍 ZIP: ${zip}\n` +
+      `📅 ${days}-day rental\n` +
+      `✅ FLAT FEE – Disposal Included\n` +
+      `💰 $${min}–$${max}\n\n` +
+      `Book now: app.trashlab.com\n` +
+      `Questions? Reply to this text or call (510) 680-2150`,
+    smsGeneral: (name: string, size: string, zip: string, days: number, tons: number, min: number, max: number) =>
+      `Hi ${name}! Your Calsan Dumpsters quote:\n\n` +
+      `📦 ${size} (General Debris)\n` +
+      `📍 ZIP: ${zip}\n` +
+      `📅 ${days}-day rental\n` +
+      `⚖️ ${tons}T included\n` +
+      `💰 $${min}–$${max}\n\n` +
+      `Book now: app.trashlab.com\n` +
+      `Questions? Reply to this text or call (510) 680-2150`,
+    afterHours: '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!',
+  },
+  es: {
+    emailSubject: (size: string) => `Tu Cotización de Contenedor - ${size}`,
+    emailGreeting: (name: string) => `Hola ${name},`,
+    emailThanks: "¡Gracias por solicitar una cotización! Aquí está tu estimado personalizado:",
+    estimatedTotal: "Total Estimado",
+    dumpsterSize: "Tamaño del Contenedor",
+    materialType: "Tipo de Material",
+    rentalPeriod: "Período de Alquiler",
+    deliveryZip: "Código Postal",
+    pricing: "Precio",
+    flatFee: "Tarifa Fija – Disposición Incluida",
+    includedWeight: "Peso Incluido",
+    extras: "Extras",
+    none: "Ninguno",
+    bookNow: "Reservar Ahora →",
+    note: "Nota:",
+    validDays: "Esta cotización es válida por 7 días.",
+    questions: "¿Preguntas? Llámanos al",
+    orText: "o envíanos un mensaje.",
+    days: "días",
+    ton: "tonelada",
+    tons: "toneladas",
+    heavyMaterials: "Materiales Pesados (Tarifa Fija)",
+    generalDebris: "Escombros Generales",
+    overageHeavy: "Los contenedores de material pesado son TARIFA FIJA—disposición incluida sin cargos extras por peso.",
+    overageYard: (rate: number) => `Cargo adicional de $${rate} por yarda extra.`,
+    overageTon: (rate: number) => `Cargo adicional de $${rate}/tonelada después del ticket de báscula.`,
+    smsHeavy: (name: string, size: string, zip: string, days: number, min: number, max: number) =>
+      `¡Hola ${name}! Tu cotización de Calsan Dumpsters:\n\n` +
+      `📦 ${size} (Materiales Pesados)\n` +
+      `📍 Código Postal: ${zip}\n` +
+      `📅 Alquiler de ${days} días\n` +
+      `✅ TARIFA FIJA – Disposición Incluida\n` +
+      `💰 $${min}–$${max}\n\n` +
+      `Reserva: app.trashlab.com\n` +
+      `¿Preguntas? Responde este mensaje o llama (510) 680-2150`,
+    smsGeneral: (name: string, size: string, zip: string, days: number, tons: number, min: number, max: number) =>
+      `¡Hola ${name}! Tu cotización de Calsan Dumpsters:\n\n` +
+      `📦 ${size} (Escombros Generales)\n` +
+      `📍 Código Postal: ${zip}\n` +
+      `📅 Alquiler de ${days} días\n` +
+      `⚖️ ${tons}T incluidas\n` +
+      `💰 $${min}–$${max}\n\n` +
+      `Reserva: app.trashlab.com\n` +
+      `¿Preguntas? Responde este mensaje o llama (510) 680-2150`,
+    afterHours: '\n\n🕐 Nuestro equipo está fuera de horario (6am-9pm). ¡Te contactaremos pronto!',
+  },
+};
 
 // Pricing defaults - fetched from DB when possible
 const DEFAULT_OVERAGE_PER_TON = 165;
@@ -74,10 +173,12 @@ const handler = async (req: Request): Promise<Response> => {
       estimatedMax,
       includedTons,
       extras,
+      language = 'en',
     } = data;
 
-    const materialLabel = materialType === 'heavy' ? 'Heavy Materials (Flat Fee)' : 'General Debris';
-    const extrasText = extras.length > 0 ? extras.join(', ') : 'None';
+    const t = templates[language] || templates.en;
+    const materialLabel = materialType === 'heavy' ? t.heavyMaterials : t.generalDebris;
+    const extrasText = extras.length > 0 ? extras.join(', ') : t.none;
     
     // Determine the correct overage message based on material and size
     const sizeValue = parseInt(sizeLabel) || 20;
@@ -86,17 +187,18 @@ const handler = async (req: Request): Promise<Response> => {
     
     let overageNote = '';
     if (isHeavy) {
-      overageNote = 'Heavy material dumpsters are FLAT FEE—disposal included with no extra weight charges.';
+      overageNote = t.overageHeavy;
     } else if (isSmallGeneral) {
-      overageNote = `Overage charged at $${pricing.overagePerYard} per additional yard.`;
+      overageNote = t.overageYard(pricing.overagePerYard);
     } else {
-      overageNote = `Overage charged at $${pricing.overagePerTon}/ton after disposal scale ticket.`;
+      overageNote = t.overageTon(pricing.overagePerTon);
     }
 
     // Send Email via Resend REST API
     let emailResult = null;
     if (RESEND_API_KEY) {
       try {
+        const tonLabel = includedTons !== 1 ? t.tons : t.ton;
         const emailHtml = `
           <!DOCTYPE html>
           <html>
@@ -120,62 +222,62 @@ const handler = async (req: Request): Promise<Response> => {
           <body>
             <div class="container">
               <div class="header">
-                <h1>🚛 Your Dumpster Quote</h1>
+                <h1>🚛 ${t.emailSubject(sizeLabel).replace(/^.*- /, '')}</h1>
                 <p style="margin: 10px 0 0 0; opacity: 0.9;">Calsan Dumpsters Pro</p>
               </div>
               <div class="content">
-                <p>Hi ${customerName},</p>
-                <p>Thanks for requesting a quote! Here's your personalized estimate:</p>
+                <p>${t.emailGreeting(customerName)}</p>
+                <p>${t.emailThanks}</p>
                 
                 <div class="quote-box">
                   <div style="text-align: center; margin-bottom: 20px;">
                     <div class="price">$${estimatedMin} – $${estimatedMax}</div>
-                    <div style="color: #6b7280; font-size: 14px;">Estimated Total</div>
+                    <div style="color: #6b7280; font-size: 14px;">${t.estimatedTotal}</div>
                   </div>
                   
                   <div class="detail-row">
-                    <span class="label">Dumpster Size</span>
+                    <span class="label">${t.dumpsterSize}</span>
                     <span class="value">${sizeLabel}</span>
                   </div>
                   <div class="detail-row">
-                    <span class="label">Material Type</span>
+                    <span class="label">${t.materialType}</span>
                     <span class="value">${materialLabel}</span>
                   </div>
                   <div class="detail-row">
-                    <span class="label">Rental Period</span>
-                    <span class="value">${rentalDays} days</span>
+                    <span class="label">${t.rentalPeriod}</span>
+                    <span class="value">${rentalDays} ${t.days}</span>
                   </div>
                   <div class="detail-row">
-                    <span class="label">Delivery ZIP</span>
+                    <span class="label">${t.deliveryZip}</span>
                     <span class="value">${zipCode}</span>
                   </div>
                   ${isHeavy ? `
                   <div class="detail-row">
-                    <span class="label">Pricing</span>
-                    <span class="value" style="color: #16a34a;">Flat Fee – Disposal Included</span>
+                    <span class="label">${t.pricing}</span>
+                    <span class="value" style="color: #16a34a;">${t.flatFee}</span>
                   </div>
                   ` : `
                   <div class="detail-row">
-                    <span class="label">Included Weight</span>
-                    <span class="value">${includedTons} ton${includedTons !== 1 ? 's' : ''}</span>
+                    <span class="label">${t.includedWeight}</span>
+                    <span class="value">${includedTons} ${tonLabel}</span>
                   </div>
                   `}
                   <div class="detail-row">
-                    <span class="label">Extras</span>
+                    <span class="label">${t.extras}</span>
                     <span class="value">${extrasText}</span>
                   </div>
                 </div>
 
                 <p style="font-size: 14px; color: #6b7280;">
-                  <strong>Note:</strong> ${overageNote} This quote is valid for 7 days.
+                  <strong>${t.note}</strong> ${overageNote} ${t.validDays}
                 </p>
 
                 <div style="text-align: center;">
-                  <a href="https://app.trashlab.com" class="cta-button">Book Now →</a>
+                  <a href="https://app.trashlab.com" class="cta-button">${t.bookNow}</a>
                 </div>
               </div>
               <div class="footer">
-                <p>Questions? Call us at <strong>(510) 680-2150</strong> or text us anytime.</p>
+                <p>${t.questions} <strong>(510) 680-2150</strong> ${t.orText}</p>
                 <p>Calsan Dumpsters Pro • Oakland, CA</p>
               </div>
             </div>
@@ -192,7 +294,7 @@ const handler = async (req: Request): Promise<Response> => {
           body: JSON.stringify({
             from: "Calsan Dumpsters <onboarding@resend.dev>",
             to: [customerEmail],
-            subject: `Your Dumpster Quote - ${sizeLabel}`,
+            subject: t.emailSubject(sizeLabel),
             html: emailHtml,
           }),
         });
@@ -239,25 +341,11 @@ const handler = async (req: Request): Promise<Response> => {
             ? '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!' 
             : '';
 
+          const afterHoursNoteLocalized = !isBusinessHours ? t.afterHours : '';
+          
           const smsBody = isHeavy
-            ? `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
-              `📦 ${sizeLabel} (${materialLabel})\n` +
-              `📍 ZIP: ${zipCode}\n` +
-              `📅 ${rentalDays}-day rental\n` +
-              `✅ FLAT FEE – Disposal Included\n` +
-              `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
-              `Book now: app.trashlab.com\n` +
-              `Questions? Reply to this text or call (510) 680-2150` +
-              afterHoursNote
-            : `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
-              `📦 ${sizeLabel} (${materialLabel})\n` +
-              `📍 ZIP: ${zipCode}\n` +
-              `📅 ${rentalDays}-day rental\n` +
-              `⚖️ ${includedTons}T included\n` +
-              `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
-              `Book now: app.trashlab.com\n` +
-              `Questions? Reply to this text or call (510) 680-2150` +
-              afterHoursNote;
+            ? t.smsHeavy(customerName, sizeLabel, zipCode, rentalDays, estimatedMin, estimatedMax) + afterHoursNoteLocalized
+            : t.smsGeneral(customerName, sizeLabel, zipCode, rentalDays, includedTons, estimatedMin, estimatedMax) + afterHoursNoteLocalized;
 
           const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
           const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
