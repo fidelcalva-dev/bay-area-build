@@ -62,6 +62,7 @@ const CustomerDocuments = () => {
             invoice_url,
             created_at,
             quotes!inner (
+              id,
               customer_phone,
               delivery_address
             )
@@ -141,6 +142,32 @@ const CustomerDocuments = () => {
                 date: doc.created_at,
                 address: order?.quotes?.delivery_address || null,
               });
+            });
+          }
+        }
+
+        // Fetch service receipts for customer orders (tickets with tons info)
+        const quoteIds = customerOrders.map(o => (o.quotes as any)?.id).filter(Boolean);
+        if (quoteIds.length > 0) {
+          const { data: receiptsData } = await supabase
+            .from("service_receipts")
+            .select("*")
+            .in("quote_id", quoteIds)
+            .order("created_at", { ascending: false });
+
+          if (receiptsData) {
+            receiptsData.forEach((receipt) => {
+              const order = customerOrders.find(o => (o.quotes as any)?.id === receipt.quote_id);
+              // Add ticket URL from receipt if not already in docs
+              if (receipt.ticket_url && !allDocs.find(d => d.url === receipt.ticket_url)) {
+                allDocs.push({
+                  type: "dump_ticket",
+                  url: receipt.ticket_url,
+                  orderId: order?.id || "",
+                  date: receipt.ticket_date || receipt.created_at,
+                  address: order?.quotes?.delivery_address || null,
+                });
+              }
             });
           }
         }

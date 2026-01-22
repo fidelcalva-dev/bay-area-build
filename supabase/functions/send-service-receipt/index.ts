@@ -12,10 +12,11 @@ const corsHeaders = {
 };
 
 interface ServiceReceiptRequest {
-  quoteId: string;
-  facilityName: string;
-  ticketDate: string;
-  totalTons: number;
+  orderId?: string;
+  quoteId?: string;
+  facilityName?: string;
+  ticketDate?: string;
+  totalTons?: number;
   ticketUrl?: string;
   ticketNumber?: string;
 }
@@ -103,13 +104,47 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const data: ServiceReceiptRequest = await req.json();
-    const { quoteId, facilityName, ticketDate, totalTons, ticketUrl, ticketNumber } = data;
+    let { orderId, quoteId, facilityName, ticketDate, totalTons, ticketUrl, ticketNumber } = data;
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Missing Supabase configuration");
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // If orderId provided, fetch the existing receipt data
+    if (orderId && !quoteId) {
+      const { data: order } = await supabase
+        .from('orders')
+        .select('quote_id')
+        .eq('id', orderId)
+        .single();
+      
+      if (order?.quote_id) {
+        quoteId = order.quote_id;
+      }
+      
+      // Also fetch the receipt data if it exists
+      const { data: receipt } = await supabase
+        .from('service_receipts')
+        .select('*')
+        .eq('quote_id', order?.quote_id || '')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (receipt) {
+        totalTons = receipt.total_tons;
+        ticketUrl = receipt.ticket_url || ticketUrl;
+        ticketNumber = receipt.ticket_number || ticketNumber;
+        facilityName = receipt.facility_name || facilityName;
+        ticketDate = receipt.ticket_date || ticketDate;
+      }
+    }
+
+    if (!quoteId) {
+      throw new Error("Missing quote ID");
+    }
 
     // Fetch quote details
     const { data: quote, error: quoteError } = await supabase
@@ -123,7 +158,9 @@ const handler = async (req: Request): Promise<Response> => {
         zip_code,
         rental_days,
         subtotal,
-        size_id
+        size_id,
+        extra_tons_prepurchased,
+        prepurchase_rate
       `)
       .eq('id', quoteId)
       .single();
@@ -149,32 +186,61 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
+    // Use actual tons value (could be passed or from existing receipt)
+    const actualTotalTons = totalTons ?? 0;
+    
+    // Fetch dynamic overage rate from config
+    const overageRate = await getOverageRateFromDB();
+    
     // Determine pricing rule and calculate overage
     const pricingRule = determinePricingRule(quote.material_type, sizeValue);
     const includedTons = INCLUDED_TONS[sizeValue] || 2;
-    const { overageTons, overageCharge } = calculateOverage(pricingRule, totalTons, includedTons);
+    const prepurchasedTons = quote.extra_tons_prepurchased || 0;
+    const { overageTons, overageCharge, prepurchaseAppliedTons, standardOverageTons } = calculateOverage(
+      pricingRule, 
+      actualTotalTons, 
+      includedTons, 
+      prepurchasedTons,
+      overageRate
+    );
 
-    // Create receipt record
-    const { data: receipt, error: receiptError } = await supabase
+    // Check if receipt already exists - if so, skip creation
+    const { data: existingReceipt } = await supabase
       .from('service_receipts')
-      .insert({
-        quote_id: quoteId,
-        facility_name: facilityName,
-        ticket_date: ticketDate,
-        total_tons: totalTons,
-        ticket_url: ticketUrl,
-        ticket_number: ticketNumber,
-        included_tons: pricingRule === 'heavy_flat' ? null : includedTons,
-        overage_tons: overageTons,
-        overage_rate: pricingRule === 'mixed_large' ? OVERAGE_RATE_PER_TON : null,
-        overage_charge: overageCharge,
-        pricing_rule: pricingRule,
-      })
-      .select()
+      .select('id')
+      .eq('quote_id', quoteId)
+      .limit(1)
       .single();
+    
+    let receipt = existingReceipt;
 
-    if (receiptError) {
-      throw new Error(`Failed to create receipt: ${receiptError.message}`);
+    // Create receipt record only if it doesn't exist
+    if (!existingReceipt) {
+      const { data: newReceipt, error: receiptError } = await supabase
+        .from('service_receipts')
+        .insert({
+          quote_id: quoteId,
+          facility_name: facilityName,
+          ticket_date: ticketDate || new Date().toISOString(),
+          total_tons: actualTotalTons,
+          ticket_url: ticketUrl,
+          ticket_number: ticketNumber,
+          included_tons: pricingRule === 'heavy_flat' ? null : includedTons,
+          overage_tons: overageTons,
+          overage_rate: pricingRule === 'mixed_large' ? overageRate : null,
+          overage_charge: overageCharge,
+          prepurchased_tons: prepurchasedTons,
+          prepurchase_applied_tons: prepurchaseAppliedTons,
+          standard_overage_tons: standardOverageTons,
+          pricing_rule: pricingRule,
+        })
+        .select()
+        .single();
+
+      if (receiptError) {
+        throw new Error(`Failed to create receipt: ${receiptError.message}`);
+      }
+      receipt = newReceipt;
     }
 
     // Update quote status
@@ -264,7 +330,7 @@ const handler = async (req: Request): Promise<Response> => {
                 
                 <div class="receipt-box">
                   <div style="text-align: center; margin-bottom: 20px;">
-                    <div class="weight">${totalTons.toFixed(2)} tons</div>
+                    <div class="weight">${actualTotalTons.toFixed(2)} tons</div>
                     <div style="color: #6b7280; font-size: 14px;">Total Weight from Scale Ticket</div>
                   </div>
                   
@@ -282,7 +348,7 @@ const handler = async (req: Request): Promise<Response> => {
                   </div>
                   <div class="detail-row">
                     <span class="label">Ticket Date</span>
-                    <span class="value">${new Date(ticketDate).toLocaleDateString()}</span>
+                    <span class="value">${ticketDate ? new Date(ticketDate).toLocaleDateString() : new Date().toLocaleDateString()}</span>
                   </div>
                   ${ticketNumber ? `
                   <div class="detail-row">
@@ -326,7 +392,7 @@ const handler = async (req: Request): Promise<Response> => {
           body: JSON.stringify({
             from: "Calsan Dumpsters <onboarding@resend.dev>",
             to: [quote.customer_email],
-            subject: `Service Receipt - ${sizeLabel} (${totalTons.toFixed(2)}T)`,
+            subject: `Service Receipt - ${sizeLabel} (${actualTotalTons.toFixed(2)}T)`,
             html: emailHtml,
           }),
         });
@@ -335,10 +401,12 @@ const handler = async (req: Request): Promise<Response> => {
         console.log("Receipt email sent:", emailResult);
 
         // Update receipt with email sent timestamp
-        await supabase
-          .from('service_receipts')
-          .update({ email_sent_at: new Date().toISOString() })
-          .eq('id', receipt.id);
+        if (receipt?.id) {
+          await supabase
+            .from('service_receipts')
+            .update({ email_sent_at: new Date().toISOString() })
+            .eq('id', receipt.id);
+        }
 
       } catch (emailError) {
         console.error("Email send error:", emailError);
@@ -358,14 +426,14 @@ const handler = async (req: Request): Promise<Response> => {
         if (pricingRule === 'heavy_flat') {
           smsBody = `✅ Service Complete!\n\n` +
             `📦 ${sizeLabel} (Heavy Flat Fee)\n` +
-            `⚖️ ${totalTons.toFixed(2)} tons\n` +
+            `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
             `✓ Disposal included – no extra charges\n\n` +
             `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
             `Thank you! — Calsan Dumpsters`;
         } else if (pricingRule === 'mixed_small') {
           smsBody = `✅ Service Complete!\n\n` +
             `📦 ${sizeLabel}\n` +
-            `⚖️ ${totalTons.toFixed(2)} tons\n` +
+            `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
             `📊 ${includedTons}T included\n\n` +
             `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
             `Thank you! — Calsan Dumpsters`;
@@ -373,15 +441,15 @@ const handler = async (req: Request): Promise<Response> => {
           if (overageCharge > 0) {
             smsBody = `✅ Service Complete!\n\n` +
               `📦 ${sizeLabel}\n` +
-              `⚖️ ${totalTons.toFixed(2)} tons\n` +
+              `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
               `📊 ${includedTons}T included\n` +
-              `⚠️ Overage: ${overageTons.toFixed(2)}T × $${OVERAGE_RATE_PER_TON} = $${overageCharge.toFixed(2)}\n\n` +
+              `⚠️ Overage: ${overageTons.toFixed(2)}T × $${overageRate} = $${overageCharge.toFixed(2)}\n\n` +
               `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
               `Invoice to follow. — Calsan Dumpsters`;
           } else {
             smsBody = `✅ Service Complete!\n\n` +
               `📦 ${sizeLabel}\n` +
-              `⚖️ ${totalTons.toFixed(2)} tons\n` +
+              `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
               `✓ Within ${includedTons}T included\n\n` +
               `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
               `Thank you! — Calsan Dumpsters`;
@@ -409,10 +477,12 @@ const handler = async (req: Request): Promise<Response> => {
         console.log("Receipt SMS sent:", smsResult);
 
         // Update receipt with SMS sent timestamp
-        await supabase
-          .from('service_receipts')
-          .update({ sms_sent_at: new Date().toISOString() })
-          .eq('id', receipt.id);
+        if (receipt?.id) {
+          await supabase
+            .from('service_receipts')
+            .update({ sms_sent_at: new Date().toISOString() })
+            .eq('id', receipt.id);
+        }
 
       } catch (smsError) {
         console.error("SMS send error:", smsError);
@@ -428,7 +498,7 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({
         success: true,
-        receiptId: receipt.id,
+        receiptId: receipt?.id || null,
         overageTons,
         overageCharge,
         pricingRule,
