@@ -212,63 +212,84 @@ const handler = async (req: Request): Promise<Response> => {
     const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
     const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
 
-    if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
+    if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber && customerPhone) {
       try {
-        // Check if currently within business hours (6AM-9PM Pacific)
-        const now = new Date();
-        const pstOffset = -8; // PST offset (simplified; doesn't account for DST)
-        const utcHour = now.getUTCHours();
-        const pstHour = (utcHour + pstOffset + 24) % 24;
-        const isBusinessHours = pstHour >= 6 && pstHour < 21;
+        // Normalize phone to E.164 format
+        let normalizedPhone = customerPhone.replace(/\D/g, '');
+        if (normalizedPhone.length === 11 && normalizedPhone.startsWith('1')) {
+          normalizedPhone = normalizedPhone.substring(1);
+        }
         
-        const afterHoursNote = !isBusinessHours 
-          ? '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!' 
-          : '';
+        // Validate phone format
+        if (normalizedPhone.length !== 10) {
+          console.error("SMS skipped: Invalid phone length", normalizedPhone.length);
+        } else if (normalizedPhone.startsWith('0') || normalizedPhone.startsWith('1')) {
+          console.error("SMS skipped: Invalid area code");
+        } else {
+          const e164Phone = `+1${normalizedPhone}`;
+          
+          // Check if currently within business hours (6AM-9PM Pacific)
+          const now = new Date();
+          const pstOffset = -8; // PST offset (simplified; doesn't account for DST)
+          const utcHour = now.getUTCHours();
+          const pstHour = (utcHour + pstOffset + 24) % 24;
+          const isBusinessHours = pstHour >= 6 && pstHour < 21;
+          
+          const afterHoursNote = !isBusinessHours 
+            ? '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!' 
+            : '';
 
-        const smsBody = isHeavy
-          ? `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
-            `📦 ${sizeLabel} (${materialLabel})\n` +
-            `📍 ZIP: ${zipCode}\n` +
-            `📅 ${rentalDays}-day rental\n` +
-            `✅ FLAT FEE – Disposal Included\n` +
-            `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
-            `Book now: app.trashlab.com\n` +
-            `Questions? Reply to this text or call (510) 680-2150` +
-            afterHoursNote
-          : `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
-            `📦 ${sizeLabel} (${materialLabel})\n` +
-            `📍 ZIP: ${zipCode}\n` +
-            `📅 ${rentalDays}-day rental\n` +
-            `⚖️ ${includedTons}T included\n` +
-            `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
-            `Book now: app.trashlab.com\n` +
-            `Questions? Reply to this text or call (510) 680-2150` +
-            afterHoursNote;
+          const smsBody = isHeavy
+            ? `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
+              `📦 ${sizeLabel} (${materialLabel})\n` +
+              `📍 ZIP: ${zipCode}\n` +
+              `📅 ${rentalDays}-day rental\n` +
+              `✅ FLAT FEE – Disposal Included\n` +
+              `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
+              `Book now: app.trashlab.com\n` +
+              `Questions? Reply to this text or call (510) 680-2150` +
+              afterHoursNote
+            : `Hi ${customerName}! Your Calsan Dumpsters quote:\n\n` +
+              `📦 ${sizeLabel} (${materialLabel})\n` +
+              `📍 ZIP: ${zipCode}\n` +
+              `📅 ${rentalDays}-day rental\n` +
+              `⚖️ ${includedTons}T included\n` +
+              `💰 $${estimatedMin}–$${estimatedMax}\n\n` +
+              `Book now: app.trashlab.com\n` +
+              `Questions? Reply to this text or call (510) 680-2150` +
+              afterHoursNote;
 
-        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-        const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
+          const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
+          const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
 
-        const formData = new URLSearchParams();
-        formData.append("To", customerPhone);
-        formData.append("From", twilioPhoneNumber);
-        formData.append("Body", smsBody);
+          const formData = new URLSearchParams();
+          formData.append("To", e164Phone);
+          formData.append("From", twilioPhoneNumber);
+          formData.append("Body", smsBody);
 
-        const smsResponse = await fetch(twilioUrl, {
-          method: "POST",
-          headers: {
-            "Authorization": `Basic ${authHeader}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: formData.toString(),
-        });
+          const smsResponse = await fetch(twilioUrl, {
+            method: "POST",
+            headers: {
+              "Authorization": `Basic ${authHeader}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData.toString(),
+          });
 
-        smsResult = await smsResponse.json();
-        console.log("SMS sent successfully:", smsResult);
+          smsResult = await smsResponse.json();
+          
+          if (smsResult.error_code) {
+            console.error("Twilio error:", smsResult.error_code, smsResult.error_message);
+            smsResult = null; // Mark as failed
+          } else {
+            console.log("SMS sent successfully:", smsResult.sid);
+          }
+        }
       } catch (smsError) {
         console.error("SMS send error:", smsError);
       }
     } else {
-      console.log("Twilio credentials not configured, skipping SMS");
+      console.log("Twilio credentials not configured or no phone provided, skipping SMS");
     }
 
     return new Response(
