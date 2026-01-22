@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { PayNowDialog } from "@/components/payment/PayNowDialog";
 import { PaymentHistory } from "@/components/payment/PaymentHistory";
+import { InvoiceLineItems } from "@/components/payment/InvoiceLineItems";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 interface OrderDetails {
@@ -402,7 +403,10 @@ const CustomerOrderDetail = () => {
               </div>
             )}
             
-            {/* Show overage if amount_due > original total (indicates overage was added) */}
+            {/* Invoice Line Items (overage, extras, etc.) */}
+            <InvoiceLineItems orderId={order.id} />
+            
+            {/* Legacy: Show overage if amount_due > original total but no line items yet */}
             {order.amount_due && order.final_total && order.amount_due > order.final_total && (
               <div className="flex justify-between text-amber-700 bg-amber-50 p-2 rounded">
                 <span className="flex items-center gap-1">
