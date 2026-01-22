@@ -3,7 +3,7 @@ import {
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
   Navigation, X, RefreshCw, Home, HardHat, Building2, Scale, FileText, Bed, Refrigerator,
-  AlertCircle, Calculator, Trash2, type LucideIcon
+  AlertCircle, Calculator, Trash2, Copy, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 import { getOverageInfo, PRICING_POLICIES } from '@/lib/shared-data';
+import { validateAndFormatPhone } from '@/lib/phoneUtils';
 
 // Extra Tons Pre-Purchase
 import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggestedExtraTons, DEFAULT_EXTRA_TON_PRICING } from './ExtraTonsRecommendation';
@@ -147,6 +148,8 @@ export function InstantQuoteCalculatorV3() {
   const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [quoteSaved, setQuoteSaved] = useState(false);
+  const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
+  const [smsStatus, setSmsStatus] = useState<'pending' | 'sent' | 'failed' | null>(null);
   const [showDistanceMap, setShowDistanceMap] = useState(false);
   const [showEstimator, setShowEstimator] = useState(false);
   const [estimatorData, setEstimatorData] = useState<EstimatorData | null>(null);
@@ -511,8 +514,9 @@ export function InstantQuoteCalculatorV3() {
     setStep(prevSteps[step]);
   };
 
-  // Handle save quote (for lead capture)
+  // Handle save quote (for lead capture) - SPLIT FLOW: DB first, notifications best-effort
   const handleSaveQuote = async () => {
+    // PHASE 1: Validate form inputs
     if (!formData.name || !formData.phone) {
       toast({
         title: 'Missing Information',
@@ -522,23 +526,40 @@ export function InstantQuoteCalculatorV3() {
       return;
     }
 
-    setIsSubmitting(true);
+    // PHASE 2: Validate phone format BEFORE attempting anything
+    const phoneValidation = validateAndFormatPhone(formData.phone);
+    if (!phoneValidation.valid) {
+      toast({
+        title: 'Invalid Phone Number',
+        description: phoneValidation.error || 'Please enter a valid 10-digit US phone number',
+        variant: 'destructive',
+      });
+      return;
+    }
 
+    setIsSubmitting(true);
+    setSmsStatus('pending');
+
+    const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
+    const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
+    const extrasLabels = formData.extras
+      .map((e) => {
+        const extra = EXTRAS.find((ex) => ex.id === e.id);
+        return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
+      })
+      .filter(Boolean) as string[];
+
+    // ============================================================
+    // PHASE 3: SAVE TO DATABASE FIRST (Critical - must succeed)
+    // ============================================================
+    let quoteId: string | null = null;
     try {
-      const userTypeData = USER_TYPES.find((u) => u.value === formData.userType);
-      const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
-      const extrasLabels = formData.extras
-        .map((e) => {
-          const extra = EXTRAS.find((ex) => ex.id === e.id);
-          return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
-        })
-        .filter(Boolean) as string[];
+      console.log('[SaveQuote] Step A: Saving quote to database...');
       
-      // Save to database
       const result = await saveQuote({
         customerName: formData.name,
         customerEmail: formData.email || undefined,
-        customerPhone: formData.phone,
+        customerPhone: phoneValidation.formatted, // Use normalized E.164 format
         userType: formData.userType,
         zipCode: formData.zip,
         zoneId: zoneResult?.zoneId,
@@ -590,76 +611,186 @@ export function InstantQuoteCalculatorV3() {
         greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloDumpFeePerTon : undefined,
       });
 
-      if (result.success) {
-        // Send SMS/email notification (fire and forget)
-        try {
-          await supabase.functions.invoke('send-quote-summary', {
-            body: {
-              customerName: formData.name,
-              customerEmail: formData.email || '',
-              customerPhone: formData.phone,
-              sizeLabel: sizeData?.label || `${formData.size} Yard`,
-              materialType: formData.material,
-              rentalDays: formData.rentalDays,
-              zipCode: formData.zip,
-              estimatedMin: quote.estimatedMin,
-              estimatedMax: quote.estimatedMax,
-              includedTons: quote.includedTons,
-              extras: extrasLabels,
-            },
-          });
-        } catch (notifyError) {
-          console.error('Failed to send notifications:', notifyError);
-        }
-
-        // Send to HighLevel webhook (fire and forget)
-        try {
-          await supabase.functions.invoke('highlevel-webhook', {
-            body: {
-              event: 'quote_saved',
-              quote_id: result.quoteId || 'unknown',
-              name: formData.name,
-              phone: formData.phone,
-              email: formData.email || undefined,
-              zip: formData.zip,
-              waste_type: formData.material,
-              recommended_size: smartRecommendation.recommendedSize,
-              selected_size: formData.size,
-              included_tons: quote.includedTons,
-              estimated_total: `$${quote.estimatedMin} - $${quote.estimatedMax}`,
-              extras: extrasLabels.length > 0 ? extrasLabels.join(', ') : '',
-              page: 'quick_quote',
-              zone_name: zoneResult?.zoneName,
-              project_type: projectType || undefined,
-              confidence_level: smartRecommendation.confidence,
-              tags: ['Quote Saved', 'Resume Later', formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris'],
-              // Distance-based pricing data
-              yard_name: distanceCalc.distance?.yard.name,
-              distance_miles: distanceCalc.distance?.distanceMiles,
-              distance_bracket: distanceCalc.distance?.bracket?.bracketName,
-            },
-          });
-        } catch (hlError) {
-          console.error('Failed to send to HighLevel:', hlError);
-        }
-
-        setQuoteSaved(true);
+      if (!result.success) {
+        console.error('[SaveQuote] Step A FAILED - DB error:', result.error);
         toast({
-          title: 'Quote Saved!',
-          description: "We've texted you the quote details",
+          title: 'Could Not Save Quote',
+          description: result.error || 'Database error. Please try again or call us.',
+          variant: 'destructive',
         });
-      } else {
-        throw new Error(result.error);
+        setIsSubmitting(false);
+        setSmsStatus(null);
+        return; // Exit early - don't proceed if DB save failed
       }
-    } catch (error) {
+
+      quoteId = result.quoteId || null;
+      setSavedQuoteId(quoteId);
+      console.log('[SaveQuote] Step A SUCCESS - Quote saved with ID:', quoteId);
+
+    } catch (dbError: any) {
+      console.error('[SaveQuote] Step A EXCEPTION:', dbError);
       toast({
-        title: 'Submission Error',
-        description: 'Please try again or call us directly',
+        title: 'Could Not Save Quote',
+        description: 'Network error. Check your connection and try again.',
         variant: 'destructive',
       });
-    } finally {
       setIsSubmitting(false);
+      setSmsStatus(null);
+      return; // Exit early
     }
+
+    // ============================================================
+    // PHASE 4: MARK AS SAVED (Success path - quote is in DB)
+    // ============================================================
+    setQuoteSaved(true);
+
+    // ============================================================
+    // PHASE 5: SEND NOTIFICATIONS (Best-effort - failures don't block save)
+    // ============================================================
+    let smsSent = false;
+
+    // 5A: Send SMS/Email notification
+    try {
+      console.log('[SaveQuote] Step B: Sending SMS notification...');
+      
+      const notifyResponse = await supabase.functions.invoke('send-quote-summary', {
+        body: {
+          customerName: formData.name,
+          customerEmail: formData.email || '',
+          customerPhone: phoneValidation.formatted, // Use E.164 format
+          sizeLabel: sizeData?.label || `${formData.size} Yard`,
+          materialType: formData.material,
+          rentalDays: formData.rentalDays,
+          zipCode: formData.zip,
+          estimatedMin: quote.estimatedMin,
+          estimatedMax: quote.estimatedMax,
+          includedTons: quote.includedTons,
+          extras: extrasLabels,
+        },
+      });
+
+      if (notifyResponse.error) {
+        console.error('[SaveQuote] Step B WARNING - SMS function error:', notifyResponse.error);
+      } else if (notifyResponse.data?.smsSent) {
+        smsSent = true;
+        console.log('[SaveQuote] Step B SUCCESS - SMS sent');
+      } else {
+        console.log('[SaveQuote] Step B - SMS not sent (Twilio may not be configured)');
+      }
+    } catch (notifyError: any) {
+      console.error('[SaveQuote] Step B EXCEPTION (non-blocking):', notifyError?.message || notifyError);
+    }
+
+    // 5B: Sync to HighLevel CRM (fire and forget)
+    try {
+      console.log('[SaveQuote] Step C: Syncing to HighLevel...');
+      
+      supabase.functions.invoke('highlevel-webhook', {
+        body: {
+          event: 'quote_saved',
+          quote_id: quoteId || 'unknown',
+          name: formData.name,
+          phone: phoneValidation.formatted,
+          email: formData.email || undefined,
+          zip: formData.zip,
+          waste_type: formData.material,
+          recommended_size: smartRecommendation.recommendedSize,
+          selected_size: formData.size,
+          included_tons: quote.includedTons,
+          estimated_total: `$${quote.estimatedMin} - $${quote.estimatedMax}`,
+          extras: extrasLabels.length > 0 ? extrasLabels.join(', ') : '',
+          page: 'quick_quote',
+          zone_name: zoneResult?.zoneName,
+          project_type: projectType || undefined,
+          confidence_level: smartRecommendation.confidence,
+          tags: ['Quote Saved', 'Resume Later', formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris'],
+          yard_name: distanceCalc.distance?.yard.name,
+          distance_miles: distanceCalc.distance?.distanceMiles,
+          distance_bracket: distanceCalc.distance?.bracket?.bracketName,
+        },
+      }).then(() => {
+        console.log('[SaveQuote] Step C SUCCESS - HighLevel sync complete');
+      }).catch((hlError) => {
+        console.error('[SaveQuote] Step C WARNING - HighLevel sync failed (non-blocking):', hlError);
+      });
+    } catch (hlError) {
+      console.error('[SaveQuote] Step C EXCEPTION (non-blocking):', hlError);
+    }
+
+    // ============================================================
+    // PHASE 6: SHOW SUCCESS UI WITH APPROPRIATE MESSAGE
+    // ============================================================
+    setSmsStatus(smsSent ? 'sent' : 'failed');
+    
+    if (smsSent) {
+      toast({
+        title: 'Quote Saved! ✅',
+        description: "We've texted you the quote details",
+      });
+    } else {
+      toast({
+        title: 'Quote Saved! ✅',
+        description: 'SMS could not be sent. Use the copy link below.',
+      });
+    }
+
+    setIsSubmitting(false);
+  };
+
+  // Resend SMS for failed attempts
+  const handleResendSms = async () => {
+    if (!savedQuoteId || !formData.phone) return;
+    
+    const phoneValidation = validateAndFormatPhone(formData.phone);
+    if (!phoneValidation.valid) {
+      toast({ title: 'Invalid phone', description: phoneValidation.error, variant: 'destructive' });
+      return;
+    }
+
+    setSmsStatus('pending');
+    const sizeData = DUMPSTER_SIZES.find((s) => s.value === formData.size);
+    const extrasLabels = formData.extras
+      .map((e) => {
+        const extra = EXTRAS.find((ex) => ex.id === e.id);
+        return extra ? `${extra.label}${e.quantity > 1 ? ` (×${e.quantity})` : ''}` : null;
+      })
+      .filter(Boolean) as string[];
+
+    try {
+      const response = await supabase.functions.invoke('send-quote-summary', {
+        body: {
+          customerName: formData.name,
+          customerEmail: formData.email || '',
+          customerPhone: phoneValidation.formatted,
+          sizeLabel: sizeData?.label || `${formData.size} Yard`,
+          materialType: formData.material,
+          rentalDays: formData.rentalDays,
+          zipCode: formData.zip,
+          estimatedMin: quote.estimatedMin,
+          estimatedMax: quote.estimatedMax,
+          includedTons: quote.includedTons,
+          extras: extrasLabels,
+        },
+      });
+
+      if (response.data?.smsSent) {
+        setSmsStatus('sent');
+        toast({ title: 'SMS Sent! ✅', description: 'Check your phone for the quote details.' });
+      } else {
+        setSmsStatus('failed');
+        toast({ title: 'SMS Failed', description: 'Please use the copy link instead.', variant: 'destructive' });
+      }
+    } catch (err) {
+      setSmsStatus('failed');
+      toast({ title: 'SMS Failed', description: 'Network error. Try again later.', variant: 'destructive' });
+    }
+  };
+
+  // Copy quote link to clipboard
+  const handleCopyQuoteLink = () => {
+    const link = `${window.location.origin}/quick-order?zip=${formData.zip}&size=${formData.size}&material=${formData.material}`;
+    navigator.clipboard.writeText(link);
+    toast({ title: 'Link Copied! 📋', description: 'Share or save this link to resume your quote.' });
   };
 
   // SMS handler
@@ -1920,9 +2051,52 @@ export function InstantQuoteCalculatorV3() {
                 </div>
                 
                 <h4 className="text-xl font-bold text-foreground mb-2">Quote Saved!</h4>
-                <p className="text-muted-foreground mb-6">
-                  Check your phone — we've texted you the details.
-                </p>
+                
+                {/* SMS Status Message */}
+                {smsStatus === 'sent' ? (
+                  <p className="text-muted-foreground mb-4">
+                    Check your phone — we've texted you the details.
+                  </p>
+                ) : smsStatus === 'failed' ? (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
+                    <p className="text-orange-700 text-sm">
+                      ⚠️ SMS could not be sent. Use the buttons below to copy your link or try again.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground mb-4">
+                    Your quote is saved. We're sending confirmation...
+                  </p>
+                )}
+
+                {/* Copy Link & Resend Buttons */}
+                {smsStatus !== 'sent' && (
+                  <div className="flex gap-2 mb-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 gap-2"
+                      onClick={handleCopyQuoteLink}
+                    >
+                      <Copy className="w-4 h-4" />
+                      Copy Link
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 gap-2"
+                      onClick={handleResendSms}
+                      disabled={smsStatus === 'pending'}
+                    >
+                      {smsStatus === 'pending' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4" />
+                      )}
+                      Resend SMS
+                    </Button>
+                  </div>
+                )}
 
                 {/* Mini Quote Summary */}
                 <div className="bg-muted/50 rounded-xl p-4 text-left mb-6">
@@ -1957,7 +2131,7 @@ export function InstantQuoteCalculatorV3() {
                 </Button>
 
                 <p className="text-sm text-muted-foreground mt-4">
-                  Not ready yet? No problem — click the link in your text anytime to continue.
+                  Not ready yet? No problem — {smsStatus === 'sent' ? 'click the link in your text' : 'use the copy link above'} anytime to continue.
                 </p>
               </div>
             )}
