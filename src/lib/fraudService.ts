@@ -43,6 +43,9 @@ export interface FraudFlag {
   resolved_by: string | null;
   resolved_at: string | null;
   resolved_notes: string | null;
+  risk_score?: number;
+  is_whitelisted?: boolean;
+  risk_level?: 'low' | 'medium' | 'high';
 }
 
 interface CreateFraudFlagParams {
