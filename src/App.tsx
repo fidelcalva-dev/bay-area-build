@@ -104,6 +104,7 @@ const DispatchDashboard = lazy(() => import("./pages/dispatch/DispatchDashboard"
 const DispatchToday = lazy(() => import("./pages/dispatch/DispatchToday"));
 const DispatchCalendarPage = lazy(() => import("./pages/dispatch/DispatchCalendarPage"));
 const DispatchFlags = lazy(() => import("./pages/dispatch/DispatchFlags"));
+const DispatchRequests = lazy(() => import("./pages/dispatch/DispatchRequests"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
@@ -361,6 +362,9 @@ const App = () => (
                 } />
                 <Route path="flags" element={
                   <Suspense fallback={<PageLoader />}><DispatchFlags /></Suspense>
+                } />
+                <Route path="requests" element={
+                  <Suspense fallback={<PageLoader />}><DispatchRequests /></Suspense>
                 } />
               </Route>
 

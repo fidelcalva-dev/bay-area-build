@@ -2777,8 +2777,10 @@ export type Database = {
       service_requests: {
         Row: {
           assigned_to: string | null
+          change_type: string | null
           created_at: string
           customer_id: string | null
+          customer_phone: string | null
           id: string
           notes: string | null
           order_id: string
@@ -2787,6 +2789,10 @@ export type Database = {
           preferred_window: string | null
           priority: string | null
           request_type: string
+          requested_delivery_date: string | null
+          requested_delivery_window: string | null
+          requested_pickup_date: string | null
+          requested_pickup_window: string | null
           resolution_notes: string | null
           response_sent_at: string | null
           reviewed_at: string | null
@@ -2797,8 +2803,10 @@ export type Database = {
         }
         Insert: {
           assigned_to?: string | null
+          change_type?: string | null
           created_at?: string
           customer_id?: string | null
+          customer_phone?: string | null
           id?: string
           notes?: string | null
           order_id: string
@@ -2807,6 +2815,10 @@ export type Database = {
           preferred_window?: string | null
           priority?: string | null
           request_type: string
+          requested_delivery_date?: string | null
+          requested_delivery_window?: string | null
+          requested_pickup_date?: string | null
+          requested_pickup_window?: string | null
           resolution_notes?: string | null
           response_sent_at?: string | null
           reviewed_at?: string | null
@@ -2817,8 +2829,10 @@ export type Database = {
         }
         Update: {
           assigned_to?: string | null
+          change_type?: string | null
           created_at?: string
           customer_id?: string | null
+          customer_phone?: string | null
           id?: string
           notes?: string | null
           order_id?: string
@@ -2827,6 +2841,10 @@ export type Database = {
           preferred_window?: string | null
           priority?: string | null
           request_type?: string
+          requested_delivery_date?: string | null
+          requested_delivery_window?: string | null
+          requested_pickup_date?: string | null
+          requested_pickup_window?: string | null
           resolution_notes?: string | null
           response_sent_at?: string | null
           reviewed_at?: string | null

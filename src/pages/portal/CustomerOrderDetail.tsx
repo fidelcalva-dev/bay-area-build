@@ -3,24 +3,20 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Truck, Calendar, MapPin, Phone, Download, 
   Camera, Clock, FileText, AlertCircle, CheckCircle2,
-  Loader2, MessageSquare, CreditCard
+  Loader2, MessageSquare, CreditCard, CalendarDays
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { 
-  Dialog, DialogContent, DialogDescription, DialogFooter, 
-  DialogHeader, DialogTitle, DialogTrigger 
-} from "@/components/ui/dialog";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { PayNowDialog } from "@/components/payment/PayNowDialog";
 import { PaymentHistory } from "@/components/payment/PaymentHistory";
 import { InvoiceLineItems } from "@/components/payment/InvoiceLineItems";
+import { ServiceRequestDialog } from "@/components/portal/ServiceRequestDialog";
+import { PendingRequestsBanner } from "@/components/portal/PendingRequestsBanner";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 interface OrderDetails {
@@ -81,8 +77,7 @@ const CustomerOrderDetail = () => {
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pickupRequestOpen, setPickupRequestOpen] = useState(false);
-  const [pickupNotes, setPickupNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scheduleChangeOpen, setScheduleChangeOpen] = useState(false);
   const [payNowOpen, setPayNowOpen] = useState(false);
 
   useEffect(() => {
@@ -187,37 +182,9 @@ const CustomerOrderDetail = () => {
     };
   }, [orderId]);
 
-  const handlePickupRequest = async () => {
-    if (!order) return;
-    setIsSubmitting(true);
-
-    try {
-      const { error } = await supabase.from("service_requests").insert({
-        order_id: order.id,
-        request_type: "pickup",
-        notes: pickupNotes || "Customer requests pickup",
-        status: "pending",
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Request Submitted",
-        description: "We'll contact you to confirm the pickup date.",
-      });
-      setPickupRequestOpen(false);
-      setPickupNotes("");
-    } catch (err) {
-      console.error("Failed to submit request:", err);
-      toast({
-        title: "Error",
-        description: "Could not submit request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // Status check for showing actions
+  const canRequestPickup = order?.status === "delivered";
+  const canRequestScheduleChange = order && !["completed", "cancelled"].includes(order.status);
 
   if (authLoading || isLoading) {
     return (
@@ -313,49 +280,23 @@ const CustomerOrderDetail = () => {
             </div>
 
             {/* Action Buttons */}
-            {order.status === "delivered" && (
+            {canRequestPickup && (
               <div className="flex gap-2">
-                <Dialog open={pickupRequestOpen} onOpenChange={setPickupRequestOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="flex-1">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Request Pickup
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Request Pickup</DialogTitle>
-                      <DialogDescription>
-                        Let us know when you'd like the dumpster picked up.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Notes (optional)</Label>
-                        <Textarea
-                          placeholder="e.g., Preferred date, time, or special instructions"
-                          value={pickupNotes}
-                          onChange={(e) => setPickupNotes(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setPickupRequestOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={handlePickupRequest} disabled={isSubmitting}>
-                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Request"}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <Button variant="outline" asChild>
-                  <a href="sms:+15101234567">
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Text Us
-                  </a>
+                <Button className="flex-1" onClick={() => setPickupRequestOpen(true)}>
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Request Pickup
+                </Button>
+                <Button variant="outline" onClick={() => setScheduleChangeOpen(true)}>
+                  <CalendarDays className="w-4 h-4 mr-2" />
+                  Change Schedule
                 </Button>
               </div>
+            )}
+            {canRequestScheduleChange && !canRequestPickup && (
+              <Button variant="outline" onClick={() => setScheduleChangeOpen(true)}>
+                <CalendarDays className="w-4 h-4 mr-2" />
+                Request Schedule Change
+              </Button>
             )}
           </CardContent>
         </Card>
@@ -565,7 +506,33 @@ const CustomerOrderDetail = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Pending Requests Banner */}
+        {orderId && <PendingRequestsBanner orderId={orderId} />}
       </main>
+
+      {/* Service Request Dialogs */}
+      {order && (
+        <>
+          <ServiceRequestDialog
+            open={pickupRequestOpen}
+            onOpenChange={setPickupRequestOpen}
+            orderId={order.id}
+            requestType="pickup"
+            currentPickupDate={order.scheduled_pickup_date}
+            customerPhone={order.quotes?.customer_phone}
+          />
+          <ServiceRequestDialog
+            open={scheduleChangeOpen}
+            onOpenChange={setScheduleChangeOpen}
+            orderId={order.id}
+            requestType="schedule_change"
+            currentDeliveryDate={order.scheduled_delivery_date}
+            currentPickupDate={order.scheduled_pickup_date}
+            customerPhone={order.quotes?.customer_phone}
+          />
+        </>
+      )}
     </div>
   );
 };
