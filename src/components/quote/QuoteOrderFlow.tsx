@@ -277,12 +277,13 @@ export function QuoteOrderFlow({
     }
   };
 
-  // Save scheduling to database
+  // Save scheduling to database and auto-create order
   const handleSchedulingConfirmed = async (schedulingResult: SchedulingResult) => {
     setScheduling(schedulingResult);
     
     if (savedQuoteId) {
       try {
+        // First update the quote with scheduling data
         await supabase
           .from('quotes')
           .update({
@@ -293,8 +294,26 @@ export function QuoteOrderFlow({
             status: 'scheduled',
           })
           .eq('id', savedQuoteId);
+
+        // Auto-create order from the scheduled quote
+        const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order-from-quote', {
+          body: { quoteId: savedQuoteId },
+        });
+
+        if (orderError) {
+          console.error('Auto-order creation error:', orderError);
+        } else if (orderResult) {
+          console.log('Order created:', orderResult);
+          // Show toast for new orders
+          if (!orderResult.alreadyExists) {
+            toast({
+              title: '📋 Order Created',
+              description: `Your order #${orderResult.orderId.slice(0, 8)} is in our system.`,
+            });
+          }
+        }
       } catch (error) {
-        console.error('Scheduling save error:', error);
+        console.error('Scheduling/order creation error:', error);
       }
     }
   };
