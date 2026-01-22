@@ -4,12 +4,14 @@ import {
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
   Boxes, UserCog, MapPinned, Banknote, Bell,
-  BarChart3, TrendingUp, PieChart
+  BarChart3, TrendingUp, PieChart, Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import { AlertBadge } from '@/components/alerts';
+import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 
 // Navigation items grouped by section - Full CRM Navigation
 const navSections = [
@@ -75,8 +77,17 @@ const navSections = [
   },
 ];
 
+// Mobile navigation - limited admin view
+const mobileNavItems: MobileNavItem[] = [
+  { path: '/admin', label: 'Overview', icon: Home, end: true },
+  { path: '/admin/alerts', label: 'Alerts', icon: Bell },
+  { path: '/admin/users', label: 'Users', icon: UserCog },
+  { path: '/admin/search', label: 'Search', icon: Search },
+];
+
 export default function AdminLayout() {
   const { user, isLoading, signOut, canAccessAdmin } = useAdminAuth();
+  const { mobileMode } = useMobileMode();
   const location = useLocation();
 
   if (isLoading) {
@@ -115,6 +126,29 @@ export default function AdminLayout() {
     );
   }
 
+  // Mobile Layout
+  if (mobileMode) {
+    const isSearchPage = location.pathname === '/admin/search';
+    
+    return (
+      <MobileLayout
+        title="Admin"
+        subtitle="Operations & Config"
+        navItems={mobileNavItems}
+        basePath="/admin"
+        onSignOut={signOut}
+        userEmail={user.email || undefined}
+      >
+        {isSearchPage ? (
+          <MobileGlobalSearch basePath="/admin" />
+        ) : (
+          <Outlet />
+        )}
+      </MobileLayout>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
