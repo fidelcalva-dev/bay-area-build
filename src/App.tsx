@@ -70,6 +70,13 @@ const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 
+// Admin Dashboards
+const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
+const AdminSalesDashboard = lazy(() => import("./pages/admin/dashboards/SalesDashboard"));
+const AdminOperationsDashboard = lazy(() => import("./pages/admin/dashboards/OperationsDashboard"));
+const AdminFinanceDashboard = lazy(() => import("./pages/admin/dashboards/FinanceDashboardPage"));
+const AdminCustomersDashboard = lazy(() => import("./pages/admin/dashboards/CustomersDashboard"));
+
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
@@ -272,6 +279,22 @@ const App = () => (
                 } />
                 <Route path="users" element={
                   <Suspense fallback={<PageLoader />}><UsersManager /></Suspense>
+                } />
+                {/* Admin Dashboards */}
+                <Route path="dashboards/overview" element={
+                  <Suspense fallback={<PageLoader />}><DashboardOverview /></Suspense>
+                } />
+                <Route path="dashboards/sales" element={
+                  <Suspense fallback={<PageLoader />}><AdminSalesDashboard /></Suspense>
+                } />
+                <Route path="dashboards/operations" element={
+                  <Suspense fallback={<PageLoader />}><AdminOperationsDashboard /></Suspense>
+                } />
+                <Route path="dashboards/finance" element={
+                  <Suspense fallback={<PageLoader />}><AdminFinanceDashboard /></Suspense>
+                } />
+                <Route path="dashboards/customers" element={
+                  <Suspense fallback={<PageLoader />}><AdminCustomersDashboard /></Suspense>
                 } />
               </Route>
 

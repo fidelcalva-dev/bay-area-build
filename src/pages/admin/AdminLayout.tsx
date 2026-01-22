@@ -3,7 +3,8 @@ import {
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
-  Boxes, UserCog, MapPinned, Banknote, AlertTriangle
+  Boxes, UserCog, MapPinned, Banknote, AlertTriangle,
+  BarChart3, TrendingUp, PieChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -15,6 +16,16 @@ const navSections = [
     title: 'Overview',
     items: [
       { path: '/admin', label: 'Dashboard', icon: Home, end: true },
+    ],
+  },
+  {
+    title: 'Analytics',
+    items: [
+      { path: '/admin/dashboards/overview', label: 'Overview', icon: BarChart3 },
+      { path: '/admin/dashboards/sales', label: 'Sales Funnel', icon: TrendingUp },
+      { path: '/admin/dashboards/operations', label: 'Operations', icon: Truck },
+      { path: '/admin/dashboards/finance', label: 'Finance', icon: DollarSign },
+      { path: '/admin/dashboards/customers', label: 'Customers', icon: PieChart },
     ],
   },
   {
