@@ -38,6 +38,9 @@ import { USER_TYPES, OVERAGE_COST_PER_TON, EXTRA_DAY_COST, OVERAGE_NOTE, PRICING
 // Quote Order Flow (Lead Capture → Address → Map Pin → Continue)
 import { QuoteOrderFlow } from './QuoteOrderFlow';
 
+// Quote Saved Screen (Post-save "What's Next" flow)
+import { QuoteSavedScreen } from './QuoteSavedScreen';
+
 // Smart Recommendation Features
 import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationReason, WhyThisSize, getSmartRecommendation } from './SmartRecommendation';
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
@@ -2044,96 +2047,27 @@ export function InstantQuoteCalculatorV3() {
                 </p>
               </>
             ) : (
-              /* Quote Saved State */
-              <div className="text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-success" />
-                </div>
-                
-                <h4 className="text-xl font-bold text-foreground mb-2">Quote Saved!</h4>
-                
-                {/* SMS Status Message */}
-                {smsStatus === 'sent' ? (
-                  <p className="text-muted-foreground mb-4">
-                    Check your phone — we've texted you the details.
-                  </p>
-                ) : smsStatus === 'failed' ? (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                    <p className="text-orange-700 text-sm">
-                      ⚠️ SMS could not be sent. Use the buttons below to copy your link or try again.
-                    </p>
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground mb-4">
-                    Your quote is saved. We're sending confirmation...
-                  </p>
-                )}
-
-                {/* Copy Link & Resend Buttons */}
-                {smsStatus !== 'sent' && (
-                  <div className="flex gap-2 mb-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 gap-2"
-                      onClick={handleCopyQuoteLink}
-                    >
-                      <Copy className="w-4 h-4" />
-                      Copy Link
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 gap-2"
-                      onClick={handleResendSms}
-                      disabled={smsStatus === 'pending'}
-                    >
-                      {smsStatus === 'pending' ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-4 h-4" />
-                      )}
-                      Resend SMS
-                    </Button>
-                  </div>
-                )}
-
-                {/* Mini Quote Summary */}
-                <div className="bg-muted/50 rounded-xl p-4 text-left mb-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}
-                        {' '}({formData.material === 'heavy' ? 'Heavy' : 'General'})
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formData.rentalDays} days • {quote.includedTons}T included • ZIP {formData.zip}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-foreground">
-                        ${quote.estimatedMin}–${quote.estimatedMax}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Continue Order CTA */}
-                <Button
-                  type="button"
-                  variant="cta"
-                  size="lg"
-                  className="w-full h-14 text-base"
-                  onClick={goNext}
-                >
-                  Continue Order
-                  <ChevronRight className="w-5 h-5" />
-                </Button>
-
-                <p className="text-sm text-muted-foreground mt-4">
-                  Not ready yet? No problem — {smsStatus === 'sent' ? 'click the link in your text' : 'use the copy link above'} anytime to continue.
-                </p>
-              </div>
+              /* Quote Saved State - "What's Next" Flow */
+              <QuoteSavedScreen
+                quoteId={savedQuoteId}
+                quoteSummary={{
+                  sizeLabel: DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label || `${formData.size} Yard`,
+                  materialType: formData.material,
+                  rentalDays: formData.rentalDays,
+                  zipCode: formData.zip,
+                  estimatedMin: quote.estimatedMin,
+                  estimatedMax: quote.estimatedMax,
+                  includedTons: quote.includedTons,
+                }}
+                customerName={formData.name}
+                customerPhone={formData.phone}
+                customerEmail={formData.email}
+                smsStatus={smsStatus}
+                onContinueToSchedule={goNext}
+                onPlaceOrderNow={goNext}
+                onEditQuote={() => setStep('size')}
+                onResendSms={handleResendSms}
+              />
             )}
           </div>
         )}
