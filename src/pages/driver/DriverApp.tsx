@@ -64,10 +64,31 @@ interface Payout {
   created_at: string;
 }
 
+const JOB_TYPE_CONFIG = {
+  delivery: { label: "Delivery", color: "bg-green-100 text-green-800" },
+  pickup: { label: "Pickup", color: "bg-blue-100 text-blue-800" },
+  swap: { label: "Swap", color: "bg-purple-100 text-purple-800" },
+  live_load: { label: "Live Load", color: "bg-orange-100 text-orange-800" },
+  dump_and_return: { label: "Dump & Return", color: "bg-amber-100 text-amber-800" },
+  relocation: { label: "Relocation", color: "bg-cyan-100 text-cyan-800" },
+  dry_run: { label: "Dry Run", color: "bg-red-100 text-red-800" },
+} as const;
+
+const STATUS_FLOW: Record<string, { next: string; action: string }> = {
+  scheduled: { next: "en_route", action: "Start Route" },
+  en_route: { next: "on_site", action: "Arrived On Site" },
+  on_site: { next: "delivered", action: "Mark Delivered" },
+  delivered: { next: "pickup_scheduled", action: "Schedule Pickup" },
+  pickup_scheduled: { next: "picked_up", action: "Mark Picked Up" },
+  picked_up: { next: "completed", action: "Complete Job" },
+};
+
 export default function DriverApp() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isLoading: authLoading, isDriver, isOwnerOperator, isAdmin, driverId } = useAdminAuth();
+  
+  const canAccess = isDriver || isOwnerOperator || isAdmin;
   
   const [activeTab, setActiveTab] = useState("jobs");
   const [isLoading, setIsLoading] = useState(true);
@@ -125,7 +146,10 @@ export default function DriverApp() {
         .order("scheduled_delivery_date");
 
       if (error) throw error;
-      setJobs((data || []).map(d => ({ ...d, logistics_type: d.logistics_type || 'delivery' })) as Job[]);
+      setJobs((data || []).map(d => ({ 
+        ...d, 
+        logistics_type: (d as Record<string, unknown>).logistics_type as string || 'delivery' 
+      })) as Job[]);
     } catch (err) {
       console.error(err);
       toast({ title: "Error loading jobs", variant: "destructive" });
