@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { PaymentHistory } from '@/components/payment/PaymentHistory';
+import { InvoiceLineItems } from '@/components/payment/InvoiceLineItems';
 import { SendPaymentRequestDialog } from '@/components/finance/SendPaymentRequestDialog';
 
 interface OrderDetails {
@@ -282,6 +283,19 @@ export default function FinanceInvoiceDetail() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Invoice Line Items */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Invoice Line Items
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <InvoiceLineItems orderId={orderId!} />
+        </CardContent>
+      </Card>
 
       {/* Payment History */}
       <Card>
