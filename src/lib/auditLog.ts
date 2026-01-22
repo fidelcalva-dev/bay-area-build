@@ -12,7 +12,9 @@ export type AuditAction =
   | 'ticket_entry'
   | 'overage_approval'
   | 'discount_approval'
-  | 'update_roles';
+  | 'update_roles'
+  | 'request_approved'
+  | 'request_denied';
 
 export type EntityType = 
   | 'order' 
