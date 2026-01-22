@@ -70,20 +70,23 @@ export const RealWorkSection = () => {
         </div>
 
         {/* Photo Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
-              className="group aspect-square rounded-xl overflow-hidden cursor-pointer relative border border-background/10 hover:border-primary/50 transition-all"
+              className="group aspect-square rounded-2xl overflow-hidden cursor-pointer relative border-2 border-background/10 hover:border-primary/60 transition-all shadow-lg hover:shadow-xl hover:shadow-primary/10"
               onClick={() => openLightbox(index)}
             >
               <img 
                 src={image.src} 
                 alt={image.alt}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                style={{ imageRendering: 'crisp-edges' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                <span className="text-white text-xs font-medium">{image.label}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                <span className="text-white text-sm font-semibold drop-shadow-md">{image.label}</span>
               </div>
             </div>
           ))}
