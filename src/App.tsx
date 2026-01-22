@@ -76,6 +76,7 @@ const AdminSalesDashboard = lazy(() => import("./pages/admin/dashboards/SalesDas
 const AdminOperationsDashboard = lazy(() => import("./pages/admin/dashboards/OperationsDashboard"));
 const AdminFinanceDashboard = lazy(() => import("./pages/admin/dashboards/FinanceDashboardPage"));
 const AdminCustomersDashboard = lazy(() => import("./pages/admin/dashboards/CustomersDashboard"));
+const KPIDashboard = lazy(() => import("./pages/admin/dashboards/KPIDashboard"));
 
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
@@ -295,6 +296,9 @@ const App = () => (
                 } />
                 <Route path="dashboards/customers" element={
                   <Suspense fallback={<PageLoader />}><AdminCustomersDashboard /></Suspense>
+                } />
+                <Route path="dashboards/kpis" element={
+                  <Suspense fallback={<PageLoader />}><KPIDashboard /></Suspense>
                 } />
               </Route>
 

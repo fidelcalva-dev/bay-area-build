@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { subDays } from 'date-fns';
-import { BarChart3, TrendingUp, Target, Users, ArrowRight, PhoneCall } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, Users, ArrowRight } from 'lucide-react';
 import { 
   DashboardKPICard, 
   DashboardFilters, 
   DashboardChart, 
   DashboardTable,
+  KPICardGrid,
   type DashboardFilterValues 
 } from '@/components/dashboard';
 import { useDashboardData, exportToCSV } from '@/hooks/useDashboardData';
+import { useKPIData } from '@/hooks/useKPIData';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -26,6 +28,8 @@ export default function SalesDashboard() {
     dailyTrend,
     revenueByMaterial,
   } = useDashboardData(filters);
+
+  const { kpiData, loading: kpiLoading } = useKPIData(filters);
 
   const handleExport = () => {
     setExporting(true);
@@ -65,6 +69,21 @@ export default function SalesDashboard() {
         onExport={handleExport}
         exporting={exporting}
       />
+
+      {/* Sales KPIs with Targets */}
+      {kpiData.sales.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Sales KPI Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <KPICardGrid kpis={kpiData.sales} loading={kpiLoading} showSparkline />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Top KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
