@@ -27,6 +27,7 @@ const Careers = lazy(() => import("./pages/Careers"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
 const Quote = lazy(() => import("./pages/Quote"));
 const ContractorQuote = lazy(() => import("./pages/ContractorQuote"));
+const QuickOrder = lazy(() => import("./pages/QuickOrder"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
 const Locations = lazy(() => import("./pages/Locations"));
@@ -75,6 +76,7 @@ const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
 const RiskReviewPage = lazy(() => import("./pages/admin/RiskReviewPage"));
+const QuickLinksManager = lazy(() => import("./pages/admin/QuickLinksManager"));
 
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
@@ -191,6 +193,9 @@ const App = () => (
               } />
               <Route path="/quote/contractor" element={
                 <Suspense fallback={<PageLoader />}><ContractorQuote /></Suspense>
+              } />
+              <Route path="/quick-order" element={
+                <Suspense fallback={<PageLoader />}><QuickOrder /></Suspense>
               } />
               <Route path="/green-impact" element={
                 <Suspense fallback={<PageLoader />}><GreenImpactMap /></Suspense>
@@ -317,6 +322,9 @@ const App = () => (
                 } />
                 <Route path="risk" element={
                   <Suspense fallback={<PageLoader />}><RiskReviewPage /></Suspense>
+                } />
+                <Route path="quick-links" element={
+                  <Suspense fallback={<PageLoader />}><QuickLinksManager /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={

@@ -4,7 +4,7 @@ import {
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
   Boxes, UserCog, MapPinned, Banknote, Bell,
-  BarChart3, TrendingUp, PieChart, Search
+  BarChart3, TrendingUp, PieChart, Search, Link2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -40,6 +40,7 @@ const navSections = [
       { path: '/admin/inventory', label: 'Inventory', icon: Boxes },
       { path: '/admin/customers', label: 'Customers', icon: Users },
       { path: '/admin/drivers', label: 'Drivers', icon: Truck },
+      { path: '/admin/quick-links', label: 'Quick Links', icon: Link2 },
     ],
   },
   {

@@ -1752,6 +1752,7 @@ export type Database = {
           placement_locked: boolean | null
           placement_photo_url: string | null
           primary_dumpster_id: string | null
+          quick_link_id: string | null
           quote_id: string | null
           requires_deposit: boolean | null
           requires_manual_review: boolean | null
@@ -1817,6 +1818,7 @@ export type Database = {
           placement_locked?: boolean | null
           placement_photo_url?: string | null
           primary_dumpster_id?: string | null
+          quick_link_id?: string | null
           quote_id?: string | null
           requires_deposit?: boolean | null
           requires_manual_review?: boolean | null
@@ -1882,6 +1884,7 @@ export type Database = {
           placement_locked?: boolean | null
           placement_photo_url?: string | null
           primary_dumpster_id?: string | null
+          quick_link_id?: string | null
           quote_id?: string | null
           requires_deposit?: boolean | null
           requires_manual_review?: boolean | null
@@ -1959,6 +1962,13 @@ export type Database = {
             columns: ["primary_dumpster_id"]
             isOneToOne: false
             referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_quick_link_id_fkey"
+            columns: ["quick_link_id"]
+            isOneToOne: false
+            referencedRelation: "quick_links"
             referencedColumns: ["id"]
           },
           {
@@ -2223,6 +2233,84 @@ export type Database = {
         }
         Relationships: []
       }
+      quick_links: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          name: string | null
+          preferred_address: string | null
+          preset_extras: Json | null
+          preset_material: string | null
+          preset_size: number | null
+          preset_yard_id: string | null
+          preset_zip: string | null
+          source: string | null
+          token: string
+          updated_at: string
+          use_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          name?: string | null
+          preferred_address?: string | null
+          preset_extras?: Json | null
+          preset_material?: string | null
+          preset_size?: number | null
+          preset_yard_id?: string | null
+          preset_zip?: string | null
+          source?: string | null
+          token: string
+          updated_at?: string
+          use_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          name?: string | null
+          preferred_address?: string | null
+          preset_extras?: Json | null
+          preset_material?: string | null
+          preset_size?: number | null
+          preset_yard_id?: string | null
+          preset_zip?: string | null
+          source?: string | null
+          token?: string
+          updated_at?: string
+          use_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quick_links_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quick_links_preset_yard_id_fkey"
+            columns: ["preset_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_events: {
         Row: {
           created_at: string
@@ -2314,6 +2402,7 @@ export type Database = {
           prepurchase_discount_pct: number | null
           prepurchase_rate: number | null
           project_type: string | null
+          quick_link_id: string | null
           receipt_sent_at: string | null
           reclassified_to_mixed: boolean | null
           recommendation_reason: string | null
@@ -2403,6 +2492,7 @@ export type Database = {
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
           project_type?: string | null
+          quick_link_id?: string | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
           recommendation_reason?: string | null
@@ -2492,6 +2582,7 @@ export type Database = {
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
           project_type?: string | null
+          quick_link_id?: string | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
           recommendation_reason?: string | null
@@ -2532,6 +2623,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_quick_link_id_fkey"
+            columns: ["quick_link_id"]
+            isOneToOne: false
+            referencedRelation: "quick_links"
             referencedColumns: ["id"]
           },
           {
