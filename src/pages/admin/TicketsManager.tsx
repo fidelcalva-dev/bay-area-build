@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { PRICING_POLICIES } from "@/lib/shared-data";
 
 interface OrderWithQuote {
   id: string;
@@ -137,7 +138,7 @@ export default function TicketsManager() {
       let overageTons = 0;
       let prepurchaseApplied = 0;
       let standardOverage = 0;
-      let overageRate = 165; // Default standard rate
+      let overageRate = PRICING_POLICIES.overagePerTonGeneral; // Canonical rate
       let overageCharge = 0;
       
       if (isHeavy) {

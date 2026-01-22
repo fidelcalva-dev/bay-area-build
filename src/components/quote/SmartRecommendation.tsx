@@ -8,6 +8,7 @@ import {
   Warehouse, Hammer, Home, Construction, Building2, TreePine, HardHat, type LucideIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PRICING_POLICIES } from '@/lib/shared-data';
 
 // Icon mapping for project types (using Lucide icons)
 const PROJECT_ICON_MAP: Record<string, LucideIcon> = {
@@ -551,9 +552,9 @@ export function WhyThisSize({
     if (materialType === 'heavy') {
       lines.push(`💡 **Flat fee pricing:** Heavy material dumpsters include disposal with no extra weight charges. Just keep the load pure (no trash).`);
     } else if (selectedSize <= 10) {
-      lines.push(`💡 **Overage info:** If you exceed capacity, overage is $30 per additional yard.`);
+      lines.push(`💡 **Overage info:** If you exceed capacity, overage is $${PRICING_POLICIES.overagePerYardSmall} per additional yard.`);
     } else {
-      lines.push(`💡 **Weight matters:** Sizes 20-50yd include tonnage allowance. Overages are billed at $165/ton after the scale ticket.`);
+      lines.push(`💡 **Weight matters:** Sizes 20-50yd include tonnage allowance. Overages are billed at $${PRICING_POLICIES.overagePerTonGeneral}/ton after the scale ticket.`);
     }
 
     return lines;

@@ -9,6 +9,7 @@ import {
   LayoutGrid, Cylinder, Square, Layers, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PRICING_POLICIES } from '@/lib/shared-data';
 
 // General debris categories with overage info
 export const GENERAL_DEBRIS_CATEGORIES = [
@@ -188,14 +189,14 @@ export function GeneralMaterialSelector({
     if (selectedSize <= 10) {
       return {
         type: 'capacity',
-        rate: '$30',
+        rate: `$${PRICING_POLICIES.overagePerYardSmall}`,
         unit: 'per extra cubic yard',
         note: 'Overage charged if debris exceeds container height',
       };
     }
     return {
       type: 'weight',
-      rate: '$165',
+      rate: `$${PRICING_POLICIES.overagePerTonGeneral}`,
       unit: 'per extra ton',
       note: 'Overage charged after included tonnage',
     };

@@ -20,8 +20,8 @@ interface ServiceReceiptRequest {
   ticketNumber?: string;
 }
 
-// Pricing constants from v56 rules
-const OVERAGE_RATE_PER_TON = 165;
+// Default pricing - fetched from DB when possible
+let OVERAGE_RATE_PER_TON = 165;
 
 // Included tons by size (general debris only)
 const INCLUDED_TONS: Record<number, number> = {
@@ -33,6 +33,27 @@ const INCLUDED_TONS: Record<number, number> = {
   40: 4,
   50: 5,
 };
+
+async function getOverageRateFromDB(): Promise<number> {
+  try {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return OVERAGE_RATE_PER_TON;
+    
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data } = await supabase
+      .from("config_settings")
+      .select("value")
+      .eq("key", "extra_ton_rate_default")
+      .single();
+
+    if (data?.value) {
+      return Number(data.value) || OVERAGE_RATE_PER_TON;
+    }
+    return OVERAGE_RATE_PER_TON;
+  } catch (error) {
+    console.error("Failed to fetch overage rate from DB:", error);
+    return OVERAGE_RATE_PER_TON;
+  }
+}
 
 function determinePricingRule(materialType: string, sizeValue: number): string {
   if (materialType === 'heavy') {
@@ -48,7 +69,8 @@ function calculateOverage(
   pricingRule: string,
   totalTons: number,
   includedTons: number,
-  prepurchasedTons: number = 0
+  prepurchasedTons: number = 0,
+  overageRate: number = OVERAGE_RATE_PER_TON
 ): { overageTons: number; overageCharge: number; prepurchaseAppliedTons: number; standardOverageTons: number } {
   // Heavy flat-fee: no overage
   if (pricingRule === 'heavy_flat') {
@@ -64,7 +86,7 @@ function calculateOverage(
   const rawOverage = Math.max(0, totalTons - includedTons);
   const prepurchaseAppliedTons = Math.min(prepurchasedTons, rawOverage);
   const standardOverageTons = Math.max(0, rawOverage - prepurchaseAppliedTons);
-  const overageCharge = standardOverageTons * OVERAGE_RATE_PER_TON;
+  const overageCharge = standardOverageTons * overageRate;
   
   return { 
     overageTons: Math.round(rawOverage * 100) / 100, 
