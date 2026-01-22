@@ -1,12 +1,14 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Headphones, Package, MessageSquare, FileText, LogOut, 
-  Home, Loader2, ClipboardList, Clock
+  Home, Loader2, ClipboardList, Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
+import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 
 const navItems = [
   { path: '/cs', label: 'Dashboard', icon: Home, end: true },
@@ -16,8 +18,16 @@ const navItems = [
   { path: '/cs/templates', label: 'SMS Templates', icon: FileText },
 ];
 
+const mobileNavItems: MobileNavItem[] = [
+  { path: '/cs/orders', label: 'Orders', icon: Package },
+  { path: '/cs/requests', label: 'Requests', icon: ClipboardList },
+  { path: '/cs/messages', label: 'Messages', icon: MessageSquare },
+  { path: '/cs/search', label: 'Search', icon: Search },
+];
+
 export default function CSLayout() {
   const { user, isLoading, signOut, canAccessAdmin } = useAdminAuth();
+  const { mobileMode } = useMobileMode();
   const location = useLocation();
 
   if (isLoading) {
@@ -49,6 +59,29 @@ export default function CSLayout() {
     );
   }
 
+  // Mobile Layout
+  if (mobileMode) {
+    const isSearchPage = location.pathname === '/cs/search';
+    
+    return (
+      <MobileLayout
+        title="CS Panel"
+        subtitle="Customer Service"
+        navItems={mobileNavItems}
+        basePath="/cs"
+        onSignOut={signOut}
+        userEmail={user.email || undefined}
+      >
+        {isSearchPage ? (
+          <MobileGlobalSearch basePath="/cs" />
+        ) : (
+          <Outlet />
+        )}
+      </MobileLayout>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">
