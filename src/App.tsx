@@ -41,7 +41,11 @@ const CustomerOrders = lazy(() => import("./pages/portal/CustomerOrders"));
 const CustomerDocuments = lazy(() => import("./pages/portal/CustomerDocuments"));
 const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
 const PaymentComplete = lazy(() => import("./pages/portal/PaymentComplete"));
-// Green Halo Portal pages (separate)
+
+// Portal Auth Guard
+import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
+
+// Green Halo Portal pages (separate - demo only)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
 const PortalDashboard = lazy(() => import("./pages/portal/PortalDashboard"));
 const ProjectDetail = lazy(() => import("./pages/portal/ProjectDetail"));
@@ -218,22 +222,34 @@ const App = () => (
                 <Suspense fallback={<PageLoader />}><CustomerLogin /></Suspense>
               } />
               <Route path="/portal/dashboard" element={
-                <Suspense fallback={<PageLoader />}><CustomerDashboard /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerDashboard /></Suspense>
+                </PortalAuthGuard>
               } />
               <Route path="/portal/orders" element={
-                <Suspense fallback={<PageLoader />}><CustomerOrders /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerOrders /></Suspense>
+                </PortalAuthGuard>
               } />
               <Route path="/portal/documents" element={
-                <Suspense fallback={<PageLoader />}><CustomerDocuments /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerDocuments /></Suspense>
+                </PortalAuthGuard>
               } />
               <Route path="/portal/order/:orderId" element={
-                <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+                </PortalAuthGuard>
               } />
               <Route path="/portal/orders/:orderId" element={
-                <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+                </PortalAuthGuard>
               } />
               <Route path="/portal/payment-complete" element={
-                <Suspense fallback={<PageLoader />}><PaymentComplete /></Suspense>
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><PaymentComplete /></Suspense>
+                </PortalAuthGuard>
               } />
 
               {/* Green Halo Client Portal */}
