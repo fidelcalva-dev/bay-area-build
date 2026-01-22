@@ -401,16 +401,38 @@ const CustomerOrderDetail = () => {
                 <span>{order.quotes.extras.join(", ")}</span>
               </div>
             )}
+            
+            {/* Show overage if amount_due > original total (indicates overage was added) */}
+            {order.amount_due && order.final_total && order.amount_due > order.final_total && (
+              <div className="flex justify-between text-amber-700 bg-amber-50 p-2 rounded">
+                <span className="flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  Overage Charge
+                </span>
+                <span className="font-medium">
+                  ${(order.amount_due - order.final_total).toFixed(2)}
+                </span>
+              </div>
+            )}
+            
             <Separator />
             <div className="flex justify-between font-semibold text-lg">
-              <span>Total</span>
+              <span>Total Due</span>
               <span>
-                {order.final_total 
-                  ? `$${order.final_total.toFixed(2)}`
-                  : `$${order.quotes?.estimated_min?.toFixed(0)} - $${order.quotes?.estimated_max?.toFixed(0)}`
+                {order.amount_due 
+                  ? `$${order.amount_due.toFixed(2)}`
+                  : order.final_total 
+                    ? `$${order.final_total.toFixed(2)}`
+                    : `$${order.quotes?.estimated_min?.toFixed(0)} - $${order.quotes?.estimated_max?.toFixed(0)}`
                 }
               </span>
             </div>
+            {order.amount_paid && order.amount_paid > 0 && (
+              <div className="flex justify-between text-green-700">
+                <span>Amount Paid</span>
+                <span>-${order.amount_paid.toFixed(2)}</span>
+              </div>
+            )}
             
             {/* Payment Status */}
             <div className="pt-2 border-t space-y-3">
