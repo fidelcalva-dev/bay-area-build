@@ -71,6 +71,7 @@ const navSections = [
     title: 'System',
     items: [
       { path: '/admin/alerts', label: 'Alerts', icon: Bell },
+      { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
       { path: '/admin/users', label: 'User Management', icon: UserCog },
       { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
     ],

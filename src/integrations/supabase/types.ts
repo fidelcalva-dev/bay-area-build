@@ -807,6 +807,117 @@ export type Database = {
         }
         Relationships: []
       }
+      fraud_actions: {
+        Row: {
+          action_type: string
+          created_at: string
+          flag_id: string
+          id: string
+          metadata: Json | null
+          notes: string | null
+          performed_by: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          flag_id: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          performed_by?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          flag_id?: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_actions_flag_id_fkey"
+            columns: ["flag_id"]
+            isOneToOne: false
+            referencedRelation: "fraud_flags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fraud_flags: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          evidence_json: Json | null
+          flag_type: string
+          id: string
+          order_id: string | null
+          phone: string | null
+          quote_id: string | null
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          resolved_notes: string | null
+          severity: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          evidence_json?: Json | null
+          flag_type: string
+          id?: string
+          order_id?: string | null
+          phone?: string | null
+          quote_id?: string | null
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_notes?: string | null
+          severity: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          evidence_json?: Json | null
+          flag_type?: string
+          id?: string
+          order_id?: string | null
+          phone?: string | null
+          quote_id?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_notes?: string | null
+          severity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_flags_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_flags_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_flags_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       heavy_material_rules: {
         Row: {
           created_at: string
@@ -1453,6 +1564,7 @@ export type Database = {
           customer_id: string | null
           delivery_completed_at: string | null
           delivery_started_at: string | null
+          deposit_required_reason: string | null
           destination_type: string | null
           destination_yard_id: string | null
           driver_notes: string | null
@@ -1461,6 +1573,8 @@ export type Database = {
           dump_ticket_url: string | null
           filled_location: string | null
           final_total: number | null
+          fraud_blocked: boolean | null
+          fraud_flags_count: number | null
           id: string
           internal_notes: string | null
           inventory_id: string | null
@@ -1486,6 +1600,7 @@ export type Database = {
           placement_photo_url: string | null
           primary_dumpster_id: string | null
           quote_id: string | null
+          requires_deposit: boolean | null
           requires_manual_review: boolean | null
           route_notes: string | null
           scheduled_delivery_date: string | null
@@ -1514,6 +1629,7 @@ export type Database = {
           customer_id?: string | null
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
+          deposit_required_reason?: string | null
           destination_type?: string | null
           destination_yard_id?: string | null
           driver_notes?: string | null
@@ -1522,6 +1638,8 @@ export type Database = {
           dump_ticket_url?: string | null
           filled_location?: string | null
           final_total?: number | null
+          fraud_blocked?: boolean | null
+          fraud_flags_count?: number | null
           id?: string
           internal_notes?: string | null
           inventory_id?: string | null
@@ -1547,6 +1665,7 @@ export type Database = {
           placement_photo_url?: string | null
           primary_dumpster_id?: string | null
           quote_id?: string | null
+          requires_deposit?: boolean | null
           requires_manual_review?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
@@ -1575,6 +1694,7 @@ export type Database = {
           customer_id?: string | null
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
+          deposit_required_reason?: string | null
           destination_type?: string | null
           destination_yard_id?: string | null
           driver_notes?: string | null
@@ -1583,6 +1703,8 @@ export type Database = {
           dump_ticket_url?: string | null
           filled_location?: string | null
           final_total?: number | null
+          fraud_blocked?: boolean | null
+          fraud_flags_count?: number | null
           id?: string
           internal_notes?: string | null
           inventory_id?: string | null
@@ -1608,6 +1730,7 @@ export type Database = {
           placement_photo_url?: string | null
           primary_dumpster_id?: string | null
           quote_id?: string | null
+          requires_deposit?: boolean | null
           requires_manual_review?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
@@ -2009,6 +2132,7 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased: number | null
           extras: string[] | null
+          fraud_flags_count: number | null
           green_halo_category: string | null
           green_halo_dump_fee: number | null
           green_halo_dump_fee_per_ton: number | null
@@ -2097,6 +2221,7 @@ export type Database = {
           estimated_min: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          fraud_flags_count?: number | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
@@ -2185,6 +2310,7 @@ export type Database = {
           estimated_min?: number
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          fraud_flags_count?: number | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
