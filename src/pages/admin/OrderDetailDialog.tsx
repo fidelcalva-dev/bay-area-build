@@ -17,6 +17,7 @@ import { logStatusChange } from '@/lib/auditLog';
 import { logOrderEvent, logScheduleChange } from '@/lib/orderEventService';
 import { OrderHistoryTab } from '@/components/admin/OrderHistoryTab';
 import { PaymentRecordDialog } from '@/components/admin/PaymentRecordDialog';
+import { OrderContractSection } from '@/components/contracts/OrderContractSection';
 import {
   reserveInventory,
   deployInventory,
@@ -41,6 +42,7 @@ import {
 interface OrderDetail {
   id: string;
   status: string;
+  customer_id: string | null;
   payment_status: string | null;
   final_total: number | null;
   amount_due: number | null;
@@ -496,6 +498,23 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                 </div>
               </div>
             </div>
+
+            {/* Contract Status Section */}
+            {order.quotes && order.customer_id && (
+              <OrderContractSection
+                orderId={order.id}
+                customerId={order.customer_id}
+                serviceAddress={order.quotes.delivery_address || order.quotes.zip_code || ''}
+                customerName={order.quotes.customer_name || 'Customer'}
+                customerPhone={order.quotes.customer_phone || ''}
+                customerEmail={order.quotes.customer_email || undefined}
+                dumpsterSize={order.quotes.dumpster_sizes?.label || 'N/A'}
+                materialType={order.quotes.material_type || 'general'}
+                rentalDays={order.quotes.rental_days || 7}
+                deliveryDate={deliveryDate}
+                deliveryWindow={deliveryWindow}
+              />
+            )}
 
             {/* Service Details */}
             <div className="bg-muted/50 rounded-lg p-4">
