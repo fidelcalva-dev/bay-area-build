@@ -964,6 +964,107 @@ export type Database = {
         }
         Relationships: []
       }
+      logistics_events: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          event_type: string
+          filled_location: string | null
+          from_status: string | null
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          logistics_type: string
+          metadata: Json | null
+          notes: string | null
+          order_id: string
+          photo_url: string | null
+          to_status: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          event_type: string
+          filled_location?: string | null
+          from_status?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          logistics_type: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id: string
+          photo_url?: string | null
+          to_status?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          event_type?: string
+          filled_location?: string | null
+          from_status?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          logistics_type?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string
+          photo_url?: string | null
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logistics_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logistics_pricing: {
+        Row: {
+          base_fee: number | null
+          created_at: string
+          description: string | null
+          dry_run_fee: number | null
+          id: string
+          included_minutes: number | null
+          is_active: boolean | null
+          logistics_type: string
+          per_minute_fee: number | null
+          updated_at: string
+        }
+        Insert: {
+          base_fee?: number | null
+          created_at?: string
+          description?: string | null
+          dry_run_fee?: number | null
+          id?: string
+          included_minutes?: number | null
+          is_active?: boolean | null
+          logistics_type: string
+          per_minute_fee?: number | null
+          updated_at?: string
+        }
+        Update: {
+          base_fee?: number | null
+          created_at?: string
+          description?: string | null
+          dry_run_fee?: number | null
+          id?: string
+          included_minutes?: number | null
+          is_active?: boolean | null
+          logistics_type?: string
+          per_minute_fee?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -1170,17 +1271,29 @@ export type Database = {
           assigned_yard_id: string | null
           balance_due: number | null
           created_at: string
+          custom_logistics_notes: string | null
           customer_id: string | null
           delivery_completed_at: string | null
           delivery_started_at: string | null
+          destination_type: string | null
+          destination_yard_id: string | null
           driver_notes: string | null
           driver_notes_internal: string | null
+          dry_run_reason: string | null
           dump_ticket_url: string | null
+          filled_location: string | null
           final_total: number | null
           id: string
           internal_notes: string | null
           inventory_id: string | null
           invoice_url: string | null
+          is_dry_run: boolean | null
+          live_load_minutes: number | null
+          logistics_type: string | null
+          multi_stop_sequence: number | null
+          origin_yard_id: string | null
+          overfill_flagged: boolean | null
+          parent_order_id: string | null
           payment_link_amount: number | null
           payment_link_sent_at: string | null
           payment_link_type: string | null
@@ -1192,15 +1305,20 @@ export type Database = {
           placement_confirmed: boolean | null
           placement_locked: boolean | null
           placement_photo_url: string | null
+          primary_dumpster_id: string | null
           quote_id: string | null
+          requires_manual_review: boolean | null
           route_notes: string | null
           scheduled_delivery_date: string | null
           scheduled_delivery_window: string | null
           scheduled_pickup_date: string | null
           scheduled_pickup_window: string | null
+          secondary_dumpster_id: string | null
           status: string
           text_before_arrival: boolean | null
+          truck_id: string | null
           updated_at: string
+          wrong_material_flagged: boolean | null
         }
         Insert: {
           actual_delivery_at?: string | null
@@ -1211,17 +1329,29 @@ export type Database = {
           assigned_yard_id?: string | null
           balance_due?: number | null
           created_at?: string
+          custom_logistics_notes?: string | null
           customer_id?: string | null
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
+          destination_type?: string | null
+          destination_yard_id?: string | null
           driver_notes?: string | null
           driver_notes_internal?: string | null
+          dry_run_reason?: string | null
           dump_ticket_url?: string | null
+          filled_location?: string | null
           final_total?: number | null
           id?: string
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
+          is_dry_run?: boolean | null
+          live_load_minutes?: number | null
+          logistics_type?: string | null
+          multi_stop_sequence?: number | null
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          parent_order_id?: string | null
           payment_link_amount?: number | null
           payment_link_sent_at?: string | null
           payment_link_type?: string | null
@@ -1233,15 +1363,20 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          primary_dumpster_id?: string | null
           quote_id?: string | null
+          requires_manual_review?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
+          secondary_dumpster_id?: string | null
           status?: string
           text_before_arrival?: boolean | null
+          truck_id?: string | null
           updated_at?: string
+          wrong_material_flagged?: boolean | null
         }
         Update: {
           actual_delivery_at?: string | null
@@ -1252,17 +1387,29 @@ export type Database = {
           assigned_yard_id?: string | null
           balance_due?: number | null
           created_at?: string
+          custom_logistics_notes?: string | null
           customer_id?: string | null
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
+          destination_type?: string | null
+          destination_yard_id?: string | null
           driver_notes?: string | null
           driver_notes_internal?: string | null
+          dry_run_reason?: string | null
           dump_ticket_url?: string | null
+          filled_location?: string | null
           final_total?: number | null
           id?: string
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
+          is_dry_run?: boolean | null
+          live_load_minutes?: number | null
+          logistics_type?: string | null
+          multi_stop_sequence?: number | null
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          parent_order_id?: string | null
           payment_link_amount?: number | null
           payment_link_sent_at?: string | null
           payment_link_type?: string | null
@@ -1274,15 +1421,20 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          primary_dumpster_id?: string | null
           quote_id?: string | null
+          requires_manual_review?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
+          secondary_dumpster_id?: string | null
           status?: string
           text_before_arrival?: boolean | null
+          truck_id?: string | null
           updated_at?: string
+          wrong_material_flagged?: boolean | null
         }
         Relationships: [
           {
@@ -1300,8 +1452,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_inventory_id_fkey"
             columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_parent_order_id_fkey"
+            columns: ["parent_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_primary_dumpster_id_fkey"
+            columns: ["primary_dumpster_id"]
             isOneToOne: false
             referencedRelation: "inventory"
             referencedColumns: ["id"]
@@ -1311,6 +1491,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_secondary_dumpster_id_fkey"
+            columns: ["secondary_dumpster_id"]
+            isOneToOne: false
+            referencedRelation: "inventory"
             referencedColumns: ["id"]
           },
         ]
@@ -2315,6 +2502,60 @@ export type Database = {
           },
         ]
       }
+      trucks: {
+        Row: {
+          assigned_driver_id: string | null
+          assigned_yard_id: string | null
+          capacity_yards: number | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          notes: string | null
+          truck_number: string
+          truck_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          capacity_yards?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          truck_number: string
+          truck_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          capacity_yards?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          truck_number?: string
+          truck_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trucks_assigned_driver_id_fkey"
+            columns: ["assigned_driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           avatar_url: string | null
@@ -2763,6 +3004,21 @@ export type Database = {
         | "owner_operator"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
+      filled_location: "customer" | "yard" | "truck"
+      logistics_type:
+        | "delivery"
+        | "pickup"
+        | "swap"
+        | "live_load"
+        | "dump_and_return"
+        | "relocation"
+        | "custom_request"
+        | "yard_filled"
+        | "truck_filled"
+        | "partial_pickup"
+        | "dry_run"
+        | "multi_stop"
+        | "maintenance_hold"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -2904,6 +3160,22 @@ export const Constants = {
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
+      filled_location: ["customer", "yard", "truck"],
+      logistics_type: [
+        "delivery",
+        "pickup",
+        "swap",
+        "live_load",
+        "dump_and_return",
+        "relocation",
+        "custom_request",
+        "yard_filled",
+        "truck_filled",
+        "partial_pickup",
+        "dry_run",
+        "multi_stop",
+        "maintenance_hold",
+      ],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
