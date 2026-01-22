@@ -846,6 +846,50 @@ export type Database = {
           },
         ]
       }
+      order_events: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          after_json: Json | null
+          before_json: Json | null
+          created_at: string
+          event_type: string
+          id: string
+          message: string | null
+          order_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          event_type: string
+          id?: string
+          message?: string | null
+          order_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          message?: string | null
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           actual_delivery_at: string | null
@@ -1531,6 +1575,56 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedule_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          id: string
+          new_date: string | null
+          new_window: string | null
+          old_date: string | null
+          old_window: string | null
+          order_id: string
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: string
+          new_date?: string | null
+          new_window?: string | null
+          old_date?: string | null
+          old_window?: string | null
+          order_id: string
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: string
+          new_date?: string | null
+          new_window?: string | null
+          old_date?: string | null
+          old_window?: string | null
+          order_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]

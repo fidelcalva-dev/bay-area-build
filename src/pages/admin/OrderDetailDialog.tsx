@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Package, Truck, Calendar, MapPin, User, Phone,
-  Clock, Warehouse, AlertCircle, Loader2, AlertTriangle, FileText
+  Clock, AlertCircle, Loader2, AlertTriangle, FileText, History
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -11,8 +11,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { logStatusChange } from '@/lib/auditLog';
+import { logOrderEvent, logScheduleChange } from '@/lib/orderEventService';
+import { OrderHistoryTab } from '@/components/admin/OrderHistoryTab';
 import {
   reserveInventory,
   deployInventory,
@@ -257,6 +260,13 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
         });
       }
 
+      // Log inventory reserved event
+      await logOrderEvent({
+        orderId: order.id,
+        eventType: 'INVENTORY_RESERVED',
+        message: `Dumpster reserved from ${availability.inventory?.yards?.name || 'yard'}`,
+      });
+
       toast({ title: 'Inventory reserved', description: 'Dumpster allocated for this order' });
     }
 
@@ -280,6 +290,12 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
         if (!releaseResult.success) {
           toast({ title: 'Warning', description: releaseResult.error, variant: 'default' });
         } else {
+          // Log inventory released event
+          await logOrderEvent({
+            orderId: order.id,
+            eventType: 'INVENTORY_RELEASED',
+            message: 'Dumpster returned to available inventory',
+          });
           toast({ title: 'Inventory released', description: 'Dumpster returned to available stock' });
         }
       }
@@ -329,6 +345,48 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
     // Log status change if it changed
     if (statusChanged) {
       await logStatusChange('order', order.id, oldStatus, newStatus);
+      await logOrderEvent({
+        orderId: order.id,
+        eventType: newStatus === 'cancelled' ? 'CANCELLED' : 'STATUS_CHANGED',
+        message: `Status changed from ${oldStatus} to ${newStatus}`,
+        beforeJson: { status: oldStatus },
+        afterJson: { status: newStatus },
+      });
+    }
+
+    // Log schedule changes
+    const oldDeliveryDate = order.scheduled_delivery_date;
+    const oldDeliveryWindow = order.scheduled_delivery_window;
+    const scheduleChanged = oldDeliveryDate !== deliveryDate || oldDeliveryWindow !== deliveryWindow;
+    
+    if (scheduleChanged && deliveryDate) {
+      const action = !oldDeliveryDate ? 'confirmed' : 'changed';
+      await logScheduleChange({
+        orderId: order.id,
+        action,
+        oldDate: oldDeliveryDate,
+        oldWindow: oldDeliveryWindow,
+        newDate: deliveryDate,
+        newWindow: deliveryWindow,
+      });
+      
+      await logOrderEvent({
+        orderId: order.id,
+        eventType: action === 'confirmed' ? 'SCHEDULE_CONFIRMED' : 'SCHEDULE_CHANGED',
+        message: action === 'confirmed' 
+          ? `Delivery scheduled for ${deliveryDate}` 
+          : `Delivery rescheduled to ${deliveryDate}`,
+      });
+    }
+
+    // Log driver assignment
+    if (driverId !== order.assigned_driver_id && driverId) {
+      const driver = drivers.find(d => d.id === driverId);
+      await logOrderEvent({
+        orderId: order.id,
+        eventType: 'DRIVER_ASSIGNED',
+        message: `Driver assigned: ${driver?.name || 'Unknown'}`,
+      });
     }
 
     toast({ title: 'Order updated successfully' });
@@ -361,25 +419,37 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : order ? (
-          <div className="space-y-6">
-            {/* Inventory Warnings */}
-            {inventoryWarning && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Inventory Unavailable</AlertTitle>
-                <AlertDescription>{inventoryWarning}</AlertDescription>
-              </Alert>
-            )}
-            {lowStockWarning && (
-              <Alert className="border-amber-200 bg-amber-50">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                <AlertTitle className="text-amber-800">Low Stock Alert</AlertTitle>
-                <AlertDescription className="text-amber-700">
-                  Inventory is running low at this yard/size combination. Consider restocking.
-                </AlertDescription>
-              </Alert>
-            )}
-            {/* Customer Info */}
+          <Tabs defaultValue="details" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="details" className="flex items-center gap-2">
+                <Package className="w-4 h-4" />
+                Details
+              </TabsTrigger>
+              <TabsTrigger value="history" className="flex items-center gap-2">
+                <History className="w-4 h-4" />
+                History
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="details" className="space-y-6 mt-0">
+              {/* Inventory Warnings */}
+              {inventoryWarning && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Inventory Unavailable</AlertTitle>
+                  <AlertDescription>{inventoryWarning}</AlertDescription>
+                </Alert>
+              )}
+              {lowStockWarning && (
+                <Alert className="border-amber-200 bg-amber-50">
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  <AlertTitle className="text-amber-800">Low Stock Alert</AlertTitle>
+                  <AlertDescription className="text-amber-700">
+                    Inventory is running low at this yard/size combination. Consider restocking.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {/* Customer Info */}
             <div className="bg-muted/50 rounded-lg p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-3">
                 <User className="w-4 h-4" />
@@ -618,7 +688,12 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                 Save Changes
               </Button>
             </div>
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="history" className="mt-0">
+              <OrderHistoryTab orderId={order.id} />
+            </TabsContent>
+          </Tabs>
         ) : (
           <p className="text-center text-muted-foreground py-8">Order not found</p>
         )}
