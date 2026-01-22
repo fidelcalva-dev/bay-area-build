@@ -215,90 +215,113 @@ export async function saveQuote(params: {
   greenHaloDumpFee?: number;
   greenHaloHandlingFee?: number;
   greenHaloDumpFeePerTon?: number;
-}): Promise<{ success: boolean; quoteId?: string; error?: string }> {
+  // Quick link reference
+  quickLinkId?: string;
+}): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string }> {
   try {
-    const { data, error } = await supabase
-      .from('quotes')
-      .insert({
-        customer_name: params.customerName,
-        customer_email: params.customerEmail,
-        customer_phone: params.customerPhone,
-        user_type: params.userType,
-        zip_code: params.zipCode,
-        zone_id: params.zoneId,
-        size_id: params.sizeId,
-        material_type: params.materialType,
-        rental_days: params.rentalDays,
-        extras: params.extras,
-        subtotal: params.subtotal,
-        estimated_min: params.estimatedMin,
-        estimated_max: params.estimatedMax,
-        discount_percent: params.discountPercent || 0,
-        selected_vendor_id: params.selectedVendorId,
-        vendor_cost: params.vendorCost,
-        margin: params.margin,
-        is_calsan_fulfillment: params.isCalsanFulfillment,
-        // Smart recommendation fields
-        recommended_size_yards: params.recommendedSizeYards,
-        recommendation_reason: params.recommendationReason,
-        user_selected_size_yards: params.userSelectedSizeYards,
-        project_type: params.projectType,
-        // Confidence fields
-        confidence_level: params.confidenceLevel,
-        confidence_note: params.confidenceNote,
-        // Distance-based pricing fields
-        customer_lat: params.customerLat,
-        customer_lng: params.customerLng,
-        yard_id: params.yardId,
-        yard_name: params.yardName,
-        distance_miles: params.distanceMiles,
-        distance_bracket: params.distanceBracket,
-        // Truck-aware routing
-        truck_distance_miles: params.truckDistanceMiles,
-        truck_duration_min: params.truckDurationMin,
-        truck_duration_max: params.truckDurationMax,
-        route_polyline: params.routePolyline,
-        routing_provider: params.routingProvider,
-        route_calculated_at: params.routingProvider ? new Date().toISOString() : undefined,
-        // Pre-purchase extra tons
-        pre_purchase_suggested: params.prePurchaseSuggested,
-        suggested_extra_tons: params.suggestedExtraTons,
-        extra_tons_prepurchased: params.extraTonsPrepurchased,
-        prepurchase_discount_pct: params.prepurchaseDiscountPct,
-        prepurchase_rate: params.prepurchaseRate,
-        prepurchase_city_rate: params.prepurchaseCityRate,
-        // Heavy material classification
-        heavy_material_class: params.heavyMaterialClass,
-        heavy_material_increment: params.heavyMaterialIncrement,
-        is_trash_contaminated: params.isTrashContaminated,
-        reclassified_to_mixed: params.reclassifiedToMixed,
-        original_material_type: params.originalMaterialType,
-        // Volume commitment discount fields
-        volume_commitment_count: params.volumeCommitmentCount || 0,
-        volume_discount_pct: params.volumeDiscountPct || 0,
-        discount_cap_applied: params.discountCapApplied || false,
-        volume_agreement_id: params.volumeAgreementId,
-        volume_validity_start: params.volumeValidityStart?.toISOString(),
-        volume_validity_end: params.volumeValidityEnd?.toISOString(),
-        requires_discount_approval: params.requiresDiscountApproval || false,
-        // Green Halo pricing fields
-        is_green_halo: params.isGreenHalo || false,
-        green_halo_category: params.greenHaloCategory,
-        green_halo_dump_fee: params.greenHaloDumpFee,
-        green_halo_handling_fee: params.greenHaloHandlingFee,
-        green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
-      })
-      .select('id')
-      .single();
+    // Use edge function to bypass RLS (server-side insert with service role)
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    
+    const payload = {
+      customer_name: params.customerName,
+      customer_email: params.customerEmail,
+      customer_phone: params.customerPhone,
+      user_type: params.userType,
+      zip_code: params.zipCode,
+      zone_id: params.zoneId,
+      size_id: params.sizeId,
+      material_type: params.materialType,
+      rental_days: params.rentalDays,
+      extras: params.extras,
+      subtotal: params.subtotal,
+      estimated_min: params.estimatedMin,
+      estimated_max: params.estimatedMax,
+      discount_percent: params.discountPercent || 0,
+      selected_vendor_id: params.selectedVendorId,
+      vendor_cost: params.vendorCost,
+      margin: params.margin,
+      is_calsan_fulfillment: params.isCalsanFulfillment,
+      // Smart recommendation fields
+      recommended_size_yards: params.recommendedSizeYards,
+      recommendation_reason: params.recommendationReason,
+      user_selected_size_yards: params.userSelectedSizeYards,
+      project_type: params.projectType,
+      // Confidence fields
+      confidence_level: params.confidenceLevel,
+      confidence_note: params.confidenceNote,
+      // Distance-based pricing fields
+      customer_lat: params.customerLat,
+      customer_lng: params.customerLng,
+      yard_id: params.yardId,
+      yard_name: params.yardName,
+      distance_miles: params.distanceMiles,
+      distance_bracket: params.distanceBracket,
+      // Truck-aware routing
+      truck_distance_miles: params.truckDistanceMiles,
+      truck_duration_min: params.truckDurationMin,
+      truck_duration_max: params.truckDurationMax,
+      route_polyline: params.routePolyline,
+      routing_provider: params.routingProvider,
+      // Pre-purchase extra tons
+      pre_purchase_suggested: params.prePurchaseSuggested,
+      suggested_extra_tons: params.suggestedExtraTons,
+      extra_tons_prepurchased: params.extraTonsPrepurchased,
+      prepurchase_discount_pct: params.prepurchaseDiscountPct,
+      prepurchase_rate: params.prepurchaseRate,
+      prepurchase_city_rate: params.prepurchaseCityRate,
+      // Heavy material classification
+      heavy_material_class: params.heavyMaterialClass,
+      heavy_material_increment: params.heavyMaterialIncrement,
+      is_trash_contaminated: params.isTrashContaminated,
+      reclassified_to_mixed: params.reclassifiedToMixed,
+      original_material_type: params.originalMaterialType,
+      // Volume commitment discount fields
+      volume_commitment_count: params.volumeCommitmentCount || 0,
+      volume_discount_pct: params.volumeDiscountPct || 0,
+      discount_cap_applied: params.discountCapApplied || false,
+      volume_agreement_id: params.volumeAgreementId,
+      volume_validity_start: params.volumeValidityStart?.toISOString(),
+      volume_validity_end: params.volumeValidityEnd?.toISOString(),
+      requires_discount_approval: params.requiresDiscountApproval || false,
+      // Green Halo pricing fields
+      is_green_halo: params.isGreenHalo || false,
+      green_halo_category: params.greenHaloCategory,
+      green_halo_dump_fee: params.greenHaloDumpFee,
+      green_halo_handling_fee: params.greenHaloHandlingFee,
+      green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
+      // Quick link reference
+      quick_link_id: params.quickLinkId,
+      // Source tracking
+      source: 'website',
+    };
 
-    if (error) {
-      console.error('Error saving quote:', error);
-      return { success: false, error: error.message };
+    console.log('[saveQuote] Calling edge function to save quote...');
+    
+    const response = await fetch(`${supabaseUrl}/functions/v1/save-quote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok || !result.success) {
+      console.error('[saveQuote] Edge function error:', result.error);
+      return { success: false, error: result.error || 'Failed to save quote' };
     }
 
-    return { success: true, quoteId: data?.id };
+    console.log('[saveQuote] Quote saved successfully:', result.quote_id);
+    return { 
+      success: true, 
+      quoteId: result.quote_id, 
+      resumeLink: result.resume_link,
+    };
   } catch (err) {
-    console.error('Quote save error:', err);
-    return { success: false, error: 'Failed to save quote' };
+    console.error('[saveQuote] Network or unexpected error:', err);
+    return { success: false, error: 'Failed to save quote - network error' };
   }
 }
