@@ -191,3 +191,127 @@ No service can be performed until this is completed.`;
     );
   }
 });
+
+// =====================================================
+// HELPER FUNCTION: Send contract signed confirmation
+// This is called by the sign-contract endpoint after signature
+// =====================================================
+export async function sendContractSignedConfirmation(
+  supabaseClient: ReturnType<typeof createClient>,
+  contractId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Fetch contract with customer info - use any to bypass strict typing in edge functions
+    const { data: contractData, error: contractError } = await supabaseClient
+      .from("contracts")
+      .select(`
+        *,
+        customers (
+          id,
+          company_name,
+          billing_phone,
+          billing_email
+        )
+      `)
+      .eq("id", contractId)
+      .single();
+
+    if (contractError || !contractData) {
+      return { success: false, error: "Contract not found" };
+    }
+
+    // Type assertion for edge function context
+    const contract = contractData as {
+      id: string;
+      customer_id: string;
+      contract_type: string;
+      service_address: string | null;
+      customers: { id: string; company_name: string | null; billing_phone: string | null; billing_email: string | null } | null;
+    };
+
+    const customer = contract.customers;
+    const phone = customer?.billing_phone;
+    const email = customer?.billing_email;
+    const customerName = customer?.company_name || '';
+
+    const contractTypeLabel = contract.contract_type === 'msa' 
+      ? 'Master Service Agreement' 
+      : 'Service Addendum';
+    
+    const serviceAddress = contract.service_address;
+
+    // Build confirmation message
+    const smsBody = `${customerName ? `Hi ${customerName.split(' ')[0]}, ` : ''}✅ Your ${contractTypeLabel} has been signed successfully.${serviceAddress ? ` Address: ${serviceAddress}` : ''}\n\nWe can now proceed with scheduling your service. Thank you!`;
+
+    // Send SMS confirmation
+    if (phone) {
+      try {
+        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+        const authHeader = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
+
+        const twilioResponse = await fetch(twilioUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${authHeader}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            To: phone,
+            From: TWILIO_PHONE_NUMBER,
+            Body: smsBody,
+          }),
+        });
+
+        if (twilioResponse.ok) {
+          const result = await twilioResponse.json();
+          
+          // Log event - use any to bypass strict typing in edge function context
+          // deno-lint-ignore no-explicit-any
+          await (supabaseClient as any).from("contract_events").insert({
+            contract_id: contractId,
+            event_type: "signed_confirmation_sent",
+            metadata: { 
+              channel: "sms",
+              phone: phone.slice(-4),
+              message_sid: result.sid,
+            },
+          });
+
+          // Log to message history
+          // deno-lint-ignore no-explicit-any
+          await (supabaseClient as any).from("message_history").insert({
+            customer_id: contract.customer_id,
+            channel: "sms",
+            direction: "outbound",
+            message_body: smsBody,
+            customer_phone: phone,
+            template_key: "contract_signed_confirmation",
+            external_id: result.sid,
+          });
+        }
+      } catch (err) {
+        console.error("SMS confirmation error:", err);
+      }
+    }
+
+    // Log email would be sent (integrate with Resend when available)
+    if (email) {
+      console.log(`Would send signed confirmation email to ${email}`);
+      
+      // deno-lint-ignore no-explicit-any
+      await (supabaseClient as any).from("contract_events").insert({
+        contract_id: contractId,
+        event_type: "signed_confirmation_email_logged",
+        metadata: { 
+          channel: "email",
+          email: email,
+        },
+      });
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending signed confirmation:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+}

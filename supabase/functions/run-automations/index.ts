@@ -289,6 +289,130 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ============ TRIGGER 6: Contract Signature Reminders ============
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+    const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString();
+
+    // Fetch pending contracts with customer info
+    const { data: pendingContracts } = await supabase
+      .from('contracts')
+      .select(`
+        id,
+        contract_type,
+        customer_id,
+        service_address,
+        created_at,
+        customers (
+          id,
+          company_name,
+          billing_phone,
+          billing_email
+        )
+      `)
+      .eq('status', 'pending');
+
+    // Get existing contract send logs to avoid duplicate reminders
+    const { data: contractEvents } = await supabase
+      .from('contract_events')
+      .select('contract_id, event_type, created_at')
+      .in('event_type', ['reminder_24h_sent', 'final_48h_sent']);
+
+    const remindersSent = new Map<string, Set<string>>();
+    for (const event of contractEvents || []) {
+      if (!remindersSent.has(event.contract_id)) {
+        remindersSent.set(event.contract_id, new Set());
+      }
+      remindersSent.get(event.contract_id)!.add(event.event_type);
+    }
+
+    const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+    const twilioToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    const twilioPhone = Deno.env.get('TWILIO_PHONE_NUMBER');
+    const baseUrl = supabaseUrl.replace('.supabase.co', '.lovable.app');
+
+    for (const contract of pendingContracts || []) {
+      const contractAge = now.getTime() - new Date(contract.created_at).getTime();
+      const hoursOld = contractAge / (1000 * 60 * 60);
+      const sentReminders = remindersSent.get(contract.id) || new Set();
+      // Handle customers as array from join
+      const customersArray = contract.customers as unknown as Array<{ id: string; company_name: string | null; billing_phone: string | null; billing_email: string | null }> | null;
+      const customer = Array.isArray(customersArray) ? customersArray[0] : customersArray;
+      const customerPhone = customer?.billing_phone;
+
+      if (!customerPhone || !twilioSid || !twilioToken || !twilioPhone) continue;
+
+      const signingLink = `${baseUrl}/portal/sign-contract?id=${contract.id}`;
+      const contractTypeLabel = contract.contract_type === 'msa' 
+        ? 'Master Service Agreement' 
+        : 'Service Addendum';
+      const customerName = customer?.company_name || '';
+
+      let reminderType: '24h' | '48h' | null = null;
+      let smsBody = '';
+
+      // Check if 48h reminder needed (but not already sent)
+      if (hoursOld >= 48 && !sentReminders.has('final_48h_sent')) {
+        reminderType = '48h';
+        smsBody = `${customerName ? `Hi ${customerName.split(' ')[0]}, ` : ''}FINAL NOTICE: Your ${contractTypeLabel} must be signed to proceed. Without signature, scheduling cannot continue. Sign now: ${signingLink}`;
+      }
+      // Check if 24h reminder needed (but not already sent)
+      else if (hoursOld >= 24 && hoursOld < 48 && !sentReminders.has('reminder_24h_sent')) {
+        reminderType = '24h';
+        smsBody = `${customerName ? `Hi ${customerName.split(' ')[0]}, ` : ''}Reminder: Your ${contractTypeLabel} is still awaiting signature. Sign now to avoid delays: ${signingLink}`;
+      }
+
+      if (reminderType && smsBody) {
+        try {
+          const response = await fetch(
+            `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Basic ${btoa(`${twilioSid}:${twilioToken}`)}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                To: customerPhone,
+                From: twilioPhone,
+                Body: smsBody,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const result = await response.json();
+            notificationsSent++;
+
+            // Log the reminder event
+            await supabase.from('contract_events').insert({
+              contract_id: contract.id,
+              event_type: reminderType === '24h' ? 'reminder_24h_sent' : 'final_48h_sent',
+              metadata: { 
+                message_sid: result.sid,
+                phone: customerPhone.slice(-4),
+              },
+            });
+
+            // Log to message history
+            await supabase.from('message_history').insert({
+              customer_id: contract.customer_id,
+              channel: 'sms',
+              direction: 'outbound',
+              message_body: smsBody,
+              customer_phone: customerPhone,
+              template_key: `contract_${reminderType}_reminder`,
+              external_id: result.sid,
+            });
+
+            console.log(`Sent ${reminderType} reminder for contract ${contract.id}`);
+          }
+        } catch (err) {
+          console.error(`Error sending ${reminderType} reminder:`, err);
+        }
+      }
+    }
+
     // ============ INSERT ALERTS & RECOMMENDATIONS ============
     if (alerts.length > 0) {
       const { error: alertError } = await supabase
