@@ -1631,6 +1631,72 @@ export type Database = {
           },
         ]
       }
+      payment_actions: {
+        Row: {
+          action_type: Database["public"]["Enums"]["payment_action_type"]
+          amount: number
+          approved_by: string | null
+          created_at: string
+          error_message: string | null
+          evidence_url: string | null
+          id: string
+          invoice_id: string | null
+          order_id: string
+          payment_id: string
+          processed_by: string | null
+          provider: string
+          provider_refund_transaction_id: string | null
+          provider_transaction_id: string | null
+          reason_code: string
+          reason_notes: string | null
+          requested_by: string
+          status: Database["public"]["Enums"]["payment_action_status"]
+          updated_at: string
+        }
+        Insert: {
+          action_type: Database["public"]["Enums"]["payment_action_type"]
+          amount: number
+          approved_by?: string | null
+          created_at?: string
+          error_message?: string | null
+          evidence_url?: string | null
+          id?: string
+          invoice_id?: string | null
+          order_id: string
+          payment_id: string
+          processed_by?: string | null
+          provider?: string
+          provider_refund_transaction_id?: string | null
+          provider_transaction_id?: string | null
+          reason_code: string
+          reason_notes?: string | null
+          requested_by: string
+          status?: Database["public"]["Enums"]["payment_action_status"]
+          updated_at?: string
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["payment_action_type"]
+          amount?: number
+          approved_by?: string | null
+          created_at?: string
+          error_message?: string | null
+          evidence_url?: string | null
+          id?: string
+          invoice_id?: string | null
+          order_id?: string
+          payment_id?: string
+          processed_by?: string | null
+          provider?: string
+          provider_refund_transaction_id?: string | null
+          provider_transaction_id?: string | null
+          reason_code?: string
+          reason_notes?: string | null
+          requested_by?: string
+          status?: Database["public"]["Enums"]["payment_action_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -1645,6 +1711,7 @@ export type Database = {
           order_id: string
           payment_type: string
           provider: string
+          refunded_amount: number
           response_code: string | null
           response_message: string | null
           status: string
@@ -1664,6 +1731,7 @@ export type Database = {
           order_id: string
           payment_type: string
           provider?: string
+          refunded_amount?: number
           response_code?: string | null
           response_message?: string | null
           status?: string
@@ -1683,6 +1751,7 @@ export type Database = {
           order_id?: string
           payment_type?: string
           provider?: string
+          refunded_amount?: number
           response_code?: string | null
           response_message?: string | null
           status?: string
@@ -3150,6 +3219,14 @@ export type Database = {
         | "dry_run"
         | "multi_stop"
         | "maintenance_hold"
+      payment_action_status:
+        | "requested"
+        | "approved"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "canceled"
+      payment_action_type: "refund" | "void"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -3309,6 +3386,15 @@ export const Constants = {
         "multi_stop",
         "maintenance_hold",
       ],
+      payment_action_status: [
+        "requested",
+        "approved",
+        "processing",
+        "completed",
+        "failed",
+        "canceled",
+      ],
+      payment_action_type: ["refund", "void"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
