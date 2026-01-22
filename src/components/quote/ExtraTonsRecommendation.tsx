@@ -9,18 +9,20 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { ConfidenceLevel } from './SmartRecommendation';
 
-// City-based pricing configuration (can be moved to DB later)
-export interface ExtraTonPricing {
-  standardRate: number;
-  discountPct: number;
-  prepurchaseRate: number;
-}
+// Import canonical pricing from shared-data.ts
+import { 
+  DEFAULT_EXTRA_TON_PRICING as CANONICAL_PRICING,
+  type ExtraTonPricing 
+} from '@/lib/shared-data';
 
-// Default pricing (Oakland/San Jose zone)
+// Re-export for backward compatibility
+export type { ExtraTonPricing };
+
+// Re-export canonical pricing
 export const DEFAULT_EXTRA_TON_PRICING: ExtraTonPricing = {
-  standardRate: 165,
-  discountPct: 0.05,
-  prepurchaseRate: 156.75, // 165 * 0.95
+  standardRate: CANONICAL_PRICING.standardRate,
+  discountPct: CANONICAL_PRICING.discountPct,
+  prepurchaseRate: CANONICAL_PRICING.standardRate * (1 - CANONICAL_PRICING.discountPct),
 };
 
 export interface ExtraTonsRecommendationProps {

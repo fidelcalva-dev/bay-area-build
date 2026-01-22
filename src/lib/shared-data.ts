@@ -285,7 +285,28 @@ export const PRICING_POLICIES = {
   
   // Surcharges
   heavyMaterialSurcharge: 100,  // Flat surcharge for heavy in general container
+  
+  // Green Halo pricing (mid-range estimates)
+  greenHaloDumpFeePerTon: 150,  // Mid-range estimate ($75-250)
+  greenHaloHandlingFee: 150,  // Mid-range of $100-200
 } as const;
+
+// ============================================================
+// EXTRA TON PRICING - Pre-purchase discounts
+// ============================================================
+
+export interface ExtraTonPricing {
+  standardRate: number;
+  discountPct: number;
+  prepurchaseRate: number;
+}
+
+// Default pricing (Oakland/San Jose zone) - Single source of truth
+export const DEFAULT_EXTRA_TON_PRICING: ExtraTonPricing = {
+  standardRate: PRICING_POLICIES.overagePerTonGeneral, // 165
+  discountPct: 0.05,
+  get prepurchaseRate() { return this.standardRate * (1 - this.discountPct); }, // 156.75
+};
 
 // ============================================================
 // CONTRACTOR VOLUME DISCOUNT TIERS (CONSERVATIVE)

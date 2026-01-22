@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -22,6 +23,34 @@ interface QuoteSummaryRequest {
   extras: string[];
 }
 
+// Pricing defaults - fetched from DB when possible
+const DEFAULT_OVERAGE_PER_TON = 165;
+const DEFAULT_OVERAGE_PER_YARD = 30;
+
+async function getPricingFromDB(): Promise<{ overagePerTon: number; overagePerYard: number }> {
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data } = await supabase
+      .from("config_settings")
+      .select("key, value")
+      .in("key", ["extra_ton_rate_default"]);
+
+    let overagePerTon = DEFAULT_OVERAGE_PER_TON;
+    if (data) {
+      const tonRate = data.find(d => d.key === "extra_ton_rate_default");
+      if (tonRate) overagePerTon = Number(tonRate.value) || DEFAULT_OVERAGE_PER_TON;
+    }
+
+    return { overagePerTon, overagePerYard: DEFAULT_OVERAGE_PER_YARD };
+  } catch (error) {
+    console.error("Failed to fetch pricing from DB, using defaults:", error);
+    return { overagePerTon: DEFAULT_OVERAGE_PER_TON, overagePerYard: DEFAULT_OVERAGE_PER_YARD };
+  }
+}
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -29,6 +58,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Fetch pricing from database
+    const pricing = await getPricingFromDB();
+    
     const data: QuoteSummaryRequest = await req.json();
     const {
       customerName,
@@ -56,9 +88,9 @@ const handler = async (req: Request): Promise<Response> => {
     if (isHeavy) {
       overageNote = 'Heavy material dumpsters are FLAT FEE—disposal included with no extra weight charges.';
     } else if (isSmallGeneral) {
-      overageNote = 'Overage charged at $30 per additional yard.';
+      overageNote = `Overage charged at $${pricing.overagePerYard} per additional yard.`;
     } else {
-      overageNote = 'Overage charged at $165/ton after disposal scale ticket.';
+      overageNote = `Overage charged at $${pricing.overagePerTon}/ton after disposal scale ticket.`;
     }
 
     // Send Email via Resend REST API

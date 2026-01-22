@@ -13,7 +13,7 @@ import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
-import { getOverageInfo } from '@/lib/shared-data';
+import { getOverageInfo, PRICING_POLICIES } from '@/lib/shared-data';
 
 // Extra Tons Pre-Purchase
 import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggestedExtraTons, DEFAULT_EXTRA_TON_PRICING } from './ExtraTonsRecommendation';
@@ -127,11 +127,10 @@ interface ZoneResult {
   multiplier: number;
 }
 
-// Calculate Green Halo dump fee based on size (estimate tons × $150/ton mid-range)
+// Calculate Green Halo dump fee based on size (estimate tons × canonical rate)
 function calculateGreenHaloDumpFee(sizeYards: number): number {
   const estimatedTons = sizeYards <= 10 ? 1 : (sizeYards <= 20 ? 2 : sizeYards <= 30 ? 3 : 4);
-  const dumpFeePerTon = 150; // Mid-range estimate ($75-250)
-  return Math.round(estimatedTons * dumpFeePerTon);
+  return Math.round(estimatedTons * PRICING_POLICIES.greenHaloDumpFeePerTon);
 }
 
 export function InstantQuoteCalculatorV3() {
@@ -356,9 +355,9 @@ export function InstantQuoteCalculatorV3() {
 
     // Green Halo pricing: Flat fee + Dump fee + Handling fee
     if (isGreenHaloMaterial) {
-      // Dump fee estimate based on size (variable $75-250/ton, use mid-range estimate)
+      // Dump fee estimate based on size (variable $75-250/ton, use canonical rate)
       const estimatedTons = formData.size <= 10 ? 1 : (formData.size <= 20 ? 2 : formData.size <= 30 ? 3 : 4);
-      const dumpFeePerTon = 150; // Mid-range estimate ($75-250)
+      const dumpFeePerTon = PRICING_POLICIES.greenHaloDumpFeePerTon;
       const dumpFeeEstimate = Math.round(estimatedTons * dumpFeePerTon);
       
       lineItems.push({
@@ -375,12 +374,11 @@ export function InstantQuoteCalculatorV3() {
         type: 'addition',
       });
       
-      // Handling fee (recommended additional)
-      const handlingFee = 150; // Mid-range of $100-200
+      // Handling fee (recommended additional) - from canonical source
       lineItems.push({
         label: 'Green Halo Handling Fee',
         subLabel: 'Processing & compliance documentation',
-        amount: handlingFee,
+        amount: PRICING_POLICIES.greenHaloHandlingFee,
         type: 'addition',
       });
     }
@@ -588,8 +586,8 @@ export function InstantQuoteCalculatorV3() {
         isGreenHalo: generalClassification?.isGreenHalo || false,
         greenHaloCategory: generalClassification?.isGreenHalo ? generalClassification.category || undefined : undefined,
         greenHaloDumpFee: generalClassification?.isGreenHalo ? calculateGreenHaloDumpFee(formData.size) : undefined,
-        greenHaloHandlingFee: generalClassification?.isGreenHalo ? 150 : undefined,
-        greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? 150 : undefined,
+        greenHaloHandlingFee: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloHandlingFee : undefined,
+        greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloDumpFeePerTon : undefined,
       });
 
       if (result.success) {
