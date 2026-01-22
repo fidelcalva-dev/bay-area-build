@@ -1,9 +1,55 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Allowed origins for CORS (production and preview domains)
+const ALLOWED_ORIGINS = [
+  'https://calsanpro.com',
+  'https://www.calsanpro.com',
+  'https://id-preview--9d2754ea-90c1-4bce-9c45-c379d4c6b54c.lovable.app',
+  'http://localhost:5173',
+  'http://localhost:8080',
+];
+
+// Rate limiting configuration
+const RATE_LIMIT = {
+  maxRequests: 30,
+  windowMs: 5 * 60 * 1000, // 5 minutes
 };
+
+// In-memory rate limit store (resets on cold start, acceptable for edge functions)
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): { allowed: boolean; remaining: number; retryAfter?: number } {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (entry) {
+    if (now < entry.resetAt) {
+      if (entry.count >= RATE_LIMIT.maxRequests) {
+        return { 
+          allowed: false, 
+          remaining: 0,
+          retryAfter: Math.ceil((entry.resetAt - now) / 1000) 
+        };
+      }
+      entry.count++;
+      return { allowed: true, remaining: RATE_LIMIT.maxRequests - entry.count };
+    }
+  }
+
+  // Reset or create new entry
+  rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT.windowMs });
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
 
 // Calsan AI Sales Rep System Prompt (Context-Aware)
 const SYSTEM_PROMPT = `ROLE
@@ -240,8 +286,45 @@ interface RequestBody {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Check origin is allowed
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    console.warn(`[ai-sales-chat] Blocked request from unauthorized origin: ${origin}`);
+    return new Response(
+      JSON.stringify({ error: "Unauthorized origin" }),
+      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Rate limiting by IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+             req.headers.get("x-real-ip") || 
+             "unknown";
+  
+  const rateCheck = checkRateLimit(ip);
+  if (!rateCheck.allowed) {
+    console.warn(`[ai-sales-chat] Rate limit exceeded for IP: ${ip}`);
+    return new Response(
+      JSON.stringify({ 
+        error: `Rate limit exceeded. Try again in ${Math.ceil(rateCheck.retryAfter! / 60)} minutes.`,
+        retryAfter: rateCheck.retryAfter
+      }),
+      { 
+        status: 429, 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Retry-After": String(rateCheck.retryAfter),
+          "X-RateLimit-Remaining": "0",
+        } 
+      }
+    );
   }
 
   try {
