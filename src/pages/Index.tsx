@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { ServiceGuaranteeSection } from '@/components/sections/ServiceGuaranteeSection';
 import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
+import { VideoExplainerSection } from '@/components/sections/VideoExplainerSection';
 import { FeaturesSection } from '@/components/sections/FeaturesSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
@@ -51,6 +52,7 @@ const Index = () => {
       <ServiceGuaranteeSection />
       
       <HowItWorksSection />
+      <VideoExplainerSection />
       <FeaturesSection />
       
       {/* Social proof - verified credentials */}
