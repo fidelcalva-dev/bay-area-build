@@ -37,6 +37,7 @@ const CustomerDashboard = lazy(() => import("./pages/portal/CustomerDashboard"))
 const CustomerOrders = lazy(() => import("./pages/portal/CustomerOrders"));
 const CustomerDocuments = lazy(() => import("./pages/portal/CustomerDocuments"));
 const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
+const PaymentComplete = lazy(() => import("./pages/portal/PaymentComplete"));
 // Green Halo Portal pages (separate)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
 const PortalDashboard = lazy(() => import("./pages/portal/PortalDashboard"));
@@ -179,6 +180,12 @@ const App = () => (
               } />
               <Route path="/portal/order/:orderId" element={
                 <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+              } />
+              <Route path="/portal/orders/:orderId" element={
+                <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+              } />
+              <Route path="/portal/payment-complete" element={
+                <Suspense fallback={<PageLoader />}><PaymentComplete /></Suspense>
               } />
 
               {/* Green Halo Client Portal */}
