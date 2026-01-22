@@ -248,6 +248,34 @@ Deno.serve(async (req) => {
         },
       });
 
+    // 10. Create order_event for traceability
+    await supabase
+      .from("order_events")
+      .insert({
+        order_id: order.id,
+        event_type: "ORDER_CREATED",
+        actor_role: "system",
+        message: `Order created from quote. Delivery: ${quote.preferred_delivery_date || 'TBD'} (${quote.preferred_delivery_window || 'TBD'})`,
+        after_json: {
+          status: "scheduled_requested",
+          delivery_date: quote.preferred_delivery_date,
+          delivery_window: quote.preferred_delivery_window,
+          pickup_date: quote.suggested_pickup_date,
+        },
+      });
+
+    // 11. Create schedule_logs entry
+    await supabase
+      .from("schedule_logs")
+      .insert({
+        order_id: order.id,
+        action: "requested",
+        new_date: quote.preferred_delivery_date,
+        new_window: quote.preferred_delivery_window,
+        actor_role: "customer",
+        reason: "Customer scheduled via quote flow",
+      });
+
     console.log(`Order ${order.id} created from quote ${quoteId}`);
 
     return new Response(

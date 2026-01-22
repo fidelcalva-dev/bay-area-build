@@ -95,6 +95,7 @@ interface Yard {
 const STATUS_OPTIONS = [
   { value: 'pending', label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
   { value: 'scheduled_requested', label: 'Schedule Requested', color: 'bg-amber-100 text-amber-800' },
+  { value: 'scheduled_confirmed', label: 'Schedule Confirmed', color: 'bg-green-100 text-green-800' },
   { value: 'confirmed', label: 'Confirmed', color: 'bg-blue-100 text-blue-800' },
   { value: 'scheduled', label: 'Scheduled', color: 'bg-purple-100 text-purple-800' },
   { value: 'en_route', label: 'En Route', color: 'bg-orange-100 text-orange-800' },
