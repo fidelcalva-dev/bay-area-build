@@ -71,6 +71,7 @@ const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
+const RiskReviewPage = lazy(() => import("./pages/admin/RiskReviewPage"));
 
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
@@ -300,6 +301,9 @@ const App = () => (
                 } />
                 <Route path="fraud-flags" element={
                   <Suspense fallback={<PageLoader />}><FraudFlagsPage /></Suspense>
+                } />
+                <Route path="risk" element={
+                  <Suspense fallback={<PageLoader />}><RiskReviewPage /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={

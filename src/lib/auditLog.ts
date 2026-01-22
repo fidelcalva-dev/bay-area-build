@@ -34,7 +34,9 @@ export type EntityType =
   | 'sms_templates'
   | 'message_history'
   | 'volume_commitment'
-  | 'approval_request';
+  | 'approval_request'
+  | 'trusted_customer'
+  | 'fraud_flag';
 
 interface AuditLogParams {
   action: AuditAction;

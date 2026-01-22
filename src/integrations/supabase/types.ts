@@ -852,6 +852,7 @@ export type Database = {
           evidence_json: Json | null
           flag_type: string
           id: string
+          is_whitelisted: boolean | null
           order_id: string | null
           phone: string | null
           quote_id: string | null
@@ -859,6 +860,8 @@ export type Database = {
           resolved_at: string | null
           resolved_by: string | null
           resolved_notes: string | null
+          risk_level: string | null
+          risk_score: number | null
           severity: string
           status: string
         }
@@ -868,6 +871,7 @@ export type Database = {
           evidence_json?: Json | null
           flag_type: string
           id?: string
+          is_whitelisted?: boolean | null
           order_id?: string | null
           phone?: string | null
           quote_id?: string | null
@@ -875,6 +879,8 @@ export type Database = {
           resolved_at?: string | null
           resolved_by?: string | null
           resolved_notes?: string | null
+          risk_level?: string | null
+          risk_score?: number | null
           severity: string
           status?: string
         }
@@ -884,6 +890,7 @@ export type Database = {
           evidence_json?: Json | null
           flag_type?: string
           id?: string
+          is_whitelisted?: boolean | null
           order_id?: string | null
           phone?: string | null
           quote_id?: string | null
@@ -891,6 +898,8 @@ export type Database = {
           resolved_at?: string | null
           resolved_by?: string | null
           resolved_notes?: string | null
+          risk_level?: string | null
+          risk_score?: number | null
           severity?: string
           status?: string
         }
@@ -2491,6 +2500,64 @@ export type Database = {
         }
         Relationships: []
       }
+      risk_score_events: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          id: string
+          order_id: string | null
+          phone: string | null
+          quote_id: string | null
+          rule_name: string
+          score_delta: number
+          total_score: number
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          order_id?: string | null
+          phone?: string | null
+          quote_id?: string | null
+          rule_name: string
+          score_delta: number
+          total_score?: number
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          order_id?: string | null
+          phone?: string | null
+          quote_id?: string | null
+          rule_name?: string
+          score_delta?: number
+          total_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_score_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "risk_score_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "risk_score_events_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           action: string
@@ -2946,6 +3013,44 @@ export type Database = {
             columns: ["assigned_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trusted_customers: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          phone: string | null
+          reason: string
+          status: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          phone?: string | null
+          reason: string
+          status?: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          phone?: string | null
+          reason?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trusted_customers_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]

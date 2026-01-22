@@ -169,6 +169,31 @@ export function FraudFlagDetailDialog({
                 <p className="text-sm text-muted-foreground">Created</p>
                 <p className="font-medium">{formatDate(flag.created_at)}</p>
               </div>
+              {flag.risk_score !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Risk Score</p>
+                  <div className="flex items-center gap-2">
+                    <Badge className={
+                      flag.risk_score >= 60 ? 'bg-red-100 text-red-800' :
+                      flag.risk_score >= 30 ? 'bg-orange-100 text-orange-800' :
+                      'bg-green-100 text-green-800'
+                    }>{flag.risk_score}</Badge>
+                    {flag.is_whitelisted && (
+                      <Badge variant="outline" className="text-green-600 border-green-200">Whitelisted</Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+              {flag.risk_level && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Risk Level</p>
+                  <Badge className={
+                    flag.risk_level === 'high' ? 'bg-red-100 text-red-800' :
+                    flag.risk_level === 'medium' ? 'bg-orange-100 text-orange-800' :
+                    'bg-green-100 text-green-800'
+                  }>{flag.risk_level.toUpperCase()}</Badge>
+                </div>
+              )}
             </div>
 
             <Separator />
