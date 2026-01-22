@@ -1,12 +1,14 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   DollarSign, FileText, LogOut, Home, Loader2, 
-  CreditCard, Settings, RotateCcw
+  CreditCard, Settings, RotateCcw, Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import logoCalsan from "@/assets/logo-calsan.jpeg";
+import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 
 const navItems = [
   { path: '/finance', label: 'Dashboard', icon: Home, end: true },
@@ -15,8 +17,16 @@ const navItems = [
   { path: '/finance/payment-actions', label: 'Refunds/Voids', icon: RotateCcw },
 ];
 
+const mobileNavItems: MobileNavItem[] = [
+  { path: '/finance/invoices', label: 'Invoices', icon: FileText },
+  { path: '/finance/payments', label: 'Payments', icon: CreditCard },
+  { path: '/finance/payment-actions', label: 'AR', icon: RotateCcw },
+  { path: '/finance/search', label: 'Search', icon: Search },
+];
+
 export default function FinanceLayout() {
   const { user, isLoading, signOut, isAdmin, isFinance } = useAdminAuth();
+  const { mobileMode } = useMobileMode();
   const location = useLocation();
 
   if (isLoading) {
@@ -48,6 +58,29 @@ export default function FinanceLayout() {
     );
   }
 
+  // Mobile Layout
+  if (mobileMode) {
+    const isSearchPage = location.pathname === '/finance/search';
+    
+    return (
+      <MobileLayout
+        title="Finance"
+        subtitle="Billing & Payments"
+        navItems={mobileNavItems}
+        basePath="/finance"
+        onSignOut={signOut}
+        userEmail={user.email || undefined}
+      >
+        {isSearchPage ? (
+          <MobileGlobalSearch basePath="/finance" />
+        ) : (
+          <Outlet />
+        )}
+      </MobileLayout>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">

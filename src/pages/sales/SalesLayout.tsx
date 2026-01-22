@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { 
-  Users, FileText, BarChart3, Settings, LogOut, 
-  Menu, X, Home, MessageSquare
+  Users, FileText, Settings, LogOut, 
+  Menu, X, Home, MessageSquare, Search, TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useMobileMode } from "@/hooks/useMobileMode";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { cn } from "@/lib/utils";
+import { MobileLayout, MobileNavItem, MobileGlobalSearch } from "@/components/mobile";
 
 const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
@@ -16,10 +18,18 @@ const SALES_NAV = [
   { label: "New Quote", href: "/quote", icon: MessageSquare },
 ];
 
+const mobileNavItems: MobileNavItem[] = [
+  { path: "/sales/leads", label: "Leads", icon: Users },
+  { path: "/sales/quotes", label: "Quotes", icon: FileText },
+  { path: "/sales", label: "Home", icon: Home, end: true },
+  { path: "/sales/search", label: "Search", icon: Search },
+];
+
 export default function SalesLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoading, isSales, isAdmin, signOut } = useAdminAuth();
+  const { mobileMode } = useMobileMode();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -44,6 +54,29 @@ export default function SalesLayout() {
     );
   }
 
+  // Mobile Layout
+  if (mobileMode) {
+    const isSearchPage = location.pathname === "/sales/search";
+    
+    return (
+      <MobileLayout
+        title="Sales"
+        subtitle="Leads & Quotes"
+        navItems={mobileNavItems}
+        basePath="/sales"
+        onSignOut={handleLogout}
+        userEmail={user?.email || undefined}
+      >
+        {isSearchPage ? (
+          <MobileGlobalSearch basePath="/sales" />
+        ) : (
+          <Outlet />
+        )}
+      </MobileLayout>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Mobile Header */}
