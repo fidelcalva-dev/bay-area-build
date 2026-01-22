@@ -10,7 +10,7 @@ export const TRUST_BADGES = {
   hablamosEspanol: { icon: CheckCircle, label: 'Hablamos Español' },
   reviews: { icon: Star, label: '200+ Reviews' }, // Use actual verified count
   sameDayAvailable: { icon: Clock, label: 'Same-Day Available' },
-  noHiddenFees: { icon: Sparkles, label: 'No Hidden Fees' },
+  noHiddenFees: { icon: Sparkles, label: 'Transparent Pricing' },
   // Special badges
   contractorDiscount: { icon: Percent, label: 'Contractor Programs' },
   fiveStarReviews: { icon: Star, label: '4.9★ (200+ Verified)' }, // Actual rating + verified count

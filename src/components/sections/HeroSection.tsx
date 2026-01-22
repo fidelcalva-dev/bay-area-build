@@ -56,7 +56,7 @@ export function HeroSection() {
                 <span className="block text-accent mt-1">with Local Yards</span>
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
-                Instant estimates · Nearest yard selected · No exact-time promises
+                Instant estimates · Nearest yard selected · Estimated time windows
               </p>
             </motion.div>
 

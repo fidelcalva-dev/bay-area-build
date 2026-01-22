@@ -63,7 +63,7 @@ export const WHY_TRUST_CALSAN: TrustSignal[] = [
     id: 'transparent-pricing',
     icon: Scale,
     title: 'Transparent Pricing',
-    description: 'ZIP-based pricing with no hidden fees',
+    description: 'ZIP-based estimates. Additional fees may apply for overages.',
     verifiable: true,
   },
 ];

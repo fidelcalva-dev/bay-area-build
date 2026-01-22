@@ -289,9 +289,9 @@ export function SchedulingStep({
         )}
       </Button>
 
-      {/* Note about exact times */}
+      {/* Note about time windows */}
       <p className="text-xs text-muted-foreground text-center">
-        We'll call 30 min before arrival with an ETA. No exact appointment times.
+        We'll call 30 min before arrival with an estimated ETA. Deliveries are scheduled in time windows.
       </p>
     </div>
   );
