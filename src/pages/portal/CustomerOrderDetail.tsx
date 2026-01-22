@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Truck, Calendar, MapPin, Phone, Download, 
   Camera, Clock, FileText, AlertCircle, CheckCircle2,
-  Loader2, MessageSquare
+  Loader2, MessageSquare, CreditCard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,8 @@ import {
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { PayNowDialog } from "@/components/payment/PayNowDialog";
+import { PaymentHistory } from "@/components/payment/PaymentHistory";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 interface OrderDetails {
@@ -30,6 +32,9 @@ interface OrderDetails {
   actual_delivery_at: string | null;
   actual_pickup_at: string | null;
   final_total: number | null;
+  amount_due: number | null;
+  amount_paid: number | null;
+  balance_due: number | null;
   payment_status: string | null;
   placement_photo_url: string | null;
   pickup_photo_url: string | null;
@@ -51,6 +56,8 @@ interface OrderDetails {
     estimated_max: number;
     rental_days: number;
     extras: string[] | null;
+    customer_email: string | null;
+    customer_phone: string | null;
   } | null;
 }
 
@@ -75,6 +82,7 @@ const CustomerOrderDetail = () => {
   const [pickupRequestOpen, setPickupRequestOpen] = useState(false);
   const [pickupNotes, setPickupNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [payNowOpen, setPayNowOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -106,7 +114,8 @@ const CustomerOrderDetail = () => {
               estimated_max,
               rental_days,
               extras,
-              customer_phone
+              customer_phone,
+              customer_email
             )
           `)
           .eq("id", orderId)
@@ -368,7 +377,7 @@ const CustomerOrderDetail = () => {
             </div>
             
             {/* Payment Status */}
-            <div className="pt-2 border-t space-y-2">
+            <div className="pt-2 border-t space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-500">Payment Status</span>
                 <Badge 
@@ -387,17 +396,47 @@ const CustomerOrderDetail = () => {
                     : "Payment Due"}
                 </Badge>
               </div>
-              {order.payment_status !== "paid" && order.final_total && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Balance Due</span>
-                  <span className="font-semibold text-red-600">
-                    ${order.final_total.toFixed(2)}
-                  </span>
-                </div>
+              {order.payment_status !== "paid" && (order.balance_due || order.final_total) && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Balance Due</span>
+                    <span className="font-semibold text-red-600">
+                      ${(order.balance_due || order.final_total || 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <Button 
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    onClick={() => setPayNowOpen(true)}
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Pay Now
+                  </Button>
+                </>
               )}
+              
+              {/* Payment History */}
+              <div className="pt-3 border-t">
+                <p className="text-sm font-medium text-gray-700 mb-2">Payment History</p>
+                <PaymentHistory orderId={order.id} />
+              </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Pay Now Dialog */}
+        <PayNowDialog
+          open={payNowOpen}
+          onOpenChange={setPayNowOpen}
+          orderId={order.id}
+          amountDue={order.amount_due || order.final_total || 0}
+          balanceDue={order.balance_due || order.final_total || 0}
+          customerEmail={order.quotes?.customer_email || undefined}
+          customerPhone={order.quotes?.customer_phone || undefined}
+          onSuccess={() => {
+            // Refresh order data
+            window.location.reload();
+          }}
+        />
 
         {/* Photos & Documents */}
         {(order.placement_photo_url || order.pickup_photo_url || order.dump_ticket_url || order.invoice_url) && (
