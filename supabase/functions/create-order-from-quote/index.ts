@@ -197,7 +197,35 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 8. Update quote status to 'converted'
+    // 8. Create invoice for the order
+    const invoiceNumber = `INV-${order.id.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30); // Net 30 by default
+
+    const { data: invoice, error: invoiceError } = await supabase
+      .from("invoices")
+      .insert({
+        order_id: order.id,
+        customer_id: customerId,
+        invoice_number: invoiceNumber,
+        amount_due: orderTotal,
+        amount_paid: 0,
+        balance_due: orderTotal,
+        payment_status: "unpaid",
+        due_date: dueDate.toISOString().split('T')[0],
+        notes: `Auto-generated invoice for order #${order.id.slice(0, 8)}`,
+      })
+      .select()
+      .single();
+
+    if (invoiceError) {
+      console.error("Invoice creation warning:", invoiceError);
+      // Don't fail order creation if invoice fails
+    } else {
+      console.log(`Invoice ${invoice?.invoice_number} created for order ${order.id}`);
+    }
+
+    // 9. Update quote status to 'converted'
     await supabase
       .from("quotes")
       .update({ 
@@ -207,7 +235,7 @@ Deno.serve(async (req) => {
       })
       .eq("id", quoteId);
 
-    // 9. Create quote event for audit trail
+    // 10. Create quote event for audit trail
     await supabase
       .from("quote_events")
       .insert({
@@ -218,6 +246,7 @@ Deno.serve(async (req) => {
           order_status: order.status,
           customer_id: customerId,
           assigned_yard_id: assignedYardId,
+          invoice_number: invoice?.invoice_number,
           scheduled_delivery_date: quote.preferred_delivery_date,
           scheduled_delivery_window: quote.preferred_delivery_window,
           final_total: orderData.final_total,
@@ -257,23 +286,25 @@ Deno.serve(async (req) => {
         },
       });
 
-    // 10. Create order_event for traceability
+    // 11. Create order_event for traceability
     await supabase
       .from("order_events")
       .insert({
         order_id: order.id,
         event_type: "ORDER_CREATED",
         actor_role: "system",
-        message: `Order created from quote. Delivery: ${quote.preferred_delivery_date || 'TBD'} (${quote.preferred_delivery_window || 'TBD'})`,
+        message: `Order created from quote. Invoice: ${invoice?.invoice_number || 'N/A'}. Delivery: ${quote.preferred_delivery_date || 'TBD'} (${quote.preferred_delivery_window || 'TBD'})`,
         after_json: {
           status: "scheduled_requested",
           delivery_date: quote.preferred_delivery_date,
           delivery_window: quote.preferred_delivery_window,
           pickup_date: quote.suggested_pickup_date,
+          invoice_number: invoice?.invoice_number,
+          amount_due: orderTotal,
         },
       });
 
-    // 11. Create schedule_logs entry
+    // 12. Create schedule_logs entry
     await supabase
       .from("schedule_logs")
       .insert({
@@ -285,7 +316,7 @@ Deno.serve(async (req) => {
         reason: "Customer scheduled via quote flow",
       });
 
-    console.log(`Order ${order.id} created from quote ${quoteId}`);
+    console.log(`Order ${order.id} created from quote ${quoteId} with invoice ${invoice?.invoice_number}`);
 
     return new Response(
       JSON.stringify({
@@ -296,6 +327,8 @@ Deno.serve(async (req) => {
         message: "Order created successfully",
         customerId,
         assignedYardId,
+        invoiceId: invoice?.id,
+        invoiceNumber: invoice?.invoice_number,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

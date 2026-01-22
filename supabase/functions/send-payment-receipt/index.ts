@@ -182,6 +182,16 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Store receipt document reference
+    const receiptDocUrl = `receipt://${paymentId}/${transactionId || 'manual'}`;
+    await supabase.from("documents").insert({
+      order_id: orderId,
+      doc_type: "payment_receipt",
+      file_url: receiptDocUrl,
+      file_name: `Receipt-${transactionId || paymentId.slice(0, 8)}.pdf`,
+      notes: `Payment receipt for $${amount.toFixed(2)} - ${new Date().toISOString()}`,
+    });
+
     // Update payment record with receipt sent timestamp
     await supabase
       .from("payments")

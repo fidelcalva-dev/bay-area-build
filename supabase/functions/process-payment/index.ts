@@ -181,15 +181,40 @@ Deno.serve(async (req) => {
         })
         .eq("id", orderId);
 
-      // Update invoice if exists
-      await supabase
+      // Update or create invoice
+      const { data: existingInvoice } = await supabase
         .from("invoices")
-        .update({
+        .select("id")
+        .eq("order_id", orderId)
+        .single();
+
+      if (existingInvoice) {
+        // Update existing invoice
+        await supabase
+          .from("invoices")
+          .update({
+            amount_paid: newAmountPaid,
+            balance_due: newBalanceDue,
+            payment_status: newPaymentStatus,
+          })
+          .eq("order_id", orderId);
+      } else {
+        // Create invoice if it doesn't exist
+        const invoiceNumber = `INV-${orderId.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30);
+        
+        await supabase.from("invoices").insert({
+          order_id: orderId,
+          customer_id: order.customer_id,
+          invoice_number: invoiceNumber,
+          amount_due: order.amount_due || order.final_total || 0,
           amount_paid: newAmountPaid,
           balance_due: newBalanceDue,
           payment_status: newPaymentStatus,
-        })
-        .eq("order_id", orderId);
+          due_date: dueDate.toISOString().split('T')[0],
+        });
+      }
 
       // Create audit log
       await supabase.from("audit_logs").insert({
