@@ -87,6 +87,16 @@ const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 
+// Finance Portal
+const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
+const FinanceDashboard = lazy(() => import("./pages/finance/FinanceDashboard"));
+const FinanceInvoices = lazy(() => import("./pages/finance/FinanceInvoices"));
+const FinanceInvoiceDetail = lazy(() => import("./pages/finance/FinanceInvoiceDetail"));
+const FinancePayments = lazy(() => import("./pages/finance/FinancePayments"));
+
+// Payment redirect page
+const PaymentRedirect = lazy(() => import("./pages/portal/PaymentRedirect"));
+
 const queryClient = new QueryClient();
 
 // Page loading fallback
@@ -284,6 +294,29 @@ const App = () => (
                   <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>
                 } />
               </Route>
+
+              {/* Finance Portal */}
+              <Route path="/finance" element={
+                <Suspense fallback={<PageLoader />}><FinanceLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><FinanceDashboard /></Suspense>
+                } />
+                <Route path="invoices" element={
+                  <Suspense fallback={<PageLoader />}><FinanceInvoices /></Suspense>
+                } />
+                <Route path="invoices/:orderId" element={
+                  <Suspense fallback={<PageLoader />}><FinanceInvoiceDetail /></Suspense>
+                } />
+                <Route path="payments" element={
+                  <Suspense fallback={<PageLoader />}><FinancePayments /></Suspense>
+                } />
+              </Route>
+
+              {/* Payment redirect page */}
+              <Route path="/portal/pay/:paymentId" element={
+                <Suspense fallback={<PageLoader />}><PaymentRedirect /></Suspense>
+              } />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
