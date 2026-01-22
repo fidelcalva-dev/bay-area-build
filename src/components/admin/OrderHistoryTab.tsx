@@ -31,6 +31,7 @@ const EVENT_CONFIG: Record<string, { icon: React.ReactNode; color: string; label
   TICKET_UPLOADED: { icon: <FileText className="w-4 h-4" />, color: 'bg-emerald-100 text-emerald-700', label: 'Ticket Uploaded' },
   RECEIPT_SENT: { icon: <FileText className="w-4 h-4" />, color: 'bg-green-100 text-green-700', label: 'Receipt Sent' },
   PAYMENT_STATUS_UPDATED: { icon: <DollarSign className="w-4 h-4" />, color: 'bg-emerald-100 text-emerald-700', label: 'Payment Update' },
+  PAYMENT_UPDATED: { icon: <DollarSign className="w-4 h-4" />, color: 'bg-green-100 text-green-700', label: 'Payment Recorded' },
   STATUS_CHANGED: { icon: <Clock className="w-4 h-4" />, color: 'bg-gray-100 text-gray-700', label: 'Status Changed' },
   NOTE_ADDED: { icon: <FileText className="w-4 h-4" />, color: 'bg-slate-100 text-slate-700', label: 'Note Added' },
   CANCELLED: { icon: <AlertCircle className="w-4 h-4" />, color: 'bg-red-100 text-red-700', label: 'Cancelled' },
