@@ -19,16 +19,28 @@ async function hashCode(code: string): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Format phone to E.164
-function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length === 10) {
-    return `+1${digits}`;
-  }
+// Format phone to E.164 with validation
+function formatPhone(phone: string): { formatted: string; valid: boolean } {
+  // Strip all non-digits
+  let digits = phone.replace(/\D/g, "");
+  
+  // Handle numbers that start with country code
   if (digits.length === 11 && digits.startsWith("1")) {
-    return `+${digits}`;
+    digits = digits.substring(1); // Remove leading 1
   }
-  return `+${digits}`;
+  
+  // US phone numbers should have exactly 10 digits
+  if (digits.length !== 10) {
+    return { formatted: "", valid: false };
+  }
+  
+  // Validate area code (can't start with 0 or 1)
+  const areaCode = digits.substring(0, 3);
+  if (areaCode.startsWith("0") || areaCode.startsWith("1")) {
+    return { formatted: "", valid: false };
+  }
+  
+  return { formatted: `+1${digits}`, valid: true };
 }
 
 Deno.serve(async (req) => {
@@ -50,8 +62,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    const formattedPhone = formatPhone(phone);
+    const { formatted: formattedPhone, valid } = formatPhone(phone);
 
+    if (!valid) {
+      return new Response(
+        JSON.stringify({ error: "Invalid phone number format. Please enter a valid 10-digit US phone number." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     // Check for existing OTP with cooldown
     const { data: existingOtp } = await supabase
       .from("phone_otps")
