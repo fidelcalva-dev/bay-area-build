@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          is_read: boolean | null
+          is_resolved: boolean | null
+          message: string | null
+          metadata: Json | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          title: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          is_read?: boolean | null
+          is_resolved?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          title: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          is_read?: boolean | null
+          is_resolved?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          title?: string
+        }
+        Relationships: []
+      }
       approval_requests: {
         Row: {
           created_at: string
@@ -104,6 +152,42 @@ export type Database = {
           user_email?: string | null
           user_id?: string | null
           user_role?: string | null
+        }
+        Relationships: []
+      }
+      automation_runs: {
+        Row: {
+          alerts_created: number | null
+          automation_type: string
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          notifications_sent: number | null
+          recommendations_created: number | null
+          triggered_by: string | null
+        }
+        Insert: {
+          alerts_created?: number | null
+          automation_type: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          notifications_sent?: number | null
+          recommendations_created?: number | null
+          triggered_by?: string | null
+        }
+        Update: {
+          alerts_created?: number | null
+          automation_type?: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          notifications_sent?: number | null
+          recommendations_created?: number | null
+          triggered_by?: string | null
         }
         Relationships: []
       }
@@ -1738,6 +1822,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recommendations: {
+        Row: {
+          accepted: boolean | null
+          accepted_at: string | null
+          action_data: Json | null
+          action_label: string | null
+          context: Json
+          created_at: string
+          description: string | null
+          dismissed_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          rec_type: string
+          shown_at: string | null
+          title: string
+        }
+        Insert: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          action_data?: Json | null
+          action_label?: string | null
+          context?: Json
+          created_at?: string
+          description?: string | null
+          dismissed_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          rec_type: string
+          shown_at?: string | null
+          title: string
+        }
+        Update: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          action_data?: Json | null
+          action_label?: string | null
+          context?: Json
+          created_at?: string
+          description?: string | null
+          dismissed_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          rec_type?: string
+          shown_at?: string | null
+          title?: string
+        }
+        Relationships: []
       }
       rental_periods: {
         Row: {

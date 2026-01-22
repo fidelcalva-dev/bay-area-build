@@ -69,6 +69,7 @@ const DispatchCalendar = lazy(() => import("./pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
+const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
@@ -280,6 +281,9 @@ const App = () => (
                 } />
                 <Route path="users" element={
                   <Suspense fallback={<PageLoader />}><UsersManager /></Suspense>
+                } />
+                <Route path="alerts" element={
+                  <Suspense fallback={<PageLoader />}><AlertsPage /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={

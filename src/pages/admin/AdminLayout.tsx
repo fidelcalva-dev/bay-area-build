@@ -3,12 +3,13 @@ import {
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
-  Boxes, UserCog, MapPinned, Banknote, AlertTriangle,
+  Boxes, UserCog, MapPinned, Banknote, Bell,
   BarChart3, TrendingUp, PieChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { cn } from '@/lib/utils';
+import { AlertBadge } from '@/components/alerts';
 
 // Navigation items grouped by section - Full CRM Navigation
 const navSections = [
@@ -67,6 +68,7 @@ const navSections = [
   {
     title: 'System',
     items: [
+      { path: '/admin/alerts', label: 'Alerts', icon: Bell },
       { path: '/admin/users', label: 'User Management', icon: UserCog },
       { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
     ],
@@ -118,14 +120,17 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r border-border flex flex-col overflow-y-auto">
         <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <Shield className="w-5 h-5 text-primary-foreground" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="font-bold text-foreground">Admin Panel</h1>
+                <p className="text-xs text-muted-foreground">Operations & Config</p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-bold text-foreground">Admin Panel</h1>
-              <p className="text-xs text-muted-foreground">Operations & Config</p>
-            </div>
+            <AlertBadge />
           </div>
         </div>
 

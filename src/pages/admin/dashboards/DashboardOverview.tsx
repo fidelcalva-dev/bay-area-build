@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { subDays } from 'date-fns';
-import { BarChart3, TrendingUp, Package, DollarSign, Users, AlertTriangle, Truck, Calendar } from 'lucide-react';
+import { BarChart3, TrendingUp, Package, DollarSign, Users, AlertTriangle, Truck, Calendar, Lightbulb } from 'lucide-react';
 import { 
   DashboardKPICard, 
   DashboardFilters, 
@@ -9,7 +9,11 @@ import {
   type DashboardFilterValues 
 } from '@/components/dashboard';
 import { useDashboardData, exportToCSV } from '@/hooks/useDashboardData';
+import { useAlerts, useRecommendations } from '@/hooks/useAlerts';
+import { AlertsPanel } from '@/components/alerts/AlertsPanel';
+import { RecommendationsList } from '@/components/alerts/RecommendationCard';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function DashboardOverview() {
   const [filters, setFilters] = useState<DashboardFilterValues>({
@@ -29,6 +33,14 @@ export default function DashboardOverview() {
     dailyTrend,
     revenueByMaterial,
   } = useDashboardData(filters);
+
+  const { criticalCount, unreadCount } = useAlerts({ resolved: false });
+  const { 
+    recommendations, 
+    loading: recLoading, 
+    acceptRecommendation, 
+    dismissRecommendation,
+  } = useRecommendations();
 
   const handleExport = () => {
     setExporting(true);
@@ -198,6 +210,34 @@ export default function DashboardOverview() {
           maxHeight={300}
         />
       </div>
+
+      {/* Alerts & Recommendations Row */}
+      {(criticalCount > 0 || recommendations.length > 0) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {criticalCount > 0 && (
+            <AlertsPanel maxHeight={300} />
+          )}
+          {recommendations.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-amber-500" />
+                  Smart Recommendations
+                  <Badge variant="secondary">{recommendations.length}</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecommendationsList
+                  recommendations={recommendations.slice(0, 3)}
+                  onAccept={acceptRecommendation}
+                  onDismiss={dismissRecommendation}
+                  loading={recLoading}
+                />
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
     </div>
   );
 }
