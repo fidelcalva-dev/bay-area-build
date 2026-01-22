@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Search, FileText, Upload, Loader2, Download, Eye, 
-  DollarSign, Scale, Calculator, Send
+  DollarSign, Scale, Calculator, Send, Image
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { PRICING_POLICIES } from "@/lib/shared-data";
+import { logOrderEvent } from "@/lib/orderEventService";
 
 interface OrderWithQuote {
   id: string;
@@ -33,7 +34,15 @@ interface OrderWithQuote {
     subtotal: number;
     extra_tons_prepurchased: number | null;
     prepurchase_rate: number | null;
+    size_id: string | null;
   } | null;
+}
+
+interface DumpsterSize {
+  id: string;
+  size_value: number;
+  label: string;
+  included_tons: number;
 }
 
 interface ServiceReceipt {
@@ -59,15 +68,20 @@ export default function TicketsManager() {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<OrderWithQuote[]>([]);
   const [receipts, setReceipts] = useState<ServiceReceipt[]>([]);
+  const [sizes, setSizes] = useState<DumpsterSize[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithQuote | null>(null);
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [ticketForm, setTicketForm] = useState({
     total_tons: "",
     ticket_number: "",
     facility_name: "",
+    ticket_file: null as File | null,
+    ticket_preview: "",
   });
 
   useEffect(() => {
@@ -77,7 +91,7 @@ export default function TicketsManager() {
   async function fetchData() {
     setIsLoading(true);
     try {
-      const [ordersRes, receiptsRes] = await Promise.all([
+      const [ordersRes, receiptsRes, sizesRes] = await Promise.all([
         supabase
           .from("orders")
           .select(`
@@ -85,7 +99,7 @@ export default function TicketsManager() {
             quotes (
               id, customer_name, customer_phone, customer_email,
               material_type, heavy_material_class, subtotal,
-              extra_tons_prepurchased, prepurchase_rate
+              extra_tons_prepurchased, prepurchase_rate, size_id
             )
           `)
           .in("status", ["delivered", "pickup_scheduled", "completed"])
@@ -96,10 +110,15 @@ export default function TicketsManager() {
           .select("*")
           .order("created_at", { ascending: false })
           .limit(100),
+        supabase
+          .from("dumpster_sizes")
+          .select("id, size_value, label, included_tons")
+          .eq("is_active", true),
       ]);
 
       if (ordersRes.data) setOrders(ordersRes.data as OrderWithQuote[]);
       if (receiptsRes.data) setReceipts(receiptsRes.data);
+      if (sizesRes.data) setSizes(sizesRes.data);
     } catch (err) {
       console.error(err);
       toast({ title: "Error loading data", variant: "destructive" });
@@ -108,14 +127,81 @@ export default function TicketsManager() {
     }
   }
 
+  function getSizeForOrder(order: OrderWithQuote): DumpsterSize | undefined {
+    return sizes.find(s => s.id === order.quotes?.size_id);
+  }
+
   function openTicketDialog(order: OrderWithQuote) {
     setSelectedOrder(order);
     setTicketForm({
       total_tons: "",
       ticket_number: "",
       facility_name: "Oakland Transfer Station",
+      ticket_file: null,
+      ticket_preview: order.dump_ticket_url || "",
     });
     setTicketDialogOpen(true);
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+      toast({ title: "Please upload an image or PDF", variant: "destructive" });
+      return;
+    }
+    
+    // Create preview for images
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setTicketForm(prev => ({
+          ...prev,
+          ticket_file: file,
+          ticket_preview: e.target?.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setTicketForm(prev => ({
+        ...prev,
+        ticket_file: file,
+        ticket_preview: "",
+      }));
+    }
+  }
+
+  async function uploadTicketFile(): Promise<string | null> {
+    if (!ticketForm.ticket_file || !selectedOrder) return selectedOrder?.dump_ticket_url || null;
+    
+    setIsUploading(true);
+    try {
+      const ext = ticketForm.ticket_file.name.split(".").pop() || "jpg";
+      const filePath = `dump-tickets/${selectedOrder.id}/${Date.now()}.${ext}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from("order-documents")
+        .upload(filePath, ticketForm.ticket_file, { 
+          cacheControl: "3600",
+          upsert: true 
+        });
+      
+      if (uploadError) throw uploadError;
+      
+      const { data: urlData } = supabase.storage
+        .from("order-documents")
+        .getPublicUrl(filePath);
+      
+      return urlData.publicUrl;
+    } catch (err) {
+      console.error("File upload error:", err);
+      toast({ title: "Failed to upload ticket", variant: "destructive" });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   async function processTicket() {
@@ -130,32 +216,40 @@ export default function TicketsManager() {
     setIsProcessing(true);
     
     try {
+      // Upload ticket file if provided
+      const ticketUrl = await uploadTicketFile();
+      
       const quote = selectedOrder.quotes;
+      const sizeConfig = getSizeForOrder(selectedOrder);
       const isHeavy = quote.heavy_material_class && quote.heavy_material_class !== "mixed";
       
       // Calculate overage based on pricing rules
-      let includedTons = 0;
+      let includedTons = sizeConfig?.included_tons || 2;
       let overageTons = 0;
       let prepurchaseApplied = 0;
       let standardOverage = 0;
-      let overageRate = PRICING_POLICIES.overagePerTonGeneral; // Canonical rate
+      let overageRate = PRICING_POLICIES.overagePerTonGeneral;
       let overageCharge = 0;
+      let pricingRule = "mixed_large";
       
       if (isHeavy) {
-        // Heavy flat-fee: no overage charges, just record tons
-        includedTons = totalTons;
+        // Heavy flat-fee: no overage charges
+        pricingRule = "heavy_flat";
+        overageTons = 0;
+        overageCharge = 0;
+      } else if (sizeConfig && sizeConfig.size_value <= 10) {
+        // Mixed 6/8/10: yard-based (no ton overage)
+        pricingRule = "mixed_small";
         overageTons = 0;
         overageCharge = 0;
       } else {
-        // Mixed debris: calculate overage
-        // Assume included tons based on size (simplified - should come from dumpster_sizes)
-        includedTons = 2; // Default, should be from size config
+        // Mixed 20+: per-ton overage
+        pricingRule = "mixed_large";
         overageTons = Math.max(0, totalTons - includedTons);
         
         if (overageTons > 0) {
-          // Apply prepurchased tons first
           const prepurchased = quote.extra_tons_prepurchased || 0;
-          const prepurchaseRate = quote.prepurchase_rate || 156.75;
+          const prepurchaseRate = quote.prepurchase_rate || (overageRate * 0.95);
           
           prepurchaseApplied = Math.min(prepurchased, overageTons);
           standardOverage = overageTons - prepurchaseApplied;
@@ -168,36 +262,67 @@ export default function TicketsManager() {
       const { error: receiptError } = await supabase.from("service_receipts").insert({
         quote_id: quote.id,
         total_tons: totalTons,
-        included_tons: includedTons,
+        included_tons: isHeavy ? null : includedTons,
         overage_tons: overageTons,
+        prepurchased_tons: quote.extra_tons_prepurchased || 0,
         prepurchase_applied_tons: prepurchaseApplied,
         standard_overage_tons: standardOverage,
-        overage_rate: overageRate,
+        overage_rate: pricingRule === "mixed_large" ? overageRate : null,
         overage_charge: overageCharge,
         ticket_number: ticketForm.ticket_number || null,
         facility_name: ticketForm.facility_name || null,
-        ticket_url: selectedOrder.dump_ticket_url,
+        ticket_url: ticketUrl,
         heavy_material_class: quote.heavy_material_class,
-        pricing_rule: isHeavy ? "heavy_flatfee" : "mixed_perton",
+        pricing_rule: pricingRule,
+        ticket_date: new Date().toISOString(),
       });
 
       if (receiptError) throw receiptError;
       
-      // Update order with final total
+      // Update order with ticket URL and final total
       const finalTotal = quote.subtotal + overageCharge;
       await supabase
         .from("orders")
         .update({ 
+          dump_ticket_url: ticketUrl,
           final_total: finalTotal,
+          amount_due: finalTotal,
+          balance_due: finalTotal - (selectedOrder.final_total ? (finalTotal - (quote.subtotal + overageCharge - quote.subtotal)) : 0),
           status: "completed"
         })
         .eq("id", selectedOrder.id);
 
-      // Trigger receipt email/SMS
+      // Log ticket upload event
+      await logOrderEvent({
+        orderId: selectedOrder.id,
+        eventType: "TICKET_UPLOADED",
+        message: `Dump ticket processed: ${totalTons}T at ${ticketForm.facility_name}`,
+        afterJson: { totalTons, overageTons, overageCharge, pricingRule }
+      });
+
+      // Trigger receipt email/SMS via edge function
       try {
-        await supabase.functions.invoke("send-service-receipt", {
-          body: { order_id: selectedOrder.id, quote_id: quote.id },
+        const { data: receiptResult } = await supabase.functions.invoke("send-service-receipt", {
+          body: { 
+            orderId: selectedOrder.id, 
+            quoteId: quote.id,
+            totalTons,
+            ticketUrl,
+            ticketNumber: ticketForm.ticket_number,
+            facilityName: ticketForm.facility_name,
+            ticketDate: new Date().toISOString()
+          },
         });
+        
+        if (receiptResult?.success) {
+          // Log receipt sent event
+          await logOrderEvent({
+            orderId: selectedOrder.id,
+            eventType: "RECEIPT_SENT",
+            message: `Service receipt sent to customer via ${receiptResult.emailSent ? 'email' : ''}${receiptResult.emailSent && receiptResult.smsSent ? ' and ' : ''}${receiptResult.smsSent ? 'SMS' : ''}`,
+            afterJson: receiptResult
+          });
+        }
       } catch (e) {
         console.log("Receipt notification failed:", e);
       }
@@ -410,6 +535,53 @@ export default function TicketsManager() {
                 )}
               </div>
 
+              {/* Ticket Upload */}
+              <div className="space-y-2">
+                <Label>Dump Ticket Image/PDF</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                {ticketForm.ticket_preview ? (
+                  <div className="relative">
+                    {ticketForm.ticket_preview.startsWith("data:image") || ticketForm.ticket_preview.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img 
+                        src={ticketForm.ticket_preview} 
+                        alt="Ticket preview" 
+                        className="w-full h-32 object-cover rounded-lg border"
+                      />
+                    ) : (
+                      <div className="w-full h-32 flex items-center justify-center bg-muted rounded-lg border">
+                        <FileText className="w-8 h-8 text-muted-foreground" />
+                        <span className="ml-2 text-sm text-muted-foreground">PDF uploaded</span>
+                      </div>
+                    )}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="w-3 h-3 mr-1" /> Replace
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 border-dashed"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <Image className="w-6 h-6 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Upload ticket image</span>
+                    </div>
+                  </Button>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <Label>Total Tons from Ticket *</Label>
                 <div className="relative">
@@ -445,33 +617,58 @@ export default function TicketsManager() {
 
               {/* Pricing Preview */}
               {ticketForm.total_tons && !isNaN(parseFloat(ticketForm.total_tons)) && (
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <p className="font-medium text-green-800 flex items-center gap-2">
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <p className="font-medium text-green-800 dark:text-green-300 flex items-center gap-2">
                     <Calculator className="w-4 h-4" /> Pricing Preview
                   </p>
                   <Separator className="my-2" />
                   <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span>Total Tons:</span>
-                      <span>{parseFloat(ticketForm.total_tons).toFixed(2)}</span>
-                    </div>
-                    {selectedOrder.quotes?.heavy_material_class ? (
-                      <div className="flex justify-between text-green-700">
-                        <span>Heavy Flat-Fee:</span>
-                        <span>No overage</span>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex justify-between">
-                          <span>Included:</span>
-                          <span>2.0 tons</span>
-                        </div>
-                        <div className="flex justify-between text-orange-600">
-                          <span>Overage:</span>
-                          <span>{Math.max(0, parseFloat(ticketForm.total_tons) - 2).toFixed(2)} tons</span>
-                        </div>
-                      </>
-                    )}
+                    {(() => {
+                      const sizeConfig = getSizeForOrder(selectedOrder);
+                      const isHeavy = selectedOrder.quotes?.heavy_material_class && selectedOrder.quotes.heavy_material_class !== "mixed";
+                      const includedTons = sizeConfig?.included_tons || 2;
+                      const tons = parseFloat(ticketForm.total_tons);
+                      const isMixedSmall = sizeConfig && sizeConfig.size_value <= 10;
+                      
+                      return (
+                        <>
+                          <div className="flex justify-between">
+                            <span>Total Tons:</span>
+                            <span className="font-medium">{tons.toFixed(2)}</span>
+                          </div>
+                          {sizeConfig && (
+                            <div className="flex justify-between text-muted-foreground">
+                              <span>Size:</span>
+                              <span>{sizeConfig.label}</span>
+                            </div>
+                          )}
+                          {isHeavy ? (
+                            <div className="flex justify-between text-green-700 dark:text-green-400">
+                              <span>Heavy Flat-Fee:</span>
+                              <span>No overage</span>
+                            </div>
+                          ) : isMixedSmall ? (
+                            <div className="flex justify-between text-blue-700 dark:text-blue-400">
+                              <span>Yard-based pricing:</span>
+                              <span>No ton overage</span>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex justify-between">
+                                <span>Included:</span>
+                                <span>{includedTons} tons</span>
+                              </div>
+                              {tons > includedTons && (
+                                <div className="flex justify-between text-orange-600 dark:text-orange-400 font-medium">
+                                  <span>Overage:</span>
+                                  <span>{(tons - includedTons).toFixed(2)}T × ${PRICING_POLICIES.overagePerTonGeneral} = ${((tons - includedTons) * PRICING_POLICIES.overagePerTonGeneral).toFixed(2)}</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
@@ -481,8 +678,8 @@ export default function TicketsManager() {
             <Button variant="outline" onClick={() => setTicketDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={processTicket} disabled={isProcessing}>
-              {isProcessing ? (
+            <Button onClick={processTicket} disabled={isProcessing || isUploading}>
+              {isProcessing || isUploading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
