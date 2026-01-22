@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { IconCircle } from '@/components/shared/IconCircle';
+import calsanVideo from '@/assets/videos/calsan-how-it-works.mp4';
 
 interface Step {
   icon: LucideIcon;
@@ -116,8 +117,26 @@ export function HowItWorksSection() {
           </StaggeredContainer>
         </div>
 
+        {/* Video Explainer */}
+        <AnimatedSection delay={0.2} className="max-w-3xl mx-auto mt-12">
+          <div className="relative rounded-2xl overflow-hidden shadow-xl border border-border bg-card">
+            <video
+              className="w-full aspect-video"
+              controls
+              playsInline
+              preload="metadata"
+            >
+              <source src={calsanVideo} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-3">
+            Watch how dumpster rental works with Calsan
+          </p>
+        </AnimatedSection>
+
         {/* CTA - Minimal */}
-        <AnimatedSection delay={0.3} className="text-center mt-12">
+        <AnimatedSection delay={0.4} className="text-center mt-10">
           <Button asChild variant="default" size="lg" className="group">
             <Link to="/#quote">
               Get instant estimate
