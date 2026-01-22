@@ -96,6 +96,13 @@ const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 
+// Dispatch Portal
+const DispatchLayout = lazy(() => import("./pages/dispatch/DispatchLayout"));
+const DispatchDashboard = lazy(() => import("./pages/dispatch/DispatchDashboard"));
+const DispatchToday = lazy(() => import("./pages/dispatch/DispatchToday"));
+const DispatchCalendarPage = lazy(() => import("./pages/dispatch/DispatchCalendarPage"));
+const DispatchFlags = lazy(() => import("./pages/dispatch/DispatchFlags"));
+
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
 const FinanceDashboard = lazy(() => import("./pages/finance/FinanceDashboard"));
@@ -325,6 +332,24 @@ const App = () => (
                 } />
                 <Route path="quotes" element={
                   <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>
+                } />
+              </Route>
+
+              {/* Dispatch Portal */}
+              <Route path="/dispatch" element={
+                <Suspense fallback={<PageLoader />}><DispatchLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><DispatchDashboard /></Suspense>
+                } />
+                <Route path="today" element={
+                  <Suspense fallback={<PageLoader />}><DispatchToday /></Suspense>
+                } />
+                <Route path="calendar" element={
+                  <Suspense fallback={<PageLoader />}><DispatchCalendarPage /></Suspense>
+                } />
+                <Route path="flags" element={
+                  <Suspense fallback={<PageLoader />}><DispatchFlags /></Suspense>
                 } />
               </Route>
 
