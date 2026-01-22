@@ -808,6 +808,78 @@ export type Database = {
           },
         ]
       }
+      kpi_snapshots: {
+        Row: {
+          actual_value: number
+          created_at: string
+          id: string
+          kpi_key: string
+          metadata: Json | null
+          snapshot_date: string
+          status: string | null
+          target_value: number | null
+        }
+        Insert: {
+          actual_value: number
+          created_at?: string
+          id?: string
+          kpi_key: string
+          metadata?: Json | null
+          snapshot_date: string
+          status?: string | null
+          target_value?: number | null
+        }
+        Update: {
+          actual_value?: number
+          created_at?: string
+          id?: string
+          kpi_key?: string
+          metadata?: Json | null
+          snapshot_date?: string
+          status?: string | null
+          target_value?: number | null
+        }
+        Relationships: []
+      }
+      kpi_targets: {
+        Row: {
+          created_at: string
+          higher_is_better: boolean | null
+          id: string
+          kpi_category: string
+          kpi_key: string
+          kpi_name: string
+          target_value: number
+          unit: string | null
+          updated_at: string
+          warning_threshold: number | null
+        }
+        Insert: {
+          created_at?: string
+          higher_is_better?: boolean | null
+          id?: string
+          kpi_category: string
+          kpi_key: string
+          kpi_name: string
+          target_value: number
+          unit?: string | null
+          updated_at?: string
+          warning_threshold?: number | null
+        }
+        Update: {
+          created_at?: string
+          higher_is_better?: boolean | null
+          id?: string
+          kpi_category?: string
+          kpi_key?: string
+          kpi_name?: string
+          target_value?: number
+          unit?: string | null
+          updated_at?: string
+          warning_threshold?: number | null
+        }
+        Relationships: []
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]

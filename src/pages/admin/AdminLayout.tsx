@@ -22,6 +22,7 @@ const navSections = [
     title: 'Analytics',
     items: [
       { path: '/admin/dashboards/overview', label: 'Overview', icon: BarChart3 },
+      { path: '/admin/dashboards/kpis', label: 'KPI Optimization', icon: TrendingUp },
       { path: '/admin/dashboards/sales', label: 'Sales Funnel', icon: TrendingUp },
       { path: '/admin/dashboards/operations', label: 'Operations', icon: Truck },
       { path: '/admin/dashboards/finance', label: 'Finance', icon: DollarSign },
