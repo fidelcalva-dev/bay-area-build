@@ -304,6 +304,128 @@ export const CRM_TEMPLATES = {
 } as const;
 
 // =====================================================
+// CONTRACT SIGNATURE TEMPLATES
+// =====================================================
+
+export interface ContractSignatureData {
+  contractType: 'msa' | 'addendum';
+  signingLink: string;
+  customerName?: string;
+  serviceAddress?: string;
+}
+
+export function buildContractRequestSMS(
+  data: ContractSignatureData,
+  variant: 'initial' | 'reminder_24h' | 'final_48h' = 'initial',
+  lang: 'en' | 'es' = 'en'
+): string {
+  const { contractType, signingLink, customerName, serviceAddress } = data;
+  const greeting = customerName ? customerName.split(' ')[0] : '';
+  
+  const typeLabel = {
+    msa: { en: 'Master Service Agreement', es: 'Acuerdo de Servicio Maestro' },
+    addendum: { en: 'Service Addendum', es: 'Adenda de Servicio' },
+  };
+
+  const messages = {
+    initial: {
+      en: `${greeting ? `Hi ${greeting}, ` : ''}Please review and sign your ${typeLabel[contractType].en} to proceed with scheduling.${serviceAddress ? ` Address: ${serviceAddress}` : ''}\n\nSign here: ${signingLink}\n\nNo service can be performed until this is completed.`,
+      es: `${greeting ? `Hola ${greeting}, ` : ''}Por favor revise y firme su ${typeLabel[contractType].es} para proceder con la programación.${serviceAddress ? ` Dirección: ${serviceAddress}` : ''}\n\nFirme aquí: ${signingLink}\n\nNo se puede realizar servicio hasta que esto esté completo.`,
+    },
+    reminder_24h: {
+      en: `${greeting ? `Hi ${greeting}, ` : ''}Reminder: Your ${typeLabel[contractType].en} is still awaiting signature. Sign now to avoid delays: ${signingLink}`,
+      es: `${greeting ? `Hola ${greeting}, ` : ''}Recordatorio: Su ${typeLabel[contractType].es} aún espera firma. Firme ahora para evitar retrasos: ${signingLink}`,
+    },
+    final_48h: {
+      en: `${greeting ? `Hi ${greeting}, ` : ''}FINAL NOTICE: Your ${typeLabel[contractType].en} must be signed to proceed. Without signature, scheduling cannot continue. Sign now: ${signingLink}`,
+      es: `${greeting ? `Hola ${greeting}, ` : ''}AVISO FINAL: Su ${typeLabel[contractType].es} debe ser firmado para proceder. Sin firma, la programación no puede continuar. Firme ahora: ${signingLink}`,
+    },
+  };
+
+  return messages[variant][lang];
+}
+
+export function buildContractSignedConfirmationSMS(
+  data: ContractSignatureData,
+  lang: 'en' | 'es' = 'en'
+): string {
+  const { contractType, customerName, serviceAddress } = data;
+  const greeting = customerName ? customerName.split(' ')[0] : '';
+  
+  const typeLabel = {
+    msa: { en: 'Master Service Agreement', es: 'Acuerdo de Servicio Maestro' },
+    addendum: { en: 'Service Addendum', es: 'Adenda de Servicio' },
+  };
+
+  if (lang === 'es') {
+    return `${greeting ? `Hola ${greeting}, ` : ''}✅ Su ${typeLabel[contractType].es} ha sido firmado exitosamente.${serviceAddress ? ` Dirección: ${serviceAddress}` : ''}\n\nAhora podemos proceder con la programación de su servicio. ¡Gracias!`;
+  }
+  
+  return `${greeting ? `Hi ${greeting}, ` : ''}✅ Your ${typeLabel[contractType].en} has been signed successfully.${serviceAddress ? ` Address: ${serviceAddress}` : ''}\n\nWe can now proceed with scheduling your service. Thank you!`;
+}
+
+export function buildContractSignedConfirmationEmail(
+  data: ContractSignatureData & { customerName?: string },
+  lang: 'en' | 'es' = 'en'
+): { subject: string; html: string } {
+  const { contractType, customerName, serviceAddress } = data;
+  const greeting = customerName ? customerName.split(' ')[0] : (lang === 'es' ? 'Estimado cliente' : 'Valued Customer');
+  
+  const typeLabel = {
+    msa: { en: 'Master Service Agreement', es: 'Acuerdo de Servicio Maestro' },
+    addendum: { en: 'Service Addendum', es: 'Adenda de Servicio' },
+  };
+
+  const subject = lang === 'es' 
+    ? `✅ ${typeLabel[contractType].es} Firmado` 
+    : `✅ ${typeLabel[contractType].en} Signed`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #0F4C3A 0%, #1a6b52 100%); color: white; padding: 24px; text-align: center; border-radius: 12px 12px 0 0; }
+        .content { background: #ffffff; padding: 24px; border: 1px solid #e5e7eb; border-top: none; }
+        .success-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center; }
+        .success-box h3 { margin: 0 0 8px; color: #166534; }
+        .footer { text-align: center; padding: 16px; color: #6b7280; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0; font-size: 24px;">${lang === 'es' ? '✅ Contrato Firmado' : '✅ Contract Signed'}</h1>
+        </div>
+        <div class="content">
+          <p>${lang === 'es' ? `Hola ${greeting},` : `Hi ${greeting},`}</p>
+          
+          <div class="success-box">
+            <h3>${lang === 'es' ? 'Firma Completada' : 'Signature Complete'}</h3>
+            <p>${lang === 'es' 
+              ? `Su ${typeLabel[contractType].es} ha sido firmado exitosamente.`
+              : `Your ${typeLabel[contractType].en} has been signed successfully.`}</p>
+            ${serviceAddress ? `<p><strong>${lang === 'es' ? 'Dirección' : 'Address'}:</strong> ${serviceAddress}</p>` : ''}
+          </div>
+          
+          <p>${lang === 'es' 
+            ? 'Ahora podemos proceder con la programación de su servicio. Un representante se pondrá en contacto pronto.'
+            : 'We can now proceed with scheduling your service. A representative will be in touch shortly.'}</p>
+        </div>
+        <div class="footer">
+          Calsan Dumpsters | Bay Area's Trusted Dumpster Service
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return { subject, html };
+}
+
+// =====================================================
 // HELPER: Get all disclaimers for a specific context
 // =====================================================
 
