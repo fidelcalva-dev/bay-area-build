@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   DollarSign, FileText, LogOut, Home, Loader2, 
-  CreditCard, Settings, RotateCcw, Search
+  CreditCard, Settings, RotateCcw, Search, Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -13,14 +13,15 @@ import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mo
 const navItems = [
   { path: '/finance', label: 'Dashboard', icon: Home, end: true },
   { path: '/finance/invoices', label: 'Invoices', icon: FileText },
+  { path: '/finance/ar-aging', label: 'AR Aging', icon: Clock },
   { path: '/finance/payments', label: 'Payments', icon: CreditCard },
   { path: '/finance/payment-actions', label: 'Refunds/Voids', icon: RotateCcw },
 ];
 
 const mobileNavItems: MobileNavItem[] = [
   { path: '/finance/invoices', label: 'Invoices', icon: FileText },
+  { path: '/finance/ar-aging', label: 'AR', icon: Clock },
   { path: '/finance/payments', label: 'Payments', icon: CreditCard },
-  { path: '/finance/payment-actions', label: 'AR', icon: RotateCcw },
   { path: '/finance/search', label: 'Search', icon: Search },
 ];
 

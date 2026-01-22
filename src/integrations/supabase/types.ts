@@ -107,6 +107,67 @@ export type Database = {
         }
         Relationships: []
       }
+      ar_actions: {
+        Row: {
+          action_type: string
+          channel: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          invoice_id: string
+          metadata: Json | null
+          notes: string | null
+          order_id: string | null
+          performed_by: string | null
+        }
+        Insert: {
+          action_type: string
+          channel?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          invoice_id: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          performed_by?: string | null
+        }
+        Update: {
+          action_type?: string
+          channel?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          invoice_id?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ar_actions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ar_actions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ar_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -943,11 +1004,14 @@ export type Database = {
           amount_due: number
           amount_paid: number
           balance_due: number
+          collections_flagged: boolean | null
           created_at: string
           customer_id: string | null
+          dispute_reason: string | null
           due_date: string | null
           id: string
           invoice_number: string
+          issue_date: string | null
           notes: string | null
           order_id: string
           payment_status: string
@@ -957,11 +1021,14 @@ export type Database = {
           amount_due?: number
           amount_paid?: number
           balance_due?: number
+          collections_flagged?: boolean | null
           created_at?: string
           customer_id?: string | null
+          dispute_reason?: string | null
           due_date?: string | null
           id?: string
           invoice_number: string
+          issue_date?: string | null
           notes?: string | null
           order_id: string
           payment_status?: string
@@ -971,11 +1038,14 @@ export type Database = {
           amount_due?: number
           amount_paid?: number
           balance_due?: number
+          collections_flagged?: boolean | null
           created_at?: string
           customer_id?: string | null
+          dispute_reason?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string
+          issue_date?: string | null
           notes?: string | null
           order_id?: string
           payment_status?: string
