@@ -18,6 +18,10 @@ interface OrderSnapshot {
   assigned_yard_id: string | null;
   status: string;
   final_total: number | null;
+  amount_due: number;
+  amount_paid: number;
+  balance_due: number;
+  payment_status: string;
   route_notes: string | null;
   driver_notes: string | null;
   text_before_arrival: boolean;
@@ -159,7 +163,8 @@ Deno.serve(async (req) => {
       driverNotes.push(`Address: ${quote.delivery_address}`);
     }
 
-    // 7. Create the order
+    // 7. Create the order with billing initialized
+    const orderTotal = quote.subtotal || quote.estimated_min || 0;
     const orderData: OrderSnapshot = {
       quote_id: quoteId,
       customer_id: customerId,
@@ -168,7 +173,11 @@ Deno.serve(async (req) => {
       scheduled_pickup_date: quote.suggested_pickup_date,
       assigned_yard_id: assignedYardId,
       status: "scheduled_requested",
-      final_total: quote.subtotal || quote.estimated_min,
+      final_total: orderTotal,
+      amount_due: orderTotal,
+      amount_paid: 0,
+      balance_due: orderTotal,
+      payment_status: "unpaid",
       route_notes: routeNotes.length > 0 ? routeNotes.join(" | ") : null,
       driver_notes: driverNotes.length > 0 ? driverNotes.join(" | ") : null,
       text_before_arrival: true, // Default to on

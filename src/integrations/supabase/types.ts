@@ -894,8 +894,11 @@ export type Database = {
         Row: {
           actual_delivery_at: string | null
           actual_pickup_at: string | null
+          amount_due: number | null
+          amount_paid: number | null
           assigned_driver_id: string | null
           assigned_yard_id: string | null
+          balance_due: number | null
           created_at: string
           customer_id: string | null
           delivery_completed_at: string | null
@@ -928,8 +931,11 @@ export type Database = {
         Insert: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          amount_due?: number | null
+          amount_paid?: number | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
+          balance_due?: number | null
           created_at?: string
           customer_id?: string | null
           delivery_completed_at?: string | null
@@ -962,8 +968,11 @@ export type Database = {
         Update: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          amount_due?: number | null
+          amount_paid?: number | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
+          balance_due?: number | null
           created_at?: string
           customer_id?: string | null
           delivery_completed_at?: string | null

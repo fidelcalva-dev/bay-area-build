@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Package, Truck, Calendar, MapPin, User, Phone,
-  Clock, AlertCircle, Loader2, AlertTriangle, FileText, History
+  Clock, AlertCircle, Loader2, AlertTriangle, FileText, History, DollarSign
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { logStatusChange } from '@/lib/auditLog';
 import { logOrderEvent, logScheduleChange } from '@/lib/orderEventService';
 import { OrderHistoryTab } from '@/components/admin/OrderHistoryTab';
+import { PaymentRecordDialog } from '@/components/admin/PaymentRecordDialog';
 import {
   reserveInventory,
   deployInventory,
@@ -42,6 +43,9 @@ interface OrderDetail {
   status: string;
   payment_status: string | null;
   final_total: number | null;
+  amount_due: number | null;
+  amount_paid: number | null;
+  balance_due: number | null;
   scheduled_delivery_date: string | null;
   scheduled_delivery_window: string | null;
   scheduled_pickup_date: string | null;
@@ -129,6 +133,9 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
   // Inventory state
   const [inventoryWarning, setInventoryWarning] = useState<string | null>(null);
   const [lowStockWarning, setLowStockWarning] = useState<boolean>(false);
+  
+  // Payment dialog state
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   
   // Editable fields
   const [status, setStatus] = useState('');
@@ -398,6 +405,18 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
 
   const getStatusInfo = (s: string) => STATUS_OPTIONS.find(o => o.value === s) || STATUS_OPTIONS[0];
 
+  const getPaymentStatusBadge = (status: string | null) => {
+    const config: Record<string, { color: string; label: string }> = {
+      paid: { color: 'bg-green-100 text-green-800', label: 'Paid' },
+      partial: { color: 'bg-yellow-100 text-yellow-800', label: 'Partial' },
+      unpaid: { color: 'bg-red-100 text-red-800', label: 'Unpaid' },
+      overdue: { color: 'bg-red-200 text-red-900', label: 'Overdue' },
+      refunded: { color: 'bg-gray-100 text-gray-800', label: 'Refunded' },
+    };
+    const c = config[status || 'unpaid'] || config.unpaid;
+    return <Badge className={c.color}>{c.label}</Badge>;
+  };
+
   if (!open) return null;
 
   return (
@@ -515,6 +534,44 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                   <strong>Placement Notes:</strong> {order.quotes.placement_notes}
                 </div>
               )}
+            </div>
+
+            {/* Billing Section */}
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  Billing
+                </h3>
+                {getPaymentStatusBadge(order.payment_status)}
+              </div>
+              <div className="grid grid-cols-4 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground">Amount Due</p>
+                  <p className="font-medium">${(order.amount_due || order.final_total || 0).toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Amount Paid</p>
+                  <p className="font-medium text-green-600">${(order.amount_paid || 0).toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Balance Due</p>
+                  <p className={`font-medium ${(order.balance_due || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    ${(order.balance_due || 0).toFixed(2)}
+                  </p>
+                </div>
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setPaymentDialogOpen(true)}
+                    disabled={(order.balance_due || 0) <= 0}
+                  >
+                    <DollarSign className="w-3 h-3 mr-1" />
+                    Record Payment
+                  </Button>
+                </div>
+              </div>
             </div>
 
             <Separator />
@@ -699,6 +756,22 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
           <p className="text-center text-muted-foreground py-8">Order not found</p>
         )}
       </DialogContent>
+      
+      {/* Payment Dialog */}
+      {order && (
+        <PaymentRecordDialog
+          open={paymentDialogOpen}
+          onOpenChange={setPaymentDialogOpen}
+          orderId={order.id}
+          currentAmountDue={order.amount_due || order.final_total || 0}
+          currentAmountPaid={order.amount_paid || 0}
+          currentBalanceDue={order.balance_due || 0}
+          onSuccess={() => {
+            fetchOrder();
+            onUpdate?.();
+          }}
+        />
+      )}
     </Dialog>
   );
 }

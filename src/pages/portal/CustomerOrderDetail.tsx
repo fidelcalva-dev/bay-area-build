@@ -338,11 +338,11 @@ const CustomerOrderDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Pricing */}
+        {/* Pricing & Billing */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <FileText className="w-4 h-4" /> Pricing
+              <FileText className="w-4 h-4" /> Pricing & Billing
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -366,9 +366,36 @@ const CustomerOrderDetail = () => {
                 }
               </span>
             </div>
-            <Badge className={order.payment_status === "paid" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
-              {order.payment_status === "paid" ? "Paid" : "Payment Pending"}
-            </Badge>
+            
+            {/* Payment Status */}
+            <div className="pt-2 border-t space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500">Payment Status</span>
+                <Badge 
+                  className={
+                    order.payment_status === "paid" 
+                      ? "bg-green-100 text-green-800" 
+                      : order.payment_status === "partial"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
+                  }
+                >
+                  {order.payment_status === "paid" 
+                    ? "Paid in Full" 
+                    : order.payment_status === "partial"
+                    ? "Partial Payment"
+                    : "Payment Due"}
+                </Badge>
+              </div>
+              {order.payment_status !== "paid" && order.final_total && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Balance Due</span>
+                  <span className="font-semibold text-red-600">
+                    ${order.final_total.toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 

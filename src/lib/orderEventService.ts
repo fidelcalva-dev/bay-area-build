@@ -12,6 +12,7 @@ export type OrderEventType =
   | 'DRIVER_STATUS_UPDATED'
   | 'TICKET_UPLOADED'
   | 'RECEIPT_SENT'
+  | 'PAYMENT_UPDATED'
   | 'PAYMENT_STATUS_UPDATED'
   | 'STATUS_CHANGED'
   | 'NOTE_ADDED'
@@ -192,6 +193,7 @@ function generateDefaultMessage(
     TICKET_UPLOADED: 'Dump ticket was uploaded',
     RECEIPT_SENT: 'Service receipt was sent',
     PAYMENT_STATUS_UPDATED: 'Payment status was updated',
+    PAYMENT_UPDATED: 'Payment was recorded',
     STATUS_CHANGED: `Status changed${beforeJson && afterJson ? ` from "${(beforeJson as any).status}" to "${(afterJson as any).status}"` : ''}`,
     NOTE_ADDED: 'Note was added',
     CANCELLED: 'Order was cancelled',
