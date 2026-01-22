@@ -53,6 +53,7 @@ const navSections = [
   {
     title: 'Configuration',
     items: [
+      { path: '/admin/configuration', label: 'Config Center', icon: Settings },
       { path: '/admin/yards', label: 'Yard Manager', icon: Warehouse },
       { path: '/admin/zones', label: 'ZIP-to-Zone', icon: MapPin },
       { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },

@@ -56,6 +56,7 @@ const VolumeCommitmentsManager = lazy(() => import("./pages/admin/VolumeCommitme
 const YardsManager = lazy(() => import("./pages/admin/YardsManager"));
 const ConfigManager = lazy(() => import("./pages/admin/ConfigManager"));
 const ConfigIndex = lazy(() => import("./pages/admin/ConfigIndex"));
+const ConfigurationHub = lazy(() => import("./pages/admin/ConfigurationHub"));
 const HeavyPricingManager = lazy(() => import("./pages/admin/HeavyPricingManager"));
 const MixedRulesManager = lazy(() => import("./pages/admin/MixedRulesManager"));
 const WarningsCapsManager = lazy(() => import("./pages/admin/WarningsCapsManager"));
@@ -269,6 +270,9 @@ const App = () => (
                 } />
                 <Route path="config" element={
                   <Suspense fallback={<PageLoader />}><ConfigManager /></Suspense>
+                } />
+                <Route path="configuration" element={
+                  <Suspense fallback={<PageLoader />}><ConfigurationHub /></Suspense>
                 } />
                 <Route path="volume-commitments" element={
                   <Suspense fallback={<PageLoader />}><VolumeCommitmentsManager /></Suspense>
