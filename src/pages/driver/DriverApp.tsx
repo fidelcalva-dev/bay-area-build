@@ -382,23 +382,55 @@ export default function DriverApp() {
                   {selectedJob.route_notes && <div className="p-2 bg-yellow-50 rounded-lg text-sm"><strong>Notes:</strong> {selectedJob.route_notes}</div>}
                 </CardContent>
               </Card>
-              <div className="grid grid-cols-3 gap-2">
-                <Button variant="outline" className="h-auto py-3 flex-col" onClick={() => { setPhotoType("delivery"); setPhotoDialogOpen(true); }}>
-                  <Camera className="w-5 h-5 mb-1" /><span className="text-xs">Delivery</span>
+              {/* LARGE Photo Buttons - Mobile Optimized */}
+              <div className="grid grid-cols-1 gap-3">
+                <Button 
+                  variant="outline" 
+                  className="h-16 text-lg font-semibold justify-start px-4" 
+                  onClick={() => { setPhotoType("delivery"); setPhotoDialogOpen(true); }}
+                >
+                  <Camera className="w-6 h-6 mr-3" />
+                  Delivery Photo
+                  <span className="ml-auto text-xs text-muted-foreground">Required</span>
                 </Button>
-                <Button variant="outline" className="h-auto py-3 flex-col" onClick={() => { setPhotoType("pickup"); setPhotoDialogOpen(true); }}>
-                  <Camera className="w-5 h-5 mb-1" /><span className="text-xs">Pickup</span>
+                <Button 
+                  variant="outline" 
+                  className="h-16 text-lg font-semibold justify-start px-4" 
+                  onClick={() => { setPhotoType("pickup"); setPhotoDialogOpen(true); }}
+                >
+                  <Camera className="w-6 h-6 mr-3" />
+                  Pickup Photo
+                  <span className="ml-auto text-xs text-muted-foreground">Required</span>
                 </Button>
-                <Button variant="outline" className="h-auto py-3 flex-col" onClick={() => { setPhotoType("ticket"); setPhotoDialogOpen(true); }}>
-                  <FileText className="w-5 h-5 mb-1" /><span className="text-xs">Ticket</span>
+                <Button 
+                  variant="outline" 
+                  className="h-16 text-lg font-semibold justify-start px-4" 
+                  onClick={() => { setPhotoType("ticket"); setPhotoDialogOpen(true); }}
+                >
+                  <FileText className="w-6 h-6 mr-3" />
+                  Dump Ticket
                 </Button>
               </div>
+
+              {/* Driver Notes */}
               <div className="space-y-2">
-                <Label>Driver Notes</Label>
-                <Textarea value={driverNotes} onChange={(e) => setDriverNotes(e.target.value)} rows={3} />
+                <Label className="text-base">Driver Notes</Label>
+                <Textarea 
+                  value={driverNotes} 
+                  onChange={(e) => setDriverNotes(e.target.value)} 
+                  rows={2}
+                  placeholder="Any issues or notes..."
+                  className="text-base"
+                />
               </div>
+
+              {/* LARGE Primary Action Button - One-handed operation */}
               {STATUS_FLOW[selectedJob.status] && (
-                <Button className="w-full" size="lg" onClick={() => updateJobStatus(STATUS_FLOW[selectedJob.status].next)}>
+                <Button 
+                  className="w-full h-16 text-xl font-bold" 
+                  size="lg" 
+                  onClick={() => updateJobStatus(STATUS_FLOW[selectedJob.status].next)}
+                >
                   {STATUS_FLOW[selectedJob.status].action}
                 </Button>
               )}

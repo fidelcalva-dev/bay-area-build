@@ -4,13 +4,13 @@ import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/
 const GUARANTEES = [
   {
     icon: Clock,
-    title: 'On-Time Delivery',
-    description: 'Delivered when promised or we make it right',
+    title: 'Estimated Time Windows',
+    description: 'Scheduled within time windows, not exact times',
   },
   {
     icon: Shield,
     title: 'Transparent Pricing',
-    description: 'Upfront estimates, no hidden fees',
+    description: 'Upfront estimates. Additional fees may apply.',
   },
   {
     icon: Users,

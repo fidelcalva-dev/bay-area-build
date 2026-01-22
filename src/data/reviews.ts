@@ -52,7 +52,7 @@ export const VERIFIED_REVIEWS: CustomerReview[] = [
     name: 'Jennifer T.',
     location: 'Berkeley, CA',
     rating: 5,
-    text: 'Perfect size recommendation, on-time delivery and pickup. No hidden fees.',
+    text: 'Perfect size recommendation, on-time delivery and pickup. Transparent pricing.',
     date: 'October 2024',
     source: 'facebook',
     verified: true,

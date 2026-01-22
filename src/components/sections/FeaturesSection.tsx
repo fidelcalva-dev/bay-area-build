@@ -23,7 +23,7 @@ const features: Feature[] = [
   {
     icon: DollarSign,
     title: 'Transparent pricing',
-    description: 'All-inclusive. No surprise fees.',
+    description: 'Upfront estimates. Additional fees may apply for overages.',
   },
   {
     icon: MessageSquare,

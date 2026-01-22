@@ -26,7 +26,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.title': 'Fast & Reliable Dumpster Rentals',
     'hero.subtitle': 'in Northern California',
-    'hero.description': 'Instant pricing. Contractor-friendly. No hidden fees.',
+    'hero.description': 'Instant estimates. Contractor-friendly. Additional fees may apply for overages.',
     'hero.cta.quote': 'Get Instant Quote',
     'hero.cta.call': 'Call Now',
     'hero.cta.order': 'Order Now',
