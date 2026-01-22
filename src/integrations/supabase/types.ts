@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          can_approve: boolean | null
+          can_delete: boolean | null
+          can_read: boolean | null
+          can_write: boolean | null
+          created_at: string
+          id: string
+          module: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          can_approve?: boolean | null
+          can_delete?: boolean | null
+          can_read?: boolean | null
+          can_write?: boolean | null
+          created_at?: string
+          id?: string
+          module: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          can_approve?: boolean | null
+          can_delete?: boolean | null
+          can_read?: boolean | null
+          can_write?: boolean | null
+          created_at?: string
+          id?: string
+          module?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
       alerts: {
         Row: {
           alert_type: string
@@ -299,6 +332,63 @@ export type Database = {
           },
         ]
       }
+      config_pending_changes: {
+        Row: {
+          created_at: string
+          current_data: Json | null
+          entity_id: string | null
+          entity_type: string
+          expires_at: string | null
+          id: string
+          is_critical: boolean | null
+          module: string
+          proposed_by: string
+          proposed_by_email: string | null
+          proposed_data: Json
+          reason_note: string
+          review_note: string | null
+          review_status: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_data?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          expires_at?: string | null
+          id?: string
+          is_critical?: boolean | null
+          module: string
+          proposed_by: string
+          proposed_by_email?: string | null
+          proposed_data: Json
+          reason_note: string
+          review_note?: string | null
+          review_status?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_data?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          expires_at?: string | null
+          id?: string
+          is_critical?: boolean | null
+          module?: string
+          proposed_by?: string
+          proposed_by_email?: string | null
+          proposed_data?: Json
+          reason_note?: string
+          review_note?: string | null
+          review_status?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Relationships: []
+      }
       config_settings: {
         Row: {
           category: string
@@ -332,6 +422,60 @@ export type Database = {
           updated_at?: string
           updated_by?: string | null
           value?: Json
+        }
+        Relationships: []
+      }
+      config_versions: {
+        Row: {
+          after_data: Json
+          applied_at: string | null
+          approved_by: string | null
+          approved_by_email: string | null
+          before_data: Json | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          is_critical: boolean | null
+          module: string
+          proposed_by: string | null
+          proposed_by_email: string | null
+          reason_note: string
+          rolled_back_at: string | null
+          status: string
+        }
+        Insert: {
+          after_data: Json
+          applied_at?: string | null
+          approved_by?: string | null
+          approved_by_email?: string | null
+          before_data?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          is_critical?: boolean | null
+          module: string
+          proposed_by?: string | null
+          proposed_by_email?: string | null
+          reason_note: string
+          rolled_back_at?: string | null
+          status?: string
+        }
+        Update: {
+          after_data?: Json
+          applied_at?: string | null
+          approved_by?: string | null
+          approved_by_email?: string | null
+          before_data?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          is_critical?: boolean | null
+          module?: string
+          proposed_by?: string | null
+          proposed_by_email?: string | null
+          reason_note?: string
+          rolled_back_at?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -3493,6 +3637,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_admin_permission: {
+        Args: { _action: string; _module: string; _user_id: string }
+        Returns: boolean
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
