@@ -197,6 +197,131 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ========== CONTRACT VALIDATION ==========
+    // Check if customer has signed MSA and address-specific addendum
+    let contractsValid = false;
+    const contractBlockers: string[] = [];
+    let msaContractId: string | null = null;
+    let addendumContractId: string | null = null;
+
+    if (customerId) {
+      // Check for signed MSA
+      const { data: signedMsa } = await supabase
+        .from("contracts")
+        .select("id")
+        .eq("customer_id", customerId)
+        .eq("contract_type", "msa")
+        .eq("status", "signed")
+        .order("signed_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (signedMsa) {
+        msaContractId = signedMsa.id;
+      } else {
+        contractBlockers.push("MSA signature required");
+        
+        // Auto-create pending MSA if none exists
+        const { data: existingMsa } = await supabase
+          .from("contracts")
+          .select("id")
+          .eq("customer_id", customerId)
+          .eq("contract_type", "msa")
+          .eq("status", "pending")
+          .limit(1)
+          .single();
+
+        if (!existingMsa) {
+          const expiresAt = new Date();
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+          
+          await supabase.from("contracts").insert({
+            customer_id: customerId,
+            contract_type: "msa",
+            status: "pending",
+            expires_at: expiresAt.toISOString(),
+          });
+          console.log(`Auto-created pending MSA for customer ${customerId}`);
+        }
+      }
+
+      // Check for signed addendum for this address
+      const serviceAddress = quote.delivery_address;
+      if (serviceAddress) {
+        const normalizedAddress = serviceAddress.toLowerCase().trim().replace(/\s+/g, ' ');
+        
+        const { data: signedAddendum } = await supabase
+          .from("contracts")
+          .select("id")
+          .eq("customer_id", customerId)
+          .eq("contract_type", "addendum")
+          .eq("status", "signed")
+          .eq("service_address_normalized", normalizedAddress)
+          .limit(1)
+          .single();
+
+        if (signedAddendum) {
+          addendumContractId = signedAddendum.id;
+        } else {
+          contractBlockers.push("Service Addendum required for this address");
+          
+          // Auto-create pending addendum
+          const { data: existingAddendum } = await supabase
+            .from("contracts")
+            .select("id")
+            .eq("customer_id", customerId)
+            .eq("contract_type", "addendum")
+            .eq("service_address_normalized", normalizedAddress)
+            .eq("status", "pending")
+            .limit(1)
+            .single();
+
+          if (!existingAddendum) {
+            const { data: newAddendum } = await supabase.from("contracts").insert({
+              customer_id: customerId,
+              contract_type: "addendum",
+              status: "pending",
+              service_address: serviceAddress,
+              service_address_normalized: normalizedAddress,
+            }).select("id").single();
+            
+            console.log(`Auto-created pending Addendum for address: ${serviceAddress}`);
+
+            // Auto-send contract request via SMS if phone available
+            if (quote.customer_phone && newAddendum) {
+              try {
+                await supabase.functions.invoke("send-contract", {
+                  body: {
+                    contractId: newAddendum.id,
+                    method: "sms",
+                    phone: quote.customer_phone,
+                    actorRole: "system",
+                  },
+                });
+                console.log(`Auto-sent addendum request to ${quote.customer_phone}`);
+              } catch (sendErr) {
+                console.error("Failed to auto-send contract:", sendErr);
+              }
+            }
+          }
+        }
+      }
+
+      // Determine if all contracts are valid
+      contractsValid = contractBlockers.length === 0;
+
+      // Update order with contract status
+      await supabase
+        .from("orders")
+        .update({
+          msa_contract_id: msaContractId,
+          addendum_contract_id: addendumContractId,
+          contracts_valid: contractsValid,
+        })
+        .eq("id", order.id);
+    }
+    // ========== END CONTRACT VALIDATION ==========
+
     // 8. Create invoice for the order
     const invoiceNumber = `INV-${order.id.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
     const dueDate = new Date();
@@ -316,7 +441,7 @@ Deno.serve(async (req) => {
         reason: "Customer scheduled via quote flow",
       });
 
-    console.log(`Order ${order.id} created from quote ${quoteId} with invoice ${invoice?.invoice_number}`);
+    console.log(`Order ${order.id} created from quote ${quoteId} with invoice ${invoice?.invoice_number}. Contracts valid: ${contractsValid}`);
 
     return new Response(
       JSON.stringify({
@@ -329,6 +454,8 @@ Deno.serve(async (req) => {
         assignedYardId,
         invoiceId: invoice?.id,
         invoiceNumber: invoice?.invoice_number,
+        contractsValid,
+        contractBlockers,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
