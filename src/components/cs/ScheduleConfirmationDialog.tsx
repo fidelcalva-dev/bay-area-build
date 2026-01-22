@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Calendar, Clock, CheckCircle2, Loader2, Send, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,10 +26,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { logOrderEvent, logScheduleChange } from '@/lib/orderEventService';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
+import { ContractBlocker } from '@/components/contracts';
 
 interface Order {
   id: string;
   status: string;
+  customer_id?: string | null;
+  contracts_valid?: boolean;
   scheduled_delivery_date: string | null;
   scheduled_delivery_window: string | null;
   scheduled_pickup_date: string | null;
@@ -37,6 +40,7 @@ interface Order {
   quotes?: {
     customer_name: string | null;
     customer_phone: string | null;
+    customer_email?: string | null;
     delivery_address: string | null;
     rental_days?: number;
   };
@@ -59,6 +63,11 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
   const { toast } = useToast();
   const { isOpen: isOfficeOpen } = useOfficeStatus();
   
+  // Contract validation state
+  const [contractBlockers, setContractBlockers] = useState<string[]>([]);
+  const [pendingContractId, setPendingContractId] = useState<string | null>(null);
+  const [isSendingContract, setIsSendingContract] = useState(false);
+  
   // Initialize with existing values or defaults
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(
     order.scheduled_delivery_date ? new Date(order.scheduled_delivery_date) : undefined
@@ -75,8 +84,128 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isAfterHours = !isOfficeOpen;
+  const hasContractBlockers = contractBlockers.length > 0;
+
+  // Check contract status when dialog opens
+  useEffect(() => {
+    if (open && order.customer_id) {
+      checkContractStatus();
+    }
+  }, [open, order.customer_id]);
+
+  async function checkContractStatus() {
+    if (!order.customer_id) return;
+
+    const blockers: string[] = [];
+
+    // Use type assertion to work around generated types not including contracts table yet
+    const contractsTable = (supabase as unknown as { from: (table: string) => ReturnType<typeof supabase.from> }).from('contracts');
+
+    // Check for signed MSA
+    const { data: signedMsa } = await contractsTable
+      .select('id')
+      .eq('customer_id', order.customer_id)
+      .eq('contract_type', 'msa')
+      .eq('status', 'signed')
+      .limit(1)
+      .single();
+
+    if (!signedMsa) {
+      blockers.push('Master Service Agreement signature required');
+      
+      // Get pending MSA for send button
+      const { data: pendingMsa } = await contractsTable
+        .select('id')
+        .eq('customer_id', order.customer_id)
+        .eq('contract_type', 'msa')
+        .eq('status', 'pending')
+        .limit(1)
+        .single();
+      
+      if (pendingMsa) {
+        setPendingContractId((pendingMsa as { id: string }).id);
+      }
+    }
+
+    // Check for signed addendum for this address
+    const serviceAddress = order.quotes?.delivery_address;
+    if (serviceAddress) {
+      const normalizedAddress = serviceAddress.toLowerCase().trim().replace(/\s+/g, ' ');
+      
+      const { data: signedAddendum } = await contractsTable
+        .select('id')
+        .eq('customer_id', order.customer_id)
+        .eq('contract_type', 'addendum')
+        .eq('status', 'signed')
+        .eq('service_address_normalized', normalizedAddress)
+        .limit(1)
+        .single();
+
+      if (!signedAddendum) {
+        blockers.push('Service Addendum required for this address');
+        
+        // Get pending addendum
+        const { data: pendingAddendum } = await contractsTable
+          .select('id')
+          .eq('customer_id', order.customer_id)
+          .eq('contract_type', 'addendum')
+          .eq('status', 'pending')
+          .eq('service_address_normalized', normalizedAddress)
+          .limit(1)
+          .single();
+        
+        if (pendingAddendum) {
+          setPendingContractId((pendingAddendum as { id: string }).id);
+        }
+      }
+    }
+
+    setContractBlockers(blockers);
+  }
+
+  async function handleSendContract(method: 'sms' | 'email') {
+    if (!pendingContractId) return;
+    
+    setIsSendingContract(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      await supabase.functions.invoke('send-contract', {
+        body: {
+          contractId: pendingContractId,
+          method,
+          phone: order.quotes?.customer_phone,
+          email: order.quotes?.customer_email,
+          actorId: user?.id,
+          actorRole: 'cs',
+        },
+      });
+
+      toast({ 
+        title: 'Contract sent', 
+        description: `Contract request sent via ${method.toUpperCase()}` 
+      });
+    } catch (err) {
+      toast({ 
+        title: 'Failed to send contract', 
+        variant: 'destructive' 
+      });
+    } finally {
+      setIsSendingContract(false);
+    }
+  }
 
   async function handleConfirm() {
+    // Block if contracts not valid
+    if (hasContractBlockers) {
+      toast({ 
+        title: 'Cannot confirm schedule', 
+        description: 'Contract signatures are required before scheduling.',
+        variant: 'destructive' 
+      });
+      return;
+    }
+
     if (!deliveryDate || !deliveryWindow) {
       toast({ title: 'Please select delivery date and window', variant: 'destructive' });
       return;
@@ -97,7 +226,7 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
           scheduled_delivery_window: deliveryWindow,
           scheduled_pickup_date: pickupDateStr,
           scheduled_pickup_window: pickupWindow || null,
-        })
+        } as Record<string, unknown>)
         .eq('id', order.id);
 
       if (updateError) throw updateError;
@@ -145,7 +274,7 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
             deliveryWindow: deliveryWindow,
             pickupDate: pickupDateStr,
             pickupWindow: pickupWindow,
-            language: 'en', // TODO: detect from customer preference
+            language: 'en',
           },
         });
 
@@ -171,11 +300,12 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
 
       onConfirmed();
       onOpenChange(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Confirmation error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({ 
         title: 'Failed to confirm schedule', 
-        description: error.message, 
+        description: errorMessage, 
         variant: 'destructive' 
       });
     } finally {
@@ -196,7 +326,17 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
           </DialogDescription>
         </DialogHeader>
 
-        {isAfterHours && (
+        {/* Contract Blocker Alert */}
+        {hasContractBlockers && (
+          <ContractBlocker
+            blockers={contractBlockers}
+            onSendSMS={() => handleSendContract('sms')}
+            onSendEmail={() => handleSendContract('email')}
+            isSending={isSendingContract}
+          />
+        )}
+
+        {isAfterHours && !hasContractBlockers && (
           <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>After hours confirmation. SMS will still be sent.</span>
@@ -319,7 +459,10 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm} disabled={isSubmitting || !deliveryDate}>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={isSubmitting || !deliveryDate || hasContractBlockers}
+          >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
