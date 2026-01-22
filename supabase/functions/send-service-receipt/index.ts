@@ -252,6 +252,116 @@ const handler = async (req: Request): Promise<Response> => {
       })
       .eq('id', quoteId);
 
+    // If there's an overage charge, update the invoice and order
+    let invoiceUpdated = false;
+    let portalPayLink = '';
+    
+    if (overageCharge > 0 && orderId) {
+      // Fetch current order billing state
+      const { data: order } = await supabase
+        .from('orders')
+        .select('id, amount_due, amount_paid, balance_due, payment_status')
+        .eq('id', orderId)
+        .single();
+
+      if (order) {
+        const newAmountDue = (order.amount_due || 0) + overageCharge;
+        const newBalanceDue = (order.balance_due || 0) + overageCharge;
+        const newPaymentStatus = order.amount_paid > 0 ? 'partial' : 'unpaid';
+
+        // Update order with overage
+        await supabase
+          .from('orders')
+          .update({
+            amount_due: newAmountDue,
+            balance_due: newBalanceDue,
+            payment_status: newPaymentStatus,
+          })
+          .eq('id', orderId);
+
+        // Update or create invoice with overage line
+        const { data: existingInvoice } = await supabase
+          .from('invoices')
+          .select('id, amount_due, balance_due, notes')
+          .eq('order_id', orderId)
+          .single();
+
+        if (existingInvoice) {
+          const invoiceNotes = existingInvoice.notes || '';
+          const overageNote = `\nOverage: ${overageTons.toFixed(2)}T × $${overageRate} = $${overageCharge.toFixed(2)} (${new Date().toLocaleDateString()})`;
+          
+          await supabase
+            .from('invoices')
+            .update({
+              amount_due: (existingInvoice.amount_due || 0) + overageCharge,
+              balance_due: (existingInvoice.balance_due || 0) + overageCharge,
+              payment_status: 'unpaid',
+              notes: invoiceNotes + overageNote,
+            })
+            .eq('id', existingInvoice.id);
+
+          invoiceUpdated = true;
+        } else {
+          // Create new invoice with overage
+          const invoiceNumber = `INV-${orderId.slice(0, 8).toUpperCase()}-OVR`;
+          const dueDate = new Date();
+          dueDate.setDate(dueDate.getDate() + 7); // Net 7 for overages
+
+          await supabase.from('invoices').insert({
+            order_id: orderId,
+            invoice_number: invoiceNumber,
+            amount_due: overageCharge,
+            amount_paid: 0,
+            balance_due: overageCharge,
+            payment_status: 'unpaid',
+            due_date: dueDate.toISOString().split('T')[0],
+            notes: `Overage: ${overageTons.toFixed(2)}T × $${overageRate} = $${overageCharge.toFixed(2)}`,
+          });
+          
+          invoiceUpdated = true;
+        }
+
+        // Create order event for overage
+        await supabase.from('order_events').insert({
+          order_id: orderId,
+          event_type: 'OVERAGE_BILLED',
+          actor_role: 'system',
+          message: `Overage of ${overageTons.toFixed(2)} tons billed: $${overageCharge.toFixed(2)}`,
+          after_json: {
+            overage_tons: overageTons,
+            overage_charge: overageCharge,
+            overage_rate: overageRate,
+            new_balance_due: newBalanceDue,
+            ticket_url: ticketUrl,
+          },
+        });
+
+        // Create audit log
+        await supabase.from('audit_logs').insert({
+          action: 'update',
+          entity_type: 'order',
+          entity_id: orderId,
+          before_data: { balance_due: order.balance_due, amount_due: order.amount_due },
+          after_data: { balance_due: newBalanceDue, amount_due: newAmountDue, overage_charge: overageCharge },
+          changes_summary: `Overage of $${overageCharge.toFixed(2)} added to order`,
+        });
+
+        // Generate portal link for payment
+        portalPayLink = `${SUPABASE_URL?.replace('.supabase.co', '.lovable.app')}/portal/orders/${orderId}`;
+      }
+    }
+
+    // Calculate the new balance after overage (for display in email/SMS)
+    let newBalanceDue = overageCharge;
+    if (orderId) {
+      const { data: currentOrder } = await supabase
+        .from('orders')
+        .select('balance_due')
+        .eq('id', orderId)
+        .single();
+      newBalanceDue = currentOrder?.balance_due || overageCharge;
+    }
+
     // Generate email content based on pricing rule
     const materialLabel = quote.material_type === 'heavy' ? 'Heavy Materials (Flat Fee)' : 'General Debris';
     
@@ -367,10 +477,20 @@ const handler = async (req: Request): Promise<Response> => {
                 ` : ''}
 
                 ${overageCharge > 0 ? `
-                <p style="font-size: 14px; color: #92400e; background: #fef3c7; padding: 12px; border-radius: 8px; margin-top: 20px;">
-                  <strong>⚠️ Additional Charge:</strong> $${overageCharge.toFixed(2)} for ${overageTons.toFixed(2)} tons over the ${includedTons}T included allowance. 
-                  You'll receive a separate invoice for this amount.
-                </p>
+                <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                  <p style="font-size: 14px; color: #92400e; margin: 0 0 12px 0;">
+                    <strong>⚠️ Overage Charge:</strong> $${overageCharge.toFixed(2)} for ${overageTons.toFixed(2)} tons over the ${includedTons}T included allowance.
+                  </p>
+                  ${orderId ? `
+                  <p style="font-size: 16px; color: #92400e; font-weight: bold; margin: 0 0 12px 0;">
+                    New Balance Due: $${newBalanceDue.toFixed(2)}
+                  </p>
+                  <a href="https://9d2754ea-90c1-4bce-9c45-c379d4c6b54c.lovableproject.com/portal/orders/${orderId}" 
+                     style="display: inline-block; background: #16a34a; color: white; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    Pay Now →
+                  </a>
+                  ` : `<p style="font-size: 13px; color: #92400e; margin: 0;">Invoice will be sent separately.</p>`}
+                </div>
                 ` : ''}
               </div>
               <div class="footer">
@@ -439,13 +559,17 @@ const handler = async (req: Request): Promise<Response> => {
             `Thank you! — Calsan Dumpsters`;
         } else {
           if (overageCharge > 0) {
+            const payLink = orderId ? `https://9d2754ea-90c1-4bce-9c45-c379d4c6b54c.lovableproject.com/portal/orders/${orderId}` : '';
+            
             smsBody = `✅ Service Complete!\n\n` +
               `📦 ${sizeLabel}\n` +
               `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
               `📊 ${includedTons}T included\n` +
-              `⚠️ Overage: ${overageTons.toFixed(2)}T × $${overageRate} = $${overageCharge.toFixed(2)}\n\n` +
-              `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
-              `Invoice to follow. — Calsan Dumpsters`;
+              `⚠️ Overage: ${overageTons.toFixed(2)}T = $${overageCharge.toFixed(2)}\n\n` +
+              `💳 Balance Due: $${newBalanceDue.toFixed(2)}\n` +
+              `${payLink ? `Pay now: ${payLink}\n\n` : '\n'}` +
+              `${ticketUrl ? `Ticket: ${ticketUrl}\n` : ''}` +
+              `— Calsan Dumpsters`;
           } else {
             smsBody = `✅ Service Complete!\n\n` +
               `📦 ${sizeLabel}\n` +
@@ -502,6 +626,8 @@ const handler = async (req: Request): Promise<Response> => {
         overageTons,
         overageCharge,
         pricingRule,
+        invoiceUpdated,
+        newBalanceDue: overageCharge > 0 ? newBalanceDue : null,
         emailSent: !!emailResult,
         smsSent: !!smsResult,
       }),
