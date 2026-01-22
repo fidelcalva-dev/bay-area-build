@@ -274,6 +274,112 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_events: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          contract_id: string
+          created_at: string
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          contract_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          contract_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_events_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contracts: {
+        Row: {
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          contract_version: string
+          created_at: string
+          customer_id: string
+          expires_at: string | null
+          id: string
+          pdf_url: string | null
+          service_address: string | null
+          service_address_normalized: string | null
+          signature_method: string | null
+          signed_at: string | null
+          signed_ip: string | null
+          status: Database["public"]["Enums"]["contract_status"]
+          terms_content: string | null
+          updated_at: string
+        }
+        Insert: {
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          contract_version?: string
+          created_at?: string
+          customer_id: string
+          expires_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          service_address?: string | null
+          service_address_normalized?: string | null
+          signature_method?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          terms_content?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          contract_version?: string
+          created_at?: string
+          customer_id?: string
+          expires_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          service_address?: string | null
+          service_address_normalized?: string | null
+          signature_method?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          terms_content?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_sessions: {
         Row: {
           created_at: string
@@ -1265,11 +1371,13 @@ export type Database = {
         Row: {
           actual_delivery_at: string | null
           actual_pickup_at: string | null
+          addendum_contract_id: string | null
           amount_due: number | null
           amount_paid: number | null
           assigned_driver_id: string | null
           assigned_yard_id: string | null
           balance_due: number | null
+          contracts_valid: boolean | null
           created_at: string
           custom_logistics_notes: string | null
           customer_id: string | null
@@ -1290,6 +1398,7 @@ export type Database = {
           is_dry_run: boolean | null
           live_load_minutes: number | null
           logistics_type: string | null
+          msa_contract_id: string | null
           multi_stop_sequence: number | null
           origin_yard_id: string | null
           overfill_flagged: boolean | null
@@ -1323,11 +1432,13 @@ export type Database = {
         Insert: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          contracts_valid?: boolean | null
           created_at?: string
           custom_logistics_notes?: string | null
           customer_id?: string | null
@@ -1348,6 +1459,7 @@ export type Database = {
           is_dry_run?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
+          msa_contract_id?: string | null
           multi_stop_sequence?: number | null
           origin_yard_id?: string | null
           overfill_flagged?: boolean | null
@@ -1381,11 +1493,13 @@ export type Database = {
         Update: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          contracts_valid?: boolean | null
           created_at?: string
           custom_logistics_notes?: string | null
           customer_id?: string | null
@@ -1406,6 +1520,7 @@ export type Database = {
           is_dry_run?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
+          msa_contract_id?: string | null
           multi_stop_sequence?: number | null
           origin_yard_id?: string | null
           overfill_flagged?: boolean | null
@@ -1438,6 +1553,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "orders_addendum_contract_id_fkey"
+            columns: ["addendum_contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_assigned_yard_id_fkey"
             columns: ["assigned_yard_id"]
             isOneToOne: false
@@ -1463,6 +1585,13 @@ export type Database = {
             columns: ["inventory_id"]
             isOneToOne: false
             referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_msa_contract_id_fkey"
+            columns: ["msa_contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
             referencedColumns: ["id"]
           },
           {
@@ -3004,6 +3133,8 @@ export type Database = {
         | "owner_operator"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
+      contract_status: "pending" | "signed" | "declined" | "expired"
+      contract_type: "msa" | "addendum"
       filled_location: "customer" | "yard" | "truck"
       logistics_type:
         | "delivery"
@@ -3160,6 +3291,8 @@ export const Constants = {
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
+      contract_status: ["pending", "signed", "declined", "expired"],
+      contract_type: ["msa", "addendum"],
       filled_location: ["customer", "yard", "truck"],
       logistics_type: [
         "delivery",
