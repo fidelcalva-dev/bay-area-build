@@ -694,6 +694,66 @@ export type Database = {
           },
         ]
       }
+      invoices: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          balance_due: number
+          created_at: string
+          customer_id: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string
+          notes: string | null
+          order_id: string
+          payment_status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_due?: number
+          amount_paid?: number
+          balance_due?: number
+          created_at?: string
+          customer_id?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          notes?: string | null
+          order_id: string
+          payment_status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          balance_due?: number
+          created_at?: string
+          customer_id?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          notes?: string | null
+          order_id?: string
+          payment_status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -911,6 +971,10 @@ export type Database = {
           internal_notes: string | null
           inventory_id: string | null
           invoice_url: string | null
+          payment_link_amount: number | null
+          payment_link_sent_at: string | null
+          payment_link_type: string | null
+          payment_link_url: string | null
           payment_status: string | null
           pickup_completed_at: string | null
           pickup_photo_url: string | null
@@ -948,6 +1012,10 @@ export type Database = {
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
+          payment_link_amount?: number | null
+          payment_link_sent_at?: string | null
+          payment_link_type?: string | null
+          payment_link_url?: string | null
           payment_status?: string | null
           pickup_completed_at?: string | null
           pickup_photo_url?: string | null
@@ -985,6 +1053,10 @@ export type Database = {
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
+          payment_link_amount?: number | null
+          payment_link_sent_at?: string | null
+          payment_link_type?: string | null
+          payment_link_url?: string | null
           payment_status?: string | null
           pickup_completed_at?: string | null
           pickup_photo_url?: string | null
@@ -1029,6 +1101,81 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          auth_code: string | null
+          card_last_four: string | null
+          card_type: string | null
+          created_at: string
+          customer_email: string | null
+          customer_id: string | null
+          customer_phone: string | null
+          id: string
+          order_id: string
+          payment_type: string
+          provider: string
+          response_code: string | null
+          response_message: string | null
+          status: string
+          transaction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          auth_code?: string | null
+          card_last_four?: string | null
+          card_type?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_phone?: string | null
+          id?: string
+          order_id: string
+          payment_type: string
+          provider?: string
+          response_code?: string | null
+          response_message?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          auth_code?: string | null
+          card_last_four?: string | null
+          card_type?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_phone?: string | null
+          id?: string
+          order_id?: string
+          payment_type?: string
+          provider?: string
+          response_code?: string | null
+          response_message?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
