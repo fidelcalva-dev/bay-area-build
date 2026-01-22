@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Loader2, Search, CheckCircle2, Phone, MessageSquare, MapPin, Calendar } from 'lucide-react';
+import { Loader2, Search, CheckCircle2, Phone, MessageSquare, MapPin, Calendar, Clock, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +27,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { format } from 'date-fns';
-import { createAuditLog } from '@/lib/auditLog';
+import { ScheduleConfirmationDialog } from '@/components/cs/ScheduleConfirmationDialog';
+import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 
 interface Order {
   id: string;
@@ -44,11 +45,14 @@ interface Order {
     delivery_address: string | null;
     user_selected_size_yards: number | null;
     material_type: string | null;
+    rental_days?: number;
   };
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon?: React.ReactNode }> = {
   pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
+  scheduled_requested: { label: 'Schedule Requested', color: 'bg-orange-100 text-orange-800', icon: <Clock className="w-3 h-3" /> },
+  scheduled_confirmed: { label: 'Confirmed', color: 'bg-green-100 text-green-800', icon: <CheckCircle2 className="w-3 h-3" /> },
   scheduled: { label: 'Scheduled', color: 'bg-blue-100 text-blue-800' },
   en_route: { label: 'En Route', color: 'bg-purple-100 text-purple-800' },
   delivered: { label: 'Delivered', color: 'bg-green-100 text-green-800' },
@@ -64,8 +68,9 @@ export default function CSOrders() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmingOrder, setConfirmingOrder] = useState<Order | null>(null);
   const { toast } = useToast();
+  const { isOpen: isOfficeOpen } = useOfficeStatus();
 
   useEffect(() => {
     fetchOrders();
@@ -82,7 +87,8 @@ export default function CSOrders() {
           customer_email,
           delivery_address,
           user_selected_size_yards,
-          material_type
+          material_type,
+          rental_days
         )
       `)
       .order('created_at', { ascending: false })
@@ -96,33 +102,10 @@ export default function CSOrders() {
     setIsLoading(false);
   }
 
-  async function confirmSchedule(order: Order) {
-    if (order.status !== 'pending') return;
-    setIsConfirming(true);
-
-    const { error } = await supabase
-      .from('orders')
-      .update({ status: 'scheduled' })
-      .eq('id', order.id);
-
-    if (error) {
-      toast({ title: 'Error confirming schedule', description: error.message, variant: 'destructive' });
-    } else {
-      await createAuditLog({
-        action: 'status_change',
-        entityType: 'order',
-        entityId: order.id,
-        beforeData: { status: 'pending' },
-        afterData: { status: 'scheduled' },
-        changesSummary: 'CS confirmed schedule',
-      });
-
-      toast({ title: 'Schedule confirmed' });
-      fetchOrders();
-      setSelectedOrder(null);
-    }
-    setIsConfirming(false);
-  }
+  // Count orders needing confirmation
+  const pendingConfirmationCount = orders.filter(
+    (o) => o.status === 'scheduled_requested' || o.status === 'pending'
+  ).length;
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -130,10 +113,18 @@ export default function CSOrders() {
       order.quotes?.customer_phone?.includes(searchTerm) ||
       order.id.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    const matchesStatus = 
+      statusFilter === 'all' || 
+      statusFilter === 'needs_confirm' 
+        ? (statusFilter === 'all' || order.status === 'scheduled_requested' || order.status === 'pending')
+        : order.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
+
+  // Can this order be confirmed?
+  const canConfirm = (order: Order) => 
+    order.status === 'scheduled_requested' || order.status === 'pending';
 
   if (isLoading) {
     return (
@@ -145,11 +136,21 @@ export default function CSOrders() {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Orders</h1>
-        <p className="text-muted-foreground mt-1">
-          View orders and confirm schedules
-        </p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Orders</h1>
+          <p className="text-muted-foreground mt-1">
+            View orders and confirm schedules
+          </p>
+        </div>
+        {pendingConfirmationCount > 0 && (
+          <div className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-lg">
+            <AlertCircle className="w-5 h-5 text-orange-600" />
+            <span className="font-medium text-orange-800">
+              {pendingConfirmationCount} awaiting confirmation
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -163,11 +164,14 @@ export default function CSOrders() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="needs_confirm">
+              ⚡ Needs Confirmation
+            </SelectItem>
             {Object.entries(STATUS_CONFIG).map(([key, config]) => (
               <SelectItem key={key} value={key}>{config.label}</SelectItem>
             ))}
@@ -188,7 +192,10 @@ export default function CSOrders() {
           </TableHeader>
           <TableBody>
             {filteredOrders.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow 
+                key={order.id}
+                className={canConfirm(order) ? 'bg-orange-50/50' : ''}
+              >
                 <TableCell>
                   <div>
                     <p className="font-medium">{order.quotes?.customer_name || 'Unknown'}</p>
@@ -221,17 +228,18 @@ export default function CSOrders() {
                   )}
                 </TableCell>
                 <TableCell>
-                  <Badge className={STATUS_CONFIG[order.status]?.color || 'bg-gray-100'}>
+                  <Badge className={`${STATUS_CONFIG[order.status]?.color || 'bg-gray-100'} flex items-center gap-1 w-fit`}>
+                    {STATUS_CONFIG[order.status]?.icon}
                     {STATUS_CONFIG[order.status]?.label || order.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    {order.status === 'pending' && (
+                    {canConfirm(order) && (
                       <Button
                         size="sm"
-                        onClick={() => confirmSchedule(order)}
-                        disabled={isConfirming}
+                        onClick={() => setConfirmingOrder(order)}
+                        className="bg-green-600 hover:bg-green-700"
                       >
                         <CheckCircle2 className="w-4 h-4 mr-1" />
                         Confirm
@@ -259,6 +267,7 @@ export default function CSOrders() {
         </Table>
       </div>
 
+      {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -268,7 +277,8 @@ export default function CSOrders() {
           {selectedOrder && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Badge className={STATUS_CONFIG[selectedOrder.status]?.color || 'bg-gray-100'}>
+                <Badge className={`${STATUS_CONFIG[selectedOrder.status]?.color || 'bg-gray-100'} flex items-center gap-1`}>
+                  {STATUS_CONFIG[selectedOrder.status]?.icon}
                   {STATUS_CONFIG[selectedOrder.status]?.label || selectedOrder.status}
                 </Badge>
                 <span className="text-sm text-muted-foreground font-mono">
@@ -308,6 +318,33 @@ export default function CSOrders() {
                 </div>
               </div>
 
+              {selectedOrder.scheduled_delivery_date && (
+                <div className="p-3 bg-muted rounded-lg space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">Delivery:</span>
+                    <span>{format(new Date(selectedOrder.scheduled_delivery_date), 'EEEE, MMM d')}</span>
+                    {selectedOrder.scheduled_delivery_window && (
+                      <Badge variant="outline" className="capitalize">
+                        {selectedOrder.scheduled_delivery_window}
+                      </Badge>
+                    )}
+                  </div>
+                  {selectedOrder.scheduled_pickup_date && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">Pickup:</span>
+                      <span>{format(new Date(selectedOrder.scheduled_pickup_date), 'EEEE, MMM d')}</span>
+                      {selectedOrder.scheduled_pickup_window && (
+                        <Badge variant="outline" className="capitalize">
+                          {selectedOrder.scheduled_pickup_window}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-3 pt-4">
                 <Button variant="outline" className="flex-1" asChild>
                   <a href={`tel:${selectedOrder.quotes?.customer_phone}`}>
@@ -323,11 +360,13 @@ export default function CSOrders() {
                 </Button>
               </div>
 
-              {selectedOrder.status === 'pending' && (
+              {canConfirm(selectedOrder) && (
                 <Button
-                  className="w-full"
-                  onClick={() => confirmSchedule(selectedOrder)}
-                  disabled={isConfirming}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    setSelectedOrder(null);
+                    setConfirmingOrder(selectedOrder);
+                  }}
                 >
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                   Confirm Schedule
@@ -337,6 +376,19 @@ export default function CSOrders() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Schedule Confirmation Dialog */}
+      {confirmingOrder && (
+        <ScheduleConfirmationDialog
+          order={confirmingOrder}
+          open={!!confirmingOrder}
+          onOpenChange={(open) => !open && setConfirmingOrder(null)}
+          onConfirmed={() => {
+            setConfirmingOrder(null);
+            fetchOrders();
+          }}
+        />
+      )}
     </div>
   );
 }
