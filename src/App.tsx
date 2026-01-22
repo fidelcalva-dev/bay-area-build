@@ -34,8 +34,9 @@ const Locations = lazy(() => import("./pages/Locations"));
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
 const CustomerDashboard = lazy(() => import("./pages/portal/CustomerDashboard"));
+const CustomerOrders = lazy(() => import("./pages/portal/CustomerOrders"));
+const CustomerDocuments = lazy(() => import("./pages/portal/CustomerDocuments"));
 const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
-
 // Green Halo Portal pages (separate)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
 const PortalDashboard = lazy(() => import("./pages/portal/PortalDashboard"));
@@ -169,6 +170,12 @@ const App = () => (
               } />
               <Route path="/portal/dashboard" element={
                 <Suspense fallback={<PageLoader />}><CustomerDashboard /></Suspense>
+              } />
+              <Route path="/portal/orders" element={
+                <Suspense fallback={<PageLoader />}><CustomerOrders /></Suspense>
+              } />
+              <Route path="/portal/documents" element={
+                <Suspense fallback={<PageLoader />}><CustomerDocuments /></Suspense>
               } />
               <Route path="/portal/order/:orderId" element={
                 <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>

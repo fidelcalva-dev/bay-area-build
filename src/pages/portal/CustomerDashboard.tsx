@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { 
   Truck, Calendar, MapPin, Phone, LogOut, Clock, 
   FileText, Download, AlertCircle, CheckCircle2, 
-  Package, ChevronRight, Loader2
+  Package, ChevronRight, Loader2, ClipboardList, Image
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -155,7 +155,7 @@ const CustomerDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
             <a href="tel:+15101234567">
               <Phone className="w-5 h-5 text-amber-600" />
@@ -166,6 +166,18 @@ const CustomerDashboard = () => {
             <Link to="/quote">
               <Package className="w-5 h-5 text-amber-600" />
               <span className="text-sm">New Order</span>
+            </Link>
+          </Button>
+          <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
+            <Link to="/portal/orders">
+              <ClipboardList className="w-5 h-5 text-amber-600" />
+              <span className="text-sm">All Orders</span>
+            </Link>
+          </Button>
+          <Button variant="outline" className="h-auto py-4 flex-col gap-2" asChild>
+            <Link to="/portal/documents">
+              <Image className="w-5 h-5 text-amber-600" />
+              <span className="text-sm">Documents</span>
             </Link>
           </Button>
         </div>
