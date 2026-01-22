@@ -20,6 +20,7 @@ export function Header() {
     { to: '/sizes', label: t('nav.sizes') },
     { to: '/areas', label: t('nav.areas') },
     { to: '/materials', label: t('nav.materials') },
+    { to: '/portal', label: 'Customer Portal' },
   ];
 
   const contractorLinks = [

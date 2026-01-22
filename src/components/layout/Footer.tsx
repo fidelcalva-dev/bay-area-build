@@ -291,6 +291,15 @@ export function Footer() {
             <p className="text-secondary-foreground/40 text-xs mt-1">
               {BUSINESS_INFO.address.full} • {BUSINESS_INFO.phone.salesFormatted}
             </p>
+            <div className="flex items-center justify-center md:justify-start gap-3 mt-2">
+              <Link to="/terms" className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors">
+                Terms of Service
+              </Link>
+              <span className="text-secondary-foreground/30">|</span>
+              <Link to="/privacy" className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
           </div>
           
           {/* Social Icons */}

@@ -12,12 +12,12 @@ const benefits = [
   {
     icon: Clock,
     title: 'Priority Dispatch',
-    description: 'Contractors get moved to the front of the line. Same-day delivery when you need it most.',
+    description: 'Contractors get moved to the front of the line. Same-day delivery available (subject to availability).',
   },
   {
     icon: RefreshCw,
     title: 'Fast Replacements',
-    description: 'Dumpster full? We can swap it out within 24 hours to keep your project moving.',
+    description: 'Dumpster full? We can swap it out within 24 hours to keep your project moving (subject to availability).',
   },
   {
     icon: Truck,
