@@ -45,31 +45,43 @@ function formatPhone(phone: string): string {
   return `+${digits}`;
 }
 
-// Build confirmation message
+// Disclaimers (standardized legal copy)
+const DISCLAIMERS = {
+  arrivalTimes: {
+    en: 'Arrival times are estimates due to traffic and transfer stations. Keep access clear during the scheduled window.',
+    es: 'Los tiempos de llegada son estimados debido al tráfico y centros de transferencia. Mantenga el acceso despejado durante la ventana programada.',
+  },
+  streetPermit: {
+    en: 'Street placement may require a permit.',
+    es: 'La colocación en calle puede requerir un permiso.',
+  },
+};
+
+// Build confirmation message (standardized template)
 function buildMessage(data: ConfirmationRequest): string {
   const lang = data.language || 'en';
   const deliveryDate = formatDate(data.deliveryDate);
   const deliveryWindow = formatWindow(data.deliveryWindow, lang);
   
   if (lang === 'es') {
-    let message = `Confirmado ✅ Entrega: ${deliveryDate} (${deliveryWindow}).`;
+    let message = `Confirmado ✅\n\nEntrega:\n• Fecha: ${deliveryDate}\n• Ventana: ${deliveryWindow}`;
     if (data.pickupDate && data.pickupWindow) {
       const pickupDate = formatDate(data.pickupDate);
       const pickupWindow = formatWindow(data.pickupWindow, lang);
-      message += ` Recogida: ${pickupDate} (${pickupWindow}).`;
+      message += `\n\nRecogida:\n• Fecha: ${pickupDate}\n• Ventana: ${pickupWindow}`;
     }
-    message += ` Los tiempos son estimados por tráfico y dumps.`;
+    message += `\n\nNotas:\n• ${DISCLAIMERS.arrivalTimes.es}\n• ${DISCLAIMERS.streetPermit.es}`;
     return message;
   }
   
   // English
-  let message = `Confirmed ✅ Delivery: ${deliveryDate} (${deliveryWindow}).`;
+  let message = `Confirmed ✅\n\nDelivery:\n• Date: ${deliveryDate}\n• Time Window: ${deliveryWindow}`;
   if (data.pickupDate && data.pickupWindow) {
     const pickupDate = formatDate(data.pickupDate);
     const pickupWindow = formatWindow(data.pickupWindow, lang);
-    message += ` Pickup: ${pickupDate} (${pickupWindow}).`;
+    message += `\n\nPickup:\n• Date: ${pickupDate}\n• Time Window: ${pickupWindow}`;
   }
-  message += ` Arrival times are estimates due to traffic & transfer stations.`;
+  message += `\n\nNotes:\n• ${DISCLAIMERS.arrivalTimes.en}\n• ${DISCLAIMERS.streetPermit.en}`;
   return message;
 }
 

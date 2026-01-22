@@ -567,6 +567,11 @@ const handler = async (req: Request): Promise<Response> => {
                   </a>
                 </div>
                 ` : ''}
+
+                <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-top: 20px; font-size: 12px; color: #6b7280;">
+                  <strong>Important:</strong> Final billing is based on official scale ticket weights.
+                  Photos, scale tickets, receipts, and records available through the customer portal constitute final documentation of service and billing.
+                </div>
               </div>
               <div class="footer">
                 <p>Thank you for choosing Calsan Dumpsters Pro!</p>
@@ -616,42 +621,48 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber && quote.customer_phone) {
       try {
+        // Standardized legal footer for all SMS
+        const legalNote = `\nFinal billing based on official scale tickets.`;
         let smsBody = '';
         
         if (pricingRule === 'heavy_flat') {
-          smsBody = `✅ Service Complete!\n\n` +
-            `📦 ${sizeLabel} (Heavy Flat Fee)\n` +
-            `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
-            `✓ Disposal included – no extra charges\n\n` +
-            `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
-            `Thank you! — Calsan Dumpsters`;
+          smsBody = `Service Receipt 📄\n\n` +
+            `Order: #${quoteId.slice(0, 8)}\n` +
+            `Size: ${sizeLabel} (Heavy Flat Fee)\n` +
+            `Weight: ${actualTotalTons.toFixed(2)}T\n` +
+            `✓ Disposal included – no extra charges\n` +
+            `${ticketUrl ? `\nTicket: ${ticketUrl}` : ''}` +
+            legalNote;
         } else if (pricingRule === 'mixed_small') {
-          smsBody = `✅ Service Complete!\n\n` +
-            `📦 ${sizeLabel}\n` +
-            `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
-            `📊 ${includedTons}T included\n\n` +
-            `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
-            `Thank you! — Calsan Dumpsters`;
+          smsBody = `Service Receipt 📄\n\n` +
+            `Order: #${quoteId.slice(0, 8)}\n` +
+            `Size: ${sizeLabel}\n` +
+            `Weight: ${actualTotalTons.toFixed(2)}T\n` +
+            `Included: ${includedTons}T\n` +
+            `${ticketUrl ? `\nTicket: ${ticketUrl}` : ''}` +
+            legalNote;
         } else {
           if (overageCharge > 0) {
             const payLink = hostedPaymentLink || portalPayLink;
             
-            smsBody = `✅ Service Complete!\n\n` +
-              `📦 ${sizeLabel}\n` +
-              `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
-              `📊 ${includedTons}T included\n` +
-              `⚠️ Overage: ${overageTons.toFixed(2)}T = $${overageCharge.toFixed(2)}\n\n` +
-              `💳 Balance Due: $${newBalanceDue.toFixed(2)}\n` +
-              `${payLink ? `Pay now: ${payLink}\n\n` : '\n'}` +
+            smsBody = `Service Receipt 📄\n\n` +
+              `Order: #${quoteId.slice(0, 8)}\n` +
+              `Size: ${sizeLabel}\n` +
+              `Weight: ${actualTotalTons.toFixed(2)}T\n` +
+              `Included: ${includedTons}T\n` +
+              `Overage: ${overageTons.toFixed(2)}T = $${overageCharge.toFixed(2)}\n\n` +
+              `Balance Due: $${newBalanceDue.toFixed(2)}\n` +
+              `${payLink ? `Pay now: ${payLink}\n` : ''}` +
               `${ticketUrl ? `Ticket: ${ticketUrl}\n` : ''}` +
-              `— Calsan Dumpsters`;
+              legalNote;
           } else {
-            smsBody = `✅ Service Complete!\n\n` +
-              `📦 ${sizeLabel}\n` +
-              `⚖️ ${actualTotalTons.toFixed(2)} tons\n` +
-              `✓ Within ${includedTons}T included\n\n` +
-              `${ticketUrl ? `View ticket: ${ticketUrl}\n\n` : ''}` +
-              `Thank you! — Calsan Dumpsters`;
+            smsBody = `Service Receipt 📄\n\n` +
+              `Order: #${quoteId.slice(0, 8)}\n` +
+              `Size: ${sizeLabel}\n` +
+              `Weight: ${actualTotalTons.toFixed(2)}T\n` +
+              `✓ Within ${includedTons}T included\n` +
+              `${ticketUrl ? `\nTicket: ${ticketUrl}` : ''}` +
+              legalNote;
           }
         }
 
