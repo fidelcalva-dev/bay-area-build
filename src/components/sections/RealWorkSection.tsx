@@ -11,12 +11,12 @@ import realWork5 from '@/assets/real-work/real-work-5.jpeg';
 import realWork6 from '@/assets/real-work/real-work-6.jpeg';
 
 const galleryImages = [
-  { id: 1, src: realWork4, alt: 'Roll-off truck in the yard', label: 'Local Fleet' },
-  { id: 2, src: realWork6, alt: 'Dumpsters staged near an overpass', label: 'Ready to Deliver' },
-  { id: 3, src: realWork3, alt: 'Dumpsters staged at a job site', label: 'On-Site Service' },
-  { id: 4, src: realWork2, alt: 'Dumpsters at our yard', label: 'Stocked & Scheduled' },
-  { id: 5, src: realWork1, alt: '30-yard dumpster placed along a driveway', label: 'Careful Placement' },
-  { id: 6, src: realWork5, alt: 'Dumpsters staged outdoors', label: 'Equipment on Hand' },
+  { id: 1, src: realWork1, alt: 'Dumpster with materials on job site', label: 'Heavy Materials' },
+  { id: 2, src: realWork2, alt: 'Multiple dumpsters in yard', label: 'Stocked & Ready' },
+  { id: 3, src: realWork3, alt: 'Calsan truck with dumpster at yard', label: 'Branded Fleet' },
+  { id: 4, src: realWork4, alt: 'Roll-off truck delivering dumpster', label: 'Live Delivery' },
+  { id: 5, src: realWork5, alt: 'Calsan truck loading dumpster', label: 'On the Move' },
+  { id: 6, src: realWork6, alt: 'Calsan truck at yard', label: 'Local Fleet' },
 ];
 
 const stats = [
