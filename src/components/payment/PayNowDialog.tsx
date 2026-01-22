@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { CreditCard, Loader2, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { CreditCard, Loader2, ExternalLink, AlertCircle, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,37 +34,6 @@ interface PayNowDialogProps {
 
 type PaymentType = 'balance' | 'deposit' | 'overage';
 
-// Declare Accept.js types
-declare global {
-  interface Window {
-    Accept?: {
-      dispatchData: (
-        secureData: {
-          authData: { clientKey: string; apiLoginID: string };
-          cardData: {
-            cardNumber: string;
-            month: string;
-            year: string;
-            cardCode: string;
-          };
-        },
-        callback: (response: AcceptResponse) => void
-      ) => void;
-    };
-  }
-}
-
-interface AcceptResponse {
-  opaqueData?: {
-    dataDescriptor: string;
-    dataValue: string;
-  };
-  messages: {
-    resultCode: string;
-    message: Array<{ code: string; text: string }>;
-  };
-}
-
 export function PayNowDialog({
   open,
   onOpenChange,
@@ -77,50 +46,30 @@ export function PayNowDialog({
 }: PayNowDialogProps) {
   const [paymentType, setPaymentType] = useState<PaymentType>('balance');
   const [amount, setAmount] = useState(balanceDue.toFixed(2));
-  const [cardNumber, setCardNumber] = useState('');
-  const [expMonth, setExpMonth] = useState('');
-  const [expYear, setExpYear] = useState('');
-  const [cvv, setCvv] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [hostedData, setHostedData] = useState<{
+    token: string;
+    formPostUrl: string;
+  } | null>(null);
   const { toast } = useToast();
-
-  // Load Accept.js script
-  useEffect(() => {
-    if (open && !document.getElementById('accept-js')) {
-      const script = document.createElement('script');
-      script.id = 'accept-js';
-      // Use sandbox for testing, production for live
-      script.src = 'https://jstest.authorize.net/v1/Accept.js';
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, [open]);
 
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       setAmount(balanceDue.toFixed(2));
-      setCardNumber('');
-      setExpMonth('');
-      setExpYear('');
-      setCvv('');
       setError(null);
-      setSuccess(false);
+      setHostedData(null);
     }
   }, [open, balanceDue]);
 
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || '';
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
+  // Auto-submit form when hosted data is ready
+  useEffect(() => {
+    if (hostedData && formRef.current) {
+      formRef.current.submit();
     }
-    return parts.length ? parts.join(' ') : value;
-  };
+  }, [hostedData]);
 
   const handlePayment = async () => {
     const paymentAmount = parseFloat(amount);
@@ -129,13 +78,8 @@ export function PayNowDialog({
       return;
     }
 
-    if (paymentAmount > balanceDue) {
+    if (paymentType !== 'overage' && paymentAmount > balanceDue) {
       setError(`Amount cannot exceed balance due ($${balanceDue.toFixed(2)})`);
-      return;
-    }
-
-    if (!cardNumber || !expMonth || !expYear || !cvv) {
-      setError('Please fill in all card details');
       return;
     }
 
@@ -143,102 +87,45 @@ export function PayNowDialog({
     setError(null);
 
     try {
-      // Use Accept.js to tokenize card data
-      if (!window.Accept) {
-        throw new Error('Payment system not loaded. Please refresh and try again.');
-      }
+      // Get the current origin for return URLs
+      const origin = window.location.origin;
+      const returnUrl = `${origin}/portal/payment-complete?orderId=${orderId}`;
+      const cancelUrl = `${origin}/portal/orders/${orderId}`;
 
-      // Get client key from environment or config
-      // In production, this should come from your backend
-      const clientKey = 'YOUR_ACCEPT_JS_CLIENT_KEY'; // This should be configured
-      const apiLoginID = import.meta.env.VITE_AUTHNET_API_LOGIN_ID || '';
-
-      const secureData = {
-        authData: {
-          clientKey,
-          apiLoginID,
+      // Call our edge function to create hosted session
+      const { data, error: fnError } = await supabase.functions.invoke('create-hosted-session', {
+        body: {
+          orderId,
+          paymentType,
+          amount: paymentAmount,
+          returnUrl,
+          cancelUrl,
         },
-        cardData: {
-          cardNumber: cardNumber.replace(/\s/g, ''),
-          month: expMonth.padStart(2, '0'),
-          year: expYear.length === 2 ? `20${expYear}` : expYear,
-          cardCode: cvv,
-        },
-      };
-
-      // Tokenize the card
-      window.Accept.dispatchData(secureData, async (response: AcceptResponse) => {
-        if (response.messages.resultCode === 'Error') {
-          const errorMsg = response.messages.message[0]?.text || 'Card validation failed';
-          setError(errorMsg);
-          setIsProcessing(false);
-          return;
-        }
-
-        // Send tokenized data to our edge function
-        try {
-          const { data, error: fnError } = await supabase.functions.invoke('process-payment', {
-            body: {
-              orderId,
-              amount: paymentAmount,
-              paymentType,
-              customerEmail,
-              customerPhone,
-              dataDescriptor: response.opaqueData?.dataDescriptor,
-              dataValue: response.opaqueData?.dataValue,
-            },
-          });
-
-          if (fnError) throw fnError;
-
-          if (data?.success) {
-            setSuccess(true);
-            toast({
-              title: 'Payment Successful!',
-              description: `$${paymentAmount.toFixed(2)} has been processed.`,
-            });
-            setTimeout(() => {
-              onOpenChange(false);
-              onSuccess?.();
-            }, 2000);
-          } else {
-            throw new Error(data?.error || 'Payment failed');
-          }
-        } catch (err: any) {
-          console.error('Payment error:', err);
-          setError(err.message || 'Payment processing failed');
-        } finally {
-          setIsProcessing(false);
-        }
       });
-    } catch (err: any) {
-      console.error('Payment setup error:', err);
-      setError(err.message || 'Failed to process payment');
+
+      if (fnError) throw fnError;
+
+      if (data?.success && data?.token) {
+        // Store the data and redirect via form post
+        setHostedData({
+          token: data.token,
+          formPostUrl: data.formPostUrl,
+        });
+
+        toast({
+          title: 'Redirecting to payment...',
+          description: 'You will be redirected to the secure payment page.',
+        });
+      } else {
+        throw new Error(data?.error || 'Failed to create payment session');
+      }
+    } catch (err: unknown) {
+      console.error('Payment session error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to initiate payment';
+      setError(errorMessage);
       setIsProcessing(false);
     }
   };
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 12 }, (_, i) => currentYear + i);
-  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
-
-  if (success) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md">
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-xl font-semibold text-green-800">Payment Successful!</h3>
-            <p className="text-gray-500 mt-2">
-              Your payment of ${parseFloat(amount).toFixed(2)} has been processed.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -284,75 +171,30 @@ export function PayNowDialog({
                   type="number"
                   step="0.01"
                   min="0"
-                  max={balanceDue}
+                  max={paymentType === 'overage' ? undefined : balanceDue}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
                   className="pl-7"
+                  disabled={isProcessing}
                 />
               </div>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setAmount(balanceDue.toFixed(2))}
+                disabled={isProcessing}
               >
                 Pay Full
               </Button>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Card Number</Label>
-            <Input
-              type="text"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-              placeholder="1234 5678 9012 3456"
-              maxLength={19}
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="space-y-2">
-              <Label>Month</Label>
-              <Select value={expMonth} onValueChange={setExpMonth}>
-                <SelectTrigger>
-                  <SelectValue placeholder="MM" />
-                </SelectTrigger>
-                <SelectContent>
-                  {months.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Year</Label>
-              <Select value={expYear} onValueChange={setExpYear}>
-                <SelectTrigger>
-                  <SelectValue placeholder="YYYY" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((y) => (
-                    <SelectItem key={y} value={y.toString()}>
-                      {y}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>CVV</Label>
-              <Input
-                type="text"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                placeholder="123"
-                maxLength={4}
-              />
-            </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p className="text-sm text-blue-800">
+              <Lock className="w-4 h-4 inline-block mr-1" />
+              You will be redirected to a secure Authorize.Net payment page to enter your card details.
+            </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -367,7 +209,7 @@ export function PayNowDialog({
           </Button>
           <Button
             onClick={handlePayment}
-            disabled={isProcessing || !cardNumber || !expMonth || !expYear || !cvv}
+            disabled={isProcessing || parseFloat(amount) <= 0}
             className="bg-green-600 hover:bg-green-700"
           >
             {isProcessing ? (
@@ -377,12 +219,25 @@ export function PayNowDialog({
               </>
             ) : (
               <>
-                <CreditCard className="w-4 h-4 mr-2" />
+                <ExternalLink className="w-4 h-4 mr-2" />
                 Pay ${parseFloat(amount || '0').toFixed(2)}
               </>
             )}
           </Button>
         </DialogFooter>
+
+        {/* Hidden form for Accept Hosted redirect */}
+        {hostedData && (
+          <form
+            ref={formRef}
+            method="POST"
+            action={hostedData.formPostUrl}
+            target="_self"
+            style={{ display: 'none' }}
+          >
+            <input type="hidden" name="token" value={hostedData.token} />
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
