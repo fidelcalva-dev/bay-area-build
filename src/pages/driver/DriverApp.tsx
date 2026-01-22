@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Truck, MapPin, Phone, Navigation, Camera, Clock, 
-  CheckCircle2, Play, Loader2, Upload, FileText,
-  DollarSign
+  CheckCircle2, Loader2, Upload, FileText,
+  DollarSign, AlertTriangle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,16 +11,28 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
+import { FilledLocationSelector } from "@/components/logistics/FilledLocationSelector";
+import { ExceptionFlags } from "@/components/logistics/ExceptionFlags";
+import { LogisticsTypeBadge } from "@/components/logistics/LogisticsTypeSelector";
+import { 
+  LOGISTICS_CONFIG, 
+  getNextStatus, 
+  getStatusActionLabel,
+  logLogisticsEvent,
+  type LogisticsType,
+  type FilledLocation
+} from "@/lib/logisticsService";
 
 interface Job {
   id: string;
   status: string;
+  logistics_type: string;
   scheduled_delivery_date: string | null;
   scheduled_delivery_window: string | null;
   scheduled_pickup_date: string | null;
@@ -52,17 +64,6 @@ interface Payout {
   created_at: string;
 }
 
-const STATUS_FLOW: Record<string, { next: string; action: string }> = {
-  scheduled: { next: "delivered", action: "Start Delivery" },
-  delivered: { next: "pickup_scheduled", action: "Complete Delivery" },
-  pickup_scheduled: { next: "completed", action: "Complete Pickup" },
-};
-
-const JOB_TYPE_CONFIG = {
-  delivery: { label: "Delivery", color: "bg-blue-100 text-blue-800" },
-  pickup: { label: "Pickup", color: "bg-orange-100 text-orange-800" },
-};
-
 export default function DriverApp() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -78,8 +79,13 @@ export default function DriverApp() {
   const [photoType, setPhotoType] = useState<"delivery" | "pickup" | "ticket">("delivery");
   const [driverNotes, setDriverNotes] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-
-  const canAccess = isDriver || isOwnerOperator || isAdmin;
+  
+  // Logistics-specific state
+  const [filledLocation, setFilledLocation] = useState<FilledLocation | null>(null);
+  const [isDryRun, setIsDryRun] = useState(false);
+  const [dryRunReason, setDryRunReason] = useState("");
+  const [overfillFlagged, setOverfillFlagged] = useState(false);
+  const [wrongMaterialFlagged, setWrongMaterialFlagged] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -105,7 +111,7 @@ export default function DriverApp() {
       const { data, error } = await supabase
         .from("orders")
         .select(`
-          id, status, scheduled_delivery_date, scheduled_delivery_window,
+          id, status, logistics_type, scheduled_delivery_date, scheduled_delivery_window,
           scheduled_pickup_date, scheduled_pickup_window,
           route_notes, driver_notes, text_before_arrival,
           quotes (
@@ -119,7 +125,7 @@ export default function DriverApp() {
         .order("scheduled_delivery_date");
 
       if (error) throw error;
-      setJobs(data as Job[]);
+      setJobs((data || []).map(d => ({ ...d, logistics_type: d.logistics_type || 'delivery' })) as Job[]);
     } catch (err) {
       console.error(err);
       toast({ title: "Error loading jobs", variant: "destructive" });
@@ -149,15 +155,44 @@ export default function DriverApp() {
   function openJobDetail(job: Job) {
     setSelectedJob(job);
     setDriverNotes(job.driver_notes || "");
+    setFilledLocation(null);
+    setIsDryRun(false);
+    setDryRunReason("");
+    setOverfillFlagged(false);
+    setWrongMaterialFlagged(false);
     setDetailOpen(true);
   }
 
   async function updateJobStatus(newStatus: string) {
     if (!selectedJob) return;
+    const logisticsType = (selectedJob.logistics_type || 'delivery') as LogisticsType;
+    
     try {
-      const updates: Record<string, unknown> = { status: newStatus, driver_notes: driverNotes };
+      const updates: Record<string, unknown> = { 
+        status: newStatus, 
+        driver_notes: driverNotes,
+        is_dry_run: isDryRun,
+        dry_run_reason: dryRunReason,
+        overfill_flagged: overfillFlagged,
+        wrong_material_flagged: wrongMaterialFlagged,
+        filled_location: filledLocation,
+        requires_manual_review: isDryRun || overfillFlagged || wrongMaterialFlagged,
+      };
+      
       const { error } = await supabase.from("orders").update(updates).eq("id", selectedJob.id);
       if (error) throw error;
+      
+      // Log logistics event
+      await logLogisticsEvent({
+        orderId: selectedJob.id,
+        eventType: 'status_change',
+        logisticsType,
+        fromStatus: selectedJob.status,
+        toStatus: newStatus,
+        filledLocation: filledLocation || undefined,
+        notes: driverNotes || undefined,
+      });
+      
       toast({ title: `Status updated to ${newStatus}` });
       setDetailOpen(false);
       fetchJobs();
