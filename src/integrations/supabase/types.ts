@@ -3844,6 +3844,9 @@ export type Database = {
         | "sales_admin"
         | "read_only_admin"
         | "cs"
+        | "cs_agent"
+        | "billing_specialist"
+        | "executive"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
@@ -4015,6 +4018,9 @@ export const Constants = {
         "sales_admin",
         "read_only_admin",
         "cs",
+        "cs_agent",
+        "billing_specialist",
+        "executive",
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],
