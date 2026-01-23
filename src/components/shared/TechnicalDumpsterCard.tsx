@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Weight, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getCanonicalDumpsterImage } from '@/lib/canonicalDumpsterImages';
 
 // Canonical dumpster specifications
 export const DUMPSTER_SPECS = {
@@ -46,93 +47,32 @@ export const DUMPSTER_SPECS = {
 
 type DumpsterSize = keyof typeof DUMPSTER_SPECS;
 
-interface TechnicalDumpsterCardProps {
+interface DumpsterPhotoDisplayProps {
   size: DumpsterSize;
-  ctaLink?: string;
-  ctaLabel?: string;
   className?: string;
 }
 
-// CSS-based scaling for each size (20yd = baseline)
-const SCALE_CLASSES: Record<DumpsterSize, string> = {
-  10: 'scale-x-[0.72] scale-y-[0.70]',
-  20: 'scale-x-100 scale-y-100',
-  30: 'scale-x-[1.08] scale-y-[1.12]',
-  40: 'scale-x-[1.18] scale-y-[1.25]',
-};
-
 /**
- * Clean roll-off dumpster silhouette SVG
- * Uses CSS transforms for size scaling
+ * Canonical dumpster photo display with dimension labels
+ * Uses approved photo-real images from the canonical registry
  */
-function DumpsterSilhouetteReal({ 
+function DumpsterPhotoDisplay({ 
   size, 
   className,
-}: { 
-  size: DumpsterSize; 
-  className?: string;
-}) {
+}: DumpsterPhotoDisplayProps) {
   const spec = DUMPSTER_SPECS[size];
+  const photoUrl = getCanonicalDumpsterImage(size, 'photo');
 
   return (
     <div className={cn("relative w-full flex items-center justify-center py-4 pb-6", className)}>
-      <svg 
-        viewBox="0 0 900 260"
-        className={cn(
-          "w-full max-w-[180px] h-auto transition-transform duration-300 origin-center group-hover:scale-105",
-          SCALE_CLASSES[size]
-        )}
-        role="img"
-        aria-label={`${size} yard roll-off dumpster: ${spec.length} long, ${spec.width} wide, ${spec.height} tall`}
-      >
-        <defs>
-          <filter id={`shadow-${size}`} x="-5%" y="-5%" width="110%" height="115%">
-            <feDropShadow dx="0" dy="3" stdDeviation="3" floodOpacity="0.12"/>
-          </filter>
-        </defs>
-
-        <g transform="translate(40,30)" filter={`url(#shadow-${size})`}>
-          {/* Body */}
-          <path 
-            d="M40,40 H700 L735,68 V178 L700,205 H60 L40,182 Z"
-            fill="#EDEDED"
-          />
-          <path 
-            d="M40,40 H700 L735,68 V178 L700,205 H60 L40,182 Z"
-            fill="none"
-            stroke="#2B2B2B"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* Skids */}
-          <path d="M80,212 H660" fill="none" stroke="#2B2B2B" strokeWidth="6" />
-          <path d="M95,224 H645" fill="none" stroke="#2B2B2B" strokeWidth="6" />
-
-          {/* Rear door hints */}
-          <path d="M690,60 V190" fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7" />
-          <path d="M712,78 V182" fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7" />
-
-          {/* Ribs */}
-          <g fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7">
-            <path d="M100,55 V190"/>
-            <path d="M150,55 V190"/>
-            <path d="M200,55 V190"/>
-            <path d="M250,55 V190"/>
-            <path d="M300,55 V190"/>
-            <path d="M350,55 V190"/>
-            <path d="M400,55 V190"/>
-            <path d="M450,55 V190"/>
-            <path d="M500,55 V190"/>
-            <path d="M550,55 V190"/>
-            <path d="M600,55 V190"/>
-            <path d="M650,55 V190"/>
-          </g>
-        </g>
-      </svg>
+      <img 
+        src={photoUrl}
+        alt={`${size} yard roll-off dumpster: ${spec.length} long, ${spec.width} wide, ${spec.height} tall`}
+        className="w-full max-w-[180px] h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
+      />
       
-      {/* Dimension labels below SVG */}
+      {/* Dimension labels below image */}
       <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-3 text-[10px] text-muted-foreground opacity-50 group-hover:opacity-90 transition-opacity">
         <span>{spec.length} L</span>
         <span className="opacity-40">×</span>
@@ -142,9 +82,16 @@ function DumpsterSilhouetteReal({
   );
 }
 
+interface TechnicalDumpsterCardProps {
+  size: DumpsterSize;
+  ctaLink?: string;
+  ctaLabel?: string;
+  className?: string;
+}
+
 /**
  * Technical Dumpster Card - Professional, trust-focused design
- * Uses SVG silhouettes with measurement arrows
+ * Uses canonical photo images from the registry
  */
 export function TechnicalDumpsterCard({
   size,
@@ -179,11 +126,11 @@ export function TechnicalDumpsterCard({
         </h3>
       </div>
       
-      {/* SVG Silhouette with measurements */}
+      {/* Canonical photo display with measurements */}
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="cursor-help">
-            <DumpsterSilhouetteReal size={size} />
+            <DumpsterPhotoDisplay size={size} />
           </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[200px]">
