@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Weight, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { DumpsterSilhouettePlain } from './DumpsterSilhouettePlain';
+import { getCanonicalDumpsterImage } from '@/lib/canonicalDumpsterImages';
 
 /**
  * CANONICAL DUMPSTER SPECS (LOCKED)
@@ -41,8 +41,8 @@ export interface PlainDumpsterCardProps {
 }
 
 /**
- * Plain Dumpster Size Card with industrial silhouette
- * Uses consistent gray SVG with dimension overlays
+ * Plain Dumpster Size Card with canonical photo images
+ * Uses approved photo-real images from the canonical registry
  */
 export function PlainDumpsterCard({
   sizeYd,
@@ -57,6 +57,7 @@ export function PlainDumpsterCard({
 }: PlainDumpsterCardProps) {
   const specs = DUMPSTER_SPECS[sizeYd];
   const isHeavy = variant === 'heavy';
+  const photoUrl = getCanonicalDumpsterImage(sizeYd, 'photo');
 
   return (
     <div
@@ -75,11 +76,16 @@ export function PlainDumpsterCard({
         </div>
       )}
 
-      {/* SVG Visual Section */}
+      {/* Photo Visual Section */}
       <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/20 to-muted/60 p-4 overflow-hidden flex items-center justify-center">
-        {/* Silhouette with unique proportions per size */}
+        {/* Canonical photo image */}
         <div className="w-full h-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-          <DumpsterSilhouettePlain size={sizeYd} />
+          <img 
+            src={photoUrl}
+            alt={`${sizeYd}-yard dumpster`}
+            className="w-full h-full object-contain"
+            loading="lazy"
+          />
         </div>
 
         {/* Size Badge - Top Left */}
