@@ -33,8 +33,8 @@ const steps: Step[] = [
     icon: Truck,
     number: '03',
     title: 'Schedule delivery',
-    description: 'Same-day available',
-    status: 'Confirmed',
+    description: 'Same-day may be available',
+    status: 'Pending confirmation',
   },
   {
     icon: CheckCircle,
