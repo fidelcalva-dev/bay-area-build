@@ -1,9 +1,12 @@
 /**
- * Scale Comparison SVG - Shows dumpster next to reference objects
+ * Scale Comparison - Shows canonical dumpster photo next to reference objects
  * Person (6ft), Pickup truck (6ft bed), Garage door (7ft)
+ * Uses approved photorealistic images from the canonical registry
  */
 import { cn } from '@/lib/utils';
 import { DumpsterSize, DUMPSTER_SPECS } from './constants';
+import { getCanonicalDumpsterImage } from '@/lib/canonicalDumpsterImages';
+import { User, Truck, Home } from 'lucide-react';
 
 interface ScaleComparisonSVGProps {
   size: DumpsterSize;
@@ -11,148 +14,116 @@ interface ScaleComparisonSVGProps {
   className?: string;
 }
 
-// Scale factor: 1 foot = 20 pixels
-const SCALE = 20;
+// Reference heights for visual comparison
+const REFERENCE_DATA = {
+  person: { height: 6, label: "6' person", icon: User },
+  pickup: { height: 5.5, label: "Pickup truck", icon: Truck },
+  garage: { height: 7, label: "7' garage door", icon: Home },
+};
 
 export function ScaleComparisonSVG({ size, compareWith, className }: ScaleComparisonSVGProps) {
   const spec = DUMPSTER_SPECS[size];
+  const photoUrl = getCanonicalDumpsterImage(size, 'photo');
+  const ref = REFERENCE_DATA[compareWith];
+  const RefIcon = ref.icon;
   
-  // Dumpster dimensions in pixels
-  const dumpsterW = spec.lengthFt * SCALE;
-  const dumpsterH = spec.heightFt * SCALE;
-  
-  // Reference object dimensions
-  const personH = 6 * SCALE; // 6 ft
-  const pickupL = 12 * SCALE; // ~12 ft total length
-  const pickupH = 5.5 * SCALE;
-  const garageH = 7 * SCALE;
-  const garageW = 8 * SCALE;
-  
-  // Calculate viewBox to fit content
-  const maxWidth = Math.max(dumpsterW, pickupL, garageW) + 60;
-  const maxHeight = Math.max(dumpsterH, personH, pickupH, garageH) + 40;
-  const viewBoxWidth = maxWidth + 100;
-  const viewBoxHeight = maxHeight + 50;
-  
-  // Ground line Y position
-  const groundY = viewBoxHeight - 20;
-  
-  // Dumpster position
-  const dumpsterX = 40;
-  const dumpsterY = groundY - dumpsterH - 10;
-  
-  // Reference position (to the right of dumpster)
-  const refX = dumpsterX + dumpsterW + 30;
+  // Calculate relative heights (dumpster height as percentage of reference)
+  const dumpsterHeightRatio = spec.heightFt / ref.height;
+  const referenceHeightPx = 120; // Base height for reference object
+  const dumpsterHeightPx = referenceHeightPx * dumpsterHeightRatio;
   
   return (
-    <svg 
-      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-      className={cn("w-full h-auto", className)}
-      role="img"
-      aria-label={`${size}-yard dumpster compared to ${compareWith}`}
-    >
-      <defs>
-        <style>
-          {`
-            .sc-ground { fill: none; stroke: hsl(220 14% 40%); stroke-width: 1.5; stroke-dasharray: 4 4; }
-            .sc-dumpster { fill: hsl(220 14% 93%); stroke: hsl(220 20% 20%); stroke-width: 2; }
-            .sc-dumpster-rib { stroke: hsl(220 20% 30%); stroke-width: 1; opacity: 0.5; }
-            .sc-person { fill: hsl(220 14% 30%); }
-            .sc-pickup { fill: hsl(220 14% 40%); stroke: hsl(220 20% 25%); stroke-width: 1.5; }
-            .sc-garage { fill: none; stroke: hsl(220 14% 50%); stroke-width: 2; stroke-dasharray: 6 3; }
-            .sc-label { font-family: system-ui, sans-serif; font-size: 11px; fill: hsl(220 14% 40%); }
-            .sc-dim { font-family: system-ui, sans-serif; font-size: 10px; fill: hsl(220 14% 50%); }
-          `}
-        </style>
-      </defs>
-      
-      {/* Ground line */}
-      <line className="sc-ground" x1="10" y1={groundY} x2={viewBoxWidth - 10} y2={groundY} />
-      
-      {/* Dumpster body */}
-      <g transform={`translate(${dumpsterX}, ${dumpsterY})`}>
-        {/* Main body - simplified trapezoid */}
-        <path 
-          className="sc-dumpster"
-          d={`M0,${dumpsterH * 0.15} L0,${dumpsterH} L${dumpsterW},${dumpsterH} L${dumpsterW},${dumpsterH * 0.1} L${dumpsterW * 0.05},${dumpsterH * 0.1} Z`}
-        />
-        {/* Ribs */}
-        {[0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((pct, i) => (
-          <line 
-            key={i}
-            className="sc-dumpster-rib"
-            x1={dumpsterW * pct} 
-            y1={dumpsterH * 0.12}
-            x2={dumpsterW * pct}
-            y2={dumpsterH - 2}
+    <div className={cn("flex items-end justify-center gap-6 py-4", className)}>
+      {/* Dumpster with canonical photo */}
+      <div className="flex flex-col items-center">
+        <div 
+          className="relative flex items-end justify-center"
+          style={{ height: Math.max(dumpsterHeightPx, referenceHeightPx) + 20 }}
+        >
+          <img 
+            src={photoUrl}
+            alt={`${size}-yard dumpster`}
+            className="object-contain rounded-lg shadow-md"
+            style={{ 
+              height: dumpsterHeightPx,
+              maxWidth: '200px',
+            }}
+            loading="lazy"
           />
-        ))}
-        {/* Size label */}
-        <text x={dumpsterW / 2} y={dumpsterH / 2 + 4} textAnchor="middle" className="sc-label" style={{ fontWeight: 600 }}>
-          {size} YD
-        </text>
-        {/* Height dimension */}
-        <text x={-8} y={dumpsterH / 2} textAnchor="end" className="sc-dim">{spec.heightFt}'</text>
-        {/* Length dimension */}
-        <text x={dumpsterW / 2} y={dumpsterH + 14} textAnchor="middle" className="sc-dim">{spec.lengthFt}' L</text>
-      </g>
+        </div>
+        <div className="mt-2 text-center">
+          <span className="font-bold text-foreground text-lg">{size} YD</span>
+          <p className="text-xs text-muted-foreground">{spec.heightFt}' tall</p>
+        </div>
+      </div>
+      
+      {/* Visual divider */}
+      <div className="h-32 w-px bg-border self-center" />
       
       {/* Reference object */}
-      {compareWith === 'person' && (
-        <g transform={`translate(${refX}, ${groundY - personH})`}>
-          {/* Simplified person silhouette */}
-          <ellipse className="sc-person" cx="15" cy="8" rx="8" ry="8" /> {/* Head */}
-          <rect className="sc-person" x="8" y="18" width="14" height="35" rx="3" /> {/* Torso */}
-          <rect className="sc-person" x="4" y="55" width="10" height="55" rx="2" /> {/* Left leg */}
-          <rect className="sc-person" x="16" y="55" width="10" height="55" rx="2" /> {/* Right leg */}
-          <text x="15" y={personH + 14} textAnchor="middle" className="sc-label">6' person</text>
-        </g>
-      )}
-      
-      {compareWith === 'pickup' && (
-        <g transform={`translate(${refX}, ${groundY - pickupH})`}>
-          {/* Simplified pickup truck */}
-          <path 
-            className="sc-pickup"
-            d={`M0,${pickupH * 0.4} 
-                L${pickupL * 0.15},${pickupH * 0.4}
-                L${pickupL * 0.2},${pickupH * 0.1}
-                L${pickupL * 0.45},${pickupH * 0.1}
-                L${pickupL * 0.5},${pickupH * 0.4}
-                L${pickupL},${pickupH * 0.4}
-                L${pickupL},${pickupH * 0.85}
-                L0,${pickupH * 0.85}
-                Z`}
-          />
-          {/* Wheels */}
-          <circle className="sc-person" cx={pickupL * 0.18} cy={pickupH * 0.85} r="12" />
-          <circle className="sc-person" cx={pickupL * 0.82} cy={pickupH * 0.85} r="12" />
-          {/* Bed outline */}
-          <rect 
-            x={pickupL * 0.52} 
-            y={pickupH * 0.25} 
-            width={pickupL * 0.42} 
-            height={pickupH * 0.55} 
-            fill="none" 
-            stroke="hsl(220 14% 50%)" 
-            strokeWidth="1.5" 
-            strokeDasharray="3 2"
-          />
-          <text x={pickupL / 2} y={pickupH + 18} textAnchor="middle" className="sc-label">6' bed pickup</text>
-        </g>
-      )}
-      
-      {compareWith === 'garage' && (
-        <g transform={`translate(${refX}, ${groundY - garageH})`}>
-          {/* Garage door outline */}
-          <rect className="sc-garage" x="0" y="0" width={garageW} height={garageH} />
-          {/* Panel lines */}
-          <line className="sc-garage" x1="0" y1={garageH * 0.25} x2={garageW} y2={garageH * 0.25} />
-          <line className="sc-garage" x1="0" y1={garageH * 0.5} x2={garageW} y2={garageH * 0.5} />
-          <line className="sc-garage" x1="0" y1={garageH * 0.75} x2={garageW} y2={garageH * 0.75} />
-          <text x={garageW / 2} y={garageH + 14} textAnchor="middle" className="sc-label">7' garage door</text>
-        </g>
-      )}
-    </svg>
+      <div className="flex flex-col items-center">
+        <div 
+          className="relative flex items-end justify-center"
+          style={{ height: Math.max(dumpsterHeightPx, referenceHeightPx) + 20 }}
+        >
+          {compareWith === 'person' && (
+            <svg 
+              viewBox="0 0 40 120" 
+              style={{ height: referenceHeightPx }}
+              className="fill-muted-foreground"
+            >
+              {/* Head */}
+              <circle cx="20" cy="12" r="10" />
+              {/* Body */}
+              <rect x="10" y="24" width="20" height="45" rx="4" />
+              {/* Left leg */}
+              <rect x="10" y="72" width="8" height="48" rx="3" />
+              {/* Right leg */}
+              <rect x="22" y="72" width="8" height="48" rx="3" />
+            </svg>
+          )}
+          
+          {compareWith === 'pickup' && (
+            <svg 
+              viewBox="0 0 180 90" 
+              style={{ height: referenceHeightPx * 0.75 }}
+              className="fill-muted-foreground"
+            >
+              {/* Cab */}
+              <path d="M0,50 L25,50 L35,20 L80,20 L90,50 L180,50 L180,80 L0,80 Z" />
+              {/* Wheels */}
+              <circle cx="35" cy="78" r="14" className="fill-foreground" />
+              <circle cx="145" cy="78" r="14" className="fill-foreground" />
+              {/* Bed outline */}
+              <rect x="95" y="30" width="75" height="45" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 2" className="stroke-background" />
+            </svg>
+          )}
+          
+          {compareWith === 'garage' && (
+            <svg 
+              viewBox="0 0 100 140" 
+              style={{ height: referenceHeightPx * 1.1 }}
+              className="stroke-muted-foreground"
+              fill="none"
+              strokeWidth="3"
+            >
+              {/* Door frame */}
+              <rect x="5" y="5" width="90" height="130" rx="2" />
+              {/* Panels */}
+              <line x1="5" y1="38" x2="95" y2="38" />
+              <line x1="5" y1="71" x2="95" y2="71" />
+              <line x1="5" y1="104" x2="95" y2="104" />
+            </svg>
+          )}
+        </div>
+        <div className="mt-2 text-center">
+          <span className="font-medium text-foreground flex items-center gap-1.5 justify-center">
+            <RefIcon className="w-4 h-4" />
+            {ref.label}
+          </span>
+          <p className="text-xs text-muted-foreground">{ref.height}' tall</p>
+        </div>
+      </div>
+    </div>
   );
 }
