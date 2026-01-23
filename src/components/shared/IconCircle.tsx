@@ -1,12 +1,12 @@
-// Standardized Icon Circle Component
-// Clean outline icons inside a light circular container
-// Modern SaaS/app look with consistent styling
+// Apple-Style Icon System
+// Clean, consistent icons in soft circular containers
+// Premium feel with subtle hover states
 
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type IconCircleSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type IconCircleVariant = 'default' | 'primary' | 'muted' | 'success' | 'warning' | 'accent';
+type IconCircleVariant = 'default' | 'primary' | 'muted' | 'success' | 'warning' | 'accent' | 'glass';
 
 interface IconCircleProps {
   icon: LucideIcon;
@@ -19,7 +19,7 @@ interface IconCircleProps {
 
 const sizeMap: Record<IconCircleSize, { container: string; icon: string }> = {
   xs: { container: 'w-8 h-8', icon: 'w-4 h-4' },
-  sm: { container: 'w-10 h-10', icon: 'w-4.5 h-4.5' },
+  sm: { container: 'w-10 h-10', icon: 'w-[18px] h-[18px]' },
   md: { container: 'w-12 h-12', icon: 'w-5 h-5' },
   lg: { container: 'w-14 h-14', icon: 'w-6 h-6' },
   xl: { container: 'w-16 h-16', icon: 'w-7 h-7' },
@@ -27,34 +27,39 @@ const sizeMap: Record<IconCircleSize, { container: string; icon: string }> = {
 
 const variantMap: Record<IconCircleVariant, { container: string; icon: string; hover?: string }> = {
   default: {
-    container: 'bg-muted/80 border border-border/50',
+    container: 'bg-muted/60 border border-border/30',
     icon: 'text-foreground/70',
-    hover: 'group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground',
+    hover: 'group-hover:bg-primary/10 group-hover:border-primary/20 group-hover:text-primary',
   },
   primary: {
-    container: 'bg-primary/10 border border-primary/20',
+    container: 'bg-primary/8 border border-primary/15',
     icon: 'text-primary',
-    hover: 'group-hover:bg-primary group-hover:text-primary-foreground',
+    hover: 'group-hover:bg-primary/15 group-hover:border-primary/25',
   },
   muted: {
-    container: 'bg-muted border border-border/30',
+    container: 'bg-muted/40 border border-border/20',
     icon: 'text-muted-foreground',
-    hover: 'group-hover:bg-primary/10 group-hover:text-primary',
+    hover: 'group-hover:bg-muted group-hover:text-foreground',
   },
   success: {
-    container: 'bg-success/10 border border-success/20',
+    container: 'bg-success/8 border border-success/15',
     icon: 'text-success',
-    hover: 'group-hover:bg-success group-hover:text-success-foreground',
+    hover: 'group-hover:bg-success/15 group-hover:border-success/25',
   },
   warning: {
-    container: 'bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800',
+    container: 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30',
     icon: 'text-amber-600 dark:text-amber-400',
-    hover: 'group-hover:bg-amber-500 group-hover:text-white',
+    hover: 'group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30',
   },
   accent: {
-    container: 'bg-accent/10 border border-accent/20',
+    container: 'bg-accent/8 border border-accent/15',
     icon: 'text-accent',
-    hover: 'group-hover:bg-accent group-hover:text-accent-foreground',
+    hover: 'group-hover:bg-accent/15 group-hover:border-accent/25',
+  },
+  glass: {
+    container: 'bg-white/50 dark:bg-white/10 backdrop-blur-sm border border-white/30 dark:border-white/10',
+    icon: 'text-foreground',
+    hover: 'group-hover:bg-white/70 dark:group-hover:bg-white/20',
   },
 };
 
@@ -72,7 +77,7 @@ export function IconCircle({
   return (
     <div
       className={cn(
-        'rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200',
+        'rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-200 ease-out',
         sizeStyles.container,
         variantStyles.container,
         hoverEffect && variantStyles.hover,
@@ -86,13 +91,13 @@ export function IconCircle({
           hoverEffect && 'transition-colors duration-200',
           iconClassName
         )}
-        strokeWidth={2}
+        strokeWidth={1.75}
       />
     </div>
   );
 }
 
-// Reusable icon card component for consistent feature/service cards
+// Apple-style feature card with icon
 interface IconCardProps {
   icon: LucideIcon;
   title: string;
@@ -115,8 +120,8 @@ export function IconCard({
   return (
     <div
       className={cn(
-        'group p-5 md:p-6 bg-card rounded-2xl border border-border transition-all duration-200',
-        hoverEffect && 'hover:border-primary/20 hover:shadow-lg hover:-translate-y-1',
+        'group p-6 bg-card rounded-2xl border border-border/40 shadow-sm transition-all duration-300 ease-out',
+        hoverEffect && 'hover:border-border hover:shadow-lg hover:-translate-y-0.5',
         className
       )}
     >
@@ -127,8 +132,8 @@ export function IconCard({
           variant={iconVariant}
           hoverEffect={hoverEffect}
         />
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-foreground mb-1">{title}</h3>
+        <div className="flex-1 min-w-0 space-y-1">
+          <h3 className="font-semibold text-foreground">{title}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
         </div>
       </div>
@@ -147,13 +152,13 @@ interface IconTextProps {
 export function IconText({ icon: Icon, children, className, iconClassName }: IconTextProps) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <Icon className={cn('w-4 h-4 text-muted-foreground flex-shrink-0', iconClassName)} strokeWidth={2} />
+      <Icon className={cn('w-4 h-4 text-muted-foreground flex-shrink-0', iconClassName)} strokeWidth={1.75} />
       <span>{children}</span>
     </div>
   );
 }
 
-// Badge-style icon display for status/trust indicators
+// Apple-style badge with icon
 interface IconBadgeProps {
   icon: LucideIcon;
   label: string;
@@ -163,22 +168,41 @@ interface IconBadgeProps {
 
 export function IconBadge({ icon: Icon, label, variant = 'default', className }: IconBadgeProps) {
   const variants = {
-    default: 'bg-muted text-muted-foreground',
-    primary: 'bg-primary/10 text-primary',
-    success: 'bg-success/10 text-success',
-    warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400',
+    default: 'bg-muted/60 text-muted-foreground border-border/30',
+    primary: 'bg-primary/8 text-primary border-primary/15',
+    success: 'bg-success/8 text-success border-success/15',
+    warning: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200/50 dark:border-amber-800/30',
   };
 
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
+        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border',
         variants[variant],
         className
       )}
     >
-      <Icon className="w-3.5 h-3.5" strokeWidth={2} />
+      <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
       <span>{label}</span>
     </div>
+  );
+}
+
+// Loading skeleton circle
+interface SkeletonCircleProps {
+  size?: IconCircleSize;
+  className?: string;
+}
+
+export function SkeletonCircle({ size = 'md', className }: SkeletonCircleProps) {
+  const sizeStyles = sizeMap[size];
+  return (
+    <div 
+      className={cn(
+        'rounded-2xl skeleton-shimmer',
+        sizeStyles.container,
+        className
+      )} 
+    />
   );
 }
