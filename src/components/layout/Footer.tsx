@@ -46,14 +46,10 @@ export function Footer() {
               <img
                 src={logoCalsanDumpstersPro}
                 alt="Calsan Dumpsters Pro"
-                className="h-10 w-auto rounded-lg"
+                className="h-12 md:h-14 w-auto"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="flex flex-col">
-                <span className="text-lg font-bold leading-tight">{BUSINESS_INFO.name}</span>
-                <span className="text-xs text-secondary-foreground/70 leading-tight">SF Bay Area</span>
-              </div>
             </Link>
             <p className="text-secondary-foreground/80 text-sm mb-4">
               {t('footer.tagline')}
