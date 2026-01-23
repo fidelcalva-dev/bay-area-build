@@ -3,183 +3,10 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, Ruler, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home } from 'lucide-react';
+import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
-
-// Import photorealistic dumpster photos
-import dumpster6yard from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
-import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
-import dumpster8yard from '@/assets/dumpsters/dumpster-8yard-photo.jpg';
-import dumpster8yardDims from '@/assets/dumpsters/dumpster-8yard-dims.png';
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard-photo.jpg';
-import dumpster10yardDims from '@/assets/dumpsters/dumpster-10yard-dims.png';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
-import dumpster20yardDims from '@/assets/dumpsters/dumpster-20yard-dims.png';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
-import dumpster30yardDims from '@/assets/dumpsters/dumpster-30yard-dims.png';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
-import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
-import dumpster50yard from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
-import dumpster50yardDims from '@/assets/dumpsters/dumpster-50yard-dims.png';
-
-// Image mapping by yard size
-const DUMPSTER_IMAGES: Record<number, { photo: string; dims: string }> = {
-  6: { photo: dumpster6yard, dims: dumpster6yardDims },
-  8: { photo: dumpster8yard, dims: dumpster8yardDims },
-  10: { photo: dumpster10yard, dims: dumpster10yardDims },
-  20: { photo: dumpster20yard, dims: dumpster20yardDims },
-  30: { photo: dumpster30yard, dims: dumpster30yardDims },
-  40: { photo: dumpster40yard, dims: dumpster40yardDims },
-  50: { photo: dumpster50yard, dims: dumpster50yardDims },
-};
-
-interface DumpsterSize {
-  yards: number;
-  dimensions: string;
-  height: string;
-  length: string;
-  width: string;
-  includedTons: number;
-  useCases: string[];
-  loads: string;
-  image: string;
-  imageDims: string;
-  popular?: boolean;
-  description: string;
-}
-
-// Build display arrays from canonical DUMPSTER_SIZES_DATA
-const heavyMaterialSizes: DumpsterSize[] = getHeavySizes().map(size => ({
-  yards: size.yards,
-  dimensions: size.dimensions,
-  length: size.length || '',
-  width: size.width || '',
-  height: size.height || '',
-  includedTons: size.includedTons,
-  useCases: size.useCases,
-  loads: size.loads || '',
-  image: DUMPSTER_IMAGES[size.yards]?.photo || '',
-  imageDims: DUMPSTER_IMAGES[size.yards]?.dims || '',
-  popular: size.popular,
-  description: size.description,
-}));
-
-const generalDebrisSizes: DumpsterSize[] = getGeneralSizes().map(size => ({
-  yards: size.yards,
-  dimensions: size.dimensions,
-  length: size.length || '',
-  width: size.width || '',
-  height: size.height || '',
-  includedTons: size.includedTons,
-  useCases: size.useCases,
-  loads: size.loads || '',
-  image: DUMPSTER_IMAGES[size.yards]?.photo || '',
-  imageDims: DUMPSTER_IMAGES[size.yards]?.dims || '',
-  popular: size.popular,
-  description: size.description,
-}));
-
-function DumpsterCard({ size, variant }: { size: DumpsterSize; variant: 'heavy' | 'general' }) {
-  const isHeavy = variant === 'heavy';
-  
-  return (
-    <div
-      className={`group relative bg-card rounded-2xl border overflow-hidden transition-all duration-300 hover:shadow-xl ${
-        size.popular 
-          ? 'border-primary ring-2 ring-primary/20' 
-          : 'border-border hover:border-primary/30'
-      }`}
-    >
-      {size.popular && (
-        <div className="absolute top-3 right-3 z-10 px-3 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-lg">
-          MOST POPULAR
-        </div>
-      )}
-
-      {/* Image Section */}
-      <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/30 to-muted/80 p-6">
-        <img
-          src={size.image}
-          alt={`${size.yards} yard dumpster`}
-          className="w-full h-full object-contain transition-all duration-500 group-hover:scale-105"
-        />
-
-        {/* Size Badge */}
-        <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-lg">
-          <span className="text-2xl font-black text-foreground">{size.yards}</span>
-          <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
-        </div>
-        
-        {/* Pricing Badge - Different for Heavy vs General */}
-        <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-lg flex items-center gap-1.5 ${
-          isHeavy ? 'bg-success/90' : 'bg-primary/90'
-        } backdrop-blur-sm`}>
-          {isHeavy ? (
-            <>
-              <CheckCircle className="w-4 h-4 text-white" />
-              <span className="text-sm font-bold text-white">Flat Fee</span>
-            </>
-          ) : (
-            <>
-              <Weight className="w-4 h-4 text-white" />
-              <span className="text-sm font-bold text-white">{size.includedTons}T Included</span>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="p-5 space-y-4">
-        {/* Description */}
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {size.description}
-        </p>
-
-        {/* Approx Dimensions Bar */}
-        <div className="flex items-center gap-2 px-3 py-2.5 bg-muted/30 rounded-lg border border-border/50">
-          <Ruler className="w-4 h-4 text-muted-foreground shrink-0" />
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-xs text-muted-foreground">Approx.</span>
-            <span className="font-medium text-foreground">{size.length}</span>
-            <span className="text-muted-foreground">×</span>
-            <span className="font-medium text-foreground">{size.width}</span>
-            <span className="text-muted-foreground">×</span>
-            <span className="font-medium text-foreground">{size.height}</span>
-          </div>
-        </div>
-
-        {/* Use Cases */}
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            Perfect for
-          </p>
-          <ul className="space-y-1.5">
-            {size.useCases.map((useCase) => (
-              <li key={useCase} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle className={`w-4 h-4 shrink-0 ${isHeavy ? 'text-amber-500' : 'text-primary'}`} />
-                <span>{useCase}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* CTA */}
-        <Button 
-          asChild 
-          variant={size.popular ? 'cta' : 'default'} 
-          className="w-full mt-2"
-          size="lg"
-        >
-          <Link to="/pricing">
-            Choose {size.yards} Yard
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </Link>
-        </Button>
-      </div>
-    </div>
-  );
-}
+import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
+import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 
 export default function Sizes() {
   const { t } = useLanguage();
@@ -187,6 +14,10 @@ export default function Sizes() {
 
   // Use canonical pricing from PRICING_POLICIES
   const overageRate = PRICING_POLICIES.overagePerTonGeneral;
+
+  // Get canonical data
+  const generalSizes = getGeneralSizes();
+  const heavySizes = getHeavySizes();
 
   return (
     <Layout
@@ -262,9 +93,17 @@ export default function Sizes() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {generalDebrisSizes.map((size) => (
-                  <DumpsterCard key={`general-${size.yards}`} size={size} variant="general" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {generalSizes.map((size) => (
+                  <PlainDumpsterCard
+                    key={`general-${size.yards}`}
+                    sizeYd={size.yards as DumpsterSizeYd}
+                    description={size.description}
+                    useCases={size.useCases}
+                    isPopular={size.popular}
+                    variant="general"
+                    ctaLink="/pricing"
+                  />
                 ))}
               </div>
             </TabsContent>
@@ -284,8 +123,15 @@ export default function Sizes() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                {heavyMaterialSizes.map((size) => (
-                  <DumpsterCard key={`heavy-${size.yards}`} size={size} variant="heavy" />
+                {heavySizes.map((size) => (
+                  <PlainDumpsterCard
+                    key={`heavy-${size.yards}`}
+                    sizeYd={size.yards as DumpsterSizeYd}
+                    description={size.description}
+                    useCases={size.useCases}
+                    variant="heavy"
+                    ctaLink="/pricing"
+                  />
                 ))}
               </div>
 
@@ -321,7 +167,7 @@ export default function Sizes() {
         </div>
       </section>
 
-      {/* Weight Info Banner - Now using canonical PRICING_POLICIES */}
+      {/* Weight Info Banner */}
       <section className="py-8 bg-accent/10 border-y border-accent/20">
         <div className="container-wide">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
