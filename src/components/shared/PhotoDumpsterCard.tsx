@@ -3,22 +3,14 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Weight, Truck, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Photorealistic dumpster photo imports
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard-photo.jpg';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
+// Use canonical dumpster image registry (single source of truth)
+import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
 // Icon used in homepage lazy section (replaces photos in that section only)
 import dumpsterIcon from '@/assets/icons/dumpster-icon-rect.jpeg';
 
-// Image map for dynamic loading
-const DUMPSTER_PHOTOS: Record<number, string> = {
-  10: dumpster10yard,
-  20: dumpster20yard,
-  30: dumpster30yard,
-  40: dumpster40yard,
-};
+// Reference canonical photos (extended to include all sizes)
+const DUMPSTER_PHOTOS: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 /**
  * CANONICAL SPECS (LOCKED) - W × L × H

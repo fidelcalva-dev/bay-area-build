@@ -154,17 +154,11 @@ import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/l
 import type { QuoteFormData, ExtraSelection } from '@/components/quote/types';
 import { DUMPSTER_SIZES, MATERIAL_TYPES, USER_TYPES, RENTAL_PERIODS, EXTRAS, OVERAGE_COST_PER_TON } from '@/components/quote/constants';
 
-import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
-import dumpster8yard from '@/assets/dumpsters/dumpster-8yard.png';
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard.png';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard.png';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard.png';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard.png';
+// Use canonical dumpster image registry (single source of truth)
+import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
-const DUMPSTER_IMAGES: Record<number, string> = {
-  6: dumpster6yard, 8: dumpster8yard, 10: dumpster10yard,
-  20: dumpster20yard, 30: dumpster30yard, 40: dumpster40yard,
-};
+// Reference canonical photos for all sizes
+const DUMPSTER_IMAGES: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 const INCLUDED_TONS: Record<number, number> = {
   6: 10, 8: 10, 10: 1, 20: 2, 30: 3, 40: 4,
