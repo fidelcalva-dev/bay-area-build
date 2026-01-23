@@ -1,6 +1,7 @@
-import { Package, Ruler, Weight, HelpCircle } from 'lucide-react';
+import { Package, Ruler, Weight, HelpCircle, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DUMPSTER_SIZES, MATERIAL_TYPES } from '@/components/quote/constants';
+import { Link } from 'react-router-dom';
 
 interface SizeSelectorProps {
   value: number;
@@ -21,16 +22,25 @@ export function SizeSelector({ value, onChange, materialType, onOpenEstimator }:
           Dumpster Size
         </label>
         
-        {onOpenEstimator && (
-          <button
-            type="button"
-            onClick={onOpenEstimator}
-            className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+        <div className="flex items-center gap-3">
+          <Link
+            to={`/visualizer?size=${value || 20}`}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium transition-colors"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            Help me choose
-          </button>
-        )}
+            <Eye className="w-3.5 h-3.5" />
+            Compare sizes
+          </Link>
+          {onOpenEstimator && (
+            <button
+              type="button"
+              onClick={onOpenEstimator}
+              className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              Help me choose
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
