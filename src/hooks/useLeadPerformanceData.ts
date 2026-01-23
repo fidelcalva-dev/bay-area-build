@@ -1,7 +1,8 @@
-// Lead Performance Data Hook
-import { useState, useEffect, useMemo } from 'react';
+// Lead Performance Data Hook with Realtime Updates
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfDay, startOfWeek, startOfMonth, differenceInMinutes } from 'date-fns';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export interface LeadMetrics {
   totalToday: number;
@@ -78,6 +79,8 @@ export function useLeadPerformanceData(filters: LeadPerformanceFilters) {
   const [leads, setLeads] = useState<LeadListItem[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   // Calculate date range
   const dateRange = useMemo(() => {
@@ -99,87 +102,155 @@ export function useLeadPerformanceData(filters: LeadPerformanceFilters) {
     }
   }, [filters.dateRange, filters.startDate, filters.endDate]);
 
-  // Fetch leads and events
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // Fetch leads
-        let leadsQuery = supabase
-          .from('sales_leads')
-          .select('*')
-          .gte('created_at', dateRange.start.toISOString())
-          .lte('created_at', dateRange.end.toISOString())
-          .order('created_at', { ascending: false });
-
-        if (filters.source) {
-          leadsQuery = leadsQuery.eq('lead_source', filters.source);
-        }
-        if (filters.assignedTo) {
-          leadsQuery = leadsQuery.eq('assigned_to', filters.assignedTo);
-        }
-
-        const { data: leadsData, error: leadsError } = await leadsQuery;
-        if (leadsError) throw leadsError;
-
-        // Fetch events for these leads
-        const leadIds = (leadsData || []).map(l => l.id);
-        let eventsData: any[] = [];
-        
-        if (leadIds.length > 0) {
-          const { data: evData, error: evError } = await supabase
-            .from('lead_events')
-            .select('*')
-            .in('lead_id', leadIds)
-            .order('created_at', { ascending: true });
-          
-          if (evError) throw evError;
-          eventsData = evData || [];
-        }
-
-        // Transform leads to list items
-        const now = new Date();
-        const transformedLeads: LeadListItem[] = (leadsData || []).map(lead => {
-          const assignedAt = lead.assigned_at ? new Date(lead.assigned_at) : new Date(lead.created_at);
-          const leadEvents = eventsData.filter(e => e.lead_id === lead.id);
-          
-          // Determine status
-          let status: LeadListItem['status'] = 'waiting';
-          if (lead.lead_status === 'converted') {
-            status = 'converted';
-          } else if (leadEvents.some(e => e.event_type === 'lead_sales_timeout')) {
-            status = 'timeout';
-          } else if (leadEvents.some(e => e.event_type.includes('contacted'))) {
-            status = 'contacted';
-          }
-
-          return {
-            id: lead.id,
-            name: lead.customer_name || 'Unknown',
-            phone: lead.customer_phone || '',
-            assignedAt,
-            minutesSinceAssigned: differenceInMinutes(now, assignedAt),
-            status,
-            assignmentType: (lead.assignment_type as 'sales' | 'cs') || 'sales',
-            source: lead.lead_source || undefined,
-            city: undefined, // Would need to join with quotes
-          };
-        });
-
-        setLeads(transformedLeads);
-        setEvents(eventsData);
-      } catch (err) {
-        console.error('Error fetching lead performance data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch data');
-      } finally {
-        setIsLoading(false);
+  // Transform raw lead data to LeadListItem
+  const transformLeadData = useCallback((leadsData: any[], eventsData: any[]): LeadListItem[] => {
+    const now = new Date();
+    return (leadsData || []).map(lead => {
+      const assignedAt = lead.assigned_at ? new Date(lead.assigned_at) : new Date(lead.created_at);
+      const leadEvents = eventsData.filter(e => e.lead_id === lead.id);
+      
+      // Determine status
+      let status: LeadListItem['status'] = 'waiting';
+      if (lead.lead_status === 'converted') {
+        status = 'converted';
+      } else if (leadEvents.some(e => e.event_type === 'lead_sales_timeout')) {
+        status = 'timeout';
+      } else if (leadEvents.some(e => e.event_type.includes('contacted'))) {
+        status = 'contacted';
       }
+
+      return {
+        id: lead.id,
+        name: lead.customer_name || 'Unknown',
+        phone: lead.customer_phone || '',
+        assignedAt,
+        minutesSinceAssigned: differenceInMinutes(now, assignedAt),
+        status,
+        assignmentType: (lead.assignment_type as 'sales' | 'cs') || 'sales',
+        source: lead.lead_source || undefined,
+        city: undefined,
+      };
+    });
+  }, []);
+
+  // Fetch data function (extracted for reuse)
+  const fetchData = useCallback(async (showLoading = true) => {
+    if (showLoading) setIsLoading(true);
+    setError(null);
+
+    try {
+      // Fetch leads
+      let leadsQuery = supabase
+        .from('sales_leads')
+        .select('*')
+        .gte('created_at', dateRange.start.toISOString())
+        .lte('created_at', dateRange.end.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (filters.source) {
+        leadsQuery = leadsQuery.eq('lead_source', filters.source);
+      }
+      if (filters.assignedTo) {
+        leadsQuery = leadsQuery.eq('assigned_to', filters.assignedTo);
+      }
+
+      const { data: leadsData, error: leadsError } = await leadsQuery;
+      if (leadsError) throw leadsError;
+
+      // Fetch events for these leads
+      const leadIds = (leadsData || []).map(l => l.id);
+      let eventsData: any[] = [];
+      
+      if (leadIds.length > 0) {
+        const { data: evData, error: evError } = await supabase
+          .from('lead_events')
+          .select('*')
+          .in('lead_id', leadIds)
+          .order('created_at', { ascending: true });
+        
+        if (evError) throw evError;
+        eventsData = evData || [];
+      }
+
+      const transformedLeads = transformLeadData(leadsData || [], eventsData);
+      setLeads(transformedLeads);
+      setEvents(eventsData);
+      setLastUpdate(new Date());
+    } catch (err) {
+      console.error('Error fetching lead performance data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+    } finally {
+      if (showLoading) setIsLoading(false);
+    }
+  }, [dateRange, filters.source, filters.assignedTo, transformLeadData]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Realtime subscription for live updates
+  useEffect(() => {
+    // Clean up previous channel
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
     }
 
-    fetchData();
-  }, [dateRange, filters.source, filters.assignedTo]);
+    // Create new channel for realtime updates
+    const channel = supabase
+      .channel('lead-performance-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sales_leads',
+        },
+        (payload) => {
+          console.log('[Realtime] sales_leads change:', payload.eventType);
+          // Refetch data on any change (debounced by Supabase)
+          fetchData(false);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'lead_events',
+        },
+        (payload) => {
+          console.log('[Realtime] lead_events change:', payload.eventType);
+          // Refetch data on any change
+          fetchData(false);
+        }
+      )
+      .subscribe((status) => {
+        console.log('[Realtime] Subscription status:', status);
+      });
+
+    channelRef.current = channel;
+
+    // Cleanup on unmount
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+  }, [fetchData]);
+
+  // Update "minutes since assigned" every minute for accurate display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLeads(prev => prev.map(lead => ({
+        ...lead,
+        minutesSinceAssigned: differenceInMinutes(new Date(), lead.assignedAt),
+      })));
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Calculate global metrics
   const globalMetrics = useMemo((): LeadMetrics => {
@@ -393,5 +464,7 @@ export function useLeadPerformanceData(filters: LeadPerformanceFilters) {
     csMetrics,
     funnelData,
     alerts,
+    lastUpdate,
+    refetch: () => fetchData(false),
   };
 }

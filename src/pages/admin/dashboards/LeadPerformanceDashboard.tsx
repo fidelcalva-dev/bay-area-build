@@ -1,9 +1,9 @@
-// Lead Performance Dashboard - Sales vs CS
-import { useState } from 'react';
+// Lead Performance Dashboard - Sales vs CS with Realtime Updates
+import { useState, useEffect } from 'react';
 import { 
   Users, Clock, TrendingUp, AlertTriangle, UserCheck, 
   PhoneCall, Timer, ArrowRight, Download, Filter,
-  ChevronDown, RefreshCw
+  ChevronDown, RefreshCw, Radio, Wifi
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -235,7 +235,29 @@ export default function LeadPerformanceDashboard() {
     csMetrics,
     funnelData,
     alerts,
+    lastUpdate,
+    refetch,
   } = useLeadPerformanceData(filters);
+
+  // Format last update time
+  const [displayTime, setDisplayTime] = useState('');
+  
+  useEffect(() => {
+    const updateDisplayTime = () => {
+      const seconds = Math.floor((Date.now() - lastUpdate.getTime()) / 1000);
+      if (seconds < 5) {
+        setDisplayTime('Just now');
+      } else if (seconds < 60) {
+        setDisplayTime(`${seconds}s ago`);
+      } else {
+        setDisplayTime(`${Math.floor(seconds / 60)}m ago`);
+      }
+    };
+    
+    updateDisplayTime();
+    const interval = setInterval(updateDisplayTime, 5000);
+    return () => clearInterval(interval);
+  }, [lastUpdate]);
 
   const handleExportCSV = () => {
     const allLeads = [...salesLeads, ...csLeads];
@@ -281,6 +303,13 @@ export default function LeadPerformanceDashboard() {
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Live indicator */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-xs font-medium text-green-700">Live</span>
+            <span className="text-xs text-green-600">{displayTime}</span>
+          </div>
+
           {/* Filters */}
           <Select 
             value={filters.dateRange} 
@@ -296,7 +325,7 @@ export default function LeadPerformanceDashboard() {
             </SelectContent>
           </Select>
 
-          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
