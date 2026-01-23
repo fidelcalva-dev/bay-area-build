@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home } from 'lucide-react';
+import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
+import { DumpsterSizeVisualizer } from '@/components/visualizer';
 
 export default function Sizes() {
   const { t } = useLanguage();
@@ -189,6 +190,24 @@ export default function Sizes() {
               </Link>
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Visualizer Section */}
+      <section className="section-padding bg-background">
+        <div className="container-narrow">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
+              <Eye className="w-4 h-4" />
+              Interactive Tool
+            </div>
+            <h2 className="heading-lg text-foreground mb-3">Size Visualizer</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Compare dumpster dimensions to everyday objects and calculate if your debris will fit.
+            </p>
+          </div>
+          
+          <DumpsterSizeVisualizer initialSize={20} showQuoteLink={true} />
         </div>
       </section>
 

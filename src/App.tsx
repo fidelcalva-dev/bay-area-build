@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 // Lazy load non-critical pages
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Sizes = lazy(() => import("./pages/Sizes"));
+const DumpsterVisualizer = lazy(() => import("./pages/DumpsterVisualizer"));
 const Areas = lazy(() => import("./pages/Areas"));
 const Materials = lazy(() => import("./pages/Materials"));
 const CapacityGuide = lazy(() => import("./pages/CapacityGuide"));
@@ -161,6 +162,9 @@ const App = () => (
               } />
               <Route path="/sizes" element={
                 <Suspense fallback={<PageLoader />}><Sizes /></Suspense>
+              } />
+              <Route path="/visualizer" element={
+                <Suspense fallback={<PageLoader />}><DumpsterVisualizer /></Suspense>
               } />
               <Route path="/areas" element={
                 <Suspense fallback={<PageLoader />}><Areas /></Suspense>
