@@ -20,18 +20,23 @@ const DUMPSTER_PHOTOS: Record<number, string> = {
   40: dumpster40yard,
 };
 
-// Specs for each size
+/**
+ * CANONICAL SPECS (LOCKED) - W × L × H
+ * 10: 7.5 × 12 × 3   | 20: 7.5 × 18 × 4
+ * 30: 7.5 × 18 × 6   | 40: 7.5 × 24 × 6
+ */
 const DUMPSTER_SPECS: Record<number, {
   length: string;
+  width: string;
   height: string;
   tons: number;
   loads: string;
   popular?: boolean;
 }> = {
-  10: { length: "12'", height: "3'", tons: 2, loads: '3–4 loads' },
-  20: { length: "18'", height: "4'", tons: 3, loads: '6–8 loads', popular: true },
-  30: { length: "18'", height: "6'", tons: 4, loads: '9–12 loads' },
-  40: { length: "22'", height: "8'", tons: 5, loads: '12–16 loads' },
+  10: { length: "12'", width: "7.5'", height: "3'",  tons: 1, loads: '4–5 loads' },
+  20: { length: "18'", width: "7.5'", height: "4'",  tons: 2, loads: '6–8 loads', popular: true },
+  30: { length: "18'", width: "7.5'", height: "6'",  tons: 3, loads: '9–12 loads' },
+  40: { length: "24'", width: "7.5'", height: "6'",  tons: 4, loads: '12–16 loads' },
 };
 
 type DumpsterSize = 10 | 20 | 30 | 40;
@@ -107,6 +112,7 @@ export function PhotoDumpsterCard({
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-2 bg-background/90 backdrop-blur-sm rounded-lg text-xs">
               <div className="flex items-center gap-3">
                 <span className="text-muted-foreground">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
+                <span className="text-muted-foreground">W: <span className="font-semibold text-foreground">{specs.width}</span></span>
                 <span className="text-muted-foreground">H: <span className="font-semibold text-foreground">{specs.height}</span></span>
               </div>
             </div>

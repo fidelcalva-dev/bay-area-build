@@ -38,7 +38,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     category: 'both',
     priceFrom: 390,  // v56 Plan A base
     useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
-    loads: '1-2 pickup loads',
+    loads: '2–3 pickup loads',
     description: 'Compact size for small jobs.',
   },
   // Both Heavy and General (8 yard) - 6 × 12 × 3 = 216 cu ft / 27 = 8 cu yd
@@ -52,7 +52,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     category: 'both',
     priceFrom: 460,  // v56 Plan A base
     useCases: ['Foundation demo', 'Brick & block', 'Garage cleanouts', 'Bathroom remodel'],
-    loads: '2-3 pickup loads',
+    loads: '3–4 pickup loads',
     description: 'Popular for driveway and foundation work.',
     popular: true,
   },
@@ -67,7 +67,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     category: 'both',
     priceFrom: 580,  // v56 Plan A base
     useCases: ['Large concrete jobs', 'Small renovations', 'Deck removal'],
-    loads: '3-4 pickup loads',
+    loads: '4–5 pickup loads',
     description: 'Versatile size for small to medium projects.',
   },
   // General Debris Only (20 yard) - 7.5 × 18 × 4 = 540 cu ft / 27 = 20 cu yd
