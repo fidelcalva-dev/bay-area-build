@@ -32,8 +32,8 @@ const features: Feature[] = [
   },
   {
     icon: Truck,
-    title: 'Same-day available',
-    description: 'Order by noon, delivered today.',
+    title: 'Same-day may be available',
+    description: 'Request by noon, subject to availability.',
   },
   {
     icon: Shield,

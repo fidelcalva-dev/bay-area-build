@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { CTA_LINKS } from '@/lib/shared-data';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 export function Header() {
@@ -175,13 +176,20 @@ export function Header() {
               <span>{BUSINESS_INFO.phone.salesFormatted}</span>
             </a>
 
-            {/* Login Button */}
-            <Button asChild variant="outline" size="sm" className="inline-flex">
-              <Link to="/admin/login">
-                <LogIn className="w-4 h-4 sm:mr-1.5" />
-                <span className="hidden sm:inline">Login</span>
-              </Link>
-            </Button>
+            {/* Login Button with Portal Tooltip */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="outline" size="sm" className="inline-flex">
+                  <Link to="/portal">
+                    <LogIn className="w-4 h-4 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Customer Portal</span>
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Resume quotes or manage orders</p>
+              </TooltipContent>
+            </Tooltip>
 
             {/* Order Now Button */}
             <Button asChild variant="cta" size="default" className="hidden sm:inline-flex">
@@ -265,9 +273,9 @@ export function Header() {
                 {language === 'en' ? 'Cambiar a Español' : 'Switch to English'}
               </button>
               <Button asChild variant="outline" size="lg" className="w-full">
-                <Link to="/admin/login" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/portal" onClick={() => setIsMenuOpen(false)}>
                   <LogIn className="w-4 h-4 mr-2" />
-                  Login
+                  Customer Portal
                 </Link>
               </Button>
               <Button asChild variant="cta" size="lg" className="w-full">

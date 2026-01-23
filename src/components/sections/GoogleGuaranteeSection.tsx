@@ -43,10 +43,10 @@ const certifications: Certification[] = [
 ];
 
 const guaranteePoints: GuaranteePoint[] = [
-  { icon: Clock, text: 'Same-day delivery available' },
-  { icon: Truck, text: 'On-time guaranteed or discount' },
+  { icon: Clock, text: 'Same-day may be available' },
+  { icon: Truck, text: 'Reliable scheduling, estimated windows' },
   { icon: Phone, text: 'Real human support, always' },
-  { icon: Shield, text: 'Money-back satisfaction guarantee' },
+  { icon: Shield, text: 'Licensed, insured, and verified' },
 ];
 
 export function GoogleGuaranteeSection() {
