@@ -41,6 +41,7 @@ export function SizesPreviewSection() {
                 size={size}
                 ctaLink="/#quote"
                 ctaLabel="Get Quote"
+                imageMode="icon"
               />
             </AnimatedItem>
           ))}

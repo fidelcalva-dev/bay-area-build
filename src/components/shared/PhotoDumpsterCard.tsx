@@ -9,6 +9,9 @@ import dumpster20yard from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
 import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
 import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
 
+// Icon used in homepage lazy section (replaces photos in that section only)
+import dumpsterIcon from '@/assets/icons/dumpster-icon.png';
+
 // Image map for dynamic loading
 const DUMPSTER_PHOTOS: Record<number, string> = {
   10: dumpster10yard,
@@ -38,6 +41,7 @@ interface PhotoDumpsterCardProps {
   ctaLink?: string;
   ctaLabel?: string;
   className?: string;
+  imageMode?: 'photo' | 'icon';
 }
 
 export function PhotoDumpsterCard({
@@ -45,10 +49,17 @@ export function PhotoDumpsterCard({
   ctaLink = '/#quote',
   ctaLabel = 'Get Quote',
   className,
+  imageMode = 'photo',
 }: PhotoDumpsterCardProps) {
   const photo = DUMPSTER_PHOTOS[size];
   const specs = DUMPSTER_SPECS[size];
   const isPopular = specs.popular;
+
+  const imageSrc = imageMode === 'icon' ? dumpsterIcon : photo;
+  const imageAlt =
+    imageMode === 'icon'
+      ? `${size} yard roll-off dumpster icon`
+      : `${size} yard roll-off dumpster`;
 
   return (
     <div
@@ -71,8 +82,10 @@ export function PhotoDumpsterCard({
       {/* Photo Section */}
       <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/30 to-muted/60 overflow-hidden">
         <img
-          src={photo}
-          alt={`${size} yard roll-off dumpster`}
+          src={imageSrc}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
         
