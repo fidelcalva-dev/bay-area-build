@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { TechnicalDumpsterCard } from '@/components/shared/TechnicalDumpsterCard';
+import { PhotoDumpsterCard } from '@/components/shared/PhotoDumpsterCard';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { IconCircle } from '@/components/shared/IconCircle';
 
@@ -37,7 +37,7 @@ export function SizesPreviewSection() {
         <StaggeredContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {sizes.map((size) => (
             <AnimatedItem key={size} variant="fadeUp">
-              <TechnicalDumpsterCard
+              <PhotoDumpsterCard
                 size={size}
                 ctaLink="/#quote"
                 ctaLabel="Get Quote"
