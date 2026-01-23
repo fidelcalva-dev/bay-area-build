@@ -4,28 +4,45 @@ import { ArrowRight, Weight, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DumpsterSilhouettePlain } from './DumpsterSilhouettePlain';
 
-// Canonical dimensions and data
+/**
+ * CANONICAL DUMPSTER SPECS (LOCKED)
+ * All dimensions: W × L × H in feet
+ * 
+ * 6 yd:  W 6   × L 12  × H 2.25
+ * 8 yd:  W 6   × L 12  × H 3
+ * 10 yd: W 7.5 × L 12  × H 3
+ * 20 yd: W 7.5 × L 18  × H 4
+ * 30 yd: W 7.5 × L 18  × H 6
+ * 40 yd: W 7.5 × L 24  × H 6
+ * 50 yd: W 7.5 × L 24  × H 7.5
+ */
 export const DUMPSTER_SPECS = {
-  6:  { lengthFt: 12, widthFt: 6, heightFt: 2.25, tonsIncluded: 0.5, pickupLoads: '2–3' },
-  8:  { lengthFt: 12, widthFt: 6, heightFt: 3, tonsIncluded: 0.5, pickupLoads: '3–4' },
-  10: { lengthFt: 12, widthFt: 7.5, heightFt: 3, tonsIncluded: 1, pickupLoads: '3–4' },
-  20: { lengthFt: 18, widthFt: 7.5, heightFt: 4, tonsIncluded: 2, pickupLoads: '6–8' },
-  30: { lengthFt: 18, widthFt: 7.5, heightFt: 6, tonsIncluded: 3, pickupLoads: '9–12' },
-  40: { lengthFt: 22, widthFt: 7.5, heightFt: 8, tonsIncluded: 4, pickupLoads: '12–16' },
-  50: { lengthFt: 24, widthFt: 7.5, heightFt: 7.5, tonsIncluded: 5, pickupLoads: '16–20' },
+  6:  { lengthFt: 12, widthFt: 6,   heightFt: 2.25, tonsIncluded: 0.5, pickupLoads: '2–3' },
+  8:  { lengthFt: 12, widthFt: 6,   heightFt: 3,    tonsIncluded: 0.5, pickupLoads: '3–4' },
+  10: { lengthFt: 12, widthFt: 7.5, heightFt: 3,    tonsIncluded: 1,   pickupLoads: '4–5' },
+  20: { lengthFt: 18, widthFt: 7.5, heightFt: 4,    tonsIncluded: 2,   pickupLoads: '6–8' },
+  30: { lengthFt: 18, widthFt: 7.5, heightFt: 6,    tonsIncluded: 3,   pickupLoads: '9–12' },
+  40: { lengthFt: 24, widthFt: 7.5, heightFt: 6,    tonsIncluded: 4,   pickupLoads: '12–16' },
+  50: { lengthFt: 24, widthFt: 7.5, heightFt: 7.5,  tonsIncluded: 5,   pickupLoads: '16–20' },
 } as const;
 
 export type DumpsterSizeYd = keyof typeof DUMPSTER_SPECS;
 
-// CSS scale mapping for visual proportion
+/**
+ * CSS SCALE MAPPING (based on relative dimensions)
+ * Reference: 40yd = 24L × 7.5W × 6H (scale 1.0)
+ * 
+ * Scale-X based on Length: 12/24=0.50, 18/24=0.75, 24/24=1.0
+ * Scale-Y based on Height: 2.25/6=0.375, 3/6=0.50, 4/6=0.667, 6/6=1.0, 7.5/6=1.25
+ */
 const SCALE_MAP: Record<DumpsterSizeYd, string> = {
-  6:  'scale-x-[0.55] scale-y-[0.45]',
-  8:  'scale-x-[0.55] scale-y-[0.55]',
-  10: 'scale-x-[0.55] scale-y-[0.55]',
-  20: 'scale-x-[0.82] scale-y-[0.72]',
-  30: 'scale-x-[0.82] scale-y-[0.90]',
-  40: 'scale-x-[1.00] scale-y-[1.00]',
-  50: 'scale-x-[1.08] scale-y-[0.95]',
+  6:  'scale-x-[0.50] scale-y-[0.38]', // 12L/24, 2.25H/6
+  8:  'scale-x-[0.50] scale-y-[0.50]', // 12L/24, 3H/6
+  10: 'scale-x-[0.50] scale-y-[0.50]', // 12L/24, 3H/6 (wider but same L)
+  20: 'scale-x-[0.75] scale-y-[0.67]', // 18L/24, 4H/6
+  30: 'scale-x-[0.75] scale-y-[1.00]', // 18L/24, 6H/6
+  40: 'scale-x-[1.00] scale-y-[1.00]', // 24L/24, 6H/6 (reference)
+  50: 'scale-x-[1.00] scale-y-[1.25]', // 24L/24, 7.5H/6
 };
 
 export interface PlainDumpsterCardProps {

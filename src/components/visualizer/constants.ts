@@ -16,6 +16,10 @@ export interface DumpsterSpec {
   isHeavyOnly?: boolean;
 }
 
+/**
+ * CANONICAL SPECS (LOCKED) - W × L × H
+ * These dimensions are the single source of truth across all visualizations
+ */
 export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
   6:  { yards: 6,  widthFt: 6,   lengthFt: 12, heightFt: 2.25, pickupLoads: '2–3',   volumeCuYd: 6,  tonsIncluded: 0.5 },
   8:  { yards: 8,  widthFt: 6,   lengthFt: 12, heightFt: 3,    pickupLoads: '3–4',   volumeCuYd: 8,  tonsIncluded: 0.5 },
