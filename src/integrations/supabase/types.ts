@@ -1404,6 +1404,47 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_type: string
+          from_assignment_type: string | null
+          id: string
+          lead_id: string
+          notes: string | null
+          to_assignment_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_type: string
+          from_assignment_type?: string | null
+          id?: string
+          lead_id: string
+          notes?: string | null
+          to_assignment_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_type?: string
+          from_assignment_type?: string | null
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          to_assignment_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       logistics_events: {
         Row: {
           actor_id: string | null
@@ -2829,7 +2870,9 @@ export type Database = {
       }
       sales_leads: {
         Row: {
+          assigned_at: string | null
           assigned_to: string | null
+          assignment_type: string | null
           company_name: string | null
           converted_at: string | null
           created_at: string
@@ -2837,15 +2880,21 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           id: string
+          is_existing_customer: boolean | null
           lead_source: string | null
           lead_status: string
           next_followup_at: string | null
           notes: string | null
           quote_id: string | null
+          routing_tags: string[] | null
+          sales_notes: string | null
+          timeout_at: string | null
           updated_at: string
         }
         Insert: {
+          assigned_at?: string | null
           assigned_to?: string | null
+          assignment_type?: string | null
           company_name?: string | null
           converted_at?: string | null
           created_at?: string
@@ -2853,15 +2902,21 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
+          is_existing_customer?: boolean | null
           lead_source?: string | null
           lead_status?: string
           next_followup_at?: string | null
           notes?: string | null
           quote_id?: string | null
+          routing_tags?: string[] | null
+          sales_notes?: string | null
+          timeout_at?: string | null
           updated_at?: string
         }
         Update: {
+          assigned_at?: string | null
           assigned_to?: string | null
+          assignment_type?: string | null
           company_name?: string | null
           converted_at?: string | null
           created_at?: string
@@ -2869,11 +2924,15 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
+          is_existing_customer?: boolean | null
           lead_source?: string | null
           lead_status?: string
           next_followup_at?: string | null
           notes?: string | null
           quote_id?: string | null
+          routing_tags?: string[] | null
+          sales_notes?: string | null
+          timeout_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -3739,6 +3798,10 @@ export type Database = {
         Args: { _action: string; _module: string; _user_id: string }
         Returns: boolean
       }
+      check_existing_customer: {
+        Args: { p_email?: string; p_phone?: string }
+        Returns: boolean
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -3752,6 +3815,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_lead_event: {
+        Args: {
+          p_event_type: string
+          p_from_type?: string
+          p_lead_id: string
+          p_notes?: string
+          p_to_type?: string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -3770,6 +3843,7 @@ export type Database = {
         | "finance_admin"
         | "sales_admin"
         | "read_only_admin"
+        | "cs"
       approval_status: "pending" | "approved" | "rejected"
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
@@ -3940,6 +4014,7 @@ export const Constants = {
         "finance_admin",
         "sales_admin",
         "read_only_admin",
+        "cs",
       ],
       approval_status: ["pending", "approved", "rejected"],
       commitment_type: ["prepaid", "contracted"],

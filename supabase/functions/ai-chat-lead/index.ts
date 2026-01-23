@@ -25,6 +25,9 @@ interface AIChatLeadData {
   notes?: string;
   conversation_transcript?: string;
   needs_human_followup?: boolean;
+  // New routing fields
+  is_existing_customer?: boolean;
+  routing_target?: "sales" | "cs";
 }
 
 serve(async (req) => {
@@ -59,6 +62,8 @@ serve(async (req) => {
       notes,
       conversation_transcript,
       needs_human_followup,
+      is_existing_customer,
+      routing_target,
     } = data;
 
     console.log("Processing AI chat lead:", name, phone);
@@ -84,12 +89,25 @@ serve(async (req) => {
     if (project_type) customFields.project_type = project_type;
     if (notes) customFields.notes = notes;
 
-    // Build tags
+    // Build tags based on routing
     const tags = ["AI Chat Lead"];
     if (waste_type === "heavy") tags.push("Heavy Materials");
     if (needs_human_followup) tags.push("Needs Human Follow-up");
     if (project_type) tags.push(project_type);
     if (city) tags.push(`City: ${city}`);
+    
+    // Add routing tags based on customer status
+    if (is_existing_customer) {
+      tags.push("existing_customer");
+      tags.push("Route: Customer Service");
+    } else {
+      tags.push("new_lead");
+      tags.push("Route: Sales");
+    }
+    
+    if (routing_target) {
+      tags.push(`Assigned: ${routing_target.toUpperCase()}`);
+    }
 
     // Search for existing contact
     const searchUrl = `https://services.leadconnectorhq.com/contacts/search/duplicates`;
