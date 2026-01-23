@@ -7,6 +7,7 @@ import { BUSINESS_INFO } from '@/lib/seo';
 import { CTA_LINKS } from '@/lib/shared-data';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 export function Header() {
@@ -40,29 +41,30 @@ export function Header() {
   const isContractorActive = contractorLinks.some(link => location.pathname === link.to);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-card/80 backdrop-blur-xl border-b border-border/40 supports-[backdrop-filter]:bg-card/60">
       <div className="container-wide">
-        <div className="flex h-16 md:h-20 items-center justify-between">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img 
               src={logoCalsan} 
               alt="Calsan Dumpsters Pro" 
-              className="h-14 md:h-16 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={cn(
+                  "px-3.5 py-2 text-sm font-medium rounded-xl transition-all duration-200",
                   isActive(link.to)
-                    ? 'text-primary bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
+                    ? "text-primary bg-primary/8"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                )}
               >
                 {link.label}
               </Link>
@@ -75,29 +77,31 @@ export function Header() {
               onMouseLeave={() => setContractorDropdownOpen(false)}
             >
               <button
-                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={cn(
+                  "flex items-center gap-1 px-3.5 py-2 text-sm font-medium rounded-xl transition-all duration-200",
                   isContractorActive
-                    ? 'text-primary bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
+                    ? "text-primary bg-primary/8"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                )}
               >
                 {t('nav.contractors')}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${contractorDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", contractorDropdownOpen && "rotate-180")} />
               </button>
 
               {contractorDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-card border border-border rounded-xl shadow-lg py-2 z-50 animate-fade-in">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-xl py-2 z-50 animate-scale-in">
                   {contractorLinks.map((link) => (
                     <Link
                       key={link.to}
                       to={link.to}
-                      className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-2.5 text-sm transition-colors",
                         isActive(link.to)
-                          ? 'text-primary bg-primary/5'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                      }`}
+                          ? "text-primary bg-primary/8"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      )}
                     >
-                      <link.icon className="w-4 h-4" />
+                      <link.icon className="w-4 h-4" strokeWidth={1.75} />
                       {link.label}
                     </Link>
                   ))}
@@ -109,11 +113,12 @@ export function Header() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={cn(
+                  "px-3.5 py-2 text-sm font-medium rounded-xl transition-all duration-200",
                   isActive(link.to)
-                    ? 'text-primary bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
+                    ? "text-primary bg-primary/8"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                )}
               >
                 {link.label}
               </Link>
@@ -121,68 +126,68 @@ export function Header() {
           </nav>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2">
             {/* Office Status - Desktop only */}
             <div className="hidden xl:block">
               <OfficeStatusIndicator variant="badge" />
             </div>
 
             {/* Social Icons - Desktop only */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center">
               <a
                 href={BUSINESS_INFO.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/60"
                 aria-label="Instagram"
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-4 h-4" strokeWidth={1.75} />
               </a>
               <a
                 href={BUSINESS_INFO.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/60"
                 aria-label="YouTube"
               >
-                <Youtube className="w-4 h-4" />
+                <Youtube className="w-4 h-4" strokeWidth={1.75} />
               </a>
               <a
                 href={BUSINESS_INFO.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/60"
                 aria-label="Facebook"
               >
-                <Facebook className="w-4 h-4" />
+                <Facebook className="w-4 h-4" strokeWidth={1.75} />
               </a>
             </div>
 
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-md transition-colors"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground border border-border/50 rounded-lg transition-all hover:bg-muted/60"
             >
-              <Globe className="w-3.5 h-3.5" />
+              <Globe className="w-3.5 h-3.5" strokeWidth={1.75} />
               {language === 'en' ? 'ES' : 'EN'}
             </button>
 
             {/* Phone */}
             <a
               href={`tel:${BUSINESS_INFO.phone.sales}`}
-              className="hidden md:flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+              className="hidden md:flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60"
             >
-              <Phone className="w-4 h-4" />
+              <Phone className="w-4 h-4" strokeWidth={1.75} />
               <span>{BUSINESS_INFO.phone.salesFormatted}</span>
             </a>
 
             {/* Login Button with Portal Tooltip */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button asChild variant="outline" size="sm" className="inline-flex">
+                <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
                   <Link to="/portal">
-                    <LogIn className="w-4 h-4 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Customer Portal</span>
+                    <LogIn className="w-4 h-4 sm:mr-1.5" strokeWidth={1.75} />
+                    <span className="hidden sm:inline">Portal</span>
                   </Link>
                 </Button>
               </TooltipTrigger>
@@ -192,7 +197,7 @@ export function Header() {
             </Tooltip>
 
             {/* Order Now Button */}
-            <Button asChild variant="cta" size="default" className="hidden sm:inline-flex">
+            <Button asChild variant="cta" size="sm" className="hidden sm:inline-flex">
               <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
                 {t('nav.orderNow')}
               </a>
@@ -201,17 +206,17 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-foreground"
+              className="lg:hidden p-2 text-foreground rounded-xl hover:bg-muted/60 transition-colors"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" strokeWidth={1.75} /> : <Menu className="w-5 h-5" strokeWidth={1.75} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-border bg-card py-4 animate-fade-in">
+          <div className="lg:hidden border-t border-border/40 bg-card/95 backdrop-blur-xl py-4 animate-fade-in">
             <nav className="flex flex-col gap-1 mb-4">
               {navLinks.map((link) => (
                 <Link

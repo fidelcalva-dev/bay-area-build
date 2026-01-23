@@ -2,10 +2,44 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+// Apple-style card with soft shadows and larger radius
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+  <div 
+    ref={ref} 
+    className={cn(
+      "rounded-2xl border border-border/50 bg-card text-card-foreground shadow-md transition-all duration-300",
+      className
+    )} 
+    {...props} 
+  />
 ));
 Card.displayName = "Card";
+
+// Glass card variant for hero/overlay sections
+const GlassCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+  <div 
+    ref={ref} 
+    className={cn(
+      "rounded-2xl glass-card text-card-foreground",
+      className
+    )} 
+    {...props} 
+  />
+));
+GlassCard.displayName = "GlassCard";
+
+// Hover card with lift effect
+const HoverCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+  <div 
+    ref={ref} 
+    className={cn(
+      "rounded-2xl border border-border/50 bg-card text-card-foreground shadow-md hover-lift cursor-pointer",
+      className
+    )} 
+    {...props} 
+  />
+));
+HoverCard.displayName = "HoverCard";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -16,7 +50,7 @@ CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
+    <h3 ref={ref} className={cn("text-xl font-semibold leading-none tracking-tight", className)} {...props} />
   ),
 );
 CardTitle.displayName = "CardTitle";
@@ -40,4 +74,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardFooter.displayName = "CardFooter";
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export { Card, GlassCard, HoverCard, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
