@@ -53,10 +53,17 @@ interface TechnicalDumpsterCardProps {
   className?: string;
 }
 
+// CSS-based scaling for each size (20yd = baseline)
+const SCALE_CLASSES: Record<DumpsterSize, string> = {
+  10: 'scale-x-[0.72] scale-y-[0.70]',
+  20: 'scale-x-100 scale-y-100',
+  30: 'scale-x-[1.08] scale-y-[1.12]',
+  40: 'scale-x-[1.18] scale-y-[1.25]',
+};
+
 /**
- * Realistic Roll-Off Dumpster Silhouette SVG
- * White steel body + green top rail + vertical ribs + skids
- * Matches real Calsan roll-off dumpsters
+ * Clean roll-off dumpster silhouette SVG
+ * Uses CSS transforms for size scaling
  */
 function DumpsterSilhouetteReal({ 
   size, 
@@ -66,166 +73,71 @@ function DumpsterSilhouetteReal({
   className?: string;
 }) {
   const spec = DUMPSTER_SPECS[size];
-  
-  // Proportional scaling based on real dimensions
-  const maxLengthFt = 22;
-  const maxHeightFt = 8;
-  
-  const lengthFt = parseFloat(spec.length);
-  const heightFt = parseFloat(spec.height);
-  
-  const lengthScale = lengthFt / maxLengthFt;
-  const heightScale = heightFt / maxHeightFt;
-  
-  // SVG dimensions
-  const svgWidth = 320;
-  const svgHeight = 100;
-  
-  // Dumpster body dimensions (scaled)
-  const bodyWidth = 220 * lengthScale;
-  const bodyHeight = 55 * heightScale;
-  const startX = (svgWidth - bodyWidth) / 2 - 10;
-  const groundY = 70;
-  const topY = groundY - bodyHeight;
-  
-  // Number of ribs based on length
-  const ribCount = Math.max(5, Math.floor(lengthScale * 12));
-  
-  // Trapezoid offsets for perspective
-  const topInset = 8;
-  const bottomInset = 4;
-  const sideSlope = 12 * heightScale;
 
   return (
-    <div className={cn("relative w-full flex items-center justify-center py-3", className)}>
+    <div className={cn("relative w-full flex items-center justify-center py-4 pb-6", className)}>
       <svg 
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        className="w-full max-w-[220px] h-auto transition-transform duration-300 group-hover:scale-105"
+        viewBox="0 0 900 260"
+        className={cn(
+          "w-full max-w-[180px] h-auto transition-transform duration-300 origin-center group-hover:scale-105",
+          SCALE_CLASSES[size]
+        )}
         role="img"
         aria-label={`${size} yard roll-off dumpster: ${spec.length} long, ${spec.width} wide, ${spec.height} tall`}
       >
         <defs>
-          <filter id={`shadow-${size}`} x="-10%" y="-10%" width="120%" height="130%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.15"/>
+          <filter id={`shadow-${size}`} x="-5%" y="-5%" width="110%" height="115%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" floodOpacity="0.12"/>
           </filter>
         </defs>
 
-        <g filter={`url(#shadow-${size})`}>
-          {/* Body - trapezoid shape */}
+        <g transform="translate(40,30)" filter={`url(#shadow-${size})`}>
+          {/* Body */}
           <path 
-            d={`M${startX + topInset},${topY} 
-                H${startX + bodyWidth - topInset} 
-                L${startX + bodyWidth + sideSlope},${topY + sideSlope} 
-                V${groundY - sideSlope} 
-                L${startX + bodyWidth - bottomInset},${groundY} 
-                H${startX + bottomInset} 
-                L${startX - sideSlope + bottomInset},${groundY - sideSlope} 
-                V${topY + sideSlope} 
-                Z`}
+            d="M40,40 H700 L735,68 V178 L700,205 H60 L40,182 Z"
             fill="#EDEDED"
+          />
+          <path 
+            d="M40,40 H700 L735,68 V178 L700,205 H60 L40,182 Z"
+            fill="none"
             stroke="#2B2B2B"
-            strokeWidth="2"
+            strokeWidth="5"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          
-          {/* Skid rails */}
-          <line 
-            x1={startX + 12} y1={groundY + 5}
-            x2={startX + bodyWidth - 12} y2={groundY + 5}
-            stroke="#2B2B2B"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <line 
-            x1={startX + 18} y1={groundY + 10}
-            x2={startX + bodyWidth - 18} y2={groundY + 10}
-            stroke="#2B2B2B"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          
+
+          {/* Skids */}
+          <path d="M80,212 H660" fill="none" stroke="#2B2B2B" strokeWidth="6" />
+          <path d="M95,224 H645" fill="none" stroke="#2B2B2B" strokeWidth="6" />
+
           {/* Rear door hints */}
-          <line 
-            x1={startX + bodyWidth - 14} y1={topY + sideSlope + 4}
-            x2={startX + bodyWidth - 14} y2={groundY - sideSlope - 4}
-            stroke="#2B2B2B"
-            strokeWidth="1.2"
-            opacity="0.7"
-          />
-          <line 
-            x1={startX + bodyWidth + sideSlope - 6} y1={topY + sideSlope + 8}
-            x2={startX + bodyWidth + sideSlope - 6} y2={groundY - sideSlope - 2}
-            stroke="#2B2B2B"
-            strokeWidth="1"
-            opacity="0.5"
-          />
-          
-          {/* Vertical ribs */}
-          {Array.from({ length: ribCount }).map((_, i) => {
-            const ribX = startX + 20 + i * ((bodyWidth - 40) / (ribCount - 1));
-            return (
-              <line
-                key={i}
-                x1={ribX} y1={topY + sideSlope + 3}
-                x2={ribX} y2={groundY - sideSlope - 2}
-                stroke="#2B2B2B"
-                strokeWidth="1"
-                opacity="0.6"
-              />
-            );
-          })}
-        </g>
-        
-        {/* Measurement arrows */}
-        <g className="text-muted-foreground opacity-40 group-hover:opacity-80 transition-opacity duration-300">
-          {/* Length arrow */}
-          <line
-            x1={startX - sideSlope} y1={groundY + 18}
-            x2={startX + bodyWidth + sideSlope} y2={groundY + 18}
-            stroke="currentColor" strokeWidth="1"
-          />
-          <polygon 
-            points={`${startX - sideSlope},${groundY + 18} ${startX - sideSlope + 5},${groundY + 15} ${startX - sideSlope + 5},${groundY + 21}`}
-            fill="currentColor"
-          />
-          <polygon 
-            points={`${startX + bodyWidth + sideSlope},${groundY + 18} ${startX + bodyWidth + sideSlope - 5},${groundY + 15} ${startX + bodyWidth + sideSlope - 5},${groundY + 21}`}
-            fill="currentColor"
-          />
-          <text
-            x={startX + bodyWidth / 2}
-            y={groundY + 28}
-            textAnchor="middle"
-            className="fill-current text-[8px] font-medium"
-          >
-            {spec.length}
-          </text>
-          
-          {/* Height arrow */}
-          <line
-            x1={startX + bodyWidth + sideSlope + 14} y1={topY}
-            x2={startX + bodyWidth + sideSlope + 14} y2={groundY}
-            stroke="currentColor" strokeWidth="1"
-          />
-          <polygon 
-            points={`${startX + bodyWidth + sideSlope + 14},${topY} ${startX + bodyWidth + sideSlope + 11},${topY + 5} ${startX + bodyWidth + sideSlope + 17},${topY + 5}`}
-            fill="currentColor"
-          />
-          <polygon 
-            points={`${startX + bodyWidth + sideSlope + 14},${groundY} ${startX + bodyWidth + sideSlope + 11},${groundY - 5} ${startX + bodyWidth + sideSlope + 17},${groundY - 5}`}
-            fill="currentColor"
-          />
-          <text
-            x={startX + bodyWidth + sideSlope + 26}
-            y={(topY + groundY) / 2 + 3}
-            textAnchor="start"
-            className="fill-current text-[8px] font-medium"
-          >
-            {spec.height}
-          </text>
+          <path d="M690,60 V190" fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7" />
+          <path d="M712,78 V182" fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7" />
+
+          {/* Ribs */}
+          <g fill="none" stroke="#2B2B2B" strokeWidth="2.5" opacity="0.7">
+            <path d="M100,55 V190"/>
+            <path d="M150,55 V190"/>
+            <path d="M200,55 V190"/>
+            <path d="M250,55 V190"/>
+            <path d="M300,55 V190"/>
+            <path d="M350,55 V190"/>
+            <path d="M400,55 V190"/>
+            <path d="M450,55 V190"/>
+            <path d="M500,55 V190"/>
+            <path d="M550,55 V190"/>
+            <path d="M600,55 V190"/>
+            <path d="M650,55 V190"/>
+          </g>
         </g>
       </svg>
+      
+      {/* Dimension labels below SVG */}
+      <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-3 text-[10px] text-muted-foreground opacity-50 group-hover:opacity-90 transition-opacity">
+        <span>{spec.length} L</span>
+        <span className="opacity-40">×</span>
+        <span>{spec.height} H</span>
+      </div>
     </div>
   );
 }
