@@ -9,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { useToast } from "@/hooks/use-toast";
 import { BUSINESS_INFO } from "@/lib/seo";
+import { validateAndFormatPhone } from "@/lib/phoneUtils";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 type Step = "phone" | "otp";
@@ -25,7 +26,14 @@ const CustomerLogin = () => {
   const [error, setError] = useState("");
 
   const formatPhoneDisplay = (value: string) => {
-    const digits = value.replace(/\D/g, "").slice(0, 10);
+    // Strip all non-digits and limit to 10
+    let digits = value.replace(/\D/g, "");
+    // If user pastes number with leading 1, strip it
+    if (digits.length === 11 && digits.startsWith("1")) {
+      digits = digits.substring(1);
+    }
+    digits = digits.slice(0, 10);
+    
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
@@ -41,8 +49,10 @@ const CustomerLogin = () => {
     e.preventDefault();
     const digits = phone.replace(/\D/g, "");
     
-    if (digits.length !== 10) {
-      setError("Please enter a valid 10-digit phone number");
+    // Use shared validation that matches server-side rules
+    const validation = validateAndFormatPhone(digits);
+    if (!validation.valid) {
+      setError(validation.error || "Please enter a valid 10-digit phone number");
       return;
     }
 
