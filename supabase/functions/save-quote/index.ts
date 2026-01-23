@@ -6,16 +6,86 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// =====================================================
+// INPUT VALIDATION FUNCTIONS
+// =====================================================
+
 // Normalize phone to E.164 format
-function normalizePhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 10) {
-    return `+1${digits}`;
-  }
+function normalizePhone(phone: string): string | null {
+  if (!phone) return null;
+  
+  let digits = phone.replace(/\D/g, '');
+  
+  // Handle leading country code
   if (digits.length === 11 && digits.startsWith('1')) {
-    return `+${digits}`;
+    digits = digits.substring(1);
   }
-  return phone; // Return as-is if format is unexpected
+  
+  // US phone numbers should have exactly 10 digits
+  if (digits.length !== 10) {
+    return null; // Invalid
+  }
+  
+  // Validate area code (can't start with 0 or 1)
+  if (digits.startsWith('0') || digits.startsWith('1')) {
+    return null; // Invalid area code
+  }
+  
+  return `+1${digits}`;
+}
+
+// Validate and sanitize name
+function sanitizeName(name: string): string | null {
+  if (!name) return null;
+  
+  // Remove HTML tags and dangerous characters
+  let sanitized = name
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/[<>'"]/g, '') // Remove potential XSS chars
+    .trim();
+  
+  // Check length
+  if (sanitized.length < 2 || sanitized.length > 100) {
+    return null;
+  }
+  
+  // Check for valid characters (letters, spaces, hyphens, apostrophes, accented chars)
+  if (!/^[a-zA-Z\s\-'À-ÿ]+$/.test(sanitized)) {
+    return null;
+  }
+  
+  return sanitized;
+}
+
+// Validate email format
+function validateEmail(email: string): string | null {
+  if (!email || email.trim() === '') return undefined as any; // Optional field
+  
+  const trimmed = email.trim().toLowerCase();
+  
+  // Basic email regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmed)) {
+    return null;
+  }
+  
+  if (trimmed.length > 255) {
+    return null;
+  }
+  
+  return trimmed;
+}
+
+// Validate ZIP code
+function validateZip(zip: string): string | null {
+  if (!zip) return null;
+  
+  const digits = zip.replace(/\D/g, '');
+  if (digits.length !== 5) {
+    return null;
+  }
+  
+  return digits;
 }
 
 serve(async (req) => {
@@ -26,8 +96,12 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
-    console.log('[save-quote] Received payload:', JSON.stringify(payload, null, 2));
+    console.log('[save-quote] Received payload');
 
+    // =====================================================
+    // VALIDATE AND SANITIZE INPUTS
+    // =====================================================
+    
     // Validate required fields
     const requiredFields = ['material_type', 'estimated_min', 'estimated_max', 'user_type', 'zip_code'];
     for (const field of requiredFields) {
@@ -40,10 +114,53 @@ serve(async (req) => {
       }
     }
 
-    // Normalize phone if present
+    // Validate ZIP code
+    const validatedZip = validateZip(payload.zip_code);
+    if (!validatedZip) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid ZIP code format (must be 5 digits)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    payload.zip_code = validatedZip;
+
+    // Validate and sanitize customer name if provided
+    if (payload.customer_name) {
+      const sanitizedName = sanitizeName(payload.customer_name);
+      if (sanitizedName === null) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid name format (2-100 characters, letters only)' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      payload.customer_name = sanitizedName;
+    }
+
+    // Validate and normalize phone if provided
     if (payload.customer_phone) {
-      payload.customer_phone = normalizePhone(payload.customer_phone);
+      const normalizedPhone = normalizePhone(payload.customer_phone);
+      if (normalizedPhone === null) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid phone number (must be 10 digits with valid area code)' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      payload.customer_phone = normalizedPhone;
       console.log('[save-quote] Normalized phone:', payload.customer_phone);
+    }
+
+    // Validate email if provided
+    if (payload.customer_email && payload.customer_email.trim() !== '') {
+      const validatedEmail = validateEmail(payload.customer_email);
+      if (validatedEmail === null) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Invalid email format' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      payload.customer_email = validatedEmail;
+    } else {
+      payload.customer_email = null;
     }
 
     // Create Supabase client with service role (bypasses RLS)
