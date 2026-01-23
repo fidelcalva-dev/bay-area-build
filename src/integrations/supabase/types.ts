@@ -2841,6 +2841,39 @@ export type Database = {
           },
         ]
       }
+      role_definitions: {
+        Row: {
+          allowed_actions: string[] | null
+          allowed_routes: string[] | null
+          created_at: string | null
+          department: string | null
+          description: string | null
+          id: string
+          label: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          allowed_actions?: string[] | null
+          allowed_routes?: string[] | null
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          label: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          allowed_actions?: string[] | null
+          allowed_routes?: string[] | null
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          label?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
       role_permissions: {
         Row: {
           action: string
@@ -3228,6 +3261,51 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_users: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          department: string
+          email: string
+          full_name: string
+          id: string
+          last_login_at: string | null
+          notes: string | null
+          phone: string | null
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          department: string
+          email: string
+          full_name: string
+          id?: string
+          last_login_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          department?: string
+          email?: string
+          full_name?: string
+          id?: string
+          last_login_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       toll_surcharges: {
         Row: {
           applies_to_delivery: boolean
@@ -3373,6 +3451,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_audit_logs: {
+        Row: {
+          action: string
+          admin_id: string | null
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          target_email: string | null
+          target_user_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          target_email?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          target_email?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
       }
       user_profiles: {
         Row: {
