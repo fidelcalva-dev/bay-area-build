@@ -40,9 +40,9 @@ export function DimensionOverlay({ size, className, showPickupLoads = true }: Di
           <div className="w-px h-8 bg-muted-foreground/40" />
         </div>
         
-        {/* Dumpster silhouette */}
+        {/* Dumpster silhouette - unique proportions per size */}
         <div className="relative mx-8">
-          <DumpsterSilhouettePlain />
+          <DumpsterSilhouettePlain size={size} />
           
           {/* Width indicator - top */}
           <div className="absolute -top-1 left-1/4 right-1/4 flex items-center justify-center">

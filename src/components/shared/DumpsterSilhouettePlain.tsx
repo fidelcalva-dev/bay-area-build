@@ -1,105 +1,173 @@
 /**
  * Plain realistic roll-off dumpster silhouette SVG
  * Industrial gray steel with ribs, skids, hinges, and structural details
- * No logos, no green rail
+ * Each size renders unique proportions based on canonical dimensions
+ * 
+ * CANONICAL DIMENSIONS (W × L × H in feet):
+ * 6 yd:  6   × 12 × 2.25
+ * 8 yd:  6   × 12 × 3
+ * 10 yd: 7.5 × 12 × 3
+ * 20 yd: 7.5 × 18 × 4
+ * 30 yd: 7.5 × 18 × 6
+ * 40 yd: 7.5 × 24 × 6
+ * 50 yd: 7.5 × 24 × 7.5
  */
-export function DumpsterSilhouettePlain() {
+
+type DumpsterSizeYd = 6 | 8 | 10 | 20 | 30 | 40 | 50;
+
+interface DumpsterSilhouettePlainProps {
+  size?: DumpsterSizeYd;
+  className?: string;
+}
+
+// Proportional specs for SVG rendering
+// Reference: 40yd (24L × 6H) = viewBox width 800, height 200
+const SIZE_PROPS: Record<DumpsterSizeYd, {
+  viewBoxWidth: number;
+  viewBoxHeight: number;
+  bodyWidth: number;
+  bodyHeight: number;
+  ribCount: number;
+  ribSpacing: number;
+}> = {
+  6:  { viewBoxWidth: 480, viewBoxHeight: 120, bodyWidth: 400, bodyHeight: 75,  ribCount: 6,  ribSpacing: 55 },
+  8:  { viewBoxWidth: 480, viewBoxHeight: 150, bodyWidth: 400, bodyHeight: 100, ribCount: 6,  ribSpacing: 55 },
+  10: { viewBoxWidth: 480, viewBoxHeight: 150, bodyWidth: 400, bodyHeight: 100, ribCount: 6,  ribSpacing: 55 },
+  20: { viewBoxWidth: 600, viewBoxHeight: 170, bodyWidth: 520, bodyHeight: 130, ribCount: 8,  ribSpacing: 55 },
+  30: { viewBoxWidth: 600, viewBoxHeight: 220, bodyWidth: 520, bodyHeight: 180, ribCount: 8,  ribSpacing: 55 },
+  40: { viewBoxWidth: 800, viewBoxHeight: 220, bodyWidth: 720, bodyHeight: 180, ribCount: 12, ribSpacing: 55 },
+  50: { viewBoxWidth: 800, viewBoxHeight: 260, bodyWidth: 720, bodyHeight: 220, ribCount: 12, ribSpacing: 55 },
+};
+
+export function DumpsterSilhouettePlain({ size = 20, className }: DumpsterSilhouettePlainProps) {
+  const props = SIZE_PROPS[size] || SIZE_PROPS[20];
+  const { viewBoxWidth, viewBoxHeight, bodyWidth, bodyHeight, ribCount, ribSpacing } = props;
+  
+  // Calculate positions based on body dimensions
+  const marginX = (viewBoxWidth - bodyWidth) / 2;
+  const marginY = 15;
+  const bodyTop = marginY;
+  const bodyBottom = marginY + bodyHeight;
+  
+  // Front/rear angles
+  const frontSlant = bodyHeight * 0.15;
+  const rearSlant = bodyHeight * 0.12;
+  
+  // Skid positions
+  const skidY1 = bodyBottom + 8;
+  const skidY2 = bodyBottom + 18;
+  
+  // Generate rib positions
+  const ribs: number[] = [];
+  const ribStartX = marginX + 50;
+  const ribEndX = marginX + bodyWidth - 40;
+  const actualRibSpacing = (ribEndX - ribStartX) / (ribCount - 1);
+  for (let i = 0; i < ribCount; i++) {
+    ribs.push(ribStartX + i * actualRibSpacing);
+  }
+  
+  // Seam positions (horizontal lines)
+  const seamY1 = bodyTop + bodyHeight * 0.25;
+  const seamY2 = bodyTop + bodyHeight * 0.50;
+  const seamY3 = bodyTop + bodyHeight * 0.75;
+
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 920 280" 
+      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight + 30}`}
       role="img" 
-      aria-label="Plain realistic roll-off dumpster silhouette"
-      className="w-full h-full"
+      aria-label={`${size} yard roll-off dumpster silhouette`}
+      className={className || "w-full h-full"}
+      preserveAspectRatio="xMidYMid meet"
     >
       <defs>
         <style>
           {`
             .dsp-body { fill: #EFEFEF; }
-            .dsp-outline { fill: none; stroke: #2B2B2B; stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
-            .dsp-rib { fill: none; stroke: #2B2B2B; stroke-width: 2.4; opacity: 0.70; stroke-linecap: round; }
-            .dsp-seam { fill: none; stroke: #2B2B2B; stroke-width: 2; opacity: 0.35; stroke-linecap: round; }
-            .dsp-skid { fill: none; stroke: #2B2B2B; stroke-width: 6.2; stroke-linecap: round; stroke-linejoin: round; }
-            .dsp-detail { fill: none; stroke: #2B2B2B; stroke-width: 2.4; opacity: 0.7; stroke-linecap: round; stroke-linejoin: round; }
-            .dsp-wear { fill: #2B2B2B; opacity: 0.05; }
+            .dsp-outline { fill: none; stroke: #2B2B2B; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+            .dsp-rib { fill: none; stroke: #2B2B2B; stroke-width: 2; opacity: 0.65; stroke-linecap: round; }
+            .dsp-seam { fill: none; stroke: #2B2B2B; stroke-width: 1.5; opacity: 0.30; stroke-linecap: round; }
+            .dsp-skid { fill: none; stroke: #2B2B2B; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+            .dsp-detail { fill: none; stroke: #2B2B2B; stroke-width: 2; opacity: 0.65; stroke-linecap: round; stroke-linejoin: round; }
+            .dsp-wear { fill: #2B2B2B; opacity: 0.04; }
           `}
         </style>
       </defs>
 
-      {/* Group positioned nicely inside viewbox */}
-      <g transform="translate(45,35)">
-        {/* Subtle industrial wear */}
-        <path className="dsp-wear" d="M70,190 h610 v12 h-610z"/>
-        <path className="dsp-wear" d="M105,75 h520 v10 h-520z"/>
+      {/* Subtle industrial wear */}
+      <rect className="dsp-wear" x={marginX + 20} y={bodyBottom - 15} width={bodyWidth - 40} height={10} rx={2} />
 
-        {/* Main body (realistic trapezoid + rear rise) */}
-        <path 
-          className="dsp-body"
-          d="M55,38 H705 L760,78 V178 L705,212 H85 L55,182 Z"
-        />
+      {/* Main body (trapezoid shape with rear rise) */}
+      <path 
+        className="dsp-body"
+        d={`
+          M ${marginX},${bodyTop + frontSlant}
+          L ${marginX + 25},${bodyTop}
+          L ${marginX + bodyWidth - 30},${bodyTop}
+          L ${marginX + bodyWidth},${bodyTop + rearSlant}
+          L ${marginX + bodyWidth},${bodyBottom - rearSlant}
+          L ${marginX + bodyWidth - 30},${bodyBottom}
+          L ${marginX + 25},${bodyBottom}
+          L ${marginX},${bodyBottom - frontSlant}
+          Z
+        `}
+      />
 
-        {/* Outer outline */}
-        <path 
-          className="dsp-outline"
-          d="M55,38 H705 L760,78 V178 L705,212 H85 L55,182 Z"
-        />
+      {/* Outer outline */}
+      <path 
+        className="dsp-outline"
+        d={`
+          M ${marginX},${bodyTop + frontSlant}
+          L ${marginX + 25},${bodyTop}
+          L ${marginX + bodyWidth - 30},${bodyTop}
+          L ${marginX + bodyWidth},${bodyTop + rearSlant}
+          L ${marginX + bodyWidth},${bodyBottom - rearSlant}
+          L ${marginX + bodyWidth - 30},${bodyBottom}
+          L ${marginX + 25},${bodyBottom}
+          L ${marginX},${bodyBottom - frontSlant}
+          Z
+        `}
+      />
 
-        {/* Top edge (reinforced rail) */}
-        <path className="dsp-detail" d="M55,38 H705 L760,78" />
+      {/* Top edge (reinforced rail) */}
+      <path className="dsp-detail" d={`M ${marginX},${bodyTop + frontSlant} L ${marginX + 25},${bodyTop} L ${marginX + bodyWidth - 30},${bodyTop} L ${marginX + bodyWidth},${bodyTop + rearSlant}`} />
 
-        {/* Bottom lip / floor hint */}
-        <path className="dsp-detail" d="M78,202 H712" />
+      {/* Bottom lip */}
+      <path className="dsp-detail" d={`M ${marginX + 30},${bodyBottom - 5} L ${marginX + bodyWidth - 35},${bodyBottom - 5}`} />
 
-        {/* Skids (roll-off rails) */}
-        <path className="dsp-skid" d="M110,218 H675"/>
-        <path className="dsp-skid" d="M125,232 H660"/>
-        
-        {/* Skid ends */}
-        <path className="dsp-detail" d="M110,218 l-20,10"/>
-        <path className="dsp-detail" d="M675,218 l20,10"/>
-        <path className="dsp-detail" d="M125,232 l-18,10"/>
-        <path className="dsp-detail" d="M660,232 l18,10"/>
+      {/* Skids (roll-off rails) */}
+      <path className="dsp-skid" d={`M ${marginX + 40},${skidY1} L ${marginX + bodyWidth - 45},${skidY1}`} />
+      <path className="dsp-skid" d={`M ${marginX + 55},${skidY2} L ${marginX + bodyWidth - 60},${skidY2}`} />
+      
+      {/* Skid ends */}
+      <path className="dsp-detail" d={`M ${marginX + 40},${skidY1} L ${marginX + 25},${skidY1 + 6}`} />
+      <path className="dsp-detail" d={`M ${marginX + bodyWidth - 45},${skidY1} L ${marginX + bodyWidth - 30},${skidY1 + 6}`} />
 
-        {/* Front hook-up / doghouse */}
-        <path className="dsp-detail" d="M75,150 H155 c25,0 40,-12 48,-32"/>
-        <path className="dsp-detail" d="M203,118 V92 c0,-10 -6,-16 -14,-20"/>
-        <path className="dsp-detail" d="M189,72 H145"/>
+      {/* Front hook-up / doghouse */}
+      <path className="dsp-detail" d={`M ${marginX + 10},${bodyTop + bodyHeight * 0.6} L ${marginX + 50},${bodyTop + bodyHeight * 0.6} Q ${marginX + 70},${bodyTop + bodyHeight * 0.5} ${marginX + 75},${bodyTop + bodyHeight * 0.35}`} />
+      <path className="dsp-detail" d={`M ${marginX + 75},${bodyTop + bodyHeight * 0.35} L ${marginX + 75},${bodyTop + bodyHeight * 0.2}`} />
 
-        {/* Rear door frame */}
-        <path className="dsp-outline" d="M705,56 V200"/>
-        <path className="dsp-detail" d="M730,74 V190"/>
+      {/* Rear door frame */}
+      <path className="dsp-outline" d={`M ${marginX + bodyWidth - 30},${bodyTop + 8} L ${marginX + bodyWidth - 30},${bodyBottom - 8}`} />
+      <path className="dsp-detail" d={`M ${marginX + bodyWidth - 15},${bodyTop + rearSlant + 10} L ${marginX + bodyWidth - 15},${bodyBottom - rearSlant - 10}`} />
 
-        {/* Rear door hinge/lock hints */}
-        <path className="dsp-detail" d="M717,98 h18"/>
-        <path className="dsp-detail" d="M717,126 h18"/>
-        <path className="dsp-detail" d="M717,154 h18"/>
-        <path className="dsp-detail" d="M712,178 h22"/>
+      {/* Rear door hinges */}
+      <path className="dsp-detail" d={`M ${marginX + bodyWidth - 25},${bodyTop + bodyHeight * 0.3} L ${marginX + bodyWidth - 10},${bodyTop + bodyHeight * 0.3}`} />
+      <path className="dsp-detail" d={`M ${marginX + bodyWidth - 25},${bodyTop + bodyHeight * 0.5} L ${marginX + bodyWidth - 10},${bodyTop + bodyHeight * 0.5}`} />
+      <path className="dsp-detail" d={`M ${marginX + bodyWidth - 25},${bodyTop + bodyHeight * 0.7} L ${marginX + bodyWidth - 10},${bodyTop + bodyHeight * 0.7}`} />
 
-        {/* Vertical ribs (panel spacing) */}
-        <g className="dsp-rib">
-          <path d="M125,58 V200"/>
-          <path d="M175,58 V200"/>
-          <path d="M225,58 V200"/>
-          <path d="M275,58 V200"/>
-          <path d="M325,58 V200"/>
-          <path d="M375,58 V200"/>
-          <path d="M425,58 V200"/>
-          <path d="M475,58 V200"/>
-          <path d="M525,58 V200"/>
-          <path d="M575,58 V200"/>
-          <path d="M625,58 V200"/>
-          <path d="M675,58 V200"/>
-        </g>
+      {/* Vertical ribs */}
+      <g className="dsp-rib">
+        {ribs.map((x, i) => (
+          <path key={i} d={`M ${x},${bodyTop + 8} L ${x},${bodyBottom - 8}`} />
+        ))}
+      </g>
 
-        {/* Horizontal seams / weld lines */}
-        <g className="dsp-seam">
-          <path d="M95,92 H720"/>
-          <path d="M88,132 H736"/>
-          <path d="M78,170 H745"/>
-        </g>
-
-        {/* Side cutout / structural notch hint */}
-        <path className="dsp-seam" d="M110,205 c30,-8 55,-8 80,0" />
+      {/* Horizontal seams */}
+      <g className="dsp-seam">
+        <path d={`M ${marginX + 30},${seamY1} L ${marginX + bodyWidth - 35},${seamY1}`} />
+        <path d={`M ${marginX + 25},${seamY2} L ${marginX + bodyWidth - 30},${seamY2}`} />
+        <path d={`M ${marginX + 30},${seamY3} L ${marginX + bodyWidth - 35},${seamY3}`} />
       </g>
     </svg>
   );
