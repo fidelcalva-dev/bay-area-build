@@ -1,17 +1,13 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
-import { DumpsterSizeCard } from '@/components/shared/DumpsterSizeCard';
+import { TechnicalDumpsterCard } from '@/components/shared/TechnicalDumpsterCard';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { IconCircle } from '@/components/shared/IconCircle';
 
-// Show the most popular sizes for preview
-const PREVIEW_SIZES = DUMPSTER_SIZES_DATA.filter(s => 
-  [10, 20, 30, 40].includes(s.yards) && (s.category === 'general' || s.category === 'both')
-);
-
 export function SizesPreviewSection() {
+  const sizes = [10, 20, 30, 40] as const;
+
   return (
     <section className="py-16 md:py-24 bg-muted/50">
       <div className="container-wide">
@@ -37,16 +33,14 @@ export function SizesPreviewSection() {
           </Button>
         </AnimatedSection>
 
-        {/* Size Cards Grid */}
+        {/* Technical Dumpster Cards Grid */}
         <StaggeredContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {PREVIEW_SIZES.map((size) => (
-            <AnimatedItem key={size.yards} variant="fadeUp">
-              <DumpsterSizeCard
+          {sizes.map((size) => (
+            <AnimatedItem key={size} variant="fadeUp">
+              <TechnicalDumpsterCard
                 size={size}
-                variant="preview"
-                category="general"
                 ctaLink="/#quote"
-                ctaLabel={`Get quote`}
+                ctaLabel="Get Quote"
               />
             </AnimatedItem>
           ))}
