@@ -4,32 +4,20 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Ruler, Weight, CheckCircle, Eye, EyeOff, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Photorealistic dumpster photo imports
-import dumpster6yard from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
-import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
-import dumpster8yard from '@/assets/dumpsters/dumpster-8yard-photo.jpg';
-import dumpster8yardDims from '@/assets/dumpsters/dumpster-8yard-dims.png';
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard-photo.jpg';
-import dumpster10yardDims from '@/assets/dumpsters/dumpster-10yard-dims.png';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
-import dumpster20yardDims from '@/assets/dumpsters/dumpster-20yard-dims.png';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
-import dumpster30yardDims from '@/assets/dumpsters/dumpster-30yard-dims.png';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
-import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
-import dumpster50yard from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
-import dumpster50yardDims from '@/assets/dumpsters/dumpster-50yard-dims.png';
+// Use canonical dumpster image registry (single source of truth)
+import { 
+  getCanonicalDumpsterImageSet,
+  DUMPSTER_PHOTO_MAP,
+  DUMPSTER_DIMS_MAP,
+} from '@/lib/canonicalDumpsterImages';
 
-// Image map for dynamic loading
-export const DUMPSTER_IMAGES: Record<number, { main: string; dims: string }> = {
-  6: { main: dumpster6yard, dims: dumpster6yardDims },
-  8: { main: dumpster8yard, dims: dumpster8yardDims },
-  10: { main: dumpster10yard, dims: dumpster10yardDims },
-  20: { main: dumpster20yard, dims: dumpster20yardDims },
-  30: { main: dumpster30yard, dims: dumpster30yardDims },
-  40: { main: dumpster40yard, dims: dumpster40yardDims },
-  50: { main: dumpster50yard, dims: dumpster50yardDims },
-};
+// Re-export for backwards compatibility
+export const DUMPSTER_IMAGES: Record<number, { main: string; dims: string }> = Object.fromEntries(
+  [6, 8, 10, 20, 30, 40, 50].map((size) => [
+    size,
+    { main: DUMPSTER_PHOTO_MAP[size], dims: DUMPSTER_DIMS_MAP[size] },
+  ])
+);
 
 export interface DumpsterSizeData {
   yards: number;

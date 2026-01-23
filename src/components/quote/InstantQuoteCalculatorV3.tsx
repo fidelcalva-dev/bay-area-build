@@ -53,23 +53,11 @@ import { MaterialVolumeEstimator, type EstimatorData } from './estimator';
 const DistanceMap = lazy(() => import('./DistanceMap').then(m => ({ default: m.DistanceMap })));
 const DistanceMapLoading = lazy(() => import('./DistanceMap').then(m => ({ default: m.DistanceMapLoading })));
 
-// Dumpster images
-import dumpster6yard from '@/assets/dumpsters/dumpster-6yard.png';
-import dumpster8yard from '@/assets/dumpsters/dumpster-8yard.png';
-import dumpster10yard from '@/assets/dumpsters/dumpster-10yard.png';
-import dumpster20yard from '@/assets/dumpsters/dumpster-20yard.png';
-import dumpster30yard from '@/assets/dumpsters/dumpster-30yard.png';
-import dumpster40yard from '@/assets/dumpsters/dumpster-40yard.png';
+// Use canonical dumpster image registry (single source of truth)
+import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
-const DUMPSTER_IMAGES: Record<number, string> = {
-  6: dumpster6yard,
-  8: dumpster8yard,
-  10: dumpster10yard,
-  20: dumpster20yard,
-  30: dumpster30yard,
-  40: dumpster40yard,
-  50: dumpster40yard, // Use 40yd image for 50yd as placeholder
-};
+// Reference canonical photos for all sizes
+const DUMPSTER_IMAGES: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 // Office Status inline component for the save step
 function OfficeStatusLine() {
