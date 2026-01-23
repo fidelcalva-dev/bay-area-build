@@ -20,28 +20,51 @@ interface DumpsterSilhouettePlainProps {
   className?: string;
 }
 
-// Proportional specs for SVG rendering
-// Reference: 40yd (24L × 6H) = viewBox width 800, height 200
+/**
+ * SIZE_PROPS calculated from canonical ratios:
+ * 
+ * LENGTH BASE: 12ft = 400px
+ * - 18ft = 400 × 1.5 = 600px
+ * - 24ft = 600 × 1.333 = 800px
+ * 
+ * HEIGHT BASE: 2.25ft = 75px
+ * - 3ft = 75 × 1.333 = 100px
+ * - 4ft = 75 × 1.778 = 133px
+ * - 6ft = 75 × 2.667 = 200px
+ * - 7.5ft = 75 × 3.333 = 250px
+ * 
+ * VERIFICATION:
+ * - 8yd/6yd height: 100/75 = 1.333 ✓
+ * - 30yd/20yd height: 200/133 = 1.504 ✓
+ * - 50yd/40yd height: 250/200 = 1.25 ✓
+ * - 18ft/12ft length: 600/400 = 1.5 ✓
+ * - 24ft/18ft length: 800/600 = 1.333 ✓
+ */
 const SIZE_PROPS: Record<DumpsterSizeYd, {
   viewBoxWidth: number;
   viewBoxHeight: number;
   bodyWidth: number;
   bodyHeight: number;
   ribCount: number;
-  ribSpacing: number;
 }> = {
-  6:  { viewBoxWidth: 480, viewBoxHeight: 120, bodyWidth: 400, bodyHeight: 75,  ribCount: 6,  ribSpacing: 55 },
-  8:  { viewBoxWidth: 480, viewBoxHeight: 150, bodyWidth: 400, bodyHeight: 100, ribCount: 6,  ribSpacing: 55 },
-  10: { viewBoxWidth: 480, viewBoxHeight: 150, bodyWidth: 400, bodyHeight: 100, ribCount: 6,  ribSpacing: 55 },
-  20: { viewBoxWidth: 600, viewBoxHeight: 170, bodyWidth: 520, bodyHeight: 130, ribCount: 8,  ribSpacing: 55 },
-  30: { viewBoxWidth: 600, viewBoxHeight: 220, bodyWidth: 520, bodyHeight: 180, ribCount: 8,  ribSpacing: 55 },
-  40: { viewBoxWidth: 800, viewBoxHeight: 220, bodyWidth: 720, bodyHeight: 180, ribCount: 12, ribSpacing: 55 },
-  50: { viewBoxWidth: 800, viewBoxHeight: 260, bodyWidth: 720, bodyHeight: 220, ribCount: 12, ribSpacing: 55 },
+  // 12ft × 2.25ft (6yd)
+  6:  { viewBoxWidth: 480, viewBoxHeight: 130, bodyWidth: 400, bodyHeight: 75,  ribCount: 6 },
+  // 12ft × 3ft (8yd, 10yd)
+  8:  { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },
+  10: { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },
+  // 18ft × 4ft (20yd)
+  20: { viewBoxWidth: 680, viewBoxHeight: 188, bodyWidth: 600, bodyHeight: 133, ribCount: 9 },
+  // 18ft × 6ft (30yd)
+  30: { viewBoxWidth: 680, viewBoxHeight: 255, bodyWidth: 600, bodyHeight: 200, ribCount: 9 },
+  // 24ft × 6ft (40yd)
+  40: { viewBoxWidth: 880, viewBoxHeight: 255, bodyWidth: 800, bodyHeight: 200, ribCount: 12 },
+  // 24ft × 7.5ft (50yd)
+  50: { viewBoxWidth: 880, viewBoxHeight: 305, bodyWidth: 800, bodyHeight: 250, ribCount: 12 },
 };
 
 export function DumpsterSilhouettePlain({ size = 20, className }: DumpsterSilhouettePlainProps) {
   const props = SIZE_PROPS[size] || SIZE_PROPS[20];
-  const { viewBoxWidth, viewBoxHeight, bodyWidth, bodyHeight, ribCount, ribSpacing } = props;
+  const { viewBoxWidth, viewBoxHeight, bodyWidth, bodyHeight, ribCount } = props;
   
   // Calculate positions based on body dimensions
   const marginX = (viewBoxWidth - bodyWidth) / 2;
