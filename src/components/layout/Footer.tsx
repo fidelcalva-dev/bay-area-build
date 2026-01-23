@@ -3,6 +3,7 @@ import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
+import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro.jpeg';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -42,9 +43,13 @@ export function Footer() {
           {/* Brand Column - NAP Consistent */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-                <Truck className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <img
+                src={logoCalsanDumpstersPro}
+                alt="Calsan Dumpsters Pro"
+                className="h-10 w-auto rounded-lg"
+                loading="lazy"
+                decoding="async"
+              />
               <div className="flex flex-col">
                 <span className="text-lg font-bold leading-tight">{BUSINESS_INFO.name}</span>
                 <span className="text-xs text-secondary-foreground/70 leading-tight">SF Bay Area</span>
