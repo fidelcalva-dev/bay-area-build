@@ -54,8 +54,8 @@ interface TechnicalDumpsterCardProps {
 }
 
 /**
- * Technical Dumpster Silhouette SVG
- * Side-view with measurement arrows - proportionally accurate
+ * Professional Roll-Off Dumpster Silhouette SVG
+ * Detailed side-view with structural elements and measurement arrows
  */
 function DumpsterSilhouette({ 
   size, 
@@ -66,11 +66,7 @@ function DumpsterSilhouette({
 }) {
   const spec = DUMPSTER_SPECS[size];
   
-  // Base dimensions for SVG viewport
-  const svgWidth = 180;
-  const svgHeight = 100;
-  
-  // Calculate proportional dimensions based on real specs
+  // Calculate proportional scale based on real specs
   // Using 22ft (40yd) as max length reference, 8ft as max height
   const maxLengthFt = 22;
   const maxHeightFt = 8;
@@ -78,171 +74,197 @@ function DumpsterSilhouette({
   const lengthFt = parseFloat(spec.length);
   const heightFt = parseFloat(spec.height);
   
-  // Container dimensions within SVG
-  const containerMaxWidth = 130;
-  const containerMaxHeight = 50;
+  // Scale factors for proportional sizing
+  const lengthScale = lengthFt / maxLengthFt;
+  const heightScale = heightFt / maxHeightFt;
   
-  const containerWidth = (lengthFt / maxLengthFt) * containerMaxWidth;
-  const containerHeight = (heightFt / maxHeightFt) * containerMaxHeight;
+  // SVG viewBox dimensions
+  const svgWidth = 280;
+  const svgHeight = 100;
   
-  // Positioning
-  const containerX = (svgWidth - containerWidth) / 2;
-  const containerY = 55 - containerHeight;
-  const groundY = 55;
+  // Dumpster positioning
+  const dumpsterWidth = 220 * lengthScale;
+  const dumpsterHeight = 55 * heightScale;
+  const startX = (svgWidth - dumpsterWidth) / 2 - 10;
+  const groundY = 70;
+  const topY = groundY - dumpsterHeight;
 
   return (
-    <div className={cn("relative w-full flex items-center justify-center py-4", className)}>
+    <div className={cn("relative w-full flex items-center justify-center py-3", className)}>
       <svg 
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        className="w-full max-w-[180px] h-auto transition-transform duration-300 group-hover:scale-105"
+        className="w-full max-w-[220px] h-auto transition-transform duration-300 group-hover:scale-105 text-primary"
         role="img"
         aria-label={`${size} yard roll-off dumpster: ${spec.length} long, ${spec.width} wide, ${spec.height} tall`}
       >
-        {/* Shadow under dumpster */}
-        <ellipse
-          cx={containerX + containerWidth / 2}
-          cy={groundY + 5}
-          rx={containerWidth / 2 + 5}
-          ry="4"
-          className="fill-muted-foreground/10"
-        />
-        
-        {/* Dumpster Body */}
-        <g>
-          {/* Main container body - slight trapezoid shape */}
-          <path
-            d={`
-              M ${containerX + 3} ${groundY}
-              L ${containerX} ${containerY}
-              L ${containerX + containerWidth} ${containerY}
-              L ${containerX + containerWidth - 3} ${groundY}
-              Z
-            `}
-            className="fill-primary/90 group-hover:fill-primary transition-colors duration-300"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.5"
+        <defs>
+          <filter id={`shadow-${size}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.15"/>
+          </filter>
+        </defs>
+
+        <g filter={`url(#shadow-${size})`}>
+          {/* Main body fill (slightly trapezoid for perspective) */}
+          <path 
+            d={`M${startX + 8},${topY} H${startX + dumpsterWidth - 8} L${startX + dumpsterWidth},${topY + 8} V${groundY - 8} L${startX + dumpsterWidth - 4},${groundY} H${startX + 12} L${startX + 8},${groundY - 6} Z`}
+            className="fill-primary/15"
           />
           
-          {/* Vertical ribs */}
-          {Array.from({ length: Math.max(3, Math.floor(containerWidth / 20)) }).map((_, i) => (
-            <line
-              key={i}
-              x1={containerX + 10 + i * (containerWidth - 20) / Math.max(2, Math.floor(containerWidth / 20) - 1)}
-              y1={containerY + 2}
-              x2={containerX + 10 + i * (containerWidth - 20) / Math.max(2, Math.floor(containerWidth / 20) - 1)}
-              y2={groundY - 2}
-              stroke="hsl(var(--primary-foreground))"
-              strokeWidth="1"
-              opacity="0.2"
-            />
-          ))}
-          
-          {/* Top rail - bright green accent */}
-          <rect
-            x={containerX - 2}
-            y={containerY - 4}
-            width={containerWidth + 4}
-            height="5"
-            rx="1.5"
-            className="fill-primary"
-            stroke="hsl(var(--primary))"
-            strokeWidth="0.5"
-          />
-          
-          {/* Front hook (Dog House style) */}
-          <path
-            d={`M ${containerX - 4} ${containerY + 10} 
-                L ${containerX - 4} ${containerY - 4} 
-                L ${containerX + 8} ${containerY - 4}`}
+          {/* Body outline */}
+          <path 
+            d={`M${startX + 8},${topY} H${startX + dumpsterWidth - 8} L${startX + dumpsterWidth},${topY + 8} V${groundY - 8} L${startX + dumpsterWidth - 4},${groundY} H${startX + 12} L${startX + 8},${groundY - 6} Z`}
             fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="2.5"
+            stroke="currentColor"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           
-          {/* Rear door hinge indicators */}
-          <line
-            x1={containerX + containerWidth - 2}
-            y1={containerY + 5}
-            x2={containerX + containerWidth - 2}
-            y2={groundY - 5}
-            stroke="hsl(var(--primary-foreground))"
-            strokeWidth="1"
-            opacity="0.3"
+          {/* Top rail (reinforced) */}
+          <path 
+            d={`M${startX + 8},${topY} H${startX + dumpsterWidth - 8} L${startX + dumpsterWidth},${topY + 8} L${startX + dumpsterWidth - 4},${topY + 12} H${startX + 14} L${startX + 8},${topY + 10} Z`}
+            className="fill-primary/25"
           />
           
-          {/* Rollers/skids */}
-          <rect
-            x={containerX + containerWidth - 25}
-            y={groundY}
-            width="20"
-            height="4"
-            rx="2"
-            className="fill-muted-foreground"
+          {/* Bottom skid rails */}
+          <line 
+            x1={startX + 18} y1={groundY + 4} 
+            x2={startX + dumpsterWidth - 16} y2={groundY + 4}
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
           />
-          <rect
-            x={containerX + containerWidth - 50}
-            y={groundY}
-            width="20"
-            height="4"
-            rx="2"
-            className="fill-muted-foreground"
+          <line 
+            x1={startX + 24} y1={groundY + 9} 
+            x2={startX + dumpsterWidth - 22} y2={groundY + 9}
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
           />
+          
+          {/* Front doghouse / hook-up */}
+          <path 
+            d={`M${startX + 14},${groundY - dumpsterHeight * 0.35} H${startX + 32} C${startX + 42},${groundY - dumpsterHeight * 0.35} ${startX + 46},${groundY - dumpsterHeight * 0.45} ${startX + 48},${groundY - dumpsterHeight * 0.55}`}
+            fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.8"
+          />
+          <line 
+            x1={startX + 48} y1={groundY - dumpsterHeight * 0.55} 
+            x2={startX + 48} y2={groundY - dumpsterHeight * 0.75}
+            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.8"
+          />
+          
+          {/* Rear door frame */}
+          <line 
+            x1={startX + dumpsterWidth - 14} y1={topY + 10} 
+            x2={startX + dumpsterWidth - 14} y2={groundY - 4}
+            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"
+          />
+          <line 
+            x1={startX + dumpsterWidth - 6} y1={topY + 14} 
+            x2={startX + dumpsterWidth - 6} y2={groundY - 6}
+            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"
+          />
+          
+          {/* Vertical ribs (panels) - proportional count */}
+          {Array.from({ length: Math.max(4, Math.floor(lengthScale * 10)) }).map((_, i) => {
+            const ribX = startX + 26 + i * ((dumpsterWidth - 52) / Math.max(3, Math.floor(lengthScale * 10) - 1));
+            return (
+              <line
+                key={i}
+                x1={ribX} y1={topY + 10}
+                x2={ribX} y2={groundY - 4}
+                stroke="currentColor"
+                strokeWidth="1"
+                strokeLinecap="round"
+                opacity="0.5"
+              />
+            );
+          })}
+          
+          {/* Horizontal panel seams */}
+          {heightScale > 0.4 && (
+            <g opacity="0.4">
+              <line 
+                x1={startX + 18} y1={topY + dumpsterHeight * 0.33} 
+                x2={startX + dumpsterWidth - 10} y2={topY + dumpsterHeight * 0.33}
+                stroke="currentColor" strokeWidth="1" strokeLinecap="round"
+              />
+              {heightScale > 0.6 && (
+                <line 
+                  x1={startX + 16} y1={topY + dumpsterHeight * 0.55} 
+                  x2={startX + dumpsterWidth - 8} y2={topY + dumpsterHeight * 0.55}
+                  stroke="currentColor" strokeWidth="1" strokeLinecap="round"
+                />
+              )}
+              {heightScale > 0.8 && (
+                <line 
+                  x1={startX + 14} y1={topY + dumpsterHeight * 0.75} 
+                  x2={startX + dumpsterWidth - 6} y2={topY + dumpsterHeight * 0.75}
+                  stroke="currentColor" strokeWidth="1" strokeLinecap="round"
+                />
+              )}
+            </g>
+          )}
+          
+          {/* Ladder hint near rear (only on larger sizes) */}
+          {heightScale >= 0.5 && (
+            <g opacity="0.6">
+              {Array.from({ length: Math.min(4, Math.ceil(heightScale * 4)) }).map((_, i) => (
+                <line
+                  key={i}
+                  x1={startX + dumpsterWidth + 2}
+                  y1={topY + 12 + i * (dumpsterHeight * 0.22)}
+                  x2={startX + dumpsterWidth + 8}
+                  y2={topY + 12 + i * (dumpsterHeight * 0.22)}
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                />
+              ))}
+            </g>
+          )}
         </g>
         
         {/* Measurement Arrows */}
-        <g className="text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+        <g className="text-muted-foreground opacity-50 group-hover:opacity-90 transition-opacity duration-300">
           {/* Length arrow (bottom) */}
           <line
-            x1={containerX}
-            y1={groundY + 18}
-            x2={containerX + containerWidth}
-            y2={groundY + 18}
-            stroke="currentColor"
-            strokeWidth="1"
+            x1={startX + 8} y1={groundY + 20}
+            x2={startX + dumpsterWidth} y2={groundY + 20}
+            stroke="currentColor" strokeWidth="1"
           />
-          {/* Arrow heads */}
           <polygon 
-            points={`${containerX},${groundY + 18} ${containerX + 5},${groundY + 15} ${containerX + 5},${groundY + 21}`}
+            points={`${startX + 8},${groundY + 20} ${startX + 14},${groundY + 17} ${startX + 14},${groundY + 23}`}
             fill="currentColor"
           />
           <polygon 
-            points={`${containerX + containerWidth},${groundY + 18} ${containerX + containerWidth - 5},${groundY + 15} ${containerX + containerWidth - 5},${groundY + 21}`}
+            points={`${startX + dumpsterWidth},${groundY + 20} ${startX + dumpsterWidth - 6},${groundY + 17} ${startX + dumpsterWidth - 6},${groundY + 23}`}
             fill="currentColor"
           />
           <text
-            x={containerX + containerWidth / 2}
-            y={groundY + 30}
+            x={startX + dumpsterWidth / 2}
+            y={groundY + 32}
             textAnchor="middle"
-            className="fill-current text-[10px] font-medium"
+            className="fill-current text-[9px] font-medium"
           >
             {spec.length}
           </text>
           
           {/* Height arrow (right side) */}
           <line
-            x1={containerX + containerWidth + 15}
-            y1={containerY}
-            x2={containerX + containerWidth + 15}
-            y2={groundY}
-            stroke="currentColor"
-            strokeWidth="1"
+            x1={startX + dumpsterWidth + 18} y1={topY}
+            x2={startX + dumpsterWidth + 18} y2={groundY}
+            stroke="currentColor" strokeWidth="1"
           />
-          {/* Arrow heads */}
           <polygon 
-            points={`${containerX + containerWidth + 15},${containerY} ${containerX + containerWidth + 12},${containerY + 5} ${containerX + containerWidth + 18},${containerY + 5}`}
+            points={`${startX + dumpsterWidth + 18},${topY} ${startX + dumpsterWidth + 15},${topY + 6} ${startX + dumpsterWidth + 21},${topY + 6}`}
             fill="currentColor"
           />
           <polygon 
-            points={`${containerX + containerWidth + 15},${groundY} ${containerX + containerWidth + 12},${groundY - 5} ${containerX + containerWidth + 18},${groundY - 5}`}
+            points={`${startX + dumpsterWidth + 18},${groundY} ${startX + dumpsterWidth + 15},${groundY - 6} ${startX + dumpsterWidth + 21},${groundY - 6}`}
             fill="currentColor"
           />
           <text
-            x={containerX + containerWidth + 25}
-            y={(containerY + groundY) / 2 + 3}
+            x={startX + dumpsterWidth + 30}
+            y={(topY + groundY) / 2 + 3}
             textAnchor="start"
-            className="fill-current text-[10px] font-medium"
+            className="fill-current text-[9px] font-medium"
           >
             {spec.height}
           </text>
