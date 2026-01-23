@@ -86,26 +86,50 @@ export function PhotoDumpsterCard({
           alt={imageAlt}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+          className={cn(
+            'w-full h-full object-contain transition-transform duration-500 group-hover:scale-105',
+            // In icon mode the asset has lots of whitespace + a very light subject;
+            // give it breathing room and a subtle shadow so it reads on the muted bg.
+            imageMode === 'icon' && 'p-4 drop-shadow-sm'
+          )}
         />
-        
-        {/* Size Badge */}
-        <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/95 backdrop-blur-sm rounded-lg shadow-sm">
-          <span className="text-2xl font-black text-foreground">{size}</span>
-          <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
-        </div>
 
-        {/* Dimension Overlay */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-2 bg-background/90 backdrop-blur-sm rounded-lg text-xs">
-          <div className="flex items-center gap-3">
-            <span className="text-muted-foreground">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
-            <span className="text-muted-foreground">H: <span className="font-semibold text-foreground">{specs.height}</span></span>
-          </div>
-        </div>
+        {/* Overlays only for photo mode so the icon stays unobstructed */}
+        {imageMode === 'photo' && (
+          <>
+            {/* Size Badge */}
+            <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/95 backdrop-blur-sm rounded-lg shadow-sm">
+              <span className="text-2xl font-black text-foreground">{size}</span>
+              <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
+            </div>
+
+            {/* Dimension Overlay */}
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-2 bg-background/90 backdrop-blur-sm rounded-lg text-xs">
+              <div className="flex items-center gap-3">
+                <span className="text-muted-foreground">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
+                <span className="text-muted-foreground">H: <span className="font-semibold text-foreground">{specs.height}</span></span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Content Section */}
       <div className="p-4 space-y-3">
+        {/* In icon mode, move key labels below so the visual stays clean */}
+        {imageMode === 'icon' && (
+          <div className="flex items-end justify-between">
+            <div className="leading-none">
+              <span className="text-2xl font-black text-foreground">{size}</span>
+              <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              <span className="mr-3">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
+              <span>H: <span className="font-semibold text-foreground">{specs.height}</span></span>
+            </div>
+          </div>
+        )}
+
         {/* Specs Pills */}
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-md text-xs font-medium text-primary">
