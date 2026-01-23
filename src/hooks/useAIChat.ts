@@ -32,11 +32,19 @@ export interface CapturedLead {
   name?: string;
   phone?: string;
   email?: string;
+  isExistingCustomer?: boolean;
 }
 
 export interface UseAIChatOptions {
   initialContext?: ChatContext;
 }
+
+// AI event types for logging
+export type AIEventType = 
+  | 'AI_started_conversation'
+  | 'AI_qualified_lead'
+  | 'AI_routed_to_sales'
+  | 'AI_routed_to_cs';
 
 export function useAIChat(options?: UseAIChatOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -242,7 +250,16 @@ export function useAIChat(options?: UseAIChatOptions) {
     }
   }, [messages, context, capturedLead, isLeadCaptured, isLoading]);
 
-  // Capture lead info and send to HighLevel
+  // Log AI event (console + will be captured by edge function)
+  const logAIEvent = useCallback((eventType: AIEventType, metadata?: Record<string, unknown>) => {
+    console.log(`[AI Chat Event] ${eventType}`, {
+      ...metadata,
+      context,
+      timestamp: new Date().toISOString(),
+    });
+  }, [context]);
+
+  // Capture lead info and route to appropriate team
   const captureLead = useCallback(async (lead: CapturedLead) => {
     setCapturedLead(lead);
     setIsLeadCaptured(true);
@@ -254,6 +271,16 @@ export function useAIChat(options?: UseAIChatOptions) {
       .join('\n\n');
 
     try {
+      // Determine routing based on existing customer status
+      const routingTarget = lead.isExistingCustomer ? 'cs' : 'sales';
+      
+      // Log routing event
+      await logAIEvent(
+        lead.isExistingCustomer ? 'AI_routed_to_cs' : 'AI_routed_to_sales',
+        { lead_phone: lead.phone, is_existing: lead.isExistingCustomer }
+      );
+
+      // Send to HighLevel CRM with routing info
       await supabase.functions.invoke('ai-chat-lead', {
         body: {
           name: lead.name,
@@ -270,12 +297,22 @@ export function useAIChat(options?: UseAIChatOptions) {
           project_type: context.projectType,
           conversation_transcript: transcript,
           needs_human_followup: false,
+          is_existing_customer: lead.isExistingCustomer,
+          routing_target: routingTarget,
         },
       });
+
+      // Log qualification event
+      await logAIEvent('AI_qualified_lead', {
+        lead_phone: lead.phone,
+        material: context.material,
+        zip: context.zip,
+      });
+
     } catch (error) {
       console.error('Failed to capture lead:', error);
     }
-  }, [messages, context]);
+  }, [messages, context, logAIEvent]);
 
   // Request human callback
   const requestCallback = useCallback(async (phone: string, bestTime?: string) => {
@@ -330,17 +367,20 @@ export function useAIChat(options?: UseAIChatOptions) {
     setIsLeadCaptured(false);
   }, [options?.initialContext]);
 
-  // Initialize with context-aware welcome message
+  // Initialize with qualification-focused welcome message
   const initializeChat = useCallback(() => {
     if (messages.length === 0) {
-      // Build context-aware welcome message
-      let welcomeMessage = "Hey there! 👋 I'm here to help you get the right dumpster, fast.";
+      // Log conversation start
+      logAIEvent('AI_started_conversation', { context });
+
+      // Use the new qualification-focused greeting
+      let welcomeMessage = `Hi 👋 I'm the assistant for Calsan Dumpsters Pro.\nI can help you get the right dumpster size and pricing.\nA human specialist can jump in anytime.`;
       
+      // If we have context, acknowledge it
       if (context.zip && context.nearestYard) {
-        welcomeMessage = `Hey there! 👋 I see you're in ZIP ${context.zip}${context.county ? ` (${context.county})` : ''}. Your nearest yard is ${context.nearestYard}${context.distanceMiles ? `, about ${context.distanceMiles.toFixed(1)} miles away` : ''}.`;
-        welcomeMessage += "\n\nAre you dumping **Heavy materials** (concrete, dirt, soil) or **General debris** (mixed junk, remodel waste)?";
+        welcomeMessage += `\n\nI see you're in ZIP ${context.zip}${context.county ? ` (${context.county})` : ''}. Is that correct?`;
       } else {
-        welcomeMessage += " What can I help you with today?";
+        welcomeMessage += `\n\nIs this your first time renting with us?`;
       }
 
       setMessages([{
@@ -349,11 +389,11 @@ export function useAIChat(options?: UseAIChatOptions) {
         content: welcomeMessage,
         timestamp: new Date(),
         quickReplies: context.zip 
-          ? ['Heavy materials (concrete/dirt)', 'General debris (mixed)', 'Help me choose']
-          : ['Get an instant quote', 'Help me choose a size', 'Heavy materials (concrete/dirt)', 'Contractor questions', 'Talk to a human'],
+          ? ['Yes, that\'s correct', 'No, different location']
+          : ['Yes, first time', 'No, I\'ve rented before'],
       }]);
     }
-  }, [messages.length, context]);
+  }, [messages.length, context, logAIEvent]);
 
   return {
     messages,
