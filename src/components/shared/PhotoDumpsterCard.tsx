@@ -10,7 +10,7 @@ import dumpster30yard from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
 import dumpster40yard from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
 
 // Icon used in homepage lazy section (replaces photos in that section only)
-import dumpsterIcon from '@/assets/icons/dumpster-icon.png';
+import dumpsterIcon from '@/assets/icons/dumpster-icon-rect.jpeg';
 
 // Image map for dynamic loading
 const DUMPSTER_PHOTOS: Record<number, string> = {
