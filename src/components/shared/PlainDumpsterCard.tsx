@@ -28,23 +28,6 @@ export const DUMPSTER_SPECS = {
 
 export type DumpsterSizeYd = keyof typeof DUMPSTER_SPECS;
 
-/**
- * CSS SCALE MAPPING (based on relative dimensions)
- * Reference: 40yd = 24L × 7.5W × 6H (scale 1.0)
- * 
- * Scale-X based on Length: 12/24=0.50, 18/24=0.75, 24/24=1.0
- * Scale-Y based on Height: 2.25/6=0.375, 3/6=0.50, 4/6=0.667, 6/6=1.0, 7.5/6=1.25
- */
-const SCALE_MAP: Record<DumpsterSizeYd, string> = {
-  6:  'scale-x-[0.50] scale-y-[0.38]', // 12L/24, 2.25H/6
-  8:  'scale-x-[0.50] scale-y-[0.50]', // 12L/24, 3H/6
-  10: 'scale-x-[0.50] scale-y-[0.50]', // 12L/24, 3H/6 (wider but same L)
-  20: 'scale-x-[0.75] scale-y-[0.67]', // 18L/24, 4H/6
-  30: 'scale-x-[0.75] scale-y-[1.00]', // 18L/24, 6H/6
-  40: 'scale-x-[1.00] scale-y-[1.00]', // 24L/24, 6H/6 (reference)
-  50: 'scale-x-[1.00] scale-y-[1.25]', // 24L/24, 7.5H/6
-};
-
 export interface PlainDumpsterCardProps {
   sizeYd: DumpsterSizeYd;
   description?: string;
@@ -93,15 +76,10 @@ export function PlainDumpsterCard({
       )}
 
       {/* SVG Visual Section */}
-      <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/20 to-muted/60 p-4 overflow-hidden">
-        {/* Silhouette with scale */}
-        <div 
-          className={cn(
-            'w-full h-full flex items-center justify-center transition-transform duration-300 origin-center group-hover:scale-105',
-            SCALE_MAP[sizeYd]
-          )}
-        >
-          <DumpsterSilhouettePlain />
+      <div className="relative aspect-[4/3] bg-gradient-to-b from-muted/20 to-muted/60 p-4 overflow-hidden flex items-center justify-center">
+        {/* Silhouette with unique proportions per size */}
+        <div className="w-full h-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+          <DumpsterSilhouettePlain size={sizeYd} />
         </div>
 
         {/* Size Badge - Top Left */}
