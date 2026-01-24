@@ -2,11 +2,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { createAuditLog } from './auditLog';
 import type { Json } from '@/integrations/supabase/types';
 
-// Type assertion helper for new tables
-const db = supabase as unknown as {
-  from: (table: string) => ReturnType<typeof supabase.from>;
-  auth: typeof supabase.auth;
-};
+// Table name aliases for type bypass
+const TRUSTED_CUSTOMERS_TABLE = 'trusted_customers' as 'orders';
+const RISK_SCORE_EVENTS_TABLE = 'risk_score_events' as 'orders';
+const FRAUD_FLAGS_TABLE = 'fraud_flags' as 'orders';
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 
@@ -61,7 +60,10 @@ export async function isWhitelisted(
   customerId?: string
 ): Promise<{ whitelisted: boolean; reason?: string }> {
   try {
-    let query = db.from('trusted_customers').select('*').eq('status', 'active');
+    let queryBuilder = supabase
+      .from(TRUSTED_CUSTOMERS_TABLE)
+      .select('*')
+      .eq('status' as 'id', 'active');
     
     const conditions: string[] = [];
     if (phone) conditions.push(`phone.eq.${phone}`);
@@ -71,10 +73,10 @@ export async function isWhitelisted(
       return { whitelisted: false };
     }
 
-    const { data } = await query.or(conditions.join(','));
+    const { data } = await queryBuilder.or(conditions.join(','));
     
     if (data && data.length > 0) {
-      const trusted = data[0] as TrustedCustomer;
+      const trusted = data[0] as unknown as TrustedCustomer;
       return { whitelisted: true, reason: trusted.reason };
     }
     
@@ -96,25 +98,29 @@ export async function addToWhitelist(params: {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
-    const { data, error } = await db.from('trusted_customers').insert([{
-      phone: params.phone || null,
-      customer_id: params.customerId || null,
-      reason: params.reason,
-      added_by: user?.id || null,
-      status: 'active',
-    }]).select('id').single();
+    const { data, error } = await supabase
+      .from(TRUSTED_CUSTOMERS_TABLE)
+      .insert([{
+        phone: params.phone || null,
+        customer_id: params.customerId || null,
+        reason: params.reason,
+        added_by: user?.id || null,
+        status: 'active',
+      }] as never)
+      .select('id')
+      .single();
 
     if (error) throw error;
 
     await createAuditLog({
       action: 'create',
       entityType: 'approval_request',
-      entityId: (data as { id: string }).id,
+      entityId: (data as unknown as { id: string }).id,
       afterData: { phone: params.phone, customer_id: params.customerId, reason: params.reason, type: 'trusted_customer' } as Json,
       changesSummary: `Added to whitelist: ${params.phone || params.customerId}`,
     });
 
-    return { success: true, id: (data as { id: string }).id };
+    return { success: true, id: (data as unknown as { id: string }).id };
   } catch (err) {
     console.error('Failed to add to whitelist:', err);
     return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
@@ -128,10 +134,10 @@ export async function removeFromWhitelist(
   trustedId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const { error } = await db
-      .from('trusted_customers')
-      .update({ status: 'inactive' })
-      .eq('id', trustedId);
+    const { error } = await supabase
+      .from(TRUSTED_CUSTOMERS_TABLE)
+      .update({ status: 'inactive' } as never)
+      .eq('id' as 'id', trustedId);
 
     if (error) throw error;
 
@@ -311,7 +317,7 @@ export async function calculateRiskScore(params: {
 
     // Log score event
     if (events.length > 0) {
-      await db.from('risk_score_events').insert(
+      await supabase.from(RISK_SCORE_EVENTS_TABLE).insert(
         events.map(e => ({
           phone: params.phone,
           customer_id: params.customerId || null,
@@ -320,7 +326,7 @@ export async function calculateRiskScore(params: {
           score_delta: e.score_delta,
           rule_name: e.rule_name,
           total_score: totalScore,
-        }))
+        })) as never
       );
     }
 
@@ -379,9 +385,9 @@ export async function updateFlagWithRiskScore(
   flagId: string,
   riskResult: RiskScoreResult
 ): Promise<void> {
-  await db.from('fraud_flags').update({
+  await supabase.from(FRAUD_FLAGS_TABLE).update({
     risk_score: riskResult.totalScore,
     risk_level: riskResult.riskLevel,
     is_whitelisted: riskResult.isWhitelisted,
-  }).eq('id', flagId);
+  } as never).eq('id' as 'id', flagId);
 }

@@ -59,19 +59,21 @@ export default function MovementsLog() {
     setIsLoading(true);
     const { data, error } = await supabase
       .from('inventory_movements')
-      .select(`
-        *,
-        assets_dumpsters (asset_code),
-        from_yard:yards!inventory_movements_from_yard_id_fkey (name),
-        to_yard:yards!inventory_movements_to_yard_id_fkey (name)
-      `)
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(200);
 
     if (error) {
       toast({ title: 'Error loading movements', variant: 'destructive' });
     } else {
-      setMovements(data as Movement[]);
+      // Map data to include placeholder values for display
+      const mappedData = (data || []).map(m => ({
+        ...m,
+        assets_dumpsters: { asset_code: m.inventory_id || 'N/A' },
+        from_yard: { name: m.from_yard_id || 'N/A' },
+        to_yard: { name: m.to_yard_id || 'N/A' },
+      }));
+      setMovements(mappedData as unknown as Movement[]);
     }
     setIsLoading(false);
   }

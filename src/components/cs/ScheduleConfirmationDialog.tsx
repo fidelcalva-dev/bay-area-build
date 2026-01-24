@@ -98,15 +98,16 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
 
     const blockers: string[] = [];
 
-    // Use type assertion to work around generated types not including contracts table yet
-    const contractsTable = (supabase as unknown as { from: (table: string) => ReturnType<typeof supabase.from> }).from('contracts');
+    // Use table name alias to bypass type constraints
+    const CONTRACTS_TABLE = 'contracts' as 'orders';
 
     // Check for signed MSA
-    const { data: signedMsa } = await contractsTable
+    const { data: signedMsa } = await supabase
+      .from(CONTRACTS_TABLE)
       .select('id')
-      .eq('customer_id', order.customer_id)
-      .eq('contract_type', 'msa')
-      .eq('status', 'signed')
+      .eq('customer_id' as 'id', order.customer_id)
+      .eq('contract_type' as 'id', 'msa')
+      .eq('status' as 'id', 'signed')
       .limit(1)
       .single();
 
@@ -114,16 +115,17 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
       blockers.push('Master Service Agreement signature required');
       
       // Get pending MSA for send button
-      const { data: pendingMsa } = await contractsTable
+      const { data: pendingMsa } = await supabase
+        .from(CONTRACTS_TABLE)
         .select('id')
-        .eq('customer_id', order.customer_id)
-        .eq('contract_type', 'msa')
-        .eq('status', 'pending')
+        .eq('customer_id' as 'id', order.customer_id)
+        .eq('contract_type' as 'id', 'msa')
+        .eq('status' as 'id', 'pending')
         .limit(1)
         .single();
       
       if (pendingMsa) {
-        setPendingContractId((pendingMsa as { id: string }).id);
+        setPendingContractId((pendingMsa as unknown as { id: string }).id);
       }
     }
 
@@ -132,12 +134,13 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
     if (serviceAddress) {
       const normalizedAddress = serviceAddress.toLowerCase().trim().replace(/\s+/g, ' ');
       
-      const { data: signedAddendum } = await contractsTable
+      const { data: signedAddendum } = await supabase
+        .from(CONTRACTS_TABLE)
         .select('id')
-        .eq('customer_id', order.customer_id)
-        .eq('contract_type', 'addendum')
-        .eq('status', 'signed')
-        .eq('service_address_normalized', normalizedAddress)
+        .eq('customer_id' as 'id', order.customer_id)
+        .eq('contract_type' as 'id', 'addendum')
+        .eq('status' as 'id', 'signed')
+        .eq('service_address_normalized' as 'id', normalizedAddress)
         .limit(1)
         .single();
 
@@ -145,17 +148,18 @@ export function ScheduleConfirmationDialog({ order, open, onOpenChange, onConfir
         blockers.push('Service Addendum required for this address');
         
         // Get pending addendum
-        const { data: pendingAddendum } = await contractsTable
+        const { data: pendingAddendum } = await supabase
+          .from(CONTRACTS_TABLE)
           .select('id')
-          .eq('customer_id', order.customer_id)
-          .eq('contract_type', 'addendum')
-          .eq('status', 'pending')
-          .eq('service_address_normalized', normalizedAddress)
+          .eq('customer_id' as 'id', order.customer_id)
+          .eq('contract_type' as 'id', 'addendum')
+          .eq('status' as 'id', 'pending')
+          .eq('service_address_normalized' as 'id', normalizedAddress)
           .limit(1)
           .single();
         
         if (pendingAddendum) {
-          setPendingContractId((pendingAddendum as { id: string }).id);
+          setPendingContractId((pendingAddendum as unknown as { id: string }).id);
         }
       }
     }

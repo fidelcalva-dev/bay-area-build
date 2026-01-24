@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// Type helper for new tables
-const db = supabase as unknown as { from: (t: string) => ReturnType<typeof supabase.from> };
-
 export interface TrustedCustomer {
   id: string;
   customer_id: string | null;
@@ -24,14 +21,14 @@ export function useTrustedCustomers() {
     setError(null);
 
     try {
-      const { data, error: queryError } = await db
-        .from('trusted_customers')
+      const { data, error: queryError } = await supabase
+        .from('trusted_customers' as 'orders')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (queryError) throw queryError;
 
-      setCustomers((data || []) as TrustedCustomer[]);
+      setCustomers((data as unknown as TrustedCustomer[]) || []);
     } catch (err) {
       console.error('Failed to fetch trusted customers:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch');
@@ -71,19 +68,19 @@ export function useRiskScoreEvents(phone?: string, customerId?: string) {
         return;
       }
 
-      let query = db
-        .from('risk_score_events')
+      let queryBuilder = supabase
+        .from('risk_score_events' as 'orders')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (phone) {
-        query = query.eq('phone', phone);
+        queryBuilder = queryBuilder.eq('phone' as 'id', phone);
       } else if (customerId) {
-        query = query.eq('customer_id', customerId);
+        queryBuilder = queryBuilder.eq('customer_id' as 'id', customerId);
       }
 
-      const { data } = await query;
+      const { data } = await queryBuilder;
       setEvents(data || []);
       setLoading(false);
     };
