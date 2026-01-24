@@ -285,6 +285,45 @@ export type Database = {
         }
         Relationships: []
       }
+      city_facility_rules: {
+        Row: {
+          city: string
+          created_at: string
+          default_facility_type_for_mixed: string
+          facility_selection_policy: string
+          id: string
+          manual_review_distance_miles: number | null
+          market: string | null
+          notes: string | null
+          requires_green_halo_for_projects: boolean
+          updated_at: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          default_facility_type_for_mixed?: string
+          facility_selection_policy?: string
+          id?: string
+          manual_review_distance_miles?: number | null
+          market?: string | null
+          notes?: string | null
+          requires_green_halo_for_projects?: boolean
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          default_facility_type_for_mixed?: string
+          facility_selection_policy?: string
+          id?: string
+          manual_review_distance_miles?: number | null
+          market?: string | null
+          notes?: string | null
+          requires_green_halo_for_projects?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       city_rates: {
         Row: {
           city_name: string
@@ -948,6 +987,69 @@ export type Database = {
           label?: string
           size_value?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      facilities: {
+        Row: {
+          accepted_material_classes: string[]
+          address: string
+          approved_by_city: string[]
+          city: string
+          created_at: string
+          facility_type: string
+          green_halo_certified: boolean
+          hours: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          state: string
+          status: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          accepted_material_classes?: string[]
+          address: string
+          approved_by_city?: string[]
+          city: string
+          created_at?: string
+          facility_type: string
+          green_halo_certified?: boolean
+          hours?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          state?: string
+          status?: string
+          updated_at?: string
+          zip: string
+        }
+        Update: {
+          accepted_material_classes?: string[]
+          address?: string
+          approved_by_city?: string[]
+          city?: string
+          created_at?: string
+          facility_type?: string
+          green_halo_certified?: boolean
+          hours?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          state?: string
+          status?: string
+          updated_at?: string
+          zip?: string
         }
         Relationships: []
       }
@@ -1694,6 +1796,72 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: true
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_disposal_plans: {
+        Row: {
+          created_at: string
+          green_halo_required: boolean
+          id: string
+          material_classification: string
+          notes: string | null
+          order_id: string
+          required_facility_type: string
+          route_miles_to_facility: number | null
+          route_minutes_to_facility: number | null
+          route_polyline: string | null
+          selected_facility_id: string | null
+          selection_method: string | null
+          suggested_facilities: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          green_halo_required?: boolean
+          id?: string
+          material_classification: string
+          notes?: string | null
+          order_id: string
+          required_facility_type: string
+          route_miles_to_facility?: number | null
+          route_minutes_to_facility?: number | null
+          route_polyline?: string | null
+          selected_facility_id?: string | null
+          selection_method?: string | null
+          suggested_facilities?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          green_halo_required?: boolean
+          id?: string
+          material_classification?: string
+          notes?: string | null
+          order_id?: string
+          required_facility_type?: string
+          route_miles_to_facility?: number | null
+          route_minutes_to_facility?: number | null
+          route_polyline?: string | null
+          selected_facility_id?: string | null
+          selection_method?: string | null
+          suggested_facilities?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_disposal_plans_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_disposal_plans_selected_facility_id_fkey"
+            columns: ["selected_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
             referencedColumns: ["id"]
           },
         ]
