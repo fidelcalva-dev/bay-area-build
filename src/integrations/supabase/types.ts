@@ -1729,7 +1729,7 @@ export type Database = {
           from_location_type: string | null
           from_yard_id: string | null
           id: string
-          inventory_id: string
+          inventory_id: string | null
           movement_type: string
           notes: string | null
           order_id: string | null
@@ -1746,7 +1746,7 @@ export type Database = {
           from_location_type?: string | null
           from_yard_id?: string | null
           id?: string
-          inventory_id: string
+          inventory_id?: string | null
           movement_type: string
           notes?: string | null
           order_id?: string | null
@@ -1763,7 +1763,7 @@ export type Database = {
           from_location_type?: string | null
           from_yard_id?: string | null
           id?: string
-          inventory_id?: string
+          inventory_id?: string | null
           movement_type?: string
           notes?: string | null
           order_id?: string | null
@@ -1774,10 +1774,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "inventory_movements_inventory_id_fkey"
-            columns: ["inventory_id"]
+            foreignKeyName: "inventory_movements_asset_id_fkey"
+            columns: ["asset_id"]
             isOneToOne: false
-            referencedRelation: "inventory"
+            referencedRelation: "assets_dumpsters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets"
             referencedColumns: ["id"]
           },
           {
