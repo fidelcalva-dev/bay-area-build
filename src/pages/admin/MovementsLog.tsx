@@ -57,7 +57,9 @@ export default function MovementsLog() {
 
   async function fetchMovements() {
     setIsLoading(true);
-    const { data, error } = await supabase
+    
+    // Fetch movements with asset and yard data
+    const { data: movementsData, error } = await supabase
       .from('inventory_movements')
       .select('*')
       .order('created_at', { ascending: false })
@@ -65,16 +67,28 @@ export default function MovementsLog() {
 
     if (error) {
       toast({ title: 'Error loading movements', variant: 'destructive' });
-    } else {
-      // Map data to include placeholder values for display
-      const mappedData = (data || []).map(m => ({
-        ...m,
-        assets_dumpsters: { asset_code: m.inventory_id || 'N/A' },
-        from_yard: { name: m.from_yard_id || 'N/A' },
-        to_yard: { name: m.to_yard_id || 'N/A' },
-      }));
-      setMovements(mappedData as unknown as Movement[]);
+      setIsLoading(false);
+      return;
     }
+
+    // Fetch assets and yards for lookup
+    const [assetsRes, yardsRes] = await Promise.all([
+      supabase.from('assets_dumpsters').select('id, asset_code'),
+      supabase.from('yards').select('id, name'),
+    ]);
+
+    const assetMap = new Map((assetsRes.data || []).map(a => [a.id, a.asset_code]));
+    const yardMap = new Map((yardsRes.data || []).map(y => [y.id, y.name]));
+
+    // Map data with resolved names
+    const mappedData = (movementsData || []).map(m => ({
+      ...m,
+      assets_dumpsters: { asset_code: assetMap.get(m.asset_id) || 'N/A' },
+      from_yard: { name: yardMap.get(m.from_yard_id) || '' },
+      to_yard: { name: yardMap.get(m.to_yard_id) || '' },
+    }));
+    
+    setMovements(mappedData as unknown as Movement[]);
     setIsLoading(false);
   }
 

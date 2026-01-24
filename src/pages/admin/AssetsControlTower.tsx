@@ -172,14 +172,15 @@ export default function AssetsControlTower() {
 
       // Log movement
       await supabase.from('inventory_movements').insert([{
-        inventory_id: asset.id,
+        asset_id: asset.id,
         movement_type: newStatus === 'maintenance' ? 'MAINTENANCE_IN' : 'MAINTENANCE_OUT',
         from_location_type: asset.current_location_type,
         from_yard_id: asset.current_yard_id,
         to_location_type: newStatus === 'maintenance' ? 'maintenance' : 'yard',
         to_yard_id: newStatus === 'available' ? asset.home_yard_id : null,
+        quantity: 1,
         notes: `Manual ${newStatus === 'maintenance' ? 'maintenance entry' : 'maintenance exit'}`,
-      }]);
+      }] as never);
 
       fetchData();
     }
@@ -205,14 +206,15 @@ export default function AssetsControlTower() {
 
       // Log transfer
       await supabase.from('inventory_movements').insert([{
-        inventory_id: selectedAsset.id,
+        asset_id: selectedAsset.id,
         movement_type: 'TRANSFER',
         from_location_type: selectedAsset.current_location_type,
         from_yard_id: selectedAsset.current_yard_id,
         to_location_type: 'yard',
         to_yard_id: targetYardId,
+        quantity: 1,
         notes: 'Manual yard transfer',
-      }]);
+      }] as never);
 
       setSetYardDialogOpen(false);
       setSelectedAsset(null);
