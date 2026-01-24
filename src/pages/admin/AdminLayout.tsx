@@ -38,7 +38,9 @@ const navSections = [
     items: [
       { path: '/admin/orders', label: 'Orders', icon: Package },
       { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
-      { path: '/admin/inventory', label: 'Inventory', icon: Boxes },
+      { path: '/admin/assets', label: 'Asset Control Tower', icon: Boxes },
+      { path: '/admin/inventory', label: 'Inventory (Legacy)', icon: Warehouse },
+      { path: '/admin/movements', label: 'Movement Log', icon: FileText },
       { path: '/admin/customers', label: 'Customers', icon: Users },
       { path: '/admin/drivers', label: 'Drivers', icon: Truck },
       { path: '/admin/quick-links', label: 'Quick Links', icon: Link2 },
