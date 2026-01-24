@@ -22,10 +22,12 @@ import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggeste
 // Types
 import type { QuoteFormData, ExtraSelection } from './types';
 
-// Material Sub-Classification
+// Material Sub-Classification (Canon-Accurate)
+import { DebrisDetailsSelector, type DebrisSelectionResult } from './DebrisDetailsSelector';
 import { HeavyMaterialSelector, type HeavyClassificationResult } from './HeavyMaterialSelector';
 import { GeneralMaterialSelector, type GeneralClassificationResult } from './GeneralMaterialSelector';
 import { calculateHeavyPrice, type HeavyMaterialClass } from '@/lib/heavyPricing';
+import { type MaterialSelectionData } from '@/lib/materialCategories';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
@@ -150,7 +152,9 @@ export function InstantQuoteCalculatorV3() {
   const [prePurchaseSuggested, setPrePurchaseSuggested] = useState(false);
   const [prePurchaseSkipped, setPrePurchaseSkipped] = useState(false);
   
-  // Material sub-classification state
+  // Material sub-classification state (Canon-Accurate)
+  const [debrisSelection, setDebrisSelection] = useState<DebrisSelectionResult | null>(null);
+  // Legacy state for backwards compatibility
   const [heavyClassification, setHeavyClassification] = useState<HeavyClassificationResult | null>(null);
   const [generalClassification, setGeneralClassification] = useState<GeneralClassificationResult | null>(null);
 
@@ -1300,42 +1304,50 @@ export function InstantQuoteCalculatorV3() {
               </div>
             </div>
 
-            {/* Heavy Material Sub-Classification (only when heavy is selected) */}
-            {formData.material === 'heavy' && (
-              <div className="p-4 rounded-xl bg-muted/30 border border-border">
-                <h5 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <HardHat className="w-4 h-4 text-primary" strokeWidth={2} />
-                  Heavy material details
-                </h5>
-                <HeavyMaterialSelector
-                  selectedSize={formData.size <= 10 ? (formData.size as 6 | 8 | 10) : 10}
-                  cityId="oakland"
-                  onClassificationChange={(result) => {
-                    setHeavyClassification(result);
-                    // If reclassified to mixed, switch material to general
-                    if (result.reclassifiedToMixed) {
-                      setFormData(prev => ({ ...prev, material: 'general' }));
-                    }
-                  }}
-                />
-              </div>
-            )}
 
-            {/* General Material Sub-Classification (only when general is selected) */}
-            {formData.material === 'general' && (
-              <div className="p-4 rounded-xl bg-muted/30 border border-border">
-                <h5 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+            {/* Canon-Accurate Debris Details Selector */}
+            <div className="p-4 rounded-xl bg-muted/30 border border-border">
+              <h5 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                {formData.material === 'heavy' ? (
+                  <HardHat className="w-4 h-4 text-primary" strokeWidth={2} />
+                ) : (
                   <Trash2 className="w-4 h-4 text-primary" strokeWidth={2} />
-                  Debris details
-                </h5>
-                <GeneralMaterialSelector
-                  selectedSize={formData.size}
-                  onClassificationChange={(result) => {
-                    setGeneralClassification(result);
-                  }}
-                />
-              </div>
-            )}
+                )}
+                {formData.material === 'heavy' ? 'Heavy material details' : 'Debris details'}
+              </h5>
+              <DebrisDetailsSelector
+                selectedSize={formData.size}
+                materialType={formData.material}
+                onSelectionChange={(result) => {
+                  setDebrisSelection(result);
+                  // Handle reclassification: if heavy material gets reclassified to mixed
+                  if (result.reclassified && formData.material === 'heavy' && !result.isHeavyMaterial) {
+                    setFormData(prev => ({ ...prev, material: 'general' }));
+                  }
+                  // Sync with legacy state for compatibility
+                  if (result.isHeavyMaterial && result.materialData) {
+                    setHeavyClassification({
+                      materialClass: result.materialData.heavyIncrement === 0 ? 'base' : 
+                                     result.materialData.heavyIncrement === 200 ? 'plus_200' : 'mixed_heavy',
+                      isCleanSingleType: result.materialData.isCleanSingleType ?? true,
+                      hasTrash: result.materialData.hasTrash ?? false,
+                      reclassifiedToMixed: result.reclassified,
+                      price: null,
+                      increment: result.materialData.heavyIncrement ?? 0,
+                    });
+                  } else {
+                    setGeneralClassification({
+                      category: result.categoryId,
+                      densityHint: null,
+                      hasWeightWarning: false,
+                      isRecyclable: result.greenHaloEligible,
+                      isGreenHalo: result.greenHaloEligible,
+                      isComplete: result.isComplete,
+                    });
+                  }
+                }}
+              />
+            </div>
 
             {/* Estimator Button */}
             <button
