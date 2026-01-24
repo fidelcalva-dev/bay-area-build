@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.twilio-sms-webhook]
 verify_jwt = false
+
+[functions.analyze-waste]
+verify_jwt = false

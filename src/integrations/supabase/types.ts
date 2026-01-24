@@ -2999,6 +2999,13 @@ export type Database = {
       }
       quotes: {
         Row: {
+          ai_analysis_id: string | null
+          ai_confidence: string | null
+          ai_hazards_json: Json | null
+          ai_materials_json: Json | null
+          ai_recommended_size: number | null
+          ai_volume_range: Json | null
+          ai_weight_range: Json | null
           city_rate_id: string | null
           company_name: string | null
           completed_at: string | null
@@ -3091,6 +3098,13 @@ export type Database = {
           zone_id: string | null
         }
         Insert: {
+          ai_analysis_id?: string | null
+          ai_confidence?: string | null
+          ai_hazards_json?: Json | null
+          ai_materials_json?: Json | null
+          ai_recommended_size?: number | null
+          ai_volume_range?: Json | null
+          ai_weight_range?: Json | null
           city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
@@ -3183,6 +3197,13 @@ export type Database = {
           zone_id?: string | null
         }
         Update: {
+          ai_analysis_id?: string | null
+          ai_confidence?: string | null
+          ai_hazards_json?: Json | null
+          ai_materials_json?: Json | null
+          ai_recommended_size?: number | null
+          ai_volume_range?: Json | null
+          ai_weight_range?: Json | null
           city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
@@ -3275,6 +3296,13 @@ export type Database = {
           zone_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "quotes_ai_analysis_id_fkey"
+            columns: ["ai_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "waste_vision_analyses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quotes_customer_id_fkey"
             columns: ["customer_id"]
@@ -4380,6 +4408,123 @@ export type Database = {
           volume_tier?: Database["public"]["Enums"]["volume_tier"]
         }
         Relationships: []
+      }
+      waste_vision_analyses: {
+        Row: {
+          alternate_sizes: number[] | null
+          applied_at: string | null
+          applied_to_quote: boolean | null
+          created_at: string
+          fit_confidence: string | null
+          green_halo_eligible: boolean | null
+          green_halo_note: string | null
+          hazard_review_notes: string | null
+          hazard_review_required: boolean | null
+          hazard_review_status: string | null
+          hazard_reviewer_id: string | null
+          hazards_detected: Json
+          id: string
+          image_count: number
+          input_type: string
+          materials_detected: Json
+          order_id: string | null
+          overall_confidence: string | null
+          pickup_loads_high: number | null
+          pickup_loads_low: number | null
+          quote_id: string | null
+          raw_ai_response: Json | null
+          recommendation_notes: string[] | null
+          recommended_size: number | null
+          recommended_waste_type: string | null
+          reference_object: string | null
+          session_id: string | null
+          volume_cy_high: number | null
+          volume_cy_low: number | null
+          weight_tons_high: number | null
+          weight_tons_low: number | null
+        }
+        Insert: {
+          alternate_sizes?: number[] | null
+          applied_at?: string | null
+          applied_to_quote?: boolean | null
+          created_at?: string
+          fit_confidence?: string | null
+          green_halo_eligible?: boolean | null
+          green_halo_note?: string | null
+          hazard_review_notes?: string | null
+          hazard_review_required?: boolean | null
+          hazard_review_status?: string | null
+          hazard_reviewer_id?: string | null
+          hazards_detected?: Json
+          id?: string
+          image_count?: number
+          input_type?: string
+          materials_detected?: Json
+          order_id?: string | null
+          overall_confidence?: string | null
+          pickup_loads_high?: number | null
+          pickup_loads_low?: number | null
+          quote_id?: string | null
+          raw_ai_response?: Json | null
+          recommendation_notes?: string[] | null
+          recommended_size?: number | null
+          recommended_waste_type?: string | null
+          reference_object?: string | null
+          session_id?: string | null
+          volume_cy_high?: number | null
+          volume_cy_low?: number | null
+          weight_tons_high?: number | null
+          weight_tons_low?: number | null
+        }
+        Update: {
+          alternate_sizes?: number[] | null
+          applied_at?: string | null
+          applied_to_quote?: boolean | null
+          created_at?: string
+          fit_confidence?: string | null
+          green_halo_eligible?: boolean | null
+          green_halo_note?: string | null
+          hazard_review_notes?: string | null
+          hazard_review_required?: boolean | null
+          hazard_review_status?: string | null
+          hazard_reviewer_id?: string | null
+          hazards_detected?: Json
+          id?: string
+          image_count?: number
+          input_type?: string
+          materials_detected?: Json
+          order_id?: string | null
+          overall_confidence?: string | null
+          pickup_loads_high?: number | null
+          pickup_loads_low?: number | null
+          quote_id?: string | null
+          raw_ai_response?: Json | null
+          recommendation_notes?: string[] | null
+          recommended_size?: number | null
+          recommended_waste_type?: string | null
+          reference_object?: string | null
+          session_id?: string | null
+          volume_cy_high?: number | null
+          volume_cy_low?: number | null
+          weight_tons_high?: number | null
+          weight_tons_low?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waste_vision_analyses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waste_vision_analyses_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       yards: {
         Row: {
