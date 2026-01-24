@@ -294,6 +294,7 @@ export type Database = {
           is_active: boolean | null
           last_checked_at: string | null
           last_success_at: string | null
+          market_id: string | null
           notes: string | null
           parse_status: string | null
           source_name: string
@@ -309,6 +310,7 @@ export type Database = {
           is_active?: boolean | null
           last_checked_at?: string | null
           last_success_at?: string | null
+          market_id?: string | null
           notes?: string | null
           parse_status?: string | null
           source_name: string
@@ -324,6 +326,7 @@ export type Database = {
           is_active?: boolean | null
           last_checked_at?: string | null
           last_success_at?: string | null
+          market_id?: string | null
           notes?: string | null
           parse_status?: string | null
           source_name?: string
@@ -331,7 +334,15 @@ export type Database = {
           source_url?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "certified_sources_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       city_facility_rules: {
         Row: {
@@ -381,6 +392,7 @@ export type Database = {
           heavy_base_10yd: number
           id: string
           is_active: boolean
+          market_id: string | null
           prepay_discount_pct: number
           updated_at: string
           zone_id: string | null
@@ -393,6 +405,7 @@ export type Database = {
           heavy_base_10yd?: number
           id?: string
           is_active?: boolean
+          market_id?: string | null
           prepay_discount_pct?: number
           updated_at?: string
           zone_id?: string | null
@@ -405,11 +418,19 @@ export type Database = {
           heavy_base_10yd?: number
           id?: string
           is_active?: boolean
+          market_id?: string | null
           prepay_discount_pct?: number
           updated_at?: string
           zone_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "city_rates_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "city_rates_zone_id_fkey"
             columns: ["zone_id"]
@@ -819,6 +840,7 @@ export type Database = {
           display_order: number
           id: string
           is_active: boolean
+          market_id: string | null
           max_miles: number | null
           min_miles: number
           price_adjustment: number
@@ -830,6 +852,7 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          market_id?: string | null
           max_miles?: number | null
           min_miles?: number
           price_adjustment?: number
@@ -841,12 +864,21 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          market_id?: string | null
           max_miles?: number | null
           min_miles?: number
           price_adjustment?: number
           requires_review?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "distance_brackets_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       distance_caps: {
         Row: {
@@ -855,6 +887,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          market_id: string | null
           max_miles: number | null
           message: string | null
           min_miles: number
@@ -866,6 +899,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          market_id?: string | null
           max_miles?: number | null
           message?: string | null
           min_miles?: number
@@ -877,12 +911,21 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          market_id?: string | null
           max_miles?: number | null
           message?: string | null
           min_miles?: number
           surcharge_amount?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "distance_caps_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documents: {
         Row: {
@@ -1164,6 +1207,7 @@ export type Database = {
           lat: number | null
           lng: number | null
           market: string | null
+          market_id: string | null
           name: string
           notes: string | null
           phone: string | null
@@ -1191,6 +1235,7 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           market?: string | null
+          market_id?: string | null
           name: string
           notes?: string | null
           phone?: string | null
@@ -1218,6 +1263,7 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           market?: string | null
+          market_id?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
@@ -1229,6 +1275,13 @@ export type Database = {
           zip?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "facilities_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "facilities_source_id_fkey"
             columns: ["source_id"]
@@ -1245,6 +1298,7 @@ export type Database = {
           compliance_required: boolean | null
           created_at: string
           id: string
+          market_id: string | null
           order_id: string
           project_type: string
           recommended_facilities: Json
@@ -1259,6 +1313,7 @@ export type Database = {
           compliance_required?: boolean | null
           created_at?: string
           id?: string
+          market_id?: string | null
           order_id: string
           project_type?: string
           recommended_facilities?: Json
@@ -1273,6 +1328,7 @@ export type Database = {
           compliance_required?: boolean | null
           created_at?: string
           id?: string
+          market_id?: string | null
           order_id?: string
           project_type?: string
           recommended_facilities?: Json
@@ -1282,6 +1338,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "facility_recommendations_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "facility_recommendations_order_id_fkey"
             columns: ["order_id"]
@@ -1893,6 +1956,112 @@ export type Database = {
         }
         Relationships: []
       }
+      market_rates: {
+        Row: {
+          created_at: string
+          extra_ton_rate_prepay: number | null
+          extra_ton_rate_standard: number
+          heavy_base_10yd: number
+          id: string
+          is_active: boolean
+          market_id: string
+          mixed_small_overage_rate: number | null
+          notes: string | null
+          prepay_discount_pct: number
+          rental_day_10_factor: number | null
+          rental_day_14_factor: number | null
+          rental_day_3_factor: number | null
+          rental_day_30_factor: number | null
+          rental_day_7_factor: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          extra_ton_rate_prepay?: number | null
+          extra_ton_rate_standard?: number
+          heavy_base_10yd?: number
+          id?: string
+          is_active?: boolean
+          market_id: string
+          mixed_small_overage_rate?: number | null
+          notes?: string | null
+          prepay_discount_pct?: number
+          rental_day_10_factor?: number | null
+          rental_day_14_factor?: number | null
+          rental_day_3_factor?: number | null
+          rental_day_30_factor?: number | null
+          rental_day_7_factor?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          extra_ton_rate_prepay?: number | null
+          extra_ton_rate_standard?: number
+          heavy_base_10yd?: number
+          id?: string
+          is_active?: boolean
+          market_id?: string
+          mixed_small_overage_rate?: number | null
+          notes?: string | null
+          prepay_discount_pct?: number
+          rental_day_10_factor?: number | null
+          rental_day_14_factor?: number | null
+          rental_day_3_factor?: number | null
+          rental_day_30_factor?: number | null
+          rental_day_7_factor?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_rates_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: true
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      markets: {
+        Row: {
+          created_at: string
+          default_yard_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_yard_id?: string | null
+          id: string
+          name: string
+          notes?: string | null
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_yard_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "markets_default_yard_id_fkey"
+            columns: ["default_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -2207,6 +2376,7 @@ export type Database = {
           is_dry_run: boolean | null
           live_load_minutes: number | null
           logistics_type: string | null
+          market_id: string | null
           msa_contract_id: string | null
           multi_stop_sequence: number | null
           origin_yard_id: string | null
@@ -2273,6 +2443,7 @@ export type Database = {
           is_dry_run?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
+          market_id?: string | null
           msa_contract_id?: string | null
           multi_stop_sequence?: number | null
           origin_yard_id?: string | null
@@ -2339,6 +2510,7 @@ export type Database = {
           is_dry_run?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
+          market_id?: string | null
           msa_contract_id?: string | null
           multi_stop_sequence?: number | null
           origin_yard_id?: string | null
@@ -2406,6 +2578,13 @@ export type Database = {
             columns: ["inventory_id"]
             isOneToOne: false
             referencedRelation: "inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
             referencedColumns: ["id"]
           },
           {
@@ -2861,6 +3040,7 @@ export type Database = {
           is_weekend_delivery: boolean | null
           last_synced_at: string | null
           margin: number | null
+          market_id: string | null
           material_type: string
           order_id: string | null
           original_material_type: string | null
@@ -2952,6 +3132,7 @@ export type Database = {
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
           margin?: number | null
+          market_id?: string | null
           material_type: string
           order_id?: string | null
           original_material_type?: string | null
@@ -3043,6 +3224,7 @@ export type Database = {
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
           margin?: number | null
+          market_id?: string | null
           material_type?: string
           order_id?: string | null
           original_material_type?: string | null
@@ -3098,6 +3280,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
             referencedColumns: ["id"]
           },
           {
@@ -4201,6 +4390,7 @@ export type Database = {
           latitude: number
           longitude: number
           market: string
+          market_id: string | null
           name: string
           priority_rank: number
           slug: string
@@ -4214,6 +4404,7 @@ export type Database = {
           latitude: number
           longitude: number
           market: string
+          market_id?: string | null
           name: string
           priority_rank?: number
           slug: string
@@ -4227,12 +4418,21 @@ export type Database = {
           latitude?: number
           longitude?: number
           market?: string
+          market_id?: string | null
           name?: string
           priority_rank?: number
           slug?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "yards_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       zip_warnings: {
         Row: {
@@ -4318,6 +4518,7 @@ export type Database = {
           county: string | null
           created_at: string
           id: string
+          market_id: string | null
           zip_code: string
           zone_id: string
         }
@@ -4326,6 +4527,7 @@ export type Database = {
           county?: string | null
           created_at?: string
           id?: string
+          market_id?: string | null
           zip_code: string
           zone_id: string
         }
@@ -4334,10 +4536,18 @@ export type Database = {
           county?: string | null
           created_at?: string
           id?: string
+          market_id?: string | null
           zip_code?: string
           zone_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "zone_zip_codes_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "zone_zip_codes_zone_id_fkey"
             columns: ["zone_id"]
