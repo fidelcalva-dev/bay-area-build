@@ -5695,6 +5695,16 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: boolean
       }
+      create_run_for_order: {
+        Args: {
+          p_notes?: string
+          p_order_id: string
+          p_run_type: Database["public"]["Enums"]["run_type"]
+          p_scheduled_date: string
+          p_scheduled_window?: string
+        }
+        Returns: string
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]

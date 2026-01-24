@@ -123,6 +123,10 @@ const DispatchToday = lazy(() => import("./pages/dispatch/DispatchToday"));
 const DispatchCalendarPage = lazy(() => import("./pages/dispatch/DispatchCalendarPage"));
 const DispatchFlags = lazy(() => import("./pages/dispatch/DispatchFlags"));
 const DispatchRequests = lazy(() => import("./pages/dispatch/DispatchRequests"));
+const DispatchRunsCalendar = lazy(() => import("./pages/dispatch/DispatchRunsCalendar"));
+const DispatchRunsList = lazy(() => import("./pages/dispatch/DispatchRunsList"));
+const DispatchRunDetail = lazy(() => import("./pages/dispatch/DispatchRunDetail"));
+const DriverRuns = lazy(() => import("./pages/driver/DriverRuns"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
