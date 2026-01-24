@@ -472,13 +472,14 @@ export async function suggestDriversForRun(runId: string): Promise<DriverSuggest
   
   if (!drivers || drivers.length === 0) return [];
   
-  // Get today's load for each driver
+  // Get today's load for each driver using type bypass pattern
   const today = run.scheduled_date;
-  const { data: todayRuns } = await supabase
-    .from('runs' as 'orders')
+  type RunsQueryResult = { data: { assigned_driver_id: string | null }[] | null };
+  const runsQuery = supabase.from('runs' as never);
+  const { data: todayRuns } = await runsQuery
     .select('assigned_driver_id')
     .eq('scheduled_date', today)
-    .not('status', 'in', '("CANCELLED")');
+    .not('status', 'in', '("CANCELLED")') as unknown as RunsQueryResult;
   
   const driverLoadMap = new Map<string, number>();
   (todayRuns || []).forEach((r: { assigned_driver_id: string | null }) => {
