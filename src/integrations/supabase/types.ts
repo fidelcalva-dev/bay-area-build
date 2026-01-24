@@ -2545,6 +2545,7 @@ export type Database = {
           fraud_blocked: boolean | null
           fraud_flags_count: number | null
           id: string
+          included_days: number | null
           internal_notes: string | null
           inventory_id: string | null
           invoice_url: string | null
@@ -2613,6 +2614,7 @@ export type Database = {
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
           id?: string
+          included_days?: number | null
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
@@ -2681,6 +2683,7 @@ export type Database = {
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
           id?: string
+          included_days?: number | null
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
