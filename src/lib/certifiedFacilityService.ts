@@ -150,11 +150,34 @@ export async function upsertCertifiedSource(
 }
 
 // =====================================================
-// CERTIFIED FACILITIES QUERIES
+// CERTIFIED FACILITIES QUERIES (MARKET-BASED)
 // =====================================================
 
 /**
- * Get city-certified facilities for a specific city
+ * Get city-certified facilities for a specific market
+ * MARKET is the primary filter - city is fallback
+ */
+export async function getCertifiedFacilitiesForMarket(
+  marketId: string
+): Promise<CertifiedFacility[]> {
+  const { data, error } = await supabase
+    .from('facilities')
+    .select('*')
+    .eq('status', 'active')
+    .eq('market_id', marketId)
+    .in('certification_type', ['city_certified', 'city_approved', 'authorized'])
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching certified facilities:', error);
+    return [];
+  }
+
+  return (data || []) as CertifiedFacility[];
+}
+
+/**
+ * Get city-certified facilities for a specific city (legacy/fallback)
  */
 export async function getCertifiedFacilitiesForCity(
   city: string
@@ -176,8 +199,30 @@ export async function getCertifiedFacilitiesForCity(
 }
 
 /**
- * Get standard disposal facilities (landfills/transfer stations)
+ * Get standard disposal facilities (landfills/transfer stations) by market
  * Used for homeowner/junk jobs
+ */
+export async function getStandardDisposalFacilitiesByMarket(
+  marketId: string
+): Promise<Facility[]> {
+  const { data, error } = await supabase
+    .from('facilities')
+    .select('*')
+    .eq('status', 'active')
+    .eq('market_id', marketId)
+    .in('facility_type', ['landfill', 'transfer_station'])
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching standard facilities:', error);
+    return [];
+  }
+
+  return (data || []) as Facility[];
+}
+
+/**
+ * Get standard disposal facilities (landfills/transfer stations) by city (legacy)
  */
 export async function getStandardDisposalFacilities(
   city?: string
@@ -204,7 +249,29 @@ export async function getStandardDisposalFacilities(
 }
 
 /**
- * Get Green Halo related facilities (Oakland WRRP)
+ * Get Green Halo related facilities by market
+ */
+export async function getGreenHaloFacilitiesByMarket(
+  marketId: string
+): Promise<CertifiedFacility[]> {
+  const { data, error } = await supabase
+    .from('facilities')
+    .select('*')
+    .eq('status', 'active')
+    .eq('market_id', marketId)
+    .eq('green_halo_related', true)
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching Green Halo facilities:', error);
+    return [];
+  }
+
+  return (data || []) as CertifiedFacility[];
+}
+
+/**
+ * Get Green Halo related facilities (legacy)
  */
 export async function getGreenHaloFacilities(
   city?: string
@@ -231,11 +298,12 @@ export async function getGreenHaloFacilities(
 }
 
 // =====================================================
-// RECOMMENDATION LOGIC
+// RECOMMENDATION LOGIC (MARKET-BASED)
 // =====================================================
 
 /**
  * Generate facility recommendations based on project type and compliance
+ * Uses MARKET as primary filter (with city fallback)
  * 
  * Logic:
  * - Contractors/permit jobs → City-certified C&D recyclers (top 3)
@@ -247,6 +315,7 @@ export async function generateFacilityRecommendations(
   projectType: ProjectType,
   complianceRequired: boolean,
   city: string,
+  marketId?: string,
   jobSiteLat?: number,
   jobSiteLng?: number
 ): Promise<FacilityRecommendation> {
@@ -258,8 +327,14 @@ export async function generateFacilityRecommendations(
 
   if (isComplianceJob) {
     // Contractor/compliance → City-certified facilities
-    facilities = await getCertifiedFacilitiesForCity(city);
-    reason = `City-certified C&D recycling facilities for ${city} permit compliance`;
+    // Use market_id if available, fallback to city
+    facilities = marketId 
+      ? await getCertifiedFacilitiesForMarket(marketId)
+      : await getCertifiedFacilitiesForCity(city);
+    
+    reason = marketId
+      ? `City-certified C&D recycling facilities for market compliance`
+      : `City-certified C&D recycling facilities for ${city} permit compliance`;
     
     const cityInfo = CITY_COMPLIANCE_INFO[city];
     if (cityInfo) {
@@ -269,7 +344,10 @@ export async function generateFacilityRecommendations(
     }
   } else {
     // Homeowner/junk → Standard disposal
-    facilities = await getStandardDisposalFacilities(city);
+    // Use market_id if available, fallback to city
+    facilities = marketId
+      ? await getStandardDisposalFacilitiesByMarket(marketId)
+      : await getStandardDisposalFacilities(city);
     reason = 'Standard disposal options for residential cleanup';
     guidance = 'Recycling support available upon request. Contact us for Green Halo certified options.';
   }

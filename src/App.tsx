@@ -82,6 +82,8 @@ const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
 const RiskReviewPage = lazy(() => import("./pages/admin/RiskReviewPage"));
 const QuickLinksManager = lazy(() => import("./pages/admin/QuickLinksManager"));
+const MarketsManager = lazy(() => import("./pages/admin/MarketsManager"));
+const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
 
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
@@ -346,6 +348,12 @@ const App = () => (
                 } />
                 <Route path="quick-links" element={
                   <Suspense fallback={<PageLoader />}><QuickLinksManager /></Suspense>
+                } />
+                <Route path="markets" element={
+                  <Suspense fallback={<PageLoader />}><MarketsManager /></Suspense>
+                } />
+                <Route path="facilities" element={
+                  <Suspense fallback={<PageLoader />}><FacilitiesManager /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={
