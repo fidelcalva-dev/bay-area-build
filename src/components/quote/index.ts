@@ -6,6 +6,7 @@ export { QuoteBreakdown } from './QuoteBreakdown';
 export { DebrisEstimator } from './DebrisEstimator';
 export { HeavyMaterialSelector } from './HeavyMaterialSelector';
 export { FacilityRequestOption, type FacilityRequest } from './FacilityRequestOption';
+export { ComplianceToggle } from './ComplianceToggle';
 export { AddressInput } from './steps/AddressInput';
 export { PlacementMap } from './steps/PlacementMap';
 export { useQuoteCalculation, getZoneByZip } from './hooks/useQuoteCalculation';
