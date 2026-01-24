@@ -4003,6 +4003,342 @@ export type Database = {
         }
         Relationships: []
       }
+      run_checkpoints: {
+        Row: {
+          checkpoint_type: Database["public"]["Enums"]["checkpoint_type"]
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          document_urls: Json | null
+          id: string
+          is_required: boolean
+          notes: string | null
+          photo_urls: Json | null
+          run_id: string
+          updated_at: string
+        }
+        Insert: {
+          checkpoint_type: Database["public"]["Enums"]["checkpoint_type"]
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          document_urls?: Json | null
+          id?: string
+          is_required?: boolean
+          notes?: string | null
+          photo_urls?: Json | null
+          run_id: string
+          updated_at?: string
+        }
+        Update: {
+          checkpoint_type?: Database["public"]["Enums"]["checkpoint_type"]
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          document_urls?: Json | null
+          id?: string
+          is_required?: boolean
+          notes?: string | null
+          photo_urls?: Json | null
+          run_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_checkpoints_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      run_events: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          event_type: string
+          from_status: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          run_id: string
+          to_status: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          event_type: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          run_id: string
+          to_status?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          event_type?: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          run_id?: string
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      runs: {
+        Row: {
+          accepted_at: string | null
+          actual_miles: number | null
+          asset_id: string | null
+          assigned_driver_id: string | null
+          assigned_truck_id: string | null
+          assignment_type: Database["public"]["Enums"]["assignment_type"]
+          base_payout: number | null
+          bonus_payout: number | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          destination_address: string | null
+          destination_facility_id: string | null
+          destination_lat: number | null
+          destination_lng: number | null
+          destination_type: Database["public"]["Enums"]["location_type"]
+          destination_yard_id: string | null
+          dispatcher_notes: string | null
+          driver_notes: string | null
+          estimated_duration_mins: number | null
+          estimated_miles: number | null
+          id: string
+          mileage_payout: number | null
+          notes: string | null
+          order_id: string | null
+          origin_address: string | null
+          origin_facility_id: string | null
+          origin_lat: number | null
+          origin_lng: number | null
+          origin_type: Database["public"]["Enums"]["location_type"]
+          origin_yard_id: string | null
+          payout_status: string | null
+          priority: number
+          run_number: string | null
+          run_type: Database["public"]["Enums"]["run_type"]
+          scheduled_date: string
+          scheduled_end: string | null
+          scheduled_start: string | null
+          scheduled_window: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["run_status"]
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          actual_miles?: number | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_truck_id?: string | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          base_payout?: number | null
+          bonus_payout?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          destination_address?: string | null
+          destination_facility_id?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          destination_type?: Database["public"]["Enums"]["location_type"]
+          destination_yard_id?: string | null
+          dispatcher_notes?: string | null
+          driver_notes?: string | null
+          estimated_duration_mins?: number | null
+          estimated_miles?: number | null
+          id?: string
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id?: string | null
+          origin_address?: string | null
+          origin_facility_id?: string | null
+          origin_lat?: number | null
+          origin_lng?: number | null
+          origin_type?: Database["public"]["Enums"]["location_type"]
+          origin_yard_id?: string | null
+          payout_status?: string | null
+          priority?: number
+          run_number?: string | null
+          run_type: Database["public"]["Enums"]["run_type"]
+          scheduled_date: string
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          scheduled_window?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["run_status"]
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          actual_miles?: number | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_truck_id?: string | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          base_payout?: number | null
+          bonus_payout?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          destination_address?: string | null
+          destination_facility_id?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          destination_type?: Database["public"]["Enums"]["location_type"]
+          destination_yard_id?: string | null
+          dispatcher_notes?: string | null
+          driver_notes?: string | null
+          estimated_duration_mins?: number | null
+          estimated_miles?: number | null
+          id?: string
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id?: string | null
+          origin_address?: string | null
+          origin_facility_id?: string | null
+          origin_lat?: number | null
+          origin_lng?: number | null
+          origin_type?: Database["public"]["Enums"]["location_type"]
+          origin_yard_id?: string | null
+          payout_status?: string | null
+          priority?: number
+          run_number?: string | null
+          run_type?: Database["public"]["Enums"]["run_type"]
+          scheduled_date?: string
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          scheduled_window?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["run_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "runs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_dumpsters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["asset_id"]
+          },
+          {
+            foreignKeyName: "runs_assigned_driver_id_fkey"
+            columns: ["assigned_driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_assigned_truck_id_fkey"
+            columns: ["assigned_truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_destination_facility_id_fkey"
+            columns: ["destination_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "runs_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "runs_origin_facility_id_fkey"
+            columns: ["origin_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "runs_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_leads: {
         Row: {
           assigned_at: string | null
@@ -5406,10 +5742,13 @@ export type Database = {
         | "billing_specialist"
         | "executive"
       approval_status: "pending" | "approved" | "rejected"
+      assignment_type: "IN_HOUSE" | "CARRIER"
+      checkpoint_type: "PICKUP_POD" | "DELIVERY_POD" | "DUMP_TICKET"
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
       contract_type: "msa" | "addendum"
       filled_location: "customer" | "yard" | "truck"
+      location_type: "yard" | "customer" | "facility"
       logistics_type:
         | "delivery"
         | "pickup"
@@ -5432,6 +5771,15 @@ export type Database = {
         | "failed"
         | "canceled"
       payment_action_type: "refund" | "void"
+      run_status:
+        | "DRAFT"
+        | "SCHEDULED"
+        | "ASSIGNED"
+        | "ACCEPTED"
+        | "EN_ROUTE"
+        | "COMPLETED"
+        | "CANCELLED"
+      run_type: "DELIVERY" | "PICKUP" | "HAUL" | "SWAP"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -5581,10 +5929,13 @@ export const Constants = {
         "executive",
       ],
       approval_status: ["pending", "approved", "rejected"],
+      assignment_type: ["IN_HOUSE", "CARRIER"],
+      checkpoint_type: ["PICKUP_POD", "DELIVERY_POD", "DUMP_TICKET"],
       commitment_type: ["prepaid", "contracted"],
       contract_status: ["pending", "signed", "declined", "expired"],
       contract_type: ["msa", "addendum"],
       filled_location: ["customer", "yard", "truck"],
+      location_type: ["yard", "customer", "facility"],
       logistics_type: [
         "delivery",
         "pickup",
@@ -5609,6 +5960,16 @@ export const Constants = {
         "canceled",
       ],
       payment_action_type: ["refund", "void"],
+      run_status: [
+        "DRAFT",
+        "SCHEDULED",
+        "ASSIGNED",
+        "ACCEPTED",
+        "EN_ROUTE",
+        "COMPLETED",
+        "CANCELLED",
+      ],
+      run_type: ["DELIVERY", "PICKUP", "HAUL", "SWAP"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
