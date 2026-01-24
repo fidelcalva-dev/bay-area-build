@@ -2,12 +2,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { createAuditLog } from './auditLog';
 import type { Json } from '@/integrations/supabase/types';
 
-// Type assertion helper for new tables not yet in generated types
-const db = supabase as unknown as {
-  from: (table: string) => ReturnType<typeof supabase.from>;
-  auth: typeof supabase.auth;
-  functions: typeof supabase.functions;
-};
+// Table name aliases for type bypass
+const FRAUD_FLAGS_TABLE = 'fraud_flags' as 'orders';
+const FRAUD_ACTIONS_TABLE = 'fraud_actions' as 'orders';
 
 export type FraudFlagType = 
   | 'velocity_phone'
@@ -74,20 +71,20 @@ export async function createFraudFlag({
 }: CreateFraudFlagParams): Promise<{ success: boolean; flagId?: string; error?: string }> {
   try {
     // Check if similar flag already exists (avoid duplicates)
-    const { data: existing } = await db
-      .from('fraud_flags')
+    const { data: existing } = await supabase
+      .from(FRAUD_FLAGS_TABLE)
       .select('id')
-      .eq('flag_type', flagType)
-      .eq('status', 'open')
+      .eq('flag_type' as 'id', flagType)
+      .eq('status' as 'id', 'open')
       .or(`phone.eq.${phone},quote_id.eq.${quoteId},order_id.eq.${orderId}`)
       .limit(1);
 
     if (existing && existing.length > 0) {
-      return { success: true, flagId: (existing[0] as { id: string }).id }; // Already flagged
+      return { success: true, flagId: (existing[0] as unknown as { id: string }).id };
     }
 
-    const { data, error } = await db
-      .from('fraud_flags')
+    const { data, error } = await supabase
+      .from(FRAUD_FLAGS_TABLE)
       .insert([{
         phone: phone || null,
         customer_id: customerId || null,
@@ -97,21 +94,21 @@ export async function createFraudFlag({
         severity,
         reason,
         evidence_json: evidence as Json,
-      }])
+      }] as never)
       .select('id')
       .single();
 
     if (error) throw error;
 
-    const flagId = (data as { id: string }).id;
+    const flagId = (data as unknown as { id: string }).id;
 
     // Log the action
-    await db.from('fraud_actions').insert([{
+    await supabase.from(FRAUD_ACTIONS_TABLE).insert([{
       flag_id: flagId,
       action_type: 'created',
       notes: reason,
       metadata: evidence as Json,
-    }]);
+    }] as never);
 
     // Create audit log
     await createAuditLog({
@@ -189,8 +186,8 @@ export async function runVelocityCheck(phone: string): Promise<FraudFlag[]> {
         evidence: { quote_count: recentQuotes.length, quotes: recentQuotes.map(q => q.id) },
       });
       if (result.flagId) {
-        const { data: flag } = await db.from('fraud_flags').select('*').eq('id', result.flagId).single();
-        if (flag) flags.push(flag as FraudFlag);
+        const { data: flag } = await supabase.from(FRAUD_FLAGS_TABLE).select('*').eq('id' as 'id', result.flagId).single();
+        if (flag) flags.push(flag as unknown as FraudFlag);
       }
     }
 
@@ -207,8 +204,8 @@ export async function runVelocityCheck(phone: string): Promise<FraudFlag[]> {
           evidence: { addresses: Array.from(uniqueAddresses), quote_ids: recentQuotes.map(q => q.id) },
         });
         if (result.flagId) {
-          const { data: flag } = await db.from('fraud_flags').select('*').eq('id', result.flagId).single();
-          if (flag) flags.push(flag as FraudFlag);
+          const { data: flag } = await supabase.from(FRAUD_FLAGS_TABLE).select('*').eq('id' as 'id', result.flagId).single();
+          if (flag) flags.push(flag as unknown as FraudFlag);
         }
       }
     }
@@ -235,8 +232,8 @@ export async function runVelocityCheck(phone: string): Promise<FraudFlag[]> {
           evidence: { names: Array.from(uniqueNames) },
         });
         if (result.flagId) {
-          const { data: flag } = await db.from('fraud_flags').select('*').eq('id', result.flagId).single();
-          if (flag) flags.push(flag as FraudFlag);
+          const { data: flag } = await supabase.from(FRAUD_FLAGS_TABLE).select('*').eq('id' as 'id', result.flagId).single();
+          if (flag) flags.push(flag as unknown as FraudFlag);
         }
       }
     }
@@ -298,8 +295,8 @@ export async function checkHighRiskCombo(orderId: string): Promise<FraudFlag | n
       });
 
       if (result.flagId) {
-        const { data: flag } = await db.from('fraud_flags').select('*').eq('id', result.flagId).single();
-        return flag as FraudFlag;
+        const { data: flag } = await supabase.from(FRAUD_FLAGS_TABLE).select('*').eq('id' as 'id', result.flagId).single();
+        return flag as unknown as FraudFlag;
       }
     }
   } catch (err) {
@@ -328,8 +325,8 @@ export async function checkOutOfRange(
     });
 
     if (result.flagId) {
-      const { data: flag } = await db.from('fraud_flags').select('*').eq('id', result.flagId).single();
-      return flag as FraudFlag;
+      const { data: flag } = await supabase.from(FRAUD_FLAGS_TABLE).select('*').eq('id' as 'id', result.flagId).single();
+      return flag as unknown as FraudFlag;
     }
   }
   return null;
@@ -346,43 +343,44 @@ export async function resolveFraudFlag(
   try {
     const { data: { user } } = await supabase.auth.getUser();
 
-    const { data: flag, error: fetchError } = await db
-      .from('fraud_flags')
+    const { data: flag, error: fetchError } = await supabase
+      .from(FRAUD_FLAGS_TABLE)
       .select('*')
-      .eq('id', flagId)
+      .eq('id' as 'id', flagId)
       .single();
 
     if (fetchError || !flag) throw new Error('Flag not found');
 
-    const { error } = await db
-      .from('fraud_flags')
+    const { error } = await supabase
+      .from(FRAUD_FLAGS_TABLE)
       .update({
         status: 'resolved',
         resolved_by: user?.id,
         resolved_at: new Date().toISOString(),
         resolved_notes: notes,
-      })
-      .eq('id', flagId);
+      } as never)
+      .eq('id' as 'id', flagId);
 
     if (error) throw error;
 
     // Log the action
-    await db.from('fraud_actions').insert([{
+    await supabase.from(FRAUD_ACTIONS_TABLE).insert([{
       flag_id: flagId,
       action_type: 'resolved',
       performed_by: user?.id,
       notes,
-    }]);
+    }] as never);
 
     // Unblock order if requested
-    if (unblockOrder && flag.order_id) {
+    const flagData = flag as unknown as FraudFlag;
+    if (unblockOrder && flagData.order_id) {
       await supabase
         .from('orders')
         .update({
           fraud_blocked: false,
           requires_manual_review: false,
         })
-        .eq('id', flag.order_id);
+        .eq('id', flagData.order_id);
     }
 
     await createAuditLog({
@@ -419,17 +417,17 @@ export async function requireDeposit(
       })
       .eq('id', orderId);
 
-    await db
-      .from('fraud_flags')
-      .update({ status: 'reviewing' })
-      .eq('id', flagId);
+    await supabase
+      .from(FRAUD_FLAGS_TABLE)
+      .update({ status: 'reviewing' } as never)
+      .eq('id' as 'id', flagId);
 
-    await db.from('fraud_actions').insert([{
+    await supabase.from(FRAUD_ACTIONS_TABLE).insert([{
       flag_id: flagId,
       action_type: 'require_deposit',
       performed_by: user?.id,
       notes: reason,
-    }]);
+    }] as never);
 
     return { success: true };
   } catch (err) {
@@ -457,17 +455,17 @@ export async function blockScheduling(
       })
       .eq('id', orderId);
 
-    await db
-      .from('fraud_flags')
-      .update({ status: 'blocked' })
-      .eq('id', flagId);
+    await supabase
+      .from(FRAUD_FLAGS_TABLE)
+      .update({ status: 'blocked' } as never)
+      .eq('id' as 'id', flagId);
 
-    await db.from('fraud_actions').insert([{
+    await supabase.from(FRAUD_ACTIONS_TABLE).insert([{
       flag_id: flagId,
       action_type: 'blocked',
       performed_by: user?.id,
       notes: reason,
-    }]);
+    }] as never);
 
     return { success: true };
   } catch (err) {
@@ -486,38 +484,38 @@ export async function whitelistEntity(
   try {
     const { data: { user } } = await supabase.auth.getUser();
 
-    const { data: flag } = await db
-      .from('fraud_flags')
+    const { data: flag } = await supabase
+      .from(FRAUD_FLAGS_TABLE)
       .select('*')
-      .eq('id', flagId)
+      .eq('id' as 'id', flagId)
       .single();
 
     if (!flag) throw new Error('Flag not found');
-    const flagData = flag as FraudFlag;
+    const flagData = flag as unknown as FraudFlag;
 
     // Resolve all open flags for this phone
     if (flagData.phone) {
-      await db
-        .from('fraud_flags')
+      await supabase
+        .from(FRAUD_FLAGS_TABLE)
         .update({
           status: 'resolved',
           resolved_by: user?.id,
           resolved_at: new Date().toISOString(),
           resolved_notes: `Whitelisted: ${notes}`,
-        })
-        .eq('phone', flagData.phone)
-        .eq('status', 'open');
+        } as never)
+        .eq('phone' as 'id', flagData.phone)
+        .eq('status' as 'id', 'open');
     }
 
-    await db.from('fraud_actions').insert([{
+    await supabase.from(FRAUD_ACTIONS_TABLE).insert([{
       flag_id: flagId,
       action_type: 'whitelist',
       performed_by: user?.id,
       notes,
-    }]);
+    }] as never);
 
     // Unblock order if exists
-    if (flag.order_id) {
+    if (flagData.order_id) {
       await supabase
         .from('orders')
         .update({
@@ -525,7 +523,7 @@ export async function whitelistEntity(
           requires_manual_review: false,
           requires_deposit: false,
         })
-        .eq('id', flag.order_id);
+        .eq('id', flagData.order_id);
     }
 
     return { success: true };

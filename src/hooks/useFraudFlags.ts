@@ -2,9 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { FraudFlag, FraudSeverity, FraudStatus } from '@/lib/fraudService';
 
-// Type helper for new tables
-const db = supabase as unknown as { from: (t: string) => ReturnType<typeof supabase.from> };
-
 export interface FraudFilters {
   status?: FraudStatus | 'all';
   severity?: FraudSeverity | 'all';
@@ -21,30 +18,30 @@ export function useFraudFlags(filters?: FraudFilters) {
     setError(null);
 
     try {
-      let query = db
-        .from('fraud_flags')
+      let queryBuilder = supabase
+        .from('fraud_flags' as 'orders')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        queryBuilder = queryBuilder.eq('status' as 'id', filters.status);
       }
 
       if (filters?.severity && filters.severity !== 'all') {
-        query = query.eq('severity', filters.severity);
+        queryBuilder = queryBuilder.eq('severity' as 'id', filters.severity);
       }
 
       if (filters?.days) {
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - filters.days);
-        query = query.gte('created_at', cutoff.toISOString());
+        queryBuilder = queryBuilder.gte('created_at' as 'id', cutoff.toISOString());
       }
 
-      const { data, error: queryError } = await query.limit(100);
+      const { data, error: queryError } = await queryBuilder.limit(100);
 
       if (queryError) throw queryError;
 
-      setFlags((data || []) as FraudFlag[]);
+      setFlags((data as unknown as FraudFlag[]) || []);
     } catch (err) {
       console.error('Failed to fetch fraud flags:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch');
@@ -80,13 +77,13 @@ export function useFraudFlagActions(flagId: string) {
 
   useEffect(() => {
     const fetchActions = async () => {
-      const { data } = await db
-        .from('fraud_actions')
+      const { data } = await supabase
+        .from('fraud_actions' as 'orders')
         .select('*')
-        .eq('flag_id', flagId)
+        .eq('flag_id' as 'id', flagId)
         .order('created_at', { ascending: false });
 
-      setActions(data || []);
+      setActions((data as unknown[]) || []);
       setLoading(false);
     };
 

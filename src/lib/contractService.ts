@@ -38,31 +38,26 @@ export function normalizeAddress(address: string): string {
   return address.toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
-// Helper to query contracts table (since types aren't generated yet)
-async function queryContracts() {
-  // Use type assertion to bypass generated types until they're updated
-  return (supabase as unknown as { from: (table: string) => ReturnType<typeof supabase.from> }).from('contracts');
-}
-
-async function queryContractEvents() {
-  return (supabase as unknown as { from: (table: string) => ReturnType<typeof supabase.from> }).from('contract_events');
-}
+// Helper type for contracts table queries
+type ContractsTable = 'contracts';
+const CONTRACTS_TABLE = 'contracts' as 'orders';
+const CONTRACT_EVENTS_TABLE = 'contract_events' as 'orders';
 
 /**
  * Check if customer has a signed MSA
  */
 export async function getCustomerMSA(customerId: string): Promise<Contract | null> {
-  const contractsTable = await queryContracts();
-  const { data } = await contractsTable
+  const { data } = await supabase
+    .from(CONTRACTS_TABLE)
     .select('*')
-    .eq('customer_id', customerId)
-    .eq('contract_type', 'msa')
-    .eq('status', 'signed')
-    .order('signed_at', { ascending: false })
+    .eq('customer_id' as 'id', customerId)
+    .eq('contract_type' as 'id', 'msa')
+    .eq('status' as 'id', 'signed')
+    .order('signed_at' as 'id', { ascending: false })
     .limit(1)
     .single();
   
-  return data as Contract | null;
+  return (data as unknown as Contract) || null;
 }
 
 /**
@@ -73,28 +68,28 @@ export async function getAddendumForAddress(
   serviceAddress: string
 ): Promise<Contract | null> {
   const normalized = normalizeAddress(serviceAddress);
-  const contractsTable = await queryContracts();
   
-  const { data } = await contractsTable
+  const { data } = await supabase
+    .from(CONTRACTS_TABLE)
     .select('*')
-    .eq('customer_id', customerId)
-    .eq('contract_type', 'addendum')
-    .eq('status', 'signed')
-    .eq('service_address_normalized', normalized)
+    .eq('customer_id' as 'id', customerId)
+    .eq('contract_type' as 'id', 'addendum')
+    .eq('status' as 'id', 'signed')
+    .eq('service_address_normalized' as 'id', normalized)
     .limit(1)
     .single();
   
-  return data as Contract | null;
+  return (data as unknown as Contract) || null;
 }
 
 /**
  * Get all contracts for a customer
  */
 export async function getCustomerContracts(customerId: string): Promise<Contract[]> {
-  const contractsTable = await queryContracts();
-  const { data, error } = await contractsTable
+  const { data, error } = await supabase
+    .from(CONTRACTS_TABLE)
     .select('*')
-    .eq('customer_id', customerId)
+    .eq('customer_id' as 'id', customerId)
     .order('created_at', { ascending: false });
   
   if (error) {
@@ -102,7 +97,7 @@ export async function getCustomerContracts(customerId: string): Promise<Contract
     return [];
   }
   
-  return (data || []) as Contract[];
+  return (data as unknown as Contract[]) || [];
 }
 
 /**
@@ -175,9 +170,9 @@ export async function createContract(params: {
     insertData.expires_at = expiresAt.toISOString();
   }
   
-  const contractsTable = await queryContracts();
-  const { data, error } = await contractsTable
-    .insert(insertData)
+  const { data, error } = await supabase
+    .from(CONTRACTS_TABLE)
+    .insert(insertData as never)
     .select()
     .single();
   
@@ -186,15 +181,16 @@ export async function createContract(params: {
     return { contract: null, error: error.message };
   }
   
-  const contract = data as Contract;
+  const contract = data as unknown as Contract;
   
   // Log event
-  const eventsTable = await queryContractEvents();
-  await eventsTable.insert({
-    contract_id: contract.id,
-    event_type: 'created',
-    metadata: { contract_type: contractType },
-  });
+  await supabase
+    .from(CONTRACT_EVENTS_TABLE)
+    .insert({
+      contract_id: contract.id,
+      event_type: 'created',
+      metadata: { contract_type: contractType },
+    } as never);
   
   await createAuditLog({
     action: 'create',
@@ -214,43 +210,45 @@ export async function signContract(
   signatureMethod: 'sms_link' | 'email_link' | 'in_person',
   ipAddress?: string
 ): Promise<{ success: boolean; error: string | null }> {
-  const contractsTable = await queryContracts();
-  const { data: contract, error: fetchError } = await contractsTable
+  const { data: contract, error: fetchError } = await supabase
+    .from(CONTRACTS_TABLE)
     .select('*')
-    .eq('id', contractId)
+    .eq('id' as 'id', contractId)
     .single();
   
   if (fetchError || !contract) {
     return { success: false, error: 'Contract not found' };
   }
   
-  const contractData = contract as Contract;
+  const contractData = contract as unknown as Contract;
   
   if (contractData.status === 'signed') {
     return { success: false, error: 'Contract already signed' };
   }
   
-  const { error } = await contractsTable
+  const { error } = await supabase
+    .from(CONTRACTS_TABLE)
     .update({
       status: 'signed',
       signed_at: new Date().toISOString(),
       signed_ip: ipAddress,
       signature_method: signatureMethod,
-    })
-    .eq('id', contractId);
+    } as never)
+    .eq('id' as 'id', contractId);
   
   if (error) {
     return { success: false, error: error.message };
   }
   
   // Log event
-  const eventsTable = await queryContractEvents();
-  await eventsTable.insert({
-    contract_id: contractId,
-    event_type: 'signed',
-    ip_address: ipAddress,
-    metadata: { method: signatureMethod },
-  });
+  await supabase
+    .from(CONTRACT_EVENTS_TABLE)
+    .insert({
+      contract_id: contractId,
+      event_type: 'signed',
+      ip_address: ipAddress,
+      metadata: { method: signatureMethod },
+    } as never);
   
   await createAuditLog({
     action: 'status_change',
