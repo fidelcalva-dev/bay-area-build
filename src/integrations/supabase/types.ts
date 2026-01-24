@@ -2431,6 +2431,7 @@ export type Database = {
           last_synced_at: string | null
           margin: number | null
           material_type: string
+          order_id: string | null
           original_material_type: string | null
           placement_lat: number | null
           placement_lng: number | null
@@ -2521,6 +2522,7 @@ export type Database = {
           last_synced_at?: string | null
           margin?: number | null
           material_type: string
+          order_id?: string | null
           original_material_type?: string | null
           placement_lat?: number | null
           placement_lng?: number | null
@@ -2611,6 +2613,7 @@ export type Database = {
           last_synced_at?: string | null
           margin?: number | null
           material_type?: string
+          order_id?: string | null
           original_material_type?: string | null
           placement_lat?: number | null
           placement_lng?: number | null
@@ -2664,6 +2667,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
           {
