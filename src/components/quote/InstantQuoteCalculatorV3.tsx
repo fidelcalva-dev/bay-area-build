@@ -1349,15 +1349,23 @@ export function InstantQuoteCalculatorV3() {
               />
             </div>
 
-            {/* Estimator Button */}
-            <button
-              type="button"
-              onClick={() => setShowEstimator(true)}
-              className="w-full p-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all flex items-center justify-center gap-2 text-sm font-medium text-primary"
-            >
-              <Calculator className="w-4 h-4" />
-              Estimate my debris volume (optional)
-            </button>
+            {/* Estimator Buttons */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowEstimator(true)}
+                className="flex-1 p-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:border-primary hover:bg-primary/10 transition-all flex items-center justify-center gap-2 text-sm font-medium text-primary"
+              >
+                <Calculator className="w-4 h-4" />
+                Estimate volume
+              </button>
+              <a
+                href="/waste-vision"
+                className="flex-1 p-3 rounded-xl border-2 border-dashed border-amber-400/50 bg-amber-50 hover:border-amber-400 hover:bg-amber-100 transition-all flex items-center justify-center gap-2 text-sm font-medium text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
+              >
+                📸 Scan my debris
+              </a>
+            </div>
 
             <Button
               type="button"

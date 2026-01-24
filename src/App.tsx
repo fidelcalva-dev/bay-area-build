@@ -34,6 +34,7 @@ const GreenHalo = lazy(() => import("./pages/GreenHalo"));
 const Locations = lazy(() => import("./pages/Locations"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const WasteVision = lazy(() => import("./pages/WasteVision"));
 
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
@@ -222,6 +223,9 @@ const App = () => (
               } />
               <Route path="/privacy" element={
                 <Suspense fallback={<PageLoader />}><Privacy /></Suspense>
+              } />
+              <Route path="/waste-vision" element={
+                <Suspense fallback={<PageLoader />}><WasteVision /></Suspense>
               } />
               
               {/* Customer Portal (SMS OTP Auth) */}

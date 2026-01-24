@@ -67,16 +67,21 @@ export default function DumpsterVisualizer() {
       <section className="py-8 bg-background border-t border-border">
         <div className="container-narrow text-center">
           <p className="text-muted-foreground mb-4">
-            Still not sure which size? Our team can help.
+            Still not sure which size? Try our AI photo analysis or talk to our team.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild variant="default">
+              <Link to="/waste-vision" className="gap-2">
+                📸 Scan Your Debris
+              </Link>
+            </Button>
             <Button asChild variant="outline">
               <a href="tel:+15106802150" className="gap-2">
                 <Phone className="w-4 h-4" />
                 Call (510) 680-2150
               </a>
             </Button>
-            <Button asChild>
+            <Button asChild variant="ghost">
               <Link to="/capacity-guide">
                 View Capacity Guide
               </Link>
