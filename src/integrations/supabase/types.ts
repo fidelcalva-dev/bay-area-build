@@ -201,6 +201,110 @@ export type Database = {
           },
         ]
       }
+      assets_dumpsters: {
+        Row: {
+          asset_code: string
+          asset_notes: string | null
+          asset_status: string
+          asset_type: string
+          condition: string | null
+          created_at: string
+          current_location_type: string
+          current_order_id: string | null
+          current_yard_id: string | null
+          days_out: number
+          deployed_at: string | null
+          home_yard_id: string
+          id: string
+          last_inspection_at: string | null
+          last_movement_at: string | null
+          needs_rebalance: boolean | null
+          revenue_30d: number | null
+          revenue_90d: number | null
+          size_id: string
+          total_deployments: number | null
+          total_revenue: number | null
+          updated_at: string
+        }
+        Insert: {
+          asset_code: string
+          asset_notes?: string | null
+          asset_status?: string
+          asset_type?: string
+          condition?: string | null
+          created_at?: string
+          current_location_type?: string
+          current_order_id?: string | null
+          current_yard_id?: string | null
+          days_out?: number
+          deployed_at?: string | null
+          home_yard_id: string
+          id?: string
+          last_inspection_at?: string | null
+          last_movement_at?: string | null
+          needs_rebalance?: boolean | null
+          revenue_30d?: number | null
+          revenue_90d?: number | null
+          size_id: string
+          total_deployments?: number | null
+          total_revenue?: number | null
+          updated_at?: string
+        }
+        Update: {
+          asset_code?: string
+          asset_notes?: string | null
+          asset_status?: string
+          asset_type?: string
+          condition?: string | null
+          created_at?: string
+          current_location_type?: string
+          current_order_id?: string | null
+          current_yard_id?: string | null
+          days_out?: number
+          deployed_at?: string | null
+          home_yard_id?: string
+          id?: string
+          last_inspection_at?: string | null
+          last_movement_at?: string | null
+          needs_rebalance?: boolean | null
+          revenue_30d?: number | null
+          revenue_90d?: number | null
+          size_id?: string
+          total_deployments?: number | null
+          total_revenue?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_home_yard_id_fkey"
+            columns: ["home_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "dumpster_sizes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -1573,34 +1677,55 @@ export type Database = {
       }
       inventory_movements: {
         Row: {
+          asset_id: string | null
           created_at: string
           created_by: string | null
+          driver_id: string | null
+          from_location_type: string | null
+          from_yard_id: string | null
           id: string
           inventory_id: string
           movement_type: string
           notes: string | null
           order_id: string | null
           quantity: number
+          to_location_type: string | null
+          to_yard_id: string | null
+          truck_id: string | null
         }
         Insert: {
+          asset_id?: string | null
           created_at?: string
           created_by?: string | null
+          driver_id?: string | null
+          from_location_type?: string | null
+          from_yard_id?: string | null
           id?: string
           inventory_id: string
           movement_type: string
           notes?: string | null
           order_id?: string | null
           quantity?: number
+          to_location_type?: string | null
+          to_yard_id?: string | null
+          truck_id?: string | null
         }
         Update: {
+          asset_id?: string | null
           created_at?: string
           created_by?: string | null
+          driver_id?: string | null
+          from_location_type?: string | null
+          from_yard_id?: string | null
           id?: string
           inventory_id?: string
           movement_type?: string
           notes?: string | null
           order_id?: string | null
           quantity?: number
+          to_location_type?: string | null
+          to_yard_id?: string | null
+          truck_id?: string | null
         }
         Relationships: [
           {
@@ -2349,6 +2474,7 @@ export type Database = {
           addendum_contract_id: string | null
           amount_due: number | null
           amount_paid: number | null
+          asset_id: string | null
           assigned_driver_id: string | null
           assigned_yard_id: string | null
           balance_due: number | null
@@ -2416,6 +2542,7 @@ export type Database = {
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
+          asset_id?: string | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
@@ -2483,6 +2610,7 @@ export type Database = {
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
+          asset_id?: string | null
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
@@ -4022,38 +4150,77 @@ export type Database = {
         Row: {
           assigned_driver_id: string | null
           assigned_yard_id: string | null
+          capacity_tons: number | null
           capacity_yards: number | null
           created_at: string
+          current_yard_id: string | null
+          home_yard_id: string | null
           id: string
           is_active: boolean | null
+          last_maintenance_at: string | null
+          license_plate: string | null
+          make: string | null
+          model: string | null
+          next_maintenance_due: string | null
           notes: string | null
+          odometer_miles: number | null
+          truck_code: string | null
           truck_number: string
+          truck_status: string | null
           truck_type: string | null
           updated_at: string
+          vin: string | null
+          year: number | null
         }
         Insert: {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
+          capacity_tons?: number | null
           capacity_yards?: number | null
           created_at?: string
+          current_yard_id?: string | null
+          home_yard_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_maintenance_at?: string | null
+          license_plate?: string | null
+          make?: string | null
+          model?: string | null
+          next_maintenance_due?: string | null
           notes?: string | null
+          odometer_miles?: number | null
+          truck_code?: string | null
           truck_number: string
+          truck_status?: string | null
           truck_type?: string | null
           updated_at?: string
+          vin?: string | null
+          year?: number | null
         }
         Update: {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
+          capacity_tons?: number | null
           capacity_yards?: number | null
           created_at?: string
+          current_yard_id?: string | null
+          home_yard_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_maintenance_at?: string | null
+          license_plate?: string | null
+          make?: string | null
+          model?: string | null
+          next_maintenance_due?: string | null
           notes?: string | null
+          odometer_miles?: number | null
+          truck_code?: string | null
           truck_number?: string
+          truck_status?: string | null
           truck_type?: string | null
           updated_at?: string
+          vin?: string | null
+          year?: number | null
         }
         Relationships: [
           {
@@ -4066,6 +4233,20 @@ export type Database = {
           {
             foreignKeyName: "trucks_assigned_yard_id_fkey"
             columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_home_yard_id_fkey"
+            columns: ["home_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
