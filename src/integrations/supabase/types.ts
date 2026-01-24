@@ -286,6 +286,13 @@ export type Database = {
             foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
             columns: ["current_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -293,8 +300,22 @@ export type Database = {
             foreignKeyName: "assets_dumpsters_home_yard_id_fkey"
             columns: ["home_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_home_yard_id_fkey"
+            columns: ["home_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["size_id"]
           },
           {
             foreignKeyName: "assets_dumpsters_size_id_fkey"
@@ -1243,6 +1264,13 @@ export type Database = {
             foreignKeyName: "drivers_assigned_yard_id_fkey"
             columns: ["assigned_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "drivers_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -1663,8 +1691,22 @@ export type Database = {
             foreignKeyName: "inventory_size_id_fkey"
             columns: ["size_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["size_id"]
+          },
+          {
+            foreignKeyName: "inventory_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
             referencedRelation: "dumpster_sizes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
           },
           {
             foreignKeyName: "inventory_yard_id_fkey"
@@ -2182,6 +2224,13 @@ export type Database = {
             foreignKeyName: "markets_default_yard_id_fkey"
             columns: ["default_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "markets_default_yard_id_fkey"
+            columns: ["default_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -2684,6 +2733,13 @@ export type Database = {
             foreignKeyName: "orders_assigned_yard_id_fkey"
             columns: ["assigned_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "orders_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -2693,6 +2749,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
           },
           {
             foreignKeyName: "orders_destination_yard_id_fkey"
@@ -2721,6 +2784,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "contracts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
           },
           {
             foreignKeyName: "orders_origin_yard_id_fkey"
@@ -3080,6 +3150,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quick_links_preset_yard_id_fkey"
+            columns: ["preset_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
           },
           {
             foreignKeyName: "quick_links_preset_yard_id_fkey"
@@ -3465,6 +3542,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vendors"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["size_id"]
           },
           {
             foreignKeyName: "quotes_size_id_fkey"
@@ -4134,6 +4218,13 @@ export type Database = {
             foreignKeyName: "toll_surcharges_origin_yard_id_fkey"
             columns: ["origin_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "toll_surcharges_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -4234,6 +4325,13 @@ export type Database = {
             foreignKeyName: "trucks_assigned_yard_id_fkey"
             columns: ["assigned_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "trucks_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
@@ -4241,8 +4339,22 @@ export type Database = {
             foreignKeyName: "trucks_current_yard_id_fkey"
             columns: ["current_yard_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "trucks_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_home_yard_id_fkey"
+            columns: ["home_yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
           },
           {
             foreignKeyName: "trucks_home_yard_id_fkey"
@@ -4424,6 +4536,13 @@ export type Database = {
           vendor_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "vendor_pricing_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["size_id"]
+          },
           {
             foreignKeyName: "vendor_pricing_size_id_fkey"
             columns: ["size_id"]
@@ -4826,6 +4945,13 @@ export type Database = {
             foreignKeyName: "zone_pricing_size_id_fkey"
             columns: ["size_id"]
             isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["size_id"]
+          },
+          {
+            foreignKeyName: "zone_pricing_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
             referencedRelation: "dumpster_sizes"
             referencedColumns: ["id"]
           },
@@ -4885,7 +5011,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      asset_inventory_summary: {
+        Row: {
+          available_count: number | null
+          deployed_count: number | null
+          maintenance_count: number | null
+          reserved_count: number | null
+          size_id: string | null
+          size_label: string | null
+          size_value: number | null
+          total_count: number | null
+          yard_id: string | null
+          yard_name: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_admin_permission: {
@@ -4920,6 +5060,7 @@ export type Database = {
         }
         Returns: string
       }
+      update_assets_days_out: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role:
