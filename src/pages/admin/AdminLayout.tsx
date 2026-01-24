@@ -39,6 +39,7 @@ const navSections = [
       { path: '/admin/orders', label: 'Orders', icon: Package },
       { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
       { path: '/admin/assets', label: 'Asset Control Tower', icon: Boxes },
+      { path: '/admin/overdue', label: 'Overdue Billing', icon: Receipt },
       { path: '/admin/inventory', label: 'Inventory (Legacy)', icon: Warehouse },
       { path: '/admin/movements', label: 'Movement Log', icon: FileText },
       { path: '/admin/customers', label: 'Customers', icon: Users },
@@ -70,6 +71,7 @@ const navSections = [
     title: 'Programs',
     items: [
       { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
+      { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
     ],
   },
   {
