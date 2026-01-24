@@ -285,6 +285,54 @@ export type Database = {
         }
         Relationships: []
       }
+      certified_sources: {
+        Row: {
+          city_or_market: string
+          created_at: string
+          facilities_found: number | null
+          id: string
+          is_active: boolean | null
+          last_checked_at: string | null
+          last_success_at: string | null
+          notes: string | null
+          parse_status: string | null
+          source_name: string
+          source_type: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          city_or_market: string
+          created_at?: string
+          facilities_found?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_checked_at?: string | null
+          last_success_at?: string | null
+          notes?: string | null
+          parse_status?: string | null
+          source_name: string
+          source_type: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city_or_market?: string
+          created_at?: string
+          facilities_found?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_checked_at?: string | null
+          last_success_at?: string | null
+          notes?: string | null
+          parse_status?: string | null
+          source_name?: string
+          source_type?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       city_facility_rules: {
         Row: {
           city: string
@@ -1103,10 +1151,14 @@ export type Database = {
           accepted_material_classes: string[]
           address: string
           approved_by_city: string[]
+          certification_city: string | null
+          certification_type: string | null
           city: string
+          compliance_notes: string | null
           created_at: string
           facility_type: string
           green_halo_certified: boolean
+          green_halo_related: boolean | null
           hours: string | null
           id: string
           lat: number | null
@@ -1115,6 +1167,8 @@ export type Database = {
           name: string
           notes: string | null
           phone: string | null
+          source_id: string | null
+          source_url: string | null
           state: string
           status: string
           updated_at: string
@@ -1124,10 +1178,14 @@ export type Database = {
           accepted_material_classes?: string[]
           address: string
           approved_by_city?: string[]
+          certification_city?: string | null
+          certification_type?: string | null
           city: string
+          compliance_notes?: string | null
           created_at?: string
           facility_type: string
           green_halo_certified?: boolean
+          green_halo_related?: boolean | null
           hours?: string | null
           id?: string
           lat?: number | null
@@ -1136,6 +1194,8 @@ export type Database = {
           name: string
           notes?: string | null
           phone?: string | null
+          source_id?: string | null
+          source_url?: string | null
           state?: string
           status?: string
           updated_at?: string
@@ -1145,10 +1205,14 @@ export type Database = {
           accepted_material_classes?: string[]
           address?: string
           approved_by_city?: string[]
+          certification_city?: string | null
+          certification_type?: string | null
           city?: string
+          compliance_notes?: string | null
           created_at?: string
           facility_type?: string
           green_halo_certified?: boolean
+          green_halo_related?: boolean | null
           hours?: string | null
           id?: string
           lat?: number | null
@@ -1157,12 +1221,82 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+          source_id?: string | null
+          source_url?: string | null
           state?: string
           status?: string
           updated_at?: string
           zip?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "facilities_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "certified_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_recommendations: {
+        Row: {
+          city_or_market: string | null
+          compliance_guidance: string | null
+          compliance_required: boolean | null
+          created_at: string
+          id: string
+          order_id: string
+          project_type: string
+          recommended_facilities: Json
+          recommended_reason: string | null
+          selected_facility_id: string | null
+          selection_method: string | null
+          updated_at: string
+        }
+        Insert: {
+          city_or_market?: string | null
+          compliance_guidance?: string | null
+          compliance_required?: boolean | null
+          created_at?: string
+          id?: string
+          order_id: string
+          project_type?: string
+          recommended_facilities?: Json
+          recommended_reason?: string | null
+          selected_facility_id?: string | null
+          selection_method?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city_or_market?: string | null
+          compliance_guidance?: string | null
+          compliance_required?: boolean | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          project_type?: string
+          recommended_facilities?: Json
+          recommended_reason?: string | null
+          selected_facility_id?: string | null
+          selection_method?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_recommendations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_recommendations_selected_facility_id_fkey"
+            columns: ["selected_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fraud_actions: {
         Row: {
