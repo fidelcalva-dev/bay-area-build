@@ -219,6 +219,7 @@ export type Database = {
           last_inspection_at: string | null
           last_movement_at: string | null
           needs_rebalance: boolean | null
+          overdue_notified: boolean | null
           revenue_30d: number | null
           revenue_90d: number | null
           size_id: string
@@ -243,6 +244,7 @@ export type Database = {
           last_inspection_at?: string | null
           last_movement_at?: string | null
           needs_rebalance?: boolean | null
+          overdue_notified?: boolean | null
           revenue_30d?: number | null
           revenue_90d?: number | null
           size_id: string
@@ -267,6 +269,7 @@ export type Database = {
           last_inspection_at?: string | null
           last_movement_at?: string | null
           needs_rebalance?: boolean | null
+          overdue_notified?: boolean | null
           revenue_30d?: number | null
           revenue_90d?: number | null
           size_id?: string
@@ -5028,6 +5031,36 @@ export type Database = {
           yard_name: string | null
         }
         Relationships: []
+      }
+      overdue_assets: {
+        Row: {
+          asset_code: string | null
+          current_order_id: string | null
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          days_out: number | null
+          days_overdue: number | null
+          deployed_at: string | null
+          id: string | null
+          included_days: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
