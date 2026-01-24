@@ -18,6 +18,7 @@ import { logOrderEvent, logScheduleChange } from '@/lib/orderEventService';
 import { OrderHistoryTab } from '@/components/admin/OrderHistoryTab';
 import { PaymentRecordDialog } from '@/components/admin/PaymentRecordDialog';
 import { OrderContractSection } from '@/components/contracts/OrderContractSection';
+import { DisposalPlanManager } from '@/components/dispatch/DisposalPlanManager';
 import {
   reserveInventory,
   deployInventory,
@@ -554,6 +555,14 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                 </div>
               )}
             </div>
+
+            {/* Disposal Plan Section */}
+            <DisposalPlanManager
+              orderId={order.id}
+              orderCity={order.quotes?.delivery_address?.split(',')[1]?.trim()}
+              materialClassification={order.quotes?.material_type}
+              onPlanUpdated={() => {}}
+            />
 
             {/* Billing Section */}
             <div className="bg-muted/50 rounded-lg p-4">

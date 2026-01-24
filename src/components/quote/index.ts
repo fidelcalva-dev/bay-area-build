@@ -5,6 +5,7 @@ export { WeightEducation } from './WeightEducation';
 export { QuoteBreakdown } from './QuoteBreakdown';
 export { DebrisEstimator } from './DebrisEstimator';
 export { HeavyMaterialSelector } from './HeavyMaterialSelector';
+export { FacilityRequestOption, type FacilityRequest } from './FacilityRequestOption';
 export { AddressInput } from './steps/AddressInput';
 export { PlacementMap } from './steps/PlacementMap';
 export { useQuoteCalculation, getZoneByZip } from './hooks/useQuoteCalculation';
