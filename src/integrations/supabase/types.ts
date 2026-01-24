@@ -707,6 +707,63 @@ export type Database = {
         }
         Relationships: []
       }
+      disposal_requests: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          order_id: string
+          requested_by: string
+          requested_facility_id: string | null
+          requested_facility_name_text: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          requested_by: string
+          requested_facility_id?: string | null
+          requested_facility_name_text?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          requested_by?: string
+          requested_facility_id?: string | null
+          requested_facility_name_text?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disposal_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disposal_requests_requested_facility_id_fkey"
+            columns: ["requested_facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       distance_brackets: {
         Row: {
           bracket_name: string
@@ -822,6 +879,57 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_facility_preferences: {
+        Row: {
+          created_at: string
+          driver_id: string
+          facility_id: string
+          id: string
+          is_default: boolean | null
+          market: string
+          notes: string | null
+          rank: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          facility_id: string
+          id?: string
+          is_default?: boolean | null
+          market: string
+          notes?: string | null
+          rank?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          facility_id?: string
+          id?: string
+          is_default?: boolean | null
+          market?: string
+          notes?: string | null
+          rank?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_facility_preferences_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_facility_preferences_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
             referencedColumns: ["id"]
           },
         ]
@@ -1003,6 +1111,7 @@ export type Database = {
           id: string
           lat: number | null
           lng: number | null
+          market: string | null
           name: string
           notes: string | null
           phone: string | null
@@ -1023,6 +1132,7 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          market?: string | null
           name: string
           notes?: string | null
           phone?: string | null
@@ -1043,6 +1153,7 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          market?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
@@ -1803,11 +1914,17 @@ export type Database = {
       order_disposal_plans: {
         Row: {
           created_at: string
+          dump_fee_at_cost: boolean | null
+          facility_selection_mode: string | null
           green_halo_required: boolean
+          handling_fee_possible: boolean | null
           id: string
+          market: string | null
           material_classification: string
           notes: string | null
           order_id: string
+          request_reason: string | null
+          requested_by: string | null
           required_facility_type: string
           route_miles_to_facility: number | null
           route_minutes_to_facility: number | null
@@ -1819,11 +1936,17 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          dump_fee_at_cost?: boolean | null
+          facility_selection_mode?: string | null
           green_halo_required?: boolean
+          handling_fee_possible?: boolean | null
           id?: string
+          market?: string | null
           material_classification: string
           notes?: string | null
           order_id: string
+          request_reason?: string | null
+          requested_by?: string | null
           required_facility_type: string
           route_miles_to_facility?: number | null
           route_minutes_to_facility?: number | null
@@ -1835,11 +1958,17 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          dump_fee_at_cost?: boolean | null
+          facility_selection_mode?: string | null
           green_halo_required?: boolean
+          handling_fee_possible?: boolean | null
           id?: string
+          market?: string | null
           material_classification?: string
           notes?: string | null
           order_id?: string
+          request_reason?: string | null
+          requested_by?: string | null
           required_facility_type?: string
           route_miles_to_facility?: number | null
           route_minutes_to_facility?: number | null
