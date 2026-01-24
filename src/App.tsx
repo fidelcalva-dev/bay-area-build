@@ -78,6 +78,8 @@ const DriversManager = lazy(() => import("./pages/admin/DriversManager"));
 const DispatchCalendar = lazy(() => import("./pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
+const AssetsControlTower = lazy(() => import("./pages/admin/AssetsControlTower"));
+const MovementsLog = lazy(() => import("./pages/admin/MovementsLog"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
@@ -337,6 +339,12 @@ const App = () => (
                 } />
                 <Route path="inventory" element={
                   <Suspense fallback={<PageLoader />}><InventoryManager /></Suspense>
+                } />
+                <Route path="assets" element={
+                  <Suspense fallback={<PageLoader />}><AssetsControlTower /></Suspense>
+                } />
+                <Route path="movements" element={
+                  <Suspense fallback={<PageLoader />}><MovementsLog /></Suspense>
                 } />
                 <Route path="users" element={
                   <Suspense fallback={<PageLoader />}><UsersManager /></Suspense>
