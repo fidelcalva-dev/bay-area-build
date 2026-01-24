@@ -14,7 +14,7 @@ import {
   EXTRA_DAY_COST,
 } from '../constants';
 
-// Extended zone result with more details
+// Extended zone result with more details (includes market_id)
 export interface ZoneLookupResult {
   zoneId: string;
   zoneName: string;
@@ -23,6 +23,8 @@ export interface ZoneLookupResult {
   county?: string;
   multiplier: number;
   isActive: boolean;
+  marketId?: string;
+  marketName?: string;
 }
 
 export interface PricingDataState {
@@ -182,6 +184,7 @@ export function useZoneLookup(zip: string) {
           zip_code,
           city_name,
           county,
+          market_id,
           zone:pricing_zones!inner(
             id, 
             name, 
@@ -206,6 +209,18 @@ export function useZoneLookup(zip: string) {
       }
 
       const zone = data.zone as any;
+      
+      // Fetch market name if market_id exists
+      let marketName: string | undefined;
+      if (data.market_id) {
+        const { data: marketData } = await supabase
+          .from('markets')
+          .select('name')
+          .eq('id', data.market_id)
+          .single();
+        marketName = marketData?.name;
+      }
+      
       setZoneResult({
         zoneId: data.zone_id,
         zoneName: zone.name,
@@ -214,6 +229,8 @@ export function useZoneLookup(zip: string) {
         county: data.county || undefined,
         multiplier: Number(zone.base_multiplier),
         isActive: zone.is_active,
+        marketId: data.market_id || undefined,
+        marketName: marketName,
       });
     } catch (err) {
       console.error('Zone lookup exception:', err);
