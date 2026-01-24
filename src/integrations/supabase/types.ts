@@ -193,11 +193,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ar_actions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["invoice_id"]
+          },
+          {
             foreignKeyName: "ar_actions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ar_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -284,6 +298,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
@@ -953,6 +974,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "disposal_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "disposal_requests_requested_facility_id_fkey"
             columns: ["requested_facility_id"]
             isOneToOne: false
@@ -1100,6 +1128,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "documents_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
         ]
       }
       driver_facility_preferences: {
@@ -1210,6 +1245,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_payouts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -1488,6 +1530,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "facility_recommendations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "facility_recommendations_selected_facility_id_fkey"
             columns: ["selected_facility_id"]
             isOneToOne: false
@@ -1606,6 +1655,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_flags_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "fraud_flags_quote_id_fkey"
@@ -1788,11 +1844,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "inventory_movements_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["asset_id"]
+          },
+          {
             foreignKeyName: "inventory_movements_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -1842,11 +1912,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["invoice_id"]
+          },
+          {
             foreignKeyName: "invoice_line_items_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -1916,6 +2000,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -2091,6 +2182,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logistics_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -2298,6 +2396,7 @@ export type Database = {
           external_id: string | null
           id: string
           message_body: string
+          mode: string | null
           order_id: string | null
           sent_by: string | null
           status: string
@@ -2312,6 +2411,7 @@ export type Database = {
           external_id?: string | null
           id?: string
           message_body: string
+          mode?: string | null
           order_id?: string | null
           sent_by?: string | null
           status?: string
@@ -2326,6 +2426,7 @@ export type Database = {
           external_id?: string | null
           id?: string
           message_body?: string
+          mode?: string | null
           order_id?: string | null
           sent_by?: string | null
           status?: string
@@ -2345,6 +2446,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -2474,6 +2582,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_disposal_plans_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "order_disposal_plans_selected_facility_id_fkey"
             columns: ["selected_facility_id"]
             isOneToOne: false
@@ -2523,6 +2638,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -2820,6 +2942,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_parent_order_id_fkey"
+            columns: ["parent_order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "orders_primary_dumpster_id_fkey"
             columns: ["primary_dumpster_id"]
             isOneToOne: false
@@ -2846,6 +2975,75 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "inventory"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      overdue_billing_state: {
+        Row: {
+          asset_id: string
+          billed_overdue_days_total: number
+          created_at: string
+          id: string
+          last_billed_at: string | null
+          last_notified_at: string | null
+          order_id: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id: string
+          billed_overdue_days_total?: number
+          created_at?: string
+          id?: string
+          last_billed_at?: string | null
+          last_notified_at?: string | null
+          order_id: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string
+          billed_overdue_days_total?: number
+          created_at?: string
+          id?: string
+          last_billed_at?: string | null
+          last_notified_at?: string | null
+          order_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "overdue_billing_state_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_dumpsters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "overdue_billing_state_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "overdue_billing_state_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["asset_id"]
+          },
+          {
+            foreignKeyName: "overdue_billing_state_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "overdue_billing_state_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -2990,6 +3188,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -3543,6 +3748,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "quotes_quick_link_id_fkey"
             columns: ["quick_link_id"]
             isOneToOne: false
@@ -3714,6 +3926,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "risk_score_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "risk_score_events_quote_id_fkey"
@@ -3909,6 +4128,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "schedule_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
         ]
       }
       service_receipts: {
@@ -4084,6 +4310,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -4831,6 +5064,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "waste_vision_analyses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
             foreignKeyName: "waste_vision_analyses_quote_id_fkey"
             columns: ["quote_id"]
             isOneToOne: false
@@ -5060,6 +5300,46 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      overdue_assets_billing_vw: {
+        Row: {
+          asset_code: string | null
+          asset_id: string | null
+          asset_status: string | null
+          billable_days: number | null
+          billed_overdue_days_total: number | null
+          customer_email: string | null
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          days_out: number | null
+          deployed_at: string | null
+          included_days: number | null
+          invoice_id: string | null
+          invoice_number: string | null
+          last_billed_at: string | null
+          last_notified_at: string | null
+          order_id: string | null
+          order_status: string | null
+          overdue_days: number | null
+          overdue_notified: boolean | null
+        }
+        Relationships: [
           {
             foreignKeyName: "orders_customer_id_fkey"
             columns: ["customer_id"]
