@@ -121,12 +121,27 @@ export function WasteVisionAnalyzer({
   showQuoteButton = true,
   className,
 }: WasteVisionAnalyzerProps) {
-  const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
+  const [images, setImages] = useState<{ file: File; preview: string; label?: string }[]>([]);
   const [referenceObject, setReferenceObject] = useState<ReferenceObject>('none');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Photo label options
+  const PHOTO_LABELS = [
+    { value: 'pile', label: '📦 Pile', description: 'Overall debris pile' },
+    { value: 'closeup', label: '🔍 Close-up', description: 'Detail shot of materials' },
+    { value: 'jobsite', label: '🏗️ Jobsite', description: 'Full work area view' },
+  ];
+
+  // Update image label
+  const updateImageLabel = (index: number, label: string) => {
+    setImages(prev => prev.map((img, i) => 
+      i === index ? { ...img, label } : img
+    ));
+  };
 
   // Handle file selection
   const handleFileSelect = useCallback(async (files: FileList | null) => {
@@ -216,10 +231,47 @@ export function WasteVisionAnalyzer({
     }
   };
 
-  // Send to CS for review
-  const handleSendToCS = () => {
-    if (result && onSendToCS) {
-      onSendToCS(result);
+  // Send to CS for review - updates analysis record and prompts contact
+  const handleSendToCS = async () => {
+    if (!result) return;
+    
+    setIsCreatingTicket(true);
+    try {
+      // Update the waste_vision_analyses record to flag for CS review
+      if (result.analysisId) {
+        await supabase
+          .from('waste_vision_analyses')
+          .update({
+            hazard_review_status: 'pending',
+            hazard_review_required: true,
+            recommendation_notes: [
+              ...(result.recommended_flow.notes || []),
+              'Customer requested human review',
+            ],
+          })
+          .eq('id', result.analysisId);
+      }
+
+      // Call the callback if provided
+      if (onSendToCS) {
+        onSendToCS(result);
+      } else {
+        // Default: show contact options
+        const shouldCall = confirm(
+          'Your analysis has been flagged for review.\n\n' +
+          'Call our team now at (510) 680-2150?\n\n' +
+          '(Click OK to call, Cancel to continue)'
+        );
+        if (shouldCall) {
+          window.location.href = 'tel:+15106802150';
+        }
+      }
+    } catch (err) {
+      console.error('Error flagging for CS review:', err);
+      // Fall back to phone call
+      window.location.href = 'tel:+15106802150';
+    } finally {
+      setIsCreatingTicket(false);
     }
   };
 
@@ -240,11 +292,11 @@ export function WasteVisionAnalyzer({
       {!result && (
         <Card>
           <CardContent className="pt-6">
-            {/* Image Grid */}
+            {/* Image Grid with Label Chips */}
             {images.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                 {images.map((img, idx) => (
-                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-muted">
+                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-muted group">
                     <img 
                       src={img.preview} 
                       alt={`Debris photo ${idx + 1}`}
@@ -252,13 +304,29 @@ export function WasteVisionAnalyzer({
                     />
                     <button
                       onClick={() => removeImage(idx)}
-                      className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90"
+                      className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3" />
                     </button>
-                    <span className="absolute bottom-1 left-1 text-xs bg-black/60 text-white px-1.5 py-0.5 rounded">
-                      {idx + 1}/{images.length}
-                    </span>
+                    {/* Photo Label Chips */}
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-gradient-to-t from-black/70 to-transparent">
+                      <div className="flex gap-1 flex-wrap">
+                        {PHOTO_LABELS.map(labelOpt => (
+                          <button
+                            key={labelOpt.value}
+                            onClick={() => updateImageLabel(idx, img.label === labelOpt.value ? '' : labelOpt.value)}
+                            className={cn(
+                              "text-[10px] px-1.5 py-0.5 rounded-full transition-all",
+                              img.label === labelOpt.value
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-white/20 text-white hover:bg-white/30"
+                            )}
+                          >
+                            {labelOpt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -551,9 +619,23 @@ export function WasteVisionAnalyzer({
               </Button>
             )}
             {(result.hazard_review_required || result.overall_confidence === 'low') && (
-              <Button onClick={handleSendToCS} variant="outline" className="flex-1">
-                <Phone className="w-4 h-4 mr-2" />
-                Contact Customer Service
+              <Button 
+                onClick={handleSendToCS} 
+                variant="outline" 
+                className="flex-1"
+                disabled={isCreatingTicket}
+              >
+                {isCreatingTicket ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Contact Customer Service
+                  </>
+                )}
               </Button>
             )}
             <Button onClick={handleReset} variant="ghost">
