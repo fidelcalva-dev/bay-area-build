@@ -63,19 +63,28 @@ export default function OverdueBillingPage() {
       if (error) throw error;
       setOverdueAssets(assets || []);
 
-      // Fetch config
+      // Fetch config using canonical keys (2026_Q1_ALIGNMENT)
       const { data: configRows } = await supabase
         .from('config_settings')
-        .select('key, value')
+        .select('category, key, value')
         .in('category', ['overdue', 'messaging']);
 
       if (configRows) {
-        const configMap = new Map(configRows.map(r => [r.key, r.value]));
+        // Build a map keyed by "category.key"
+        const configMap = new Map<string, unknown>();
+        for (const row of configRows) {
+          const fullKey = `${row.category}.${row.key}`;
+          let value: unknown = row.value;
+          if (typeof value === 'string') {
+            try { value = JSON.parse(value); } catch { value = (value as string).replace(/^"|"$/g, ''); }
+          }
+          configMap.set(fullKey, value);
+        }
         setConfig({
-          daily_rate: Number(configMap.get('daily_rate_default')) || 35,
-          escalation_days: Number(configMap.get('task_escalation_days')) || 3,
-          max_auto_bill: Number(configMap.get('auto_bill_max_amount')) || 250,
-          messaging_mode: String(configMap.get('mode') || 'DRY_RUN').replace(/"/g, ''),
+          daily_rate: Number(configMap.get('overdue.daily_rate')) || 35,
+          escalation_days: Number(configMap.get('overdue.escalation_days')) || 3,
+          max_auto_bill: Number(configMap.get('overdue.auto_bill_max')) || 250,
+          messaging_mode: String(configMap.get('messaging.mode') || 'DRY_RUN'),
         });
       }
 

@@ -71,9 +71,10 @@ export default function MixedRulesManager() {
 
     try {
       // Update extra ton rate
+      // Update using canonical key: pricing.extra_ton_rate_default
       const { error: rateError } = await supabase
         .from('config_settings')
-        .update({ value: standardTonRate })
+        .update({ value: standardTonRate, updated_at: new Date().toISOString() })
         .eq('category', 'pricing')
         .eq('key', 'extra_ton_rate_default');
 
