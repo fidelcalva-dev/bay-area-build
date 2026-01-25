@@ -7,6 +7,7 @@ export { PlainDumpsterCard, DUMPSTER_SPECS as PLAIN_DUMPSTER_SPECS, type Dumpste
 export { PhotoDumpsterCard } from './PhotoDumpsterCard';
 export { CTAButtons, PhoneCTA, CTA_CONFIG } from './CTAButtons';
 export { OfficeStatusIndicator } from './OfficeStatusIndicator';
+export { PriceAnchor, PriceAnchorStatic } from './PriceAnchor';
 
 // Re-export canonical image registry for convenience
 export { 

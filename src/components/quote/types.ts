@@ -61,6 +61,7 @@ export interface UserType {
   discount: number;
   icon: string;
   benefits: string[];
+  helperText?: string; // Dynamic micro-copy for Quick Quote (Phase 2, Item 4)
 }
 
 export interface QuoteLineItem {
