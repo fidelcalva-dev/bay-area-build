@@ -5065,6 +5065,33 @@ export type Database = {
           },
         ]
       }
+      security_acknowledgements: {
+        Row: {
+          id: string
+          issue_key: string
+          notes: string | null
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          issue_key: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          issue_key?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       service_receipts: {
         Row: {
           created_at: string
