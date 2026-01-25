@@ -1,5 +1,6 @@
 // Ads Capacity Guard Edge Function
 // Pauses/adjusts campaigns based on inventory utilization and capacity rules
+// Supports DRY_RUN mode (DB only) or LIVE mode (Google Ads API)
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -35,6 +36,20 @@ interface CapacityResult {
   campaigns_affected: number;
 }
 
+async function getAdsMode(supabase: any): Promise<'DRY_RUN' | 'LIVE'> {
+  const { data } = await supabase
+    .from('config_settings')
+    .select('value')
+    .eq('category', 'ads')
+    .eq('key', 'mode')
+    .maybeSingle();
+  
+  const mode = data?.value as string | undefined;
+  // Remove quotes if JSON-encoded string
+  const cleanMode = mode?.replace(/"/g, '') || 'DRY_RUN';
+  return cleanMode === 'LIVE' ? 'LIVE' : 'DRY_RUN';
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -47,13 +62,15 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Starting capacity guard check...');
+    // Check ads mode - DRY_RUN = DB only, LIVE = sync with Google Ads API
+    const adsMode = await getAdsMode(supabase);
+    console.log(`Starting capacity guard check in ${adsMode} mode...`);
 
     // Log sync start
     await supabase.from('ads_sync_log').insert({
       sync_type: 'capacity_check',
       status: 'started',
-      metadata: { triggered_by: 'edge_function' }
+      metadata: { triggered_by: 'edge_function', mode: adsMode }
     });
 
     // Get all active markets
@@ -110,6 +127,7 @@ Deno.serve(async (req) => {
         // PAUSE all campaigns - low inventory
         for (const campaign of marketCampaigns) {
           if (campaign.status === 'active') {
+            // Update DB
             await supabase
               .from('ads_campaigns')
               .update({ 
@@ -118,6 +136,13 @@ Deno.serve(async (req) => {
                 updated_at: new Date().toISOString()
               })
               .eq('id', campaign.id);
+            
+            // In LIVE mode, would call Google Ads API
+            if (adsMode === 'LIVE') {
+              console.log(`[LIVE] Would pause campaign ${campaign.id} via Google Ads API`);
+              // TODO: Implement Google Ads API pause call
+            }
+            
             campaignsAffected++;
             totalPaused++;
           }
@@ -131,12 +156,12 @@ Deno.serve(async (req) => {
           title: `Low Inventory: ${market.city}`,
           message: `Only ${available} dumpsters available in ${market.city}. Campaigns paused.`,
           entity_type: 'market',
-          metadata: { market_code: market.market_code, available, threshold: market.inventory_threshold }
+          metadata: { market_code: market.market_code, available, threshold: market.inventory_threshold, mode: adsMode }
         });
         alertsCreated.push(market.market_code);
 
       } else if (utilizationPct >= market.utilization_pause_threshold) {
-        // HIGH utilization - switch to PREMIUM messaging (or pause if already PREMIUM)
+        // HIGH utilization - switch to PREMIUM messaging
         for (const campaign of marketCampaigns) {
           if (campaign.status === 'active' && campaign.messaging_tier !== 'PREMIUM') {
             await supabase
@@ -146,6 +171,12 @@ Deno.serve(async (req) => {
                 updated_at: new Date().toISOString()
               })
               .eq('id', campaign.id);
+            
+            if (adsMode === 'LIVE') {
+              console.log(`[LIVE] Would update ad copy for ${campaign.id} to PREMIUM tier`);
+              // TODO: Implement Google Ads API ad copy update
+            }
+            
             campaignsAffected++;
             totalUpdated++;
           }
@@ -163,6 +194,11 @@ Deno.serve(async (req) => {
                 updated_at: new Date().toISOString()
               })
               .eq('id', campaign.id);
+            
+            if (adsMode === 'LIVE') {
+              console.log(`[LIVE] Would update ad copy for ${campaign.id} to CORE tier`);
+            }
+            
             campaignsAffected++;
             totalUpdated++;
           }
@@ -182,6 +218,11 @@ Deno.serve(async (req) => {
                 updated_at: new Date().toISOString()
               })
               .eq('id', campaign.id);
+            
+            if (adsMode === 'LIVE') {
+              console.log(`[LIVE] Would resume campaign ${campaign.id} via Google Ads API`);
+            }
+            
             campaignsAffected++;
             totalUpdated++;
           } else if (campaign.messaging_tier !== 'BASE') {
@@ -221,15 +262,17 @@ Deno.serve(async (req) => {
       duration_ms: durationMs,
       metadata: { 
         results,
-        alerts_created: alertsCreated.length
+        alerts_created: alertsCreated.length,
+        mode: adsMode
       }
     });
 
-    console.log(`Capacity guard completed in ${durationMs}ms`);
+    console.log(`Capacity guard completed in ${durationMs}ms (${adsMode} mode)`);
 
     return new Response(
       JSON.stringify({
         success: true,
+        mode: adsMode,
         markets_checked: markets?.length || 0,
         campaigns_paused: totalPaused,
         campaigns_updated: totalUpdated,
