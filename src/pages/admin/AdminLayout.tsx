@@ -34,6 +34,14 @@ const navSections = [
     ],
   },
   {
+    title: 'Google Ads',
+    items: [
+      { path: '/admin/ads/overview', label: 'Ads Overview', icon: TrendingUp },
+      { path: '/admin/ads/campaigns', label: 'Campaigns', icon: BarChart3 },
+      { path: '/admin/ads/rules', label: 'Automation Rules', icon: Settings },
+    ],
+  },
+  {
     title: 'Operations',
     items: [
       { path: '/admin/orders', label: 'Orders', icon: Package },
