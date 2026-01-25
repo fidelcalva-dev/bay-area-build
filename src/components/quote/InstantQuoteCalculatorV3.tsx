@@ -933,7 +933,7 @@ export function InstantQuoteCalculatorV3() {
         {/* Step 1: ZIP */}
         {step === 'zip' && (
           <div className="space-y-5">
-            {/* User Type Selection - Compact chips with SVG icons */}
+            {/* User Type Selection - Compact chips with SVG icons + Micro-copy */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-foreground">I am a...</label>
@@ -966,6 +966,12 @@ export function InstantQuoteCalculatorV3() {
                   );
                 })}
               </div>
+              {/* User Type Micro-copy (Phase 2, Item 4) */}
+              {formData.userType && (
+                <p className="text-xs text-muted-foreground mt-2 transition-all duration-200">
+                  {USER_TYPES.find(t => t.value === formData.userType)?.helperText}
+                </p>
+              )}
             </div>
 
             {/* ZIP Input - Clean system style with auto-detect */}
@@ -1111,12 +1117,20 @@ export function InstantQuoteCalculatorV3() {
                           )}
                         </div>
                         
-                        {/* Availability messaging based on distance */}
+                        {/* Yard Value Explanation (Phase 2, Item 5) */}
+                        {distanceCalc.distance && (
+                          <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                            <span className="text-primary">💡</span>
+                            Local yard = faster delivery, lower transport cost, better availability
+                          </p>
+                        )}
+                        
+                        {/* Availability messaging based on distance (Phase 2, Item 6) */}
                         {distanceCalc.distance && (
                           <div className="mt-2 pt-2 border-t border-success/20">
                             <p className="text-xs text-muted-foreground">
                               {distanceCalc.distance.distanceMiles <= 10 && (
-                                <span className="text-success">⚡ Same-day delivery may be available</span>
+                                <span className="text-success">⚡ Same-day delivery available</span>
                               )}
                               {distanceCalc.distance.distanceMiles > 10 && distanceCalc.distance.distanceMiles <= 25 && (
                                 <span className="text-primary">📅 Next-day delivery likely</span>

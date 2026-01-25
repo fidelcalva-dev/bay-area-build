@@ -1,8 +1,11 @@
 import { motion, Variants } from 'framer-motion';
-import { Phone, MessageSquare, Star, Shield, Award } from 'lucide-react';
+import { MessageSquare, Star, Shield, Award } from 'lucide-react';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
 import { Button } from '@/components/ui/button';
+import { PriceAnchor } from '@/components/shared/PriceAnchor';
+import { LocalSEOSchema, getLocalizedH1 } from '@/components/seo/LocalSEOSchema';
 import { BUSINESS_INFO } from '@/lib/shared-data';
+import { analytics } from '@/lib/analytics';
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -33,31 +36,60 @@ const TRUST_ITEMS = [
   { icon: Award, label: 'Licensed & Insured' },
 ];
 
-export function HeroSection() {
+interface HeroSectionProps {
+  cityName?: string;
+  countyName?: string;
+}
+
+export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
+  const handleCTAClick = (ctaType: string) => {
+    analytics.homepageCTAClick(ctaType);
+  };
+
   return (
     <section className="relative overflow-hidden">
+      {/* Local SEO Schema injection */}
+      <LocalSEOSchema 
+        cityName={cityName} 
+        countyName={countyName}
+        includeFAQ={true}
+        includeService={true}
+      />
+      
       {/* Modern gradient background */}
       <div className="absolute inset-0 gradient-hero" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--accent)/0.15)_0%,_transparent_50%)]" />
       
       <div className="container-wide relative">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center py-8 md:py-12 lg:py-20">
-          {/* Left Content - Simplified */}
+          {/* Left Content - SEO Optimized */}
           <motion.div 
             className="text-center lg:text-left space-y-6"
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
           >
-            {/* H1 - Clear value prop */}
+            {/* H1 - SEO optimized with dynamic city */}
             <motion.div variants={fadeInUp}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                ZIP-Based Dumpster Rentals
-                <span className="block text-accent mt-1">with Local Yards</span>
+                {cityName ? (
+                  <>
+                    Dumpster Rental in {cityName}, CA
+                    <span className="block text-accent mt-1">ZIP-Based with Local Yards</span>
+                  </>
+                ) : (
+                  <>
+                    ZIP-Based Dumpster Rentals
+                    <span className="block text-accent mt-1">with Local Yards</span>
+                  </>
+                )}
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
                 Instant estimates · Nearest yard selected · Estimated time windows
               </p>
+              
+              {/* Price Anchor (P0) - Auto-updates with BASE pricing */}
+              <PriceAnchor variant="hero" />
             </motion.div>
 
             {/* 2 CTAs Only */}
@@ -67,6 +99,7 @@ export function HeroSection() {
                 variant="cta" 
                 size="lg"
                 className="flex-1 text-lg font-bold shadow-lg"
+                onClick={() => handleCTAClick('get_quote')}
               >
                 <a href="#quote">
                   Get Instant Quote
@@ -78,6 +111,7 @@ export function HeroSection() {
                 variant="outline" 
                 size="lg"
                 className="flex-1 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                onClick={() => handleCTAClick('text_us')}
               >
                 <a href={`sms:${BUSINESS_INFO.phone.sales}`}>
                   <MessageSquare className="w-5 h-5 mr-2" />

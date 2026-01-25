@@ -2,6 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
 import { CheckCircle, MessageCircle } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
+import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 
 const benefits = [
   'All-inclusive pricing — no hidden fees',
@@ -73,6 +74,8 @@ export default function Quote() {
                 <p className="text-sm text-muted-foreground">
                   🔒 Your information is secure and never shared
                 </p>
+                {/* Price Transparency Note (Phase 3, Item 8) */}
+                <PriceTransparencyNote className="text-xs text-muted-foreground mt-2" />
                 <p className="text-xs text-muted-foreground mt-1">
                   We'll contact you within 15 minutes during business hours (6AM–9PM daily)
                 </p>

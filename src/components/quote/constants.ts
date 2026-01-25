@@ -220,6 +220,7 @@ export const RENTAL_PERIODS: RentalPeriod[] = [
 
 // User types - NO AUTOMATIC DISCOUNTS (volume-based only)
 // Discounts require prepaid/contracted volume commitment
+// helperText is used for dynamic micro-copy in the Quick Quote (Phase 2, Item 4)
 export const USER_TYPES: UserType[] = [
   { 
     value: 'homeowner', 
@@ -227,6 +228,7 @@ export const USER_TYPES: UserType[] = [
     discount: 0, 
     icon: 'home',
     benefits: ['No hidden fees', 'Same-day available', 'Flexible scheduling'],
+    helperText: 'Best value · Simple pricing · Ideal for cleanouts & remodels',
   },
   { 
     value: 'contractor', 
@@ -234,6 +236,7 @@ export const USER_TYPES: UserType[] = [
     discount: 0, // Volume-based only - see contractorDiscounts.ts
     icon: 'hard-hat',
     benefits: ['Volume programs available', 'Priority scheduling', 'Net-30 available'],
+    helperText: 'Priority scheduling · Higher tonnage options · Faster swaps',
   },
   { 
     value: 'business', 
@@ -241,6 +244,7 @@ export const USER_TYPES: UserType[] = [
     discount: 0, // Volume-based only - see contractorDiscounts.ts
     icon: 'building-2',
     benefits: ['Volume programs available', 'Recurring service', 'Dedicated support'],
+    helperText: 'Compliance · Reporting · Multi-location support',
   },
   { 
     value: 'preferred_contractor', 
@@ -248,6 +252,7 @@ export const USER_TYPES: UserType[] = [
     discount: 0, // Volume-based only
     icon: 'award',
     benefits: ['Volume programs available', 'Priority dispatch', 'Dedicated account rep'],
+    helperText: 'Preferred pricing · Priority dispatch',
   },
   { 
     value: 'wholesaler_broker', 
@@ -255,6 +260,7 @@ export const USER_TYPES: UserType[] = [
     discount: 0, // Volume-based only, requires approval
     icon: 'handshake',
     benefits: ['Volume programs available', 'Custom agreements', 'Multi-site support'],
+    helperText: 'Volume-based pricing · Dedicated support',
   },
 ];
 
