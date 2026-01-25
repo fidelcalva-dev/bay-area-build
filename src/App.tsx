@@ -95,6 +95,7 @@ const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
 const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage"));
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
+const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
 
 // Google Ads Admin Pages
 const AdsOverview = lazy(() => import("./pages/admin/ads/AdsOverview"));
@@ -405,6 +406,9 @@ const App = () => (
                 } />
                 <Route path="config/health" element={
                   <Suspense fallback={<PageLoader />}><ConfigHealthPage /></Suspense>
+                } />
+                <Route path="security" element={
+                  <Suspense fallback={<PageLoader />}><SecurityHealthPage /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={
