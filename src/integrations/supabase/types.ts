@@ -1511,6 +1511,7 @@ export type Database = {
           description: string | null
           id: string
           is_locked: boolean | null
+          is_sensitive: boolean | null
           key: string
           updated_at: string
           updated_by: string | null
@@ -1522,6 +1523,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_locked?: boolean | null
+          is_sensitive?: boolean | null
           key: string
           updated_at?: string
           updated_by?: string | null
@@ -1533,6 +1535,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_locked?: boolean | null
+          is_sensitive?: boolean | null
           key?: string
           updated_at?: string
           updated_by?: string | null
