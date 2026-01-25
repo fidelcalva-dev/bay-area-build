@@ -639,6 +639,44 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_availability: {
+        Row: {
+          calls_today: number | null
+          current_call_id: string | null
+          id: string
+          last_call_ended_at: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          calls_today?: number | null
+          current_call_id?: string | null
+          id?: string
+          last_call_ended_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          calls_today?: number | null
+          current_call_id?: string | null
+          id?: string
+          last_call_ended_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_availability_current_call_id_fkey"
+            columns: ["current_call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alerts: {
         Row: {
           alert_type: string
@@ -1025,6 +1063,189 @@ export type Database = {
           triggered_by?: string | null
         }
         Relationships: []
+      }
+      call_assignments: {
+        Row: {
+          accepted_at: string | null
+          call_id: string
+          created_at: string | null
+          declined_at: string | null
+          ended_at: string | null
+          id: string
+          offered_at: string | null
+          role: Database["public"]["Enums"]["phone_purpose"]
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          call_id: string
+          created_at?: string | null
+          declined_at?: string | null
+          ended_at?: string | null
+          id?: string
+          offered_at?: string | null
+          role: Database["public"]["Enums"]["phone_purpose"]
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          call_id?: string
+          created_at?: string | null
+          declined_at?: string | null
+          ended_at?: string | null
+          id?: string
+          offered_at?: string | null
+          role?: Database["public"]["Enums"]["phone_purpose"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_assignments_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_events: {
+        Row: {
+          answered_at: string | null
+          assigned_user_id: string | null
+          call_status: Database["public"]["Enums"]["call_status"]
+          caller_name: string | null
+          contact_id: string | null
+          created_at: string | null
+          direction: Database["public"]["Enums"]["call_direction"]
+          duration_seconds: number | null
+          ended_at: string | null
+          from_number: string
+          id: string
+          notes: string | null
+          order_id: string | null
+          phone_number_id: string | null
+          recording_sid: string | null
+          recording_url: string | null
+          started_at: string | null
+          to_number: string
+          twilio_call_sid: string | null
+        }
+        Insert: {
+          answered_at?: string | null
+          assigned_user_id?: string | null
+          call_status?: Database["public"]["Enums"]["call_status"]
+          caller_name?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          direction: Database["public"]["Enums"]["call_direction"]
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          phone_number_id?: string | null
+          recording_sid?: string | null
+          recording_url?: string | null
+          started_at?: string | null
+          to_number: string
+          twilio_call_sid?: string | null
+        }
+        Update: {
+          answered_at?: string | null
+          assigned_user_id?: string | null
+          call_status?: Database["public"]["Enums"]["call_status"]
+          caller_name?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          direction?: Database["public"]["Enums"]["call_direction"]
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number?: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          phone_number_id?: string | null
+          recording_sid?: string | null
+          recording_url?: string | null
+          started_at?: string | null
+          to_number?: string
+          twilio_call_sid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_events_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "call_events_phone_number_id_fkey"
+            columns: ["phone_number_id"]
+            isOneToOne: false
+            referencedRelation: "phone_numbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_tasks: {
+        Row: {
+          assigned_to: string | null
+          call_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          priority: number | null
+          scheduled_for: string | null
+          task_type: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          call_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          priority?: number | null
+          scheduled_for?: string | null
+          task_type: string
+        }
+        Update: {
+          assigned_to?: string | null
+          call_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          priority?: number | null
+          scheduled_for?: string | null
+          task_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_tasks_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       certified_sources: {
         Row: {
@@ -3790,6 +4011,39 @@ export type Database = {
           },
         ]
       }
+      phone_numbers: {
+        Row: {
+          created_at: string | null
+          friendly_name: string | null
+          id: string
+          is_active: boolean | null
+          market_code: string | null
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          twilio_number: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          friendly_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          market_code?: string | null
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          twilio_number: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          friendly_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          market_code?: string | null
+          purpose?: Database["public"]["Enums"]["phone_purpose"]
+          twilio_number?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       phone_otps: {
         Row: {
           attempts: number
@@ -5838,6 +6092,47 @@ export type Database = {
         }
         Relationships: []
       }
+      voicemails: {
+        Row: {
+          audio_path: string
+          call_id: string
+          created_at: string | null
+          id: string
+          is_reviewed: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          transcription: string | null
+        }
+        Insert: {
+          audio_path: string
+          call_id: string
+          created_at?: string | null
+          id?: string
+          is_reviewed?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          transcription?: string | null
+        }
+        Update: {
+          audio_path?: string
+          call_id?: string
+          created_at?: string | null
+          id?: string
+          is_reviewed?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          transcription?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voicemails_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       volume_commitments: {
         Row: {
           agreement_id: string | null
@@ -6324,6 +6619,10 @@ export type Database = {
         }
         Returns: string
       }
+      find_available_agent: {
+        Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
+        Returns: string
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -6337,6 +6636,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_call_event: {
+        Args: {
+          p_direction: Database["public"]["Enums"]["call_direction"]
+          p_from: string
+          p_status?: Database["public"]["Enums"]["call_status"]
+          p_to: string
+          p_twilio_sid: string
+        }
+        Returns: string
       }
       log_lead_event: {
         Args: {
@@ -6372,6 +6681,14 @@ export type Database = {
         | "executive"
       approval_status: "pending" | "approved" | "rejected"
       assignment_type: "IN_HOUSE" | "CARRIER"
+      call_direction: "INBOUND" | "OUTBOUND"
+      call_status:
+        | "RINGING"
+        | "ANSWERED"
+        | "MISSED"
+        | "VOICEMAIL"
+        | "COMPLETED"
+        | "FAILED"
       checkpoint_type: "PICKUP_POD" | "DELIVERY_POD" | "DUMP_TICKET"
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
@@ -6400,6 +6717,7 @@ export type Database = {
         | "failed"
         | "canceled"
       payment_action_type: "refund" | "void"
+      phone_purpose: "SALES" | "CS" | "BILLING"
       run_status:
         | "DRAFT"
         | "SCHEDULED"
@@ -6559,6 +6877,15 @@ export const Constants = {
       ],
       approval_status: ["pending", "approved", "rejected"],
       assignment_type: ["IN_HOUSE", "CARRIER"],
+      call_direction: ["INBOUND", "OUTBOUND"],
+      call_status: [
+        "RINGING",
+        "ANSWERED",
+        "MISSED",
+        "VOICEMAIL",
+        "COMPLETED",
+        "FAILED",
+      ],
       checkpoint_type: ["PICKUP_POD", "DELIVERY_POD", "DUMP_TICKET"],
       commitment_type: ["prepaid", "contracted"],
       contract_status: ["pending", "signed", "declined", "expired"],
@@ -6589,6 +6916,7 @@ export const Constants = {
         "canceled",
       ],
       payment_action_type: ["refund", "void"],
+      phone_purpose: ["SALES", "CS", "BILLING"],
       run_status: [
         "DRAFT",
         "SCHEDULED",
