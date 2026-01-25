@@ -96,6 +96,13 @@ const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage")
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 
+// Google Ads Admin Pages
+const AdsOverview = lazy(() => import("./pages/admin/ads/AdsOverview"));
+const AdsCampaigns = lazy(() => import("./pages/admin/ads/AdsCampaigns"));
+const AdsRules = lazy(() => import("./pages/admin/ads/AdsRules"));
+const AdsMarketsPage = lazy(() => import("./pages/admin/ads/AdsMarketsPage"));
+const AdsLogsPage = lazy(() => import("./pages/admin/ads/AdsLogsPage"));
+
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
 const AdminSalesDashboard = lazy(() => import("./pages/admin/dashboards/SalesDashboard"));
@@ -420,6 +427,25 @@ const App = () => (
                 } />
                 <Route path="dashboards/leads" element={
                   <Suspense fallback={<PageLoader />}><LeadPerformanceDashboard /></Suspense>
+                } />
+                {/* Google Ads Routes */}
+                <Route path="ads" element={
+                  <Suspense fallback={<PageLoader />}><AdsOverview /></Suspense>
+                } />
+                <Route path="ads/overview" element={
+                  <Suspense fallback={<PageLoader />}><AdsOverview /></Suspense>
+                } />
+                <Route path="ads/campaigns" element={
+                  <Suspense fallback={<PageLoader />}><AdsCampaigns /></Suspense>
+                } />
+                <Route path="ads/rules" element={
+                  <Suspense fallback={<PageLoader />}><AdsRules /></Suspense>
+                } />
+                <Route path="ads/markets" element={
+                  <Suspense fallback={<PageLoader />}><AdsMarketsPage /></Suspense>
+                } />
+                <Route path="ads/logs" element={
+                  <Suspense fallback={<PageLoader />}><AdsLogsPage /></Suspense>
                 } />
               </Route>
 
