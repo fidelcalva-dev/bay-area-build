@@ -8,3 +8,15 @@ verify_jwt = false
 
 [functions.analyze-waste]
 verify_jwt = false
+
+[functions.calls-inbound-handler]
+verify_jwt = false
+
+[functions.calls-status-callback]
+verify_jwt = false
+
+[functions.calls-voicemail-handler]
+verify_jwt = false
+
+[functions.calls-outbound-connect]
+verify_jwt = false
