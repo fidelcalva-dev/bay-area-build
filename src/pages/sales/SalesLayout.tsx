@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { 
   Users, FileText, Settings, LogOut, 
-  Menu, X, Home, MessageSquare, Search, TrendingUp
+  Menu, X, Home, MessageSquare, Search, TrendingUp, Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -10,17 +10,20 @@ import { useMobileMode } from "@/hooks/useMobileMode";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { cn } from "@/lib/utils";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from "@/components/mobile";
+import { AgentStatusWidget } from "@/components/telephony";
 
 const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
   { label: "Leads", href: "/sales/leads", icon: Users },
   { label: "Quotes", href: "/sales/quotes", icon: FileText },
+  { label: "Calls", href: "/sales/calls", icon: Phone },
   { label: "New Quote", href: "/quote", icon: MessageSquare },
 ];
 
 const mobileNavItems: MobileNavItem[] = [
   { path: "/sales/leads", label: "Leads", icon: Users },
   { path: "/sales/quotes", label: "Quotes", icon: FileText },
+  { path: "/sales/calls", label: "Calls", icon: Phone },
   { path: "/sales", label: "Home", icon: Home, end: true },
   { path: "/sales/search", label: "Search", icon: Search },
 ];
@@ -139,6 +142,11 @@ export default function SalesLayout() {
               );
             })}
           </nav>
+
+          {/* Agent Status */}
+          <div className="p-4 border-t border-border">
+            <AgentStatusWidget />
+          </div>
 
           {/* Footer */}
           <div className="p-4 border-t space-y-2">

@@ -97,6 +97,11 @@ const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
 
+// Telephony Admin Pages
+const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
+const PhoneNumbersManager = lazy(() => import("./pages/admin/PhoneNumbersManager"));
+const CallAnalyticsPage = lazy(() => import("./pages/admin/CallAnalyticsPage"));
+
 // Google Ads Admin Pages
 const AdsOverview = lazy(() => import("./pages/admin/ads/AdsOverview"));
 const AdsCampaigns = lazy(() => import("./pages/admin/ads/AdsCampaigns"));
@@ -120,6 +125,7 @@ const CSOrders = lazy(() => import("./pages/cs/CSOrders"));
 const CSRequests = lazy(() => import("./pages/cs/CSRequests"));
 const CSTemplates = lazy(() => import("./pages/cs/CSTemplates"));
 const CSMessages = lazy(() => import("./pages/cs/CSMessages"));
+const CSCalls = lazy(() => import("./pages/cs/CSCalls"));
 
 // Driver App
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
@@ -129,6 +135,7 @@ const SalesLayout = lazy(() => import("./pages/sales/SalesLayout"));
 const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
+const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
 
 // Dispatch Portal
 const DispatchLayout = lazy(() => import("./pages/dispatch/DispatchLayout"));
@@ -410,6 +417,16 @@ const App = () => (
                 <Route path="security" element={
                   <Suspense fallback={<PageLoader />}><SecurityHealthPage /></Suspense>
                 } />
+                {/* Telephony Routes */}
+                <Route path="telephony/calls" element={
+                  <Suspense fallback={<PageLoader />}><CallsManager /></Suspense>
+                } />
+                <Route path="telephony/numbers" element={
+                  <Suspense fallback={<PageLoader />}><PhoneNumbersManager /></Suspense>
+                } />
+                <Route path="telephony/analytics" element={
+                  <Suspense fallback={<PageLoader />}><CallAnalyticsPage /></Suspense>
+                } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={
                   <Suspense fallback={<PageLoader />}><DashboardOverview /></Suspense>
@@ -470,6 +487,9 @@ const App = () => (
                 } />
                 <Route path="quotes" element={
                   <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>
+                } />
+                <Route path="calls" element={
+                  <Suspense fallback={<PageLoader />}><SalesCalls /></Suspense>
                 } />
               </Route>
 

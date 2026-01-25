@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Headphones, Package, MessageSquare, FileText, LogOut, 
-  Home, Loader2, ClipboardList, Search
+  Home, Loader2, ClipboardList, Search, Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -9,11 +9,13 @@ import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
+import { AgentStatusWidget } from '@/components/telephony';
 
 const navItems = [
   { path: '/cs', label: 'Dashboard', icon: Home, end: true },
   { path: '/cs/orders', label: 'Orders', icon: Package },
   { path: '/cs/requests', label: 'Requests Queue', icon: ClipboardList },
+  { path: '/cs/calls', label: 'Calls', icon: Phone },
   { path: '/cs/messages', label: 'Messages', icon: MessageSquare },
   { path: '/cs/templates', label: 'SMS Templates', icon: FileText },
 ];
@@ -21,6 +23,7 @@ const navItems = [
 const mobileNavItems: MobileNavItem[] = [
   { path: '/cs/orders', label: 'Orders', icon: Package },
   { path: '/cs/requests', label: 'Requests', icon: ClipboardList },
+  { path: '/cs/calls', label: 'Calls', icon: Phone },
   { path: '/cs/messages', label: 'Messages', icon: MessageSquare },
   { path: '/cs/search', label: 'Search', icon: Search },
 ];
@@ -126,6 +129,11 @@ export default function CSLayout() {
             );
           })}
         </nav>
+
+        {/* Agent Status */}
+        <div className="p-4 border-t border-border">
+          <AgentStatusWidget />
+        </div>
 
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3 mb-3">

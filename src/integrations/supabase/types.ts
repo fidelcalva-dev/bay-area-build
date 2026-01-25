@@ -1203,6 +1203,51 @@ export type Database = {
           },
         ]
       }
+      call_routing_rules: {
+        Row: {
+          business_hours_only: boolean | null
+          conditions: Json | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          max_ring_time: number | null
+          name: string
+          overflow_to_voicemail: boolean | null
+          priority: number | null
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          round_robin: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_hours_only?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_ring_time?: number | null
+          name: string
+          overflow_to_voicemail?: boolean | null
+          priority?: number | null
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          round_robin?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_hours_only?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_ring_time?: number | null
+          name?: string
+          overflow_to_voicemail?: boolean | null
+          priority?: number | null
+          purpose?: Database["public"]["Enums"]["phone_purpose"]
+          round_robin?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       call_tasks: {
         Row: {
           assigned_to: string | null
@@ -1654,6 +1699,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crm_notes: {
+        Row: {
+          body: string
+          created_at: string | null
+          created_by: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          is_internal: boolean | null
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          created_by?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          is_internal?: boolean | null
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          created_by?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          is_internal?: boolean | null
+        }
+        Relationships: []
+      }
+      crm_tasks: {
+        Row: {
+          assigned_team: string | null
+          assigned_user_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          due_at: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          priority: number | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_team?: string | null
+          assigned_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_at?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          priority?: number | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_team?: string | null
+          assigned_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_at?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          priority?: number | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       customer_sessions: {
         Row: {
@@ -3269,6 +3395,185 @@ export type Database = {
           },
         ]
       }
+      message_logs: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string | null
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          provider: string | null
+          provider_message_id: string | null
+          queue_id: string | null
+          response: Json | null
+          status: string
+          subject: string | null
+          to_address: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          queue_id?: string | null
+          response?: Json | null
+          status: string
+          subject?: string | null
+          to_address: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          queue_id?: string | null
+          response?: Json | null
+          status?: string
+          subject?: string | null
+          to_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_logs_queue_id_fkey"
+            columns: ["queue_id"]
+            isOneToOne: false
+            referencedRelation: "message_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_queue: {
+        Row: {
+          body: string
+          channel: string
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          entity_id: string | null
+          entity_type: string | null
+          error_message: string | null
+          id: string
+          mode: string | null
+          payload: Json | null
+          retry_count: number | null
+          scheduled_for: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string | null
+          template_key: string | null
+          to_address: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          mode?: string | null
+          payload?: Json | null
+          retry_count?: number | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          template_key?: string | null
+          to_address: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          mode?: string | null
+          payload?: Json | null
+          retry_count?: number | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          template_key?: string | null
+          to_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_queue_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_queue_template_key_fkey"
+            columns: ["template_key"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      message_templates: {
+        Row: {
+          body: string
+          category: string | null
+          channel: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          key: string
+          language: string | null
+          name: string
+          subject: string | null
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          body: string
+          category?: string | null
+          channel: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key: string
+          language?: string | null
+          name: string
+          subject?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          body?: string
+          category?: string | null
+          channel?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key?: string
+          language?: string | null
+          name?: string
+          subject?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           created_at: string
@@ -3315,6 +3620,119 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: true
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunities: {
+        Row: {
+          assigned_user_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          expected_close_date: string | null
+          id: string
+          last_activity_at: string | null
+          lead_id: string | null
+          lost_reason: string | null
+          order_id: string | null
+          pipeline_id: string
+          probability: number | null
+          quote_id: string | null
+          source: string | null
+          stage_id: string
+          stage_type: Database["public"]["Enums"]["pipeline_stage_type"]
+          status: string | null
+          updated_at: string | null
+          value_estimate: number | null
+        }
+        Insert: {
+          assigned_user_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          expected_close_date?: string | null
+          id?: string
+          last_activity_at?: string | null
+          lead_id?: string | null
+          lost_reason?: string | null
+          order_id?: string | null
+          pipeline_id: string
+          probability?: number | null
+          quote_id?: string | null
+          source?: string | null
+          stage_id: string
+          stage_type?: Database["public"]["Enums"]["pipeline_stage_type"]
+          status?: string | null
+          updated_at?: string | null
+          value_estimate?: number | null
+        }
+        Update: {
+          assigned_user_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          expected_close_date?: string | null
+          id?: string
+          last_activity_at?: string | null
+          lead_id?: string | null
+          lost_reason?: string | null
+          order_id?: string | null
+          pipeline_id?: string
+          probability?: number | null
+          quote_id?: string | null
+          source?: string | null
+          stage_id?: string
+          stage_type?: Database["public"]["Enums"]["pipeline_stage_type"]
+          status?: string | null
+          updated_at?: string | null
+          value_estimate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "opportunities_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
             referencedColumns: ["id"]
           },
         ]
@@ -4074,6 +4492,77 @@ export type Database = {
           id?: string
           phone?: string
           verified_at?: string | null
+        }
+        Relationships: []
+      }
+      pipeline_stages: {
+        Row: {
+          auto_advance_days: number | null
+          color: string | null
+          created_at: string | null
+          id: string
+          name: string
+          pipeline_id: string
+          position: number
+          stage_type: Database["public"]["Enums"]["pipeline_stage_type"]
+        }
+        Insert: {
+          auto_advance_days?: number | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          pipeline_id: string
+          position: number
+          stage_type: Database["public"]["Enums"]["pipeline_stage_type"]
+        }
+        Update: {
+          auto_advance_days?: number | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          pipeline_id?: string
+          position?: number
+          stage_type?: Database["public"]["Enums"]["pipeline_stage_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_stages_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipelines: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -6718,6 +7207,17 @@ export type Database = {
         | "canceled"
       payment_action_type: "refund" | "void"
       phone_purpose: "SALES" | "CS" | "BILLING"
+      pipeline_stage_type:
+        | "new_lead"
+        | "quoted"
+        | "follow_up"
+        | "won_paid"
+        | "scheduled"
+        | "delivered"
+        | "pickup_requested"
+        | "completed"
+        | "overdue"
+        | "lost"
       run_status:
         | "DRAFT"
         | "SCHEDULED"
@@ -6917,6 +7417,18 @@ export const Constants = {
       ],
       payment_action_type: ["refund", "void"],
       phone_purpose: ["SALES", "CS", "BILLING"],
+      pipeline_stage_type: [
+        "new_lead",
+        "quoted",
+        "follow_up",
+        "won_paid",
+        "scheduled",
+        "delivered",
+        "pickup_requested",
+        "completed",
+        "overdue",
+        "lost",
+      ],
       run_status: [
         "DRAFT",
         "SCHEDULED",
