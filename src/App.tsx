@@ -89,6 +89,7 @@ const MarketsManager = lazy(() => import("./pages/admin/MarketsManager"));
 const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
 const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage"));
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
+const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 
 // Admin Dashboards
 const DashboardOverview = lazy(() => import("./pages/admin/dashboards/DashboardOverview"));
@@ -378,6 +379,9 @@ const App = () => (
                 } />
                 <Route path="approval-queue" element={
                   <Suspense fallback={<PageLoader />}><ApprovalQueuePage /></Suspense>
+                } />
+                <Route path="config/health" element={
+                  <Suspense fallback={<PageLoader />}><ConfigHealthPage /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={
