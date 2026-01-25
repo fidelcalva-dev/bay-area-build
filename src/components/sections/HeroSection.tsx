@@ -1,5 +1,5 @@
 import { motion, Variants } from 'framer-motion';
-import { MessageSquare, Star, Shield, Award } from 'lucide-react';
+import { MessageSquare, Star, Shield, Award, MapPin } from 'lucide-react';
 import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
 import { Button } from '@/components/ui/button';
 import { PriceAnchor } from '@/components/shared/PriceAnchor';
@@ -84,6 +84,12 @@ export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
                   </>
                 )}
               </h1>
+              
+              {/* Category Tagline */}
+              <p className="text-sm md:text-base text-primary-foreground/70 font-medium flex items-center gap-2 mt-2">
+                <MapPin className="w-4 h-4" />
+                Powered by Real Local Yards, Not Brokers
+              </p>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
                 Instant estimates · Nearest yard selected · Estimated time windows
               </p>

@@ -36,6 +36,11 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const WasteVision = lazy(() => import("./pages/WasteVision"));
 
+// Category Positioning Pages
+const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
+const NotABroker = lazy(() => import("./pages/NotABroker"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
 const CustomerDashboard = lazy(() => import("./pages/portal/CustomerDashboard"));
@@ -235,6 +240,17 @@ const App = () => (
               } />
               <Route path="/waste-vision" element={
                 <Suspense fallback={<PageLoader />}><WasteVision /></Suspense>
+              } />
+              
+              {/* Category Positioning Pages */}
+              <Route path="/why-local-yards" element={
+                <Suspense fallback={<PageLoader />}><WhyLocalYards /></Suspense>
+              } />
+              <Route path="/not-a-broker" element={
+                <Suspense fallback={<PageLoader />}><NotABroker /></Suspense>
+              } />
+              <Route path="/how-it-works" element={
+                <Suspense fallback={<PageLoader />}><HowItWorks /></Suspense>
               } />
               
               {/* Customer Portal (SMS OTP Auth) */}
