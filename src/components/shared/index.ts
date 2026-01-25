@@ -8,8 +8,10 @@ export { PhotoDumpsterCard } from './PhotoDumpsterCard';
 export { CTAButtons, PhoneCTA, CTA_CONFIG } from './CTAButtons';
 export { OfficeStatusIndicator } from './OfficeStatusIndicator';
 export { PriceAnchor, PriceAnchorStatic } from './PriceAnchor';
+export { WhyLocalYardsCard } from './WhyLocalYardsCard';
+export { LocalYardBadge, ConfirmationYardInfo, PricingTransparencyNote } from './LocalYardBadge';
+export { BrokerComparisonTable, SimplifiedComparison } from './BrokerComparisonTable';
 
-// Re-export canonical image registry for convenience
 export { 
   CANONICAL_DUMPSTER_IMAGES,
   DUMPSTER_PHOTO_MAP,
