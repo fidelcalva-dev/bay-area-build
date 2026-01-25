@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Truck, Calendar, LogOut, Home, Loader2, 
-  AlertTriangle, Settings, Search, ClipboardList
+  AlertTriangle, Settings, Search, ClipboardList, Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -9,6 +9,7 @@ import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
+import { AgentStatusWidget } from '@/components/telephony';
 
 const navItems = [
   { path: '/dispatch', label: 'Dashboard', icon: Home, end: true },
@@ -121,6 +122,11 @@ export default function DispatchLayout() {
             );
           })}
         </nav>
+
+        {/* Agent Status */}
+        <div className="p-4 border-t border-border">
+          <AgentStatusWidget />
+        </div>
 
         <div className="p-4 border-t border-border space-y-2">
           {isAdmin && (

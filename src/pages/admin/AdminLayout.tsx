@@ -4,7 +4,7 @@ import {
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
   Boxes, UserCog, MapPinned, Banknote, Bell,
-  BarChart3, TrendingUp, PieChart, Search, Link2
+  BarChart3, TrendingUp, PieChart, Search, Link2, Phone, MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -82,6 +82,14 @@ const navSections = [
     items: [
       { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
       { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
+    ],
+  },
+  {
+    title: 'Telephony',
+    items: [
+      { path: '/admin/telephony/calls', label: 'Call Logs', icon: Phone },
+      { path: '/admin/telephony/numbers', label: 'Phone Numbers', icon: Phone },
+      { path: '/admin/telephony/analytics', label: 'Call Analytics', icon: BarChart3 },
     ],
   },
   {
