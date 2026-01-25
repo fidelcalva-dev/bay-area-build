@@ -36,6 +36,13 @@ export function Footer() {
     { to: '/sizes', label: 'Size Guide' },
   ];
 
+  // Category differentiation links (SEO + Trust)
+  const differentiationLinks = [
+    { to: '/why-local-yards', label: 'Why Local Yards' },
+    { to: '/not-a-broker', label: 'We\'re Not a Broker' },
+    { to: '/how-it-works', label: 'How It Works' },
+  ];
+
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container-wide section-padding">
@@ -51,8 +58,13 @@ export function Footer() {
                 decoding="async"
               />
             </Link>
-            <p className="text-secondary-foreground/80 text-sm mb-4">
+            <p className="text-secondary-foreground/80 text-sm mb-2">
               {t('footer.tagline')}
+            </p>
+            {/* Category positioning tagline */}
+            <p className="text-xs text-primary/80 font-medium mb-4 flex items-center gap-1.5">
+              <MapPin className="w-3 h-3" />
+              ZIP-Based Pricing · Powered by Real Local Yards
             </p>
             
             {/* NAP - Name, Address, Phone */}
@@ -143,6 +155,21 @@ export function Footer() {
             <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Resources</h5>
             <ul className="space-y-2">
               {resourceLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Why Us / Differentiation Links */}
+            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Why Us</h5>
+            <ul className="space-y-2">
+              {differentiationLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
