@@ -478,8 +478,8 @@ export async function suggestDriversForRun(runId: string): Promise<DriverSuggest
   const runsQuery = supabase.from('runs' as never);
   const { data: todayRuns } = await runsQuery
     .select('assigned_driver_id')
-    .eq('scheduled_date', today)
-    .not('status', 'in', '("CANCELLED")') as unknown as RunsQueryResult;
+    .eq('scheduled_date' as 'id', today as never)
+    .not('status' as 'id', 'in', '("CANCELLED")' as never) as unknown as RunsQueryResult;
   
   const driverLoadMap = new Map<string, number>();
   (todayRuns || []).forEach((r: { assigned_driver_id: string | null }) => {
