@@ -20,10 +20,10 @@
 // Canonical photo imports - photorealistic dumpsters
 import dumpster6yardPhoto from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
 import dumpster8yardPhoto from '@/assets/dumpsters/dumpster-8yard-photo.jpg';
-import dumpster10yardPhoto from '@/assets/dumpsters/dumpster-10yard-photo.jpg';
-import dumpster20yardPhoto from '@/assets/dumpsters/dumpster-20yard-photo.jpg';
-import dumpster30yardPhoto from '@/assets/dumpsters/dumpster-30yard-photo.jpg';
-import dumpster40yardPhoto from '@/assets/dumpsters/dumpster-40yard-photo.jpg';
+import dumpster10yardPhoto from '@/assets/dumpsters/dumpster-10yard-photo.png';
+import dumpster20yardPhoto from '@/assets/dumpsters/dumpster-20yard-photo.png';
+import dumpster30yardPhoto from '@/assets/dumpsters/dumpster-30yard-photo.png';
+import dumpster40yardPhoto from '@/assets/dumpsters/dumpster-40yard-photo.png';
 import dumpster50yardPhoto from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
 
 // Canonical dimension diagram imports
