@@ -18,6 +18,7 @@ export interface ProjectCategory {
   icon: string;
   is_active: boolean;
   display_order: number;
+  allowed_customer_types: string[] | null;
 }
 
 export interface MaterialCatalogItem {
@@ -89,7 +90,14 @@ export function useProjectCategories(customerType?: string) {
           .order('display_order', { ascending: true });
 
         if (catError) throw catError;
-        setCategories(catData || []);
+        // Cast allowed_customer_types from JSON to string array
+        const typedCategories = (catData || []).map(c => ({
+          ...c,
+          allowed_customer_types: Array.isArray(c.allowed_customer_types) 
+            ? c.allowed_customer_types as string[]
+            : null,
+        })) as ProjectCategory[];
+        setCategories(typedCategories);
 
         // Fetch visibility rules if customer type is specified
         if (ct) {
@@ -119,18 +127,28 @@ export function useProjectCategories(customerType?: string) {
     fetchData();
   }, [customerType]);
 
-  // Filter and sort categories based on customer type visibility rules
+  // Filter and sort categories based on customer type visibility rules and allowed_customer_types
   const filteredCategories = useMemo(() => {
     if (!customerType) return categories;
     
     const ct = USER_TYPE_TO_CUSTOMER_TYPE[customerType] || 'homeowner';
     
-    // If we have visibility rules, use them
+    // First filter by allowed_customer_types from the category itself
+    let filtered = categories.filter(c => {
+      // If allowed_customer_types is defined, check if customer type is in the list
+      if (c.allowed_customer_types && Array.isArray(c.allowed_customer_types)) {
+        return c.allowed_customer_types.includes(ct);
+      }
+      // Fallback: allow all if not specified
+      return true;
+    });
+    
+    // Then apply visibility rules if they exist
     if (Object.keys(visibility).length > 0) {
-      return categories
+      filtered = filtered
         .filter(c => {
           const rule = visibility[c.category_code];
-          // If no rule exists, default to visible for backwards compatibility
+          // If no rule exists, default to visible
           return rule ? rule.is_visible : true;
         })
         .sort((a, b) => {
@@ -140,17 +158,7 @@ export function useProjectCategories(customerType?: string) {
         });
     }
 
-    // Fallback to hardcoded map if no DB rules exist
-    const relevanceMap: Record<CustomerType, string[]> = {
-      homeowner: ['HOME_CLEANOUT', 'REMODEL', 'ROOFING', 'YARD_CLEANUP', 'LANDSCAPING', 'SMALL_CONCRETE_PAVERS', 'GARAGE_PROPERTY_CLEANOUT'],
-      contractor: ['REMODEL', 'DEMOLITION', 'ROOFING', 'LANDSCAPING', 'NEW_CONSTRUCTION'],
-      business: ['COMMERCIAL_TRASH', 'COMMERCIAL_RECYCLING', 'WAREHOUSE_CLEANOUT', 'PROPERTY_MANAGEMENT'],
-      preferred_contractor: ['REMODEL', 'DEMOLITION', 'ROOFING', 'LANDSCAPING', 'NEW_CONSTRUCTION'],
-      wholesaler: categories.map(c => c.category_code), // All categories
-    };
-
-    const relevant = relevanceMap[ct] || [];
-    return categories.filter(c => relevant.includes(c.category_code));
+    return filtered;
   }, [categories, customerType, visibility]);
 
   return { categories: filteredCategories, allCategories: categories, isLoading, error };

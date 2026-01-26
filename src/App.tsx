@@ -123,6 +123,7 @@ const LeadPerformanceDashboard = lazy(() => import("./pages/admin/dashboards/Lea
 const MaterialCatalogPage = lazy(() => import("./pages/admin/materials/MaterialCatalogPage"));
 const ProjectCategoriesPage = lazy(() => import("./pages/admin/materials/ProjectCategoriesPage"));
 const MaterialOffersPage = lazy(() => import("./pages/admin/materials/MaterialOffersPage"));
+const CustomerTypeRulesPage = lazy(() => import("./pages/admin/CustomerTypeRulesPage"));
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
@@ -431,6 +432,9 @@ const App = () => (
                 } />
                 <Route path="materials/offers" element={
                   <Suspense fallback={<PageLoader />}><MaterialOffersPage /></Suspense>
+                } />
+                <Route path="customer-type-rules" element={
+                  <Suspense fallback={<PageLoader />}><CustomerTypeRulesPage /></Suspense>
                 } />
                 <Route path="heavy-risk" element={
                   <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>
