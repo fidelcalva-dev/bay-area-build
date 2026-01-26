@@ -24,8 +24,6 @@ interface AIJob {
   created_at: string;
   updated_at?: string;
 }
-  updated_at: string;
-}
 
 const statusConfig: Record<string, { color: string; icon: React.ElementType }> = {
   PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
