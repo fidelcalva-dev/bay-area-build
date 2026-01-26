@@ -1891,6 +1891,59 @@ export type Database = {
           },
         ]
       }
+      customer_profiles: {
+        Row: {
+          company_name: string | null
+          confidence_score: number
+          contact_id: string | null
+          created_at: string | null
+          customer_type: string
+          detected_signals_json: Json | null
+          email: string | null
+          id: string
+          session_id: string | null
+          updated_at: string | null
+          was_auto_detected: boolean | null
+          was_overridden: boolean | null
+        }
+        Insert: {
+          company_name?: string | null
+          confidence_score?: number
+          contact_id?: string | null
+          created_at?: string | null
+          customer_type?: string
+          detected_signals_json?: Json | null
+          email?: string | null
+          id?: string
+          session_id?: string | null
+          updated_at?: string | null
+          was_auto_detected?: boolean | null
+          was_overridden?: boolean | null
+        }
+        Update: {
+          company_name?: string | null
+          confidence_score?: number
+          contact_id?: string | null
+          created_at?: string | null
+          customer_type?: string
+          detected_signals_json?: Json | null
+          email?: string | null
+          id?: string
+          session_id?: string | null
+          updated_at?: string | null
+          was_auto_detected?: boolean | null
+          was_overridden?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_profiles_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_sessions: {
         Row: {
           created_at: string
@@ -1928,6 +1981,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      customer_type_rules: {
+        Row: {
+          conditions_json: Json
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          output_customer_type: string
+          rule_code: string
+          rule_name: string
+          signal_type: string
+          updated_at: string | null
+          weight: number
+        }
+        Insert: {
+          conditions_json?: Json
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          output_customer_type: string
+          rule_code: string
+          rule_name: string
+          signal_type: string
+          updated_at?: string | null
+          weight?: number
+        }
+        Update: {
+          conditions_json?: Json
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          output_customer_type?: string
+          rule_code?: string
+          rule_name?: string
+          signal_type?: string
+          updated_at?: string | null
+          weight?: number
+        }
+        Relationships: []
       }
       customers: {
         Row: {
@@ -5075,6 +5173,7 @@ export type Database = {
       }
       project_categories: {
         Row: {
+          allowed_customer_types: Json | null
           category_code: string
           created_at: string | null
           description: string | null
@@ -5088,6 +5187,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          allowed_customer_types?: Json | null
           category_code: string
           created_at?: string | null
           description?: string | null
@@ -5101,6 +5201,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          allowed_customer_types?: Json | null
           category_code?: string
           created_at?: string | null
           description?: string | null
