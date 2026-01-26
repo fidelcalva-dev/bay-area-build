@@ -677,6 +677,148 @@ export type Database = {
           },
         ]
       }
+      ai_actions: {
+        Row: {
+          action_type: string
+          created_at: string
+          decision_id: string
+          id: string
+          request_json: Json | null
+          result_json: Json | null
+          status: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          decision_id: string
+          id?: string
+          request_json?: Json | null
+          result_json?: Json | null
+          status?: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          decision_id?: string
+          id?: string
+          request_json?: Json | null
+          result_json?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_actions_decision_id_fkey"
+            columns: ["decision_id"]
+            isOneToOne: false
+            referencedRelation: "ai_decisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_decisions: {
+        Row: {
+          actions_json: Json | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          decision_type: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          job_id: string | null
+          recommendation: string | null
+          requires_approval: boolean
+          severity: string
+          summary: string
+        }
+        Insert: {
+          actions_json?: Json | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          decision_type: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          job_id?: string | null
+          recommendation?: string | null
+          requires_approval?: boolean
+          severity?: string
+          summary: string
+        }
+        Update: {
+          actions_json?: Json | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          decision_type?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          job_id?: string | null
+          recommendation?: string | null
+          requires_approval?: boolean
+          severity?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_decisions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "ai_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_jobs: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          id: string
+          job_type: string
+          last_error: string | null
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          payload: Json | null
+          priority: number
+          scheduled_for: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          job_type: string
+          last_error?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          payload?: Json | null
+          priority?: number
+          scheduled_for?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          job_type?: string
+          last_error?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          payload?: Json | null
+          priority?: number
+          scheduled_for?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       alerts: {
         Row: {
           alert_type: string
@@ -3317,6 +3459,7 @@ export type Database = {
           kpi_key: string
           metadata: Json | null
           snapshot_date: string
+          snapshot_type: string | null
           status: string | null
           target_value: number | null
         }
@@ -3327,6 +3470,7 @@ export type Database = {
           kpi_key: string
           metadata?: Json | null
           snapshot_date: string
+          snapshot_type?: string | null
           status?: string | null
           target_value?: number | null
         }
@@ -3337,6 +3481,7 @@ export type Database = {
           kpi_key?: string
           metadata?: Json | null
           snapshot_date?: string
+          snapshot_type?: string | null
           status?: string | null
           target_value?: number | null
         }
@@ -4192,6 +4337,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications_outbox: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          mode: string
+          priority: string | null
+          sent_at: string | null
+          status: string
+          target_team: string | null
+          target_user_id: string | null
+          title: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          mode?: string
+          priority?: string | null
+          sent_at?: string | null
+          status?: string
+          target_team?: string | null
+          target_user_id?: string | null
+          title: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          mode?: string
+          priority?: string | null
+          sent_at?: string | null
+          status?: string
+          target_team?: string | null
+          target_user_id?: string | null
+          title?: string
+        }
+        Relationships: []
       }
       opportunities: {
         Row: {
@@ -7996,7 +8195,20 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: boolean
       }
+      claim_next_ai_job: {
+        Args: { p_worker_id: string }
+        Returns: {
+          attempt_count: number
+          id: string
+          job_type: string
+          payload: Json
+        }[]
+      }
       classify_and_route_lead: { Args: { p_lead_id: string }; Returns: Json }
+      complete_ai_job: {
+        Args: { p_error?: string; p_job_id: string; p_success: boolean }
+        Returns: undefined
+      }
       create_or_update_lead: {
         Args: {
           p_address?: string
@@ -8024,6 +8236,29 @@ export type Database = {
           p_run_type: Database["public"]["Enums"]["run_type"]
           p_scheduled_date: string
           p_scheduled_window?: string
+        }
+        Returns: string
+      }
+      enqueue_ai_job: {
+        Args: {
+          p_job_type: string
+          p_payload?: Json
+          p_priority?: number
+          p_scheduled_for?: string
+        }
+        Returns: string
+      }
+      enqueue_notification: {
+        Args: {
+          p_body: string
+          p_channel: string
+          p_entity_id?: string
+          p_entity_type?: string
+          p_mode?: string
+          p_priority?: string
+          p_target_team: string
+          p_target_user_id?: string
+          p_title: string
         }
         Returns: string
       }
@@ -8061,6 +8296,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_ai_decision: {
+        Args: {
+          p_actions_json?: Json
+          p_decision_type: string
+          p_entity_id: string
+          p_entity_type: string
+          p_job_id: string
+          p_recommendation?: string
+          p_requires_approval?: boolean
+          p_severity: string
+          p_summary: string
+        }
+        Returns: string
+      }
       log_call_event: {
         Args: {
           p_direction: Database["public"]["Enums"]["call_direction"]
@@ -8091,6 +8340,15 @@ export type Database = {
             }
             Returns: boolean
           }
+      record_kpi_snapshot: {
+        Args: {
+          p_date: string
+          p_market_code: string
+          p_metrics: Json
+          p_type?: string
+        }
+        Returns: string
+      }
       update_assets_days_out: { Args: never; Returns: undefined }
     }
     Enums: {
