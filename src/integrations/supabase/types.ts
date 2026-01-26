@@ -1805,6 +1805,57 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_material_offers: {
+        Row: {
+          created_at: string | null
+          customer_type: string
+          id: string
+          is_hidden: boolean | null
+          is_recommended: boolean | null
+          material_code: string
+          priority: number | null
+          project_category_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_type: string
+          id?: string
+          is_hidden?: boolean | null
+          is_recommended?: boolean | null
+          material_code: string
+          priority?: number | null
+          project_category_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_type?: string
+          id?: string
+          is_hidden?: boolean | null
+          is_recommended?: boolean | null
+          material_code?: string
+          priority?: number | null
+          project_category_code?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_material_offers_material_code_fkey"
+            columns: ["material_code"]
+            isOneToOne: false
+            referencedRelation: "material_catalog"
+            referencedColumns: ["material_code"]
+          },
+          {
+            foreignKeyName: "customer_material_offers_project_category_code_fkey"
+            columns: ["project_category_code"]
+            isOneToOne: false
+            referencedRelation: "project_categories"
+            referencedColumns: ["category_code"]
+          },
+        ]
+      }
       customer_sessions: {
         Row: {
           created_at: string
@@ -3466,6 +3517,72 @@ export type Database = {
           },
         ]
       }
+      material_catalog: {
+        Row: {
+          allowed_sizes_json: Json | null
+          created_at: string | null
+          default_pricing_model: string
+          density_hint: string | null
+          description_short: string | null
+          description_short_es: string | null
+          display_name: string
+          display_name_es: string | null
+          display_order: number | null
+          green_halo_allowed: boolean | null
+          group_name: string
+          heavy_increment: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_heavy_material: boolean | null
+          material_code: string
+          requires_contamination_check: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_sizes_json?: Json | null
+          created_at?: string | null
+          default_pricing_model: string
+          density_hint?: string | null
+          description_short?: string | null
+          description_short_es?: string | null
+          display_name: string
+          display_name_es?: string | null
+          display_order?: number | null
+          green_halo_allowed?: boolean | null
+          group_name: string
+          heavy_increment?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_heavy_material?: boolean | null
+          material_code: string
+          requires_contamination_check?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_sizes_json?: Json | null
+          created_at?: string | null
+          default_pricing_model?: string
+          density_hint?: string | null
+          description_short?: string | null
+          description_short_es?: string | null
+          display_name?: string
+          display_name_es?: string | null
+          display_order?: number | null
+          green_halo_allowed?: boolean | null
+          group_name?: string
+          heavy_increment?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_heavy_material?: boolean | null
+          material_code?: string
+          requires_contamination_check?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -4918,6 +5035,48 @@ export type Database = {
           name?: string
           slug?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      project_categories: {
+        Row: {
+          category_code: string
+          created_at: string | null
+          description: string | null
+          description_es: string | null
+          display_name: string
+          display_name_es: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          category_code: string
+          created_at?: string | null
+          description?: string | null
+          description_es?: string | null
+          display_name: string
+          display_name_es?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          category_code?: string
+          created_at?: string | null
+          description?: string | null
+          description_es?: string | null
+          display_name?: string
+          display_name_es?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
         }
         Relationships: []
       }

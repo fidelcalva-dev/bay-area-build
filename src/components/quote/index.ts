@@ -9,6 +9,8 @@ export { FacilityRequestOption, type FacilityRequest } from './FacilityRequestOp
 export { ComplianceToggle } from './ComplianceToggle';
 export { AddressInput } from './steps/AddressInput';
 export { PlacementMap } from './steps/PlacementMap';
+export { ProjectCategorySelector } from './steps/ProjectCategorySelector';
+export { SmartMaterialSelector } from './steps/SmartMaterialSelector';
 export { UserTypeMicroCopy, YardValueExplanation, USER_TYPE_HELPER_TEXT } from './UserTypeMicroCopy';
 export { useQuoteCalculation, getZoneByZip } from './hooks/useQuoteCalculation';
 export { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
