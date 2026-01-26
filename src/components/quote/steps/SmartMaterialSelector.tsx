@@ -157,7 +157,7 @@ function MaterialCard({
             )}
 
             {/* Green Halo eligible */}
-            {hasGreenHalo && (
+            {hasGreenHalo && material.material_code !== 'GRASS_YARD_WASTE' && (
               <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-green-50 text-green-700 border-green-200">
                 <Recycle className="w-3 h-3 mr-0.5" />
                 {isSpanish ? 'Reciclable' : 'Recyclable'}
@@ -341,9 +341,13 @@ export function SmartMaterialSelector({
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
             <div className="text-xs text-muted-foreground">
-              {isSpanish 
-                ? 'El tamaño disponible puede cambiar según el material seleccionado.'
-                : 'Available sizes may change based on the selected material.'}
+              {value === 'GRASS_YARD_WASTE'
+                ? (isSpanish 
+                    ? 'Los desechos de jardín se facturan por tonelaje debido al contenido de tierra. Green Halo™ no disponible.'
+                    : 'Yard waste is billed by tonnage due to soil content. Green Halo™ not available.')
+                : (isSpanish 
+                    ? 'El tamaño disponible puede cambiar según el material seleccionado.'
+                    : 'Available sizes may change based on the selected material.')}
             </div>
           </div>
         </div>

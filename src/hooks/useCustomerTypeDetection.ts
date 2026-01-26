@@ -267,22 +267,24 @@ export function useCustomerTypeDetection(inputs: DetectionInputs) {
 // HOOK: useCustomerTypeLabels
 // ============================================================
 
-export function getCustomerTypeLabel(type: CustomerType, isSpanish = false): string {
-  const labels: Record<CustomerType, { en: string; es: string }> = {
+export function getCustomerTypeLabel(type: CustomerType | 'commercial', isSpanish = false): string {
+  const labels: Record<string, { en: string; es: string }> = {
     homeowner: { en: 'Homeowner', es: 'Propietario' },
     contractor: { en: 'Contractor', es: 'Contratista' },
-    business: { en: 'Business', es: 'Negocio' },
+    business: { en: 'Commercial / Business', es: 'Comercial / Negocio' },
+    commercial: { en: 'Commercial / Business', es: 'Comercial / Negocio' },
     preferred_contractor: { en: 'Preferred Contractor', es: 'Contratista Preferido' },
     wholesaler: { en: 'Wholesaler/Broker', es: 'Mayorista' },
   };
   return labels[type]?.[isSpanish ? 'es' : 'en'] || type;
 }
 
-export function getCustomerTypeIcon(type: CustomerType): string {
-  const icons: Record<CustomerType, string> = {
+export function getCustomerTypeIcon(type: CustomerType | 'commercial'): string {
+  const icons: Record<string, string> = {
     homeowner: 'home',
     contractor: 'hard-hat',
     business: 'building-2',
+    commercial: 'building-2',
     preferred_contractor: 'star',
     wholesaler: 'warehouse',
   };

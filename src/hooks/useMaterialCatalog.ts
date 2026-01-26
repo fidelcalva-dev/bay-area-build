@@ -58,11 +58,12 @@ export interface SmartMaterialResult {
 // Customer types that match our system
 export type CustomerType = 'homeowner' | 'contractor' | 'business' | 'preferred_contractor' | 'wholesaler';
 
-// Map user types to customer types for offers lookup
+// Map user types to customer types for offers lookup (includes aliases)
 const USER_TYPE_TO_CUSTOMER_TYPE: Record<string, CustomerType> = {
   'homeowner': 'homeowner',
   'contractor': 'contractor',
   'business': 'business',
+  'commercial': 'business', // Alias for business
   'preferred_contractor': 'preferred_contractor',
   'wholesaler': 'wholesaler',
 };
