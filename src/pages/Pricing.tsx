@@ -167,8 +167,8 @@ const overageExplanations = [
   {
     title: 'Overage Charges (General Debris)',
     icon: Scale,
-    rate: 'Varies by size',
-    description: `General debris 20-50yd: $${PRICING_POLICIES.overagePerTonGeneral}/ton overage after included weight. General debris 6-10yd: $${PRICING_POLICIES.overagePerYardSmall}/yard overage. Heavy material dumpsters: FLAT FEE—no overage charges.`,
+    rate: `$${PRICING_POLICIES.overagePerTonGeneral}/ton`,
+    description: `General debris dumpsters include base tonnage by size. Any weight beyond the included amount is billed at $${PRICING_POLICIES.overagePerTonGeneral} per ton, based on scale ticket. Heavy material dumpsters: FLAT FEE—no overage charges.`,
     tip: 'For heavy materials (concrete, dirt, brick), choose a dedicated heavy material dumpster for flat fee pricing with no weight worries.'
   },
 ];

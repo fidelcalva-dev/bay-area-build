@@ -149,9 +149,9 @@ export function WeightEducation({ className, compact = false, selectedSize, mate
           <div className="space-y-2">
             <h4 className="font-semibold text-foreground">What if I go over?</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              If your load exceeds the included tonnage, you'll be billed at{' '}
-              <span className="font-semibold text-foreground">$75–$95 per additional ton</span>{' '}
-              (varies by zone). We weigh every load at the landfill and send you a receipt.
+              General debris dumpsters include base tonnage by size. Any weight beyond the included amount is billed at{' '}
+              <span className="font-semibold text-foreground">$165 per ton</span>, based on scale ticket.
+              Heavy material dumpsters are flat-fee with no extra weight charges.
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ export function WeightEducation({ className, compact = false, selectedSize, mate
             <p className="text-sm text-muted-foreground leading-relaxed">
               Debris must not exceed the top of the container. Overfilled dumpsters are{' '}
               <span className="font-semibold text-foreground">illegal to transport</span> and require a second haul.
-              Keep it level to avoid a <span className="font-semibold text-foreground">$150+ trip fee</span>.
+              Keep it level to avoid additional fees.
             </p>
             
             {/* Visual overfill diagram */}
@@ -235,7 +235,7 @@ export function WeightEducation({ className, compact = false, selectedSize, mate
           to="/contractor-best-practices#weight" 
           className="flex items-center justify-between text-sm text-primary hover:underline"
         >
-          <span>📘 View Full Weight & Material Guidelines</span>
+          <span className="flex items-center gap-2"><Info className="w-4 h-4" /> View Full Weight & Material Guidelines</span>
           <ExternalLink className="w-4 h-4" />
         </Link>
       </div>

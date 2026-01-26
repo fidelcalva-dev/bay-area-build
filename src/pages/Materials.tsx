@@ -31,7 +31,7 @@ const specialRules = [
   },
   {
     title: 'Overage Fees',
-    description: 'General debris 20-50yd: $165/ton overage. General debris 6-10yd: $30 per additional yard overage. Heavy material dumpsters: No overage—flat fee includes disposal.',
+    description: 'General debris dumpsters include base tonnage by size. Any weight beyond the included amount is billed at $165 per ton, based on scale ticket. Heavy material dumpsters: No overage—flat fee includes disposal.',
     icon: Info,
   },
   {

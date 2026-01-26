@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { Lightbulb } from 'lucide-react';
 
 // Canonical micro-copy for each user type (Phase 2, Item 4)
 export const USER_TYPE_HELPER_TEXT: Record<string, {
@@ -75,7 +76,7 @@ export function YardValueExplanation({ className }: YardValueExplanationProps) {
       "text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1",
       className
     )}>
-      <span className="text-primary">💡</span>
+      <Lightbulb className="w-3 h-3 text-primary" />
       Local yard selected automatically for speed and availability
     </p>
   );

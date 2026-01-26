@@ -127,9 +127,8 @@ HEAVY MATERIAL PRICING (FLAT-FEE, NO WEIGHT CHARGES):
 4) HEAVY + TRASH = RECLASSIFIED AS GENERAL (weight-based billing)
 
 GENERAL DEBRIS PRICING:
-- 6/8/10 yard: Overage billed at $30 per additional yard
-- 20+ yard: Weight-based, $165/ton overage after included tons
-- Included tons: 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+- ALL sizes (5-50 yard): Weight-based, $165/ton overage after included tons
+- Included tons: 5yd=0.5T, 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
 
 WHEN TO ESCALATE TO HUMAN:
 - User insists on exact guaranteed price

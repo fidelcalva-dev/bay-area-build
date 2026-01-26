@@ -2,7 +2,7 @@
 // Uses Edge Function proxy to avoid CORS issues
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { MapPin, Loader2, CheckCircle, Search, AlertCircle } from 'lucide-react';
+import { MapPin, Loader2, CheckCircle, Search, AlertCircle, Lightbulb } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -251,8 +251,8 @@ export function AddressInput({ initialZip, onAddressConfirmed, value }: AddressI
 
       {/* Pre-fill hint */}
       {initialZip && query.length === 0 && (
-        <p className="text-xs text-muted-foreground">
-          💡 Enter the complete street address for ZIP {initialZip}
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <Lightbulb className="w-3 h-3" /> Enter the complete street address for ZIP {initialZip}
         </p>
       )}
     </div>

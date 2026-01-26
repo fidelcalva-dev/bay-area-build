@@ -550,11 +550,9 @@ export function WhyThisSize({
 
     // Weight reminder - different for heavy vs general
     if (materialType === 'heavy') {
-      lines.push(`💡 **Flat fee pricing:** Heavy material dumpsters include disposal with no extra weight charges. Just keep the load pure (no trash).`);
-    } else if (selectedSize <= 10) {
-      lines.push(`💡 **Overage info:** If you exceed capacity, overage is $${PRICING_POLICIES.overagePerYardSmall} per additional yard.`);
+      lines.push(`Flat fee pricing: Heavy material dumpsters include disposal with no extra weight charges. Just keep the load pure (no trash).`);
     } else {
-      lines.push(`💡 **Weight matters:** Sizes 20-50yd include tonnage allowance. Overages are billed at $${PRICING_POLICIES.overagePerTonGeneral}/ton after the scale ticket.`);
+      lines.push(`Weight matters: General debris includes base tonnage by size. Any weight beyond included amount is billed at $${PRICING_POLICIES.overagePerTonGeneral}/ton based on scale ticket.`);
     }
 
     return lines;

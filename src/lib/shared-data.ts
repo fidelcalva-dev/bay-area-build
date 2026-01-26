@@ -158,8 +158,8 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'What happens if I go over the weight/capacity limit?',
     questionEs: '¿Qué pasa si excedo el límite de peso/capacidad?',
-    answer: 'For general debris dumpsters (20-50yd), overage is $165/ton. For small general debris dumpsters (6-10yd), overage is $30 per additional yard. Heavy material dumpsters (6-10yd) are flat fee—disposal is included with no extra weight charges.',
-    answerEs: 'Para contenedores de escombros generales (20-50yd), el exceso es $165/tonelada. Para contenedores pequeños (6-10yd), el exceso es $30 por yarda adicional. Los contenedores de materiales pesados son tarifa plana—sin cargos adicionales por peso.',
+    answer: 'General debris dumpsters include base tonnage by size. Any weight beyond the included amount is billed at $165 per ton, based on scale ticket. Heavy material dumpsters (5-10yd) are flat fee—disposal is included with no extra weight charges.',
+    answerEs: 'Los contenedores de escombros generales incluyen tonelaje base por tamaño. Cualquier peso adicional se factura a $165 por tonelada, según el ticket de báscula. Los contenedores de materiales pesados son tarifa plana—sin cargos adicionales por peso.',
     category: 'pricing',
   },
   {
@@ -208,15 +208,15 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'What is the difference between inert and general debris dumpsters?',
     questionEs: '¿Cuál es la diferencia entre contenedores para materiales inertes y escombros generales?',
-    answer: 'Inert/heavy dumpsters (6-10yd) are FLAT FEE for pure loads of concrete, dirt, brick, asphalt—no weight overage charges. General debris dumpsters (20-50yd) have weight limits with $165/ton overage. Small general debris dumpsters (6-10yd) have $30/yard overage. If trash is mixed in heavy loads, reclassification applies.',
-    answerEs: 'Los contenedores inertes/pesados (6-10yd) son TARIFA PLANA para cargas puras—sin cargos por exceso de peso. Los contenedores de escombros generales (20-50yd) tienen $165/tonelada por exceso. Los pequeños (6-10yd) tienen $30/yarda por exceso.',
+    answer: 'Heavy/inert dumpsters (5-10yd) are FLAT FEE for pure loads of concrete, dirt, brick, asphalt—no weight overage charges. General debris dumpsters include base tonnage and overage is billed at $165/ton. If trash is mixed in heavy loads, reclassification to General Debris applies.',
+    answerEs: 'Los contenedores pesados/inertes (5-10yd) son TARIFA PLANA para cargas puras—sin cargos por exceso de peso. Los contenedores de escombros generales incluyen tonelaje base y el exceso se factura a $165/tonelada.',
     category: 'materials',
   },
   {
     question: 'How does weight/overage billing work for contractors?',
     questionEs: '¿Cómo funciona la facturación por peso/exceso para contratistas?',
-    answer: 'Heavy material dumpsters (6-10yd): FLAT FEE—no weight overage. General debris 20-50yd: includes 2-5 tons, overage at $165/ton. General debris 6-10yd: overage at $30 per additional yard (not per ton). Always keep heavy and general debris separate.',
-    answerEs: 'Contenedores pesados (6-10yd): TARIFA PLANA—sin exceso por peso. Escombros generales 20-50yd: incluye 2-5 toneladas, exceso a $165/ton. Escombros generales 6-10yd: exceso a $30 por yarda adicional.',
+    answer: 'Heavy material dumpsters (5-10yd): FLAT FEE—no weight overage. General debris (all sizes): includes base tonnage by size, overage at $165/ton based on scale ticket. Always keep heavy and general debris separate.',
+    answerEs: 'Contenedores pesados (5-10yd): TARIFA PLANA—sin exceso por peso. Escombros generales (todos los tamaños): incluye tonelaje base por tamaño, exceso a $165/tonelada según ticket de báscula.',
     category: 'pricing',
   },
   {
@@ -262,19 +262,16 @@ export const PRICING_POLICIES = {
   cancellation24h: 100,
   wrongMaterialsCleaning: 300,
   
-  // Overweight rates (v56 Page 12) - varies by material and size
-  // General debris 20-50yd: per-ton overage
-  overagePerTonGeneral: 165,  // Standard rate from v56
+  // Overweight rates (v56 Page 12)
+  // CANONICAL RULE: ALL general debris sizes use $165/ton overage
+  overagePerTonGeneral: 165,  // Standard rate for ALL general debris sizes (5-50yd)
   overagePerTonHomeowner: 165,  // Range: $135-$200
   overagePerTonContractor: 135,  // Preferred rate
   overagePerTonBusiness: 145,
   
-  // General debris 6-10yd: per-yard overage (not per-ton)
-  overagePerYardSmall: 30,  // $30 per additional yard for 6/8/10yd mixed debris
-  
   // Heavy materials: FLAT FEE - no overage charges
   // heavyMaterialFlatFee: true (disposal included, no weight charges)
-  
+
   // Special items
   mattressDisposal: 50,
   applianceWithFreon: 75,
@@ -328,11 +325,11 @@ export const WHOLESALER_APPROVAL_THRESHOLD = 0.07; // 7%+ requires manual approv
 // OVERAGE RULES BY MATERIAL AND SIZE
 // ============================================================
 
-// Heavy Materials (6/8/10yd): FLAT FEE - no overage, no tons displayed
-// General Debris 6/8/10yd: $30 per additional yard overage
-// General Debris 20-50yd: $165 per ton overage
+// CANONICAL RULES:
+// Heavy Materials (5/6/8/10yd): FLAT FEE - no overage, no tons displayed
+// General Debris (ALL SIZES 5-50yd): $165 per ton overage
 
-export type OverageRule = 'flat_fee' | 'per_yard' | 'per_ton';
+export type OverageRule = 'flat_fee' | 'per_ton';
 
 export interface OverageInfo {
   rule: OverageRule;
@@ -344,6 +341,7 @@ export interface OverageInfo {
 
 /**
  * Get the overage rule for a given material type and size
+ * CANONICAL: All general debris uses $165/ton regardless of size
  */
 export function getOverageInfo(materialType: 'general' | 'heavy', sizeYards: number): OverageInfo {
   // Heavy materials: FLAT FEE - no overage charges
@@ -355,23 +353,12 @@ export function getOverageInfo(materialType: 'general' | 'heavy', sizeYards: num
     };
   }
   
-  // General debris 6/8/10: $30 per additional yard
-  if (sizeYards <= 10) {
-    return {
-      rule: 'per_yard',
-      rate: PRICING_POLICIES.overagePerYardSmall,
-      unit: 'yard',
-      displayMessage: `Overage billed at $${PRICING_POLICIES.overagePerYardSmall} per additional yard.`,
-      showTons: false,
-    };
-  }
-  
-  // General debris 20-50: per-ton overage
+  // General debris (ALL sizes): $165 per ton overage
   return {
     rule: 'per_ton',
     rate: PRICING_POLICIES.overagePerTonGeneral,
     unit: 'ton',
-    displayMessage: `Overage billed per ton after disposal scale ticket ($${PRICING_POLICIES.overagePerTonGeneral}/ton).`,
+    displayMessage: `Any weight beyond included amount is billed at $${PRICING_POLICIES.overagePerTonGeneral} per ton, based on scale ticket.`,
     showTons: true,
   };
 }

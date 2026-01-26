@@ -170,11 +170,12 @@ export function DebrisDetailsSelector({
           color: 'text-success',
         };
       case 'MIXED_YARD_OVERAGE':
+      case 'MIXED_TON_OVERAGE':
         return {
-          label: 'Capacity-Based Pricing',
-          labelEs: 'Precio por Capacidad',
-          description: `$${PRICING_POLICIES.overagePerYardSmall}/yd overage if filled above rim`,
-          descriptionEs: `$${PRICING_POLICIES.overagePerYardSmall}/yd extra si se llena por encima`,
+          label: 'Weight-Based Pricing',
+          labelEs: 'Precio por Peso',
+          description: `$${PRICING_POLICIES.overagePerTonGeneral}/ton after included tonnage`,
+          descriptionEs: `$${PRICING_POLICIES.overagePerTonGeneral}/ton después del tonelaje incluido`,
           icon: Scale,
           color: 'text-primary',
         };

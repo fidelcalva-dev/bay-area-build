@@ -211,7 +211,6 @@ function ScenarioCard({ titleKey, icon: Icon, recommended, whyKey, weightNoteKey
 export default function CapacityGuide() {
   const { t, language } = useLanguage();
   const overageGeneral = PRICING_POLICIES.overagePerTonGeneral;
-  const overageYard = PRICING_POLICIES.overagePerYardSmall;
 
   return (
     <Layout
