@@ -14,8 +14,10 @@ const DUMPSTER_PHOTOS: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 /**
  * CANONICAL SPECS (LOCKED) - W × L × H
- * 10: 7.5 × 12 × 3   | 20: 7.5 × 18 × 4
- * 30: 7.5 × 18 × 6   | 40: 7.5 × 24 × 6
+ * All sizes from shared-data.ts for consistency
+ * 6: 6 × 12 × 2.25   | 8: 6 × 12 × 3     | 10: 7.5 × 12 × 3
+ * 20: 7.5 × 18 × 4   | 30: 7.5 × 18 × 6  | 40: 7.5 × 24 × 6
+ * 50: 7.5 × 24 × 7.5
  */
 const DUMPSTER_SPECS: Record<number, {
   length: string;
@@ -24,14 +26,18 @@ const DUMPSTER_SPECS: Record<number, {
   tons: number;
   loads: string;
   popular?: boolean;
+  priceFrom?: number;
 }> = {
-  10: { length: "12'", width: "7.5'", height: "3'",  tons: 1, loads: '4–5 loads' },
-  20: { length: "18'", width: "7.5'", height: "4'",  tons: 2, loads: '6–8 loads', popular: true },
-  30: { length: "18'", width: "7.5'", height: "6'",  tons: 3, loads: '9–12 loads' },
-  40: { length: "24'", width: "7.5'", height: "6'",  tons: 4, loads: '12–16 loads' },
+  6:  { length: "12'", width: "6'",   height: "2.25'", tons: 0.5, loads: '2–3 loads', priceFrom: 390 },
+  8:  { length: "12'", width: "6'",   height: "3'",    tons: 0.5, loads: '3–4 loads', priceFrom: 460, popular: true },
+  10: { length: "12'", width: "7.5'", height: "3'",    tons: 1, loads: '4–5 loads', priceFrom: 580 },
+  20: { length: "18'", width: "7.5'", height: "4'",    tons: 2, loads: '6–8 loads', priceFrom: 620, popular: true },
+  30: { length: "18'", width: "7.5'", height: "6'",    tons: 3, loads: '9–12 loads', priceFrom: 770 },
+  40: { length: "24'", width: "7.5'", height: "6'",    tons: 4, loads: '12–16 loads', priceFrom: 895 },
+  50: { length: "24'", width: "7.5'", height: "7.5'",  tons: 5, loads: '16–20 loads', priceFrom: 1135 },
 };
 
-type DumpsterSize = 10 | 20 | 30 | 40;
+type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40 | 50;
 
 interface PhotoDumpsterCardProps {
   size: DumpsterSize;
@@ -39,6 +45,7 @@ interface PhotoDumpsterCardProps {
   ctaLabel?: string;
   className?: string;
   imageMode?: 'photo' | 'icon';
+  showPrice?: boolean;
 }
 
 export function PhotoDumpsterCard({
@@ -47,16 +54,21 @@ export function PhotoDumpsterCard({
   ctaLabel = 'Get Quote',
   className,
   imageMode = 'photo',
+  showPrice = false,
 }: PhotoDumpsterCardProps) {
   const photo = DUMPSTER_PHOTOS[size];
   const specs = DUMPSTER_SPECS[size];
-  const isPopular = specs.popular;
+  const isPopular = specs?.popular;
 
-  const imageSrc = imageMode === 'icon' ? dumpsterIcon : photo;
+  // Handle missing photo gracefully
+  const imageSrc = imageMode === 'icon' ? dumpsterIcon : (photo || dumpsterIcon);
   const imageAlt =
     imageMode === 'icon'
       ? `${size} yard roll-off dumpster icon`
       : `${size} yard roll-off dumpster`;
+  
+  // Fallback specs for any missing size
+  const safeSpecs = specs || { length: "N/A", width: "N/A", height: "N/A", tons: 0, loads: 'N/A' };
 
   return (
     <div
@@ -103,9 +115,9 @@ export function PhotoDumpsterCard({
             {/* Dimension Overlay */}
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-2 bg-background/90 backdrop-blur-sm rounded-lg text-xs">
               <div className="flex items-center gap-3">
-                <span className="text-muted-foreground">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
-                <span className="text-muted-foreground">W: <span className="font-semibold text-foreground">{specs.width}</span></span>
-                <span className="text-muted-foreground">H: <span className="font-semibold text-foreground">{specs.height}</span></span>
+                <span className="text-muted-foreground">L: <span className="font-semibold text-foreground">{safeSpecs.length}</span></span>
+                <span className="text-muted-foreground">W: <span className="font-semibold text-foreground">{safeSpecs.width}</span></span>
+                <span className="text-muted-foreground">H: <span className="font-semibold text-foreground">{safeSpecs.height}</span></span>
               </div>
             </div>
           </>
@@ -122,9 +134,17 @@ export function PhotoDumpsterCard({
               <span className="text-sm font-medium text-muted-foreground ml-1">YARD</span>
             </div>
             <div className="text-xs text-muted-foreground">
-              <span className="mr-3">L: <span className="font-semibold text-foreground">{specs.length}</span></span>
-              <span>H: <span className="font-semibold text-foreground">{specs.height}</span></span>
+              <span className="mr-3">L: <span className="font-semibold text-foreground">{safeSpecs.length}</span></span>
+              <span>H: <span className="font-semibold text-foreground">{safeSpecs.height}</span></span>
             </div>
+          </div>
+        )}
+
+        {/* Price Display (when showPrice is true) */}
+        {showPrice && safeSpecs.priceFrom && (
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-muted-foreground">From</span>
+            <span className="text-lg font-bold text-foreground">${safeSpecs.priceFrom}</span>
           </div>
         )}
 
@@ -132,11 +152,11 @@ export function PhotoDumpsterCard({
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-md text-xs font-medium text-primary">
             <Weight className="w-3 h-3" />
-            {specs.tons}T included
+            {safeSpecs.tons}T included
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-xs font-medium text-muted-foreground">
             <Truck className="w-3 h-3" />
-            ≈ {specs.loads}
+            ≈ {safeSpecs.loads}
           </span>
         </div>
 
