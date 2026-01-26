@@ -61,7 +61,12 @@ serve(async (req) => {
       .eq("key", "mode")
       .maybeSingle();
 
-    const mode = configMode?.value || "DRY_RUN";
+    const mode = (typeof configMode?.value === 'string' 
+      ? configMode.value.replace(/"/g, '') 
+      : configMode?.value) || "DRY_RUN";
+    
+    const isLiveMode = mode === "LIVE" || mode === "LIVE_INTERNAL";
+    console.log(`Master AI mode: ${mode}, isLive: ${isLiveMode}`);
 
     // Claim next job
     const { data: jobs, error: claimError } = await supabase.rpc("claim_next_ai_job", {
@@ -126,7 +131,7 @@ serve(async (req) => {
             await supabase.from("ai_actions").insert({
               decision_id: decisionRow,
               action_type: action.type,
-              status: mode === "LIVE" ? "EXECUTED" : "DRAFTED",
+              status: isLiveMode ? "EXECUTED" : "DRAFTED",
               request_json: action.request,
             });
 

@@ -3,11 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface MasterAIConfig {
   enabled: boolean;
-  mode: 'DRY_RUN' | 'LIVE';
+  mode: 'DRY_RUN' | 'LIVE' | 'LIVE_INTERNAL';
   control_tower_interval_minutes: number;
   daily_brief_time: string;
   eod_time: string;
   alert_thresholds: Record<string, number>;
+  allow_internal_notifications?: boolean;
+  allow_customer_messages?: boolean;
+  allow_calls?: boolean;
 }
 
 interface QueueStats {
@@ -100,6 +103,9 @@ export function useMasterAI() {
         daily_brief_time: data.config?.daily_brief_time ?? '08:00',
         eod_time: data.config?.eod_time ?? '18:00',
         alert_thresholds: data.config?.alert_thresholds ?? {},
+        allow_internal_notifications: data.config?.allow_internal_notifications ?? true,
+        allow_customer_messages: data.config?.allow_customer_messages ?? false,
+        allow_calls: data.config?.allow_calls ?? false,
       });
       setQueueStats(data.queue);
       setRecentDecisions(data.recent_decisions || []);
