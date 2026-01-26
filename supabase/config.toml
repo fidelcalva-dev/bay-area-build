@@ -20,3 +20,15 @@ verify_jwt = false
 
 [functions.calls-outbound-connect]
 verify_jwt = false
+
+[functions.lead-capture]
+verify_jwt = false
+
+[functions.lead-from-quote]
+verify_jwt = false
+
+[functions.lead-ai-classify]
+verify_jwt = false
+
+[functions.lead-export]
+verify_jwt = false

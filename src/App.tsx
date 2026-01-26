@@ -118,6 +118,9 @@ const AdminFinanceDashboard = lazy(() => import("./pages/admin/dashboards/Financ
 const AdminCustomersDashboard = lazy(() => import("./pages/admin/dashboards/CustomersDashboard"));
 const KPIDashboard = lazy(() => import("./pages/admin/dashboards/KPIDashboard"));
 const LeadPerformanceDashboard = lazy(() => import("./pages/admin/dashboards/LeadPerformanceDashboard"));
+const LeadEngineSettings = lazy(() => import("./pages/admin/LeadEngineSettings"));
+const LeadInbox = lazy(() => import("./pages/sales/LeadInbox"));
+const CSLeads = lazy(() => import("./pages/cs/CSLeads"));
 
 // Material Catalog Admin Pages
 const MaterialCatalogPage = lazy(() => import("./pages/admin/materials/MaterialCatalogPage"));
@@ -471,6 +474,9 @@ const App = () => (
                 <Route path="dashboards/leads" element={
                   <Suspense fallback={<PageLoader />}><LeadPerformanceDashboard /></Suspense>
                 } />
+                <Route path="leads/settings" element={
+                  <Suspense fallback={<PageLoader />}><LeadEngineSettings /></Suspense>
+                } />
                 {/* Google Ads Routes */}
                 <Route path="ads" element={
                   <Suspense fallback={<PageLoader />}><AdsOverview /></Suspense>
@@ -512,6 +518,9 @@ const App = () => (
                 } />
                 <Route path="calls" element={
                   <Suspense fallback={<PageLoader />}><SalesCalls /></Suspense>
+                } />
+                <Route path="inbox" element={
+                  <Suspense fallback={<PageLoader />}><LeadInbox /></Suspense>
                 } />
               </Route>
 
