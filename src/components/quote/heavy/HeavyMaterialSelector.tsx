@@ -1,5 +1,6 @@
 // Heavy Material Selector Component
 // Phase 3: UI for selecting heavy materials with fill-line warnings
+// Uses Lucide icons instead of emojis for consistency
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/collapsible';
 import { useHeavyMaterials } from '@/hooks/useHeavyMaterials';
 import type { HeavyMaterialProfile } from '@/lib/heavyMaterialService';
+import { getHeavyMaterialIcon } from '@/lib/heavyMaterialIcons';
 
 interface HeavyMaterialSelectorProps {
   sizeYd: number;
@@ -268,7 +270,7 @@ export function HeavyMaterialSelector({
   );
 }
 
-// Individual Material Card
+// Individual Material Card with Lucide icons instead of emojis
 function MaterialCard({
   profile,
   isSelected,
@@ -278,6 +280,9 @@ function MaterialCard({
   isSelected: boolean;
   onClick: () => void;
 }) {
+  // Get the Lucide icon for this material
+  const MaterialIcon = getHeavyMaterialIcon(profile.material_code);
+  
   return (
     <button
       type="button"
@@ -290,7 +295,19 @@ function MaterialCard({
           : "border-input bg-background hover:border-primary/50"
       )}
     >
-      <span className="text-2xl">{profile.icon}</span>
+      {/* Lucide icon instead of emoji */}
+      <div className={cn(
+        "w-10 h-10 rounded-xl flex items-center justify-center",
+        isSelected ? "bg-primary/15" : "bg-muted/60"
+      )}>
+        <MaterialIcon 
+          className={cn(
+            "w-5 h-5",
+            isSelected ? "text-primary" : "text-muted-foreground"
+          )}
+          strokeWidth={1.75}
+        />
+      </div>
       <span className="text-xs font-medium text-foreground leading-tight">
         {profile.display_name}
       </span>

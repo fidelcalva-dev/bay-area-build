@@ -53,6 +53,14 @@ import {
   Sparkles,
   Percent,
   ExternalLink,
+  
+  // Heavy Materials (for icon consistency)
+  Hammer,
+  Mountain,
+  Leaf,
+  CircleDot,
+  Layers,
+  Square,
 } from 'lucide-react';
 
 // ========================================
@@ -115,6 +123,18 @@ export const ICONS = {
   close: X,
   menu: Menu,
   external: ExternalLink,
+  
+  // Heavy Material Icons (canonical mappings)
+  concrete: Hammer,
+  asphalt: Layers,
+  soil: Mountain,
+  rock: Mountain,
+  gravel: CircleDot,
+  granite: Square,
+  brick: Layers,
+  grass: Leaf,
+  wood: Package,
+  mixed: Box,
 } as const;
 
 // Type for icon keys
