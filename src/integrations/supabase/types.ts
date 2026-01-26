@@ -3886,6 +3886,7 @@ export type Database = {
         Row: {
           actual_delivery_at: string | null
           actual_pickup_at: string | null
+          actual_weight_tons: number | null
           addendum_contract_id: string | null
           amount_due: number | null
           amount_paid: number | null
@@ -3893,6 +3894,9 @@ export type Database = {
           assigned_driver_id: string | null
           assigned_yard_id: string | null
           balance_due: number | null
+          contamination_detected: boolean | null
+          contamination_detected_at: string | null
+          contamination_notes: string | null
           contracts_valid: boolean | null
           created_at: string
           custom_logistics_notes: string | null
@@ -3906,16 +3910,23 @@ export type Database = {
           driver_notes_internal: string | null
           dry_run_reason: string | null
           dump_ticket_url: string | null
+          estimated_fill_pct: number | null
+          estimated_weight_tons_max: number | null
+          estimated_weight_tons_min: number | null
+          extra_tons_charged: number | null
           filled_location: string | null
           final_total: number | null
           fraud_blocked: boolean | null
           fraud_flags_count: number | null
+          heavy_material_code: string | null
           id: string
           included_days: number | null
+          included_tons_for_size: number | null
           internal_notes: string | null
           inventory_id: string | null
           invoice_url: string | null
           is_dry_run: boolean | null
+          is_heavy_material: boolean | null
           live_load_minutes: number | null
           logistics_type: string | null
           market_id: string | null
@@ -3938,8 +3949,14 @@ export type Database = {
           primary_dumpster_id: string | null
           quick_link_id: string | null
           quote_id: string | null
+          reclassified_at: string | null
+          reclassified_to_debris: boolean | null
+          reclassify_on_contamination: boolean | null
+          requested_green_halo: boolean | null
           requires_deposit: boolean | null
+          requires_fill_line: boolean | null
           requires_manual_review: boolean | null
+          requires_pre_pickup_photos: boolean | null
           route_notes: string | null
           scheduled_delivery_date: string | null
           scheduled_delivery_window: string | null
@@ -3950,11 +3967,13 @@ export type Database = {
           text_before_arrival: boolean | null
           truck_id: string | null
           updated_at: string
+          weight_risk_level: string | null
           wrong_material_flagged: boolean | null
         }
         Insert: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          actual_weight_tons?: number | null
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
@@ -3962,6 +3981,9 @@ export type Database = {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          contamination_detected?: boolean | null
+          contamination_detected_at?: string | null
+          contamination_notes?: string | null
           contracts_valid?: boolean | null
           created_at?: string
           custom_logistics_notes?: string | null
@@ -3975,16 +3997,23 @@ export type Database = {
           driver_notes_internal?: string | null
           dry_run_reason?: string | null
           dump_ticket_url?: string | null
+          estimated_fill_pct?: number | null
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          extra_tons_charged?: number | null
           filled_location?: string | null
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          heavy_material_code?: string | null
           id?: string
           included_days?: number | null
+          included_tons_for_size?: number | null
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
           is_dry_run?: boolean | null
+          is_heavy_material?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
           market_id?: string | null
@@ -4007,8 +4036,14 @@ export type Database = {
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
+          reclassified_at?: string | null
+          reclassified_to_debris?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          requested_green_halo?: boolean | null
           requires_deposit?: boolean | null
+          requires_fill_line?: boolean | null
           requires_manual_review?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
@@ -4019,11 +4054,13 @@ export type Database = {
           text_before_arrival?: boolean | null
           truck_id?: string | null
           updated_at?: string
+          weight_risk_level?: string | null
           wrong_material_flagged?: boolean | null
         }
         Update: {
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
+          actual_weight_tons?: number | null
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
@@ -4031,6 +4068,9 @@ export type Database = {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          contamination_detected?: boolean | null
+          contamination_detected_at?: string | null
+          contamination_notes?: string | null
           contracts_valid?: boolean | null
           created_at?: string
           custom_logistics_notes?: string | null
@@ -4044,16 +4084,23 @@ export type Database = {
           driver_notes_internal?: string | null
           dry_run_reason?: string | null
           dump_ticket_url?: string | null
+          estimated_fill_pct?: number | null
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          extra_tons_charged?: number | null
           filled_location?: string | null
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          heavy_material_code?: string | null
           id?: string
           included_days?: number | null
+          included_tons_for_size?: number | null
           internal_notes?: string | null
           inventory_id?: string | null
           invoice_url?: string | null
           is_dry_run?: boolean | null
+          is_heavy_material?: boolean | null
           live_load_minutes?: number | null
           logistics_type?: string | null
           market_id?: string | null
@@ -4076,8 +4123,14 @@ export type Database = {
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
+          reclassified_at?: string | null
+          reclassified_to_debris?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          requested_green_halo?: boolean | null
           requires_deposit?: boolean | null
+          requires_fill_line?: boolean | null
           requires_manual_review?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
@@ -4088,6 +4141,7 @@ export type Database = {
           text_before_arrival?: boolean | null
           truck_id?: string | null
           updated_at?: string
+          weight_risk_level?: string | null
           wrong_material_flagged?: boolean | null
         }
         Relationships: [
@@ -4788,8 +4842,11 @@ export type Database = {
           distance_bracket: string | null
           distance_miles: number | null
           driver_id: string | null
+          estimated_fill_pct: number | null
           estimated_max: number
           estimated_min: number
+          estimated_weight_tons_max: number | null
+          estimated_weight_tons_min: number | null
           extra_tons_prepurchased: number | null
           extras: string[] | null
           fraud_flags_count: number | null
@@ -4798,12 +4855,14 @@ export type Database = {
           green_halo_dump_fee_per_ton: number | null
           green_halo_handling_fee: number | null
           heavy_material_class: string | null
+          heavy_material_code: string | null
           heavy_material_increment: number | null
           highlevel_contact_id: string | null
           highlevel_tags: string[] | null
           id: string
           is_calsan_fulfillment: boolean
           is_green_halo: boolean | null
+          is_heavy_material: boolean | null
           is_trash_contaminated: boolean | null
           is_weekend_delivery: boolean | null
           last_synced_at: string | null
@@ -4826,10 +4885,14 @@ export type Database = {
           quick_link_id: string | null
           receipt_sent_at: string | null
           reclassified_to_mixed: boolean | null
+          reclassify_on_contamination: boolean | null
           recommendation_reason: string | null
           recommended_size_yards: number | null
           rental_days: number
+          requested_green_halo: boolean | null
           requires_discount_approval: boolean | null
+          requires_fill_line: boolean | null
+          requires_pre_pickup_photos: boolean | null
           route_calculated_at: string | null
           route_polyline: string | null
           routing_provider: string | null
@@ -4853,6 +4916,7 @@ export type Database = {
           volume_discount_pct: number | null
           volume_validity_end: string | null
           volume_validity_start: string | null
+          weight_risk_level: string | null
           yard_id: string | null
           yard_name: string | null
           zip_code: string
@@ -4887,8 +4951,11 @@ export type Database = {
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
+          estimated_fill_pct?: number | null
           estimated_max: number
           estimated_min: number
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
@@ -4897,12 +4964,14 @@ export type Database = {
           green_halo_dump_fee_per_ton?: number | null
           green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
+          heavy_material_code?: string | null
           heavy_material_increment?: number | null
           highlevel_contact_id?: string | null
           highlevel_tags?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
+          is_heavy_material?: boolean | null
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
@@ -4925,10 +4994,14 @@ export type Database = {
           quick_link_id?: string | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
+          reclassify_on_contamination?: boolean | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          requested_green_halo?: boolean | null
           requires_discount_approval?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -4952,6 +5025,7 @@ export type Database = {
           volume_discount_pct?: number | null
           volume_validity_end?: string | null
           volume_validity_start?: string | null
+          weight_risk_level?: string | null
           yard_id?: string | null
           yard_name?: string | null
           zip_code: string
@@ -4986,8 +5060,11 @@ export type Database = {
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
+          estimated_fill_pct?: number | null
           estimated_max?: number
           estimated_min?: number
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
@@ -4996,12 +5073,14 @@ export type Database = {
           green_halo_dump_fee_per_ton?: number | null
           green_halo_handling_fee?: number | null
           heavy_material_class?: string | null
+          heavy_material_code?: string | null
           heavy_material_increment?: number | null
           highlevel_contact_id?: string | null
           highlevel_tags?: string[] | null
           id?: string
           is_calsan_fulfillment?: boolean
           is_green_halo?: boolean | null
+          is_heavy_material?: boolean | null
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
@@ -5024,10 +5103,14 @@ export type Database = {
           quick_link_id?: string | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
+          reclassify_on_contamination?: boolean | null
           recommendation_reason?: string | null
           recommended_size_yards?: number | null
           rental_days?: number
+          requested_green_halo?: boolean | null
           requires_discount_approval?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -5051,6 +5134,7 @@ export type Database = {
           volume_discount_pct?: number | null
           volume_validity_end?: string | null
           volume_validity_start?: string | null
+          weight_risk_level?: string | null
           yard_id?: string | null
           yard_name?: string | null
           zip_code?: string
