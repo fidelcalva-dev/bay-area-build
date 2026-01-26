@@ -20,6 +20,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { HelpTooltip } from '@/components/help';
 
 // Icon mapping for materials
 const MATERIAL_ICONS: Record<string, LucideIcon> = {
@@ -340,7 +341,7 @@ export function SmartMaterialSelector({
         <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border/50">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-            <div className="text-xs text-muted-foreground">
+            <div className="flex-1 text-xs text-muted-foreground">
               {value === 'GRASS_YARD_WASTE'
                 ? (isSpanish 
                     ? 'Los desechos de jardín se facturan por tonelaje debido al contenido de tierra. Green Halo™ no disponible.'
@@ -349,6 +350,9 @@ export function SmartMaterialSelector({
                     ? 'El tamaño disponible puede cambiar según el material seleccionado.'
                     : 'Available sizes may change based on the selected material.')}
             </div>
+            {value === 'GRASS_YARD_WASTE' && (
+              <HelpTooltip helpKey="GRASS_DEBRIS_RULE" placement="popover" />
+            )}
           </div>
         </div>
       )}

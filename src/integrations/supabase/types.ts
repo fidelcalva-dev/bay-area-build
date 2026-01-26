@@ -3125,6 +3125,78 @@ export type Database = {
         }
         Relationships: []
       }
+      help_content: {
+        Row: {
+          body: string
+          created_at: string
+          help_key: string
+          id: string
+          is_active: boolean
+          scopes: Database["public"]["Enums"]["help_scope"][]
+          severity: Database["public"]["Enums"]["help_severity"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          help_key: string
+          id?: string
+          is_active?: boolean
+          scopes?: Database["public"]["Enums"]["help_scope"][]
+          severity?: Database["public"]["Enums"]["help_severity"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          help_key?: string
+          id?: string
+          is_active?: boolean
+          scopes?: Database["public"]["Enums"]["help_scope"][]
+          severity?: Database["public"]["Enums"]["help_severity"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      internal_documents: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          description: string | null
+          doc_key: Database["public"]["Enums"]["doc_key_type"]
+          file_path: string | null
+          id: string
+          is_active: boolean
+          title: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          description?: string | null
+          doc_key: Database["public"]["Enums"]["doc_key_type"]
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          title: string
+          version?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          description?: string | null
+          doc_key?: Database["public"]["Enums"]["doc_key_type"]
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          title?: string
+          version?: string
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           available_count: number
@@ -7440,6 +7512,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_help_acknowledgements: {
+        Row: {
+          acknowledged_at: string
+          help_key: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged_at?: string
+          help_key: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          acknowledged_at?: string
+          help_key?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_profiles: {
         Row: {
           avatar_url: string | null
@@ -8385,7 +8478,20 @@ export type Database = {
       commitment_type: "prepaid" | "contracted"
       contract_status: "pending" | "signed" | "declined" | "expired"
       contract_type: "msa" | "addendum"
+      doc_key_type:
+        | "NON_NEGOTIABLE_RULES"
+        | "CEO_WEEKLY_CHECKLIST"
+        | "PLAYBOOK_EXCEPTIONS"
       filled_location: "customer" | "yard" | "truck"
+      help_scope:
+        | "GLOBAL"
+        | "SALES"
+        | "CS"
+        | "DISPATCH"
+        | "DRIVER"
+        | "BILLING"
+        | "ADMIN"
+      help_severity: "INFO" | "WARNING" | "CRITICAL"
       location_type: "yard" | "customer" | "facility"
       logistics_type:
         | "delivery"
@@ -8593,7 +8699,22 @@ export const Constants = {
       commitment_type: ["prepaid", "contracted"],
       contract_status: ["pending", "signed", "declined", "expired"],
       contract_type: ["msa", "addendum"],
+      doc_key_type: [
+        "NON_NEGOTIABLE_RULES",
+        "CEO_WEEKLY_CHECKLIST",
+        "PLAYBOOK_EXCEPTIONS",
+      ],
       filled_location: ["customer", "yard", "truck"],
+      help_scope: [
+        "GLOBAL",
+        "SALES",
+        "CS",
+        "DISPATCH",
+        "DRIVER",
+        "BILLING",
+        "ADMIN",
+      ],
+      help_severity: ["INFO", "WARNING", "CRITICAL"],
       location_type: ["yard", "customer", "facility"],
       logistics_type: [
         "delivery",

@@ -97,6 +97,7 @@ const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage")
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
+const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 
 // Telephony Admin Pages
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
@@ -495,6 +496,10 @@ const App = () => (
                 } />
                 <Route path="ads/logs" element={
                   <Suspense fallback={<PageLoader />}><AdsLogsPage /></Suspense>
+                } />
+                {/* Internal Documentation */}
+                <Route path="docs" element={
+                  <Suspense fallback={<PageLoader />}><InternalDocsPage /></Suspense>
                 } />
               </Route>
 
