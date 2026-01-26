@@ -119,6 +119,10 @@ const AdminCustomersDashboard = lazy(() => import("./pages/admin/dashboards/Cust
 const KPIDashboard = lazy(() => import("./pages/admin/dashboards/KPIDashboard"));
 const LeadPerformanceDashboard = lazy(() => import("./pages/admin/dashboards/LeadPerformanceDashboard"));
 
+// Material Catalog Admin Pages
+const MaterialCatalogPage = lazy(() => import("./pages/admin/materials/MaterialCatalogPage"));
+const ProjectCategoriesPage = lazy(() => import("./pages/admin/materials/ProjectCategoriesPage"));
+const MaterialOffersPage = lazy(() => import("./pages/admin/materials/MaterialOffersPage"));
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
@@ -417,6 +421,16 @@ const App = () => (
                 } />
                 <Route path="security" element={
                   <Suspense fallback={<PageLoader />}><SecurityHealthPage /></Suspense>
+                } />
+                {/* Material Catalog Admin Pages */}
+                <Route path="materials/catalog" element={
+                  <Suspense fallback={<PageLoader />}><MaterialCatalogPage /></Suspense>
+                } />
+                <Route path="materials/categories" element={
+                  <Suspense fallback={<PageLoader />}><ProjectCategoriesPage /></Suspense>
+                } />
+                <Route path="materials/offers" element={
+                  <Suspense fallback={<PageLoader />}><MaterialOffersPage /></Suspense>
                 } />
                 <Route path="heavy-risk" element={
                   <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>
