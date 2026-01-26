@@ -44,3 +44,21 @@ verify_jwt = false
 
 [functions.master-ai-notifier]
 verify_jwt = false
+
+[functions.lead-omnichannel]
+verify_jwt = false
+
+[functions.lead-from-phone]
+verify_jwt = false
+
+[functions.lead-from-sms]
+verify_jwt = false
+
+[functions.lead-from-meta]
+verify_jwt = false
+
+[functions.lead-from-google-ads]
+verify_jwt = false
+
+[functions.lead-manual-add]
+verify_jwt = false
