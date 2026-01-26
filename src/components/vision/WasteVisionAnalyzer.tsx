@@ -131,9 +131,9 @@ export function WasteVisionAnalyzer({
 
   // Photo label options
   const PHOTO_LABELS = [
-    { value: 'pile', label: '📦 Pile', description: 'Overall debris pile' },
-    { value: 'closeup', label: '🔍 Close-up', description: 'Detail shot of materials' },
-    { value: 'jobsite', label: '🏗️ Jobsite', description: 'Full work area view' },
+    { value: 'pile', label: 'Pile', description: 'Overall debris pile' },
+    { value: 'closeup', label: 'Close-up', description: 'Detail shot of materials' },
+    { value: 'jobsite', label: 'Jobsite', description: 'Full work area view' },
   ];
 
   // Update image label

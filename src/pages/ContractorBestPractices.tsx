@@ -84,15 +84,7 @@ const BEST_PRACTICES_SECTIONS = [
               <Scale className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <span className="font-medium text-foreground">General debris (20-50yd):</span> Includes weight by size (20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T). Overage: <span className="font-semibold">$165/ton</span> after scale ticket.
-            </div>
-          </li>
-          <li className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-              <Scale className="w-4 h-4 text-accent" />
-            </div>
-            <div>
-              <span className="font-medium text-foreground">General debris (6-10yd):</span> Overage: <span className="font-semibold">$30 per additional yard</span> (not per ton).
+              <span className="font-medium text-foreground">General debris (all sizes):</span> Includes weight by size. Overage: <span className="font-semibold">$165/ton</span> based on scale ticket.
             </div>
           </li>
         </ul>

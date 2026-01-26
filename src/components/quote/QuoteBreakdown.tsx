@@ -18,7 +18,6 @@ export function QuoteBreakdown({ quote, compact = false, materialType = 'general
   // Get the correct overage info based on material and size
   const overageInfo = getOverageInfo(materialType, sizeYards);
   const isHeavyMaterial = materialType === 'heavy';
-  const isSmallGeneral = materialType === 'general' && sizeYards <= 10;
 
   return (
     <div className={cn(
@@ -91,15 +90,10 @@ export function QuoteBreakdown({ quote, compact = false, materialType = 'general
             <Package className="w-3 h-3" />
             Flat Fee – Disposal Included
           </span>
-        ) : overageInfo.showTons ? (
+        ) : (
           <span className="flex items-center gap-1">
             <Weight className="w-3 h-3" />
             {quote.includedTons}T Included
-          </span>
-        ) : (
-          <span className="flex items-center gap-1">
-            <Package className="w-3 h-3" />
-            {sizeYards} Yards Capacity
           </span>
         )}
         <span className="flex items-center gap-1">

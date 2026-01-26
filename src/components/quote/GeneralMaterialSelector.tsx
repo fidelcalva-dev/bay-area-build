@@ -186,19 +186,12 @@ export function GeneralMaterialSelector({
         note: 'Green Halo materials are transported to specialized recycling facilities — flat-fee pricing applies',
       };
     }
-    if (selectedSize <= 10) {
-      return {
-        type: 'capacity',
-        rate: `$${PRICING_POLICIES.overagePerYardSmall}`,
-        unit: 'per extra cubic yard',
-        note: 'Overage charged if debris exceeds container height',
-      };
-    }
+    // All general debris sizes use per-ton overage (canonical rule)
     return {
       type: 'weight',
       rate: `$${PRICING_POLICIES.overagePerTonGeneral}`,
       unit: 'per extra ton',
-      note: 'Overage charged after included tonnage',
+      note: 'Any weight beyond included amount is billed at $165/ton based on scale ticket',
     };
   };
 

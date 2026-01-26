@@ -3,7 +3,7 @@ import {
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
   Navigation, X, RefreshCw, Home, HardHat, Building2, Scale, FileText, Bed, Refrigerator,
-  AlertCircle, Calculator, Trash2, Copy, type LucideIcon
+  AlertCircle, Calculator, Trash2, Copy, Lightbulb, CalendarCheck, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -1126,7 +1126,7 @@ export function InstantQuoteCalculatorV3() {
                         {/* Yard Value Explanation (Phase 2, Item 5) */}
                         {distanceCalc.distance && (
                           <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-                            <span className="text-primary">💡</span>
+                            <Lightbulb className="w-3 h-3 text-primary" />
                             Local yard = faster delivery, lower transport cost, better availability
                           </p>
                         )}
@@ -1136,13 +1136,13 @@ export function InstantQuoteCalculatorV3() {
                           <div className="mt-2 pt-2 border-t border-success/20">
                             <p className="text-xs text-muted-foreground">
                               {distanceCalc.distance.distanceMiles <= 10 && (
-                                <span className="text-success">⚡ Same-day delivery available</span>
+                                <span className="text-success flex items-center gap-1"><Zap className="w-3 h-3" /> Same-day delivery available</span>
                               )}
                               {distanceCalc.distance.distanceMiles > 10 && distanceCalc.distance.distanceMiles <= 25 && (
-                                <span className="text-primary">📅 Next-day delivery likely</span>
+                                <span className="text-primary flex items-center gap-1"><CalendarCheck className="w-3 h-3" /> Next-day delivery likely</span>
                               )}
                               {distanceCalc.distance.distanceMiles > 25 && (
-                                <span className="text-warning">📞 Manual review recommended — we'll confirm by text</span>
+                                <span className="text-warning flex items-center gap-1"><Phone className="w-3 h-3" /> Manual review recommended — we'll confirm by text</span>
                               )}
                             </p>
                           </div>
@@ -1602,15 +1602,10 @@ export function InstantQuoteCalculatorV3() {
                     <CheckCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>Heavy materials are flat-fee. No extra weight charges.</span>
                   </>
-                ) : formData.size <= 10 ? (
-                  <>
-                    <Info className="w-3.5 h-3.5 shrink-0" />
-                    <span>Overage is billed at $30 per additional yard for 6–10 yard mixed debris.</span>
-                  </>
                 ) : (
                   <>
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>Overage billed per ton after disposal scale ticket ($165/ton).</span>
+                    <span>Overage billed at $165 per ton based on scale ticket.</span>
                   </>
                 )}
               </div>
@@ -1770,10 +1765,7 @@ export function InstantQuoteCalculatorV3() {
                 {/* Overage disclaimer - only for general debris */}
                 {formData.material === 'general' && (
                   <div className="text-[10px] text-muted-foreground bg-muted/30 rounded px-2 py-1.5">
-                    {formData.size <= 10 
-                      ? 'Overage: $30 per additional yard'
-                      : 'Included tons + overage per ton after scale ticket'
-                    }
+                    Included tons + overage at $165/ton based on scale ticket
                   </div>
                 )}
               </div>
@@ -1815,10 +1807,10 @@ export function InstantQuoteCalculatorV3() {
                   const materialLabel = formData.material === 'heavy' ? 'Heavy Materials' : 'General Debris';
                   const msg = encodeURIComponent(
                     `Hi! I'd like to confirm my dumpster rental:\n\n` +
-                    `📦 ${sizeData?.label} (${materialLabel})\n` +
-                    `📍 ZIP: ${formData.zip}\n` +
-                    `📅 ${formData.rentalDays} day rental\n` +
-                    `💰 Est: $${quote.estimatedMin}–$${quote.estimatedMax}\n\n` +
+                    `${sizeData?.label} (${materialLabel})\n` +
+                    `ZIP: ${formData.zip}\n` +
+                    `${formData.rentalDays} day rental\n` +
+                    `Est: $${quote.estimatedMin}–$${quote.estimatedMax}\n\n` +
                     `Please confirm availability!`
                   );
                   window.open(`sms:+15106802150?body=${msg}`, '_blank');

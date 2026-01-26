@@ -51,27 +51,26 @@ const templates = {
     heavyMaterials: "Heavy Materials (Flat Fee)",
     generalDebris: "General Debris",
     overageHeavy: "Heavy material dumpsters are FLAT FEE—disposal included with no extra weight charges.",
-    overageYard: (rate: number) => `Overage charged at $${rate} per additional yard.`,
-    overageTon: (rate: number) => `Overage charged at $${rate}/ton after disposal scale ticket.`,
+    overageTon: (rate: number) => `Any weight beyond included amount is billed at $${rate}/ton based on scale ticket.`,
     smsHeavy: (name: string, size: string, zip: string, days: number, min: number, max: number) =>
       `Hi ${name}! Your Calsan Dumpsters quote:\n\n` +
-      `📦 ${size} (Heavy Materials)\n` +
-      `📍 ZIP: ${zip}\n` +
-      `📅 ${days}-day rental\n` +
-      `✅ FLAT FEE – Disposal Included\n` +
-      `💰 $${min}–$${max}\n\n` +
+      `${size} (Heavy Materials)\n` +
+      `ZIP: ${zip}\n` +
+      `${days}-day rental\n` +
+      `FLAT FEE – Disposal Included\n` +
+      `$${min}–$${max}\n\n` +
       `Book now: app.trashlab.com\n` +
       `Questions? Reply to this text or call (510) 680-2150`,
     smsGeneral: (name: string, size: string, zip: string, days: number, tons: number, min: number, max: number) =>
       `Hi ${name}! Your Calsan Dumpsters quote:\n\n` +
-      `📦 ${size} (General Debris)\n` +
-      `📍 ZIP: ${zip}\n` +
-      `📅 ${days}-day rental\n` +
-      `⚖️ ${tons}T included\n` +
-      `💰 $${min}–$${max}\n\n` +
+      `${size} (General Debris)\n` +
+      `ZIP: ${zip}\n` +
+      `${days}-day rental\n` +
+      `${tons}T included\n` +
+      `$${min}–$${max}\n\n` +
       `Book now: app.trashlab.com\n` +
       `Questions? Reply to this text or call (510) 680-2150`,
-    afterHours: '\n\n🕐 Our team is currently offline (6am-9pm). We\'ll follow up first thing!',
+    afterHours: '\n\nOur team is currently offline (6am-9pm). We will follow up first thing!',
   },
   es: {
     emailSubject: (size: string) => `Tu Cotización de Contenedor - ${size}`,
@@ -98,35 +97,33 @@ const templates = {
     heavyMaterials: "Materiales Pesados (Tarifa Fija)",
     generalDebris: "Escombros Generales",
     overageHeavy: "Los contenedores de material pesado son TARIFA FIJA—disposición incluida sin cargos extras por peso.",
-    overageYard: (rate: number) => `Cargo adicional de $${rate} por yarda extra.`,
-    overageTon: (rate: number) => `Cargo adicional de $${rate}/tonelada después del ticket de báscula.`,
+    overageTon: (rate: number) => `Cualquier peso adicional se factura a $${rate}/tonelada según el ticket de báscula.`,
     smsHeavy: (name: string, size: string, zip: string, days: number, min: number, max: number) =>
       `¡Hola ${name}! Tu cotización de Calsan Dumpsters:\n\n` +
-      `📦 ${size} (Materiales Pesados)\n` +
-      `📍 Código Postal: ${zip}\n` +
-      `📅 Alquiler de ${days} días\n` +
-      `✅ TARIFA FIJA – Disposición Incluida\n` +
-      `💰 $${min}–$${max}\n\n` +
+      `${size} (Materiales Pesados)\n` +
+      `Código Postal: ${zip}\n` +
+      `Alquiler de ${days} días\n` +
+      `TARIFA FIJA – Disposición Incluida\n` +
+      `$${min}–$${max}\n\n` +
       `Reserva: app.trashlab.com\n` +
       `¿Preguntas? Responde este mensaje o llama (510) 680-2150`,
     smsGeneral: (name: string, size: string, zip: string, days: number, tons: number, min: number, max: number) =>
       `¡Hola ${name}! Tu cotización de Calsan Dumpsters:\n\n` +
-      `📦 ${size} (Escombros Generales)\n` +
-      `📍 Código Postal: ${zip}\n` +
-      `📅 Alquiler de ${days} días\n` +
-      `⚖️ ${tons}T incluidas\n` +
-      `💰 $${min}–$${max}\n\n` +
+      `${size} (Escombros Generales)\n` +
+      `Código Postal: ${zip}\n` +
+      `Alquiler de ${days} días\n` +
+      `${tons}T incluidas\n` +
+      `$${min}–$${max}\n\n` +
       `Reserva: app.trashlab.com\n` +
       `¿Preguntas? Responde este mensaje o llama (510) 680-2150`,
-    afterHours: '\n\n🕐 Nuestro equipo está fuera de horario (6am-9pm). ¡Te contactaremos pronto!',
+    afterHours: '\n\nNuestro equipo está fuera de horario (6am-9pm). ¡Te contactaremos pronto!',
   },
 };
 
 // Pricing defaults - fetched from DB when possible
 const DEFAULT_OVERAGE_PER_TON = 165;
-const DEFAULT_OVERAGE_PER_YARD = 30;
 
-async function getPricingFromDB(): Promise<{ overagePerTon: number; overagePerYard: number }> {
+async function getPricingFromDB(): Promise<{ overagePerTon: number }> {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -143,10 +140,10 @@ async function getPricingFromDB(): Promise<{ overagePerTon: number; overagePerYa
       if (tonRate) overagePerTon = Number(tonRate.value) || DEFAULT_OVERAGE_PER_TON;
     }
 
-    return { overagePerTon, overagePerYard: DEFAULT_OVERAGE_PER_YARD };
+    return { overagePerTon };
   } catch (error) {
     console.error("Failed to fetch pricing from DB, using defaults:", error);
-    return { overagePerTon: DEFAULT_OVERAGE_PER_TON, overagePerYard: DEFAULT_OVERAGE_PER_YARD };
+    return { overagePerTon: DEFAULT_OVERAGE_PER_TON };
   }
 }
 
@@ -180,16 +177,13 @@ const handler = async (req: Request): Promise<Response> => {
     const materialLabel = materialType === 'heavy' ? t.heavyMaterials : t.generalDebris;
     const extrasText = extras.length > 0 ? extras.join(', ') : t.none;
     
-    // Determine the correct overage message based on material and size
-    const sizeValue = parseInt(sizeLabel) || 20;
+    // Determine the correct overage message based on material type
+    // CANONICAL: All general debris uses per-ton overage
     const isHeavy = materialType === 'heavy';
-    const isSmallGeneral = !isHeavy && sizeValue <= 10;
     
     let overageNote = '';
     if (isHeavy) {
       overageNote = t.overageHeavy;
-    } else if (isSmallGeneral) {
-      overageNote = t.overageYard(pricing.overagePerYard);
     } else {
       overageNote = t.overageTon(pricing.overagePerTon);
     }

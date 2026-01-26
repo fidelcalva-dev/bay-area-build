@@ -96,7 +96,7 @@ export function calculateFitStatus(
   if (ratio <= 0.8) {
     return {
       status: 'fits',
-      label: '✅ Likely fits',
+      label: 'Likely fits',
       message: `Your ${estimatedVolume.toFixed(1)} cu yd should fit comfortably in a ${selectedSize}-yard dumpster.`,
     };
   }
@@ -104,7 +104,7 @@ export function calculateFitStatus(
   if (ratio <= 1.0) {
     return {
       status: 'tight',
-      label: '⚠️ Might be tight',
+      label: 'Might be tight',
       message: `You're near capacity (${Math.round(ratio * 100)}%). Load carefully or consider the next size up.`,
       recommendedSize: availableSizes.find(s => s > selectedSize),
     };
@@ -115,7 +115,7 @@ export function calculateFitStatus(
   
   return {
     status: 'overflow',
-    label: '❌ Risk of overflow',
+    label: 'Risk of overflow',
     message: nextSize 
       ? `At ${estimatedVolume.toFixed(1)} cu yd, a ${selectedSize}-yard may not fit everything. Consider a ${nextSize}-yard.`
       : isHeavy 

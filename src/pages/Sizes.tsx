@@ -179,7 +179,7 @@ export default function Sizes() {
               <div>
                 <p className="font-semibold text-foreground">Overage Rules by Material Type</p>
                 <p className="text-sm text-muted-foreground">
-                  Heavy: Flat Fee (no overage) • General 6-10yd: $30/yard • General 20-50yd: ${overageRate}/ton
+                  Heavy Materials: Flat Fee (no overage) | General Debris: ${overageRate}/ton based on scale ticket
                 </p>
               </div>
             </div>
