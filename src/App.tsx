@@ -146,6 +146,13 @@ const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
+const SalesLeadInbox = lazy(() => import("./pages/sales/SalesLeadInbox"));
+
+// CS Lead Inbox
+const CSLeadInbox = lazy(() => import("./pages/cs/CSLeadInbox"));
+
+// Admin Lead Hub
+const AdminLeadsHub = lazy(() => import("./pages/admin/AdminLeadsHub"));
 
 // Dispatch Portal
 const DispatchLayout = lazy(() => import("./pages/dispatch/DispatchLayout"));
@@ -526,6 +533,9 @@ const App = () => (
                 } />
                 <Route path="inbox" element={
                   <Suspense fallback={<PageLoader />}><LeadInbox /></Suspense>
+                } />
+                <Route path="lead-hub" element={
+                  <Suspense fallback={<PageLoader />}><SalesLeadInbox /></Suspense>
                 } />
               </Route>
 

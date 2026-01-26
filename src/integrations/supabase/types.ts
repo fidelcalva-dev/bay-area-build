@@ -3634,8 +3634,80 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_channels: {
+        Row: {
+          channel_key: string
+          created_at: string | null
+          description: string | null
+          display_name: string
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          requires_api_key: boolean | null
+          updated_at: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          channel_key: string
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          requires_api_key?: boolean | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          channel_key?: string
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          requires_api_key?: boolean | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
+      lead_dedup_keys: {
+        Row: {
+          created_at: string | null
+          email_normalized: string | null
+          id: string
+          lead_id: string
+          phone_normalized: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_normalized?: string | null
+          id?: string
+          lead_id: string
+          phone_normalized?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_normalized?: string | null
+          id?: string
+          lead_id?: string
+          phone_normalized?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_dedup_keys_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_events: {
         Row: {
+          channel_key: string | null
           created_at: string
           created_by: string | null
           event_source: string | null
@@ -3648,6 +3720,7 @@ export type Database = {
           to_assignment_type: string | null
         }
         Insert: {
+          channel_key?: string | null
           created_at?: string
           created_by?: string | null
           event_source?: string | null
@@ -3660,6 +3733,7 @@ export type Database = {
           to_assignment_type?: string | null
         }
         Update: {
+          channel_key?: string | null
           created_at?: string
           created_by?: string | null
           event_source?: string | null
@@ -6710,11 +6784,15 @@ export type Database = {
         Row: {
           address: string | null
           ai_classification_json: Json | null
+          ai_mode: string | null
+          ai_recommended_action: string | null
           assigned_at: string | null
           assigned_to: string | null
           assignment_type: string | null
+          call_recording_id: string | null
           capture_ip: string | null
           capture_user_agent: string | null
+          channel_key: string | null
           city: string | null
           company_name: string | null
           consent_status: string | null
@@ -6733,6 +6811,7 @@ export type Database = {
           linked_contact_id: string | null
           linked_opportunity_id: string | null
           market_code: string | null
+          message_excerpt: string | null
           next_followup_at: string | null
           notes: string | null
           project_category: string | null
@@ -6754,11 +6833,15 @@ export type Database = {
         Insert: {
           address?: string | null
           ai_classification_json?: Json | null
+          ai_mode?: string | null
+          ai_recommended_action?: string | null
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
+          channel_key?: string | null
           city?: string | null
           company_name?: string | null
           consent_status?: string | null
@@ -6777,6 +6860,7 @@ export type Database = {
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           market_code?: string | null
+          message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
           project_category?: string | null
@@ -6798,11 +6882,15 @@ export type Database = {
         Update: {
           address?: string | null
           ai_classification_json?: Json | null
+          ai_mode?: string | null
+          ai_recommended_action?: string | null
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
+          channel_key?: string | null
           city?: string | null
           company_name?: string | null
           consent_status?: string | null
@@ -6821,6 +6909,7 @@ export type Database = {
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           market_code?: string | null
+          message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
           project_category?: string | null
@@ -8280,6 +8369,28 @@ export type Database = {
         Args: { p_actual_weight_tons: number; p_order_id: string }
         Returns: boolean
       }
+      auto_assign_lead: { Args: { p_lead_id: string }; Returns: string }
+      capture_omnichannel_lead: {
+        Args: {
+          p_address?: string
+          p_channel_key: string
+          p_city?: string
+          p_company_name?: string
+          p_consent_status?: string
+          p_contact_name?: string
+          p_dedup_window_days?: number
+          p_email?: string
+          p_gclid?: string
+          p_message_excerpt?: string
+          p_phone?: string
+          p_raw_payload?: Json
+          p_utm_campaign?: string
+          p_utm_source?: string
+          p_utm_term?: string
+          p_zip?: string
+        }
+        Returns: string
+      }
       check_admin_permission: {
         Args: { _action: string; _module: string; _user_id: string }
         Returns: boolean
@@ -8443,6 +8554,10 @@ export type Database = {
         Returns: string
       }
       update_assets_days_out: { Args: never; Returns: undefined }
+      update_lead_status: {
+        Args: { p_lead_id: string; p_notes?: string; p_status: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role:
