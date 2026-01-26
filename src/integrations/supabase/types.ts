@@ -7480,6 +7480,10 @@ export type Database = {
       }
     }
     Functions: {
+      apply_scale_ticket_weight: {
+        Args: { p_actual_weight_tons: number; p_order_id: string }
+        Returns: boolean
+      }
       check_admin_permission: {
         Args: { _action: string; _module: string; _user_id: string }
         Returns: boolean
@@ -7552,10 +7556,16 @@ export type Database = {
         }
         Returns: string
       }
-      mark_order_contaminated: {
-        Args: { p_notes?: string; p_order_id: string }
-        Returns: boolean
-      }
+      mark_order_contaminated:
+        | { Args: { p_notes?: string; p_order_id: string }; Returns: boolean }
+        | {
+            Args: {
+              p_actual_weight_tons?: number
+              p_notes?: string
+              p_order_id: string
+            }
+            Returns: boolean
+          }
       update_assets_days_out: { Args: never; Returns: undefined }
     }
     Enums: {
