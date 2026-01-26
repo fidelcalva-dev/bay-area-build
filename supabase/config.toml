@@ -32,3 +32,12 @@ verify_jwt = false
 
 [functions.lead-export]
 verify_jwt = false
+
+[functions.master-ai-worker]
+verify_jwt = false
+
+[functions.master-ai-scheduler]
+verify_jwt = false
+
+[functions.master-ai-admin]
+verify_jwt = false
