@@ -3381,35 +3381,77 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_assignment_rules: {
+        Row: {
+          assign_to_team: string | null
+          assign_to_user_id: string | null
+          conditions_json: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          priority: number | null
+          rule_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          assign_to_team?: string | null
+          assign_to_user_id?: string | null
+          conditions_json?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          rule_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          assign_to_team?: string | null
+          assign_to_user_id?: string | null
+          conditions_json?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          rule_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       lead_events: {
         Row: {
           created_at: string
           created_by: string | null
+          event_source: string | null
           event_type: string
           from_assignment_type: string | null
           id: string
           lead_id: string
           notes: string | null
+          payload_json: Json | null
           to_assignment_type: string | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
+          event_source?: string | null
           event_type: string
           from_assignment_type?: string | null
           id?: string
           lead_id: string
           notes?: string | null
+          payload_json?: Json | null
           to_assignment_type?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
+          event_source?: string | null
           event_type?: string
           from_assignment_type?: string | null
           id?: string
           lead_id?: string
           notes?: string | null
+          payload_json?: Json | null
           to_assignment_type?: string | null
         }
         Relationships: [
@@ -3421,6 +3463,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lead_export_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          date_range_end: string | null
+          date_range_start: string | null
+          error_message: string | null
+          export_format: string
+          filters_json: Json | null
+          id: string
+          leads_count: number | null
+          output_file_path: string | null
+          output_file_url: string | null
+          requested_by: string | null
+          requested_by_email: string | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          date_range_end?: string | null
+          date_range_start?: string | null
+          error_message?: string | null
+          export_format?: string
+          filters_json?: Json | null
+          id?: string
+          leads_count?: number | null
+          output_file_path?: string | null
+          output_file_url?: string | null
+          requested_by?: string | null
+          requested_by_email?: string | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          date_range_end?: string | null
+          date_range_start?: string | null
+          error_message?: string | null
+          export_format?: string
+          filters_json?: Json | null
+          id?: string
+          leads_count?: number | null
+          output_file_path?: string | null
+          output_file_url?: string | null
+          requested_by?: string | null
+          requested_by_email?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      lead_sources: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_name: string
+          icon_name: string | null
+          id: string
+          is_active: boolean | null
+          is_automated: boolean | null
+          requires_consent: boolean | null
+          source_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_automated?: boolean | null
+          requires_consent?: boolean | null
+          source_key: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_automated?: boolean | null
+          requires_consent?: boolean | null
+          source_key?: string
+        }
+        Relationships: []
       }
       logistics_events: {
         Row: {
@@ -6308,72 +6437,152 @@ export type Database = {
       }
       sales_leads: {
         Row: {
+          address: string | null
+          ai_classification_json: Json | null
           assigned_at: string | null
           assigned_to: string | null
           assignment_type: string | null
+          capture_ip: string | null
+          capture_user_agent: string | null
+          city: string | null
           company_name: string | null
+          consent_status: string | null
           converted_at: string | null
           created_at: string
           customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
+          customer_type_detected: string | null
+          first_response_sent_at: string | null
+          gclid: string | null
           id: string
           is_existing_customer: boolean | null
           lead_source: string | null
           lead_status: string
+          linked_contact_id: string | null
+          linked_opportunity_id: string | null
+          market_code: string | null
           next_followup_at: string | null
           notes: string | null
+          project_category: string | null
           quote_id: string | null
+          raw_payload_json: Json | null
+          requested_service: string | null
           routing_tags: string[] | null
           sales_notes: string | null
+          source_key: string | null
           timeout_at: string | null
           updated_at: string
+          urgency_score: number | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          zip: string | null
         }
         Insert: {
+          address?: string | null
+          ai_classification_json?: Json | null
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          city?: string | null
           company_name?: string | null
+          consent_status?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          customer_type_detected?: string | null
+          first_response_sent_at?: string | null
+          gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
           lead_source?: string | null
           lead_status?: string
+          linked_contact_id?: string | null
+          linked_opportunity_id?: string | null
+          market_code?: string | null
           next_followup_at?: string | null
           notes?: string | null
+          project_category?: string | null
           quote_id?: string | null
+          raw_payload_json?: Json | null
+          requested_service?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          source_key?: string | null
           timeout_at?: string | null
           updated_at?: string
+          urgency_score?: number | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
         }
         Update: {
+          address?: string | null
+          ai_classification_json?: Json | null
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          city?: string | null
           company_name?: string | null
+          consent_status?: string | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          customer_type_detected?: string | null
+          first_response_sent_at?: string | null
+          gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
           lead_source?: string | null
           lead_status?: string
+          linked_contact_id?: string | null
+          linked_opportunity_id?: string | null
+          market_code?: string | null
           next_followup_at?: string | null
           notes?: string | null
+          project_category?: string | null
           quote_id?: string | null
+          raw_payload_json?: Json | null
+          requested_service?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          source_key?: string | null
           timeout_at?: string | null
           updated_at?: string
+          urgency_score?: number | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_leads_linked_contact_id_fkey"
+            columns: ["linked_contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_leads_linked_opportunity_id_fkey"
+            columns: ["linked_opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_leads_quote_id_fkey"
             columns: ["quote_id"]
@@ -7786,6 +7995,27 @@ export type Database = {
       check_existing_customer: {
         Args: { p_email?: string; p_phone?: string }
         Returns: boolean
+      }
+      classify_and_route_lead: { Args: { p_lead_id: string }; Returns: Json }
+      create_or_update_lead: {
+        Args: {
+          p_address?: string
+          p_city?: string
+          p_company_name?: string
+          p_customer_email?: string
+          p_customer_name?: string
+          p_customer_phone?: string
+          p_dedup_hours?: number
+          p_gclid?: string
+          p_notes?: string
+          p_raw_payload?: Json
+          p_source_key: string
+          p_utm_campaign?: string
+          p_utm_source?: string
+          p_utm_term?: string
+          p_zip?: string
+        }
+        Returns: string
       }
       create_run_for_order: {
         Args: {
