@@ -833,6 +833,13 @@ export type Database = {
             foreignKeyName: "ar_actions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ar_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -922,6 +929,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
           {
             foreignKeyName: "assets_dumpsters_current_order_id_fkey"
             columns: ["current_order_id"]
@@ -1179,6 +1193,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "call_events_order_id_fkey"
@@ -1912,6 +1933,13 @@ export type Database = {
             foreignKeyName: "disposal_requests_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "disposal_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2067,6 +2095,13 @@ export type Database = {
             foreignKeyName: "documents_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "documents_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2180,6 +2215,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "drivers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_payouts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "driver_payouts_order_id_fkey"
@@ -2468,6 +2510,13 @@ export type Database = {
             foreignKeyName: "facility_recommendations_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: true
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "facility_recommendations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2595,6 +2644,13 @@ export type Database = {
             foreignKeyName: "fraud_flags_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "fraud_flags_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2613,6 +2669,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      heavy_material_profiles: {
+        Row: {
+          created_at: string
+          density_ton_per_yd3_max: number
+          density_ton_per_yd3_min: number
+          description: string | null
+          display_name: string
+          display_name_es: string | null
+          display_order: number
+          green_halo_allowed: boolean
+          icon: string | null
+          id: string
+          is_active: boolean
+          material_code: string
+          max_tons_cap: number
+          recommended_fill_pct: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          density_ton_per_yd3_max: number
+          density_ton_per_yd3_min: number
+          description?: string | null
+          display_name: string
+          display_name_es?: string | null
+          display_order?: number
+          green_halo_allowed?: boolean
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          material_code: string
+          max_tons_cap?: number
+          recommended_fill_pct?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          density_ton_per_yd3_max?: number
+          density_ton_per_yd3_min?: number
+          description?: string | null
+          display_name?: string
+          display_name_es?: string | null
+          display_order?: number
+          green_halo_allowed?: boolean
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          material_code?: string
+          max_tons_cap?: number
+          recommended_fill_pct?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       heavy_material_rules: {
         Row: {
@@ -2644,6 +2754,48 @@ export type Database = {
           is_active?: boolean
           material_class?: string
           material_list?: string[]
+        }
+        Relationships: []
+      }
+      heavy_weight_rules: {
+        Row: {
+          allow_full_fill: boolean
+          created_at: string
+          estimated_weight_max_tons: number
+          estimated_weight_min_tons: number
+          fill_line_pct: number
+          hard_stop_over_tons: boolean
+          id: string
+          is_active: boolean
+          material_code: string
+          size_yd: number
+          updated_at: string
+        }
+        Insert: {
+          allow_full_fill?: boolean
+          created_at?: string
+          estimated_weight_max_tons: number
+          estimated_weight_min_tons: number
+          fill_line_pct: number
+          hard_stop_over_tons?: boolean
+          id?: string
+          is_active?: boolean
+          material_code: string
+          size_yd: number
+          updated_at?: string
+        }
+        Update: {
+          allow_full_fill?: boolean
+          created_at?: string
+          estimated_weight_max_tons?: number
+          estimated_weight_min_tons?: number
+          fill_line_pct?: number
+          hard_stop_over_tons?: boolean
+          id?: string
+          is_active?: boolean
+          material_code?: string
+          size_yd?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2796,6 +2948,13 @@ export type Database = {
             foreignKeyName: "inventory_movements_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2859,6 +3018,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["invoice_id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "invoice_line_items_order_id_fkey"
@@ -2935,6 +3101,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "invoices_order_id_fkey"
@@ -3118,6 +3291,13 @@ export type Database = {
           to_status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "logistics_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
           {
             foreignKeyName: "logistics_events_order_id_fkey"
             columns: ["order_id"]
@@ -3381,6 +3561,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "message_history_order_id_fkey"
@@ -3707,6 +3894,13 @@ export type Database = {
             foreignKeyName: "opportunities_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "opportunities_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -3812,6 +4006,13 @@ export type Database = {
             foreignKeyName: "order_disposal_plans_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: true
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "order_disposal_plans_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -3866,6 +4067,13 @@ export type Database = {
           order_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
           {
             foreignKeyName: "order_events_order_id_fkey"
             columns: ["order_id"]
@@ -4226,6 +4434,13 @@ export type Database = {
             foreignKeyName: "orders_parent_order_id_fkey"
             columns: ["parent_order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "orders_parent_order_id_fkey"
+            columns: ["parent_order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -4318,6 +4533,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["asset_id"]
+          },
+          {
+            foreignKeyName: "overdue_billing_state_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "overdue_billing_state_order_id_fkey"
@@ -4469,6 +4691,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "payments_order_id_fkey"
@@ -5166,6 +5395,13 @@ export type Database = {
             foreignKeyName: "quotes_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -5341,6 +5577,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "risk_score_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "risk_score_events_order_id_fkey"
@@ -5728,6 +5971,13 @@ export type Database = {
             foreignKeyName: "runs_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "runs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -5879,6 +6129,13 @@ export type Database = {
           reason?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "schedule_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
           {
             foreignKeyName: "schedule_logs_order_id_fkey"
             columns: ["order_id"]
@@ -6088,6 +6345,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
           },
           {
             foreignKeyName: "service_requests_order_id_fkey"
@@ -6886,6 +7150,13 @@ export type Database = {
             foreignKeyName: "waste_vision_analyses_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "waste_vision_analyses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -7105,6 +7376,31 @@ export type Database = {
         }
         Relationships: []
       }
+      heavy_risk_orders_vw: {
+        Row: {
+          actual_weight_tons: number | null
+          contamination_detected: boolean | null
+          created_at: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address: string | null
+          estimated_fill_pct: number | null
+          estimated_weight_tons_max: number | null
+          estimated_weight_tons_min: number | null
+          extra_tons_charged: number | null
+          heavy_material_code: string | null
+          included_tons_for_size: number | null
+          is_heavy_material: boolean | null
+          order_id: string | null
+          reclassified_to_debris: boolean | null
+          requested_green_halo: boolean | null
+          requires_fill_line: boolean | null
+          requires_pre_pickup_photos: boolean | null
+          status: string | null
+          weight_risk_level: string | null
+        }
+        Relationships: []
+      }
       overdue_assets: {
         Row: {
           asset_code: string | null
@@ -7119,6 +7415,13 @@ export type Database = {
           included_days: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "assets_dumpsters_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
           {
             foreignKeyName: "assets_dumpsters_current_order_id_fkey"
             columns: ["current_order_id"]
@@ -7195,6 +7498,22 @@ export type Database = {
         }
         Returns: string
       }
+      estimate_heavy_weight: {
+        Args: {
+          p_fill_pct?: number
+          p_material_code: string
+          p_size_yd: number
+        }
+        Returns: {
+          allow_full_fill: boolean
+          green_halo_allowed: boolean
+          recommended_fill_pct: number
+          risk_level: string
+          volume_effective: number
+          weight_max_tons: number
+          weight_min_tons: number
+        }[]
+      }
       find_available_agent: {
         Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
         Returns: string
@@ -7232,6 +7551,10 @@ export type Database = {
           p_to_type?: string
         }
         Returns: string
+      }
+      mark_order_contaminated: {
+        Args: { p_notes?: string; p_order_id: string }
+        Returns: boolean
       }
       update_assets_days_out: { Args: never; Returns: undefined }
     }

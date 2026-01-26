@@ -91,6 +91,7 @@ const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
 const RiskReviewPage = lazy(() => import("./pages/admin/RiskReviewPage"));
 const QuickLinksManager = lazy(() => import("./pages/admin/QuickLinksManager"));
 const MarketsManager = lazy(() => import("./pages/admin/MarketsManager"));
+const HeavyRiskDashboard = lazy(() => import("./pages/admin/HeavyRiskDashboard"));
 const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
 const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage"));
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
@@ -416,6 +417,9 @@ const App = () => (
                 } />
                 <Route path="security" element={
                   <Suspense fallback={<PageLoader />}><SecurityHealthPage /></Suspense>
+                } />
+                <Route path="heavy-risk" element={
+                  <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>
                 } />
                 {/* Telephony Routes */}
                 <Route path="telephony/calls" element={
