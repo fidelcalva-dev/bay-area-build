@@ -48,6 +48,9 @@ import { ProjectTypeSelector, ConfidenceBadge, RecommendedBadge, RecommendationR
 import { WeightVisualization, EducationalMicroCopy } from './WeightVisualization';
 import { DeliveryFeasibility } from './DeliveryFeasibility';
 
+// Enhanced Size Selector V2 with material-aware logic
+import { SizeSelectorV2 } from './steps/SizeSelectorV2';
+
 // Material Volume & Weight Estimator
 import { MaterialVolumeEstimator, type EstimatorData } from './estimator';
 
@@ -151,6 +154,9 @@ export function InstantQuoteCalculatorV3() {
   const [prepurchasedExtraTons, setPrepurchasedExtraTons] = useState(0);
   const [prePurchaseSuggested, setPrePurchaseSuggested] = useState(false);
   const [prePurchaseSkipped, setPrePurchaseSkipped] = useState(false);
+  
+  // Size auto-correction message state
+  const [sizeAutoCorrectedMessage, setSizeAutoCorrectedMessage] = useState<string | null>(null);
   
   // Material sub-classification state (Canon-Accurate)
   const [debrisSelection, setDebrisSelection] = useState<DebrisSelectionResult | null>(null);
@@ -1438,189 +1444,71 @@ export function InstantQuoteCalculatorV3() {
               materialType={formData.material}
             />
 
-            <div>
-              <h4 className="text-base font-bold text-foreground mb-1">Select size</h4>
-              <p className="text-xs text-muted-foreground mb-3">
-                {formData.material === 'heavy' 
-                  ? '6-10 yard for heavy materials — flat-fee pricing'
-                  : '6-50 yard available'
-                }
-              </p>
-
-              {/* Heavy Material Classification Summary */}
-              {formData.material === 'heavy' && heavyClassification?.materialClass && (
-                <div className="mb-4 p-3 rounded-lg bg-success/10 border border-success/20">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-foreground">
-                        {heavyClassification.materialClass === 'base' && 'Base Heavy Materials'}
-                        {heavyClassification.materialClass === 'plus_200' && 'Specialty Heavy (+$200)'}
-                        {heavyClassification.materialClass === 'mixed_heavy' && 'Mixed Heavy (+$300)'}
-                      </span>
-                      <span className="text-xs text-success ml-2">
-                        Flat fee — no weight charges
-                      </span>
-                    </div>
+            {/* Heavy Material Classification Summary */}
+            {formData.material === 'heavy' && heavyClassification?.materialClass && (
+              <div className="p-3 rounded-lg bg-success/10 border border-success/20">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                  <div className="flex-1">
+                    <span className="text-sm font-medium text-foreground">
+                      {heavyClassification.materialClass === 'base' && 'Base Heavy Materials'}
+                      {heavyClassification.materialClass === 'plus_200' && 'Specialty Heavy (+$200)'}
+                      {heavyClassification.materialClass === 'mixed_heavy' && 'Mixed Heavy (+$300)'}
+                    </span>
+                    <span className="text-xs text-success ml-2">
+                      Flat fee — no weight charges
+                    </span>
                   </div>
                 </div>
-              )}
-
-              {/* Confidence Meter - Compact (hidden for heavy since pricing is flat) */}
-              {formData.material !== 'heavy' && (
-                <div className="mb-4 p-3 rounded-lg border border-border bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    <ConfidenceBadge 
-                      confidence={smartRecommendation.confidence}
-                      label={smartRecommendation.confidenceLabel}
-                    />
-                    <p className="text-xs text-foreground flex-1">{smartRecommendation.confidenceNote}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {availableSizes.map((size) => {
-                  const includedTons = calculateIncludedTons(size.value, formData.material);
-                  const image = DUMPSTER_IMAGES[size.value];
-                  
-                  // Calculate price based on material type
-                  const isHeavyWithClass = formData.material === 'heavy' && heavyClassification?.materialClass;
-                  let displayPrice: number;
-                  let isFlatFee = false;
-                  
-                  if (isHeavyWithClass && [6, 8, 10].includes(size.value)) {
-                    // Use heavy pricing calculation
-                    const heavyPrice = calculateHeavyPrice(
-                      size.value as 6 | 8 | 10, 
-                      heavyClassification.materialClass as HeavyMaterialClass,
-                      'oakland'
-                    );
-                    displayPrice = heavyPrice.roundedPrice;
-                    isFlatFee = true;
-                  } else {
-                    // Standard pricing with zone multiplier
-                    displayPrice = Math.round(size.basePrice * (zoneResult?.multiplier || 1));
-                  }
-
-                  return (
-                    <button
-                      key={size.id}
-                      type="button"
-                      onClick={() => setFormData((prev) => ({ ...prev, size: size.value }))}
-                      className={cn(
-                        "relative p-3 rounded-xl border-2 text-left transition-all",
-                        formData.size === size.value
-                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                          : "border-input bg-background hover:border-primary/50",
-                        size.popular && "ring-1 ring-accent/50",
-                        projectType && size.value === smartRecommendation.recommendedSize && "ring-2 ring-primary/50"
-                      )}
-                    >
-                      {/* Recommended Badge (when project type is selected) */}
-                      <RecommendedBadge isRecommended={projectType !== null && size.value === smartRecommendation.recommendedSize} />
-                      
-                      {/* Popular Badge (only if not showing recommended) */}
-                      {size.popular && !(projectType !== null && size.value === smartRecommendation.recommendedSize) && (
-                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full whitespace-nowrap z-10">
-                          POPULAR
-                        </span>
-                      )}
-
-                      {image && (
-                        <div className="aspect-[4/3] bg-muted/50 rounded-lg mb-2 p-2 mt-2">
-                          <img src={image} alt={size.label} className="w-full h-full object-contain" />
-                        </div>
-                      )}
-
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-foreground">{size.value}</div>
-                        <div className="text-xs text-muted-foreground uppercase">yard</div>
-                        
-                        {/* Weight info - different for heavy vs general */}
-                        {isFlatFee ? (
-                          <div className="flex items-center justify-center gap-1 mt-1 text-xs text-success font-medium">
-                            <CheckCircle className="w-3 h-3" />
-                            Flat fee
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center gap-1 mt-1 text-xs text-primary font-medium">
-                            <Weight className="w-3 h-3" />
-                            {includedTons}T incl
-                          </div>
-                        )}
-                        
-                        {size.dimensions && (
-                          <div className="mt-1 text-[10px] text-muted-foreground">
-                            Approx. {size.dimensions}
-                          </div>
-                        )}
-                        
-                        {/* Price display */}
-                        <div className={cn(
-                          "mt-2 text-sm font-semibold",
-                          isFlatFee ? "text-success" : "text-foreground"
-                        )}>
-                          ${displayPrice}
-                        </div>
-                        
-                        {/* Heavy material increment badge */}
-                        {isFlatFee && heavyClassification?.increment && heavyClassification.increment > 0 && (
-                          <div className="mt-1 text-[10px] text-amber-600 font-medium">
-                            +${heavyClassification.increment} specialty
-                          </div>
-                        )}
-                        
-                        {/* Show reason under recommended card */}
-                        {projectType !== null && size.value === smartRecommendation.recommendedSize && (
-                          <RecommendationReason reason={smartRecommendation.recommendationReason} />
-                        )}
-                      </div>
-
-                      {formData.size === size.value && (
-                        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                          <CheckCircle className="w-3.5 h-3.5 text-primary-foreground" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
               </div>
+            )}
 
-              {/* Why This Size - Expandable explanation */}
-              <WhyThisSize
-                projectType={projectType}
-                materialType={formData.material}
-                recommendedSize={smartRecommendation.recommendedSize}
-                selectedSize={formData.size}
-              />
-
-              {/* Selected size details */}
-              {formData.size && (
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Package className="w-5 h-5 text-primary" />
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {DUMPSTER_SIZES.find((s) => s.value === formData.size)?.dimensions} • 
-                        {' '}{DUMPSTER_SIZES.find((s) => s.value === formData.size)?.description}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Weight Visualization */}
-                  <WeightVisualization 
-                    includedTons={calculateIncludedTons(formData.size, formData.material)}
-                    materialType={formData.material}
-                    projectType={projectType}
-                    className="mt-3"
+            {/* Confidence Meter - Compact (hidden for heavy since pricing is flat) */}
+            {formData.material !== 'heavy' && (
+              <div className="p-3 rounded-lg border border-border bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <ConfidenceBadge 
+                    confidence={smartRecommendation.confidence}
+                    label={smartRecommendation.confidenceLabel}
                   />
+                  <p className="text-xs text-foreground flex-1">{smartRecommendation.confidenceNote}</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Size Selector V2 - Material and Market Aware */}
+            <SizeSelectorV2
+              value={formData.size}
+              onChange={(size) => {
+                setFormData((prev) => ({ ...prev, size }));
+                setSizeAutoCorrectedMessage(null);
+              }}
+              materialType={formData.material}
+              materialCode={debrisSelection?.categoryId || null}
+              sizes={DUMPSTER_SIZES}
+              onOpenEstimator={() => setShowEstimator(true)}
+              onSizeAutoCorrected={(newSize, reason) => {
+                setSizeAutoCorrectedMessage(reason);
+                setTimeout(() => setSizeAutoCorrectedMessage(null), 5000);
+              }}
+            />
+
+            {/* Why This Size - Expandable explanation */}
+            <WhyThisSize
+              projectType={projectType}
+              materialType={formData.material}
+              recommendedSize={smartRecommendation.recommendedSize}
+              selectedSize={formData.size}
+            />
+
+            {/* Weight Visualization */}
+            {formData.size && formData.material !== 'heavy' && (
+              <WeightVisualization 
+                includedTons={calculateIncludedTons(formData.size, formData.material)}
+                materialType={formData.material}
+                projectType={projectType}
+              />
+            )}
 
             <Button
               type="button"
