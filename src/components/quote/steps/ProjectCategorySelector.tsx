@@ -23,6 +23,8 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   'warehouse': Warehouse,
   'key': Key,
   'package': Package,
+  // Add Lucide icon mappings for new homeowner categories
+  'leaf': TreePine, // fallback for yard cleanup
 };
 
 interface ProjectCategorySelectorProps {
