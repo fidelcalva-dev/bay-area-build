@@ -72,20 +72,41 @@ const USER_TYPE_TO_CUSTOMER_TYPE: Record<string, CustomerType> = {
 
 export function useProjectCategories(customerType?: string) {
   const [categories, setCategories] = useState<ProjectCategory[]>([]);
+  const [visibility, setVisibility] = useState<Record<string, { is_visible: boolean; display_order: number }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchCategories() {
+    async function fetchData() {
       try {
-        const { data, error: fetchError } = await supabase
+        const ct = customerType ? (USER_TYPE_TO_CUSTOMER_TYPE[customerType] || 'homeowner') : null;
+        
+        // Fetch categories
+        const { data: catData, error: catError } = await supabase
           .from('project_categories')
           .select('*')
           .eq('is_active', true)
           .order('display_order', { ascending: true });
 
-        if (fetchError) throw fetchError;
-        setCategories(data || []);
+        if (catError) throw catError;
+        setCategories(catData || []);
+
+        // Fetch visibility rules if customer type is specified
+        if (ct) {
+          const { data: visData, error: visError } = await supabase
+            .from('customer_category_visibility')
+            .select('category_code, is_visible, display_order')
+            .eq('customer_type', ct);
+
+          if (visError) throw visError;
+          
+          const visMap: Record<string, { is_visible: boolean; display_order: number }> = {};
+          (visData || []).forEach(v => {
+            visMap[v.category_code] = { is_visible: v.is_visible, display_order: v.display_order };
+          });
+          setVisibility(visMap);
+        }
+
         setError(null);
       } catch (err) {
         console.error('Failed to fetch project categories:', err);
@@ -95,18 +116,33 @@ export function useProjectCategories(customerType?: string) {
       }
     }
 
-    fetchCategories();
-  }, []);
+    fetchData();
+  }, [customerType]);
 
-  // Filter categories based on customer type relevance
+  // Filter and sort categories based on customer type visibility rules
   const filteredCategories = useMemo(() => {
     if (!customerType) return categories;
     
     const ct = USER_TYPE_TO_CUSTOMER_TYPE[customerType] || 'homeowner';
     
-    // Define which categories are relevant per customer type
+    // If we have visibility rules, use them
+    if (Object.keys(visibility).length > 0) {
+      return categories
+        .filter(c => {
+          const rule = visibility[c.category_code];
+          // If no rule exists, default to visible for backwards compatibility
+          return rule ? rule.is_visible : true;
+        })
+        .sort((a, b) => {
+          const orderA = visibility[a.category_code]?.display_order ?? a.display_order;
+          const orderB = visibility[b.category_code]?.display_order ?? b.display_order;
+          return orderA - orderB;
+        });
+    }
+
+    // Fallback to hardcoded map if no DB rules exist
     const relevanceMap: Record<CustomerType, string[]> = {
-      homeowner: ['HOME_CLEANOUT', 'REMODEL', 'ROOFING', 'LANDSCAPING'],
+      homeowner: ['HOME_CLEANOUT', 'REMODEL', 'ROOFING', 'YARD_CLEANUP', 'LANDSCAPING', 'SMALL_CONCRETE_PAVERS', 'GARAGE_PROPERTY_CLEANOUT'],
       contractor: ['REMODEL', 'DEMOLITION', 'ROOFING', 'LANDSCAPING', 'NEW_CONSTRUCTION'],
       business: ['COMMERCIAL_TRASH', 'COMMERCIAL_RECYCLING', 'WAREHOUSE_CLEANOUT', 'PROPERTY_MANAGEMENT'],
       preferred_contractor: ['REMODEL', 'DEMOLITION', 'ROOFING', 'LANDSCAPING', 'NEW_CONSTRUCTION'],
@@ -115,7 +151,7 @@ export function useProjectCategories(customerType?: string) {
 
     const relevant = relevanceMap[ct] || [];
     return categories.filter(c => relevant.includes(c.category_code));
-  }, [categories, customerType]);
+  }, [categories, customerType, visibility]);
 
   return { categories: filteredCategories, allCategories: categories, isLoading, error };
 }

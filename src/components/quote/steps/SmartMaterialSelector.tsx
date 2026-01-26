@@ -45,7 +45,13 @@ interface SmartMaterialSelectorProps {
   projectCategoryCode: string | null;
   selectedSize: number;
   isSpanish?: boolean;
+  onHeavyMaterialWarning?: (material: MaterialCatalogItem) => void;
 }
+
+// Check if customer type is homeowner
+const isHomeownerType = (customerType: string): boolean => {
+  return customerType === 'homeowner';
+};
 
 function MaterialCard({
   offer,
@@ -54,6 +60,8 @@ function MaterialCard({
   onSelect,
   selectedSize,
   isSpanish,
+  isHomeowner,
+  showHeavyWarning,
 }: {
   offer: MaterialOffer;
   isSelected: boolean;
@@ -61,6 +69,8 @@ function MaterialCard({
   onSelect: () => void;
   selectedSize: number;
   isSpanish: boolean;
+  isHomeowner: boolean;
+  showHeavyWarning: boolean;
 }) {
   const { material } = offer;
   const IconComponent = MATERIAL_ICONS[material.icon] || Package;
@@ -164,6 +174,18 @@ function MaterialCard({
                 : `Only available in ${material.allowed_sizes_json.join(', ')} yd`}
             </div>
           )}
+
+          {/* Homeowner heavy material warning */}
+          {isHomeowner && isHeavy && showHeavyWarning && (
+            <div className="flex items-start gap-1.5 mt-2 p-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-700">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span>
+                {isSpanish 
+                  ? 'Material pesado: máximo 10 toneladas. Requiere línea de llenado. Peso extra = $165/ton.' 
+                  : 'Heavy material: 10-ton max. Fill-line required. Extra weight = $165/ton.'}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Selection checkmark */}
@@ -184,12 +206,14 @@ export function SmartMaterialSelector({
   projectCategoryCode,
   selectedSize,
   isSpanish = false,
+  onHeavyMaterialWarning,
 }: SmartMaterialSelectorProps) {
   const { recommended, other, isLoading, error, hasConfiguredOffers } = useSmartMaterials(
     customerType,
     projectCategoryCode
   );
   const [showOther, setShowOther] = useState(false);
+  const isHomeowner = isHomeownerType(customerType);
 
   if (!projectCategoryCode) {
     return (
@@ -223,6 +247,10 @@ export function SmartMaterialSelector({
   }
 
   const handleSelect = (offer: MaterialOffer) => {
+    // For homeowners selecting heavy materials, trigger warning callback if provided
+    if (isHomeowner && offer.material.is_heavy_material && onHeavyMaterialWarning) {
+      onHeavyMaterialWarning(offer.material);
+    }
     onChange(offer.material_code, offer.material);
   };
 
@@ -248,6 +276,8 @@ export function SmartMaterialSelector({
                 onSelect={() => handleSelect(offer)}
                 selectedSize={selectedSize}
                 isSpanish={isSpanish}
+                isHomeowner={isHomeowner}
+                showHeavyWarning={value === offer.material_code}
               />
             ))}
           </div>
@@ -278,18 +308,20 @@ export function SmartMaterialSelector({
           
           {(showOther || recommended.length === 0) && (
             <div className="space-y-2">
-              {other.map((offer) => (
-                <MaterialCard
-                  key={offer.material_code}
-                  offer={offer}
-                  isSelected={value === offer.material_code}
-                  isRecommended={false}
-                  onSelect={() => handleSelect(offer)}
-                  selectedSize={selectedSize}
-                  isSpanish={isSpanish}
-                />
-              ))}
-            </div>
+            {other.map((offer) => (
+              <MaterialCard
+                key={offer.material_code}
+                offer={offer}
+                isSelected={value === offer.material_code}
+                isRecommended={false}
+                onSelect={() => handleSelect(offer)}
+                selectedSize={selectedSize}
+                isSpanish={isSpanish}
+                isHomeowner={isHomeowner}
+                showHeavyWarning={value === offer.material_code}
+              />
+            ))}
+          </div>
           )}
         </div>
       )}

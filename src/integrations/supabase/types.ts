@@ -1805,6 +1805,41 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_category_visibility: {
+        Row: {
+          category_code: string
+          created_at: string | null
+          customer_type: string
+          display_order: number | null
+          id: string
+          is_visible: boolean | null
+        }
+        Insert: {
+          category_code: string
+          created_at?: string | null
+          customer_type: string
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+        }
+        Update: {
+          category_code?: string
+          created_at?: string | null
+          customer_type?: string
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_category_visibility_category_code_fkey"
+            columns: ["category_code"]
+            isOneToOne: false
+            referencedRelation: "project_categories"
+            referencedColumns: ["category_code"]
+          },
+        ]
+      }
       customer_material_offers: {
         Row: {
           created_at: string | null
