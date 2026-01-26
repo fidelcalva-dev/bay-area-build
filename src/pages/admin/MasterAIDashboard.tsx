@@ -139,7 +139,15 @@ export default function MasterAIDashboard() {
     if (!config) return;
     setTogglingMode(true);
     try {
-      const newMode = config.mode === 'DRY_RUN' ? 'LIVE' : 'DRY_RUN';
+      // Cycle through modes: DRY_RUN -> LIVE_INTERNAL -> LIVE -> DRY_RUN
+      let newMode: 'DRY_RUN' | 'LIVE_INTERNAL' | 'LIVE';
+      if (config.mode === 'DRY_RUN') {
+        newMode = 'LIVE_INTERNAL';
+      } else if (config.mode === 'LIVE_INTERNAL') {
+        newMode = 'LIVE';
+      } else {
+        newMode = 'DRY_RUN';
+      }
       await updateConfig('mode', newMode);
       toast({ 
         title: 'Mode updated', 
@@ -287,9 +295,48 @@ export default function MasterAIDashboard() {
             <Brain className="w-8 h-8 text-primary" />
             CALSAN Master AI
           </h1>
-          <p className="text-muted-foreground mt-1">
-            24/7 Autonomous Operations Supervisor • {config?.mode || 'DRY_RUN'} Mode
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-muted-foreground">
+              24/7 Autonomous Operations Supervisor
+            </p>
+            {config?.mode === 'LIVE_INTERNAL' && (
+              <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                LIVE — Internal Only
+              </Badge>
+            )}
+            {config?.mode === 'LIVE' && (
+              <Badge variant="destructive">
+                FULL LIVE
+              </Badge>
+            )}
+            {config?.mode === 'DRY_RUN' && (
+              <Badge variant="secondary">
+                DRY RUN
+              </Badge>
+            )}
+          </div>
+          {config?.mode === 'LIVE_INTERNAL' && (
+            <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3 h-3 text-green-500" /> IN_APP
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3 h-3 text-green-500" /> Tasks
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3 h-3 text-green-500" /> Alerts
+              </span>
+              <span className="flex items-center gap-1 text-red-500">
+                <AlertCircle className="w-3 h-3" /> No SMS
+              </span>
+              <span className="flex items-center gap-1 text-red-500">
+                <AlertCircle className="w-3 h-3" /> No Email
+              </span>
+              <span className="flex items-center gap-1 text-red-500">
+                <AlertCircle className="w-3 h-3" /> No Calls
+              </span>
+            </div>
+          )}
           {bootTimestamp && (
             <p className="text-xs text-muted-foreground mt-1">
               Last boot: {new Date(bootTimestamp).toLocaleString()}
@@ -337,8 +384,11 @@ export default function MasterAIDashboard() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Mode</p>
                 <Badge 
-                  variant={config?.mode === 'LIVE' ? 'default' : 'secondary'}
-                  className="text-lg px-3 py-1"
+                  variant={config?.mode === 'LIVE' ? 'destructive' : config?.mode === 'LIVE_INTERNAL' ? 'default' : 'secondary'}
+                  className={cn(
+                    "text-lg px-3 py-1",
+                    config?.mode === 'LIVE_INTERNAL' && "bg-green-600"
+                  )}
                 >
                   {config?.mode || 'DRY_RUN'}
                 </Badge>
@@ -349,7 +399,7 @@ export default function MasterAIDashboard() {
                 onClick={handleToggleMode}
                 disabled={togglingMode}
               >
-                {togglingMode ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Toggle'}
+                {togglingMode ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Cycle'}
               </Button>
             </div>
           </CardContent>

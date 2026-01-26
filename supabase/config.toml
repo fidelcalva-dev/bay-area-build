@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.generate-internal-pdf]
 verify_jwt = false
+
+[functions.master-ai-notifier]
+verify_jwt = false
