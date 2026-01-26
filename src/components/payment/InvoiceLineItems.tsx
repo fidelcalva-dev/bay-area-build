@@ -58,6 +58,8 @@ export function InvoiceLineItems({ orderId }: InvoiceLineItemsProps) {
         return <Minus className="w-4 h-4 text-green-600" />;
       case 'extra':
         return <Plus className="w-4 h-4 text-blue-600" />;
+      case 'reclassification':
+        return <AlertTriangle className="w-4 h-4 text-red-600" />;
       default:
         return <Package className="w-4 h-4 text-gray-500" />;
     }
@@ -71,6 +73,8 @@ export function InvoiceLineItems({ orderId }: InvoiceLineItemsProps) {
         return 'bg-green-50 border-green-200';
       case 'prepurchase':
         return 'bg-blue-50 border-blue-200';
+      case 'reclassification':
+        return 'bg-red-50 border-red-200';
       default:
         return 'bg-gray-50 border-gray-200';
     }
