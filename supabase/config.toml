@@ -39,5 +39,5 @@ verify_jwt = false
 [functions.master-ai-scheduler]
 verify_jwt = false
 
-[functions.master-ai-admin]
+[functions.generate-internal-pdf]
 verify_jwt = false

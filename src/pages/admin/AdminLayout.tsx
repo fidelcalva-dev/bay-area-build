@@ -93,6 +93,12 @@ const navSections = [
     ],
   },
   {
+    title: 'Resources',
+    items: [
+      { path: '/admin/docs', label: 'Internal Docs', icon: FileText },
+    ],
+  },
+  {
     title: 'System',
     items: [
       { path: '/admin/alerts', label: 'Alerts', icon: Bell },
