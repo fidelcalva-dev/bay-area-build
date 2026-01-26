@@ -18,8 +18,8 @@
  */
 
 // Canonical photo imports - photorealistic dumpsters
-import dumpster6yardPhoto from '@/assets/dumpsters/dumpster-6yard-photo.jpg';
-import dumpster8yardPhoto from '@/assets/dumpsters/dumpster-8yard-photo.jpg';
+import dumpster6yardPhoto from '@/assets/dumpsters/6_yd.png';
+import dumpster8yardPhoto from '@/assets/dumpsters/8_yd.png';
 import dumpster10yardPhoto from '@/assets/dumpsters/dumpster-10yard-photo.png';
 import dumpster20yardPhoto from '@/assets/dumpsters/dumpster-20yard-photo.png';
 import dumpster30yardPhoto from '@/assets/dumpsters/dumpster-30yard-photo.png';
