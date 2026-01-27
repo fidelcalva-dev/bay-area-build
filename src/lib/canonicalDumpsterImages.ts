@@ -24,7 +24,7 @@ import dumpster10yardPhoto from '@/assets/dumpsters/dumpster-10yard-photo.png';
 import dumpster20yardPhoto from '@/assets/dumpsters/dumpster-20yard-photo.png';
 import dumpster30yardPhoto from '@/assets/dumpsters/dumpster-30yard-photo.png';
 import dumpster40yardPhoto from '@/assets/dumpsters/dumpster-40yard-photo.png';
-import dumpster50yardPhoto from '@/assets/dumpsters/dumpster-50yard-photo.jpg';
+import dumpster50yardPhoto from '@/assets/dumpsters/50_yd.png';
 
 // Canonical dimension diagram imports
 import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
