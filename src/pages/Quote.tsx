@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculator';
-import { CheckCircle, MessageCircle } from 'lucide-react';
+import { CheckCircle, MessageCircle, Shield } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 
@@ -71,8 +71,9 @@ export default function Quote() {
               
               {/* Reassurance below calculator */}
               <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  🔒 Your information is secure and never shared
+                <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
+                  <Shield className="w-4 h-4" />
+                  Your information is secure and never shared
                 </p>
                 {/* Price Transparency Note (Phase 3, Item 8) */}
                 <PriceTransparencyNote className="text-xs text-muted-foreground mt-2" />
