@@ -116,11 +116,11 @@ export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
                 asChild
                 variant="outline" 
                 size="lg"
-                className="flex-1 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                className="flex-1 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10"
                 onClick={() => handleCTAClick('text_us')}
               >
                 <a href={`sms:${BUSINESS_INFO.phone.sales}`}>
-                  <MessageSquare className="w-5 h-5 mr-2" />
+                  <MessageSquare className="w-5 h-5 mr-2 text-accent" />
                   Text Us
                 </a>
               </Button>
