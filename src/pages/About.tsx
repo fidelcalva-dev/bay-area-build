@@ -7,15 +7,14 @@ import { Link } from 'react-router-dom';
 import { PAGE_SEO } from '@/lib/seo';
 
 // Import real work photos
-import realWork1 from '@/assets/real-work/real-work-1.jpeg';
-import realWork2 from '@/assets/real-work/real-work-2.jpeg';
-import realWork3 from '@/assets/real-work/real-work-3.jpeg';
-import realWork4 from '@/assets/real-work/real-work-4.jpeg';
-import realWork5 from '@/assets/real-work/real-work-5.jpeg';
-import realWork6 from '@/assets/real-work/real-work-6.jpeg';
 import fleetYard from '@/assets/real-work/fleet-yard.jpg';
+import brandedFleet from '@/assets/real-work/branded-fleet.jpg';
+import stockedReady from '@/assets/real-work/stocked-ready.jpg';
+import jobSite from '@/assets/real-work/job-site.jpg';
 import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
-import workerAction from '@/assets/real-work/worker-action.jpg';
+import heavyMaterials from '@/assets/real-work/heavy-materials.jpg';
+import liveDelivery from '@/assets/real-work/live-delivery.jpg';
+import pickupComplete from '@/assets/real-work/pickup-complete.jpg';
 
 const values = [
   {
@@ -49,14 +48,13 @@ const stats = [
 
 const fleetGallery = [
   { id: 1, caption: 'Fleet Yard', image: fleetYard },
-  { id: 2, caption: 'Truck Delivery', image: truckDelivery },
-  { id: 3, caption: 'Worker Action', image: workerAction },
-  { id: 4, caption: 'Job Site', image: realWork1 },
-  { id: 5, caption: 'Heavy Materials', image: realWork2 },
-  { id: 6, caption: 'Branded Fleet', image: realWork3 },
-  { id: 7, caption: 'Live Delivery', image: realWork4 },
-  { id: 8, caption: 'Pickup Complete', image: realWork5 },
-  { id: 9, caption: 'Team at Work', image: realWork6 },
+  { id: 2, caption: 'Branded Fleet', image: brandedFleet },
+  { id: 3, caption: 'Stocked & Ready', image: stockedReady },
+  { id: 4, caption: 'Job Site', image: jobSite },
+  { id: 5, caption: 'Truck Delivery', image: truckDelivery },
+  { id: 6, caption: 'Heavy Materials', image: heavyMaterials },
+  { id: 7, caption: 'Live Delivery', image: liveDelivery },
+  { id: 8, caption: 'Pickup Complete', image: pickupComplete },
 ];
 
 export default function About() {
