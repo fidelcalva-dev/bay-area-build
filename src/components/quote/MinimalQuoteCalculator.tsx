@@ -1,81 +1,55 @@
 // ============================================================
 // MINIMAL QUOTE CALCULATOR - High-Conversion 6-Step Flow
 // ============================================================
-// Reduces friction while preserving all backend pricing rules
-// Flow: ZIP → Material → Size → Price → (Notices) → Confirm
+// Flow: ZIP → Material → Size → Price → (Notice) → Confirm
+// Mobile-first, modern, premium, 60-90 second completion
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
-  Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
-  CheckCircle, MapPin, Package, Calendar, Shield, Clock, Info, Truck,
-  Home, HardHat, Trash2, Scale, AlertTriangle, type LucideIcon
+  Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, 
+  CheckCircle, MapPin, Package, Calendar, Shield, Clock, Truck,
+  Home, HardHat, Trash2, Scale, Recycle, Leaf, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
-import { PRICING_POLICIES } from '@/lib/shared-data';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 import { analytics } from '@/lib/analytics';
 
 import type { QuoteFormData } from './types';
 import { usePricingData, calculateIncludedTons } from './hooks/usePricingData';
 import { useDistanceCalculation } from './hooks/useDistanceCalculation';
-import { USER_TYPES, PRICING_ZONES } from './constants';
+import { PRICING_ZONES } from './constants';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
-// ============================================================
-// STEP DEFINITIONS
-// ============================================================
-
-type Step = 'zip' | 'material' | 'size' | 'price' | 'contact' | 'success';
-
-const STEPS: { key: Step; label: string }[] = [
-  { key: 'zip', label: 'Location' },
-  { key: 'material', label: 'Material' },
-  { key: 'size', label: 'Size' },
-  { key: 'price', label: 'Quote' },
-  { key: 'contact', label: 'Confirm' },
-];
+// UI Components
+import { ProgressBar6 } from './ui/ProgressBar6';
+import { CardSelectable } from './ui/CardSelectable';
+import { BadgePill } from './ui/BadgePill';
+import { PriceHero } from './ui/PriceHero';
+import { InfoBox, InfoBoxCompact } from './ui/InfoBox';
+import { SummaryCardMini } from './ui/SummaryCard';
 
 // ============================================================
-// MATERIAL OPTIONS - Human Readable
+// TYPES
 // ============================================================
+
+type Step = 'zip' | 'material' | 'size' | 'price' | 'notice' | 'confirm' | 'success';
+type MaterialCategory = 'GENERAL_DEBRIS' | 'HEAVY_MATERIALS' | 'YARD_WASTE' | 'CLEAN_RECYCLING';
 
 interface MaterialOption {
-  id: 'general' | 'heavy';
+  id: MaterialCategory;
   title: string;
   subtitle: string;
   icon: LucideIcon;
-  examples: string;
   badge?: string;
+  badgeVariant?: 'default' | 'warning' | 'info';
 }
-
-const MATERIAL_OPTIONS: MaterialOption[] = [
-  {
-    id: 'general',
-    title: 'Household & Construction',
-    subtitle: 'Furniture, drywall, wood, yard waste',
-    icon: Trash2,
-    examples: 'Remodels, cleanouts, landscaping debris',
-  },
-  {
-    id: 'heavy',
-    title: 'Concrete & Dirt',
-    subtitle: 'Rock, brick, asphalt, soil',
-    icon: HardHat,
-    examples: 'Driveways, foundations, hardscape',
-    badge: '6-10 yd only',
-  },
-];
-
-// ============================================================
-// SIZE OPTIONS
-// ============================================================
 
 interface SizeOption {
   value: number;
@@ -83,6 +57,48 @@ interface SizeOption {
   fits: string;
   popular?: boolean;
 }
+
+interface ZoneResult {
+  zoneId: string;
+  zoneName: string;
+  cityName?: string;
+  multiplier: number;
+}
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+
+const STEP_LABELS = ['Location', 'Material', 'Size', 'Quote', 'Notice', 'Confirm'];
+
+const MATERIAL_OPTIONS: MaterialOption[] = [
+  {
+    id: 'GENERAL_DEBRIS',
+    title: 'Household & Construction',
+    subtitle: 'Furniture, drywall, wood, mixed debris',
+    icon: Trash2,
+  },
+  {
+    id: 'HEAVY_MATERIALS',
+    title: 'Concrete & Dirt',
+    subtitle: 'Rock, brick, asphalt, clean fill',
+    icon: HardHat,
+    badge: '6-10 yd only',
+    badgeVariant: 'warning',
+  },
+  {
+    id: 'YARD_WASTE',
+    title: 'Yard Waste',
+    subtitle: 'Grass, leaves, branches, landscaping',
+    icon: Leaf,
+  },
+  {
+    id: 'CLEAN_RECYCLING',
+    title: 'Clean Recycling',
+    subtitle: 'Clean wood, metal, cardboard',
+    icon: Recycle,
+  },
+];
 
 const DEBRIS_SIZES: SizeOption[] = [
   { value: 10, label: '10 Yard', fits: '3-4 pickup loads' },
@@ -98,17 +114,6 @@ const HEAVY_SIZES: SizeOption[] = [
 ];
 
 // ============================================================
-// ZONE RESULT TYPE
-// ============================================================
-
-interface ZoneResult {
-  zoneId: string;
-  zoneName: string;
-  cityName?: string;
-  multiplier: number;
-}
-
-// ============================================================
 // COMPONENT
 // ============================================================
 
@@ -122,53 +127,44 @@ export function MinimalQuoteCalculator() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
-  const [quoteSaved, setQuoteSaved] = useState(false);
-  const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
   const [stepStartTime, setStepStartTime] = useState<number>(Date.now());
 
   // Form state
-  const [formData, setFormData] = useState<QuoteFormData>({
-    userType: 'homeowner',
-    zip: '',
-    material: 'general',
-    size: 20,
-    rentalDays: 7,
-    extras: [],
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-  });
+  const [zip, setZip] = useState('');
+  const [materialCategory, setMaterialCategory] = useState<MaterialCategory | null>(null);
+  const [size, setSize] = useState(20);
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
 
   // Auto-detect ZIP
   const autoDetectZip = useAutoDetectZip();
   
   useEffect(() => {
-    if (!formData.zip && autoDetectZip.status === 'idle') {
+    if (!zip && autoDetectZip.status === 'idle') {
       autoDetectZip.detectZip();
     }
   }, []);
   
   useEffect(() => {
-    if (autoDetectZip.zip && autoDetectZip.zip.length === 5 && !formData.zip) {
-      setFormData(prev => ({ ...prev, zip: autoDetectZip.zip! }));
+    if (autoDetectZip.zip && autoDetectZip.zip.length === 5 && !zip) {
+      setZip(autoDetectZip.zip);
     }
   }, [autoDetectZip.zip]);
 
   // Distance calculation
-  const distanceCalc = useDistanceCalculation(formData.zip);
+  const distanceCalc = useDistanceCalculation(zip);
 
   // Track step timing for analytics
   useEffect(() => {
     setStepStartTime(Date.now());
   }, [step]);
 
-  // Step index
-  const stepIndex = STEPS.findIndex(s => s.key === step);
-
   // Zone lookup
-  const lookupZone = useCallback(async (zip: string) => {
-    if (zip.length !== 5) {
+  const lookupZone = useCallback(async (zipCode: string) => {
+    if (zipCode.length !== 5) {
       setZoneResult(null);
       return;
     }
@@ -182,7 +178,7 @@ export function MinimalQuoteCalculator() {
           city_name,
           zone:pricing_zones!inner(id, name, base_multiplier, is_active)
         `)
-        .eq('zip_code', zip)
+        .eq('zip_code', zipCode)
         .maybeSingle();
 
       if (!error && data && (data.zone as any)?.is_active) {
@@ -197,7 +193,7 @@ export function MinimalQuoteCalculator() {
 
       // Fallback to constants
       for (const zone of PRICING_ZONES) {
-        if (zone.zipCodes.includes(zip)) {
+        if (zone.zipCodes.includes(zipCode)) {
           setZoneResult({
             zoneId: zone.id,
             zoneName: zone.name,
@@ -217,45 +213,51 @@ export function MinimalQuoteCalculator() {
   }, []);
 
   useEffect(() => {
-    if (formData.zip.length === 5) {
-      lookupZone(formData.zip);
+    if (zip.length === 5) {
+      lookupZone(zip);
     } else {
       setZoneResult(null);
     }
-  }, [formData.zip, lookupZone]);
+  }, [zip, lookupZone]);
+
+  // Derived state
+  const isHeavy = materialCategory === 'HEAVY_MATERIALS';
+  const isYardWaste = materialCategory === 'YARD_WASTE';
+  const showNoticeStep = isHeavy || isYardWaste;
+  const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
   // Auto-adjust size for heavy materials
   useEffect(() => {
-    if (formData.material === 'heavy' && formData.size > 10) {
-      setFormData(prev => ({ ...prev, size: 10 }));
+    if (isHeavy && size > 10) {
+      setSize(10);
     }
-  }, [formData.material, formData.size]);
+  }, [isHeavy, size]);
 
   // Available sizes based on material
   const availableSizes = useMemo(() => {
-    return formData.material === 'heavy' ? HEAVY_SIZES : DEBRIS_SIZES;
-  }, [formData.material]);
+    return isHeavy ? HEAVY_SIZES : DEBRIS_SIZES;
+  }, [isHeavy]);
 
   // Calculate quote
   const quote = useMemo(() => {
     if (!zoneResult) {
-      return { subtotal: 0, includedTons: 0, isValid: false };
+      return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
     }
 
-    const sizeData = DUMPSTER_SIZES.find(s => s.value === formData.size);
+    const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
     if (!sizeData) {
-      return { subtotal: 0, includedTons: 0, isValid: false };
+      return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
     }
 
-    const isFlatFee = formData.material === 'heavy';
-    const includedTons = isFlatFee ? 0 : calculateIncludedTons(formData.size, formData.material);
+    const isFlatFee = isHeavy;
+    const includedTons = isFlatFee ? 0 : calculateIncludedTons(size, materialTypeForPricing);
 
     // Base price with zone multiplier
     let subtotal = Math.round(sizeData.basePrice * zoneResult.multiplier);
 
     // Heavy material adjustment
-    if (formData.material === 'heavy') {
-      subtotal += 200; // Base heavy surcharge
+    if (isHeavy) {
+      subtotal += 200;
     }
 
     // Distance adjustment
@@ -264,34 +266,48 @@ export function MinimalQuoteCalculator() {
     }
 
     return { subtotal, includedTons, isValid: true, isFlatFee };
-  }, [formData, zoneResult, DUMPSTER_SIZES, distanceCalc.distance]);
+  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing]);
+
+  // Step index for progress bar (1-6)
+  const stepIndex = useMemo(() => {
+    const map: Record<Step, number> = {
+      zip: 1,
+      material: 2,
+      size: 3,
+      price: 4,
+      notice: 5,
+      confirm: showNoticeStep ? 6 : 5,
+      success: showNoticeStep ? 6 : 5,
+    };
+    return map[step];
+  }, [step, showNoticeStep]);
+
+  const totalSteps = showNoticeStep ? 6 : 5;
 
   // Navigation
   const canGoNext = useMemo(() => {
     switch (step) {
-      case 'zip': return formData.zip.length === 5 && zoneResult && !isCheckingZip;
-      case 'material': return !!formData.material;
-      case 'size': return !!formData.size;
+      case 'zip': return zip.length === 5 && zoneResult && !isCheckingZip;
+      case 'material': return !!materialCategory;
+      case 'size': return !!size;
       case 'price': return true;
-      case 'contact': return formData.name && formData.phone;
+      case 'notice': return true;
+      case 'confirm': return customerName && customerPhone && termsAccepted;
       default: return false;
     }
-  }, [step, formData, zoneResult, isCheckingZip]);
-
-  const trackStepComplete = (currentStep: Step) => {
-    const duration = Date.now() - stepStartTime;
-    analytics.quoteStep1Complete(currentStep, String(duration));
-  };
+  }, [step, zip, zoneResult, isCheckingZip, materialCategory, size, customerName, customerPhone, termsAccepted]);
 
   const goNext = () => {
-    trackStepComplete(step);
+    const duration = Date.now() - stepStartTime;
+    analytics.quoteStepComplete(step, duration);
     
     const nextSteps: Record<Step, Step> = {
       zip: 'material',
       material: 'size',
       size: 'price',
-      price: 'contact',
-      contact: 'success',
+      price: showNoticeStep ? 'notice' : 'confirm',
+      notice: 'confirm',
+      confirm: 'success',
       success: 'success',
     };
     setStep(nextSteps[step]);
@@ -303,15 +319,30 @@ export function MinimalQuoteCalculator() {
       material: 'zip',
       size: 'material',
       price: 'size',
-      contact: 'price',
-      success: 'contact',
+      notice: 'price',
+      confirm: showNoticeStep ? 'notice' : 'price',
+      success: 'confirm',
     };
     setStep(prevSteps[step]);
   };
 
+  // Handle material selection (auto-advance)
+  const handleMaterialSelect = (category: MaterialCategory) => {
+    setMaterialCategory(category);
+    // Auto-advance after selection
+    setTimeout(() => setStep('size'), 150);
+  };
+
+  // Handle size selection (auto-advance)
+  const handleSizeSelect = (sizeValue: number) => {
+    setSize(sizeValue);
+    // Auto-advance after selection
+    setTimeout(() => setStep('price'), 150);
+  };
+
   // Save quote
   const handleSaveQuote = async () => {
-    const phoneValidation = validateAndFormatPhone(formData.phone);
+    const phoneValidation = validateAndFormatPhone(customerPhone);
     if (!phoneValidation.valid) {
       toast({
         title: 'Invalid Phone',
@@ -324,16 +355,16 @@ export function MinimalQuoteCalculator() {
     setIsSubmitting(true);
 
     try {
-      const sizeData = DUMPSTER_SIZES.find(s => s.value === formData.size);
+      const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
       
       const result = await saveQuote({
-        customerName: formData.name,
-        customerEmail: formData.email || undefined,
+        customerName,
+        customerEmail: customerEmail || undefined,
         customerPhone: phoneValidation.formatted,
-        userType: formData.userType,
-        zipCode: formData.zip,
+        userType: 'homeowner',
+        zipCode: zip,
         zoneId: zoneResult?.zoneId,
-        materialType: formData.material,
+        materialType: materialTypeForPricing,
         rentalDays: 7,
         extras: [],
         subtotal: quote.subtotal,
@@ -348,25 +379,24 @@ export function MinimalQuoteCalculator() {
 
       if (result.success) {
         setSavedQuoteId(result.quoteId || null);
-        setQuoteSaved(true);
-        analytics.quoteCompleted(formData.size, formData.material, quote.subtotal);
+        analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
         
         // Send SMS notification
         await supabase.functions.invoke('send-quote-summary', {
           body: {
-            customerName: formData.name,
+            customerName,
             customerPhone: phoneValidation.formatted,
-            sizeLabel: sizeData?.label || `${formData.size} Yard`,
-            materialType: formData.material,
+            sizeLabel: sizeData?.label || `${size} Yard`,
+            materialType: materialTypeForPricing,
             rentalDays: 7,
-            zipCode: formData.zip,
+            zipCode: zip,
             estimatedMin: quote.subtotal,
             estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
             includedTons: quote.includedTons,
           },
         });
 
-        toast({ title: 'Quote Saved', description: "We'll text you the details shortly." });
+        toast({ title: 'Quote Saved', description: "We'll contact you within 15 minutes." });
         goNext();
       } else {
         toast({ title: 'Error', description: result.error || 'Failed to save quote', variant: 'destructive' });
@@ -378,9 +408,35 @@ export function MinimalQuoteCalculator() {
     }
   };
 
+  // Reset calculator
+  const handleReset = () => {
+    setStep('zip');
+    setZip('');
+    setMaterialCategory(null);
+    setSize(20);
+    setCustomerName('');
+    setCustomerPhone('');
+    setCustomerEmail('');
+    setTermsAccepted(false);
+    setZoneResult(null);
+    setSavedQuoteId(null);
+  };
+
+  // Get size label
+  const getSizeLabel = () => {
+    const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
+    return sizeData?.label || `${size} Yard`;
+  };
+
+  // Get material label
+  const getMaterialLabel = () => {
+    const mat = MATERIAL_OPTIONS.find(m => m.id === materialCategory);
+    return mat?.title || materialCategory || '';
+  };
+
   return (
     <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border" id="quote-calculator">
-      {/* Minimal Header */}
+      {/* Header */}
       <div className="bg-foreground px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -404,16 +460,7 @@ export function MinimalQuoteCalculator() {
         {/* Progress bar */}
         {step !== 'success' && (
           <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-background/60">Step {stepIndex + 1} of {STEPS.length}</span>
-              <span className="text-xs font-semibold text-background">{STEPS[stepIndex]?.label}</span>
-            </div>
-            <div className="relative h-1 bg-background/10 rounded-full overflow-hidden">
-              <div 
-                className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-300"
-                style={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }}
-              />
-            </div>
+            <ProgressBar6 currentStep={stepIndex} totalSteps={totalSteps} />
           </div>
         )}
       </div>
@@ -421,27 +468,32 @@ export function MinimalQuoteCalculator() {
       {/* Content */}
       <div className="p-5">
         
-        {/* Step 1: ZIP */}
+        {/* ============================== */}
+        {/* STEP 1: LOCATION (ZIP) */}
+        {/* ============================== */}
         {step === 'zip' && (
           <div className="space-y-5">
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
-                Service ZIP Code
-              </label>
+              <h4 className="text-lg font-bold text-foreground mb-1">Where do you need it?</h4>
+              <p className="text-sm text-muted-foreground">Enter your service ZIP code</p>
+            </div>
+
+            <div>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={5}
                   placeholder="94501"
-                  value={formData.zip}
-                  onChange={(e) => setFormData(prev => ({ ...prev, zip: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
                   className="h-14 pl-12 text-lg font-semibold"
+                  autoFocus
                 />
                 {isCheckingZip && (
-                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-primary" />
+                  <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-primary" />
                 )}
               </div>
             </div>
@@ -467,8 +519,8 @@ export function MinimalQuoteCalculator() {
             <div className="flex flex-wrap gap-2">
               {[
                 { icon: Shield, label: 'Licensed' },
-                { icon: Clock, label: 'Same-day' },
-                { icon: Truck, label: 'All-inclusive' },
+                { icon: Clock, label: 'Same-day available' },
+                { icon: Truck, label: 'All-inclusive pricing' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/50 rounded-lg text-xs text-muted-foreground">
                   <Icon className="w-3.5 h-3.5 text-primary" />
@@ -480,278 +532,221 @@ export function MinimalQuoteCalculator() {
             <Button
               variant="cta"
               size="lg"
-              className="w-full h-12"
+              className="w-full h-14"
               onClick={goNext}
               disabled={!canGoNext}
             >
               Continue
-              <ChevronRight className="w-4 h-4 ml-1" />
+              <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
           </div>
         )}
 
-        {/* Step 2: Material */}
+        {/* ============================== */}
+        {/* STEP 2: MATERIAL CATEGORY */}
+        {/* ============================== */}
         {step === 'material' && (
           <div className="space-y-5">
-            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
               <ChevronLeft className="w-3.5 h-3.5" /> Back
             </button>
 
             <div>
-              <h4 className="text-base font-bold text-foreground mb-1">What are you disposing?</h4>
-              <p className="text-xs text-muted-foreground mb-4">This determines pricing and size options</p>
+              <h4 className="text-lg font-bold text-foreground mb-1">What are you tossing?</h4>
+              <p className="text-sm text-muted-foreground">Select the material type</p>
+            </div>
 
-              <div className="space-y-3">
-                {MATERIAL_OPTIONS.map(opt => (
+            <div className="space-y-3">
+              {MATERIAL_OPTIONS.map(opt => (
+                <CardSelectable
+                  key={opt.id}
+                  selected={materialCategory === opt.id}
+                  onClick={() => handleMaterialSelect(opt.id)}
+                  icon={opt.icon}
+                  title={opt.title}
+                  subtitle={opt.subtitle}
+                  badge={opt.badge}
+                  badgeVariant={opt.badgeVariant}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 3: DUMPSTER SIZE */}
+        {/* ============================== */}
+        {step === 'size' && (
+          <div className="space-y-5">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Back
+            </button>
+
+            <div>
+              <h4 className="text-lg font-bold text-foreground mb-1">Choose your size</h4>
+              <p className="text-sm text-muted-foreground">
+                {isHeavy 
+                  ? 'Heavy materials require smaller dumpsters'
+                  : 'Most customers choose 20 yard'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {availableSizes.map(sizeOpt => {
+                const isSelected = size === sizeOpt.value;
+                const image = DUMPSTER_PHOTO_MAP[sizeOpt.value];
+                
+                return (
                   <button
-                    key={opt.id}
+                    key={sizeOpt.value}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, material: opt.id }))}
+                    onClick={() => handleSizeSelect(sizeOpt.value)}
                     className={cn(
-                      "w-full p-4 rounded-xl border-2 text-left transition-all",
-                      formData.material === opt.id
+                      "relative p-3 rounded-xl border-2 text-center transition-all min-h-[140px] flex flex-col",
+                      isSelected
                         ? "border-primary bg-primary/5"
                         : "border-border hover:border-primary/50"
                     )}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center shrink-0",
-                        formData.material === opt.id ? "bg-primary/10" : "bg-muted"
-                      )}>
-                        <opt.icon className={cn(
-                          "w-5 h-5",
-                          formData.material === opt.id ? "text-primary" : "text-foreground/70"
-                        )} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-foreground">{opt.title}</span>
-                          {opt.badge && (
-                            <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">
-                              {opt.badge}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">{opt.subtitle}</p>
-                        <p className="text-xs text-muted-foreground/80 mt-1">{opt.examples}</p>
-                      </div>
-                      {formData.material === opt.id && (
-                        <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <Button
-              variant="cta"
-              size="lg"
-              className="w-full h-12"
-              onClick={goNext}
-              disabled={!canGoNext}
-            >
-              Continue
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-        )}
-
-        {/* Step 3: Size */}
-        {step === 'size' && (
-          <div className="space-y-5">
-            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back
-            </button>
-
-            <div>
-              <h4 className="text-base font-bold text-foreground mb-1">Choose your size</h4>
-              <p className="text-xs text-muted-foreground mb-4">
-                {formData.material === 'heavy' 
-                  ? 'Heavy materials require smaller dumpsters'
-                  : 'Most customers choose 20 yard'}
-              </p>
-
-              <div className="grid grid-cols-2 gap-3">
-                {availableSizes.map(size => {
-                  const isSelected = formData.size === size.value;
-                  const image = DUMPSTER_PHOTO_MAP[size.value];
-                  
-                  return (
-                    <button
-                      key={size.value}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, size: size.value }))}
-                      className={cn(
-                        "relative p-3 rounded-xl border-2 text-center transition-all",
-                        isSelected
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      )}
-                    >
-                      {size.popular && (
-                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full">
-                          POPULAR
-                        </span>
-                      )}
-                      
+                    {sizeOpt.popular && (
+                      <BadgePill 
+                        variant="primary" 
+                        className="absolute -top-2 left-1/2 -translate-x-1/2"
+                      >
+                        Popular
+                      </BadgePill>
+                    )}
+                    
+                    <div className="flex-1 flex items-center justify-center">
                       {image && (
                         <img 
                           src={image} 
-                          alt={size.label}
-                          className="w-full h-20 object-contain mb-2"
+                          alt={sizeOpt.label}
+                          className="w-full h-16 object-contain"
                         />
                       )}
-                      
-                      <div className="text-lg font-bold text-foreground">{size.value}</div>
-                      <div className="text-[10px] text-muted-foreground uppercase">yard</div>
-                      <div className="text-xs text-muted-foreground mt-1">{size.fits}</div>
-                      
-                      {isSelected && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                          <CheckCircle className="w-3 h-3 text-primary-foreground" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                    </div>
+                    
+                    <div className="mt-2">
+                      <div className="text-xl font-bold text-foreground">{sizeOpt.value}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">yard</div>
+                      <div className="text-xs text-muted-foreground mt-1">{sizeOpt.fits}</div>
+                    </div>
+                    
+                    {isSelected && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-primary-foreground" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-
-            <Button
-              variant="cta"
-              size="lg"
-              className="w-full h-12"
-              onClick={goNext}
-              disabled={!canGoNext}
-            >
-              See my price
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
           </div>
         )}
 
-        {/* Step 4: Price Display */}
+        {/* ============================== */}
+        {/* STEP 4: PRICE DISPLAY */}
+        {/* ============================== */}
         {step === 'price' && quote.isValid && (
           <div className="space-y-5">
-            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
               <ChevronLeft className="w-3.5 h-3.5" /> Back
             </button>
 
-            {/* Main price card */}
-            <div className="rounded-2xl border-2 border-primary/20 bg-gradient-to-b from-primary/5 to-transparent overflow-hidden">
-              <div className="p-5 text-center">
-                <div className="text-sm text-muted-foreground mb-1">Your instant quote</div>
-                <div className="text-4xl font-bold text-foreground">
-                  ${quote.subtotal.toLocaleString()}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {DUMPSTER_SIZES.find(s => s.value === formData.size)?.label} • 7 days
-                </div>
-              </div>
-
-              {/* What's included - Expandable */}
-              <Collapsible>
-                <CollapsibleTrigger className="w-full px-5 py-3 bg-muted/30 border-t border-border flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">What's included?</span>
-                  <Info className="w-4 h-4 text-muted-foreground" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="px-5 py-3 bg-muted/20 border-t border-border/50 text-sm text-muted-foreground space-y-1">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-3.5 h-3.5 text-success" />
-                    Delivery & pickup
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-3.5 h-3.5 text-success" />
-                    7-day rental
-                  </div>
-                  {quote.isFlatFee ? (
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-success" />
-                      Disposal (flat fee, no weight charges)
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-success" />
-                      {quote.includedTons}T disposal included
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-3.5 h-3.5 text-success" />
-                    Licensed & insured
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            </div>
-
-            {/* Conditional notices - only if applicable */}
-            {formData.material === 'heavy' && (
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <span>Heavy materials must follow fill line. Mixed/contaminated loads may be reclassified.</span>
-              </div>
-            )}
-
-            {!quote.isFlatFee && (
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border text-xs text-muted-foreground">
-                <Scale className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>Weight over {quote.includedTons}T billed at $165/ton based on scale ticket.</span>
-              </div>
-            )}
-
-            <Button
-              variant="cta"
-              size="lg"
-              className="w-full h-12"
-              onClick={goNext}
-            >
-              <MessageCircle className="w-4 h-4" />
-              Get this quote
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+            <PriceHero
+              price={quote.subtotal}
+              subtitle={`${getSizeLabel()} dumpster • 7-day rental`}
+              ctaLabel="Reserve Dumpster"
+              onCtaClick={goNext}
+              includedItems={[
+                { label: 'Delivery & pickup' },
+                { label: '7-day rental included' },
+                quote.isFlatFee 
+                  ? { label: 'Flat fee (no weight charges)' }
+                  : { label: `${quote.includedTons}T disposal included` },
+                { label: 'Licensed & insured' },
+              ]}
+            />
 
             <Button
               variant="outline"
               size="default"
               className="w-full"
-              onClick={() => window.open(`sms:+15106802150?body=${encodeURIComponent(`Quote: ${DUMPSTER_SIZES.find(s => s.value === formData.size)?.label} in ${formData.zip} - $${quote.subtotal}`)}`, '_blank')}
+              onClick={() => window.open(`tel:+15106802150`, '_blank')}
             >
               <Phone className="w-4 h-4" />
-              Text us instead
+              Call (510) 680-2150
             </Button>
           </div>
         )}
 
-        {/* Step 5: Contact / Confirm */}
-        {step === 'contact' && (
+        {/* ============================== */}
+        {/* STEP 5: NOTICE (Conditional) */}
+        {/* ============================== */}
+        {step === 'notice' && (
           <div className="space-y-5">
-            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
               <ChevronLeft className="w-3.5 h-3.5" /> Back
             </button>
 
-            <div className="text-center">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <MessageCircle className="w-7 h-7 text-primary" />
-              </div>
-              <h4 className="text-lg font-bold text-foreground">Almost there!</h4>
-              <p className="text-sm text-muted-foreground mt-1">We'll text you the quote details</p>
+            <div>
+              <h4 className="text-lg font-bold text-foreground mb-1">Important Notice</h4>
+              <p className="text-sm text-muted-foreground">Please review before confirming</p>
+            </div>
+
+            {isHeavy && (
+              <InfoBox variant="warning" title="Heavy Material Guidelines">
+                Heavy materials must be loaded below the fill line. Mixed or contaminated loads (trash, wood, etc.) will be reclassified and billed as general debris at $165/ton.
+              </InfoBox>
+            )}
+
+            {isYardWaste && (
+              <InfoBox variant="info" title="Yard Waste Pricing">
+                Yard waste is priced as debris due to soil content. Weight over the included amount is billed at $165/ton based on the scale ticket.
+              </InfoBox>
+            )}
+
+            <SummaryCardMini
+              size={getSizeLabel()}
+              material={getMaterialLabel()}
+              price={quote.subtotal}
+              rentalDays={7}
+            />
+
+            <Button
+              variant="cta"
+              size="lg"
+              className="w-full h-14"
+              onClick={goNext}
+            >
+              Continue to Confirm
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Button>
+          </div>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 6: CONFIRM & SCHEDULE */}
+        {/* ============================== */}
+        {step === 'confirm' && (
+          <div className="space-y-5">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Back
+            </button>
+
+            <div>
+              <h4 className="text-lg font-bold text-foreground mb-1">Confirm Your Order</h4>
+              <p className="text-sm text-muted-foreground">We'll text you the details</p>
             </div>
 
             {/* Mini summary */}
-            <div className="bg-muted/50 rounded-xl p-4 flex justify-between items-center">
-              <div>
-                <div className="font-semibold text-foreground">
-                  {DUMPSTER_SIZES.find(s => s.value === formData.size)?.label}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {formData.material === 'heavy' ? 'Heavy' : 'General'} • 7 days
-                </div>
-              </div>
-              <div className="text-xl font-bold text-foreground">
-                ${quote.subtotal.toLocaleString()}
-              </div>
-            </div>
+            <SummaryCardMini
+              size={getSizeLabel()}
+              material={getMaterialLabel()}
+              price={quote.subtotal}
+              rentalDays={7}
+            />
 
             {/* Contact form */}
             <div className="space-y-3">
@@ -762,8 +757,8 @@ export function MinimalQuoteCalculator() {
                 <Input
                   type="text"
                   placeholder="John Smith"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
                   className="h-12"
                 />
               </div>
@@ -775,8 +770,8 @@ export function MinimalQuoteCalculator() {
                 <Input
                   type="tel"
                   placeholder="(510) 555-1234"
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
                   className="h-12"
                 />
               </div>
@@ -788,11 +783,24 @@ export function MinimalQuoteCalculator() {
                 <Input
                   type="email"
                   placeholder="you@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
                   className="h-12"
                 />
               </div>
+            </div>
+
+            {/* Terms checkbox */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border">
+              <Checkbox
+                id="terms"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                className="mt-0.5"
+              />
+              <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                I understand that additional charges may apply for weight over the included amount, extra days, or prohibited items.
+              </label>
             </div>
 
             <Button
@@ -800,76 +808,54 @@ export function MinimalQuoteCalculator() {
               size="lg"
               className="w-full h-14 text-base"
               onClick={handleSaveQuote}
-              disabled={isSubmitting || !formData.name || !formData.phone}
+              disabled={isSubmitting || !canGoNext}
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Saving...
+                  Processing...
                 </>
               ) : (
                 <>
-                  <MessageCircle className="w-5 h-5" />
-                  Save & Text Me
+                  <CheckCircle className="w-5 h-5" />
+                  Confirm Order
                 </>
               )}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
-              By saving, you agree to receive SMS messages about your quote.
+              By confirming, you agree to receive SMS about your order.
             </p>
           </div>
         )}
 
-        {/* Step 6: Success */}
+        {/* ============================== */}
+        {/* SUCCESS */}
+        {/* ============================== */}
         {step === 'success' && (
           <div className="py-6 text-center">
             <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-success" />
             </div>
             
-            <h3 className="text-xl font-bold text-foreground mb-2">Quote Saved!</h3>
+            <h3 className="text-xl font-bold text-foreground mb-2">Order Confirmed</h3>
             <p className="text-muted-foreground mb-6">
-              We'll contact you within 15 minutes to confirm.
+              We'll contact you within 15 minutes to schedule delivery.
             </p>
 
-            <div className="bg-muted/50 rounded-xl p-4 text-left mb-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold text-foreground">
-                    {DUMPSTER_SIZES.find(s => s.value === formData.size)?.label}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    7 days • ZIP {formData.zip}
-                  </div>
-                </div>
-                <div className="text-lg font-bold text-foreground">
-                  ${quote.subtotal.toLocaleString()}
-                </div>
-              </div>
-            </div>
+            <SummaryCardMini
+              size={getSizeLabel()}
+              material={getMaterialLabel()}
+              price={quote.subtotal}
+              rentalDays={7}
+              className="mb-6"
+            />
 
             <div className="space-y-3">
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => {
-                  setStep('zip');
-                  setFormData({
-                    userType: 'homeowner',
-                    zip: '',
-                    material: 'general',
-                    size: 20,
-                    rentalDays: 7,
-                    extras: [],
-                    name: '',
-                    phone: '',
-                    email: '',
-                    address: '',
-                  });
-                  setZoneResult(null);
-                  setQuoteSaved(false);
-                }}
+                onClick={handleReset}
               >
                 Get Another Quote
               </Button>

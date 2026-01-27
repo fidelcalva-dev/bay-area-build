@@ -15,5 +15,9 @@ export { SmartMaterialSelector } from './steps/SmartMaterialSelector';
 export { UserTypeMicroCopy, YardValueExplanation, USER_TYPE_HELPER_TEXT } from './UserTypeMicroCopy';
 export { useQuoteCalculation, getZoneByZip } from './hooks/useQuoteCalculation';
 export { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
+export { useQuoteFlow, type QuoteStep, type MaterialCategory, type QuoteFlowState, type QuoteFlowReturn } from './hooks/useQuoteFlow';
 export * from './types';
 export * from './constants';
+
+// UI Components
+export * from './ui';
