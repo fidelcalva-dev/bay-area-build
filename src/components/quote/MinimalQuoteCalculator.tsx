@@ -258,6 +258,17 @@ export function MinimalQuoteCalculator() {
     }
   }, [step, itemSelections]);
 
+  // Auto-apply recommendation in LIVE modes (preselection)
+  useEffect(() => {
+    if (step === 'recommend' && aiRecommendation.shouldPreselect && aiRecommendation.recommendation) {
+      const rec = aiRecommendation.recommendation;
+      // Pre-set the size based on AI recommendation
+      if (rec.recommended_size_yd && rec.recommended_size_yd !== size) {
+        setSize(rec.recommended_size_yd);
+      }
+    }
+  }, [step, aiRecommendation.shouldPreselect, aiRecommendation.recommendation]);
+
   // Auto-adjust size for heavy materials
   useEffect(() => {
     if (isHeavy && size > 10) {
@@ -370,10 +381,13 @@ export function MinimalQuoteCalculator() {
   };
 
   // Handle accepting size recommendation
-  const handleAcceptRecommendation = (recommendedSize: number) => {
+  const handleAcceptRecommendation = (recommendedSize: number, wasPreselected?: boolean) => {
     // Apply recommendation to state
     setSize(recommendedSize);
     setMaterialCategory(sizeRecommendation.category);
+    
+    // Track acceptance
+    aiRecommendation.trackAccept(recommendedSize, wasPreselected || false);
     
     // Go to price step
     const duration = Date.now() - stepStartTime;
@@ -384,12 +398,18 @@ export function MinimalQuoteCalculator() {
   // Handle "change size" from recommendation - go to size picker
   const handleChangeSize = () => {
     setMaterialCategory(sizeRecommendation.category);
+    aiRecommendation.trackChange(0, 'change_size_clicked');
     setStep('size');
   };
 
   // Handle "edit items" from recommendation
   const handleEditItems = () => {
     setStep('items');
+  };
+
+  // Handle tracking size change for AI metrics
+  const handleTrackSizeChange = (selectedSize: number, reason: string) => {
+    aiRecommendation.trackChange(selectedSize, reason);
   };
 
   // Save quote
@@ -647,9 +667,12 @@ export function MinimalQuoteCalculator() {
               recommendation={sizeRecommendation}
               aiRecommendation={aiRecommendation.recommendation}
               aiLoading={aiRecommendation.isLoading}
+              aiMode={aiRecommendation.mode}
+              shouldPreselect={aiRecommendation.shouldPreselect}
               onAccept={handleAcceptRecommendation}
               onChangeSize={handleChangeSize}
               onEditItems={handleEditItems}
+              onTrackChange={handleTrackSizeChange}
             />
           </div>
         )}

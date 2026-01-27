@@ -17,7 +17,13 @@ type AnalyticsEvent =
   | 'zip_entered'
   | 'material_selected'
   | 'size_selected'
-  | 'extras_added';
+  | 'extras_added'
+  // AI Recommendation metrics
+  | 'ai_recommendation_shown'
+  | 'ai_recommendation_accepted'
+  | 'ai_recommendation_changed'
+  | 'ai_recommendation_preselected'
+  | 'ai_size_override';
 
 interface EventData {
   [key: string]: string | number | boolean | undefined;
@@ -89,6 +95,52 @@ export const analytics = {
   
   quoteAbandoned: (step: string, durationMs: number) =>
     trackEvent('quote_abandoned', { step, duration_ms: durationMs }),
+  
+  // AI Recommendation metrics (Phase A-E rollout)
+  aiRecommendationShown: (
+    recommendedSize: number,
+    category: string,
+    confidenceScore: number,
+    mode: string
+  ) =>
+    trackEvent('ai_recommendation_shown', {
+      recommended_size: recommendedSize,
+      category,
+      confidence_score: confidenceScore,
+      mode,
+    }),
+  
+  aiRecommendationAccepted: (
+    recommendedSize: number,
+    wasPreselected: boolean,
+    timeToDecisionMs: number
+  ) =>
+    trackEvent('ai_recommendation_accepted', {
+      recommended_size: recommendedSize,
+      was_preselected: wasPreselected,
+      time_to_decision_ms: timeToDecisionMs,
+    }),
+  
+  aiRecommendationChanged: (
+    recommendedSize: number,
+    selectedSize: number,
+    reason: string
+  ) =>
+    trackEvent('ai_recommendation_changed', {
+      recommended_size: recommendedSize,
+      selected_size: selectedSize,
+      reason,
+    }),
+  
+  aiRecommendationPreselected: (size: number, mode: string) =>
+    trackEvent('ai_recommendation_preselected', { size, mode }),
+  
+  aiSizeOverride: (fromSize: number, toSize: number, isSmaller: boolean) =>
+    trackEvent('ai_size_override', {
+      from_size: fromSize,
+      to_size: toSize,
+      is_smaller: isSmaller,
+    }),
 };
 
 export default analytics;

@@ -1,23 +1,28 @@
 // ============================================================
 // SIZE RECOMMENDATION VIEW - Enhanced with AI Integration
 // Clean hero display with pricing psychology optimizations
+// Supports DRY_RUN, LIVE_SOFT, LIVE modes for controlled rollout
 // ============================================================
-import { ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle, Info, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle, Info, Loader2, AlertTriangle, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 import type { SizeRecommendation } from '../hooks/useSizeRecommendation';
 import type { AIRecommendationOutput, AIRecommendationNotice } from '../types/aiRecommendation';
+import type { QuoteAIMode } from '@/lib/configService';
 import { BadgePill } from '../ui/BadgePill';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SizeRecommendationViewProps {
   recommendation: SizeRecommendation;
   aiRecommendation?: AIRecommendationOutput | null;
   aiLoading?: boolean;
-  onAccept: (size: number) => void;
+  aiMode?: QuoteAIMode;
+  shouldPreselect?: boolean;
+  onAccept: (size: number, wasPreselected?: boolean) => void;
   onChangeSize: () => void;
   onEditItems: () => void;
+  onTrackChange?: (selectedSize: number, reason: string) => void;
   className?: string;
 }
 
@@ -77,9 +82,12 @@ export function SizeRecommendationView({
   recommendation,
   aiRecommendation,
   aiLoading,
+  aiMode = 'DRY_RUN',
+  shouldPreselect = false,
   onAccept,
   onChangeSize,
   onEditItems,
+  onTrackChange,
   className,
 }: SizeRecommendationViewProps) {
   // Use AI recommendation if available, otherwise fall back to local recommendation
@@ -118,9 +126,9 @@ export function SizeRecommendationView({
     : recommendation.allowGreenHalo;
   
   const notices = useAI ? aiRecommendation.notices : [];
-  const allowedSizes = useAI ? aiRecommendation.must_enforce.allowed_sizes : undefined;
 
   const [showSmallerWarning, setShowSmallerWarning] = useState(false);
+  const [isPreselected, setIsPreselected] = useState(false);
 
   const image = DUMPSTER_PHOTO_MAP[recommendedSize];
   const categoryLabel = getCategoryLabel(category, forcesDebrisHeavy);
@@ -129,12 +137,34 @@ export function SizeRecommendationView({
   // Limit alternatives to max 2 options
   const limitedAlternatives = alternativeSizes.slice(0, 2);
 
+  // Mode-specific messaging
+  const isLiveMode = aiMode === 'LIVE_SOFT' || aiMode === 'LIVE';
+  const showPreselectedIndicator = isLiveMode && !aiLoading;
+
+  // Track if recommendation was preselected (for LIVE modes)
+  useEffect(() => {
+    if (shouldPreselect && !aiLoading && aiRecommendation) {
+      setIsPreselected(true);
+    }
+  }, [shouldPreselect, aiLoading, aiRecommendation]);
+
   // Handle smaller size selection with loss aversion hint
   const handleAlternativeClick = (size: number) => {
     if (size < recommendedSize && !showSmallerWarning) {
       setShowSmallerWarning(true);
     }
-    onAccept(size);
+    
+    // Track the change
+    if (onTrackChange) {
+      onTrackChange(size, size < recommendedSize ? 'smaller_selected' : 'larger_selected');
+    }
+    
+    onAccept(size, false);
+  };
+
+  // Handle accepting recommendation
+  const handleAcceptRecommendation = () => {
+    onAccept(recommendedSize, isPreselected);
   };
 
   // Loading state
@@ -165,6 +195,14 @@ export function SizeRecommendationView({
         <p className="text-sm text-muted-foreground mt-1">
           {categoryLabel}
         </p>
+        
+        {/* LIVE mode: Show preselection indicator */}
+        {showPreselectedIndicator && (
+          <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+            <Check className="w-3.5 h-3.5 text-success" />
+            Recommended based on your project
+          </p>
+        )}
       </div>
 
       {/* Primary recommendation card - visually dominant */}
@@ -240,14 +278,14 @@ export function SizeRecommendationView({
         </div>
       </div>
 
-      {/* Primary CTA */}
+      {/* Primary CTA - Different text for LIVE modes */}
       <Button
         variant="cta"
         size="lg"
         className="w-full h-14"
-        onClick={() => onAccept(recommendedSize)}
+        onClick={handleAcceptRecommendation}
       >
-        Use Recommendation
+        {isLiveMode ? 'Continue with This Size' : 'Use Recommendation'}
         <ArrowRight className="w-5 h-5 ml-1" />
       </Button>
 
@@ -284,7 +322,12 @@ export function SizeRecommendationView({
           variant="ghost"
           size="sm"
           className="flex-1 text-muted-foreground"
-          onClick={onChangeSize}
+          onClick={() => {
+            if (onTrackChange) {
+              onTrackChange(0, 'change_size_clicked');
+            }
+            onChangeSize();
+          }}
         >
           Change Size
         </Button>

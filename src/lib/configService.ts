@@ -12,6 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 // Messaging mode type
 export type MessagingMode = 'DRY_RUN' | 'LIVE';
 
+// Quote AI mode type (controlled rollout phases)
+export type QuoteAIMode = 'DRY_RUN' | 'LIVE_SOFT' | 'LIVE';
+
 export const CANONICAL_CONFIG = {
   // Messaging
   'messaging.mode': { category: 'messaging', key: 'mode', default: 'DRY_RUN' as MessagingMode },
@@ -77,7 +80,7 @@ export const CANONICAL_CONFIG = {
 
   // Quote AI
   'quote_ai.enabled': { category: 'quote_ai', key: 'enabled', default: true },
-  'quote_ai.mode': { category: 'quote_ai', key: 'mode', default: 'DRY_RUN' as 'DRY_RUN' | 'LIVE' },
+  'quote_ai.mode': { category: 'quote_ai', key: 'mode', default: 'DRY_RUN' as QuoteAIMode },
 
   // Portal
   'portal.otp_enabled': { category: 'portal', key: 'otp_enabled', default: true },
