@@ -1,17 +1,20 @@
 // ============================================================
-// SIZE RECOMMENDATION VIEW - Option B
+// SIZE RECOMMENDATION VIEW - Enhanced with AI Integration
 // Clean hero display with pricing psychology optimizations
 // ============================================================
-import { ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle, AlertTriangle, Info } from 'lucide-react';
+import { ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle, Info, Loader2, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 import type { SizeRecommendation } from '../hooks/useSizeRecommendation';
+import type { AIRecommendationOutput, AIRecommendationNotice } from '../types/aiRecommendation';
 import { BadgePill } from '../ui/BadgePill';
 import { useState } from 'react';
 
 interface SizeRecommendationViewProps {
   recommendation: SizeRecommendation;
+  aiRecommendation?: AIRecommendationOutput | null;
+  aiLoading?: boolean;
   onAccept: (size: number) => void;
   onChangeSize: () => void;
   onEditItems: () => void;
@@ -29,17 +32,19 @@ function ConfidenceIndicator({ score }: { score: number }) {
 }
 
 // Get category display label
-function getCategoryLabel(category: string, forcesDebrisHeavy: boolean): string {
+function getCategoryLabel(category: string, forcesDebrisHeavy?: boolean): string {
   if (forcesDebrisHeavy) return 'Yard Waste';
   switch (category) {
-    case 'HEAVY_MATERIALS': return 'Heavy Materials';
+    case 'HEAVY_MATERIALS':
+    case 'HEAVY': return 'Heavy Materials';
     case 'CLEAN_RECYCLING': return 'Recycling';
+    case 'DEBRIS_HEAVY':
     case 'YARD_WASTE': return 'Yard Waste';
     default: return 'General Debris';
   }
 }
 
-// Get confidence message based on score (Phase 2)
+// Get confidence message based on score
 function getConfidenceMessage(score: number): string {
   if (score >= 85) {
     return 'Most customers with similar projects choose this size.';
@@ -49,23 +54,71 @@ function getConfidenceMessage(score: number): string {
   return 'You can adjust the size if you\'re unsure.';
 }
 
+// Render AI notice
+function AINoticeItem({ notice }: { notice: AIRecommendationNotice }) {
+  return (
+    <div className={cn(
+      "flex items-start gap-2 p-2.5 rounded-lg text-xs",
+      notice.type === 'WARNING' 
+        ? "bg-warning/10 text-warning-foreground" 
+        : "bg-muted/50 text-muted-foreground"
+    )}>
+      {notice.type === 'WARNING' ? (
+        <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+      ) : (
+        <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+      )}
+      <span>{notice.text}</span>
+    </div>
+  );
+}
+
 export function SizeRecommendationView({
   recommendation,
+  aiRecommendation,
+  aiLoading,
   onAccept,
   onChangeSize,
   onEditItems,
   className,
 }: SizeRecommendationViewProps) {
-  const {
-    category,
-    recommendedSize,
-    alternativeSizes,
-    reasonShort,
-    confidenceScore,
-    isHeavy,
-    forcesDebrisHeavy,
-    allowGreenHalo,
-  } = recommendation;
+  // Use AI recommendation if available, otherwise fall back to local recommendation
+  const useAI = !!aiRecommendation;
+  
+  const recommendedSize = useAI 
+    ? aiRecommendation.recommended_size_yd 
+    : recommendation.recommendedSize;
+  
+  const alternativeSizes = useAI 
+    ? aiRecommendation.alternatives 
+    : recommendation.alternativeSizes;
+  
+  const confidenceScore = useAI 
+    ? aiRecommendation.confidence_score 
+    : recommendation.confidenceScore;
+  
+  const reasonShort = useAI 
+    ? aiRecommendation.reason_short 
+    : recommendation.reasonShort;
+  
+  const category = useAI 
+    ? aiRecommendation.category 
+    : recommendation.category;
+  
+  const isHeavy = useAI 
+    ? (aiRecommendation.category === 'HEAVY' || aiRecommendation.category === 'DEBRIS_HEAVY')
+    : recommendation.isHeavy;
+  
+  const forcesDebrisHeavy = useAI 
+    ? aiRecommendation.must_enforce.force_debris_heavy 
+    : recommendation.forcesDebrisHeavy;
+  
+  const allowGreenHalo = useAI 
+    ? !aiRecommendation.must_enforce.hide_green_halo && aiRecommendation.service_type === 'GREEN_HALO'
+    : recommendation.allowGreenHalo;
+  
+  const notices = useAI ? aiRecommendation.notices : [];
+  const allowedSizes = useAI ? aiRecommendation.must_enforce.allowed_sizes : undefined;
 
   const [showSmallerWarning, setShowSmallerWarning] = useState(false);
 
@@ -73,10 +126,10 @@ export function SizeRecommendationView({
   const categoryLabel = getCategoryLabel(category, forcesDebrisHeavy);
   const confidenceMessage = getConfidenceMessage(confidenceScore);
 
-  // Phase 5: Limit alternatives to max 2 options
+  // Limit alternatives to max 2 options
   const limitedAlternatives = alternativeSizes.slice(0, 2);
 
-  // Phase 6: Handle smaller size selection with loss aversion hint
+  // Handle smaller size selection with loss aversion hint
   const handleAlternativeClick = (size: number) => {
     if (size < recommendedSize && !showSmallerWarning) {
       setShowSmallerWarning(true);
@@ -84,9 +137,23 @@ export function SizeRecommendationView({
     onAccept(size);
   };
 
+  // Loading state
+  if (aiLoading) {
+    return (
+      <div className={cn("space-y-5", className)}>
+        <div className="text-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">
+            Analyzing your project...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={cn("space-y-5", className)}>
-      {/* Recommendation header with "Best fit" badge (Phase 1) */}
+      {/* Recommendation header with "Best fit" badge */}
       <div className="text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-3">
           <ThumbsUp className="w-4 h-4" />
@@ -100,7 +167,7 @@ export function SizeRecommendationView({
         </p>
       </div>
 
-      {/* Primary recommendation card - visually dominant (Phase 1) */}
+      {/* Primary recommendation card - visually dominant */}
       <div className="relative p-1 rounded-2xl bg-gradient-to-b from-primary/20 to-primary/5">
         <div className="bg-background rounded-xl p-4">
           {/* Dumpster image */}
@@ -152,15 +219,24 @@ export function SizeRecommendationView({
             </div>
           </div>
 
-          {/* Confidence message - single line (Phase 2) */}
+          {/* AI Reason or Confidence message */}
           <div className="mt-4 text-center">
             <div className="flex items-center gap-2 justify-center">
               <ConfidenceIndicator score={confidenceScore} />
               <p className="text-sm text-muted-foreground">
-                {confidenceMessage}
+                {reasonShort || confidenceMessage}
               </p>
             </div>
           </div>
+
+          {/* AI Notices */}
+          {notices.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {notices.map((notice, idx) => (
+                <AINoticeItem key={idx} notice={notice} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -175,7 +251,7 @@ export function SizeRecommendationView({
         <ArrowRight className="w-5 h-5 ml-1" />
       </Button>
 
-      {/* Alternative sizes - smaller, limited to 2 (Phase 1 & 5) */}
+      {/* Alternative sizes - smaller, limited to 2 */}
       {limitedAlternatives.length > 0 && (
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-2">Or choose a different size:</p>
@@ -192,7 +268,7 @@ export function SizeRecommendationView({
             ))}
           </div>
           
-          {/* Loss aversion hint (Phase 6) */}
+          {/* Loss aversion hint */}
           {showSmallerWarning && (
             <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Info className="w-3.5 h-3.5" />

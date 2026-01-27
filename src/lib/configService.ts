@@ -75,6 +75,10 @@ export const CANONICAL_CONFIG = {
   'leads.timeout_minutes': { category: 'leads', key: 'timeout_minutes', default: 15 },
   'leads.routing_enabled': { category: 'leads', key: 'routing_enabled', default: true },
 
+  // Quote AI
+  'quote_ai.enabled': { category: 'quote_ai', key: 'enabled', default: true },
+  'quote_ai.mode': { category: 'quote_ai', key: 'mode', default: 'DRY_RUN' as 'DRY_RUN' | 'LIVE' },
+
   // Portal
   'portal.otp_enabled': { category: 'portal', key: 'otp_enabled', default: true },
   'portal.show_overdue_balance': { category: 'portal', key: 'show_overdue_balance', default: true },
