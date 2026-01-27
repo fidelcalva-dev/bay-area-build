@@ -110,7 +110,7 @@ export const REVIEW_STATS = {
 
 // External review links
 export const REVIEW_LINKS = {
-  google: 'https://g.page/calsan-dumpsters-pro/review',
+  google: 'https://g.page/r/CSWUNM-e5B3MEAE/review',
   googleProfile: 'https://g.page/calsan-dumpsters-pro',
   facebook: 'https://facebook.com/calsandumpsterspro/reviews',
   facebookPage: 'https://facebook.com/calsandumpsterspro',
