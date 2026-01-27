@@ -80,7 +80,7 @@ export const COMPANY_FACTS = {
 
 // Certification links for verification
 export const CERTIFICATION_LINKS = {
-  bbb: 'https://www.bbb.org/us/ca/oakland/profile/dumpster-rental/calsan-dumpsters-pro-1116-123456',
+  bbb: 'https://www.bbb.org/us/ca/oakland/profile/dumpster-service/calsan-dumpsters-pro-1116-895042',
   googleGuarantee: 'https://support.google.com/google-ads/answer/7549288',
   googleBusiness: 'https://g.page/calsan-dumpsters-pro',
 } as const;
