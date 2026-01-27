@@ -90,6 +90,9 @@ const navSections = [
       { path: '/admin/telephony/calls', label: 'Call Logs', icon: Phone },
       { path: '/admin/telephony/numbers', label: 'Phone Numbers', icon: Phone },
       { path: '/admin/telephony/analytics', label: 'Call Analytics', icon: BarChart3 },
+      { path: '/admin/telephony/migration', label: 'GHL Migration', icon: Phone },
+      { path: '/admin/telephony/test', label: 'Test Call', icon: Phone },
+      { path: '/admin/telephony/import', label: 'Import History', icon: FileText },
     ],
   },
   {

@@ -1,9 +1,42 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createHmac } from 'https://deno.land/std@0.177.0/node/crypto.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-twilio-signature',
 };
+
+// Validate Twilio webhook signature
+function validateTwilioSignature(
+  authToken: string,
+  signature: string,
+  url: string,
+  params: Record<string, string>
+): boolean {
+  // Sort and concatenate params
+  const sortedKeys = Object.keys(params).sort();
+  let data = url;
+  for (const key of sortedKeys) {
+    data += key + params[key];
+  }
+  
+  const hmac = createHmac('sha1', authToken);
+  hmac.update(data);
+  const expectedSig = hmac.digest('base64');
+  
+  return signature === expectedSig;
+}
+
+// Detect call source based on forwarding indicators
+function detectCallSource(formData: FormData): string {
+  const forwardedFrom = formData.get('ForwardedFrom') as string;
+  const sipHeader = formData.get('SipHeader_X-Forwarded-From') as string;
+  
+  if (forwardedFrom || sipHeader) {
+    return 'GHL_FORWARD';
+  }
+  return 'NATIVE';
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -24,7 +57,29 @@ Deno.serve(async (req) => {
     const callStatus = formData.get('CallStatus') as string;
     const callerName = formData.get('CallerName') as string || '';
 
-    console.log('Inbound call received:', { callSid, from, to, callStatus });
+    // Detect call source (GHL forward vs native)
+    const callSource = detectCallSource(formData);
+
+    console.log('Inbound call received:', { callSid, from, to, callStatus, callSource });
+
+    // Optional: Validate Twilio signature in production
+    const twilioSignature = req.headers.get('x-twilio-signature');
+    const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    if (authToken && twilioSignature) {
+      const params: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        params[key] = value.toString();
+      });
+      
+      const requestUrl = req.url;
+      const isValid = validateTwilioSignature(authToken, twilioSignature, requestUrl, params);
+      
+      if (!isValid) {
+        console.warn('Invalid Twilio signature - request may not be from Twilio');
+        // In production, you may want to reject invalid signatures:
+        // return new Response('Forbidden', { status: 403 });
+      }
+    }
 
     // Find the phone number and its purpose
     const { data: phoneNumber } = await supabase
@@ -60,7 +115,7 @@ Deno.serve(async (req) => {
       p_purpose: phoneNumber.purpose
     });
 
-    // Create call event record
+    // Create call event record with source tracking
     const { data: callEvent, error: callError } = await supabase
       .from('call_events')
       .insert({
@@ -73,6 +128,7 @@ Deno.serve(async (req) => {
         assigned_user_id: agentId || null,
         call_status: 'RINGING',
         caller_name: callerName || contact?.full_name || null,
+        call_source: callSource,
       })
       .select('id')
       .single();
