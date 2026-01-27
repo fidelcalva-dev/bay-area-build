@@ -48,14 +48,13 @@ const stats = [
 
 const fleetGallery = [
   { id: 1, caption: 'Fleet Yard', image: fleetYard },
-  { id: 2, caption: 'Truck Delivery', image: truckDelivery },
-  { id: 3, caption: 'Worker Action', image: workerAction },
-  { id: 4, caption: 'Job Site', image: realWork1 },
-  { id: 5, caption: 'Heavy Materials', image: realWork2 },
-  { id: 6, caption: 'Branded Fleet', image: realWork3 },
-  { id: 7, caption: 'Live Delivery', image: realWork4 },
-  { id: 8, caption: 'Pickup Complete', image: realWork5 },
-  { id: 9, caption: 'Team at Work', image: realWork6 },
+  { id: 2, caption: 'Branded Fleet', image: brandedFleet },
+  { id: 3, caption: 'Stocked & Ready', image: stockedReady },
+  { id: 4, caption: 'Job Site', image: jobSite },
+  { id: 5, caption: 'Truck Delivery', image: truckDelivery },
+  { id: 6, caption: 'Heavy Materials', image: heavyMaterials },
+  { id: 7, caption: 'Live Delivery', image: liveDelivery },
+  { id: 8, caption: 'Pickup Complete', image: pickupComplete },
 ];
 
 export default function About() {
