@@ -1,21 +1,19 @@
 // ============================================================
-// SMART MATERIALS LIST STEP
-// Quick chip-based selection of common materials
+// SMART MATERIALS LIST - Option B Chip-Based Intake
+// 8 Default East Bay chips with expand option
 // ============================================================
 import { useState, useMemo, useCallback } from 'react';
 import { 
   Package, Armchair, BedDouble, Refrigerator, Trash2,
-  Square, CircleDashed, Grid2x2, LayoutGrid, Home,
+  Square, Grid2x2, LayoutGrid, Home, Wrench,
   Layers, Grid3x3, Mountain, Gem, Diamond,
   Trees, Sparkles, Factory, Boxes, Container,
   Leaf, TreePine, Flower2, ChevronDown, ChevronUp,
-  Check, type LucideIcon
+  Check, CircleDashed, type LucideIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import type { DisposalItem, ItemSelection } from '../hooks/useDisposalItemCatalog';
-import { getMostCommonItems, groupItemsByCategory } from '../hooks/useDisposalItemCatalog';
 
 // Icon mapping for Lucide icons by name
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -44,6 +42,26 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Leaf,
   TreePine,
   Flower2,
+  Wrench,
+};
+
+// Default 8 East Bay chips (simple display names, code mappings)
+const DEFAULT_CHIP_CONFIG: { code: string; label: string; icon: LucideIcon }[] = [
+  { code: 'GENERAL_JUNK', label: 'Household Junk', icon: Trash2 },
+  { code: 'REMODEL', label: 'Remodel Debris', icon: Wrench },
+  { code: 'CONSTRUCTION', label: 'Construction Debris', icon: Home },
+  { code: 'CONCRETE', label: 'Concrete / Brick / Tile', icon: Layers },
+  { code: 'DIRT', label: 'Clean Fill Dirt / Soil', icon: Mountain },
+  { code: 'GRASS_YARD_WASTE', label: 'Yard Waste', icon: Leaf },
+  { code: 'CLEAN_WOOD', label: 'Clean Wood / Wood Chips', icon: Trees },
+  { code: 'COMMERCIAL', label: 'Commercial Trash', icon: Boxes },
+];
+
+// Codes that map to multiple catalog items (aggregate chips)
+const AGGREGATE_MAPPINGS: Record<string, string[]> = {
+  REMODEL: ['DRYWALL', 'CABINETS', 'FLOORING'],
+  CONSTRUCTION: ['WOOD_FRAMING', 'ROOFING_SHINGLES', 'DRYWALL'],
+  COMMERCIAL: ['GENERAL_JUNK', 'BOXES', 'CARDBOARD'],
 };
 
 interface SmartMaterialsListProps {
@@ -53,40 +71,56 @@ interface SmartMaterialsListProps {
   className?: string;
 }
 
-// Category display config
-const CATEGORY_CONFIG: Record<string, { label: string; defaultOpen: boolean }> = {
-  MOST_COMMON: { label: 'Most Common', defaultOpen: true },
-  CONSTRUCTION: { label: 'Construction', defaultOpen: false },
-  HEAVY: { label: 'Heavy Materials', defaultOpen: false },
-  RECYCLING: { label: 'Recycling', defaultOpen: false },
-  YARD: { label: 'Yard & Landscaping', defaultOpen: false },
-};
-
 export function SmartMaterialsList({
   catalogItems,
   selections,
   onSelectionsChange,
   className,
 }: SmartMaterialsListProps) {
-  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set(['MOST_COMMON']));
+  const [showMore, setShowMore] = useState(false);
 
-  // Organize items by category
-  const organizedItems = useMemo(() => {
-    const mostCommon = getMostCommonItems(catalogItems);
-    const grouped = groupItemsByCategory(catalogItems);
-    
-    return {
-      MOST_COMMON: mostCommon,
-      CONSTRUCTION: grouped.CONSTRUCTION.filter(
-        item => !mostCommon.some(m => m.item_code === item.item_code)
-      ),
-      HEAVY: grouped.HEAVY,
-      RECYCLING: grouped.RECYCLING,
-      YARD: grouped.YARD,
-    };
+  // Build catalog lookup
+  const catalogMap = useMemo(() => {
+    const map = new Map<string, DisposalItem>();
+    for (const item of catalogItems) {
+      map.set(item.item_code, item);
+    }
+    return map;
   }, [catalogItems]);
 
-  // Toggle item selection
+  // Get the actual item codes for a chip (handles aggregates)
+  const getItemCodesForChip = useCallback((chipCode: string): string[] => {
+    if (AGGREGATE_MAPPINGS[chipCode]) {
+      return AGGREGATE_MAPPINGS[chipCode];
+    }
+    // Direct mapping to catalog item
+    return [chipCode];
+  }, []);
+
+  // Check if a chip is selected (any of its codes are in selections)
+  const isChipSelected = useCallback((chipCode: string): boolean => {
+    const codes = getItemCodesForChip(chipCode);
+    return codes.some(code => selections.some(s => s.itemCode === code));
+  }, [selections, getItemCodesForChip]);
+
+  // Toggle chip selection
+  const toggleChip = useCallback((chipCode: string) => {
+    const codes = getItemCodesForChip(chipCode);
+    const isSelected = isChipSelected(chipCode);
+
+    if (isSelected) {
+      // Remove all related codes
+      onSelectionsChange(selections.filter(s => !codes.includes(s.itemCode)));
+    } else {
+      // Add all related codes with MED quantity
+      const newSelections = codes
+        .filter(code => catalogMap.has(code))
+        .map(code => ({ itemCode: code, quantity: 'MED' as const }));
+      onSelectionsChange([...selections, ...newSelections]);
+    }
+  }, [selections, onSelectionsChange, getItemCodesForChip, isChipSelected, catalogMap]);
+
+  // Toggle an individual catalog item (for expanded view)
   const toggleItem = useCallback((itemCode: string) => {
     const exists = selections.find(s => s.itemCode === itemCode);
     if (exists) {
@@ -110,37 +144,55 @@ export function SmartMaterialsList({
     }));
   }, [selections, onSelectionsChange]);
 
-  // Toggle category open/closed
-  const toggleCategory = useCallback((category: string) => {
-    setOpenCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
-      } else {
-        next.add(category);
-      }
-      return next;
-    });
-  }, []);
-
   // Get icon component for an item
   const getIcon = (iconName: string | null): LucideIcon => {
     return (iconName && ICON_MAP[iconName]) || Package;
   };
 
-  // Check if item is selected
-  const isSelected = (itemCode: string) => selections.some(s => s.itemCode === itemCode);
-  
-  // Get quantity for selected item
-  const getQuantity = (itemCode: string) => {
-    const sel = selections.find(s => s.itemCode === itemCode);
-    return sel?.quantity || 'MED';
+  // Render a default chip
+  const renderDefaultChip = (chip: typeof DEFAULT_CHIP_CONFIG[0]) => {
+    const selected = isChipSelected(chip.code);
+    const Icon = chip.icon;
+
+    return (
+      <button
+        key={chip.code}
+        type="button"
+        onClick={() => toggleChip(chip.code)}
+        className={cn(
+          "relative flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 transition-all text-left",
+          "hover:border-primary/50 hover:bg-primary/5",
+          selected
+            ? "border-primary bg-primary/10"
+            : "border-border bg-card"
+        )}
+      >
+        <Icon className={cn(
+          "w-5 h-5 shrink-0",
+          selected ? "text-primary" : "text-muted-foreground"
+        )} />
+        
+        <span className={cn(
+          "text-sm font-medium",
+          selected ? "text-foreground" : "text-muted-foreground"
+        )}>
+          {chip.label}
+        </span>
+
+        {selected && (
+          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+            <Check className="w-3 h-3 text-primary-foreground" />
+          </div>
+        )}
+      </button>
+    );
   };
 
-  const renderChip = (item: DisposalItem) => {
+  // Render expanded catalog item
+  const renderCatalogItem = (item: DisposalItem) => {
     const Icon = getIcon(item.icon_name);
-    const selected = isSelected(item.item_code);
-    const quantity = getQuantity(item.item_code);
+    const selected = selections.some(s => s.itemCode === item.item_code);
+    const selection = selections.find(s => s.itemCode === item.item_code);
     const isHeavy = item.forces_category === 'HEAVY_MATERIALS';
     const isYard = item.forces_category === 'YARD_WASTE';
 
@@ -170,7 +222,7 @@ export function SmartMaterialsList({
           {item.display_name}
         </span>
 
-        {selected && (
+        {selected && selection && (
           <button
             type="button"
             onClick={(e) => cycleQuantity(item.item_code, e)}
@@ -179,7 +231,7 @@ export function SmartMaterialsList({
               "bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
             )}
           >
-            {quantity}
+            {selection.quantity}
           </button>
         )}
 
@@ -192,55 +244,127 @@ export function SmartMaterialsList({
     );
   };
 
-  const renderCategory = (categoryKey: string, items: DisposalItem[]) => {
-    if (items.length === 0) return null;
-    
-    const config = CATEGORY_CONFIG[categoryKey];
-    const isOpen = openCategories.has(categoryKey);
+  // Group catalog items for expanded view
+  const groupedItems = useMemo(() => {
+    const groups: Record<string, DisposalItem[]> = {
+      HOUSEHOLD: [],
+      CONSTRUCTION: [],
+      HEAVY: [],
+      RECYCLING: [],
+      YARD: [],
+    };
 
-    return (
-      <Collapsible
-        key={categoryKey}
-        open={isOpen}
-        onOpenChange={() => toggleCategory(categoryKey)}
-      >
-        <CollapsibleTrigger asChild>
-          <button
-            type="button"
-            className="w-full flex items-center justify-between py-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
-          >
-            <span>{config?.label || categoryKey}</span>
-            {isOpen ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </button>
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent className="pb-3">
-          <div className="flex flex-wrap gap-2">
-            {items.map(renderChip)}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    );
-  };
+    for (const item of catalogItems) {
+      if (item.forces_category === 'HEAVY_MATERIALS') {
+        groups.HEAVY.push(item);
+      } else if (item.forces_category === 'YARD_WASTE') {
+        groups.YARD.push(item);
+      } else if (item.forces_category === 'CLEAN_RECYCLING') {
+        groups.RECYCLING.push(item);
+      } else if (item.item_group === 'CONSTRUCTION') {
+        groups.CONSTRUCTION.push(item);
+      } else {
+        groups.HOUSEHOLD.push(item);
+      }
+    }
+
+    return groups;
+  }, [catalogItems]);
 
   return (
-    <div className={cn("space-y-2", className)}>
-      {/* Most Common - always show first */}
-      {renderCategory('MOST_COMMON', organizedItems.MOST_COMMON)}
-      
-      {/* Other categories */}
-      {renderCategory('CONSTRUCTION', organizedItems.CONSTRUCTION)}
-      {renderCategory('HEAVY', organizedItems.HEAVY)}
-      {renderCategory('RECYCLING', organizedItems.RECYCLING)}
-      {renderCategory('YARD', organizedItems.YARD)}
-      
+    <div className={cn("space-y-4", className)}>
+      {/* Default 8 chips in 2-column grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {DEFAULT_CHIP_CONFIG.map(renderDefaultChip)}
+      </div>
+
+      {/* Expand button */}
+      <button
+        type="button"
+        onClick={() => setShowMore(!showMore)}
+        className="w-full flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
+        {showMore ? (
+          <>
+            <ChevronUp className="w-4 h-4" />
+            Show less
+          </>
+        ) : (
+          <>
+            <ChevronDown className="w-4 h-4" />
+            More items
+          </>
+        )}
+      </button>
+
+      {/* Expanded catalog items */}
+      {showMore && (
+        <div className="space-y-4 pt-2 border-t border-border">
+          {/* Household */}
+          {groupedItems.HOUSEHOLD.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Household
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {groupedItems.HOUSEHOLD.map(renderCatalogItem)}
+              </div>
+            </div>
+          )}
+
+          {/* Construction */}
+          {groupedItems.CONSTRUCTION.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Construction
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {groupedItems.CONSTRUCTION.map(renderCatalogItem)}
+              </div>
+            </div>
+          )}
+
+          {/* Heavy */}
+          {groupedItems.HEAVY.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Heavy Materials
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {groupedItems.HEAVY.map(renderCatalogItem)}
+              </div>
+            </div>
+          )}
+
+          {/* Recycling */}
+          {groupedItems.RECYCLING.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Recycling
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {groupedItems.RECYCLING.map(renderCatalogItem)}
+              </div>
+            </div>
+          )}
+
+          {/* Yard */}
+          {groupedItems.YARD.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Yard Waste
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {groupedItems.YARD.map(renderCatalogItem)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Selection count */}
       {selections.length > 0 && (
-        <div className="pt-2 text-sm text-muted-foreground">
+        <div className="pt-2 text-sm text-muted-foreground text-center">
           {selections.length} item{selections.length !== 1 ? 's' : ''} selected
         </div>
       )}

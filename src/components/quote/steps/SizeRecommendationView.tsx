@@ -1,8 +1,8 @@
 // ============================================================
-// SIZE RECOMMENDATION VIEW
-// Shows the recommended size based on material selections
+// SIZE RECOMMENDATION VIEW - Option B
+// Clean hero display with simplified warnings (no numbers)
 // ============================================================
-import { AlertTriangle, ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle } from 'lucide-react';
+import { ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle, AlertTriangle, Leaf, Recycle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
@@ -27,6 +27,17 @@ function ConfidenceIndicator({ score }: { score: number }) {
   return <HelpCircle className="w-4 h-4 text-muted-foreground" />;
 }
 
+// Get category display label
+function getCategoryLabel(category: string, forcesDebrisHeavy: boolean): string {
+  if (forcesDebrisHeavy) return 'Yard Waste';
+  switch (category) {
+    case 'HEAVY_MATERIALS': return 'Heavy Materials';
+    case 'CLEAN_RECYCLING': return 'Recycling';
+    case 'YARD_WASTE': return 'Yard Waste';
+    default: return 'General Debris';
+  }
+}
+
 export function SizeRecommendationView({
   recommendation,
   onAccept,
@@ -35,6 +46,7 @@ export function SizeRecommendationView({
   className,
 }: SizeRecommendationViewProps) {
   const {
+    category,
     recommendedSize,
     alternativeSizes,
     reasonShort,
@@ -42,10 +54,11 @@ export function SizeRecommendationView({
     confidenceScore,
     isHeavy,
     forcesDebrisHeavy,
+    allowGreenHalo,
   } = recommendation;
 
   const image = DUMPSTER_PHOTO_MAP[recommendedSize];
-  const showHeavyWarning = isHeavy || forcesDebrisHeavy;
+  const categoryLabel = getCategoryLabel(category, forcesDebrisHeavy);
 
   return (
     <div className={cn("space-y-5", className)}>
@@ -55,14 +68,17 @@ export function SizeRecommendationView({
           <Lightbulb className="w-4 h-4" />
           Recommended for your project
         </div>
-        <h4 className="text-xl font-bold text-foreground">
+        <h4 className="text-2xl font-bold text-foreground">
           {recommendedSize} Yard Dumpster
         </h4>
+        <p className="text-sm text-muted-foreground mt-1">
+          {categoryLabel}
+        </p>
       </div>
 
       {/* Dumpster image */}
       <div className="flex justify-center">
-        <div className="relative w-48 h-32">
+        <div className="relative w-56 h-36">
           {image ? (
             <img
               src={image}
@@ -77,7 +93,7 @@ export function SizeRecommendationView({
             </div>
           )}
           
-          {/* Popular badge */}
+          {/* Popular badge for 20yd standard debris */}
           {recommendedSize === 20 && !isHeavy && (
             <BadgePill 
               variant="primary" 
@@ -87,7 +103,8 @@ export function SizeRecommendationView({
             </BadgePill>
           )}
           
-          {isHeavy && (
+          {/* Heavy rated badge */}
+          {isHeavy && !forcesDebrisHeavy && (
             <BadgePill 
               variant="warning" 
               className="absolute -top-2 left-1/2 -translate-x-1/2"
@@ -95,39 +112,31 @@ export function SizeRecommendationView({
               Heavy Rated
             </BadgePill>
           )}
+
+          {/* Green Halo badge for recycling */}
+          {allowGreenHalo && (
+            <BadgePill 
+              variant="success" 
+              className="absolute -top-2 left-1/2 -translate-x-1/2"
+            >
+              Green Halo Eligible
+            </BadgePill>
+          )}
         </div>
       </div>
 
-      {/* Confidence message */}
-      <div className="p-3 rounded-xl bg-muted/50 border border-border">
+      {/* Confidence message - cleaner display */}
+      <div className="p-4 rounded-xl bg-muted/50 border border-border text-center">
         <div className="flex items-center gap-2 justify-center mb-1">
           <ConfidenceIndicator score={confidenceScore} />
           <p className="text-sm font-medium text-foreground">
             {confidenceMessage}
           </p>
         </div>
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-xs text-muted-foreground">
           {reasonShort}
         </p>
       </div>
-
-      {/* Heavy material warning */}
-      {showHeavyWarning && (
-        <div className="p-3 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-foreground">
-              {forcesDebrisHeavy ? 'Debris Heavy Pricing' : 'Fill Line Required'}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {forcesDebrisHeavy 
-                ? 'Yard waste is priced as debris due to soil content. Overweight billed at $165/ton.'
-                : 'Heavy materials must be loaded below the fill line to comply with weight limits.'
-              }
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Primary CTA */}
       <Button
@@ -136,11 +145,11 @@ export function SizeRecommendationView({
         className="w-full h-14"
         onClick={() => onAccept(recommendedSize)}
       >
-        Use {recommendedSize} Yard
+        Use Recommendation
         <ArrowRight className="w-5 h-5 ml-1" />
       </Button>
 
-      {/* Alternative sizes */}
+      {/* Alternative sizes - cleaner layout */}
       {alternativeSizes.length > 0 && (
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-2">Or choose a different size:</p>
@@ -150,9 +159,9 @@ export function SizeRecommendationView({
                 key={size}
                 type="button"
                 onClick={() => onAccept(size)}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors"
+                className="px-5 py-2.5 text-sm font-medium rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-colors"
               >
-                {size} yd
+                {size} yard
               </button>
             ))}
           </div>
@@ -167,7 +176,7 @@ export function SizeRecommendationView({
           className="flex-1 text-muted-foreground"
           onClick={onChangeSize}
         >
-          See all sizes
+          Change Size
         </Button>
         <Button
           variant="ghost"
@@ -176,7 +185,7 @@ export function SizeRecommendationView({
           onClick={onEditItems}
         >
           <Edit2 className="w-3.5 h-3.5 mr-1" />
-          Edit items
+          Edit Items
         </Button>
       </div>
     </div>

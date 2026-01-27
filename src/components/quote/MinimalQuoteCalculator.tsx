@@ -1,14 +1,14 @@
 // ============================================================
-// MINIMAL QUOTE CALCULATOR - High-Conversion 7-Step Flow
+// OPTION B CALCULATOR - Chips-Based Intake + Smart Recommendation
 // ============================================================
-// Flow: ZIP → Items → Recommendation → Size → Price → (Notice) → Confirm
-// Mobile-first, modern, premium, 60-90 second completion
+// Flow: ZIP → Items (Chips) → Recommendation → Price → (Notice) → Confirm
+// Mobile-first, 60-90 second completion, invisible complexity
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, 
-  CheckCircle, MapPin, Package, Calendar, Shield, Clock, Truck,
-  Home, HardHat, Trash2, Scale, Recycle, Leaf, Sparkles, type LucideIcon
+  CheckCircle, MapPin, Shield, Clock, Truck,
+  Home, HardHat, Trash2, Recycle, Leaf, Sparkles, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,7 +43,8 @@ import { SizeRecommendationView } from './steps/SizeRecommendationView';
 // TYPES
 // ============================================================
 
-type Step = 'zip' | 'items' | 'recommend' | 'material' | 'size' | 'price' | 'notice' | 'confirm' | 'success';
+// Option B: 6 main steps (notice is conditional)
+type Step = 'zip' | 'items' | 'recommend' | 'size' | 'price' | 'notice' | 'confirm' | 'success';
 type MaterialCategory = 'GENERAL_DEBRIS' | 'HEAVY_MATERIALS' | 'YARD_WASTE' | 'CLEAN_RECYCLING';
 
 interface MaterialOption {
@@ -73,7 +74,7 @@ interface ZoneResult {
 // CONSTANTS
 // ============================================================
 
-const STEP_LABELS = ['Location', 'Material', 'Size', 'Quote', 'Notice', 'Confirm'];
+const STEP_LABELS = ['Location', 'Items', 'Size', 'Price', 'Notice', 'Confirm'];
 
 const MATERIAL_OPTIONS: MaterialOption[] = [
   {
@@ -145,7 +146,6 @@ export function MinimalQuoteCalculator() {
   
   // Smart materials selection state
   const [itemSelections, setItemSelections] = useState<ItemSelection[]>([]);
-  const [useSmartFlow, setUseSmartFlow] = useState(true); // Toggle between smart/manual flow
   
   // Fetch disposal item catalog
   const { data: catalogItems = [], isLoading: catalogLoading } = useDisposalItemCatalog();
@@ -237,7 +237,8 @@ export function MinimalQuoteCalculator() {
   // Derived state - also check recommendation for smart flow
   const isHeavy = materialCategory === 'HEAVY_MATERIALS' || sizeRecommendation.isHeavy;
   const isYardWaste = materialCategory === 'YARD_WASTE' || sizeRecommendation.forcesDebrisHeavy;
-  const showNoticeStep = isHeavy || isYardWaste;
+  const isRecycling = sizeRecommendation.allowGreenHalo;
+  const showNoticeStep = isHeavy || isYardWaste || isRecycling;
   const materialTypeForPricing = isHeavy || sizeRecommendation.isHeavy ? 'heavy' : 'general';
 
   // Auto-adjust size for heavy materials
@@ -288,7 +289,6 @@ export function MinimalQuoteCalculator() {
       zip: 1,
       items: 2,
       recommend: 3,
-      material: 2, // Fallback manual flow
       size: 3,
       price: 4,
       notice: 5,
@@ -306,24 +306,22 @@ export function MinimalQuoteCalculator() {
       case 'zip': return zip.length === 5 && zoneResult && !isCheckingZip;
       case 'items': return itemSelections.length > 0;
       case 'recommend': return true;
-      case 'material': return !!materialCategory;
       case 'size': return !!size;
       case 'price': return true;
       case 'notice': return true;
       case 'confirm': return customerName && customerPhone && termsAccepted;
       default: return false;
     }
-  }, [step, zip, zoneResult, isCheckingZip, itemSelections, materialCategory, size, customerName, customerPhone, termsAccepted]);
+  }, [step, zip, zoneResult, isCheckingZip, itemSelections, size, customerName, customerPhone, termsAccepted]);
 
   const goNext = () => {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
     
     const nextSteps: Record<Step, Step> = {
-      zip: useSmartFlow ? 'items' : 'material',
+      zip: 'items',
       items: 'recommend',
       recommend: 'price', // After accepting recommendation, go to price
-      material: 'size',
       size: 'price',
       price: showNoticeStep ? 'notice' : 'confirm',
       notice: 'confirm',
@@ -338,21 +336,13 @@ export function MinimalQuoteCalculator() {
       zip: 'zip',
       items: 'zip',
       recommend: 'items',
-      material: 'zip',
-      size: 'material',
-      price: useSmartFlow ? 'recommend' : 'size',
+      size: 'recommend',
+      price: 'recommend',
       notice: 'price',
       confirm: showNoticeStep ? 'notice' : 'price',
       success: 'confirm',
     };
     setStep(prevSteps[step]);
-  };
-
-  // Handle material selection (auto-advance)
-  const handleMaterialSelect = (category: MaterialCategory) => {
-    setMaterialCategory(category);
-    // Auto-advance after selection
-    setTimeout(() => setStep('size'), 150);
   };
 
   // Handle size selection (auto-advance)
@@ -374,9 +364,8 @@ export function MinimalQuoteCalculator() {
     setStep('price');
   };
 
-  // Handle "see all sizes" from recommendation
+  // Handle "change size" from recommendation - go to size picker
   const handleChangeSize = () => {
-    // Apply category from recommendation, then go to manual size selection
     setMaterialCategory(sizeRecommendation.category);
     setStep('size');
   };
@@ -384,12 +373,6 @@ export function MinimalQuoteCalculator() {
   // Handle "edit items" from recommendation
   const handleEditItems = () => {
     setStep('items');
-  };
-
-  // Skip smart flow and use manual
-  const handleSkipSmartFlow = () => {
-    setUseSmartFlow(false);
-    setStep('material');
   };
 
   // Save quote
@@ -473,7 +456,6 @@ export function MinimalQuoteCalculator() {
     setZoneResult(null);
     setSavedQuoteId(null);
     setItemSelections([]);
-    setUseSmartFlow(true);
   };
 
   // Get size label
@@ -632,14 +614,6 @@ export function MinimalQuoteCalculator() {
               Get Recommendation
               <Sparkles className="w-5 h-5 ml-1" />
             </Button>
-
-            <button
-              type="button"
-              onClick={handleSkipSmartFlow}
-              className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
-            >
-              Skip and choose manually
-            </button>
           </div>
         )}
 
@@ -658,37 +632,6 @@ export function MinimalQuoteCalculator() {
               onChangeSize={handleChangeSize}
               onEditItems={handleEditItems}
             />
-          </div>
-        )}
-
-        {/* ============================== */}
-        {/* STEP: MATERIAL CATEGORY (Manual Flow) */}
-        {/* ============================== */}
-        {step === 'material' && (
-          <div className="space-y-5">
-            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back
-            </button>
-
-            <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">What are you tossing?</h4>
-              <p className="text-sm text-muted-foreground">Select the material type</p>
-            </div>
-
-            <div className="space-y-3">
-              {MATERIAL_OPTIONS.map(opt => (
-                <CardSelectable
-                  key={opt.id}
-                  selected={materialCategory === opt.id}
-                  onClick={() => handleMaterialSelect(opt.id)}
-                  icon={opt.icon}
-                  title={opt.title}
-                  subtitle={opt.subtitle}
-                  badge={opt.badge}
-                  badgeVariant={opt.badgeVariant}
-                />
-              ))}
-            </div>
           </div>
         )}
 
@@ -810,19 +753,28 @@ export function MinimalQuoteCalculator() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Important Notice</h4>
-              <p className="text-sm text-muted-foreground">Please review before confirming</p>
+              <h4 className="text-lg font-bold text-foreground mb-1">Before You Confirm</h4>
+              <p className="text-sm text-muted-foreground">Just a quick heads up</p>
             </div>
 
-            {isHeavy && (
+            {/* Heavy materials notice - simplified, no numbers */}
+            {isHeavy && !isYardWaste && (
               <InfoBox variant="warning" title="Heavy Material Guidelines">
-                Heavy materials must be loaded below the fill line. Mixed or contaminated loads (trash, wood, etc.) will be reclassified and billed as general debris at $165/ton.
+                Heavy materials have weight limits. We'll guide you to load it safely.
               </InfoBox>
             )}
 
+            {/* Yard waste notice - simplified, no numbers */}
             {isYardWaste && (
-              <InfoBox variant="info" title="Yard Waste Pricing">
-                Yard waste is priced as debris due to soil content. Weight over the included amount is billed at $165/ton based on the scale ticket.
+              <InfoBox variant="info" title="Yard Waste Notice">
+                Yard waste must be kept free of trash or debris.
+              </InfoBox>
+            )}
+
+            {/* Recycling notice */}
+            {sizeRecommendation.allowGreenHalo && (
+              <InfoBox variant="success" title="Recycling Requirement">
+                Materials must be clean and separated to qualify for recycling.
               </InfoBox>
             )}
 
