@@ -103,6 +103,9 @@ const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
 const PhoneNumbersManager = lazy(() => import("./pages/admin/PhoneNumbersManager"));
 const CallAnalyticsPage = lazy(() => import("./pages/admin/CallAnalyticsPage"));
+const TelephonyMigration = lazy(() => import("./pages/admin/TelephonyMigration"));
+const TelephonyTestCall = lazy(() => import("./pages/admin/TelephonyTestCall"));
+const TelephonyImport = lazy(() => import("./pages/admin/TelephonyImport"));
 
 // Google Ads Admin Pages
 const AdsOverview = lazy(() => import("./pages/admin/ads/AdsOverview"));
@@ -459,6 +462,15 @@ const App = () => (
                 } />
                 <Route path="telephony/analytics" element={
                   <Suspense fallback={<PageLoader />}><CallAnalyticsPage /></Suspense>
+                } />
+                <Route path="telephony/migration" element={
+                  <Suspense fallback={<PageLoader />}><TelephonyMigration /></Suspense>
+                } />
+                <Route path="telephony/test" element={
+                  <Suspense fallback={<PageLoader />}><TelephonyTestCall /></Suspense>
+                } />
+                <Route path="telephony/import" element={
+                  <Suspense fallback={<PageLoader />}><TelephonyImport /></Suspense>
                 } />
                 {/* Admin Dashboards */}
                 <Route path="dashboards/overview" element={

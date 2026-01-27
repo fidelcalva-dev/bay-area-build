@@ -1268,6 +1268,7 @@ export type Database = {
         Row: {
           answered_at: string | null
           assigned_user_id: string | null
+          call_source: string | null
           call_status: Database["public"]["Enums"]["call_status"]
           caller_name: string | null
           contact_id: string | null
@@ -1277,6 +1278,8 @@ export type Database = {
           ended_at: string | null
           from_number: string
           id: string
+          imported_at: string | null
+          is_historical: boolean | null
           notes: string | null
           order_id: string | null
           phone_number_id: string | null
@@ -1289,6 +1292,7 @@ export type Database = {
         Insert: {
           answered_at?: string | null
           assigned_user_id?: string | null
+          call_source?: string | null
           call_status?: Database["public"]["Enums"]["call_status"]
           caller_name?: string | null
           contact_id?: string | null
@@ -1298,6 +1302,8 @@ export type Database = {
           ended_at?: string | null
           from_number: string
           id?: string
+          imported_at?: string | null
+          is_historical?: boolean | null
           notes?: string | null
           order_id?: string | null
           phone_number_id?: string | null
@@ -1310,6 +1316,7 @@ export type Database = {
         Update: {
           answered_at?: string | null
           assigned_user_id?: string | null
+          call_source?: string | null
           call_status?: Database["public"]["Enums"]["call_status"]
           caller_name?: string | null
           contact_id?: string | null
@@ -1319,6 +1326,8 @@ export type Database = {
           ended_at?: string | null
           from_number?: string
           id?: string
+          imported_at?: string | null
+          is_historical?: boolean | null
           notes?: string | null
           order_id?: string | null
           phone_number_id?: string | null
@@ -1365,6 +1374,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      call_history_imports: {
+        Row: {
+          errors: Json | null
+          filename: string | null
+          id: string
+          imported_at: string | null
+          imported_by: string | null
+          records_imported: number | null
+          records_skipped: number | null
+          records_total: number | null
+        }
+        Insert: {
+          errors?: Json | null
+          filename?: string | null
+          id?: string
+          imported_at?: string | null
+          imported_by?: string | null
+          records_imported?: number | null
+          records_skipped?: number | null
+          records_total?: number | null
+        }
+        Update: {
+          errors?: Json | null
+          filename?: string | null
+          id?: string
+          imported_at?: string | null
+          imported_by?: string | null
+          records_imported?: number | null
+          records_skipped?: number | null
+          records_total?: number | null
+        }
+        Relationships: []
       }
       call_routing_rules: {
         Row: {
@@ -7409,6 +7451,83 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      telephony_migrations: {
+        Row: {
+          business_hours: Json | null
+          created_at: string | null
+          created_by: string | null
+          current_provider: string
+          cutover_completed_at: string | null
+          cutover_started_at: string | null
+          friendly_name: string | null
+          ghl_routing_rules: Json | null
+          id: string
+          migration_method: string
+          notes: string | null
+          phone_number: string
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          recording_enabled: boolean | null
+          rollback_at: string | null
+          status: string
+          target_provider: string
+          twilio_number_id: string | null
+          updated_at: string | null
+          voicemail_enabled: boolean | null
+        }
+        Insert: {
+          business_hours?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          current_provider?: string
+          cutover_completed_at?: string | null
+          cutover_started_at?: string | null
+          friendly_name?: string | null
+          ghl_routing_rules?: Json | null
+          id?: string
+          migration_method: string
+          notes?: string | null
+          phone_number: string
+          purpose: Database["public"]["Enums"]["phone_purpose"]
+          recording_enabled?: boolean | null
+          rollback_at?: string | null
+          status?: string
+          target_provider?: string
+          twilio_number_id?: string | null
+          updated_at?: string | null
+          voicemail_enabled?: boolean | null
+        }
+        Update: {
+          business_hours?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          current_provider?: string
+          cutover_completed_at?: string | null
+          cutover_started_at?: string | null
+          friendly_name?: string | null
+          ghl_routing_rules?: Json | null
+          id?: string
+          migration_method?: string
+          notes?: string | null
+          phone_number?: string
+          purpose?: Database["public"]["Enums"]["phone_purpose"]
+          recording_enabled?: boolean | null
+          rollback_at?: string | null
+          status?: string
+          target_provider?: string
+          twilio_number_id?: string | null
+          updated_at?: string | null
+          voicemail_enabled?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telephony_migrations_twilio_number_id_fkey"
+            columns: ["twilio_number_id"]
+            isOneToOne: false
+            referencedRelation: "phone_numbers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       toll_surcharges: {
         Row: {
