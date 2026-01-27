@@ -1,5 +1,5 @@
 import { Layout } from '@/components/layout/Layout';
-import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
+import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculator';
 import { CheckCircle, MessageCircle } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
@@ -67,7 +67,7 @@ export default function Quote() {
 
             {/* Right - Calculator */}
             <div className="lg:pt-0">
-              <InstantQuoteCalculatorV3 />
+              <MinimalQuoteCalculator />
               
               {/* Reassurance below calculator */}
               <div className="mt-6 text-center">
