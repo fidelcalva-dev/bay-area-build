@@ -1,6 +1,6 @@
 import { motion, Variants } from 'framer-motion';
 import { MessageSquare, Star, Shield, Award, MapPin } from 'lucide-react';
-import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalculatorV3';
+import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculator';
 import { Button } from '@/components/ui/button';
 import { PriceAnchor } from '@/components/shared/PriceAnchor';
 import { LocalSEOSchema, getLocalizedH1 } from '@/components/seo/LocalSEOSchema';
@@ -153,7 +153,7 @@ export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary-foreground/10 rounded-full blur-3xl" />
             
-            <InstantQuoteCalculatorV3 />
+            <MinimalQuoteCalculator />
           </motion.div>
         </div>
       </div>

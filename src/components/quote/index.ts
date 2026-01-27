@@ -1,5 +1,6 @@
-// Quote System Exports - V3 is the canonical calculator
+// Quote System Exports - V3 is the canonical calculator, Minimal is the high-conversion variant
 export { InstantQuoteCalculatorV3 } from './InstantQuoteCalculatorV3';
+export { MinimalQuoteCalculator } from './MinimalQuoteCalculator';
 export { QuoteOrderFlow } from './QuoteOrderFlow';
 export { WeightEducation } from './WeightEducation';
 export { QuoteBreakdown } from './QuoteBreakdown';

@@ -1303,7 +1303,7 @@ export function InstantQuoteCalculatorV3() {
                           )}
                           {type.value === 'general' && formData.material === 'general' && (
                             <div className="mt-2 text-xs text-muted-foreground">
-                              <span className="font-medium">Overage:</span> $165/ton (20+yd) or $30/yard (6-10yd)
+                              <span className="font-medium">Overage:</span> $165/ton based on scale ticket
                             </div>
                           )}
                         </div>

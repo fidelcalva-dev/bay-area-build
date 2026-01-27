@@ -5,14 +5,18 @@ type AnalyticsEvent =
   | 'homepage_cta_click'
   | 'quote_start'
   | 'quote_step1_complete'
+  | 'quote_step_complete'
+  | 'quote_step_time'
   | 'quote_completed'
   | 'quote_saved'
+  | 'quote_abandoned'
   | 'same_day_indicator_shown'
   | 'premium_escalation_triggered'
   | 'size_recommendation_shown'
   | 'user_type_selected'
   | 'zip_entered'
   | 'material_selected'
+  | 'size_selected'
   | 'extras_added';
 
 interface EventData {
@@ -74,8 +78,17 @@ export const analytics = {
   materialSelected: (material: string) => 
     trackEvent('material_selected', { material }),
   
+  sizeSelected: (size: number, material: string) =>
+    trackEvent('size_selected', { size, material }),
+  
   extrasAdded: (extraIds: string[]) => 
     trackEvent('extras_added', { extras: extraIds.join(','), count: extraIds.length }),
+  
+  quoteStepComplete: (step: string, durationMs: number) =>
+    trackEvent('quote_step_complete', { step, duration_ms: durationMs }),
+  
+  quoteAbandoned: (step: string, durationMs: number) =>
+    trackEvent('quote_abandoned', { step, duration_ms: durationMs }),
 };
 
 export default analytics;
