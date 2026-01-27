@@ -2766,6 +2766,54 @@ export type Database = {
         }
         Relationships: []
       }
+      entity_google_links: {
+        Row: {
+          chat_space_id: string | null
+          chat_thread_ids: Json | null
+          created_at: string
+          drive_file_ids_json: Json | null
+          drive_folder_id: string | null
+          drive_folder_url: string | null
+          entity_id: string
+          entity_type: string
+          gmail_thread_ids: Json | null
+          id: string
+          meet_event_id: string | null
+          meet_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          chat_space_id?: string | null
+          chat_thread_ids?: Json | null
+          created_at?: string
+          drive_file_ids_json?: Json | null
+          drive_folder_id?: string | null
+          drive_folder_url?: string | null
+          entity_id: string
+          entity_type: string
+          gmail_thread_ids?: Json | null
+          id?: string
+          meet_event_id?: string | null
+          meet_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          chat_space_id?: string | null
+          chat_thread_ids?: Json | null
+          created_at?: string
+          drive_file_ids_json?: Json | null
+          drive_folder_id?: string | null
+          drive_folder_url?: string | null
+          entity_id?: string
+          entity_type?: string
+          gmail_thread_ids?: Json | null
+          id?: string
+          meet_event_id?: string | null
+          meet_link?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       facilities: {
         Row: {
           accepted_material_classes: string[]
@@ -3085,6 +3133,123 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      google_chat_spaces: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          space_name: string
+          space_purpose: string
+          target_team: string
+          updated_at: string
+          webhook_url_encrypted: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          space_name: string
+          space_purpose: string
+          target_team: string
+          updated_at?: string
+          webhook_url_encrypted?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          space_name?: string
+          space_purpose?: string
+          target_team?: string
+          updated_at?: string
+          webhook_url_encrypted?: string | null
+        }
+        Relationships: []
+      }
+      google_connections: {
+        Row: {
+          access_token_encrypted: string
+          created_at: string
+          google_email: string
+          id: string
+          last_used_at: string | null
+          refresh_token_encrypted: string
+          scopes_json: Json
+          status: Database["public"]["Enums"]["google_connection_status"]
+          token_expires_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token_encrypted: string
+          created_at?: string
+          google_email: string
+          id?: string
+          last_used_at?: string | null
+          refresh_token_encrypted: string
+          scopes_json?: Json
+          status?: Database["public"]["Enums"]["google_connection_status"]
+          token_expires_at: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token_encrypted?: string
+          created_at?: string
+          google_email?: string
+          id?: string
+          last_used_at?: string | null
+          refresh_token_encrypted?: string
+          scopes_json?: Json
+          status?: Database["public"]["Enums"]["google_connection_status"]
+          token_expires_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      google_events_log: {
+        Row: {
+          action_type: Database["public"]["Enums"]["google_action_type"]
+          created_at: string
+          duration_ms: number | null
+          entity_id: string | null
+          entity_type: string | null
+          error_message: string | null
+          id: string
+          request_json: Json | null
+          response_json: Json | null
+          status: Database["public"]["Enums"]["google_event_status"]
+          user_id: string | null
+        }
+        Insert: {
+          action_type: Database["public"]["Enums"]["google_action_type"]
+          created_at?: string
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          request_json?: Json | null
+          response_json?: Json | null
+          status?: Database["public"]["Enums"]["google_event_status"]
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["google_action_type"]
+          created_at?: string
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          request_json?: Json | null
+          response_json?: Json | null
+          status?: Database["public"]["Enums"]["google_event_status"]
+          user_id?: string | null
+        }
+        Relationships: []
       }
       heavy_material_profiles: {
         Row: {
@@ -8680,6 +8845,16 @@ export type Database = {
         Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
         Returns: string
       }
+      get_google_connection: {
+        Args: { p_user_id: string }
+        Returns: {
+          google_email: string
+          id: string
+          scopes_json: Json
+          status: Database["public"]["Enums"]["google_connection_status"]
+          token_expires_at: string
+        }[]
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -8718,6 +8893,20 @@ export type Database = {
         }
         Returns: string
       }
+      log_google_event: {
+        Args: {
+          p_action_type: Database["public"]["Enums"]["google_action_type"]
+          p_duration_ms?: number
+          p_entity_id?: string
+          p_entity_type?: string
+          p_error_message?: string
+          p_request_json?: Json
+          p_response_json?: Json
+          p_status?: Database["public"]["Enums"]["google_event_status"]
+          p_user_id: string
+        }
+        Returns: string
+      }
       log_lead_event: {
         Args: {
           p_event_type: string
@@ -8751,6 +8940,20 @@ export type Database = {
       update_lead_status: {
         Args: { p_lead_id: string; p_notes?: string; p_status: string }
         Returns: boolean
+      }
+      upsert_entity_google_link: {
+        Args: {
+          p_chat_space_id?: string
+          p_drive_file_id?: string
+          p_drive_folder_id?: string
+          p_drive_folder_url?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_gmail_thread_id?: string
+          p_meet_event_id?: string
+          p_meet_link?: string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -8792,6 +8995,21 @@ export type Database = {
         | "CEO_WEEKLY_CHECKLIST"
         | "PLAYBOOK_EXCEPTIONS"
       filled_location: "customer" | "yard" | "truck"
+      google_action_type:
+        | "SEND_EMAIL"
+        | "READ_EMAIL"
+        | "SYNC_THREAD"
+        | "CREATE_MEET"
+        | "UPDATE_MEET"
+        | "CREATE_DRIVE_FOLDER"
+        | "UPLOAD_DRIVE"
+        | "ATTACH_FILE"
+        | "POST_CHAT_MESSAGE"
+        | "OAUTH_CONNECT"
+        | "OAUTH_REFRESH"
+        | "OAUTH_REVOKE"
+      google_connection_status: "CONNECTED" | "EXPIRED" | "REVOKED" | "PENDING"
+      google_event_status: "DRY_RUN" | "LIVE" | "SUCCESS" | "FAILED" | "PENDING"
       help_scope:
         | "GLOBAL"
         | "SALES"
@@ -9014,6 +9232,22 @@ export const Constants = {
         "PLAYBOOK_EXCEPTIONS",
       ],
       filled_location: ["customer", "yard", "truck"],
+      google_action_type: [
+        "SEND_EMAIL",
+        "READ_EMAIL",
+        "SYNC_THREAD",
+        "CREATE_MEET",
+        "UPDATE_MEET",
+        "CREATE_DRIVE_FOLDER",
+        "UPLOAD_DRIVE",
+        "ATTACH_FILE",
+        "POST_CHAT_MESSAGE",
+        "OAUTH_CONNECT",
+        "OAUTH_REFRESH",
+        "OAUTH_REVOKE",
+      ],
+      google_connection_status: ["CONNECTED", "EXPIRED", "REVOKED", "PENDING"],
+      google_event_status: ["DRY_RUN", "LIVE", "SUCCESS", "FAILED", "PENDING"],
       help_scope: [
         "GLOBAL",
         "SALES",
