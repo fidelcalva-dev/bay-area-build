@@ -1,12 +1,15 @@
 // ============================================================
 // USE QUOTE AI RECOMMENDATION HOOK
 // Calls quote-ai-recommend edge function with session caching
+// Supports DRY_RUN, LIVE_SOFT, LIVE modes for controlled rollout
 // ============================================================
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { AIRecommendationInput, AIRecommendationOutput } from '../types/aiRecommendation';
 import { DEFAULT_AI_RECOMMENDATION } from '../types/aiRecommendation';
 import type { ItemSelection } from './useDisposalItemCatalog';
+import { getConfig, type QuoteAIMode } from '@/lib/configService';
+import { analytics } from '@/lib/analytics';
 
 interface UseQuoteAIRecommendationOptions {
   zip: string;
@@ -21,8 +24,12 @@ interface UseQuoteAIRecommendationResult {
   recommendation: AIRecommendationOutput;
   isLoading: boolean;
   error: string | null;
+  mode: QuoteAIMode;
+  shouldPreselect: boolean;
   fetchRecommendation: (selections: ItemSelection[]) => Promise<void>;
   clearCache: () => void;
+  trackAccept: (size: number, wasPreselected: boolean) => void;
+  trackChange: (selectedSize: number, reason: string) => void;
 }
 
 // Session cache for recommendations
@@ -42,7 +49,26 @@ export function useQuoteAIRecommendation(
   const [recommendation, setRecommendation] = useState<AIRecommendationOutput>(DEFAULT_AI_RECOMMENDATION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<QuoteAIMode>('DRY_RUN');
   const abortControllerRef = useRef<AbortController | null>(null);
+  const recommendationShownAtRef = useRef<number>(0);
+
+  // Load config mode on mount
+  useEffect(() => {
+    async function loadMode() {
+      try {
+        const configMode = await getConfig('quote_ai.mode');
+        setMode(configMode);
+      } catch {
+        // Default to DRY_RUN if config fails
+        setMode('DRY_RUN');
+      }
+    }
+    loadMode();
+  }, []);
+
+  // Determine if preselection is enabled based on mode
+  const shouldPreselect = mode === 'LIVE_SOFT' || mode === 'LIVE';
 
   const fetchRecommendation = useCallback(async (selections: ItemSelection[]) => {
     // Early return if no selections
@@ -56,6 +82,15 @@ export function useQuoteAIRecommendation(
     const cached = recommendationCache.get(cacheKey);
     if (cached) {
       setRecommendation(cached);
+      recommendationShownAtRef.current = Date.now();
+      
+      // Track recommendation shown from cache
+      analytics.aiRecommendationShown(
+        cached.recommended_size_yd,
+        cached.category,
+        cached.confidence_score,
+        mode
+      );
       return;
     }
 
@@ -94,6 +129,20 @@ export function useQuoteAIRecommendation(
         const result = data as AIRecommendationOutput;
         setRecommendation(result);
         recommendationCache.set(cacheKey, result);
+        recommendationShownAtRef.current = Date.now();
+
+        // Track recommendation shown
+        analytics.aiRecommendationShown(
+          result.recommended_size_yd,
+          result.category,
+          result.confidence_score,
+          mode
+        );
+
+        // Track preselection in LIVE modes
+        if (shouldPreselect) {
+          analytics.aiRecommendationPreselected(result.recommended_size_yd, mode);
+        }
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
@@ -106,7 +155,23 @@ export function useQuoteAIRecommendation(
     } finally {
       setIsLoading(false);
     }
-  }, [options]);
+  }, [options, mode, shouldPreselect]);
+
+  // Track when user accepts recommendation
+  const trackAccept = useCallback((size: number, wasPreselected: boolean) => {
+    const timeToDecision = Date.now() - recommendationShownAtRef.current;
+    analytics.aiRecommendationAccepted(size, wasPreselected, timeToDecision);
+  }, []);
+
+  // Track when user changes from recommendation
+  const trackChange = useCallback((selectedSize: number, reason: string) => {
+    const recommendedSize = recommendation.recommended_size_yd;
+    analytics.aiRecommendationChanged(recommendedSize, selectedSize, reason);
+    
+    if (selectedSize !== recommendedSize) {
+      analytics.aiSizeOverride(recommendedSize, selectedSize, selectedSize < recommendedSize);
+    }
+  }, [recommendation.recommended_size_yd]);
 
   const clearCache = useCallback(() => {
     recommendationCache.clear();
@@ -126,7 +191,11 @@ export function useQuoteAIRecommendation(
     recommendation,
     isLoading,
     error,
+    mode,
+    shouldPreselect,
     fetchRecommendation,
     clearCache,
+    trackAccept,
+    trackChange,
   };
 }
