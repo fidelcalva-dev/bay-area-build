@@ -1,14 +1,14 @@
 // ============================================================
-// MINIMAL QUOTE CALCULATOR - High-Conversion 6-Step Flow
+// MINIMAL QUOTE CALCULATOR - High-Conversion 7-Step Flow
 // ============================================================
-// Flow: ZIP → Material → Size → Price → (Notice) → Confirm
+// Flow: ZIP → Items → Recommendation → Size → Price → (Notice) → Confirm
 // Mobile-first, modern, premium, 60-90 second completion
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, 
   CheckCircle, MapPin, Package, Calendar, Shield, Clock, Truck,
-  Home, HardHat, Trash2, Scale, Recycle, Leaf, type LucideIcon
+  Home, HardHat, Trash2, Scale, Recycle, Leaf, Sparkles, type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,8 @@ import { analytics } from '@/lib/analytics';
 import type { QuoteFormData } from './types';
 import { usePricingData, calculateIncludedTons } from './hooks/usePricingData';
 import { useDistanceCalculation } from './hooks/useDistanceCalculation';
+import { useDisposalItemCatalog, type ItemSelection } from './hooks/useDisposalItemCatalog';
+import { useSizeRecommendation } from './hooks/useSizeRecommendation';
 import { PRICING_ZONES } from './constants';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
@@ -34,12 +36,14 @@ import { BadgePill } from './ui/BadgePill';
 import { PriceHero } from './ui/PriceHero';
 import { InfoBox, InfoBoxCompact } from './ui/InfoBox';
 import { SummaryCardMini } from './ui/SummaryCard';
+import { SmartMaterialsList } from './steps/SmartMaterialsList';
+import { SizeRecommendationView } from './steps/SizeRecommendationView';
 
 // ============================================================
 // TYPES
 // ============================================================
 
-type Step = 'zip' | 'material' | 'size' | 'price' | 'notice' | 'confirm' | 'success';
+type Step = 'zip' | 'items' | 'recommend' | 'material' | 'size' | 'price' | 'notice' | 'confirm' | 'success';
 type MaterialCategory = 'GENERAL_DEBRIS' | 'HEAVY_MATERIALS' | 'YARD_WASTE' | 'CLEAN_RECYCLING';
 
 interface MaterialOption {
@@ -138,6 +142,16 @@ export function MinimalQuoteCalculator() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
+  
+  // Smart materials selection state
+  const [itemSelections, setItemSelections] = useState<ItemSelection[]>([]);
+  const [useSmartFlow, setUseSmartFlow] = useState(true); // Toggle between smart/manual flow
+  
+  // Fetch disposal item catalog
+  const { data: catalogItems = [], isLoading: catalogLoading } = useDisposalItemCatalog();
+  
+  // Size recommendation based on selected items
+  const sizeRecommendation = useSizeRecommendation(itemSelections, catalogItems);
 
   // Auto-detect ZIP
   const autoDetectZip = useAutoDetectZip();
@@ -220,11 +234,11 @@ export function MinimalQuoteCalculator() {
     }
   }, [zip, lookupZone]);
 
-  // Derived state
-  const isHeavy = materialCategory === 'HEAVY_MATERIALS';
-  const isYardWaste = materialCategory === 'YARD_WASTE';
+  // Derived state - also check recommendation for smart flow
+  const isHeavy = materialCategory === 'HEAVY_MATERIALS' || sizeRecommendation.isHeavy;
+  const isYardWaste = materialCategory === 'YARD_WASTE' || sizeRecommendation.forcesDebrisHeavy;
   const showNoticeStep = isHeavy || isYardWaste;
-  const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
+  const materialTypeForPricing = isHeavy || sizeRecommendation.isHeavy ? 'heavy' : 'general';
 
   // Auto-adjust size for heavy materials
   useEffect(() => {
@@ -272,7 +286,9 @@ export function MinimalQuoteCalculator() {
   const stepIndex = useMemo(() => {
     const map: Record<Step, number> = {
       zip: 1,
-      material: 2,
+      items: 2,
+      recommend: 3,
+      material: 2, // Fallback manual flow
       size: 3,
       price: 4,
       notice: 5,
@@ -288,6 +304,8 @@ export function MinimalQuoteCalculator() {
   const canGoNext = useMemo(() => {
     switch (step) {
       case 'zip': return zip.length === 5 && zoneResult && !isCheckingZip;
+      case 'items': return itemSelections.length > 0;
+      case 'recommend': return true;
       case 'material': return !!materialCategory;
       case 'size': return !!size;
       case 'price': return true;
@@ -295,14 +313,16 @@ export function MinimalQuoteCalculator() {
       case 'confirm': return customerName && customerPhone && termsAccepted;
       default: return false;
     }
-  }, [step, zip, zoneResult, isCheckingZip, materialCategory, size, customerName, customerPhone, termsAccepted]);
+  }, [step, zip, zoneResult, isCheckingZip, itemSelections, materialCategory, size, customerName, customerPhone, termsAccepted]);
 
   const goNext = () => {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
     
     const nextSteps: Record<Step, Step> = {
-      zip: 'material',
+      zip: useSmartFlow ? 'items' : 'material',
+      items: 'recommend',
+      recommend: 'price', // After accepting recommendation, go to price
       material: 'size',
       size: 'price',
       price: showNoticeStep ? 'notice' : 'confirm',
@@ -316,9 +336,11 @@ export function MinimalQuoteCalculator() {
   const goBack = () => {
     const prevSteps: Record<Step, Step> = {
       zip: 'zip',
+      items: 'zip',
+      recommend: 'items',
       material: 'zip',
       size: 'material',
-      price: 'size',
+      price: useSmartFlow ? 'recommend' : 'size',
       notice: 'price',
       confirm: showNoticeStep ? 'notice' : 'price',
       success: 'confirm',
@@ -338,6 +360,36 @@ export function MinimalQuoteCalculator() {
     setSize(sizeValue);
     // Auto-advance after selection
     setTimeout(() => setStep('price'), 150);
+  };
+
+  // Handle accepting size recommendation
+  const handleAcceptRecommendation = (recommendedSize: number) => {
+    // Apply recommendation to state
+    setSize(recommendedSize);
+    setMaterialCategory(sizeRecommendation.category);
+    
+    // Go to price step
+    const duration = Date.now() - stepStartTime;
+    analytics.quoteStepComplete('recommend', duration);
+    setStep('price');
+  };
+
+  // Handle "see all sizes" from recommendation
+  const handleChangeSize = () => {
+    // Apply category from recommendation, then go to manual size selection
+    setMaterialCategory(sizeRecommendation.category);
+    setStep('size');
+  };
+
+  // Handle "edit items" from recommendation
+  const handleEditItems = () => {
+    setStep('items');
+  };
+
+  // Skip smart flow and use manual
+  const handleSkipSmartFlow = () => {
+    setUseSmartFlow(false);
+    setStep('material');
   };
 
   // Save quote
@@ -420,6 +472,8 @@ export function MinimalQuoteCalculator() {
     setTermsAccepted(false);
     setZoneResult(null);
     setSavedQuoteId(null);
+    setItemSelections([]);
+    setUseSmartFlow(true);
   };
 
   // Get size label
@@ -543,7 +597,72 @@ export function MinimalQuoteCalculator() {
         )}
 
         {/* ============================== */}
-        {/* STEP 2: MATERIAL CATEGORY */}
+        {/* STEP 2: SMART ITEMS SELECTION */}
+        {/* ============================== */}
+        {step === 'items' && (
+          <div className="space-y-5">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Back
+            </button>
+
+            <div>
+              <h4 className="text-lg font-bold text-foreground mb-1">What are you throwing away?</h4>
+              <p className="text-sm text-muted-foreground">Select all that apply</p>
+            </div>
+
+            {catalogLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : (
+              <SmartMaterialsList
+                catalogItems={catalogItems}
+                selections={itemSelections}
+                onSelectionsChange={setItemSelections}
+              />
+            )}
+
+            <Button
+              variant="cta"
+              size="lg"
+              className="w-full h-14"
+              onClick={goNext}
+              disabled={!canGoNext}
+            >
+              Get Recommendation
+              <Sparkles className="w-5 h-5 ml-1" />
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleSkipSmartFlow}
+              className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
+            >
+              Skip and choose manually
+            </button>
+          </div>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 3: SIZE RECOMMENDATION */}
+        {/* ============================== */}
+        {step === 'recommend' && (
+          <div className="space-y-5">
+            <button onClick={goBack} className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5" /> Back
+            </button>
+
+            <SizeRecommendationView
+              recommendation={sizeRecommendation}
+              onAccept={handleAcceptRecommendation}
+              onChangeSize={handleChangeSize}
+              onEditItems={handleEditItems}
+            />
+          </div>
+        )}
+
+        {/* ============================== */}
+        {/* STEP: MATERIAL CATEGORY (Manual Flow) */}
         {/* ============================== */}
         {step === 'material' && (
           <div className="space-y-5">

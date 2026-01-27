@@ -2214,6 +2214,54 @@ export type Database = {
         }
         Relationships: []
       }
+      disposal_item_catalog: {
+        Row: {
+          created_at: string
+          default_material_code: string | null
+          display_name: string
+          display_order: number
+          forces_category: string | null
+          icon_name: string | null
+          id: string
+          is_active: boolean
+          item_code: string
+          item_group: string
+          updated_at: string
+          volume_points: number
+          weight_class: string
+        }
+        Insert: {
+          created_at?: string
+          default_material_code?: string | null
+          display_name: string
+          display_order?: number
+          forces_category?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean
+          item_code: string
+          item_group: string
+          updated_at?: string
+          volume_points?: number
+          weight_class?: string
+        }
+        Update: {
+          created_at?: string
+          default_material_code?: string | null
+          display_name?: string
+          display_order?: number
+          forces_category?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean
+          item_code?: string
+          item_group?: string
+          updated_at?: string
+          volume_points?: number
+          weight_class?: string
+        }
+        Relationships: []
+      }
       disposal_requests: {
         Row: {
           created_at: string
@@ -5809,6 +5857,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      quote_item_selections: {
+        Row: {
+          created_at: string
+          id: string
+          item_code: string
+          quantity_level: string
+          quote_id: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_code: string
+          quantity_level?: string
+          quote_id?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_code?: string
+          quantity_level?: string
+          quote_id?: string | null
+          session_id?: string
+        }
+        Relationships: []
       }
       quotes: {
         Row: {
