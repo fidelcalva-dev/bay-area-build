@@ -169,13 +169,13 @@ const handler = async (req: Request): Promise<Response> => {
       estimatedMin,
       estimatedMax,
       includedTons,
-      extras,
+      extras = [],
       language = 'en',
     } = data;
 
     const t = templates[language] || templates.en;
     const materialLabel = materialType === 'heavy' ? t.heavyMaterials : t.generalDebris;
-    const extrasText = extras.length > 0 ? extras.join(', ') : t.none;
+    const extrasText = (extras && extras.length > 0) ? extras.join(', ') : t.none;
     
     // Determine the correct overage message based on material type
     // CANONICAL: All general debris uses per-ton overage
