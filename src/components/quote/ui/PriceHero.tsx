@@ -1,10 +1,11 @@
 // ============================================================
 // PRICE HERO - Big centered price display with CTA
+// Includes pricing psychology optimizations
 // ============================================================
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Check, ChevronDown, Info, type LucideIcon } from 'lucide-react';
+import { Check, ChevronDown, MapPin, Shield, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface IncludedItem {
@@ -24,7 +25,17 @@ interface PriceHeroProps {
   includedItems?: IncludedItem[];
   whatsIncludedLabel?: string;
   className?: string;
+  // Pricing psychology props (Phase 3, 4, 7)
+  isRecommendedSize?: boolean;
+  isHeavyOrYard?: boolean;
 }
+
+// Trust signals for Phase 7
+const TRUST_SIGNALS = [
+  'Local yards · Transparent pricing',
+  'No hidden fees',
+  'Trusted by homeowners and contractors',
+];
 
 export function PriceHero({
   price,
@@ -38,8 +49,18 @@ export function PriceHero({
   includedItems = [],
   whatsIncludedLabel = "What's included?",
   className,
+  isRecommendedSize = true,
+  isHeavyOrYard = false,
 }: PriceHeroProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Phase 4: De-risking micro-copy
+  const deRiskingCopy = isHeavyOrYard
+    ? "We'll guide you if any adjustments are needed."
+    : "Exact pricing based on your ZIP and availability.";
+
+  // Phase 7: Rotate trust signals or pick one
+  const trustSignal = TRUST_SIGNALS[0];
 
   return (
     <div className={cn(
@@ -48,6 +69,20 @@ export function PriceHero({
     )}>
       {/* Price display */}
       <div className="p-6 text-center">
+        {/* Phase 3: Value badge above price */}
+        <div className="mb-2">
+          {isRecommendedSize ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
+              <Check className="w-3 h-3" />
+              Best value for your selection
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2.5 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-full">
+              Selected size
+            </span>
+          )}
+        </div>
+        
         <div className="text-sm text-muted-foreground mb-1">{priceLabel}</div>
         <div className="text-5xl font-bold text-foreground tracking-tight">
           ${price.toLocaleString()}
@@ -57,6 +92,11 @@ export function PriceHero({
             {subtitle}
           </div>
         )}
+        
+        {/* Phase 4: De-risking micro-copy */}
+        <div className="text-xs text-muted-foreground/80 mt-3">
+          {deRiskingCopy}
+        </div>
       </div>
 
       {/* What's included accordion */}
@@ -104,6 +144,12 @@ export function PriceHero({
             </>
           )}
         </Button>
+        
+        {/* Phase 7: Trust signal below CTA */}
+        <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground/70">
+          <Shield className="w-3 h-3" />
+          <span>{trustSignal}</span>
+        </div>
       </div>
     </div>
   );
