@@ -2,7 +2,7 @@
 // SIZE RECOMMENDATION VIEW
 // Shows the recommended size based on material selections
 // ============================================================
-import { CheckCircle, AlertTriangle, ArrowRight, Edit2, Lightbulb } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Edit2, Lightbulb, ThumbsUp, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
@@ -17,6 +17,16 @@ interface SizeRecommendationViewProps {
   className?: string;
 }
 
+// Confidence icon based on score
+function ConfidenceIndicator({ score }: { score: number }) {
+  if (score >= 85) {
+    return <ThumbsUp className="w-4 h-4 text-success" />;
+  } else if (score >= 70) {
+    return <Lightbulb className="w-4 h-4 text-primary" />;
+  }
+  return <HelpCircle className="w-4 h-4 text-muted-foreground" />;
+}
+
 export function SizeRecommendationView({
   recommendation,
   onAccept,
@@ -25,10 +35,11 @@ export function SizeRecommendationView({
   className,
 }: SizeRecommendationViewProps) {
   const {
-    category,
     recommendedSize,
     alternativeSizes,
     reasonShort,
+    confidenceMessage,
+    confidenceScore,
     isHeavy,
     forcesDebrisHeavy,
   } = recommendation;
@@ -87,9 +98,15 @@ export function SizeRecommendationView({
         </div>
       </div>
 
-      {/* Reason */}
+      {/* Confidence message */}
       <div className="p-3 rounded-xl bg-muted/50 border border-border">
-        <p className="text-sm text-muted-foreground text-center">
+        <div className="flex items-center gap-2 justify-center mb-1">
+          <ConfidenceIndicator score={confidenceScore} />
+          <p className="text-sm font-medium text-foreground">
+            {confidenceMessage}
+          </p>
+        </div>
+        <p className="text-xs text-muted-foreground text-center">
           {reasonShort}
         </p>
       </div>

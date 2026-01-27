@@ -1,5 +1,5 @@
 // ============================================================
-// SIZE RECOMMENDATION ENGINE
+// EAST BAY-TUNED SIZE RECOMMENDATION ENGINE
 // Determines category and recommends dumpster size based on selected items
 // ============================================================
 import { useMemo } from 'react';
@@ -12,9 +12,11 @@ export interface SizeRecommendation {
   recommendedSize: number;
   alternativeSizes: number[];
   reasonShort: string;
+  confidenceMessage: string;
+  confidenceScore: number; // 0-100
   volumeScore: number;
   isHeavy: boolean;
-  forcesDebrisHeavy: boolean; // Yard waste routes to debris heavy
+  forcesDebrisHeavy: boolean;
   allowGreenHalo: boolean;
 }
 
@@ -25,18 +27,18 @@ const QUANTITY_MULTIPLIERS: Record<string, number> = {
   LARGE: 1.4,
 };
 
-// Standard debris size mapping by volume score
-const DEBRIS_SIZE_MAP = [
-  { maxScore: 10, size: 10 },
-  { maxScore: 20, size: 20 },
-  { maxScore: 30, size: 30 },
-  { maxScore: Infinity, size: 40 },
-];
+// Items that trigger safety buffer additions
+const APPLIANCE_SHINGLE_CODES = ['APPLIANCES', 'ROOFING_SHINGLES'];
 
 // Heavy sizes (only 5-10 available)
 const HEAVY_SIZES = [5, 6, 8, 10];
 const DEBRIS_SIZES = [10, 20, 30, 40];
 const RECYCLING_SIZES = [10, 20, 30];
+
+// Heavy fallback order
+const HEAVY_FALLBACK_ORDER = [10, 8, 6, 5];
+// Debris fallback order
+const DEBRIS_FALLBACK_ORDER = [20, 10, 30, 40];
 
 export function calculateSizeRecommendation(
   selections: ItemSelection[],
@@ -49,6 +51,8 @@ export function calculateSizeRecommendation(
       recommendedSize: 20,
       alternativeSizes: [10, 30],
       reasonShort: 'Most customers choose 20 yard for general projects.',
+      confidenceMessage: 'This size fits most projects like yours.',
+      confidenceScore: 75,
       volumeScore: 0,
       isHeavy: false,
       forcesDebrisHeavy: false,
@@ -68,6 +72,8 @@ export function calculateSizeRecommendation(
   let hasYardWaste = false;
   let allRecycling = true;
   let hasCleanWoodOnly = true;
+  let hasHeavyWeightClass = false;
+  let hasAppliancesOrShingles = false;
 
   for (const selection of selections) {
     const item = itemMap.get(selection.itemCode);
@@ -75,6 +81,16 @@ export function calculateSizeRecommendation(
 
     const multiplier = QUANTITY_MULTIPLIERS[selection.quantity] || 1;
     volumeScore += item.volume_points * multiplier;
+
+    // Check weight class for safety buffer
+    if (item.weight_class === 'HEAVY') {
+      hasHeavyWeightClass = true;
+    }
+
+    // Check for appliances or shingles
+    if (APPLIANCE_SHINGLE_CODES.includes(item.item_code)) {
+      hasAppliancesOrShingles = true;
+    }
 
     // Check for forced categories
     if (item.forces_category === 'HEAVY_MATERIALS') {
@@ -95,6 +111,17 @@ export function calculateSizeRecommendation(
       hasCleanWoodOnly = false;
     }
   }
+
+  // Apply East Bay safety buffers
+  if (hasHeavyWeightClass) {
+    volumeScore *= 1.15;
+  }
+  if (hasAppliancesOrShingles) {
+    volumeScore += 2;
+  }
+
+  // Round volume score for cleaner logic
+  volumeScore = Math.round(volumeScore * 100) / 100;
 
   // Determine category priority:
   // 1. YARD_WASTE selected -> forces DEBRIS_HEAVY (no Green Halo)
@@ -123,72 +150,122 @@ export function calculateSizeRecommendation(
     category = 'GENERAL_DEBRIS';
   }
 
-  // Determine recommended size based on category
+  // Determine recommended size based on category and East Bay mapping
   let recommendedSize: number;
   let alternativeSizes: number[];
   let reasonShort: string;
+  let confidenceScore: number;
+  let confidenceMessage: string;
 
   if (isHeavy || forcesDebrisHeavy) {
-    // Heavy materials: only 5/6/8/10 available, recommend 10 unless small volume
-    if (volumeScore <= 4) {
+    // Heavy materials: only 5/6/8/10 available
+    // East Bay mapping: default 10, smaller based on score
+    if (volumeScore <= 3) {
+      recommendedSize = 5;
+      alternativeSizes = [6, 8];
+      confidenceScore = 70;
+    } else if (volumeScore <= 4) {
       recommendedSize = 6;
-      alternativeSizes = [8, 10];
-    } else if (volumeScore <= 7) {
+      alternativeSizes = [5, 8];
+      confidenceScore = 75;
+    } else if (volumeScore <= 6) {
       recommendedSize = 8;
       alternativeSizes = [6, 10];
+      confidenceScore = 80;
     } else {
       recommendedSize = 10;
       alternativeSizes = [8, 6];
+      confidenceScore = 90;
     }
+
     reasonShort = forcesDebrisHeavy
-      ? 'Yard waste requires heavy-rated sizes. We recommend 10 yard for most projects.'
-      : 'Heavy materials require smaller dumpsters for weight limits. 10 yard handles most jobs.';
+      ? 'Yard waste requires heavy-rated sizes due to soil content.'
+      : 'Heavy materials require smaller dumpsters for weight limits.';
+    
+    confidenceMessage = confidenceScore >= 85
+      ? 'Most customers with similar projects choose this size.'
+      : confidenceScore >= 70
+        ? 'This size fits most projects like yours.'
+        : 'You can adjust the size if you\'re unsure.';
+
   } else if (category === 'CLEAN_RECYCLING') {
     // Recycling: prefer 20, alternatives 10/30
     if (volumeScore <= 8) {
       recommendedSize = 10;
       alternativeSizes = [20];
-    } else if (volumeScore <= 18) {
+      confidenceScore = 80;
+    } else if (volumeScore <= 20) {
       recommendedSize = 20;
       alternativeSizes = [10, 30];
+      confidenceScore = 85;
     } else {
       recommendedSize = 30;
       alternativeSizes = [20];
+      confidenceScore = 75;
     }
-    reasonShort = 'Clean recyclable materials work great in standard sizes.';
-  } else {
-    // Standard debris: map by volume score
-    const mapping = DEBRIS_SIZE_MAP.find(m => volumeScore <= m.maxScore);
-    recommendedSize = mapping?.size || 20;
     
-    // Build alternatives
-    const idx = DEBRIS_SIZES.indexOf(recommendedSize);
-    alternativeSizes = DEBRIS_SIZES.filter((_, i) => Math.abs(i - idx) === 1);
+    reasonShort = 'Clean recyclable materials work great in standard sizes.';
+    confidenceMessage = confidenceScore >= 85
+      ? 'Most customers with similar projects choose this size.'
+      : 'This size fits most projects like yours.';
+
+  } else {
+    // Standard debris: East Bay mapping
+    if (volumeScore <= 10) {
+      recommendedSize = 10;
+      alternativeSizes = [20];
+      confidenceScore = 75;
+    } else if (volumeScore <= 20) {
+      recommendedSize = 20;
+      alternativeSizes = [10, 30];
+      confidenceScore = 90;
+    } else if (volumeScore <= 30) {
+      recommendedSize = 30;
+      alternativeSizes = [20, 40];
+      confidenceScore = 85;
+    } else {
+      recommendedSize = 40;
+      alternativeSizes = [30];
+      confidenceScore = 80;
+    }
     
     reasonShort = 'Based on your selections, this size fits most projects like yours.';
+    confidenceMessage = confidenceScore >= 85
+      ? 'Most customers with similar projects choose this size.'
+      : confidenceScore >= 70
+        ? 'This size fits most projects like yours.'
+        : 'You can adjust the size if you\'re unsure.';
   }
 
-  // Apply market availability filter if provided
+  // Apply market availability filter
   if (marketAvailableSizes && marketAvailableSizes.length > 0) {
-    const validSizes = isHeavy ? HEAVY_SIZES : DEBRIS_SIZES;
+    const validSizes = isHeavy ? HEAVY_SIZES : (category === 'CLEAN_RECYCLING' ? RECYCLING_SIZES : DEBRIS_SIZES);
     const availableSizes = validSizes.filter(s => marketAvailableSizes.includes(s));
     
     if (!availableSizes.includes(recommendedSize)) {
-      // Find closest available size (prefer larger)
-      const sorted = [...availableSizes].sort((a, b) => 
-        Math.abs(a - recommendedSize) - Math.abs(b - recommendedSize)
-      );
-      recommendedSize = sorted[0] || recommendedSize;
+      // Use fallback order based on category
+      const fallbackOrder = isHeavy ? HEAVY_FALLBACK_ORDER : DEBRIS_FALLBACK_ORDER;
+      const fallback = fallbackOrder.find(s => availableSizes.includes(s));
+      recommendedSize = fallback || recommendedSize;
+      
+      // Lower confidence when we had to fallback
+      confidenceScore = Math.max(confidenceScore - 10, 60);
+      confidenceMessage = 'This size fits most projects like yours.';
     }
     
-    alternativeSizes = alternativeSizes.filter(s => availableSizes.includes(s));
+    alternativeSizes = alternativeSizes.filter(s => availableSizes.includes(s) && s !== recommendedSize);
   }
+
+  // Ensure we have at most 2 alternatives
+  alternativeSizes = alternativeSizes.slice(0, 2);
 
   return {
     category,
     recommendedSize,
     alternativeSizes,
     reasonShort,
+    confidenceMessage,
+    confidenceScore,
     volumeScore,
     isHeavy,
     forcesDebrisHeavy,
