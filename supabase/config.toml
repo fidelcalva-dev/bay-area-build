@@ -65,3 +65,21 @@ verify_jwt = false
 
 [functions.quote-ai-recommend]
 verify_jwt = false
+
+[functions.google-oauth-start]
+verify_jwt = false
+
+[functions.google-oauth-callback]
+verify_jwt = false
+
+[functions.google-send-email]
+verify_jwt = false
+
+[functions.google-create-meet]
+verify_jwt = false
+
+[functions.google-drive-folder]
+verify_jwt = false
+
+[functions.google-chat-webhook]
+verify_jwt = false
