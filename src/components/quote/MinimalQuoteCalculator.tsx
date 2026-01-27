@@ -26,6 +26,7 @@ import { usePricingData, calculateIncludedTons } from './hooks/usePricingData';
 import { useDistanceCalculation } from './hooks/useDistanceCalculation';
 import { useDisposalItemCatalog, type ItemSelection } from './hooks/useDisposalItemCatalog';
 import { useSizeRecommendation } from './hooks/useSizeRecommendation';
+import { useQuoteAIRecommendation } from './hooks/useQuoteAIRecommendation';
 import { PRICING_ZONES } from './constants';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
@@ -150,7 +151,7 @@ export function MinimalQuoteCalculator() {
   // Fetch disposal item catalog
   const { data: catalogItems = [], isLoading: catalogLoading } = useDisposalItemCatalog();
   
-  // Size recommendation based on selected items
+  // Size recommendation based on selected items (local fallback)
   const sizeRecommendation = useSizeRecommendation(itemSelections, catalogItems);
 
   // Auto-detect ZIP
@@ -240,6 +241,22 @@ export function MinimalQuoteCalculator() {
   const isRecycling = sizeRecommendation.allowGreenHalo;
   const showNoticeStep = isHeavy || isYardWaste || isRecycling;
   const materialTypeForPricing = isHeavy || sizeRecommendation.isHeavy ? 'heavy' : 'general';
+
+  // AI Recommendation hook - after derived state
+  const aiRecommendation = useQuoteAIRecommendation({
+    zip,
+    marketCode: zoneResult?.zoneName || null,
+    yardId: distanceCalc.distance?.yard?.id || null,
+    availableSizes: isHeavy ? [5, 6, 8, 10] : [10, 20, 30, 40],
+    customerType: 'homeowner',
+  });
+
+  // Fetch AI recommendation when transitioning to recommend step
+  useEffect(() => {
+    if (step === 'recommend' && itemSelections.length > 0) {
+      aiRecommendation.fetchRecommendation(itemSelections);
+    }
+  }, [step, itemSelections]);
 
   // Auto-adjust size for heavy materials
   useEffect(() => {
@@ -628,6 +645,8 @@ export function MinimalQuoteCalculator() {
 
             <SizeRecommendationView
               recommendation={sizeRecommendation}
+              aiRecommendation={aiRecommendation.recommendation}
+              aiLoading={aiRecommendation.isLoading}
               onAccept={handleAcceptRecommendation}
               onChangeSize={handleChangeSize}
               onEditItems={handleEditItems}

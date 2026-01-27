@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.lead-manual-add]
 verify_jwt = false
+
+[functions.quote-ai-recommend]
+verify_jwt = false
