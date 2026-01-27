@@ -27,15 +27,26 @@ function validateTwilioSignature(
   return signature === expectedSig;
 }
 
-// Detect call source based on forwarding indicators
-function detectCallSource(formData: FormData): string {
+// Detect call source and extract forwarding metadata
+function detectCallSource(formData: FormData): { source: string; metadata: Record<string, any> } {
   const forwardedFrom = formData.get('ForwardedFrom') as string;
   const sipHeader = formData.get('SipHeader_X-Forwarded-From') as string;
+  const calledVia = formData.get('CalledVia') as string;
+  const to = formData.get('To') as string;
   
   if (forwardedFrom || sipHeader) {
-    return 'GHL_FORWARD';
+    return {
+      source: 'GHL_FORWARD',
+      metadata: {
+        original_did: forwardedFrom || sipHeader,
+        forwarded_to: to,
+        forwarding_method: calledVia ? 'DUAL_RING' : 'FORWARD',
+        detected_at: new Date().toISOString()
+      }
+    };
   }
-  return 'NATIVE';
+  
+  return { source: 'NATIVE', metadata: {} };
 }
 
 Deno.serve(async (req) => {
@@ -57,10 +68,10 @@ Deno.serve(async (req) => {
     const callStatus = formData.get('CallStatus') as string;
     const callerName = formData.get('CallerName') as string || '';
 
-    // Detect call source (GHL forward vs native)
-    const callSource = detectCallSource(formData);
+    // Detect call source and metadata (GHL forward vs native)
+    const { source: callSource, metadata: forwardingMetadata } = detectCallSource(formData);
 
-    console.log('Inbound call received:', { callSid, from, to, callStatus, callSource });
+    console.log('Inbound call received:', { callSid, from, to, callStatus, callSource, forwardingMetadata });
 
     // Optional: Validate Twilio signature in production
     const twilioSignature = req.headers.get('x-twilio-signature');
@@ -115,7 +126,7 @@ Deno.serve(async (req) => {
       p_purpose: phoneNumber.purpose
     });
 
-    // Create call event record with source tracking
+    // Create call event record with source tracking and metadata
     const { data: callEvent, error: callError } = await supabase
       .from('call_events')
       .insert({
@@ -129,6 +140,9 @@ Deno.serve(async (req) => {
         call_status: 'RINGING',
         caller_name: callerName || contact?.full_name || null,
         call_source: callSource,
+        notes: callSource === 'GHL_FORWARD' 
+          ? `Forwarded from GHL: ${forwardingMetadata.original_did || 'unknown'}` 
+          : null,
       })
       .select('id')
       .single();

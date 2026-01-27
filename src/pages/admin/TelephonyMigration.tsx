@@ -37,6 +37,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneDisplay } from '@/lib/phoneUtils';
+import { MigrationWizard } from '@/components/telephony/MigrationWizard';
 
 interface TelephonyMigration {
   id: string;
@@ -320,13 +321,23 @@ export default function TelephonyMigration() {
         </Dialog>
       </div>
 
-      <Tabs defaultValue="worksheet">
+      <Tabs defaultValue="wizard">
         <TabsList>
+          <TabsTrigger value="wizard">Wizard</TabsTrigger>
           <TabsTrigger value="worksheet">Migration Worksheet</TabsTrigger>
           <TabsTrigger value="cutover">Cutover Instructions</TabsTrigger>
           <TabsTrigger value="webhooks">Webhook URLs</TabsTrigger>
           <TabsTrigger value="rollback">Rollback Plan</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="wizard" className="space-y-4">
+          <MigrationWizard 
+            webhookBaseUrl={webhookBase} 
+            onComplete={() => {
+              toast({ title: 'Migration Marked Complete', description: 'Remember to update status in worksheet' });
+            }}
+          />
+        </TabsContent>
 
         <TabsContent value="worksheet" className="space-y-4">
           <Card>
