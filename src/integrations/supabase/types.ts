@@ -2223,6 +2223,8 @@ export type Database = {
           is_active: boolean
           notes: string | null
           phone: string | null
+          sms_opt_out: boolean | null
+          sms_opt_out_at: string | null
           updated_at: string
           user_id: string
         }
@@ -2237,6 +2239,8 @@ export type Database = {
           is_active?: boolean
           notes?: string | null
           phone?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -2251,6 +2255,8 @@ export type Database = {
           is_active?: boolean
           notes?: string | null
           phone?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -4607,8 +4613,12 @@ export type Database = {
           entity_type: string | null
           error_message: string | null
           id: string
+          last_attempt_at: string | null
+          max_attempts: number | null
           mode: string | null
           payload: Json | null
+          provider: string | null
+          provider_message_id: string | null
           retry_count: number | null
           scheduled_for: string | null
           sent_at: string | null
@@ -4627,8 +4637,12 @@ export type Database = {
           entity_type?: string | null
           error_message?: string | null
           id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
           mode?: string | null
           payload?: Json | null
+          provider?: string | null
+          provider_message_id?: string | null
           retry_count?: number | null
           scheduled_for?: string | null
           sent_at?: string | null
@@ -4647,8 +4661,12 @@ export type Database = {
           entity_type?: string | null
           error_message?: string | null
           id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
           mode?: string | null
           payload?: Json | null
+          provider?: string | null
+          provider_message_id?: string | null
           retry_count?: number | null
           scheduled_for?: string | null
           sent_at?: string | null
@@ -8788,6 +8806,7 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: boolean
       }
+      check_sms_rate_limit: { Args: { p_phone: string }; Returns: boolean }
       claim_next_ai_job: {
         Args: { p_worker_id: string }
         Returns: {
@@ -8838,6 +8857,19 @@ export type Database = {
           p_payload?: Json
           p_priority?: number
           p_scheduled_for?: string
+        }
+        Returns: string
+      }
+      enqueue_ghl_message: {
+        Args: {
+          p_channel: string
+          p_contact_id?: string
+          p_entity_id?: string
+          p_entity_type?: string
+          p_scheduled_for?: string
+          p_template_key: string
+          p_to_address: string
+          p_variables?: Json
         }
         Returns: string
       }

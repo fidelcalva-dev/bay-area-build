@@ -83,3 +83,12 @@ verify_jwt = false
 
 [functions.google-chat-webhook]
 verify_jwt = false
+
+[functions.ghl-send-message]
+verify_jwt = false
+
+[functions.ghl-message-worker]
+verify_jwt = false
+
+[functions.ghl-inbound-webhook]
+verify_jwt = false
