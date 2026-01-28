@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getValidAccessToken, checkGoogleMode } from "../_shared/google-auth.ts";
+import { getValidAccessToken, checkSubMode } from "../_shared/google-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -65,7 +65,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const mode = await checkGoogleMode(supabaseAdmin);
+    const driveMode = await checkSubMode(supabaseAdmin, 'drive_mode');
 
     // Check if folder already exists for entity
     const { data: existingLink } = await supabaseAdmin
@@ -98,7 +98,7 @@ serve(async (req) => {
 
     const requestPayload = { folderName, parentFolderId, entityType, entityId };
 
-    if (mode === 'DRY_RUN') {
+    if (driveMode === 'OFF' || driveMode === 'DRY_RUN') {
       // Log but don't create
       await supabaseAdmin.rpc('log_google_event', {
         p_user_id: userId,
@@ -106,17 +106,17 @@ serve(async (req) => {
         p_entity_type: entityType,
         p_entity_id: entityId,
         p_request_json: requestPayload,
-        p_status: 'DRY_RUN',
+        p_status: driveMode === 'OFF' ? 'SKIPPED' : 'DRY_RUN',
         p_duration_ms: Date.now() - startTime,
       });
 
-      console.log('[DRY_RUN] Would create folder:', folderName);
+      console.log(`[${driveMode}] Would create folder:`, folderName);
 
       return new Response(
         JSON.stringify({ 
           success: true, 
-          mode: 'DRY_RUN',
-          message: 'Folder would be created (DRY_RUN mode)',
+          mode: driveMode,
+          message: `Folder would be created (${driveMode} mode)`,
           wouldCreate: { folderName, parentFolderId }
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

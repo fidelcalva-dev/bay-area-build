@@ -224,3 +224,65 @@ export async function checkGoogleMode(
   const mode = configData?.value ? JSON.parse(configData.value) : 'DRY_RUN';
   return mode;
 }
+
+// deno-lint-ignore no-explicit-any
+export async function checkSubMode(
+  supabase: SupabaseClient<any>,
+  subKey: 'gmail_mode' | 'meet_mode' | 'chat_mode' | 'drive_mode'
+): Promise<'DRY_RUN' | 'LIVE' | 'OFF'> {
+  const { data } = await supabase
+    .from('config_settings')
+    .select('value')
+    .eq('key', `google.${subKey}`)
+    .single();
+  
+  interface ConfigData { value?: string }
+  const configData = data as ConfigData | null;
+  const mode = configData?.value ? JSON.parse(configData.value) : 'DRY_RUN';
+  return mode;
+}
+
+// deno-lint-ignore no-explicit-any
+export async function checkRoleAllowed(
+  supabase: SupabaseClient<any>,
+  userId: string,
+  configKey: 'gmail_live_roles' | 'meet_live_roles'
+): Promise<boolean> {
+  // Get allowed roles from config
+  const { data: configData } = await supabase
+    .from('config_settings')
+    .select('value')
+    .eq('key', `google.${configKey}`)
+    .single();
+  
+  const allowedRoles: string[] = configData?.value ? JSON.parse(configData.value) : ['sales'];
+  
+  // Get user's roles
+  const { data: userRoles } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId);
+  
+  if (!userRoles || userRoles.length === 0) return false;
+  
+  const userRoleNames = userRoles.map((r: { role: string }) => r.role);
+  return allowedRoles.some((role: string) => userRoleNames.includes(role));
+}
+
+// deno-lint-ignore no-explicit-any
+export async function getAllowedDomains(
+  supabase: SupabaseClient<any>
+): Promise<string[]> {
+  const { data } = await supabase
+    .from('config_settings')
+    .select('value')
+    .eq('key', 'google.allowed_domains')
+    .single();
+  
+  if (!data?.value) return [];
+  try {
+    return JSON.parse(data.value);
+  } catch {
+    return [];
+  }
+}

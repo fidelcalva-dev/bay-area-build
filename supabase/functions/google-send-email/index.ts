@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getValidAccessToken, checkGoogleMode } from "../_shared/google-auth.ts";
+import { getValidAccessToken, checkSubMode, checkRoleAllowed } from "../_shared/google-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -100,8 +100,11 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const mode = await checkGoogleMode(supabaseAdmin);
-
+    // Check gmail-specific mode
+    const gmailMode = await checkSubMode(supabaseAdmin, 'gmail_mode');
+    
+    // Check if user role is allowed for LIVE mode
+    const isRoleAllowed = await checkRoleAllowed(supabaseAdmin, userId, 'gmail_live_roles');
     // Get valid access token
     const tokenData = await getValidAccessToken(supabaseAdmin, userId);
     if (!tokenData) {
@@ -113,8 +116,15 @@ serve(async (req) => {
 
     const requestPayload = { to, subject, bodyType, entityType, entityId, cc, bcc };
 
-    if (mode === 'DRY_RUN') {
-      // Log but don't send
+    // Check if we should actually send: must be LIVE mode AND role allowed
+    const shouldSend = gmailMode === 'LIVE' && isRoleAllowed;
+
+    if (!shouldSend) {
+      // Log as DRY_RUN
+      const reason = gmailMode !== 'LIVE' 
+        ? 'gmail_mode is DRY_RUN' 
+        : 'User role not in gmail_live_roles';
+      
       await supabaseAdmin.rpc('log_google_event', {
         p_user_id: userId,
         p_action_type: 'SEND_EMAIL',
@@ -125,12 +135,13 @@ serve(async (req) => {
         p_duration_ms: Date.now() - startTime,
       });
 
-      console.log('[DRY_RUN] Would send email:', { to, subject, from: tokenData.googleEmail });
+      console.log('[DRY_RUN] Would send email:', { to, subject, from: tokenData.googleEmail, reason });
 
       return new Response(
         JSON.stringify({ 
           success: true, 
           mode: 'DRY_RUN',
+          reason,
           message: 'Email would be sent (DRY_RUN mode)',
           wouldSend: { from: tokenData.googleEmail, to, subject }
         }),
