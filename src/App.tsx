@@ -78,6 +78,8 @@ const OrdersManager = lazy(() => import("./pages/admin/OrdersManager"));
 const CustomersManager = lazy(() => import("./pages/admin/CustomersManager"));
 const AuditLogsPage = lazy(() => import("./pages/admin/AuditLogsPage"));
 const AdminGoogleSettings = lazy(() => import("./pages/admin/AdminGoogleSettings"));
+const AdminGoogleSetup = lazy(() => import("./pages/admin/AdminGoogleSetup"));
+const AdminGoogleLogs = lazy(() => import("./pages/admin/AdminGoogleLogs"));
 const TollSurchargesManager = lazy(() => import("./pages/admin/TollSurchargesManager"));
 const CityRatesManager = lazy(() => import("./pages/admin/CityRatesManager"));
 const DriversManager = lazy(() => import("./pages/admin/DriversManager"));
@@ -384,6 +386,12 @@ const App = () => (
                 } />
                 <Route path="google" element={
                   <Suspense fallback={<PageLoader />}><AdminGoogleSettings /></Suspense>
+                } />
+                <Route path="google/setup" element={
+                  <Suspense fallback={<PageLoader />}><AdminGoogleSetup /></Suspense>
+                } />
+                <Route path="google/logs" element={
+                  <Suspense fallback={<PageLoader />}><AdminGoogleLogs /></Suspense>
                 } />
                 <Route path="toll-surcharges" element={
                   <Suspense fallback={<PageLoader />}><TollSurchargesManager /></Suspense>

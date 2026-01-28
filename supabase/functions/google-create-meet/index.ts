@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getValidAccessToken, checkGoogleMode } from "../_shared/google-auth.ts";
+import { getValidAccessToken, checkSubMode, checkRoleAllowed } from "../_shared/google-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -68,8 +68,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const mode = await checkGoogleMode(supabaseAdmin);
-
+    const meetMode = await checkSubMode(supabaseAdmin, 'meet_mode');
+    
+    // Check if user role is allowed for LIVE mode
+    const isRoleAllowed = await checkRoleAllowed(supabaseAdmin, userId, 'meet_live_roles');
     // Get valid access token
     const tokenData = await getValidAccessToken(supabaseAdmin, userId);
     if (!tokenData) {
@@ -81,7 +83,14 @@ serve(async (req) => {
 
     const requestPayload = { title, description, startTime: meetStart, endTime: meetEnd, attendees, entityType, entityId };
 
-    if (mode === 'DRY_RUN') {
+    // Check if we should actually create: must be LIVE mode AND role allowed
+    const shouldCreate = meetMode === 'LIVE' && isRoleAllowed;
+
+    if (!shouldCreate) {
+      const reason = meetMode !== 'LIVE' 
+        ? 'meet_mode is DRY_RUN' 
+        : 'User role not in meet_live_roles';
+      
       // Log but don't create
       await supabaseAdmin.rpc('log_google_event', {
         p_user_id: userId,
@@ -93,12 +102,13 @@ serve(async (req) => {
         p_duration_ms: Date.now() - startTime,
       });
 
-      console.log('[DRY_RUN] Would create Meet:', { title, startTime: meetStart });
+      console.log('[DRY_RUN] Would create Meet:', { title, startTime: meetStart, reason });
 
       return new Response(
         JSON.stringify({ 
           success: true, 
           mode: 'DRY_RUN',
+          reason,
           message: 'Meet would be created (DRY_RUN mode)',
           wouldCreate: { title, startTime: meetStart, endTime: meetEnd }
         }),

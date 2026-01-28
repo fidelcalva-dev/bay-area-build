@@ -3251,6 +3251,36 @@ export type Database = {
         }
         Relationships: []
       }
+      google_preflight_checks: {
+        Row: {
+          check_name: string
+          check_type: string
+          checked_at: string | null
+          checked_by: string | null
+          details: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          check_name: string
+          check_type: string
+          checked_at?: string | null
+          checked_by?: string | null
+          details?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          check_name?: string
+          check_type?: string
+          checked_at?: string | null
+          checked_by?: string | null
+          details?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       heavy_material_profiles: {
         Row: {
           created_at: string
