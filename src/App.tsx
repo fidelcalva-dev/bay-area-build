@@ -99,6 +99,7 @@ const HeavyRiskDashboard = lazy(() => import("./pages/admin/HeavyRiskDashboard")
 const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
 const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage"));
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
+const CompensationPage = lazy(() => import("./pages/admin/CompensationPage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
 const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
@@ -447,6 +448,9 @@ const App = () => (
                 } />
                 <Route path="approval-queue" element={
                   <Suspense fallback={<PageLoader />}><ApprovalQueuePage /></Suspense>
+                } />
+                <Route path="compensation" element={
+                  <Suspense fallback={<PageLoader />}><CompensationPage /></Suspense>
                 } />
                 <Route path="config/health" element={
                   <Suspense fallback={<PageLoader />}><ConfigHealthPage /></Suspense>

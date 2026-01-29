@@ -82,6 +82,7 @@ const navSections = [
     items: [
       { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
       { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
+      { path: '/admin/compensation', label: 'Compensation', icon: DollarSign },
     ],
   },
   {
