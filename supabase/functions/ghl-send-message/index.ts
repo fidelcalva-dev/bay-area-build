@@ -176,7 +176,8 @@ async function sendSmsViaGHL(to: string, body: string): Promise<{ success: boole
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          body: `SMS sent: ${body}`,
+          // Format for GHL Workflow trigger: SEND_SMS|message content
+          body: `SEND_SMS|${body}`,
         }),
       });
       
