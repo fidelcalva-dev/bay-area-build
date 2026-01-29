@@ -1652,6 +1652,302 @@ export type Database = {
           },
         ]
       }
+      compensation_adjustments: {
+        Row: {
+          adjustment_type: Database["public"]["Enums"]["adjustment_type"]
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          period: string
+          reason: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          status: Database["public"]["Enums"]["earning_status"]
+          user_id: string
+        }
+        Insert: {
+          adjustment_type: Database["public"]["Enums"]["adjustment_type"]
+          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          period: string
+          reason: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          status?: Database["public"]["Enums"]["earning_status"]
+          user_id: string
+        }
+        Update: {
+          adjustment_type?: Database["public"]["Enums"]["adjustment_type"]
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          period?: string
+          reason?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          status?: Database["public"]["Enums"]["earning_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      compensation_audit_log: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string
+          details_json: Json | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: string | null
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          details_json?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          details_json?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
+      compensation_earnings: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          calculation_details: Json | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          gross_amount: number
+          id: string
+          paid_at: string | null
+          payout_amount: number
+          period: string
+          plan_id: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          rule_id: string | null
+          status: Database["public"]["Enums"]["earning_status"]
+          updated_at: string
+          user_id: string
+          void_reason: string | null
+          voided_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculation_details?: Json | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          gross_amount: number
+          id?: string
+          paid_at?: string | null
+          payout_amount: number
+          period: string
+          plan_id?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          rule_id?: string | null
+          status?: Database["public"]["Enums"]["earning_status"]
+          updated_at?: string
+          user_id: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          calculation_details?: Json | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          gross_amount?: number
+          id?: string
+          paid_at?: string | null
+          payout_amount?: number
+          period?: string
+          plan_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          rule_id?: string | null
+          status?: Database["public"]["Enums"]["earning_status"]
+          updated_at?: string
+          user_id?: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compensation_earnings_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "compensation_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compensation_earnings_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "compensation_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compensation_periods: {
+        Row: {
+          closed_at: string | null
+          closed_by: string | null
+          created_at: string
+          id: string
+          period: string
+          period_end: string
+          period_start: string
+          status: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          period: string
+          period_end: string
+          period_start: string
+          status?: string
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          period?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      compensation_plans: {
+        Row: {
+          commission_type: Database["public"]["Enums"]["commission_type"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          effective_from: string
+          effective_to: string | null
+          id: string
+          is_active: boolean
+          plan_name: string
+          role: Database["public"]["Enums"]["app_role"]
+          rules_json: Json
+          updated_at: string
+        }
+        Insert: {
+          commission_type?: Database["public"]["Enums"]["commission_type"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          plan_name: string
+          role: Database["public"]["Enums"]["app_role"]
+          rules_json?: Json
+          updated_at?: string
+        }
+        Update: {
+          commission_type?: Database["public"]["Enums"]["commission_type"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          plan_name?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          rules_json?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      compensation_rules: {
+        Row: {
+          condition_json: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          payout_formula_json: Json
+          plan_id: string
+          priority: number
+          rule_name: string
+          trigger_event: Database["public"]["Enums"]["compensation_trigger"]
+          updated_at: string
+        }
+        Insert: {
+          condition_json?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          payout_formula_json?: Json
+          plan_id: string
+          priority?: number
+          rule_name: string
+          trigger_event: Database["public"]["Enums"]["compensation_trigger"]
+          updated_at?: string
+        }
+        Update: {
+          condition_json?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          payout_formula_json?: Json
+          plan_id?: string
+          priority?: number
+          rule_name?: string
+          trigger_event?: Database["public"]["Enums"]["compensation_trigger"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compensation_rules_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "compensation_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config_pending_changes: {
         Row: {
           created_at: string
@@ -8008,6 +8304,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_compensation_summary: {
+        Row: {
+          approved_amount: number
+          id: string
+          paid_amount: number
+          pending_amount: number
+          period: string
+          total_adjustments: number
+          total_earnings: number
+          updated_at: string
+          user_id: string
+          voided_amount: number
+        }
+        Insert: {
+          approved_amount?: number
+          id?: string
+          paid_amount?: number
+          pending_amount?: number
+          period: string
+          total_adjustments?: number
+          total_earnings?: number
+          updated_at?: string
+          user_id: string
+          voided_amount?: number
+        }
+        Update: {
+          approved_amount?: number
+          id?: string
+          paid_amount?: number
+          pending_amount?: number
+          period?: string
+          total_adjustments?: number
+          total_earnings?: number
+          updated_at?: string
+          user_id?: string
+          voided_amount?: number
+        }
+        Relationships: []
+      }
       user_help_acknowledgements: {
         Row: {
           acknowledged_at: string
@@ -8776,6 +9111,10 @@ export type Database = {
         Args: { p_actual_weight_tons: number; p_order_id: string }
         Returns: boolean
       }
+      approve_compensation_earning: {
+        Args: { p_earning_id: string }
+        Returns: boolean
+      }
       auto_assign_lead: { Args: { p_lead_id: string }; Returns: string }
       capture_omnichannel_lead: {
         Args: {
@@ -8820,6 +9159,20 @@ export type Database = {
       complete_ai_job: {
         Args: { p_error?: string; p_job_id: string; p_success: boolean }
         Returns: undefined
+      }
+      create_compensation_earning: {
+        Args: {
+          p_calculation_details?: Json
+          p_entity_id: string
+          p_entity_type: string
+          p_gross_amount: number
+          p_payout_amount: number
+          p_plan_id: string
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_rule_id: string
+          p_user_id: string
+        }
+        Returns: string
       }
       create_or_update_lead: {
         Args: {
@@ -8907,6 +9260,7 @@ export type Database = {
         Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
         Returns: string
       }
+      get_current_compensation_period: { Args: never; Returns: string }
       get_google_connection: {
         Args: { p_user_id: string }
         Returns: {
@@ -8952,6 +9306,18 @@ export type Database = {
           p_status?: Database["public"]["Enums"]["call_status"]
           p_to: string
           p_twilio_sid: string
+        }
+        Returns: string
+      }
+      log_compensation_audit: {
+        Args: {
+          p_action: string
+          p_after_data?: Json
+          p_before_data?: Json
+          p_details?: Json
+          p_entity_id?: string
+          p_entity_type?: string
+          p_target_user_id: string
         }
         Returns: string
       }
@@ -9003,6 +9369,10 @@ export type Database = {
         Args: { p_lead_id: string; p_notes?: string; p_status: string }
         Returns: boolean
       }
+      update_user_compensation_summary: {
+        Args: { p_period: string; p_user_id: string }
+        Returns: undefined
+      }
       upsert_entity_google_link: {
         Args: {
           p_chat_space_id?: string
@@ -9017,8 +9387,13 @@ export type Database = {
         }
         Returns: string
       }
+      void_compensation_earning: {
+        Args: { p_entity_id: string; p_entity_type: string; p_reason: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      adjustment_type: "BONUS" | "PENALTY" | "CREDIT" | "CLAWBACK"
       app_role:
         | "admin"
         | "moderator"
@@ -9049,13 +9424,21 @@ export type Database = {
         | "COMPLETED"
         | "FAILED"
       checkpoint_type: "PICKUP_POD" | "DELIVERY_POD" | "DUMP_TICKET"
+      commission_type: "PERCENTAGE" | "FLAT" | "TIERED" | "KPI_BASED"
       commitment_type: "prepaid" | "contracted"
+      compensation_trigger:
+        | "PAYMENT_CAPTURED"
+        | "ORDER_COMPLETED"
+        | "RUN_COMPLETED"
+        | "KPI_PERIOD_END"
+        | "MANUAL"
       contract_status: "pending" | "signed" | "declined" | "expired"
       contract_type: "msa" | "addendum"
       doc_key_type:
         | "NON_NEGOTIABLE_RULES"
         | "CEO_WEEKLY_CHECKLIST"
         | "PLAYBOOK_EXCEPTIONS"
+      earning_status: "PENDING" | "APPROVED" | "PAID" | "VOIDED"
       filled_location: "customer" | "yard" | "truck"
       google_action_type:
         | "SEND_EMAIL"
@@ -9253,6 +9636,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      adjustment_type: ["BONUS", "PENALTY", "CREDIT", "CLAWBACK"],
       app_role: [
         "admin",
         "moderator",
@@ -9285,7 +9669,15 @@ export const Constants = {
         "FAILED",
       ],
       checkpoint_type: ["PICKUP_POD", "DELIVERY_POD", "DUMP_TICKET"],
+      commission_type: ["PERCENTAGE", "FLAT", "TIERED", "KPI_BASED"],
       commitment_type: ["prepaid", "contracted"],
+      compensation_trigger: [
+        "PAYMENT_CAPTURED",
+        "ORDER_COMPLETED",
+        "RUN_COMPLETED",
+        "KPI_PERIOD_END",
+        "MANUAL",
+      ],
       contract_status: ["pending", "signed", "declined", "expired"],
       contract_type: ["msa", "addendum"],
       doc_key_type: [
@@ -9293,6 +9685,7 @@ export const Constants = {
         "CEO_WEEKLY_CHECKLIST",
         "PLAYBOOK_EXCEPTIONS",
       ],
+      earning_status: ["PENDING", "APPROVED", "PAID", "VOIDED"],
       filled_location: ["customer", "yard", "truck"],
       google_action_type: [
         "SEND_EMAIL",
