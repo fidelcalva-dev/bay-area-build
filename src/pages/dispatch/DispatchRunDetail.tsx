@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { 
   Loader2, ArrowLeft, Truck, Package, Construction, RefreshCw,
   User, Calendar, Clock, MapPin, Phone, Camera, FileText, CheckCircle2,
-  AlertTriangle, Upload
+  AlertTriangle, Upload, Timer
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,8 @@ import {
   RUN_STATUS_FLOW,
   RUN_TYPE_CONFIG,
 } from "@/lib/runsService";
+import { OperationalTimeBadge } from "@/components/operations/OperationalTimeBadge";
+import type { ServiceType, MaterialCategory } from "@/types/operationalTime";
 
 const RUN_TYPE_ICONS: Record<RunType, React.ReactNode> = {
   DELIVERY: <Truck className="w-5 h-5" />,
@@ -200,9 +203,20 @@ export default function DispatchRunDetail() {
             </div>
           </div>
         </div>
-        <Badge className={cn("text-sm py-1 px-3", statusConfig.color)}>
-          {run.status}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {run.origin_yard?.id && (
+            <OperationalTimeBadge
+              yardId={run.origin_yard.id}
+              destinationAddress={run.destination_address || undefined}
+              serviceType={run.run_type as ServiceType}
+              materialCategory="DEBRIS"
+              autoCalculate={true}
+            />
+          )}
+          <Badge className={cn("text-sm py-1 px-3", statusConfig.color)}>
+            {run.status}
+          </Badge>
+        </div>
       </div>
       
       {/* Action Button */}

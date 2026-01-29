@@ -92,3 +92,6 @@ verify_jwt = false
 
 [functions.ghl-inbound-webhook]
 verify_jwt = false
+
+[functions.calculate-operational-time]
+verify_jwt = false

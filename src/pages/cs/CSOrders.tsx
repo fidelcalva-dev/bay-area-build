@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Loader2, Search, CheckCircle2, Phone, MessageSquare, MapPin, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Loader2, Search, CheckCircle2, Phone, MessageSquare, MapPin, Calendar, Clock, AlertCircle, Timer } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,9 +26,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { format } from 'date-fns';
 import { ScheduleConfirmationDialog } from '@/components/cs/ScheduleConfirmationDialog';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
+import { OperationalTimeCalculator } from '@/components/operations/OperationalTimeCalculator';
+import type { MaterialCategory } from '@/types/operationalTime';
 
 interface Order {
   id: string;
@@ -38,11 +41,14 @@ interface Order {
   scheduled_pickup_date: string | null;
   scheduled_pickup_window: string | null;
   created_at: string;
+  assigned_yard_id: string | null;
   quotes?: {
     customer_name: string | null;
     customer_phone: string | null;
     customer_email: string | null;
     delivery_address: string | null;
+    delivery_lat: number | null;
+    delivery_lng: number | null;
     user_selected_size_yards: number | null;
     material_type: string | null;
     rental_days?: number;
@@ -86,6 +92,8 @@ export default function CSOrders() {
           customer_phone,
           customer_email,
           delivery_address,
+          delivery_lat,
+          delivery_lng,
           user_selected_size_yards,
           material_type,
           rental_days
@@ -344,6 +352,34 @@ export default function CSOrders() {
                   )}
                 </div>
               )}
+
+              {/* Operational Time (Internal) */}
+              {selectedOrder.assigned_yard_id && (
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" className="w-full justify-between">
+                        <span className="flex items-center gap-2">
+                          <Timer className="w-4 h-4" />
+                          Service Duration (Internal)
+                        </span>
+                        <span className="text-xs text-muted-foreground">Click to expand</span>
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-4">
+                      <OperationalTimeCalculator
+                        initialYardId={selectedOrder.assigned_yard_id}
+                        initialAddress={selectedOrder.quotes?.delivery_address || undefined}
+                        initialLat={selectedOrder.quotes?.delivery_lat || undefined}
+                        initialLng={selectedOrder.quotes?.delivery_lng || undefined}
+                        initialServiceType="DELIVERY"
+                        initialMaterialCategory={
+                          (selectedOrder.quotes?.material_type?.toUpperCase() as MaterialCategory) || 'DEBRIS'
+                        }
+                        compact={true}
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
 
               <div className="flex gap-3 pt-4">
                 <Button variant="outline" className="flex-1" asChild>
