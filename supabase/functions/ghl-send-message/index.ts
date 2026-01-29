@@ -47,6 +47,7 @@ async function sendSmsViaGHL(to: string, body: string): Promise<{ success: boole
 
   try {
     // First, find contact by phone
+    console.log(`[GHL] Searching for contact with phone: ${phone}`);
     const searchRes = await fetch(`${GHL_API_BASE}/contacts/search/duplicates`, {
       method: "POST",
       headers: {
@@ -61,13 +62,21 @@ async function sendSmsViaGHL(to: string, body: string): Promise<{ success: boole
     });
 
     let contactId: string | null = null;
+    const searchText = await searchRes.text();
+    console.log(`[GHL] Search response status: ${searchRes.status}, body: ${searchText}`);
+    
     if (searchRes.ok) {
-      const searchData = await searchRes.json();
-      contactId = searchData.contacts?.[0]?.id;
+      try {
+        const searchData = JSON.parse(searchText);
+        contactId = searchData.contacts?.[0]?.id;
+      } catch (e) {
+        console.error("[GHL] Failed to parse search response:", e);
+      }
     }
 
     // If no contact, create one
     if (!contactId) {
+      console.log(`[GHL] Contact not found, creating new contact...`);
       const createRes = await fetch(`${GHL_API_BASE}/contacts/`, {
         method: "POST",
         headers: {
@@ -82,9 +91,16 @@ async function sendSmsViaGHL(to: string, body: string): Promise<{ success: boole
         }),
       });
 
+      const createText = await createRes.text();
+      console.log(`[GHL] Create response status: ${createRes.status}, body: ${createText}`);
+      
       if (createRes.ok) {
-        const createData = await createRes.json();
-        contactId = createData.contact?.id;
+        try {
+          const createData = JSON.parse(createText);
+          contactId = createData.contact?.id;
+        } catch (e) {
+          console.error("[GHL] Failed to parse create response:", e);
+        }
       }
     }
 
