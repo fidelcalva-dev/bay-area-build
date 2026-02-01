@@ -3023,6 +3023,48 @@ export type Database = {
           },
         ]
       }
+      dump_fee_profiles: {
+        Row: {
+          created_at: string
+          default_cost_per_load: number | null
+          default_cost_per_ton: number | null
+          dump_cost_model: string
+          id: string
+          is_active: boolean
+          market_code: string | null
+          material_category: string
+          material_code: string | null
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_cost_per_load?: number | null
+          default_cost_per_ton?: number | null
+          dump_cost_model?: string
+          id?: string
+          is_active?: boolean
+          market_code?: string | null
+          material_category: string
+          material_code?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_cost_per_load?: number | null
+          default_cost_per_ton?: number | null
+          dump_cost_model?: string
+          id?: string
+          is_active?: boolean
+          market_code?: string | null
+          material_category?: string
+          material_code?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dumpster_sizes: {
         Row: {
           base_price: number
@@ -6244,6 +6286,48 @@ export type Database = {
         }
         Relationships: []
       }
+      profit_guardrail_events: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          is_acknowledged: boolean
+          margin_pct: number | null
+          reason: string
+          recommendation: string | null
+          severity: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          is_acknowledged?: boolean
+          margin_pct?: number | null
+          reason: string
+          recommendation?: string | null
+          severity?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          is_acknowledged?: boolean
+          margin_pct?: number | null
+          reason?: string
+          recommendation?: string | null
+          severity?: string
+        }
+        Relationships: []
+      }
       project_categories: {
         Row: {
           allowed_customer_types: Json | null
@@ -7669,6 +7753,81 @@ export type Database = {
         }
         Relationships: []
       }
+      service_cost_estimates: {
+        Row: {
+          assumed_dump_fee_cost: number
+          assumed_weight_tons: number | null
+          calculation_details: Json | null
+          created_at: string
+          customer_price: number
+          entity_id: string
+          entity_type: string
+          estimated_drive_minutes: number
+          estimated_dump_minutes: number
+          estimated_handling_minutes: number
+          estimated_margin: number
+          estimated_margin_pct: number
+          estimated_total_cost: number
+          estimated_total_minutes: number
+          estimated_truck_cost: number
+          id: string
+          market_code: string | null
+          material_category: string | null
+          material_code: string | null
+          service_type: string
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          assumed_dump_fee_cost?: number
+          assumed_weight_tons?: number | null
+          calculation_details?: Json | null
+          created_at?: string
+          customer_price?: number
+          entity_id: string
+          entity_type: string
+          estimated_drive_minutes?: number
+          estimated_dump_minutes?: number
+          estimated_handling_minutes?: number
+          estimated_margin?: number
+          estimated_margin_pct?: number
+          estimated_total_cost?: number
+          estimated_total_minutes?: number
+          estimated_truck_cost?: number
+          id?: string
+          market_code?: string | null
+          material_category?: string | null
+          material_code?: string | null
+          service_type: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          assumed_dump_fee_cost?: number
+          assumed_weight_tons?: number | null
+          calculation_details?: Json | null
+          created_at?: string
+          customer_price?: number
+          entity_id?: string
+          entity_type?: string
+          estimated_drive_minutes?: number
+          estimated_dump_minutes?: number
+          estimated_handling_minutes?: number
+          estimated_margin?: number
+          estimated_margin_pct?: number
+          estimated_total_cost?: number
+          estimated_total_minutes?: number
+          estimated_truck_cost?: number
+          id?: string
+          market_code?: string | null
+          material_category?: string | null
+          material_code?: string | null
+          service_type?: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
       service_receipts: {
         Row: {
           created_at: string
@@ -8098,6 +8257,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      truck_cost_profiles: {
+        Row: {
+          cost_per_hour: number
+          cost_per_mile: number | null
+          created_at: string
+          driver_cost_model: string
+          id: string
+          is_active: boolean
+          owner_operator_payout_delivery: number | null
+          owner_operator_payout_pickup: number | null
+          owner_operator_payout_swap: number | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          cost_per_hour?: number
+          cost_per_mile?: number | null
+          created_at?: string
+          driver_cost_model?: string
+          id?: string
+          is_active?: boolean
+          owner_operator_payout_delivery?: number | null
+          owner_operator_payout_pickup?: number | null
+          owner_operator_payout_swap?: number | null
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          cost_per_hour?: number
+          cost_per_mile?: number | null
+          created_at?: string
+          driver_cost_model?: string
+          id?: string
+          is_active?: boolean
+          owner_operator_payout_delivery?: number | null
+          owner_operator_payout_pickup?: number | null
+          owner_operator_payout_swap?: number | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
       }
       trucks: {
         Row: {
