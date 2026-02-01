@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { format, addDays, startOfWeek, isSameDay } from "date-fns";
 import { 
   ChevronLeft, ChevronRight, Calendar, Plus, Loader2, 
-  Truck, Package, Construction, RefreshCw, Filter, User, MapPin
+  Truck as TruckIcon, Package, Construction, RefreshCw, Filter, User, MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,10 +50,12 @@ const TIME_WINDOWS = [
 ];
 
 const RUN_TYPE_ICONS: Record<RunType, React.ReactNode> = {
-  DELIVERY: <Truck className="w-3 h-3" />,
+  DELIVERY: <TruckIcon className="w-3 h-3" />,
   PICKUP: <Package className="w-3 h-3" />,
   HAUL: <Construction className="w-3 h-3" />,
   SWAP: <RefreshCw className="w-3 h-3" />,
+  DUMP_AND_RETURN: <TruckIcon className="w-3 h-3" />,
+  YARD_TRANSFER: <TruckIcon className="w-3 h-3" />,
 };
 
 export default function DispatchRunsCalendar() {
@@ -264,7 +266,7 @@ export default function DispatchRunsCalendar() {
         
         <Select value={filterType} onValueChange={setFilterType}>
           <SelectTrigger className="w-[150px]">
-            <Truck className="w-4 h-4 mr-2" />
+            <TruckIcon className="w-4 h-4 mr-2" />
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
           <SelectContent>

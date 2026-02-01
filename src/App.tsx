@@ -149,6 +149,10 @@ const CSMessages = lazy(() => import("./pages/cs/CSMessages"));
 const CSCalls = lazy(() => import("./pages/cs/CSCalls"));
 
 // Driver App
+const DriverLayout = lazy(() => import("./pages/driver/DriverLayout"));
+const DriverHome = lazy(() => import("./pages/driver/DriverHome"));
+const DriverRuns = lazy(() => import("./pages/driver/DriverRuns"));
+const DriverProfile = lazy(() => import("./pages/driver/DriverProfile"));
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
 
 // Sales Portal
@@ -175,7 +179,6 @@ const DispatchRequests = lazy(() => import("./pages/dispatch/DispatchRequests"))
 const DispatchRunsCalendar = lazy(() => import("./pages/dispatch/DispatchRunsCalendar"));
 const DispatchRunsList = lazy(() => import("./pages/dispatch/DispatchRunsList"));
 const DispatchRunDetail = lazy(() => import("./pages/dispatch/DispatchRunDetail"));
-const DriverRuns = lazy(() => import("./pages/driver/DriverRuns"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
@@ -555,8 +558,23 @@ const App = () => (
                 } />
               </Route>
 
-              {/* Driver App */}
+              {/* Driver App with Layout */}
               <Route path="/driver" element={
+                <Suspense fallback={<PageLoader />}><DriverLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><DriverHome /></Suspense>
+                } />
+                <Route path="runs" element={
+                  <Suspense fallback={<PageLoader />}><DriverRuns /></Suspense>
+                } />
+                <Route path="profile" element={
+                  <Suspense fallback={<PageLoader />}><DriverProfile /></Suspense>
+                } />
+              </Route>
+              
+              {/* Legacy Driver App (standalone) */}
+              <Route path="/driver/legacy" element={
                 <Suspense fallback={<PageLoader />}><DriverApp /></Suspense>
               } />
 
