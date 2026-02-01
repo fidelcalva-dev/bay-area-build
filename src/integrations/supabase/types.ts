@@ -3025,6 +3025,7 @@ export type Database = {
       }
       dump_fee_profiles: {
         Row: {
+          assumed_tons_defaults_json: Json | null
           created_at: string
           default_cost_per_load: number | null
           default_cost_per_ton: number | null
@@ -3038,6 +3039,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assumed_tons_defaults_json?: Json | null
           created_at?: string
           default_cost_per_load?: number | null
           default_cost_per_ton?: number | null
@@ -3051,6 +3053,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assumed_tons_defaults_json?: Json | null
           created_at?: string
           default_cost_per_load?: number | null
           default_cost_per_ton?: number | null
@@ -3787,6 +3790,48 @@ export type Database = {
           severity?: Database["public"]["Enums"]["help_severity"]
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      inhouse_cost_rates: {
+        Row: {
+          cost_per_hour: number
+          cost_per_mile: number | null
+          created_at: string
+          id: string
+          is_active: boolean
+          market_code: string
+          minimum_charge_per_run: number | null
+          notes: string | null
+          overhead_multiplier: number
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          cost_per_hour?: number
+          cost_per_mile?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          market_code: string
+          minimum_charge_per_run?: number | null
+          notes?: string | null
+          overhead_multiplier?: number
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          cost_per_hour?: number
+          cost_per_mile?: number | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          market_code?: string
+          minimum_charge_per_run?: number | null
+          notes?: string | null
+          overhead_multiplier?: number
+          updated_at?: string
+          vehicle_type?: string
         }
         Relationships: []
       }
@@ -5922,6 +5967,57 @@ export type Database = {
           },
         ]
       }
+      owner_operator_rates: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          market_code: string
+          mileage_rate: number | null
+          minimum_payout: number | null
+          notes: string | null
+          payout_delivery: number
+          payout_dump_run: number | null
+          payout_pickup: number
+          payout_swap: number
+          toll_policy_json: Json | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          market_code: string
+          mileage_rate?: number | null
+          minimum_payout?: number | null
+          notes?: string | null
+          payout_delivery?: number
+          payout_dump_run?: number | null
+          payout_pickup?: number
+          payout_swap?: number
+          toll_policy_json?: Json | null
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          market_code?: string
+          mileage_rate?: number | null
+          minimum_payout?: number | null
+          notes?: string | null
+          payout_delivery?: number
+          payout_dump_run?: number | null
+          payout_pickup?: number
+          payout_swap?: number
+          toll_policy_json?: Json | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
       payment_actions: {
         Row: {
           action_type: Database["public"]["Enums"]["payment_action_type"]
@@ -6298,6 +6394,7 @@ export type Database = {
           margin_pct: number | null
           reason: string
           recommendation: string | null
+          recommended_action: string | null
           severity: string
         }
         Insert: {
@@ -6311,6 +6408,7 @@ export type Database = {
           margin_pct?: number | null
           reason: string
           recommendation?: string | null
+          recommended_action?: string | null
           severity?: string
         }
         Update: {
@@ -6324,6 +6422,7 @@ export type Database = {
           margin_pct?: number | null
           reason?: string
           recommendation?: string | null
+          recommended_action?: string | null
           severity?: string
         }
         Relationships: []
@@ -7755,11 +7854,17 @@ export type Database = {
       }
       service_cost_estimates: {
         Row: {
+          alternative_model_cost: number | null
+          alternative_model_margin_pct: number | null
           assumed_dump_fee_cost: number
           assumed_weight_tons: number | null
+          best_model: string | null
           calculation_details: Json | null
+          comparison_json: Json | null
+          cost_model_used: string | null
           created_at: string
           customer_price: number
+          dump_cost_breakdown_json: Json | null
           entity_id: string
           entity_type: string
           estimated_drive_minutes: number
@@ -7774,16 +7879,24 @@ export type Database = {
           market_code: string | null
           material_category: string | null
           material_code: string | null
+          route_miles: number | null
           service_type: string
+          truck_cost_breakdown_json: Json | null
           updated_at: string
           vehicle_type: string
         }
         Insert: {
+          alternative_model_cost?: number | null
+          alternative_model_margin_pct?: number | null
           assumed_dump_fee_cost?: number
           assumed_weight_tons?: number | null
+          best_model?: string | null
           calculation_details?: Json | null
+          comparison_json?: Json | null
+          cost_model_used?: string | null
           created_at?: string
           customer_price?: number
+          dump_cost_breakdown_json?: Json | null
           entity_id: string
           entity_type: string
           estimated_drive_minutes?: number
@@ -7798,16 +7911,24 @@ export type Database = {
           market_code?: string | null
           material_category?: string | null
           material_code?: string | null
+          route_miles?: number | null
           service_type: string
+          truck_cost_breakdown_json?: Json | null
           updated_at?: string
           vehicle_type?: string
         }
         Update: {
+          alternative_model_cost?: number | null
+          alternative_model_margin_pct?: number | null
           assumed_dump_fee_cost?: number
           assumed_weight_tons?: number | null
+          best_model?: string | null
           calculation_details?: Json | null
+          comparison_json?: Json | null
+          cost_model_used?: string | null
           created_at?: string
           customer_price?: number
+          dump_cost_breakdown_json?: Json | null
           entity_id?: string
           entity_type?: string
           estimated_drive_minutes?: number
@@ -7822,7 +7943,9 @@ export type Database = {
           market_code?: string | null
           material_category?: string | null
           material_code?: string | null
+          route_miles?: number | null
           service_type?: string
+          truck_cost_breakdown_json?: Json | null
           updated_at?: string
           vehicle_type?: string
         }
@@ -8627,6 +8750,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vehicle_cost_profiles: {
+        Row: {
+          created_at: string
+          default_cost_model: string
+          id: string
+          is_active: boolean
+          market_code: string
+          notes: string | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          created_at?: string
+          default_cost_model?: string
+          id?: string
+          is_active?: boolean
+          market_code: string
+          notes?: string | null
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          created_at?: string
+          default_cost_model?: string
+          id?: string
+          is_active?: boolean
+          market_code?: string
+          notes?: string | null
+          updated_at?: string
+          vehicle_type?: string
         }
         Relationships: []
       }

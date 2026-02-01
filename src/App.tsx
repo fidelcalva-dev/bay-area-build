@@ -103,6 +103,7 @@ const CompensationPage = lazy(() => import("./pages/admin/CompensationPage"));
 const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
 const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
+const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDashboard"));
 
 // Telephony Admin Pages
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
@@ -476,6 +477,9 @@ const App = () => (
                 } />
                 <Route path="heavy-risk" element={
                   <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>
+                } />
+                <Route path="profitability" element={
+                  <Suspense fallback={<PageLoader />}><ProfitabilityDashboard /></Suspense>
                 } />
                 {/* Telephony Routes */}
                 <Route path="telephony/calls" element={
