@@ -2558,6 +2558,80 @@ export type Database = {
         }
         Relationships: []
       }
+      dispatch_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          id: string
+          is_resolved: boolean | null
+          message: string | null
+          metadata: Json | null
+          order_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          run_id: string | null
+          severity: string
+          title: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          order_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          run_id?: string | null
+          severity?: string
+          title: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          order_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          run_id?: string | null
+          severity?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispatch_alerts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "dispatch_alerts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispatch_alerts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "dispatch_alerts_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disposal_item_catalog: {
         Row: {
           created_at: string
@@ -6313,6 +6387,42 @@ export type Database = {
         }
         Relationships: []
       }
+      pod_requirements: {
+        Row: {
+          checkpoint_type: Database["public"]["Enums"]["checkpoint_type"]
+          condition_json: Json | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          is_required: boolean | null
+          run_type: Database["public"]["Enums"]["run_type"]
+        }
+        Insert: {
+          checkpoint_type: Database["public"]["Enums"]["checkpoint_type"]
+          condition_json?: Json | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          run_type: Database["public"]["Enums"]["run_type"]
+        }
+        Update: {
+          checkpoint_type?: Database["public"]["Enums"]["checkpoint_type"]
+          condition_json?: Json | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          run_type?: Database["public"]["Enums"]["run_type"]
+        }
+        Relationships: []
+      }
       pricing_extras: {
         Row: {
           created_at: string
@@ -7365,10 +7475,13 @@ export type Database = {
           document_urls: Json | null
           id: string
           is_required: boolean
+          metadata: Json | null
           notes: string | null
           photo_urls: Json | null
           run_id: string
           updated_at: string
+          validation_notes: string | null
+          validation_status: string | null
         }
         Insert: {
           checkpoint_type: Database["public"]["Enums"]["checkpoint_type"]
@@ -7378,10 +7491,13 @@ export type Database = {
           document_urls?: Json | null
           id?: string
           is_required?: boolean
+          metadata?: Json | null
           notes?: string | null
           photo_urls?: Json | null
           run_id: string
           updated_at?: string
+          validation_notes?: string | null
+          validation_status?: string | null
         }
         Update: {
           checkpoint_type?: Database["public"]["Enums"]["checkpoint_type"]
@@ -7391,10 +7507,13 @@ export type Database = {
           document_urls?: Json | null
           id?: string
           is_required?: boolean
+          metadata?: Json | null
           notes?: string | null
           photo_urls?: Json | null
           run_id?: string
           updated_at?: string
+          validation_notes?: string | null
+          validation_status?: string | null
         }
         Relationships: [
           {
@@ -7457,6 +7576,8 @@ export type Database = {
         Row: {
           accepted_at: string | null
           actual_miles: number | null
+          actual_weight_tons: number | null
+          arrived_at: string | null
           asset_id: string | null
           assigned_driver_id: string | null
           assigned_truck_id: string | null
@@ -7466,6 +7587,7 @@ export type Database = {
           cancellation_reason: string | null
           cancelled_at: string | null
           completed_at: string | null
+          contamination_flagged: boolean | null
           created_at: string
           created_by: string | null
           customer_name: string | null
@@ -7478,9 +7600,13 @@ export type Database = {
           destination_yard_id: string | null
           dispatcher_notes: string | null
           driver_notes: string | null
+          dump_fee: number | null
           estimated_duration_mins: number | null
           estimated_miles: number | null
+          fill_line_compliant: boolean | null
           id: string
+          is_heavy_material: boolean | null
+          material_code: string | null
           mileage_payout: number | null
           notes: string | null
           order_id: string | null
@@ -7490,8 +7616,11 @@ export type Database = {
           origin_lng: number | null
           origin_type: Database["public"]["Enums"]["location_type"]
           origin_yard_id: string | null
+          overfill_flagged: boolean | null
           payout_status: string | null
+          pickup_asset_id: string | null
           priority: number
+          requires_fill_line_check: boolean | null
           run_number: string | null
           run_type: Database["public"]["Enums"]["run_type"]
           scheduled_date: string
@@ -7505,6 +7634,8 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           actual_miles?: number | null
+          actual_weight_tons?: number | null
+          arrived_at?: string | null
           asset_id?: string | null
           assigned_driver_id?: string | null
           assigned_truck_id?: string | null
@@ -7514,6 +7645,7 @@ export type Database = {
           cancellation_reason?: string | null
           cancelled_at?: string | null
           completed_at?: string | null
+          contamination_flagged?: boolean | null
           created_at?: string
           created_by?: string | null
           customer_name?: string | null
@@ -7526,9 +7658,13 @@ export type Database = {
           destination_yard_id?: string | null
           dispatcher_notes?: string | null
           driver_notes?: string | null
+          dump_fee?: number | null
           estimated_duration_mins?: number | null
           estimated_miles?: number | null
+          fill_line_compliant?: boolean | null
           id?: string
+          is_heavy_material?: boolean | null
+          material_code?: string | null
           mileage_payout?: number | null
           notes?: string | null
           order_id?: string | null
@@ -7538,8 +7674,11 @@ export type Database = {
           origin_lng?: number | null
           origin_type?: Database["public"]["Enums"]["location_type"]
           origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
           payout_status?: string | null
+          pickup_asset_id?: string | null
           priority?: number
+          requires_fill_line_check?: boolean | null
           run_number?: string | null
           run_type: Database["public"]["Enums"]["run_type"]
           scheduled_date: string
@@ -7553,6 +7692,8 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           actual_miles?: number | null
+          actual_weight_tons?: number | null
+          arrived_at?: string | null
           asset_id?: string | null
           assigned_driver_id?: string | null
           assigned_truck_id?: string | null
@@ -7562,6 +7703,7 @@ export type Database = {
           cancellation_reason?: string | null
           cancelled_at?: string | null
           completed_at?: string | null
+          contamination_flagged?: boolean | null
           created_at?: string
           created_by?: string | null
           customer_name?: string | null
@@ -7574,9 +7716,13 @@ export type Database = {
           destination_yard_id?: string | null
           dispatcher_notes?: string | null
           driver_notes?: string | null
+          dump_fee?: number | null
           estimated_duration_mins?: number | null
           estimated_miles?: number | null
+          fill_line_compliant?: boolean | null
           id?: string
+          is_heavy_material?: boolean | null
+          material_code?: string | null
           mileage_payout?: number | null
           notes?: string | null
           order_id?: string | null
@@ -7586,8 +7732,11 @@ export type Database = {
           origin_lng?: number | null
           origin_type?: Database["public"]["Enums"]["location_type"]
           origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
           payout_status?: string | null
+          pickup_asset_id?: string | null
           priority?: number
+          requires_fill_line_check?: boolean | null
           run_number?: string | null
           run_type?: Database["public"]["Enums"]["run_type"]
           scheduled_date?: string
@@ -7696,6 +7845,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "yards"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_pickup_asset_id_fkey"
+            columns: ["pickup_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_dumpsters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_pickup_asset_id_fkey"
+            columns: ["pickup_asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_pickup_asset_id_fkey"
+            columns: ["pickup_asset_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["asset_id"]
           },
         ]
       }
@@ -9583,6 +9753,14 @@ export type Database = {
         Returns: boolean
       }
       auto_assign_lead: { Args: { p_lead_id: string }; Returns: string }
+      can_complete_run: {
+        Args: { p_run_id: string }
+        Returns: {
+          can_complete: boolean
+          missing_checkpoints: string[]
+          reason: string
+        }[]
+      }
       capture_omnichannel_lead: {
         Args: {
           p_address?: string
@@ -9661,6 +9839,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_run_checkpoints_from_config: {
+        Args: { p_run_id: string }
+        Returns: number
+      }
       create_run_for_order: {
         Args: {
           p_notes?: string
@@ -9726,6 +9908,14 @@ export type Database = {
       find_available_agent: {
         Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
         Returns: string
+      }
+      flag_run_contamination: {
+        Args: { p_notes?: string; p_photo_url?: string; p_run_id: string }
+        Returns: boolean
+      }
+      flag_run_overfill: {
+        Args: { p_notes?: string; p_run_id: string }
+        Returns: boolean
       }
       get_current_compensation_period: { Args: never; Returns: string }
       get_google_connection: {

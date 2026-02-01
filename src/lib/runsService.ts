@@ -1,15 +1,28 @@
 /**
  * Runs Service - Core operations for the Dispatch Operating System
+ * 
+ * Canonical run types: DELIVERY, PICKUP, SWAP, DUMP_AND_RETURN, YARD_TRANSFER, HAUL
+ * Canonical status flow: DRAFT -> SCHEDULED -> ASSIGNED -> ACCEPTED -> EN_ROUTE -> ARRIVED -> COMPLETED
  */
 import { supabase } from "@/integrations/supabase/client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyQuery = any;
-export type RunType = 'DELIVERY' | 'PICKUP' | 'HAUL' | 'SWAP';
-export type RunStatus = 'DRAFT' | 'SCHEDULED' | 'ASSIGNED' | 'ACCEPTED' | 'EN_ROUTE' | 'COMPLETED' | 'CANCELLED';
+
+export type RunType = 'DELIVERY' | 'PICKUP' | 'HAUL' | 'SWAP' | 'DUMP_AND_RETURN' | 'YARD_TRANSFER';
+export type RunStatus = 'DRAFT' | 'SCHEDULED' | 'ASSIGNED' | 'ACCEPTED' | 'EN_ROUTE' | 'ARRIVED' | 'COMPLETED' | 'CANCELLED';
 export type LocationType = 'yard' | 'customer' | 'facility';
 export type AssignmentType = 'IN_HOUSE' | 'CARRIER';
-export type CheckpointType = 'PICKUP_POD' | 'DELIVERY_POD' | 'DUMP_TICKET';
+export type CheckpointType = 
+  | 'PICKUP_POD' 
+  | 'DELIVERY_POD' 
+  | 'DUMP_TICKET'
+  | 'FILL_LINE_PHOTO'
+  | 'MATERIAL_CLOSEUP'
+  | 'CONTAMINATION_PHOTO'
+  | 'SWAP_PICKUP_POD'
+  | 'SWAP_DELIVERY_POD'
+  | 'OVERFILL_PHOTO';
 
 export interface Run {
   id: string;
@@ -17,6 +30,7 @@ export interface Run {
   run_type: RunType;
   order_id: string | null;
   asset_id: string | null;
+  pickup_asset_id: string | null; // For SWAP: the full dumpster being picked up
   
   // Origin
   origin_type: LocationType;
@@ -49,12 +63,20 @@ export interface Run {
   // Timestamps
   accepted_at: string | null;
   started_at: string | null;
+  arrived_at: string | null;
   completed_at: string | null;
   cancelled_at: string | null;
   
   // Customer (denormalized)
   customer_name: string | null;
   customer_phone: string | null;
+  
+  // Heavy Material Enforcement
+  is_heavy_material: boolean;
+  requires_fill_line_check: boolean;
+  fill_line_compliant: boolean | null;
+  actual_weight_tons: number | null;
+  dump_fee: number | null;
   
   // Notes
   notes: string | null;
@@ -76,10 +98,12 @@ export interface Run {
   
   // Joined data (optional)
   assets_dumpsters?: { asset_code: string; size_id: string } | null;
+  pickup_asset?: { asset_code: string; size_id: string } | null;
   drivers?: { id: string; name: string; phone: string; is_owner_operator: boolean } | null;
   trucks?: { id: string; truck_number: string; truck_type: string } | null;
   origin_yard?: { id: string; name: string } | null;
   destination_yard?: { id: string; name: string } | null;
+  destination_facility?: { id: string; name: string } | null;
   checkpoints?: RunCheckpoint[];
 }
 
@@ -109,22 +133,25 @@ export interface RunEvent {
   created_at: string;
 }
 
-// Status flow configuration
+// Status flow configuration with ARRIVED state
 export const RUN_STATUS_FLOW: Record<RunStatus, { next: RunStatus | null; action: string; color: string }> = {
   DRAFT: { next: 'SCHEDULED', action: 'Schedule', color: 'bg-muted text-muted-foreground' },
   SCHEDULED: { next: 'ASSIGNED', action: 'Assign', color: 'bg-blue-100 text-blue-800' },
   ASSIGNED: { next: 'ACCEPTED', action: 'Accept', color: 'bg-yellow-100 text-yellow-800' },
   ACCEPTED: { next: 'EN_ROUTE', action: 'Start', color: 'bg-orange-100 text-orange-800' },
-  EN_ROUTE: { next: 'COMPLETED', action: 'Complete', color: 'bg-purple-100 text-purple-800' },
+  EN_ROUTE: { next: 'ARRIVED', action: 'Arrived', color: 'bg-purple-100 text-purple-800' },
+  ARRIVED: { next: 'COMPLETED', action: 'Complete', color: 'bg-indigo-100 text-indigo-800' },
   COMPLETED: { next: null, action: '', color: 'bg-green-100 text-green-800' },
   CANCELLED: { next: null, action: '', color: 'bg-red-100 text-red-800' },
 };
 
 export const RUN_TYPE_CONFIG: Record<RunType, { label: string; icon: string; color: string }> = {
-  DELIVERY: { label: 'Delivery', icon: '🚚', color: 'bg-blue-500' },
-  PICKUP: { label: 'Pickup', icon: '📦', color: 'bg-green-500' },
-  HAUL: { label: 'Haul', icon: '🏗️', color: 'bg-orange-500' },
-  SWAP: { label: 'Swap', icon: '🔄', color: 'bg-purple-500' },
+  DELIVERY: { label: 'Delivery', icon: 'Truck', color: 'bg-blue-500' },
+  PICKUP: { label: 'Pickup', icon: 'Package', color: 'bg-green-500' },
+  HAUL: { label: 'Haul', icon: 'Construction', color: 'bg-orange-500' },
+  SWAP: { label: 'Swap', icon: 'RefreshCw', color: 'bg-purple-500' },
+  DUMP_AND_RETURN: { label: 'Dump & Return', icon: 'ArrowLeftRight', color: 'bg-amber-500' },
+  YARD_TRANSFER: { label: 'Yard Transfer', icon: 'MoveRight', color: 'bg-cyan-500' },
 };
 
 // =====================================================
@@ -291,6 +318,7 @@ export async function updateRunStatus(
     
     if (newStatus === 'ACCEPTED') updateData.accepted_at = new Date().toISOString();
     if (newStatus === 'EN_ROUTE') updateData.started_at = new Date().toISOString();
+    if (newStatus === 'ARRIVED') updateData.arrived_at = new Date().toISOString();
     if (newStatus === 'COMPLETED') updateData.completed_at = new Date().toISOString();
     if (newStatus === 'CANCELLED') {
       updateData.cancelled_at = new Date().toISOString();
@@ -525,4 +553,217 @@ export async function suggestDriversForRun(runId: string): Promise<DriverSuggest
   
   // Sort by score descending, take top 3
   return suggestions.sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+// =====================================================
+// HEAVY ENFORCEMENT & CONTAMINATION FLAGGING
+// =====================================================
+
+/**
+ * Flag run for contamination - driver detected mixed materials in heavy load
+ */
+export async function flagRunContamination(
+  runId: string,
+  notes: string,
+  photoUrl?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+    
+    // Log event
+    await logRunEvent(runId, 'CONTAMINATION_FLAGGED', run.status, run.status, notes);
+    
+    // Create dispatch alert
+    await supabase.from('dispatch_alerts' as 'orders').insert({
+      run_id: runId,
+      order_id: run.order_id,
+      alert_type: 'CONTAMINATION_DETECTED',
+      severity: 'HIGH',
+      message: `Contamination detected: ${notes}`,
+      photo_url: photoUrl || null,
+    } as never);
+    
+    // If order exists, trigger contamination reclassification
+    if (run.order_id) {
+      await supabase.rpc('mark_order_contaminated', {
+        p_order_id: run.order_id,
+        p_notes: notes,
+      });
+    }
+    
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+/**
+ * Flag run for overfill - dumpster filled beyond allowed level
+ */
+export async function flagRunOverfill(
+  runId: string,
+  notes: string,
+  photoUrl?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+    
+    // Log event
+    await logRunEvent(runId, 'OVERFILL_FLAGGED', run.status, run.status, notes);
+    
+    // Create dispatch alert
+    await supabase.from('dispatch_alerts' as 'orders').insert({
+      run_id: runId,
+      order_id: run.order_id,
+      alert_type: 'OVERFILL_DETECTED',
+      severity: 'MEDIUM',
+      message: `Overfill detected: ${notes}`,
+      photo_url: photoUrl || null,
+    } as never);
+    
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+/**
+ * Mark fill line compliance for heavy material run
+ */
+export async function setFillLineCompliance(
+  runId: string,
+  isCompliant: boolean,
+  notes?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase
+      .from('runs' as 'orders')
+      .update({
+        fill_line_compliant: isCompliant,
+        driver_notes: notes || null,
+      } as never)
+      .eq('id', runId);
+    
+    if (error) throw error;
+    
+    await logRunEvent(runId, isCompliant ? 'FILL_LINE_PASSED' : 'FILL_LINE_FAILED', null, null, notes);
+    
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+/**
+ * Record dump ticket weight and fee
+ */
+export async function recordDumpTicket(
+  runId: string,
+  actualWeightTons: number,
+  dumpFee: number,
+  ticketPhotoUrl?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+    
+    const { error } = await supabase
+      .from('runs' as 'orders')
+      .update({
+        actual_weight_tons: actualWeightTons,
+        dump_fee: dumpFee,
+      } as never)
+      .eq('id', runId);
+    
+    if (error) throw error;
+    
+    // Complete the dump ticket checkpoint if exists
+    const checkpoints = await getRunCheckpoints(runId);
+    const dumpTicketCheckpoint = checkpoints.find(c => c.checkpoint_type === 'DUMP_TICKET');
+    if (dumpTicketCheckpoint && ticketPhotoUrl) {
+      await completeCheckpoint(dumpTicketCheckpoint.id, [ticketPhotoUrl]);
+    }
+    
+    await logRunEvent(runId, 'DUMP_TICKET_RECORDED', null, null, `Weight: ${actualWeightTons}T, Fee: $${dumpFee}`);
+    
+    // If this is heavy material, apply weight to order for billing
+    if (run.order_id && run.is_heavy_material) {
+      await supabase.rpc('apply_scale_ticket_weight', {
+        p_order_id: run.order_id,
+        p_actual_weight_tons: actualWeightTons,
+      });
+    }
+    
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+// =====================================================
+// SWAP WORKFLOW HELPERS
+// =====================================================
+
+/**
+ * Get available empty assets in yard for SWAP runs
+ */
+export async function getAvailableAssetsForSwap(yardId: string, sizeId?: string): Promise<{
+  id: string;
+  asset_code: string;
+  size_value: number;
+}[]> {
+  const query = supabase
+    .from('assets_dumpsters')
+    .select('id, asset_code, size_id, dumpster_sizes!inner(size_value)')
+    .eq('current_yard_id', yardId)
+    .eq('asset_status', 'available');
+  
+  if (sizeId) {
+    query.eq('size_id', sizeId);
+  }
+  
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching available assets:', error);
+    return [];
+  }
+  
+  return (data || []).map((a: { id: string; asset_code: string; dumpster_sizes: { size_value: number } }) => ({
+    id: a.id,
+    asset_code: a.asset_code,
+    size_value: a.dumpster_sizes?.size_value || 0,
+  }));
+}
+
+/**
+ * Reserve empty asset for SWAP run
+ */
+export async function reserveAssetForSwap(
+  runId: string,
+  assetId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Update run with delivery asset
+    await supabase
+      .from('runs' as 'orders')
+      .update({ asset_id: assetId } as never)
+      .eq('id', runId);
+    
+    // Reserve the asset
+    await supabase
+      .from('assets_dumpsters')
+      .update({
+        asset_status: 'reserved',
+        last_movement_at: new Date().toISOString(),
+      })
+      .eq('id', assetId);
+    
+    await logRunEvent(runId, 'SWAP_ASSET_RESERVED', null, null, `Reserved asset ${assetId}`);
+    
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
 }

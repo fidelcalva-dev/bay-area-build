@@ -38,6 +38,8 @@ const RUN_TYPE_ICONS: Record<RunType, React.ReactNode> = {
   PICKUP: <Package className="w-4 h-4" />,
   HAUL: <Construction className="w-4 h-4" />,
   SWAP: <RefreshCw className="w-4 h-4" />,
+  DUMP_AND_RETURN: <Truck className="w-4 h-4" />,
+  YARD_TRANSFER: <Truck className="w-4 h-4" />,
 };
 
 export default function DispatchRunsList() {
