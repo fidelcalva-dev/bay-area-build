@@ -107,6 +107,10 @@ const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDas
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
+const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
+
+// Internal Calculator
+const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
 
 // Telephony Admin Pages
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
@@ -554,6 +558,10 @@ const App = () => (
                 <Route path="docs" element={
                   <Suspense fallback={<PageLoader />}><InternalDocsPage /></Suspense>
                 } />
+                {/* Calculator Logs */}
+                <Route path="calculator/logs" element={
+                  <Suspense fallback={<PageLoader />}><CalculatorLogsPage /></Suspense>
+                } />
                 {/* QA Control Center */}
                 <Route path="qa/control-center" element={
                   <Suspense fallback={<PageLoader />}><QaControlCenter /></Suspense>
@@ -667,6 +675,11 @@ const App = () => (
               {/* Payment redirect page */}
               <Route path="/portal/pay/:paymentId" element={
                 <Suspense fallback={<PageLoader />}><PaymentRedirect /></Suspense>
+              } />
+
+              {/* Internal Calculator */}
+              <Route path="/internal/calculator" element={
+                <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
               } />
               
               <Route path="*" element={<NotFound />} />

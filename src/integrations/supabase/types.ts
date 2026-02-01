@@ -1220,6 +1220,215 @@ export type Database = {
         }
         Relationships: []
       }
+      calculator_estimates: {
+        Row: {
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
+          blocked_reason: string | null
+          created_at: string | null
+          created_by: string | null
+          customer_price: number | null
+          customer_tier: string | null
+          customer_type: string
+          destination_address: string | null
+          destination_lat: number | null
+          destination_lng: number | null
+          discount_reason: string | null
+          discount_type: string | null
+          discount_value: number | null
+          dumpster_size: number
+          facility_id: string | null
+          final_margin_pct: number | null
+          final_price: number | null
+          id: string
+          internal_cost: number | null
+          is_feasible: boolean | null
+          is_same_day: boolean | null
+          linked_lead_id: string | null
+          linked_order_id: string | null
+          linked_quote_id: string | null
+          margin_class: string | null
+          margin_pct: number | null
+          market_code: string
+          material_category: string
+          recommendations: Json | null
+          requires_approval: boolean | null
+          route_details: Json | null
+          service_type: string
+          sla_class: string | null
+          time_breakdown: Json | null
+          total_time_minutes: number | null
+          traffic_mode: string | null
+          updated_at: string | null
+          warnings: string[] | null
+          yard_id: string | null
+        }
+        Insert: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          blocked_reason?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          customer_price?: number | null
+          customer_tier?: string | null
+          customer_type: string
+          destination_address?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          discount_reason?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          dumpster_size: number
+          facility_id?: string | null
+          final_margin_pct?: number | null
+          final_price?: number | null
+          id?: string
+          internal_cost?: number | null
+          is_feasible?: boolean | null
+          is_same_day?: boolean | null
+          linked_lead_id?: string | null
+          linked_order_id?: string | null
+          linked_quote_id?: string | null
+          margin_class?: string | null
+          margin_pct?: number | null
+          market_code: string
+          material_category: string
+          recommendations?: Json | null
+          requires_approval?: boolean | null
+          route_details?: Json | null
+          service_type: string
+          sla_class?: string | null
+          time_breakdown?: Json | null
+          total_time_minutes?: number | null
+          traffic_mode?: string | null
+          updated_at?: string | null
+          warnings?: string[] | null
+          yard_id?: string | null
+        }
+        Update: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          blocked_reason?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          customer_price?: number | null
+          customer_tier?: string | null
+          customer_type?: string
+          destination_address?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          discount_reason?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          dumpster_size?: number
+          facility_id?: string | null
+          final_margin_pct?: number | null
+          final_price?: number | null
+          id?: string
+          internal_cost?: number | null
+          is_feasible?: boolean | null
+          is_same_day?: boolean | null
+          linked_lead_id?: string | null
+          linked_order_id?: string | null
+          linked_quote_id?: string | null
+          margin_class?: string | null
+          margin_pct?: number | null
+          market_code?: string
+          material_category?: string
+          recommendations?: Json | null
+          requires_approval?: boolean | null
+          route_details?: Json | null
+          service_type?: string
+          sla_class?: string | null
+          time_breakdown?: Json | null
+          total_time_minutes?: number | null
+          traffic_mode?: string | null
+          updated_at?: string | null
+          warnings?: string[] | null
+          yard_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculator_estimates_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "calculator_estimates_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calculator_logs: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          discount_applied: Json | null
+          estimate_id: string | null
+          id: string
+          inputs_json: Json
+          ip_address: string | null
+          linked_entity_id: string | null
+          linked_entity_type: string | null
+          notes: string | null
+          outputs_json: Json | null
+          override_details: Json | null
+          user_agent: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          discount_applied?: Json | null
+          estimate_id?: string | null
+          id?: string
+          inputs_json: Json
+          ip_address?: string | null
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
+          notes?: string | null
+          outputs_json?: Json | null
+          override_details?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          discount_applied?: Json | null
+          estimate_id?: string | null
+          id?: string
+          inputs_json?: Json
+          ip_address?: string | null
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
+          notes?: string | null
+          outputs_json?: Json | null
+          override_details?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculator_logs_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "calculator_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_assignments: {
         Row: {
           accepted_at: string | null
@@ -9676,6 +9885,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      zone_restrictions: {
+        Row: {
+          allowed_windows: string[] | null
+          applies_to: string[] | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          market_code: string
+          max_size_yd: number | null
+          reason: string | null
+          restriction_type: string
+          updated_at: string | null
+          zone_name: string | null
+        }
+        Insert: {
+          allowed_windows?: string[] | null
+          applies_to?: string[] | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          market_code: string
+          max_size_yd?: number | null
+          reason?: string | null
+          restriction_type: string
+          updated_at?: string | null
+          zone_name?: string | null
+        }
+        Update: {
+          allowed_windows?: string[] | null
+          applies_to?: string[] | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          market_code?: string
+          max_size_yd?: number | null
+          reason?: string | null
+          restriction_type?: string
+          updated_at?: string | null
+          zone_name?: string | null
+        }
+        Relationships: []
       }
       zone_zip_codes: {
         Row: {
