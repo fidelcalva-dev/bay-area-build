@@ -106,6 +106,7 @@ const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDashboard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
+const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 
 // Telephony Admin Pages
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
@@ -559,6 +560,9 @@ const App = () => (
                 } />
                 <Route path="qa/workflows" element={
                   <Suspense fallback={<PageLoader />}><WorkflowsExplorer /></Suspense>
+                } />
+                <Route path="qa/workflow-graph" element={
+                  <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
                 } />
               </Route>
 

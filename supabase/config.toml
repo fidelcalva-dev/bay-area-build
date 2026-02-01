@@ -98,3 +98,6 @@ verify_jwt = false
 
 [functions.qa-runner]
 verify_jwt = false
+
+[functions.health-collector]
+verify_jwt = false

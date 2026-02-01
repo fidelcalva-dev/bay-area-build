@@ -4705,6 +4705,48 @@ export type Database = {
         }
         Relationships: []
       }
+      manual_setup_items: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          name: string
+          notes: string | null
+          status: string
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       market_rates: {
         Row: {
           created_at: string
@@ -8520,6 +8562,63 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      system_health_events: {
+        Row: {
+          created_at: string
+          details_json: Json | null
+          id: string
+          message: string
+          severity: string
+          source_key: string
+          source_type: string
+        }
+        Insert: {
+          created_at?: string
+          details_json?: Json | null
+          id?: string
+          message: string
+          severity: string
+          source_key: string
+          source_type: string
+        }
+        Update: {
+          created_at?: string
+          details_json?: Json | null
+          id?: string
+          message?: string
+          severity?: string
+          source_key?: string
+          source_type?: string
+        }
+        Relationships: []
+      }
+      system_health_snapshot: {
+        Row: {
+          created_at: string
+          generated_at: string
+          id: string
+          issues_json: Json
+          node_health_json: Json
+          summary_json: Json
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          issues_json?: Json
+          node_health_json?: Json
+          summary_json?: Json
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          issues_json?: Json
+          node_health_json?: Json
+          summary_json?: Json
         }
         Relationships: []
       }
