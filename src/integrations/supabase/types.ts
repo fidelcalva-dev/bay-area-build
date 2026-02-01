@@ -9890,7 +9890,16 @@ export type Database = {
         | "VOICEMAIL"
         | "COMPLETED"
         | "FAILED"
-      checkpoint_type: "PICKUP_POD" | "DELIVERY_POD" | "DUMP_TICKET"
+      checkpoint_type:
+        | "PICKUP_POD"
+        | "DELIVERY_POD"
+        | "DUMP_TICKET"
+        | "FILL_LINE_PHOTO"
+        | "MATERIAL_CLOSEUP"
+        | "CONTAMINATION_PHOTO"
+        | "SWAP_PICKUP_POD"
+        | "SWAP_DELIVERY_POD"
+        | "OVERFILL_PHOTO"
       commission_type: "PERCENTAGE" | "FLAT" | "TIERED" | "KPI_BASED"
       commitment_type: "prepaid" | "contracted"
       compensation_trigger:
@@ -9991,9 +10000,16 @@ export type Database = {
         | "ASSIGNED"
         | "ACCEPTED"
         | "EN_ROUTE"
+        | "ARRIVED"
         | "COMPLETED"
         | "CANCELLED"
-      run_type: "DELIVERY" | "PICKUP" | "HAUL" | "SWAP"
+      run_type:
+        | "DELIVERY"
+        | "PICKUP"
+        | "HAUL"
+        | "SWAP"
+        | "DUMP_AND_RETURN"
+        | "YARD_TRANSFER"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -10154,7 +10170,17 @@ export const Constants = {
         "COMPLETED",
         "FAILED",
       ],
-      checkpoint_type: ["PICKUP_POD", "DELIVERY_POD", "DUMP_TICKET"],
+      checkpoint_type: [
+        "PICKUP_POD",
+        "DELIVERY_POD",
+        "DUMP_TICKET",
+        "FILL_LINE_PHOTO",
+        "MATERIAL_CLOSEUP",
+        "CONTAMINATION_PHOTO",
+        "SWAP_PICKUP_POD",
+        "SWAP_DELIVERY_POD",
+        "OVERFILL_PHOTO",
+      ],
       commission_type: ["PERCENTAGE", "FLAT", "TIERED", "KPI_BASED"],
       commitment_type: ["prepaid", "contracted"],
       compensation_trigger: [
@@ -10263,10 +10289,18 @@ export const Constants = {
         "ASSIGNED",
         "ACCEPTED",
         "EN_ROUTE",
+        "ARRIVED",
         "COMPLETED",
         "CANCELLED",
       ],
-      run_type: ["DELIVERY", "PICKUP", "HAUL", "SWAP"],
+      run_type: [
+        "DELIVERY",
+        "PICKUP",
+        "HAUL",
+        "SWAP",
+        "DUMP_AND_RETURN",
+        "YARD_TRANSFER",
+      ],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
