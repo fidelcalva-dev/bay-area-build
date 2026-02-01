@@ -95,3 +95,6 @@ verify_jwt = false
 
 [functions.calculate-operational-time]
 verify_jwt = false
+
+[functions.qa-runner]
+verify_jwt = false

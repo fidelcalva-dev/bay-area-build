@@ -104,6 +104,7 @@ const ConfigHealthPage = lazy(() => import("./pages/admin/ConfigHealthPage"));
 const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage"));
 const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDashboard"));
+const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 
 // Telephony Admin Pages
 const CallsManager = lazy(() => import("./pages/admin/CallsManager"));
@@ -547,6 +548,10 @@ const App = () => (
                 {/* Internal Documentation */}
                 <Route path="docs" element={
                   <Suspense fallback={<PageLoader />}><InternalDocsPage /></Suspense>
+                } />
+                {/* QA Control Center */}
+                <Route path="qa/control-center" element={
+                  <Suspense fallback={<PageLoader />}><QaControlCenter /></Suspense>
                 } />
               </Route>
 
