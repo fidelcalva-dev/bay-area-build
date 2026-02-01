@@ -111,6 +111,7 @@ const navSections = [
   {
     title: 'System',
     items: [
+      { path: '/admin/qa/control-center', label: 'QA Control Center', icon: Shield },
       { path: '/admin/alerts', label: 'Alerts', icon: Bell },
       { path: '/admin/security', label: 'Security Health', icon: Shield },
       { path: '/admin/setup/functions', label: 'Functions Map', icon: Settings },

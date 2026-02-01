@@ -6472,6 +6472,116 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_checks: {
+        Row: {
+          category: Database["public"]["Enums"]["qa_category"]
+          check_key: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          severity: Database["public"]["Enums"]["qa_severity"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["qa_category"]
+          check_key: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          severity?: Database["public"]["Enums"]["qa_severity"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["qa_category"]
+          check_key?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          severity?: Database["public"]["Enums"]["qa_severity"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qa_results: {
+        Row: {
+          admin_route: string | null
+          check_key: string
+          created_at: string
+          details_json: Json | null
+          evidence: string | null
+          fix_suggestion: string | null
+          id: string
+          qa_run_id: string
+          status: Database["public"]["Enums"]["qa_check_status"]
+        }
+        Insert: {
+          admin_route?: string | null
+          check_key: string
+          created_at?: string
+          details_json?: Json | null
+          evidence?: string | null
+          fix_suggestion?: string | null
+          id?: string
+          qa_run_id: string
+          status: Database["public"]["Enums"]["qa_check_status"]
+        }
+        Update: {
+          admin_route?: string | null
+          check_key?: string
+          created_at?: string
+          details_json?: Json | null
+          evidence?: string | null
+          fix_suggestion?: string | null
+          id?: string
+          qa_run_id?: string
+          status?: Database["public"]["Enums"]["qa_check_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_results_qa_run_id_fkey"
+            columns: ["qa_run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qa_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          started_at: string
+          started_by_user_id: string | null
+          status: Database["public"]["Enums"]["qa_run_status"]
+          summary_json: Json | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          started_at?: string
+          started_by_user_id?: string | null
+          status?: Database["public"]["Enums"]["qa_run_status"]
+          summary_json?: Json | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          started_at?: string
+          started_by_user_id?: string | null
+          status?: Database["public"]["Enums"]["qa_run_status"]
+          summary_json?: Json | null
+        }
+        Relationships: []
+      }
       quick_links: {
         Row: {
           created_at: string
@@ -9856,6 +9966,25 @@ export type Database = {
         | "completed"
         | "overdue"
         | "lost"
+      qa_category:
+        | "WEBSITE"
+        | "CALCULATOR"
+        | "PRICING"
+        | "HEAVY"
+        | "CRM"
+        | "LEADS"
+        | "MESSAGING"
+        | "TELEPHONY"
+        | "DISPATCH"
+        | "DRIVER"
+        | "BILLING"
+        | "ADS"
+        | "MASTER_AI"
+        | "GOOGLE"
+        | "SECURITY"
+      qa_check_status: "PASS" | "FAIL" | "WARN" | "SKIP"
+      qa_run_status: "RUNNING" | "DONE" | "FAILED"
+      qa_severity: "P0" | "P1" | "P2"
       run_status:
         | "DRAFT"
         | "SCHEDULED"
@@ -10108,6 +10237,26 @@ export const Constants = {
         "overdue",
         "lost",
       ],
+      qa_category: [
+        "WEBSITE",
+        "CALCULATOR",
+        "PRICING",
+        "HEAVY",
+        "CRM",
+        "LEADS",
+        "MESSAGING",
+        "TELEPHONY",
+        "DISPATCH",
+        "DRIVER",
+        "BILLING",
+        "ADS",
+        "MASTER_AI",
+        "GOOGLE",
+        "SECURITY",
+      ],
+      qa_check_status: ["PASS", "FAIL", "WARN", "SKIP"],
+      qa_run_status: ["RUNNING", "DONE", "FAILED"],
+      qa_severity: ["P0", "P1", "P2"],
       run_status: [
         "DRAFT",
         "SCHEDULED",
