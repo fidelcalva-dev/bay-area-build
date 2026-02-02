@@ -41,6 +41,10 @@ const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
 const NotABroker = lazy(() => import("./pages/NotABroker"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 
+// Preview Pages (v2 Uber-like experience)
+const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
+const PreviewHome = lazy(() => import("./pages/preview/PreviewHome"));
+
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
 const CustomerDashboard = lazy(() => import("./pages/portal/CustomerDashboard"));
@@ -305,6 +309,14 @@ const App = () => (
               } />
               <Route path="/how-it-works" element={
                 <Suspense fallback={<PageLoader />}><HowItWorks /></Suspense>
+              } />
+              
+              {/* Preview Routes (v2 Uber-like experience) */}
+              <Route path="/preview/quote" element={
+                <Suspense fallback={<PageLoader />}><PreviewQuote /></Suspense>
+              } />
+              <Route path="/preview/home" element={
+                <Suspense fallback={<PageLoader />}><PreviewHome /></Suspense>
               } />
               
               {/* Customer Portal (SMS OTP Auth) */}
