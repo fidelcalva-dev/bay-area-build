@@ -8120,6 +8120,214 @@ export type Database = {
           },
         ]
       }
+      sales_ai_audit: {
+        Row: {
+          action_type: string
+          ai_output_json: Json | null
+          contact_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          input_summary_json: Json | null
+          latency_ms: number | null
+          lead_id: string | null
+          model_used: string | null
+          tokens_used: number | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action_type: string
+          ai_output_json?: Json | null
+          contact_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          input_summary_json?: Json | null
+          latency_ms?: number | null
+          lead_id?: string | null
+          model_used?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action_type?: string
+          ai_output_json?: Json | null
+          contact_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          input_summary_json?: Json | null
+          latency_ms?: number | null
+          lead_id?: string | null
+          model_used?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_ai_audit_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_ai_audit_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_ai_insights: {
+        Row: {
+          churn_risk_score: number | null
+          contact_id: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          intent_score: number | null
+          lead_id: string | null
+          model_used: string | null
+          objections_json: Json | null
+          reasoning: string | null
+          recommended_next_action: string | null
+          recommended_offer_json: Json | null
+          recommended_script_json: Json | null
+          urgency_score: number | null
+          value_score: number | null
+        }
+        Insert: {
+          churn_risk_score?: number | null
+          contact_id?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          intent_score?: number | null
+          lead_id?: string | null
+          model_used?: string | null
+          objections_json?: Json | null
+          reasoning?: string | null
+          recommended_next_action?: string | null
+          recommended_offer_json?: Json | null
+          recommended_script_json?: Json | null
+          urgency_score?: number | null
+          value_score?: number | null
+        }
+        Update: {
+          churn_risk_score?: number | null
+          contact_id?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          intent_score?: number | null
+          lead_id?: string | null
+          model_used?: string | null
+          objections_json?: Json | null
+          reasoning?: string | null
+          recommended_next_action?: string | null
+          recommended_offer_json?: Json | null
+          recommended_script_json?: Json | null
+          urgency_score?: number | null
+          value_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_ai_insights_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_ai_insights_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_ai_messages_drafts: {
+        Row: {
+          channel: string
+          contact_id: string | null
+          created_at: string
+          created_by_user_id: string | null
+          discarded_at: string | null
+          draft_body: string
+          draft_type: string | null
+          id: string
+          insight_id: string | null
+          lead_id: string | null
+          sent_at: string | null
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          channel: string
+          contact_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          discarded_at?: string | null
+          draft_body: string
+          draft_type?: string | null
+          id?: string
+          insight_id?: string | null
+          lead_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          channel?: string
+          contact_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          discarded_at?: string | null
+          draft_body?: string
+          draft_type?: string | null
+          id?: string
+          insight_id?: string | null
+          lead_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_ai_messages_drafts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_ai_messages_drafts_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "sales_ai_insights"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_ai_messages_drafts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_leads: {
         Row: {
           address: string | null
