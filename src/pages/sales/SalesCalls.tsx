@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, PhoneOutgoing, History, Users } from 'lucide-react';
+import { Phone, PhoneOutgoing, History, Users, Brain } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import {
   ActiveCallPanel,
   AgentStatusSelector,
   CallHistoryTable,
+  LiveCoachPanel,
+  AfterCallPanel,
 } from '@/components/telephony';
 
 export default function SalesCalls() {
@@ -20,6 +22,7 @@ export default function SalesCalls() {
   const [dialNumber, setDialNumber] = useState('');
   const [callHistory, setCallHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
 
   const {
     incomingCall,
@@ -90,6 +93,15 @@ export default function SalesCalls() {
     console.log('Ending call...');
   };
 
+  const handleCreateQuote = (data: { zip?: string; material?: string; size?: number }) => {
+    // Navigate to internal calculator with prefilled data
+    const params = new URLSearchParams();
+    if (data.zip) params.set('zip', data.zip);
+    if (data.material) params.set('material', data.material);
+    if (data.size) params.set('size', data.size.toString());
+    navigate(`/internal/calculator?${params.toString()}`);
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -109,7 +121,7 @@ export default function SalesCalls() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Dialer & Active Call */}
+        {/* Left Column - Dialer & Active Call & AI Coach */}
         <div className="space-y-6">
           {/* Dialer */}
           <Card>
@@ -144,6 +156,23 @@ export default function SalesCalls() {
               call={currentCall}
               onEndCall={handleEndCall}
               onSaveNotes={(notes) => saveCallNotes(currentCall.id, notes)}
+            />
+          )}
+
+          {/* Live AI Coach Panel - During Active Call */}
+          {currentCall && (
+            <LiveCoachPanel
+              callId={currentCall.id}
+              isActive={true}
+              onCreateQuote={handleCreateQuote}
+            />
+          )}
+
+          {/* After-Call Panel - When viewing completed call */}
+          {selectedCallId && !currentCall && (
+            <AfterCallPanel
+              callId={selectedCallId}
+              onCreateQuote={handleCreateQuote}
             />
           )}
 
@@ -195,7 +224,7 @@ export default function SalesCalls() {
                       setDialNumber(phone);
                     }}
                     onViewDetails={(callId) => {
-                      console.log('View call details:', callId);
+                      setSelectedCallId(callId);
                     }}
                   />
                 </TabsContent>
@@ -203,14 +232,14 @@ export default function SalesCalls() {
                   <CallHistoryTable
                     calls={callHistory.filter((c) => c.call_status === 'MISSED')}
                     onCallBack={(phone) => setDialNumber(phone)}
-                    onViewDetails={(callId) => console.log('View:', callId)}
+                    onViewDetails={(callId) => setSelectedCallId(callId)}
                   />
                 </TabsContent>
                 <TabsContent value="voicemail" className="mt-4">
                   <CallHistoryTable
                     calls={callHistory.filter((c) => c.call_status === 'VOICEMAIL')}
                     onCallBack={(phone) => setDialNumber(phone)}
-                    onViewDetails={(callId) => console.log('View:', callId)}
+                    onViewDetails={(callId) => setSelectedCallId(callId)}
                   />
                 </TabsContent>
               </Tabs>

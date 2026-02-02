@@ -49,6 +49,42 @@ function detectCallSource(formData: FormData): { source: string; metadata: Recor
   return { source: 'NATIVE', metadata: {} };
 }
 
+// Get Call AI configuration
+async function getCallAIConfig(supabase: any): Promise<{
+  enabled: boolean;
+  disclaimerEnabled: boolean;
+  disclaimerText: string;
+  coachingEnabled: boolean;
+}> {
+  const keys = [
+    'call_ai.enabled',
+    'call_ai.disclaimer_enabled', 
+    'call_ai.disclaimer_text',
+    'call_ai.coaching_enabled'
+  ];
+  
+  const { data } = await supabase
+    .from('config_settings')
+    .select('key, value')
+    .in('key', keys);
+  
+  const config: Record<string, any> = {};
+  data?.forEach((row: any) => {
+    let value = row.value;
+    if (typeof value === 'string') {
+      value = value.replace(/^"|"$/g, '');
+    }
+    config[row.key] = value;
+  });
+  
+  return {
+    enabled: config['call_ai.enabled'] === 'true' || config['call_ai.enabled'] === true,
+    disclaimerEnabled: config['call_ai.disclaimer_enabled'] === 'true' || config['call_ai.disclaimer_enabled'] === true,
+    disclaimerText: config['call_ai.disclaimer_text'] || 'This call may be recorded and analyzed for quality and training purposes.',
+    coachingEnabled: config['call_ai.coaching_enabled'] === 'true' || config['call_ai.coaching_enabled'] === true,
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -91,6 +127,10 @@ Deno.serve(async (req) => {
         // return new Response('Forbidden', { status: 403 });
       }
     }
+
+    // Get Call AI configuration
+    const callAIConfig = await getCallAIConfig(supabase);
+    console.log('Call AI Config:', callAIConfig);
 
     // Find the phone number and its purpose
     const { data: phoneNumber } = await supabase
@@ -169,38 +209,82 @@ Deno.serve(async (req) => {
         .eq('user_id', agentId);
     }
 
-    // Generate TwiML response
-    const recordingDisclaimer = 'This call may be recorded for quality and training purposes.';
+    // Log disclaimer event if AI enabled
+    if (callAIConfig.enabled && callAIConfig.disclaimerEnabled && callEvent) {
+      await supabase.from('call_ai_events').insert({
+        call_id: callEvent.id,
+        event_type: 'DISCLAIMER_PLAYED',
+        payload_json: {
+          disclaimer_text: callAIConfig.disclaimerText,
+          coaching_enabled: callAIConfig.coachingEnabled,
+        },
+      });
+    }
+
+    // Generate TwiML response with Call AI integration
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const streamUrl = `wss://${new URL(supabaseUrl!).hostname}/functions/v1/call-ai-stream`;
     
     let twiml: string;
     
     if (agentId) {
-      // Route to agent - in production, this would dial the agent's SIP endpoint or phone
-      twiml = `<?xml version="1.0" encoding="UTF-8"?>
-        <Response>
-          <Say>${recordingDisclaimer}</Say>
-          <Say>Please hold while we connect you to an agent.</Say>
-          <Play>https://api.twilio.com/cowbell.mp3</Play>
-          <Pause length="30"/>
-          <Say>We're sorry, all agents are busy. Please leave a message after the beep.</Say>
-          <Record 
-            maxLength="120" 
-            action="${Deno.env.get('SUPABASE_URL')}/functions/v1/calls-voicemail-handler?callId=${callEvent?.id}"
-            transcribe="true"
-            transcribeCallback="${Deno.env.get('SUPABASE_URL')}/functions/v1/calls-transcription-handler"
-          />
-        </Response>`;
+      // Route to agent with AI coaching support
+      if (callAIConfig.enabled && callAIConfig.disclaimerEnabled) {
+        // Play disclaimer first, then start stream if coaching enabled
+        twiml = `<?xml version="1.0" encoding="UTF-8"?>
+          <Response>
+            <Say>${callAIConfig.disclaimerText}</Say>
+            ${callAIConfig.coachingEnabled ? `
+            <Start>
+              <Stream url="${streamUrl}" track="both_tracks">
+                <Parameter name="callId" value="${callEvent?.id || ''}" />
+                <Parameter name="callSid" value="${callSid}" />
+              </Stream>
+            </Start>
+            ` : ''}
+            <Say>Please hold while we connect you to an agent.</Say>
+            <Play>https://api.twilio.com/cowbell.mp3</Play>
+            <Pause length="30"/>
+            <Say>We're sorry, all agents are busy. Please leave a message after the beep.</Say>
+            <Record 
+              maxLength="120" 
+              action="${supabaseUrl}/functions/v1/calls-voicemail-handler?callId=${callEvent?.id}"
+              transcribe="true"
+              transcribeCallback="${supabaseUrl}/functions/v1/calls-transcription-handler"
+            />
+          </Response>`;
+      } else {
+        // Standard routing without AI
+        twiml = `<?xml version="1.0" encoding="UTF-8"?>
+          <Response>
+            <Say>This call may be recorded for quality and training purposes.</Say>
+            <Say>Please hold while we connect you to an agent.</Say>
+            <Play>https://api.twilio.com/cowbell.mp3</Play>
+            <Pause length="30"/>
+            <Say>We're sorry, all agents are busy. Please leave a message after the beep.</Say>
+            <Record 
+              maxLength="120" 
+              action="${supabaseUrl}/functions/v1/calls-voicemail-handler?callId=${callEvent?.id}"
+              transcribe="true"
+              transcribeCallback="${supabaseUrl}/functions/v1/calls-transcription-handler"
+            />
+          </Response>`;
+      }
     } else {
       // No agent available - go to voicemail
+      const disclaimerSay = callAIConfig.enabled && callAIConfig.disclaimerEnabled 
+        ? callAIConfig.disclaimerText 
+        : 'This call may be recorded for quality and training purposes.';
+        
       twiml = `<?xml version="1.0" encoding="UTF-8"?>
         <Response>
-          <Say>${recordingDisclaimer}</Say>
+          <Say>${disclaimerSay}</Say>
           <Say>Thank you for calling. All of our representatives are currently assisting other customers. Please leave your name, phone number, and a brief message, and we will return your call as soon as possible.</Say>
           <Record 
             maxLength="120" 
-            action="${Deno.env.get('SUPABASE_URL')}/functions/v1/calls-voicemail-handler?callId=${callEvent?.id}"
+            action="${supabaseUrl}/functions/v1/calls-voicemail-handler?callId=${callEvent?.id}"
             transcribe="true"
-            transcribeCallback="${Deno.env.get('SUPABASE_URL')}/functions/v1/calls-transcription-handler"
+            transcribeCallback="${supabaseUrl}/functions/v1/calls-transcription-handler"
           />
         </Response>`;
 
