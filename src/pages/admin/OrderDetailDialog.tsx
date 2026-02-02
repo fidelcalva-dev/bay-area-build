@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Package, Truck, Calendar, MapPin, User, Phone,
-  Clock, AlertCircle, Loader2, AlertTriangle, FileText, History, DollarSign
+  Clock, AlertCircle, Loader2, AlertTriangle, FileText, History, DollarSign, Map
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import { OrderHistoryTab } from '@/components/admin/OrderHistoryTab';
 import { PaymentRecordDialog } from '@/components/admin/PaymentRecordDialog';
 import { OrderContractSection } from '@/components/contracts/OrderContractSection';
 import { DisposalPlanManager } from '@/components/dispatch/DisposalPlanManager';
+import { SitePlacementViewer } from '@/components/placement';
 import {
   reserveInventory,
   deployInventory,
@@ -443,16 +444,24 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
           </div>
         ) : order ? (
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="details" className="flex items-center gap-2">
                 <Package className="w-4 h-4" />
                 Details
+              </TabsTrigger>
+              <TabsTrigger value="placement" className="flex items-center gap-2">
+                <Map className="w-4 h-4" />
+                Placement
               </TabsTrigger>
               <TabsTrigger value="history" className="flex items-center gap-2">
                 <History className="w-4 h-4" />
                 History
               </TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="placement" className="mt-0">
+              <SitePlacementViewer orderId={order.id} />
+            </TabsContent>
             
             <TabsContent value="details" className="space-y-6 mt-0">
               {/* Inventory Warnings */}
