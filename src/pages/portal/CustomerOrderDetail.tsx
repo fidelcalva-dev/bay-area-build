@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   ArrowLeft, Truck, Calendar, MapPin, Phone, Download, 
   Camera, Clock, FileText, AlertCircle, CheckCircle2,
-  Loader2, MessageSquare, CreditCard, CalendarDays
+  Loader2, MessageSquare, CreditCard, CalendarDays, Map
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,8 @@ import { PaymentHistory } from "@/components/payment/PaymentHistory";
 import { InvoiceLineItems } from "@/components/payment/InvoiceLineItems";
 import { ServiceRequestDialog } from "@/components/portal/ServiceRequestDialog";
 import { PendingRequestsBanner } from "@/components/portal/PendingRequestsBanner";
+import { OrderTimeline } from "@/components/portal/OrderTimeline";
+import { SitePlacementViewer } from "@/components/placement";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 
 interface OrderDetails {
@@ -301,6 +304,24 @@ const CustomerOrderDetail = () => {
           </CardContent>
         </Card>
 
+        {/* Order Timeline */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Clock className="w-4 h-4" /> Order Timeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OrderTimeline
+              status={order.status}
+              scheduledDeliveryDate={order.scheduled_delivery_date}
+              actualDeliveryAt={order.actual_delivery_at}
+              scheduledPickupDate={order.scheduled_pickup_date}
+              actualPickupAt={order.actual_pickup_at}
+            />
+          </CardContent>
+        </Card>
+
         {/* Location Details */}
         <Card>
           <CardHeader>
@@ -324,6 +345,27 @@ const CustomerOrderDetail = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Site Placement Map */}
+        <Collapsible>
+          <Card>
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Map className="w-4 h-4" /> Dumpster Placement Map
+                  <Badge variant="outline" className="ml-auto text-xs">
+                    Click to expand
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="pt-0">
+                <SitePlacementViewer orderId={order.id} />
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
         {/* Pricing & Billing */}
         <Card>
