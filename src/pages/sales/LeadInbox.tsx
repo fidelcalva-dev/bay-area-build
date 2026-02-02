@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { 
   Users, Phone, Mail, MessageSquare, Search, Filter, 
   Download, Sparkles, Clock, CheckCircle2, XCircle, 
-  TrendingUp, Loader2, Building, User, MapPin
+  TrendingUp, Loader2, Building, User, MapPin, Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,10 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { useLeadCapture, Lead, LeadFilters } from '@/hooks/useLeadCapture';
+import { AICloseAssistPanel } from '@/components/sales/AICloseAssistPanel';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   new: { label: 'New', color: 'bg-blue-100 text-blue-800', icon: Clock },
@@ -285,75 +287,106 @@ export default function LeadInbox() {
         </CardContent>
       </Card>
 
-      {/* Lead Detail Dialog */}
+      {/* Lead Detail Dialog with AI Assist */}
       <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh]">
           <DialogHeader>
-            <DialogTitle>Lead Details</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              Lead Details
+              {selectedLead && (
+                <Badge variant="outline" className="ml-2">
+                  {selectedLead.lead_status}
+                </Badge>
+              )}
+            </DialogTitle>
           </DialogHeader>
           {selectedLead && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Name</label>
-                  <p className="font-medium">{selectedLead.customer_name || '—'}</p>
+            <ScrollArea className="max-h-[70vh]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pr-4">
+                {/* Left Column - Lead Info */}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Name</label>
+                      <p className="font-medium">{selectedLead.customer_name || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                      <p>{selectedLead.customer_phone || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Email</label>
+                      <p>{selectedLead.customer_email || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Company</label>
+                      <p>{selectedLead.company_name || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Location</label>
+                      <p>{selectedLead.city}{selectedLead.city && selectedLead.zip ? ', ' : ''}{selectedLead.zip || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Source</label>
+                      <p>{selectedLead.source_key || selectedLead.lead_source || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Customer Type</label>
+                      <p className="capitalize">{selectedLead.customer_type_detected || 'Unknown'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Project Category</label>
+                      <p className="capitalize">{selectedLead.project_category || '—'}</p>
+                    </div>
+                  </div>
+
+                  {selectedLead.notes && (
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Notes</label>
+                      <p className="text-sm whitespace-pre-wrap bg-muted p-2 rounded">{selectedLead.notes}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Update Status</label>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                        <Button
+                          key={key}
+                          variant={selectedLead.lead_status === key ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            updateLeadStatus(selectedLead.id, key);
+                            setSelectedLead({ ...selectedLead, lead_status: key });
+                          }}
+                        >
+                          {config.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+
+                {/* Right Column - AI Close Assist */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Phone</label>
-                  <p>{selectedLead.customer_phone || '—'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email</label>
-                  <p>{selectedLead.customer_email || '—'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Company</label>
-                  <p>{selectedLead.company_name || '—'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Location</label>
-                  <p>{selectedLead.city}{selectedLead.city && selectedLead.zip ? ', ' : ''}{selectedLead.zip || '—'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Source</label>
-                  <p>{selectedLead.source_key || selectedLead.lead_source || '—'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Customer Type</label>
-                  <p className="capitalize">{selectedLead.customer_type_detected || 'Unknown'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Project Category</label>
-                  <p className="capitalize">{selectedLead.project_category || '—'}</p>
+                  <AICloseAssistPanel
+                    leadId={selectedLead.id}
+                    entityType="LEAD"
+                    entityId={selectedLead.id}
+                    leadData={{
+                      customer_name: selectedLead.customer_name || undefined,
+                      customer_phone: selectedLead.customer_phone || undefined,
+                      customer_email: selectedLead.customer_email || undefined,
+                      zip: selectedLead.zip || undefined,
+                      city: selectedLead.city || undefined,
+                      source_key: selectedLead.source_key || undefined,
+                      notes: selectedLead.notes || undefined,
+                    }}
+                    userRole="sales"
+                  />
                 </div>
               </div>
-
-              {selectedLead.notes && (
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Notes</label>
-                  <p className="text-sm whitespace-pre-wrap bg-muted p-2 rounded">{selectedLead.notes}</p>
-                </div>
-              )}
-
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">Update Status</label>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                    <Button
-                      key={key}
-                      variant={selectedLead.lead_status === key ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => {
-                        updateLeadStatus(selectedLead.id, key);
-                        setSelectedLead({ ...selectedLead, lead_status: key });
-                      }}
-                    >
-                      {config.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            </ScrollArea>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedLead(null)}>Close</Button>
