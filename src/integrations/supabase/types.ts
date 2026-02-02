@@ -6170,6 +6170,51 @@ export type Database = {
           },
         ]
       }
+      notification_rules: {
+        Row: {
+          channels: Json
+          created_at: string
+          description: string | null
+          event_action:
+            | Database["public"]["Enums"]["timeline_event_action"]
+            | null
+          event_type: Database["public"]["Enums"]["timeline_event_type"]
+          id: string
+          is_active: boolean
+          priority: Database["public"]["Enums"]["notification_priority"]
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }
+        Insert: {
+          channels?: Json
+          created_at?: string
+          description?: string | null
+          event_action?:
+            | Database["public"]["Enums"]["timeline_event_action"]
+            | null
+          event_type: Database["public"]["Enums"]["timeline_event_type"]
+          id?: string
+          is_active?: boolean
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Update: {
+          channels?: Json
+          created_at?: string
+          description?: string | null
+          event_action?:
+            | Database["public"]["Enums"]["timeline_event_action"]
+            | null
+          event_type?: Database["public"]["Enums"]["timeline_event_type"]
+          id?: string
+          is_active?: boolean
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications_outbox: {
         Row: {
           body: string
@@ -9740,6 +9785,59 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_notifications: {
+        Row: {
+          action_url: string | null
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          dismissed_at: string | null
+          event_id: string | null
+          id: string
+          message: string | null
+          notification_type: Database["public"]["Enums"]["timeline_event_type"]
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          dismissed_at?: string | null
+          event_id?: string | null
+          id?: string
+          message?: string | null
+          notification_type: Database["public"]["Enums"]["timeline_event_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          dismissed_at?: string | null
+          event_id?: string | null
+          id?: string
+          message?: string | null
+          notification_type?: Database["public"]["Enums"]["timeline_event_type"]
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "timeline_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_users: {
         Row: {
           created_at: string | null
@@ -9916,6 +10014,108 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "phone_numbers"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      timeline_events: {
+        Row: {
+          actor_role: string | null
+          correction_reason: string | null
+          corrects_event_id: string | null
+          created_at: string
+          created_by_user_id: string | null
+          customer_id: string | null
+          details_json: Json | null
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["timeline_entity_type"]
+          event_action: Database["public"]["Enums"]["timeline_event_action"]
+          event_type: Database["public"]["Enums"]["timeline_event_type"]
+          id: string
+          is_correction: boolean | null
+          order_id: string | null
+          source: Database["public"]["Enums"]["timeline_source"]
+          source_id: string | null
+          source_table: string | null
+          summary: string
+          visibility: Database["public"]["Enums"]["timeline_visibility"]
+        }
+        Insert: {
+          actor_role?: string | null
+          correction_reason?: string | null
+          corrects_event_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          customer_id?: string | null
+          details_json?: Json | null
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["timeline_entity_type"]
+          event_action: Database["public"]["Enums"]["timeline_event_action"]
+          event_type: Database["public"]["Enums"]["timeline_event_type"]
+          id?: string
+          is_correction?: boolean | null
+          order_id?: string | null
+          source?: Database["public"]["Enums"]["timeline_source"]
+          source_id?: string | null
+          source_table?: string | null
+          summary: string
+          visibility?: Database["public"]["Enums"]["timeline_visibility"]
+        }
+        Update: {
+          actor_role?: string | null
+          correction_reason?: string | null
+          corrects_event_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          customer_id?: string | null
+          details_json?: Json | null
+          entity_id?: string
+          entity_type?: Database["public"]["Enums"]["timeline_entity_type"]
+          event_action?: Database["public"]["Enums"]["timeline_event_action"]
+          event_type?: Database["public"]["Enums"]["timeline_event_type"]
+          id?: string
+          is_correction?: boolean | null
+          order_id?: string | null
+          source?: Database["public"]["Enums"]["timeline_source"]
+          source_id?: string | null
+          source_table?: string | null
+          summary?: string
+          visibility?: Database["public"]["Enums"]["timeline_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeline_events_corrects_event_id_fkey"
+            columns: ["corrects_event_id"]
+            isOneToOne: false
+            referencedRelation: "timeline_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeline_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeline_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "timeline_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeline_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
           },
         ]
       }
@@ -11264,6 +11464,19 @@ export type Database = {
         }
         Returns: string
       }
+      create_staff_notification: {
+        Args: {
+          p_action_url?: string
+          p_channel: Database["public"]["Enums"]["notification_channel"]
+          p_event_id: string
+          p_message?: string
+          p_notification_type: Database["public"]["Enums"]["timeline_event_type"]
+          p_priority: Database["public"]["Enums"]["notification_priority"]
+          p_title: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       driver_assigned_to_order: {
         Args: { p_order_id: string; p_user_id: string }
         Returns: boolean
@@ -11481,6 +11694,24 @@ export type Database = {
         }
         Returns: string
       }
+      log_timeline_event: {
+        Args: {
+          p_actor_role?: string
+          p_customer_id?: string
+          p_details_json?: Json
+          p_entity_id: string
+          p_entity_type: Database["public"]["Enums"]["timeline_entity_type"]
+          p_event_action: Database["public"]["Enums"]["timeline_event_action"]
+          p_event_type: Database["public"]["Enums"]["timeline_event_type"]
+          p_order_id?: string
+          p_source?: Database["public"]["Enums"]["timeline_source"]
+          p_source_id?: string
+          p_source_table?: string
+          p_summary: string
+          p_visibility?: Database["public"]["Enums"]["timeline_visibility"]
+        }
+        Returns: string
+      }
       mark_order_contaminated:
         | { Args: { p_notes?: string; p_order_id: string }; Returns: boolean }
         | {
@@ -11660,6 +11891,8 @@ export type Database = {
         | "dry_run"
         | "multi_stop"
         | "maintenance_hold"
+      notification_channel: "IN_APP" | "SMS" | "EMAIL" | "SLACK" | "GOOGLE_CHAT"
+      notification_priority: "LOW" | "NORMAL" | "HIGH" | "CRITICAL"
       payment_action_status:
         | "requested"
         | "approved"
@@ -11722,6 +11955,50 @@ export type Database = {
         | "SWAP"
         | "DUMP_AND_RETURN"
         | "YARD_TRANSFER"
+      timeline_entity_type:
+        | "CUSTOMER"
+        | "ORDER"
+        | "LEAD"
+        | "RUN"
+        | "INVOICE"
+        | "QUOTE"
+        | "ASSET"
+      timeline_event_action:
+        | "CREATED"
+        | "UPDATED"
+        | "SENT"
+        | "RECEIVED"
+        | "COMPLETED"
+        | "FAILED"
+        | "FLAGGED"
+        | "SCHEDULED"
+        | "CANCELLED"
+        | "ASSIGNED"
+        | "UPLOADED"
+        | "APPROVED"
+        | "REJECTED"
+        | "REFUNDED"
+      timeline_event_type:
+        | "CALL"
+        | "SMS"
+        | "EMAIL"
+        | "QUOTE"
+        | "ORDER"
+        | "PAYMENT"
+        | "DISPATCH"
+        | "DELIVERY"
+        | "PICKUP"
+        | "SWAP"
+        | "PLACEMENT"
+        | "NOTE"
+        | "SYSTEM"
+        | "AI"
+        | "BILLING"
+        | "OVERDUE"
+        | "CONTAMINATION"
+        | "DUMP_TICKET"
+      timeline_source: "USER" | "SYSTEM" | "AI" | "WEBHOOK" | "TRIGGER" | "CRON"
+      timeline_visibility: "INTERNAL" | "CUSTOMER"
       transcript_status: "LIVE" | "FINAL" | "FAILED"
       truck_type: "ROLLOFF" | "HIGHSIDE" | "END_DUMP" | "TENWHEEL" | "SUPER10"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
@@ -11963,6 +12240,8 @@ export const Constants = {
         "multi_stop",
         "maintenance_hold",
       ],
+      notification_channel: ["IN_APP", "SMS", "EMAIL", "SLACK", "GOOGLE_CHAT"],
+      notification_priority: ["LOW", "NORMAL", "HIGH", "CRITICAL"],
       payment_action_status: [
         "requested",
         "approved",
@@ -12031,6 +12310,53 @@ export const Constants = {
         "DUMP_AND_RETURN",
         "YARD_TRANSFER",
       ],
+      timeline_entity_type: [
+        "CUSTOMER",
+        "ORDER",
+        "LEAD",
+        "RUN",
+        "INVOICE",
+        "QUOTE",
+        "ASSET",
+      ],
+      timeline_event_action: [
+        "CREATED",
+        "UPDATED",
+        "SENT",
+        "RECEIVED",
+        "COMPLETED",
+        "FAILED",
+        "FLAGGED",
+        "SCHEDULED",
+        "CANCELLED",
+        "ASSIGNED",
+        "UPLOADED",
+        "APPROVED",
+        "REJECTED",
+        "REFUNDED",
+      ],
+      timeline_event_type: [
+        "CALL",
+        "SMS",
+        "EMAIL",
+        "QUOTE",
+        "ORDER",
+        "PAYMENT",
+        "DISPATCH",
+        "DELIVERY",
+        "PICKUP",
+        "SWAP",
+        "PLACEMENT",
+        "NOTE",
+        "SYSTEM",
+        "AI",
+        "BILLING",
+        "OVERDUE",
+        "CONTAMINATION",
+        "DUMP_TICKET",
+      ],
+      timeline_source: ["USER", "SYSTEM", "AI", "WEBHOOK", "TRIGGER", "CRON"],
+      timeline_visibility: ["INTERNAL", "CUSTOMER"],
       transcript_status: ["LIVE", "FINAL", "FAILED"],
       truck_type: ["ROLLOFF", "HIGHSIDE", "END_DUMP", "TENWHEEL", "SUPER10"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],

@@ -115,6 +115,8 @@ const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
+const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
+const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -505,6 +507,12 @@ const App = () => (
                 } />
                 <Route path="customer-type-rules" element={
                   <Suspense fallback={<PageLoader />}><CustomerTypeRulesPage /></Suspense>
+                } />
+                <Route path="activity" element={
+                  <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
+                } />
+                <Route path="customers/:id" element={
+                  <Suspense fallback={<PageLoader />}><CustomerDetail /></Suspense>
                 } />
                 <Route path="heavy-risk" element={
                   <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>
