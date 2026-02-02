@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   User, Phone, Mail, Building2, MapPin, FileText, DollarSign, 
-  ArrowLeft, Loader2, Package 
+  ArrowLeft, Loader2, Package, Activity
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TimelineView, AddNoteDialog } from '@/components/timeline';
 import { getCustomerTimeline, type TimelineEvent } from '@/lib/timelineService';
+import { HealthScoreCard, HealthEventsTimeline, HealthBadge } from '@/components/health';
+import { getCustomerHealthScore, type CustomerHealthScore } from '@/lib/customerHealthService';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Customer {
@@ -35,6 +37,7 @@ export default function CustomerDetail() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [healthScore, setHealthScore] = useState<CustomerHealthScore | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isTimelineLoading, setIsTimelineLoading] = useState(false);
 
@@ -51,7 +54,7 @@ export default function CustomerDetail() {
       if (!id) return;
       setIsLoading(true);
 
-      const [customerResult, ordersResult] = await Promise.all([
+      const [customerResult, ordersResult, health] = await Promise.all([
         supabase
           .from('customers')
           .select('*')
@@ -62,6 +65,7 @@ export default function CustomerDetail() {
           .select('id, status, amount_due, created_at')
           .eq('customer_id', id)
           .order('created_at', { ascending: false }),
+        getCustomerHealthScore(id),
       ]);
 
       if (customerResult.data) {
@@ -70,6 +74,7 @@ export default function CustomerDetail() {
       if (ordersResult.data) {
         setOrders(ordersResult.data);
       }
+      setHealthScore(health);
 
       setIsLoading(false);
       loadTimeline();
@@ -134,6 +139,9 @@ export default function CustomerDetail() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <User className="w-6 h-6" />
               {customer.company_name || 'Customer'}
+              {healthScore && (
+                <HealthBadge status={healthScore.status} showScore score={healthScore.score} size="sm" />
+              )}
             </h1>
             <div className="flex items-center gap-2 mt-1 text-muted-foreground">
               {customer.customer_type && (
@@ -188,6 +196,10 @@ export default function CustomerDetail() {
       <Tabs defaultValue="timeline" className="space-y-4">
         <TabsList>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="health" className="flex items-center gap-1.5">
+            <Activity className="w-4 h-4" />
+            Health
+          </TabsTrigger>
           <TabsTrigger value="orders">Orders ({orders.length})</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
@@ -208,6 +220,13 @@ export default function CustomerDetail() {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="health">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <HealthScoreCard customerId={customer.id} />
+            <HealthEventsTimeline customerId={customer.id} limit={15} />
+          </div>
         </TabsContent>
 
         <TabsContent value="orders">
