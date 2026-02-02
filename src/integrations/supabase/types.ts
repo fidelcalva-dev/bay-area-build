@@ -2747,6 +2747,142 @@ export type Database = {
           },
         ]
       }
+      customer_health_events: {
+        Row: {
+          created_at: string
+          customer_id: string
+          delta_score: number
+          details_json: Json | null
+          event_type: Database["public"]["Enums"]["health_event_type"]
+          id: string
+          score_after: number | null
+          score_before: number | null
+          severity: Database["public"]["Enums"]["health_event_severity"]
+          source_entity_id: string | null
+          source_entity_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          delta_score?: number
+          details_json?: Json | null
+          event_type: Database["public"]["Enums"]["health_event_type"]
+          id?: string
+          score_after?: number | null
+          score_before?: number | null
+          severity?: Database["public"]["Enums"]["health_event_severity"]
+          source_entity_id?: string | null
+          source_entity_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          delta_score?: number
+          details_json?: Json | null
+          event_type?: Database["public"]["Enums"]["health_event_type"]
+          id?: string
+          score_after?: number | null
+          score_before?: number | null
+          severity?: Database["public"]["Enums"]["health_event_severity"]
+          source_entity_id?: string | null
+          source_entity_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_health_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_health_rules: {
+        Row: {
+          category: string
+          created_at: string
+          delta_score: number
+          description: string
+          event_type: Database["public"]["Enums"]["health_event_type"]
+          id: string
+          is_active: boolean
+          rule_key: string
+          threshold_json: Json | null
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          delta_score: number
+          description: string
+          event_type: Database["public"]["Enums"]["health_event_type"]
+          id?: string
+          is_active?: boolean
+          rule_key: string
+          threshold_json?: Json | null
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          delta_score?: number
+          description?: string
+          event_type?: Database["public"]["Enums"]["health_event_type"]
+          id?: string
+          is_active?: boolean
+          rule_key?: string
+          threshold_json?: Json | null
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: []
+      }
+      customer_health_scores: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          last_updated_at: string
+          negative_drivers: Json | null
+          positive_drivers: Json | null
+          score: number
+          score_breakdown_json: Json | null
+          status: Database["public"]["Enums"]["health_status"]
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          last_updated_at?: string
+          negative_drivers?: Json | null
+          positive_drivers?: Json | null
+          score?: number
+          score_breakdown_json?: Json | null
+          status?: Database["public"]["Enums"]["health_status"]
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          last_updated_at?: string
+          negative_drivers?: Json | null
+          positive_drivers?: Json | null
+          score?: number
+          score_breakdown_json?: Json | null
+          status?: Database["public"]["Enums"]["health_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_health_scores_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: true
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_material_offers: {
         Row: {
           created_at: string | null
@@ -11408,6 +11544,10 @@ export type Database = {
         Args: { p_error?: string; p_job_id: string; p_success: boolean }
         Returns: undefined
       }
+      compute_health_status: {
+        Args: { p_score: number }
+        Returns: Database["public"]["Enums"]["health_status"]
+      }
       create_compensation_earning: {
         Args: {
           p_calculation_details?: Json
@@ -11722,6 +11862,10 @@ export type Database = {
             }
             Returns: boolean
           }
+      recalculate_customer_health: {
+        Args: { p_customer_id: string }
+        Returns: number
+      }
       record_kpi_snapshot: {
         Args: {
           p_date: string
@@ -11748,6 +11892,18 @@ export type Database = {
         Returns: string
       }
       update_assets_days_out: { Args: never; Returns: undefined }
+      update_customer_health_score: {
+        Args: {
+          p_customer_id: string
+          p_delta_score?: number
+          p_details_json?: Json
+          p_event_type: Database["public"]["Enums"]["health_event_type"]
+          p_severity?: Database["public"]["Enums"]["health_event_severity"]
+          p_source_entity_id?: string
+          p_source_entity_type?: string
+        }
+        Returns: string
+      }
       update_lead_status: {
         Args: { p_lead_id: string; p_notes?: string; p_status: string }
         Returns: boolean
@@ -11867,6 +12023,28 @@ export type Database = {
         | "OAUTH_REVOKE"
       google_connection_status: "CONNECTED" | "EXPIRED" | "REVOKED" | "PENDING"
       google_event_status: "DRY_RUN" | "LIVE" | "SUCCESS" | "FAILED" | "PENDING"
+      health_event_severity: "LOW" | "MED" | "HIGH"
+      health_event_type:
+        | "PAYMENT_RECEIVED"
+        | "PAYMENT_OVERDUE"
+        | "CHARGEBACK"
+        | "REFUND"
+        | "DISPUTE"
+        | "CANCELLATION"
+        | "NO_SHOW"
+        | "BLOCKED_ACCESS"
+        | "RESCHEDULE"
+        | "CONTAMINATION"
+        | "OVERWEIGHT"
+        | "POD_MISSING"
+        | "REPEAT_ORDER"
+        | "HIGH_VOLUME"
+        | "FAST_PAY"
+        | "CLEAN_COMPLIANCE"
+        | "REVIEW_POSITIVE"
+        | "REVIEW_NEGATIVE"
+        | "INITIAL_SCORE"
+      health_status: "GREEN" | "AMBER" | "RED"
       help_scope:
         | "GLOBAL"
         | "SALES"
@@ -12214,6 +12392,29 @@ export const Constants = {
       ],
       google_connection_status: ["CONNECTED", "EXPIRED", "REVOKED", "PENDING"],
       google_event_status: ["DRY_RUN", "LIVE", "SUCCESS", "FAILED", "PENDING"],
+      health_event_severity: ["LOW", "MED", "HIGH"],
+      health_event_type: [
+        "PAYMENT_RECEIVED",
+        "PAYMENT_OVERDUE",
+        "CHARGEBACK",
+        "REFUND",
+        "DISPUTE",
+        "CANCELLATION",
+        "NO_SHOW",
+        "BLOCKED_ACCESS",
+        "RESCHEDULE",
+        "CONTAMINATION",
+        "OVERWEIGHT",
+        "POD_MISSING",
+        "REPEAT_ORDER",
+        "HIGH_VOLUME",
+        "FAST_PAY",
+        "CLEAN_COMPLIANCE",
+        "REVIEW_POSITIVE",
+        "REVIEW_NEGATIVE",
+        "INITIAL_SCORE",
+      ],
+      health_status: ["GREEN", "AMBER", "RED"],
       help_scope: [
         "GLOBAL",
         "SALES",

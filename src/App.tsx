@@ -117,6 +117,7 @@ const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
+const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -513,6 +514,9 @@ const App = () => (
                 } />
                 <Route path="customers/:id" element={
                   <Suspense fallback={<PageLoader />}><CustomerDetail /></Suspense>
+                } />
+                <Route path="customer-health" element={
+                  <Suspense fallback={<PageLoader />}><CustomerHealthDashboard /></Suspense>
                 } />
                 <Route path="heavy-risk" element={
                   <Suspense fallback={<PageLoader />}><HeavyRiskDashboard /></Suspense>

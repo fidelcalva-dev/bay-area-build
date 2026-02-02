@@ -119,3 +119,9 @@ verify_jwt = false
 
 [functions.seed-market-pricing]
 verify_jwt = false
+
+[functions.customer-health-update]
+verify_jwt = false
+
+[functions.customer-health-recalc]
+verify_jwt = false
