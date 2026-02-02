@@ -2798,6 +2798,68 @@ export type Database = {
           },
         ]
       }
+      customer_portal_links: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          expires_at: string
+          id: string
+          last_used_at: string | null
+          order_id: string
+          token_hash: string
+          trigger_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          last_used_at?: string | null
+          order_id: string
+          token_hash: string
+          trigger_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          last_used_at?: string | null
+          order_id?: string
+          token_hash?: string
+          trigger_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_portal_links_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_portal_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "customer_portal_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_portal_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+        ]
+      }
       customer_profiles: {
         Row: {
           company_name: string | null
@@ -6222,6 +6284,8 @@ export type Database = {
           placement_confirmed: boolean | null
           placement_locked: boolean | null
           placement_photo_url: string | null
+          portal_link_id: string | null
+          portal_link_sent_at: string | null
           primary_dumpster_id: string | null
           quick_link_id: string | null
           quote_id: string | null
@@ -6309,6 +6373,8 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          portal_link_id?: string | null
+          portal_link_sent_at?: string | null
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
@@ -6396,6 +6462,8 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          portal_link_id?: string | null
+          portal_link_sent_at?: string | null
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
@@ -6518,6 +6586,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "orders_portal_link_id_fkey"
+            columns: ["portal_link_id"]
+            isOneToOne: false
+            referencedRelation: "customer_portal_links"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "orders_primary_dumpster_id_fkey"
@@ -10772,6 +10847,14 @@ export type Database = {
         }
         Returns: string
       }
+      create_portal_link: {
+        Args: {
+          p_order_id: string
+          p_token_hash: string
+          p_trigger_source?: string
+        }
+        Returns: string
+      }
       create_run_checkpoints_from_config: {
         Args: { p_run_id: string }
         Returns: number
@@ -11025,6 +11108,15 @@ export type Database = {
       user_owns_order: {
         Args: { p_order_id: string; p_user_id: string }
         Returns: boolean
+      }
+      validate_portal_token: {
+        Args: { p_order_id: string; p_token_hash: string }
+        Returns: {
+          customer_id: string
+          link_id: string
+          order_id: string
+          valid: boolean
+        }[]
       }
       void_compensation_earning: {
         Args: { p_entity_id: string; p_entity_type: string; p_reason: string }

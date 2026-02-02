@@ -110,3 +110,9 @@ verify_jwt = false
 
 [functions.call-ai-finalize]
 verify_jwt = false
+
+[functions.send-portal-link]
+verify_jwt = false
+
+[functions.validate-portal-token]
+verify_jwt = false
