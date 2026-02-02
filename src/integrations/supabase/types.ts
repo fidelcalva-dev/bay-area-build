@@ -3593,11 +3593,14 @@ export type Database = {
           default_cost_per_load: number | null
           default_cost_per_ton: number | null
           dump_cost_model: string
+          facility_name: string | null
           id: string
           is_active: boolean
           market_code: string | null
           material_category: string
           material_code: string | null
+          material_stream: string | null
+          min_charge: number | null
           notes: string | null
           updated_at: string
         }
@@ -3607,11 +3610,14 @@ export type Database = {
           default_cost_per_load?: number | null
           default_cost_per_ton?: number | null
           dump_cost_model?: string
+          facility_name?: string | null
           id?: string
           is_active?: boolean
           market_code?: string | null
           material_category: string
           material_code?: string | null
+          material_stream?: string | null
+          min_charge?: number | null
           notes?: string | null
           updated_at?: string
         }
@@ -3621,11 +3627,14 @@ export type Database = {
           default_cost_per_load?: number | null
           default_cost_per_ton?: number | null
           dump_cost_model?: string
+          facility_name?: string | null
           id?: string
           is_active?: boolean
           market_code?: string | null
           material_category?: string
           material_code?: string | null
+          material_stream?: string | null
+          min_charge?: number | null
           notes?: string | null
           updated_at?: string
         }
@@ -4280,6 +4289,65 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      heavy_material_rates: {
+        Row: {
+          base_price_flat: number
+          created_at: string
+          facility_name: string | null
+          heavy_category: string
+          id: string
+          included_days: number
+          is_active: boolean
+          market_code: string
+          material_stream: string
+          max_tons: number
+          notes: string | null
+          reclass_to_debris_heavy: boolean
+          size_yd: number
+          updated_at: string
+        }
+        Insert: {
+          base_price_flat: number
+          created_at?: string
+          facility_name?: string | null
+          heavy_category: string
+          id?: string
+          included_days?: number
+          is_active?: boolean
+          market_code: string
+          material_stream: string
+          max_tons?: number
+          notes?: string | null
+          reclass_to_debris_heavy?: boolean
+          size_yd: number
+          updated_at?: string
+        }
+        Update: {
+          base_price_flat?: number
+          created_at?: string
+          facility_name?: string | null
+          heavy_category?: string
+          id?: string
+          included_days?: number
+          is_active?: boolean
+          market_code?: string
+          material_stream?: string
+          max_tons?: number
+          notes?: string | null
+          reclass_to_debris_heavy?: boolean
+          size_yd?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "heavy_material_rates_market_code_fkey"
+            columns: ["market_code"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       heavy_material_rules: {
         Row: {
@@ -5332,6 +5400,74 @@ export type Database = {
             foreignKeyName: "market_rates_market_id_fkey"
             columns: ["market_id"]
             isOneToOne: true
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_size_pricing: {
+        Row: {
+          base_price: number
+          created_at: string
+          dump_cost_assumption: number | null
+          extra_ton_rate: number
+          id: string
+          included_days: number
+          included_tons: number
+          is_active: boolean
+          market_code: string
+          notes: string | null
+          overdue_daily_rate: number
+          same_day_fee: number | null
+          service_fee_component: number | null
+          size_yd: number
+          target_margin_pct: number | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          base_price: number
+          created_at?: string
+          dump_cost_assumption?: number | null
+          extra_ton_rate?: number
+          id?: string
+          included_days?: number
+          included_tons: number
+          is_active?: boolean
+          market_code: string
+          notes?: string | null
+          overdue_daily_rate?: number
+          same_day_fee?: number | null
+          service_fee_component?: number | null
+          size_yd: number
+          target_margin_pct?: number | null
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number
+          created_at?: string
+          dump_cost_assumption?: number | null
+          extra_ton_rate?: number
+          id?: string
+          included_days?: number
+          included_tons?: number
+          is_active?: boolean
+          market_code?: string
+          notes?: string | null
+          overdue_daily_rate?: number
+          same_day_fee?: number | null
+          service_fee_component?: number | null
+          size_yd?: number
+          target_margin_pct?: number | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_size_pricing_market_code_fkey"
+            columns: ["market_code"]
+            isOneToOne: false
             referencedRelation: "markets"
             referencedColumns: ["id"]
           },
@@ -9288,6 +9424,42 @@ export type Database = {
           },
         ]
       }
+      size_pricing_defaults: {
+        Row: {
+          base_service_fee: number
+          created_at: string
+          description: string | null
+          id: string
+          included_days_default: number
+          included_tons_default: number
+          is_active: boolean
+          size_yd: number
+          updated_at: string
+        }
+        Insert: {
+          base_service_fee: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          included_days_default?: number
+          included_tons_default: number
+          is_active?: boolean
+          size_yd: number
+          updated_at?: string
+        }
+        Update: {
+          base_service_fee?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          included_days_default?: number
+          included_tons_default?: number
+          is_active?: boolean
+          size_yd?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       size_volume_factors: {
         Row: {
           created_at: string
@@ -10939,6 +11111,17 @@ export type Database = {
         Returns: boolean
       }
       get_current_compensation_period: { Args: never; Returns: string }
+      get_dump_fee: {
+        Args: { p_market_code: string; p_material_stream: string }
+        Returns: {
+          assumed_tons_json: Json
+          cost_per_load: number
+          cost_per_ton: number
+          dump_cost_model: string
+          facility_name: string
+          min_charge: number
+        }[]
+      }
       get_google_connection: {
         Args: { p_user_id: string }
         Returns: {
@@ -10947,6 +11130,34 @@ export type Database = {
           scopes_json: Json
           status: Database["public"]["Enums"]["google_connection_status"]
           token_expires_at: string
+        }[]
+      }
+      get_heavy_material_rate: {
+        Args: {
+          p_market_code: string
+          p_material_stream: string
+          p_size_yd: number
+        }
+        Returns: {
+          base_price_flat: number
+          facility_name: string
+          heavy_category: string
+          included_days: number
+          max_tons: number
+          reclass_to_debris_heavy: boolean
+        }[]
+      }
+      get_market_pricing: {
+        Args: { p_market_code: string; p_size_yd: number; p_tier?: string }
+        Returns: {
+          base_price: number
+          dump_cost_assumption: number
+          extra_ton_rate: number
+          included_days: number
+          included_tons: number
+          overdue_daily_rate: number
+          same_day_fee: number
+          service_fee_component: number
         }[]
       }
       has_any_role: {
