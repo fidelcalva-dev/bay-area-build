@@ -101,3 +101,6 @@ verify_jwt = false
 
 [functions.health-collector]
 verify_jwt = false
+
+[functions.sales-ai-analyze]
+verify_jwt = false

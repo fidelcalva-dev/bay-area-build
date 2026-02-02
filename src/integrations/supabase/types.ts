@@ -10352,6 +10352,21 @@ export type Database = {
         }
         Returns: string
       }
+      log_sales_ai_audit: {
+        Args: {
+          p_action_type: string
+          p_ai_output?: Json
+          p_contact_id?: string
+          p_entity_id?: string
+          p_entity_type?: string
+          p_input_summary?: Json
+          p_latency_ms?: number
+          p_lead_id?: string
+          p_model_used?: string
+          p_tokens_used?: number
+        }
+        Returns: string
+      }
       mark_order_contaminated:
         | { Args: { p_notes?: string; p_order_id: string }; Returns: boolean }
         | {
