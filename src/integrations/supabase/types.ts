@@ -9512,6 +9512,48 @@ export type Database = {
           },
         ]
       }
+      search_index: {
+        Row: {
+          address_normalized: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          market_code: string | null
+          phone_normalized: string | null
+          search_text: string
+          status: string | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address_normalized?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          market_code?: string | null
+          phone_normalized?: string | null
+          search_text: string
+          status?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address_normalized?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          market_code?: string | null
+          phone_normalized?: string | null
+          search_text?: string
+          status?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       security_acknowledgements: {
         Row: {
           id: string
@@ -11736,6 +11778,16 @@ export type Database = {
           service_fee_component: number
         }[]
       }
+      global_search: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          entity_id: string
+          entity_type: string
+          rank: number
+          subtitle: string
+          title: string
+        }[]
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -11891,6 +11943,8 @@ export type Database = {
         }
         Returns: string
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       update_assets_days_out: { Args: never; Returns: undefined }
       update_customer_health_score: {
         Args: {
