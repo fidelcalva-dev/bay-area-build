@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -6,12 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   Play, RefreshCw, Download, CheckCircle2, XCircle, AlertTriangle, 
   SkipForward, Shield, Calculator, DollarSign, Package, Users,
   MessageSquare, Phone, Truck, Receipt, TrendingUp, Bot, Globe, Lock,
-  ExternalLink
+  ExternalLink, ToggleLeft, Eye
 } from 'lucide-react';
+import { 
+  fetchFeatureFlags, 
+  updateFeatureFlag, 
+  type FeatureFlags 
+} from '@/lib/featureFlags';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
@@ -85,6 +92,13 @@ const severityColors: Record<string, string> = {
 export default function QaControlCenter() {
   const queryClient = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags | null>(null);
+  const [updatingFlag, setUpdatingFlag] = useState<string | null>(null);
+
+  // Fetch feature flags
+  useEffect(() => {
+    fetchFeatureFlags().then(setFeatureFlags);
+  }, []);
 
   // Fetch checks
   const { data: checks = [] } = useQuery({
@@ -169,6 +183,26 @@ export default function QaControlCenter() {
 
   // Calculate Go-Live readiness
   const isGoLiveReady = p0Failures.length === 0 && results.length > 0;
+
+  // Handle feature flag toggle
+  const handleFlagToggle = async (key: keyof FeatureFlags, currentValue: boolean) => {
+    // Block enabling v2 themes if not go-live ready
+    if (!currentValue && !isGoLiveReady && (key === 'public_theme.v2_uber' || key === 'quote_flow.v2_minimal')) {
+      toast.error('Cannot enable v2 features until all P0 checks pass');
+      return;
+    }
+
+    setUpdatingFlag(key);
+    const result = await updateFeatureFlag(key, !currentValue);
+    
+    if (result.success) {
+      setFeatureFlags(prev => prev ? { ...prev, [key]: !currentValue } : null);
+      toast.success(`Feature flag ${key} ${!currentValue ? 'enabled' : 'disabled'}`);
+    } else {
+      toast.error(`Failed to update: ${result.error}`);
+    }
+    setUpdatingFlag(null);
+  };
 
   // Generate report
   const generateReport = () => {
@@ -329,6 +363,106 @@ export default function QaControlCenter() {
           </Card>
         </div>
       )}
+
+      {/* Feature Flags Control */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ToggleLeft className="w-5 h-5" />
+            Feature Flags - Rollout Control
+          </CardTitle>
+          <CardDescription>
+            Manage v2 Uber-like experience rollout. V2 flags require all P0 checks to pass.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {featureFlags && (
+              <>
+                {/* Public Theme v2 */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-5 h-5 text-primary" />
+                    <div>
+                      <Label>public_theme.v2_uber</Label>
+                      <p className="text-xs text-muted-foreground">Uber-like public website design</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={featureFlags['public_theme.v2_uber']}
+                    onCheckedChange={() => handleFlagToggle('public_theme.v2_uber', featureFlags['public_theme.v2_uber'])}
+                    disabled={updatingFlag === 'public_theme.v2_uber' || (!isGoLiveReady && !featureFlags['public_theme.v2_uber'])}
+                  />
+                </div>
+
+                {/* Quote Flow v2 */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Calculator className="w-5 h-5 text-primary" />
+                    <div>
+                      <Label>quote_flow.v2_minimal</Label>
+                      <p className="text-xs text-muted-foreground">Minimal 6-step quote flow</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={featureFlags['quote_flow.v2_minimal']}
+                    onCheckedChange={() => handleFlagToggle('quote_flow.v2_minimal', featureFlags['quote_flow.v2_minimal'])}
+                    disabled={updatingFlag === 'quote_flow.v2_minimal' || (!isGoLiveReady && !featureFlags['quote_flow.v2_minimal'])}
+                  />
+                </div>
+
+                {/* Portal Tracking */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Eye className="w-5 h-5 text-primary" />
+                    <div>
+                      <Label>portal.tracking_enabled</Label>
+                      <p className="text-xs text-muted-foreground">Customer order tracking timeline</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={featureFlags['portal.tracking_enabled']}
+                    onCheckedChange={() => handleFlagToggle('portal.tracking_enabled', featureFlags['portal.tracking_enabled'])}
+                    disabled={updatingFlag === 'portal.tracking_enabled'}
+                  />
+                </div>
+
+                {/* Portal Placement */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Truck className="w-5 h-5 text-primary" />
+                    <div>
+                      <Label>portal.placement_enabled</Label>
+                      <p className="text-xs text-muted-foreground">Site placement mapping tool</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={featureFlags['portal.placement_enabled']}
+                    onCheckedChange={() => handleFlagToggle('portal.placement_enabled', featureFlags['portal.placement_enabled'])}
+                    disabled={updatingFlag === 'portal.placement_enabled'}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+          
+          {/* Preview Links */}
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <h4 className="font-medium mb-2 flex items-center gap-2">
+              <Eye className="w-4 h-4" />
+              Preview Mode (Always Uses v2)
+            </h4>
+            <div className="flex gap-3">
+              <Button variant="outline" size="sm" asChild>
+                <a href="/preview/quote" target="_blank">Preview Quote Flow</a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="/preview/home" target="_blank">Preview Homepage</a>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* P0 Failures - Pinned */}
       {p0Failures.length > 0 && (
