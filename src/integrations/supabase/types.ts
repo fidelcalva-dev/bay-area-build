@@ -3569,6 +3569,42 @@ export type Database = {
         }
         Relationships: []
       }
+      dumpster_dimensions: {
+        Row: {
+          created_at: string
+          description: string | null
+          height_ft: number | null
+          id: string
+          is_active: boolean
+          length_ft: number
+          size_yd: number
+          updated_at: string
+          width_ft: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          height_ft?: number | null
+          id?: string
+          is_active?: boolean
+          length_ft: number
+          size_yd: number
+          updated_at?: string
+          width_ft: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          height_ft?: number | null
+          id?: string
+          is_active?: boolean
+          length_ft?: number
+          size_yd?: number
+          updated_at?: string
+          width_ft?: number
+        }
+        Relationships: []
+      }
       dumpster_sizes: {
         Row: {
           base_price: number
@@ -6038,6 +6074,85 @@ export type Database = {
             foreignKeyName: "order_events_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+        ]
+      }
+      order_site_placement: {
+        Row: {
+          created_at: string
+          created_by_role: Database["public"]["Enums"]["placement_creator_role"]
+          created_by_user_id: string | null
+          dumpster_rect_json: Json
+          dumpster_size_yd: number
+          id: string
+          image_storage_path: string | null
+          map_center_lat: number
+          map_center_lng: number
+          map_provider: string
+          map_zoom: number
+          order_id: string
+          placement_notes: string | null
+          truck_rect_json: Json
+          truck_type: Database["public"]["Enums"]["truck_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_role?: Database["public"]["Enums"]["placement_creator_role"]
+          created_by_user_id?: string | null
+          dumpster_rect_json?: Json
+          dumpster_size_yd: number
+          id?: string
+          image_storage_path?: string | null
+          map_center_lat: number
+          map_center_lng: number
+          map_provider?: string
+          map_zoom?: number
+          order_id: string
+          placement_notes?: string | null
+          truck_rect_json?: Json
+          truck_type?: Database["public"]["Enums"]["truck_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_role?: Database["public"]["Enums"]["placement_creator_role"]
+          created_by_user_id?: string | null
+          dumpster_rect_json?: Json
+          dumpster_size_yd?: number
+          id?: string
+          image_storage_path?: string | null
+          map_center_lat?: number
+          map_center_lng?: number
+          map_provider?: string
+          map_zoom?: number
+          order_id?: string
+          placement_notes?: string | null
+          truck_rect_json?: Json
+          truck_type?: Database["public"]["Enums"]["truck_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_site_placement_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "order_site_placement_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_site_placement_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["order_id"]
           },
@@ -9437,6 +9552,39 @@ export type Database = {
         }
         Relationships: []
       }
+      truck_dimensions: {
+        Row: {
+          clearance_notes: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          length_ft: number
+          truck_type: Database["public"]["Enums"]["truck_type"]
+          updated_at: string
+          width_ft: number
+        }
+        Insert: {
+          clearance_notes?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          length_ft: number
+          truck_type: Database["public"]["Enums"]["truck_type"]
+          updated_at?: string
+          width_ft: number
+        }
+        Update: {
+          clearance_notes?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          length_ft?: number
+          truck_type?: Database["public"]["Enums"]["truck_type"]
+          updated_at?: string
+          width_ft?: number
+        }
+        Relationships: []
+      }
       trucks: {
         Row: {
           assigned_driver_id: string | null
@@ -10638,6 +10786,10 @@ export type Database = {
         }
         Returns: string
       }
+      driver_assigned_to_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: boolean
+      }
       enqueue_ai_job: {
         Args: {
           p_job_type: string
@@ -10831,6 +10983,22 @@ export type Database = {
         }
         Returns: string
       }
+      save_order_placement: {
+        Args: {
+          p_creator_role?: Database["public"]["Enums"]["placement_creator_role"]
+          p_dumpster_rect_json: Json
+          p_dumpster_size_yd: number
+          p_image_storage_path?: string
+          p_map_center_lat: number
+          p_map_center_lng: number
+          p_map_zoom: number
+          p_order_id: string
+          p_placement_notes?: string
+          p_truck_rect_json: Json
+          p_truck_type: Database["public"]["Enums"]["truck_type"]
+        }
+        Returns: string
+      }
       update_assets_days_out: { Args: never; Returns: undefined }
       update_lead_status: {
         Args: { p_lead_id: string; p_notes?: string; p_status: string }
@@ -10853,6 +11021,10 @@ export type Database = {
           p_meet_link?: string
         }
         Returns: string
+      }
+      user_owns_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: boolean
       }
       void_compensation_earning: {
         Args: { p_entity_id: string; p_entity_type: string; p_reason: string }
@@ -10982,6 +11154,13 @@ export type Database = {
         | "completed"
         | "overdue"
         | "lost"
+      placement_creator_role:
+        | "CUSTOMER"
+        | "SALES"
+        | "CS"
+        | "DISPATCH"
+        | "ADMIN"
+        | "DRIVER"
       qa_category:
         | "WEBSITE"
         | "CALCULATOR"
@@ -11018,6 +11197,7 @@ export type Database = {
         | "DUMP_AND_RETURN"
         | "YARD_TRANSFER"
       transcript_status: "LIVE" | "FINAL" | "FAILED"
+      truck_type: "ROLLOFF" | "HIGHSIDE" | "END_DUMP" | "TENWHEEL" | "SUPER10"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -11279,6 +11459,14 @@ export const Constants = {
         "overdue",
         "lost",
       ],
+      placement_creator_role: [
+        "CUSTOMER",
+        "SALES",
+        "CS",
+        "DISPATCH",
+        "ADMIN",
+        "DRIVER",
+      ],
       qa_category: [
         "WEBSITE",
         "CALCULATOR",
@@ -11318,6 +11506,7 @@ export const Constants = {
         "YARD_TRANSFER",
       ],
       transcript_status: ["LIVE", "FINAL", "FAILED"],
+      truck_type: ["ROLLOFF", "HIGHSIDE", "END_DUMP", "TENWHEEL", "SUPER10"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
