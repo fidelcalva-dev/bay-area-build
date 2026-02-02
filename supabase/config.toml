@@ -104,3 +104,9 @@ verify_jwt = false
 
 [functions.sales-ai-analyze]
 verify_jwt = false
+
+[functions.call-ai-analyze]
+verify_jwt = false
+
+[functions.call-ai-finalize]
+verify_jwt = false

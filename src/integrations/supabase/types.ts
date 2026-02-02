@@ -1429,6 +1429,121 @@ export type Database = {
           },
         ]
       }
+      call_ai_events: {
+        Row: {
+          agent_user_id: string | null
+          call_id: string
+          created_at: string
+          event_type: Database["public"]["Enums"]["call_ai_event_type"]
+          id: string
+          payload_json: Json | null
+        }
+        Insert: {
+          agent_user_id?: string | null
+          call_id: string
+          created_at?: string
+          event_type: Database["public"]["Enums"]["call_ai_event_type"]
+          id?: string
+          payload_json?: Json | null
+        }
+        Update: {
+          agent_user_id?: string | null
+          call_id?: string
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["call_ai_event_type"]
+          id?: string
+          payload_json?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_ai_events_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_ai_insights: {
+        Row: {
+          call_id: string
+          churn_risk_score: number | null
+          competitor_mentions: Json | null
+          created_at: string
+          detected_material_category: string | null
+          detected_size_preference: number | null
+          detected_topics_json: Json | null
+          detected_zip_code: string | null
+          id: string
+          intent_score: number | null
+          is_final: boolean | null
+          latency_ms: number | null
+          model_used: string | null
+          next_best_action: string | null
+          objection_tags_json: Json | null
+          risk_flags_json: Json | null
+          suggested_responses_json: Json | null
+          summary_bullets: Json | null
+          tokens_used: number | null
+          updated_at: string
+          urgency_score: number | null
+        }
+        Insert: {
+          call_id: string
+          churn_risk_score?: number | null
+          competitor_mentions?: Json | null
+          created_at?: string
+          detected_material_category?: string | null
+          detected_size_preference?: number | null
+          detected_topics_json?: Json | null
+          detected_zip_code?: string | null
+          id?: string
+          intent_score?: number | null
+          is_final?: boolean | null
+          latency_ms?: number | null
+          model_used?: string | null
+          next_best_action?: string | null
+          objection_tags_json?: Json | null
+          risk_flags_json?: Json | null
+          suggested_responses_json?: Json | null
+          summary_bullets?: Json | null
+          tokens_used?: number | null
+          updated_at?: string
+          urgency_score?: number | null
+        }
+        Update: {
+          call_id?: string
+          churn_risk_score?: number | null
+          competitor_mentions?: Json | null
+          created_at?: string
+          detected_material_category?: string | null
+          detected_size_preference?: number | null
+          detected_topics_json?: Json | null
+          detected_zip_code?: string | null
+          id?: string
+          intent_score?: number | null
+          is_final?: boolean | null
+          latency_ms?: number | null
+          model_used?: string | null
+          next_best_action?: string | null
+          objection_tags_json?: Json | null
+          risk_flags_json?: Json | null
+          suggested_responses_json?: Json | null
+          summary_bullets?: Json | null
+          tokens_used?: number | null
+          updated_at?: string
+          urgency_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_ai_insights_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_assignments: {
         Row: {
           accepted_at: string | null
@@ -1584,6 +1699,59 @@ export type Database = {
           },
         ]
       }
+      call_followups: {
+        Row: {
+          call_id: string
+          channel: string
+          created_at: string
+          discarded_at: string | null
+          discarded_by: string | null
+          draft_body: string
+          id: string
+          sent_at: string | null
+          sent_by: string | null
+          status: Database["public"]["Enums"]["call_followup_status"]
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          call_id: string
+          channel: string
+          created_at?: string
+          discarded_at?: string | null
+          discarded_by?: string | null
+          draft_body: string
+          id?: string
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: Database["public"]["Enums"]["call_followup_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          call_id?: string
+          channel?: string
+          created_at?: string
+          discarded_at?: string | null
+          discarded_by?: string | null
+          draft_body?: string
+          id?: string
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: Database["public"]["Enums"]["call_followup_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_followups_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_history_imports: {
         Row: {
           errors: Json | null
@@ -1699,6 +1867,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "call_tasks_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "call_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_transcripts: {
+        Row: {
+          call_id: string
+          confidence_avg: number | null
+          created_at: string
+          id: string
+          language: string | null
+          provider: string
+          speaker_segments: Json | null
+          status: Database["public"]["Enums"]["transcript_status"]
+          transcript_text: string | null
+          updated_at: string
+          word_count: number | null
+        }
+        Insert: {
+          call_id: string
+          confidence_avg?: number | null
+          created_at?: string
+          id?: string
+          language?: string | null
+          provider?: string
+          speaker_segments?: Json | null
+          status?: Database["public"]["Enums"]["transcript_status"]
+          transcript_text?: string | null
+          updated_at?: string
+          word_count?: number | null
+        }
+        Update: {
+          call_id?: string
+          confidence_avg?: number | null
+          created_at?: string
+          id?: string
+          language?: string | null
+          provider?: string
+          speaker_segments?: Json | null
+          status?: Database["public"]["Enums"]["transcript_status"]
+          transcript_text?: string | null
+          updated_at?: string
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_transcripts_call_id_fkey"
             columns: ["call_id"]
             isOneToOne: false
             referencedRelation: "call_events"
@@ -10302,6 +10520,15 @@ export type Database = {
       }
     }
     Functions: {
+      append_transcript_chunk: {
+        Args: {
+          p_call_id: string
+          p_chunk_text: string
+          p_confidence?: number
+          p_speaker?: string
+        }
+        Returns: string
+      }
       apply_scale_ticket_weight: {
         Args: { p_actual_weight_tons: number; p_order_id: string }
         Returns: boolean
@@ -10463,6 +10690,7 @@ export type Database = {
           weight_min_tons: number
         }[]
       }
+      finalize_call_transcript: { Args: { p_call_id: string }; Returns: string }
       find_available_agent: {
         Args: { p_purpose: Database["public"]["Enums"]["phone_purpose"] }
         Returns: string
@@ -10511,6 +10739,15 @@ export type Database = {
           p_requires_approval?: boolean
           p_severity: string
           p_summary: string
+        }
+        Returns: string
+      }
+      log_call_ai_event: {
+        Args: {
+          p_agent_user_id?: string
+          p_call_id: string
+          p_event_type: Database["public"]["Enums"]["call_ai_event_type"]
+          p_payload?: Json
         }
         Returns: string
       }
@@ -10645,7 +10882,14 @@ export type Database = {
         | "executive"
       approval_status: "pending" | "approved" | "rejected"
       assignment_type: "IN_HOUSE" | "CARRIER"
+      call_ai_event_type:
+        | "TRANSCRIPT_CHUNK"
+        | "INSIGHT_UPDATE"
+        | "COACH_PROMPT"
+        | "AGENT_ACTION"
+        | "DISCLAIMER_PLAYED"
       call_direction: "INBOUND" | "OUTBOUND"
+      call_followup_status: "DRAFT" | "SENT" | "DISCARDED"
       call_status:
         | "RINGING"
         | "ANSWERED"
@@ -10773,6 +11017,7 @@ export type Database = {
         | "SWAP"
         | "DUMP_AND_RETURN"
         | "YARD_TRANSFER"
+      transcript_status: "LIVE" | "FINAL" | "FAILED"
       volume_tier: "tier_a" | "tier_b" | "tier_c" | "tier_d"
     }
     CompositeTypes: {
@@ -10924,7 +11169,15 @@ export const Constants = {
       ],
       approval_status: ["pending", "approved", "rejected"],
       assignment_type: ["IN_HOUSE", "CARRIER"],
+      call_ai_event_type: [
+        "TRANSCRIPT_CHUNK",
+        "INSIGHT_UPDATE",
+        "COACH_PROMPT",
+        "AGENT_ACTION",
+        "DISCLAIMER_PLAYED",
+      ],
       call_direction: ["INBOUND", "OUTBOUND"],
+      call_followup_status: ["DRAFT", "SENT", "DISCARDED"],
       call_status: [
         "RINGING",
         "ANSWERED",
@@ -11064,6 +11317,7 @@ export const Constants = {
         "DUMP_AND_RETURN",
         "YARD_TRANSFER",
       ],
+      transcript_status: ["LIVE", "FINAL", "FAILED"],
       volume_tier: ["tier_a", "tier_b", "tier_c", "tier_d"],
     },
   },
