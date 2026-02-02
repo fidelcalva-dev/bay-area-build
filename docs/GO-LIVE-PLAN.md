@@ -1,7 +1,7 @@
 # Go-Live Plan: Uber-Like Customer Experience
 
 **Generated**: 2026-02-02  
-**Version**: 2.0
+**Version**: 2.1 (Homepage Upgrade)
 
 ---
 
@@ -154,7 +154,8 @@ heavy_material_rates (flat-fee heavy pricing)
 
 ### Preview URLs (Always Use v2)
 - `/preview/quote` - Quote flow v2
-- `/preview/home` - Homepage v2
+- `/preview/home` - Homepage v2 (Uber-like hero with ZIP bar)
+- `/portal/track` - Order tracking entry page
 
 ### Rollout Steps
 1. **Internal Preview**: Enable preview mode, test internally
@@ -168,7 +169,17 @@ heavy_material_rates (flat-fee heavy pricing)
 
 ## Appendix A: File Structure
 
-### New Components
+### V2 Homepage Components
+```
+src/components/sections/
+├── HeroSectionV2.tsx       # Uber-like hero with ZIP bar
+├── HowItWorksV2.tsx        # Simplified 3-step strip
+├── BenefitsStripV2.tsx     # 3 key value props
+├── QuickSizesV2.tsx        # Common sizes quick picks
+└── ... (existing sections)
+```
+
+### Quote Flow UI Kit
 ```
 src/components/quote/ui/
 ├── PageShellPublic.tsx
@@ -183,7 +194,11 @@ src/components/quote/ui/
 └── index.ts
 
 src/components/portal/
-└── OrderTrackingCard.tsx
+├── OrderTrackingCard.tsx
+└── ... (existing components)
+
+src/pages/portal/
+└── PortalTrack.tsx         # Order tracking entry page
 ```
 
 ### Feature Management

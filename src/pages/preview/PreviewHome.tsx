@@ -1,36 +1,29 @@
 // ============================================================
 // PREVIEW HOME PAGE - v2 Homepage Preview
-// For internal testing before public rollout
+// Uber-like booking experience for internal testing
 // ============================================================
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { HeroSection } from '@/components/sections/HeroSection';
-import { ServiceGuaranteeSection } from '@/components/sections/ServiceGuaranteeSection';
-import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
-import { FeaturesSection } from '@/components/sections/FeaturesSection';
+import { HeroSectionV2 } from '@/components/sections/HeroSectionV2';
+import { HowItWorksV2 } from '@/components/sections/HowItWorksV2';
+import { BenefitsStripV2 } from '@/components/sections/BenefitsStripV2';
+import { QuickSizesV2 } from '@/components/sections/QuickSizesV2';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
 import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 // Lazy load heavier sections
 const RealWorkSection = lazy(() => 
   import('@/components/sections/RealWorkSection').then(mod => ({ default: mod.RealWorkSection }))
 );
-const SizesPreviewSection = lazy(() => 
-  import('@/components/sections/SizesPreviewSection').then(mod => ({ default: mod.SizesPreviewSection }))
-);
-const ServiceCoverageMapSection = lazy(() => 
-  import('@/components/sections/ServiceCoverageMapSection').then(mod => ({ default: mod.ServiceCoverageMapSection }))
-);
 const ReviewsSection = lazy(() => 
   import('@/components/sections/ReviewsSection').then(mod => ({ default: mod.ReviewsSection }))
-);
-const RecyclingCommitmentSection = lazy(() => 
-  import('@/components/sections/RecyclingCommitmentSection').then(mod => ({ default: mod.RecyclingCommitmentSection }))
 );
 
 // Minimal loading fallback
@@ -53,38 +46,42 @@ export default function PreviewHome() {
       {/* Preview Mode Banner */}
       <div className="bg-amber-500/10 border-b border-amber-500/30 py-2 sticky top-0 z-50">
         <div className="container-wide">
-          <div className="flex items-center justify-center gap-2 text-sm text-amber-700">
-            <AlertTriangle className="w-4 h-4" />
-            <span className="font-medium">Preview Mode</span>
-            <Badge variant="outline" className="text-xs">v2 Homepage</Badge>
-            <span className="text-amber-600">- For internal testing only</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-amber-700">
+              <AlertTriangle className="w-4 h-4" />
+              <span className="font-medium">Preview Mode</span>
+              <Badge variant="outline" className="text-xs">v2 Uber-like Homepage</Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="ghost" size="sm" className="text-amber-700 hover:text-amber-800">
+                <Link to="/">
+                  <Eye className="w-4 h-4 mr-1" />
+                  View Current Site
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Critical above-the-fold */}
-      <HeroSection />
+      {/* V2 Hero - Uber-like with prominent ZIP bar */}
+      <HeroSectionV2 />
       
-      {/* Service Guarantee - immediately after hero */}
-      <ServiceGuaranteeSection />
+      {/* V2 Benefits Strip - 3 key value props */}
+      <BenefitsStripV2 />
       
-      <HowItWorksSection />
-      <FeaturesSection />
+      {/* V2 How It Works - Simplified 3 steps */}
+      <HowItWorksV2 />
       
-      {/* Social proof - verified credentials */}
+      {/* V2 Quick Sizes - Common sizes only */}
+      <QuickSizesV2 />
+      
+      {/* Social proof - verified credentials (reused) */}
       <TrustBadgesSection />
       
-      {/* Lazy-loaded sections */}
-      <Suspense fallback={<SectionLoader />}>
-        <SizesPreviewSection />
-      </Suspense>
-      
+      {/* Real work examples */}
       <Suspense fallback={<SectionLoader />}>
         <RealWorkSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionLoader />}>
-        <ServiceCoverageMapSection />
       </Suspense>
       
       {/* Verified customer reviews */}
@@ -92,13 +89,8 @@ export default function PreviewHome() {
         <ReviewsSection />
       </Suspense>
       
-      {/* Environmental commitment - accurate messaging */}
-      <Suspense fallback={<SectionLoader />}>
-        <RecyclingCommitmentSection />
-      </Suspense>
-      
       {/* FAQ + CTA */}
-      <FAQSection />
+      <FAQSection limit={4} />
       <CTASection />
     </Layout>
   );

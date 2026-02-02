@@ -52,6 +52,7 @@ const CustomerOrders = lazy(() => import("./pages/portal/CustomerOrders"));
 const CustomerDocuments = lazy(() => import("./pages/portal/CustomerDocuments"));
 const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
 const PaymentComplete = lazy(() => import("./pages/portal/PaymentComplete"));
+const PortalTrack = lazy(() => import("./pages/portal/PortalTrack"));
 
 // Portal Auth Guard
 import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
@@ -322,6 +323,9 @@ const App = () => (
               {/* Customer Portal (SMS OTP Auth) */}
               <Route path="/portal" element={
                 <Suspense fallback={<PageLoader />}><CustomerLogin /></Suspense>
+              } />
+              <Route path="/portal/track" element={
+                <Suspense fallback={<PageLoader />}><PortalTrack /></Suspense>
               } />
               <Route path="/portal/dashboard" element={
                 <PortalAuthGuard>
