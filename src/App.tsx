@@ -105,6 +105,7 @@ const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage")
 const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDashboard"));
 const LocationPricingManager = lazy(() => import("./pages/admin/pricing/LocationPricingManager"));
+const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
@@ -451,6 +452,9 @@ const App = () => (
                 } />
                 <Route path="markets" element={
                   <Suspense fallback={<PageLoader />}><MarketsManager /></Suspense>
+                } />
+                <Route path="markets/new-location" element={
+                  <Suspense fallback={<PageLoader />}><NewLocationWizard /></Suspense>
                 } />
                 <Route path="facilities" element={
                   <Suspense fallback={<PageLoader />}><FacilitiesManager /></Suspense>

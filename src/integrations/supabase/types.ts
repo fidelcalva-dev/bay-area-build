@@ -5340,6 +5340,166 @@ export type Database = {
         }
         Relationships: []
       }
+      market_onboarding: {
+        Row: {
+          activated_at: string | null
+          city: string
+          created_at: string
+          created_by: string | null
+          facilities_config_json: Json | null
+          id: string
+          market_code: string
+          market_name: string
+          notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          state: string
+          status: string
+          template_id: string | null
+          updated_at: string
+          yard_id: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          city: string
+          created_at?: string
+          created_by?: string | null
+          facilities_config_json?: Json | null
+          id?: string
+          market_code: string
+          market_name: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          yard_id?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          city?: string
+          created_at?: string
+          created_by?: string | null
+          facilities_config_json?: Json | null
+          id?: string
+          market_code?: string
+          market_name?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          yard_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_onboarding_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "market_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_onboarding_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "market_onboarding_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_price_adjustments: {
+        Row: {
+          adjustment_pct: number
+          applies_to: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          market_code: string
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          adjustment_pct?: number
+          applies_to: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          market_code: string
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adjustment_pct?: number
+          applies_to?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          market_code?: string
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      market_price_versions: {
+        Row: {
+          activated_at: string | null
+          activated_by: string | null
+          archived_at: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          market_code: string
+          notes: string | null
+          pricing_snapshot_json: Json | null
+          status: string
+          updated_at: string
+          version_label: string
+        }
+        Insert: {
+          activated_at?: string | null
+          activated_by?: string | null
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          market_code: string
+          notes?: string | null
+          pricing_snapshot_json?: Json | null
+          status?: string
+          updated_at?: string
+          version_label?: string
+        }
+        Update: {
+          activated_at?: string | null
+          activated_by?: string | null
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          market_code?: string
+          notes?: string | null
+          pricing_snapshot_json?: Json | null
+          status?: string
+          updated_at?: string
+          version_label?: string
+        }
+        Relationships: []
+      }
       market_rates: {
         Row: {
           created_at: string
@@ -5472,6 +5632,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_templates: {
+        Row: {
+          created_at: string
+          default_core_markup_pct: number
+          default_days_included: number
+          default_extra_ton_rate: number
+          default_included_tons_json: Json
+          default_overdue_daily_rate: number
+          default_premium_markup_pct: number
+          default_same_day_fee: number | null
+          default_service_fee_by_size_json: Json | null
+          description: string | null
+          green_halo_prices_json: Json | null
+          heavy_base_prices_json: Json | null
+          heavy_included_days: number | null
+          heavy_max_tons: number | null
+          id: string
+          is_active: boolean
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_core_markup_pct?: number
+          default_days_included?: number
+          default_extra_ton_rate?: number
+          default_included_tons_json?: Json
+          default_overdue_daily_rate?: number
+          default_premium_markup_pct?: number
+          default_same_day_fee?: number | null
+          default_service_fee_by_size_json?: Json | null
+          description?: string | null
+          green_halo_prices_json?: Json | null
+          heavy_base_prices_json?: Json | null
+          heavy_included_days?: number | null
+          heavy_max_tons?: number | null
+          id?: string
+          is_active?: boolean
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_core_markup_pct?: number
+          default_days_included?: number
+          default_extra_ton_rate?: number
+          default_included_tons_json?: Json
+          default_overdue_daily_rate?: number
+          default_premium_markup_pct?: number
+          default_same_day_fee?: number | null
+          default_service_fee_by_size_json?: Json | null
+          description?: string | null
+          green_halo_prices_json?: Json | null
+          heavy_base_prices_json?: Json | null
+          heavy_included_days?: number | null
+          heavy_max_tons?: number | null
+          id?: string
+          is_active?: boolean
+          template_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       markets: {
         Row: {

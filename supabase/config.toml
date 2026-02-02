@@ -116,3 +116,6 @@ verify_jwt = false
 
 [functions.validate-portal-token]
 verify_jwt = false
+
+[functions.seed-market-pricing]
+verify_jwt = false
