@@ -11784,7 +11784,7 @@ export type Database = {
         Args: never
         Returns: {
           coverage_pct: number
-          entity_type: string
+          entity_type_out: string
           indexed_count: number
           total_count: number
         }[]
