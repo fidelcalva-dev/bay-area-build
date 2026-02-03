@@ -2539,6 +2539,8 @@ export type Database = {
           notes: string | null
           phone: string | null
           phone_normalized: string | null
+          sms_opt_out: boolean | null
+          sms_opt_out_at: string | null
           state: string | null
           street_address: string | null
           updated_at: string
@@ -2557,6 +2559,8 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           phone_normalized?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
           state?: string | null
           street_address?: string | null
           updated_at?: string
@@ -2575,6 +2579,8 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           phone_normalized?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
           state?: string | null
           street_address?: string | null
           updated_at?: string
@@ -4289,6 +4295,449 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ghl_call_logs: {
+        Row: {
+          answered_at: string | null
+          caller_name: string | null
+          contact_id: string | null
+          created_at: string
+          customer_id: string | null
+          direction: string
+          duration_seconds: number | null
+          ended_at: string | null
+          from_number: string
+          ghl_call_id: string | null
+          ghl_conversation_id: string | null
+          id: string
+          lead_id: string | null
+          order_id: string | null
+          recording_duration_seconds: number | null
+          recording_url: string | null
+          started_at: string | null
+          status: string
+          thread_id: string | null
+          to_number: string
+          transcript: string | null
+          voicemail_url: string | null
+        }
+        Insert: {
+          answered_at?: string | null
+          caller_name?: string | null
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          direction: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number: string
+          ghl_call_id?: string | null
+          ghl_conversation_id?: string | null
+          id?: string
+          lead_id?: string | null
+          order_id?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          started_at?: string | null
+          status: string
+          thread_id?: string | null
+          to_number: string
+          transcript?: string | null
+          voicemail_url?: string | null
+        }
+        Update: {
+          answered_at?: string | null
+          caller_name?: string | null
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          direction?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          from_number?: string
+          ghl_call_id?: string | null
+          ghl_conversation_id?: string | null
+          id?: string
+          lead_id?: string | null
+          order_id?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          started_at?: string | null
+          status?: string
+          thread_id?: string | null
+          to_number?: string
+          transcript?: string | null
+          voicemail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ghl_call_logs_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ghl_call_logs_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_message_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ghl_connections: {
+        Row: {
+          created_at: string
+          id: string
+          last_sync_at: string | null
+          location_id: string
+          location_name: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_sync_at?: string | null
+          location_id: string
+          location_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_sync_at?: string | null
+          location_id?: string
+          location_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ghl_message_threads: {
+        Row: {
+          channel: string
+          contact_id: string | null
+          created_at: string
+          customer_id: string | null
+          email_address: string | null
+          ghl_contact_id: string | null
+          ghl_conversation_id: string
+          id: string
+          is_archived: boolean | null
+          last_message_at: string | null
+          last_message_direction: string | null
+          lead_id: string | null
+          order_id: string | null
+          phone_number: string | null
+          unread_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          channel?: string
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          email_address?: string | null
+          ghl_contact_id?: string | null
+          ghl_conversation_id: string
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          last_message_direction?: string | null
+          lead_id?: string | null
+          order_id?: string | null
+          phone_number?: string | null
+          unread_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          email_address?: string | null
+          ghl_contact_id?: string | null
+          ghl_conversation_id?: string
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          last_message_direction?: string | null
+          lead_id?: string | null
+          order_id?: string | null
+          phone_number?: string | null
+          unread_count?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ghl_message_threads_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_message_threads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_message_threads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_message_threads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ghl_message_threads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_message_threads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+        ]
+      }
+      ghl_messages: {
+        Row: {
+          attachments_json: Json | null
+          body_html: string | null
+          body_text: string | null
+          channel: string
+          contact_id: string | null
+          created_at: string
+          customer_id: string | null
+          delivered_at: string | null
+          direction: string
+          error_message: string | null
+          from_email: string | null
+          from_number: string | null
+          ghl_conversation_id: string
+          ghl_message_id: string | null
+          id: string
+          is_automated: boolean | null
+          lead_id: string | null
+          order_id: string | null
+          read_at: string | null
+          sent_at: string | null
+          sent_by_user_id: string | null
+          status: string
+          subject: string | null
+          template_key: string | null
+          thread_id: string | null
+          to_email: string | null
+          to_number: string | null
+        }
+        Insert: {
+          attachments_json?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          channel?: string
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          delivered_at?: string | null
+          direction: string
+          error_message?: string | null
+          from_email?: string | null
+          from_number?: string | null
+          ghl_conversation_id: string
+          ghl_message_id?: string | null
+          id?: string
+          is_automated?: boolean | null
+          lead_id?: string | null
+          order_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          sent_by_user_id?: string | null
+          status?: string
+          subject?: string | null
+          template_key?: string | null
+          thread_id?: string | null
+          to_email?: string | null
+          to_number?: string | null
+        }
+        Update: {
+          attachments_json?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          channel?: string
+          contact_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          delivered_at?: string | null
+          direction?: string
+          error_message?: string | null
+          from_email?: string | null
+          from_number?: string | null
+          ghl_conversation_id?: string
+          ghl_message_id?: string | null
+          id?: string
+          is_automated?: boolean | null
+          lead_id?: string | null
+          order_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          sent_by_user_id?: string | null
+          status?: string
+          subject?: string | null
+          template_key?: string | null
+          thread_id?: string | null
+          to_email?: string | null
+          to_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ghl_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_message_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ghl_sync_log: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          details_json: Json | null
+          error_message: string | null
+          id: string
+          records_created: number | null
+          records_failed: number | null
+          records_processed: number | null
+          records_skipped: number | null
+          records_updated: number | null
+          started_at: string
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          details_json?: Json | null
+          error_message?: string | null
+          id?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          started_at?: string
+          status: string
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          details_json?: Json | null
+          error_message?: string | null
+          id?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          started_at?: string
+          status?: string
+          sync_type?: string
+        }
+        Relationships: []
       }
       google_chat_spaces: {
         Row: {
@@ -11853,6 +12302,56 @@ export type Database = {
           indexed_count: number
           total_count: number
         }[]
+      }
+      ghl_create_call_timeline_event: {
+        Args: { p_call_id: string; p_entity_id: string; p_entity_type: string }
+        Returns: string
+      }
+      ghl_create_message_timeline_event: {
+        Args: {
+          p_entity_id: string
+          p_entity_type: string
+          p_message_id: string
+        }
+        Returns: string
+      }
+      ghl_match_contact: {
+        Args: { p_email?: string; p_phone?: string }
+        Returns: {
+          contact_id: string
+          customer_id: string
+          lead_id: string
+          match_type: string
+        }[]
+      }
+      ghl_process_inbound_call: {
+        Args: {
+          p_direction?: string
+          p_duration_seconds?: number
+          p_from_number?: string
+          p_ghl_call_id: string
+          p_ghl_conversation_id?: string
+          p_recording_url?: string
+          p_started_at?: string
+          p_status?: string
+          p_to_number?: string
+        }
+        Returns: string
+      }
+      ghl_process_inbound_message: {
+        Args: {
+          p_body_text?: string
+          p_channel: string
+          p_from_email?: string
+          p_from_number?: string
+          p_ghl_conversation_id: string
+          p_ghl_message_id: string
+          p_sent_at?: string
+          p_subject?: string
+          p_to_email?: string
+          p_to_number?: string
+        }
+        Returns: string
       }
       global_search: {
         Args: { p_limit?: number; p_query: string }
