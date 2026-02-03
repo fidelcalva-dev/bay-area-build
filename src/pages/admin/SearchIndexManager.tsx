@@ -10,7 +10,7 @@ import { RefreshCw, Database, Users, Building2, CheckCircle, AlertCircle, Play }
 import { toast } from "sonner";
 
 interface IndexStats {
-  entity_type: string;
+  entity_type_out: string;
   total_count: number;
   indexed_count: number;
   coverage_pct: number;
