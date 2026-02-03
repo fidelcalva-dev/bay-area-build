@@ -2525,6 +2525,71 @@ export type Database = {
         }
         Relationships: []
       }
+      contacts: {
+        Row: {
+          city: string | null
+          created_at: string
+          customer_id: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean | null
+          is_primary: boolean | null
+          job_title: string | null
+          notes: string | null
+          phone: string | null
+          phone_normalized: string | null
+          state: string | null
+          street_address: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          customer_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          notes?: string | null
+          phone?: string | null
+          phone_normalized?: string | null
+          state?: string | null
+          street_address?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          customer_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          notes?: string | null
+          phone?: string | null
+          phone_normalized?: string | null
+          state?: string | null
+          street_address?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_events: {
         Row: {
           actor_id: string | null
@@ -11926,6 +11991,8 @@ export type Database = {
             }
             Returns: boolean
           }
+      normalize_address: { Args: { p_address: string }; Returns: string }
+      normalize_phone: { Args: { p_phone: string }; Returns: string }
       recalculate_customer_health: {
         Args: { p_customer_id: string }
         Returns: number
@@ -11989,6 +12056,20 @@ export type Database = {
           p_gmail_thread_id?: string
           p_meet_event_id?: string
           p_meet_link?: string
+        }
+        Returns: string
+      }
+      upsert_search_index: {
+        Args: {
+          p_address?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_market_code?: string
+          p_phone?: string
+          p_search_text?: string
+          p_status?: string
+          p_subtitle?: string
+          p_title: string
         }
         Returns: string
       }
