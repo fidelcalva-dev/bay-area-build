@@ -125,3 +125,6 @@ verify_jwt = false
 
 [functions.customer-health-recalc]
 verify_jwt = false
+
+[functions.search-index-backfill]
+verify_jwt = false

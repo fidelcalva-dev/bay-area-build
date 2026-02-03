@@ -118,6 +118,7 @@ const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage")
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
 const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
+const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -495,6 +496,9 @@ const App = () => (
                 } />
                 <Route path="setup/functions" element={
                   <Suspense fallback={<PageLoader />}><IntegrationFunctionsMap /></Suspense>
+                } />
+                <Route path="setup/search-index" element={
+                  <Suspense fallback={<PageLoader />}><SearchIndexManager /></Suspense>
                 } />
                 {/* Material Catalog Admin Pages */}
                 <Route path="materials/catalog" element={

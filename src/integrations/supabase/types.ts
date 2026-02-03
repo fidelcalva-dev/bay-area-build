@@ -11534,6 +11534,8 @@ export type Database = {
         Returns: boolean
       }
       auto_assign_lead: { Args: { p_lead_id: string }; Returns: string }
+      backfill_search_index_contacts: { Args: never; Returns: number }
+      backfill_search_index_customers: { Args: never; Returns: number }
       can_complete_run: {
         Args: { p_run_id: string }
         Returns: {
@@ -11778,11 +11780,21 @@ export type Database = {
           service_fee_component: number
         }[]
       }
+      get_search_index_stats: {
+        Args: never
+        Returns: {
+          coverage_pct: number
+          entity_type: string
+          indexed_count: number
+          total_count: number
+        }[]
+      }
       global_search: {
         Args: { p_limit?: number; p_query: string }
         Returns: {
           entity_id: string
           entity_type: string
+          match_type: string
           rank: number
           subtitle: string
           title: string
