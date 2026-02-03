@@ -112,11 +112,11 @@ export default function SearchIndexManager() {
       {/* Coverage Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stats?.map((stat) => (
-          <Card key={stat.entity_type}>
+          <Card key={stat.entity_type_out}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
-                {getEntityIcon(stat.entity_type)}
-                <CardTitle className="text-lg">{stat.entity_type}</CardTitle>
+                {getEntityIcon(stat.entity_type_out)}
+                <CardTitle className="text-lg">{stat.entity_type_out}</CardTitle>
               </div>
               <CardDescription>
                 {stat.indexed_count} / {stat.total_count} indexed
