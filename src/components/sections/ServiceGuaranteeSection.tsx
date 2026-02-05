@@ -28,11 +28,11 @@ export function ServiceGuaranteeSection() {
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
             {/* Left side - Image */}
             <AnimatedItem variant="fadeUp" className="flex-shrink-0">
-              <div className="p-1 rounded-xl bg-primary/30">
+              <div className="p-1.5 rounded-xl bg-primary/30">
                 <img 
                   src={calsanPromiseImage} 
-                  alt="20 yard dumpster delivery" 
-                  className="w-48 md:w-56 h-auto rounded-lg object-cover"
+                  alt="Dumpster delivery" 
+                  className="w-56 md:w-72 h-auto rounded-lg object-cover"
                 />
               </div>
             </AnimatedItem>
