@@ -73,7 +73,7 @@ export function RecyclingCommitmentSection() {
                 <img 
                   src={recyclingPhoto} 
                   alt="Calsan truck at recycling facility" 
-                  className="w-64 md:w-80 h-auto rounded-lg object-cover"
+                  className="w-52 md:w-64 h-auto rounded-lg object-cover"
                 />
               </div>
             </div>
