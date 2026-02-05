@@ -48,21 +48,23 @@ export function RecyclingCommitmentSection() {
 
         {/* Process Steps - Two Column Layout */}
         <AnimatedSection className="mb-12">
-          <h3 className="text-xl font-bold text-foreground text-center mb-8">How Recycling Works</h3>
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            {/* Left Side - Steps */}
-            <div className="flex-1 flex flex-col gap-3">
-              {RECYCLING_PROCESS.steps.map((step) => (
-                <div key={step.step} className="flex items-center gap-3 bg-card px-4 py-3 rounded-xl border border-border">
-                  <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {step.step}
+          <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12">
+            {/* Left Side - Title + Steps */}
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-foreground mb-6">How Recycling Works</h3>
+              <div className="flex flex-col gap-3">
+                {RECYCLING_PROCESS.steps.map((step) => (
+                  <div key={step.step} className="flex items-center gap-3 bg-card px-4 py-3 rounded-xl border border-border">
+                    <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                      {step.step}
+                    </div>
+                    <div>
+                      <div className="font-medium text-foreground text-sm">{step.title}</div>
+                      <div className="text-xs text-muted-foreground">{step.description}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-foreground text-sm">{step.title}</div>
-                    <div className="text-xs text-muted-foreground">{step.description}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {/* Right Side - Photo */}
