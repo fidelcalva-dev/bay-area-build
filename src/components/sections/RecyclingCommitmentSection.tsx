@@ -11,6 +11,7 @@ import {
   GREEN_HALO_NOTE 
 } from '@/data/recycling';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
+import recyclingPhoto from '@/assets/recycling-commitment-photo.jpg';
 
 export function RecyclingCommitmentSection() {
   return (
@@ -45,26 +46,35 @@ export function RecyclingCommitmentSection() {
           ))}
         </StaggeredContainer>
 
-        {/* Process Steps */}
+        {/* Process Steps - Two Column Layout */}
         <AnimatedSection className="mb-12">
           <h3 className="text-xl font-bold text-foreground text-center mb-8">How Recycling Works</h3>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-center gap-4 md:gap-2">
-            {RECYCLING_PROCESS.steps.map((step, index) => (
-              <div key={step.step} className="flex items-center gap-2">
-                <div className="flex items-center gap-3 bg-card px-4 py-3 rounded-xl border border-border">
-                  <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            {/* Left Side - Steps */}
+            <div className="flex-1 flex flex-col gap-3">
+              {RECYCLING_PROCESS.steps.map((step) => (
+                <div key={step.step} className="flex items-center gap-3 bg-card px-4 py-3 rounded-xl border border-border">
+                  <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
                     {step.step}
                   </div>
                   <div>
                     <div className="font-medium text-foreground text-sm">{step.title}</div>
-                    <div className="text-xs text-muted-foreground hidden lg:block">{step.description}</div>
+                    <div className="text-xs text-muted-foreground">{step.description}</div>
                   </div>
                 </div>
-                {index < RECYCLING_PROCESS.steps.length - 1 && (
-                  <ArrowRight className="w-5 h-5 text-muted-foreground hidden md:block" />
-                )}
+              ))}
+            </div>
+
+            {/* Right Side - Photo */}
+            <div className="flex-shrink-0">
+              <div className="p-1.5 rounded-xl bg-green-700/30">
+                <img 
+                  src={recyclingPhoto} 
+                  alt="Calsan truck at recycling facility" 
+                  className="w-64 md:w-80 h-auto rounded-lg object-cover"
+                />
               </div>
-            ))}
+            </div>
           </div>
         </AnimatedSection>
 
