@@ -9,6 +9,7 @@ import realWork3 from '@/assets/real-work/real-work-3.jpeg';
 import realWork4 from '@/assets/real-work/real-work-4.jpeg';
 import realWork5 from '@/assets/real-work/real-work-5.jpeg';
 import realWork6 from '@/assets/real-work/real-work-6.jpeg';
+import operationsVideo from '@/assets/real-work/operations-video.mp4';
 
 const galleryImages = [
   { id: 1, src: realWork1, alt: 'Dumpster with materials on job site', label: 'Heavy Materials' },
@@ -70,7 +71,7 @@ export const RealWorkSection = () => {
         </div>
 
         {/* Photo Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 mb-10">
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
@@ -87,6 +88,18 @@ export const RealWorkSection = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Operations Video */}
+        <div className="max-w-4xl mx-auto">
+          <video 
+            src={operationsVideo}
+            controls
+            className="w-full rounded-xl border border-background/10"
+            poster=""
+          >
+            Your browser does not support the video tag.
+          </video>
         </div>
       </div>
 
