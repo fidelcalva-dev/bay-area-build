@@ -6770,6 +6770,89 @@ export type Database = {
         }
         Relationships: []
       }
+      missing_connections: {
+        Row: {
+          category: string
+          created_at: string
+          detected_reason: string | null
+          id: string
+          item_key: string
+          last_scanned_at: string | null
+          manual_steps_json: Json | null
+          priority: string
+          required_env_vars_json: Json | null
+          required_webhooks_json: Json | null
+          status: string
+          title: string
+          verification_steps_json: Json | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          detected_reason?: string | null
+          id?: string
+          item_key: string
+          last_scanned_at?: string | null
+          manual_steps_json?: Json | null
+          priority?: string
+          required_env_vars_json?: Json | null
+          required_webhooks_json?: Json | null
+          status?: string
+          title: string
+          verification_steps_json?: Json | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          detected_reason?: string | null
+          id?: string
+          item_key?: string
+          last_scanned_at?: string | null
+          manual_steps_json?: Json | null
+          priority?: string
+          required_env_vars_json?: Json | null
+          required_webhooks_json?: Json | null
+          status?: string
+          title?: string
+          verification_steps_json?: Json | null
+        }
+        Relationships: []
+      }
+      missing_connections_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          item_id: string
+          note: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          item_id: string
+          note?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          note?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missing_connections_log_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "missing_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           created_at: string
