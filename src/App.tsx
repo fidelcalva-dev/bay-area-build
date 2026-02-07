@@ -132,6 +132,7 @@ const TelephonyMigration = lazy(() => import("./pages/admin/TelephonyMigration")
 const TelephonyTestCall = lazy(() => import("./pages/admin/TelephonyTestCall"));
 const TelephonyImport = lazy(() => import("./pages/admin/TelephonyImport"));
 const IntegrationFunctionsMap = lazy(() => import("./pages/admin/IntegrationFunctionsMap"));
+const WhatsMissingPage = lazy(() => import("./pages/admin/WhatsMissingPage"));
 
 // Google Ads Admin Pages
 const AdsOverview = lazy(() => import("./pages/admin/ads/AdsOverview"));
@@ -500,6 +501,9 @@ const App = () => (
                 } />
                 <Route path="setup/functions" element={
                   <Suspense fallback={<PageLoader />}><IntegrationFunctionsMap /></Suspense>
+                } />
+                <Route path="setup/what-missing" element={
+                  <Suspense fallback={<PageLoader />}><WhatsMissingPage /></Suspense>
                 } />
                 <Route path="setup/search-index" element={
                   <Suspense fallback={<PageLoader />}><SearchIndexManager /></Suspense>
