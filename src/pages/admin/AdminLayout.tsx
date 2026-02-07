@@ -115,6 +115,7 @@ const navSections = [
       { path: '/admin/alerts', label: 'Alerts', icon: Bell },
       { path: '/admin/security', label: 'Security Health', icon: Shield },
       { path: '/admin/setup/functions', label: 'Functions Map', icon: Settings },
+      { path: '/admin/setup/what-missing', label: "What's Missing", icon: Shield },
       { path: '/admin/risk', label: 'Risk Review', icon: Shield },
       { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
       { path: '/admin/users', label: 'User Management', icon: UserCog },

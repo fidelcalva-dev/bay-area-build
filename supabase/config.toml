@@ -137,3 +137,6 @@ verify_jwt = false
 
 [functions.ghl-send-outbound]
 verify_jwt = false
+
+[functions.scan-missing-connections]
+verify_jwt = false
