@@ -149,3 +149,6 @@ verify_jwt = false
 
 [functions.internal-alert-dispatcher]
 verify_jwt = false
+
+[functions.invite-staff]
+verify_jwt = false
