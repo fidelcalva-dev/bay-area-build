@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { Shield, Mail, Lock, Loader2 } from 'lucide-react';
+import { isValidRedirect } from '@/lib/crmLinks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -9,10 +10,14 @@ import { useToast } from '@/hooks/use-toast';
 export default function AdminLogin() {
   const { user, isLoading, signIn, signUp, canAccessAdmin } = useAdminAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+
+  const redirectTo = searchParams.get('redirect');
 
   if (isLoading) {
     return (
@@ -24,7 +29,8 @@ export default function AdminLogin() {
 
   // Redirect authenticated users with admin access to dashboard
   if (user && canAccessAdmin()) {
-    return <Navigate to="/admin" replace />;
+    const target = redirectTo && isValidRedirect(redirectTo) ? redirectTo : '/admin';
+    return <Navigate to={target} replace />;
   }
 
   if (user && !canAccessAdmin()) {
