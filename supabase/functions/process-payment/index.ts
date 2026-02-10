@@ -268,6 +268,32 @@ Deno.serve(async (req) => {
         console.error("Failed to upload conversion:", e);
       }
 
+      // Dispatch internal alert for payment (best effort)
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            event_type: 'PAYMENT_RECEIVED',
+            entity_type: 'PAYMENT',
+            entity_id: payment.id,
+            source: 'WEBSITE',
+            payload: {
+              customer_name: order.quotes?.customer_name,
+              customer_phone: customerPhone || order.quotes?.customer_phone,
+              customer_email: customerEmail || order.quotes?.customer_email,
+              amount,
+              source_key: 'PAYMENT',
+            },
+          }),
+        });
+      } catch (alertErr) {
+        console.error('Internal alert failed (non-critical):', alertErr);
+      }
+
       // Trigger receipt notification
       try {
         await fetch(`${supabaseUrl}/functions/v1/send-payment-receipt`, {

@@ -91,6 +91,35 @@ Deno.serve(async (req) => {
 
     console.log('Lead created/updated:', leadId);
 
+    // Dispatch internal alert (best effort)
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          event_type: 'LEAD_CREATED',
+          entity_type: 'LEAD',
+          entity_id: leadId,
+          source: 'WEBSITE',
+          payload: {
+            customer_name: payload.customer_name,
+            customer_phone: payload.customer_phone,
+            customer_email: payload.customer_email,
+            city: payload.city,
+            zip_code: payload.zip,
+            source_key: payload.source_key,
+          },
+        }),
+      });
+    } catch (alertErr) {
+      console.error('Internal alert failed (non-critical):', alertErr);
+    }
+
     // Update additional fields not in the function
     if (payload.project_category || payload.requested_service || payload.consent_status) {
       await supabase

@@ -5152,6 +5152,92 @@ export type Database = {
         }
         Relationships: []
       }
+      internal_alert_deliveries: {
+        Row: {
+          alert_id: string
+          channel: string
+          created_at: string
+          error_message: string | null
+          id: string
+          provider: string
+          recipient: string
+          status: string
+        }
+        Insert: {
+          alert_id: string
+          channel: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          provider: string
+          recipient: string
+          status?: string
+        }
+        Update: {
+          alert_id?: string
+          channel?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          provider?: string
+          recipient?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "internal_alert_deliveries_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "internal_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      internal_alerts: {
+        Row: {
+          body_text: string | null
+          created_at: string
+          dedupe_key: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id: string
+          links_json: Json | null
+          payload_json: Json | null
+          source: string
+          status: string
+          title: string
+        }
+        Insert: {
+          body_text?: string | null
+          created_at?: string
+          dedupe_key: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id?: string
+          links_json?: Json | null
+          payload_json?: Json | null
+          source?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          body_text?: string | null
+          created_at?: string
+          dedupe_key?: string
+          entity_id?: string
+          entity_type?: string
+          event_type?: string
+          id?: string
+          links_json?: Json | null
+          payload_json?: Json | null
+          source?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       internal_documents: {
         Row: {
           created_at: string
