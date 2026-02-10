@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { captureAttribution } from "@/lib/attributionTracker";
+import { initTracking } from "@/lib/trackingService";
 
 // Critical pages loaded immediately
 import Index from "./pages/Index";
@@ -226,7 +228,13 @@ const PageLoader = () => (
   </div>
 );
 
-const App = () => (
+const App = () => {
+  useEffect(() => {
+    captureAttribution();
+    initTracking();
+  }, []);
+
+  return (
   <ErrorBoundary>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
@@ -738,6 +746,7 @@ const App = () => (
     </QueryClientProvider>
   </HelmetProvider>
 </ErrorBoundary>
-);
+  );
+};
 
 export default App;
