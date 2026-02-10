@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { loadEmailConfig, sendEmail } from "../_shared/email-sender.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,13 +7,19 @@ const corsHeaders = {
 };
 
 interface ReceiptRequest {
-  paymentId: string;
-  orderId: string;
+  paymentId?: string;
+  payment_id?: string;
+  orderId?: string;
+  order_id?: string;
   amount: number;
   customerEmail?: string;
+  customer_email?: string;
   customerPhone?: string;
+  customer_phone?: string;
   transactionId?: string;
-  newBalance: number;
+  transaction_id?: string;
+  newBalance?: number;
+  new_balance?: number;
 }
 
 Deno.serve(async (req) => {
@@ -25,27 +32,48 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    const body: ReceiptRequest = await req.json();
+
+    // Accept both camelCase and snake_case (backward compatible)
+    const paymentId = body.paymentId ?? body.payment_id;
+    const orderId = body.orderId ?? body.order_id;
+    const amount = body.amount;
+    const customerEmail = body.customerEmail ?? body.customer_email;
+    const customerPhone = body.customerPhone ?? body.customer_phone;
+    const transactionId = body.transactionId ?? body.transaction_id;
+    const newBalance = body.newBalance ?? body.new_balance ?? 0;
+
+    if (!orderId) {
+      return new Response(
+        JSON.stringify({ error: "orderId (or order_id) is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (amount === undefined || amount === null) {
+      return new Response(
+        JSON.stringify({ error: "amount is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const twilioAccountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
     const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
     const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-
-    const body: ReceiptRequest = await req.json();
-    const { paymentId, orderId, amount, customerEmail, customerPhone, transactionId, newBalance } = body;
 
     let smsSent = false;
-    let emailSent = false;
+    let emailResult: { success: boolean; status: string; messageId?: string; error?: string } = { success: false, status: "SKIPPED" };
 
     // Send SMS receipt
     if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber && customerPhone) {
       try {
-        const formattedPhone = customerPhone.startsWith("+1") 
-          ? customerPhone 
+        const formattedPhone = customerPhone.startsWith("+1")
+          ? customerPhone
           : `+1${customerPhone.replace(/\D/g, "")}`;
 
+        const orderRef = orderId.length >= 8 ? orderId.slice(0, 8) : orderId;
         const smsBody = newBalance <= 0
-          ? `✅ Payment received! $${amount.toFixed(2)} paid. Your Calsan order #${orderId.slice(0, 8)} is now PAID IN FULL. Thank you!`
-          : `✅ Payment received! $${amount.toFixed(2)} paid. Remaining balance: $${newBalance.toFixed(2)}. Order #${orderId.slice(0, 8)}. Thank you! - Calsan`;
+          ? `✅ Payment received! $${amount.toFixed(2)} paid. Your Calsan order #${orderRef} is now PAID IN FULL. Thank you!`
+          : `✅ Payment received! $${amount.toFixed(2)} paid. Remaining balance: $${newBalance.toFixed(2)}. Order #${orderRef}. Thank you! - Calsan`;
 
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const twilioAuth = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
@@ -67,7 +95,6 @@ Deno.serve(async (req) => {
           smsSent = true;
           console.log("SMS receipt sent to:", formattedPhone);
 
-          // Log message history
           await supabase.from("message_history").insert({
             order_id: orderId,
             customer_phone: formattedPhone,
@@ -83,11 +110,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Send email receipt
-    if (resendApiKey && customerEmail) {
-      try {
-        const emailHtml = `
-<!DOCTYPE html>
+    // Send email receipt via shared sender
+    if (customerEmail) {
+      const emailConfig = await loadEmailConfig(supabase);
+      const orderRef = orderId.length >= 8 ? orderId.slice(0, 8).toUpperCase() : orderId.toUpperCase();
+
+      const emailHtml = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -118,11 +146,10 @@ Deno.serve(async (req) => {
       <div class="receipt-box">
         <p style="text-align: center; margin-bottom: 20px;">Payment Received</p>
         <p class="amount" style="text-align: center;">$${amount.toFixed(2)}</p>
-        
         <div style="margin-top: 24px;">
           <div class="detail-row">
             <span class="label">Order #</span>
-            <span class="value">${orderId.slice(0, 8).toUpperCase()}</span>
+            <span class="value">${orderRef}</span>
           </div>
           <div class="detail-row">
             <span class="label">Transaction ID</span>
@@ -130,22 +157,14 @@ Deno.serve(async (req) => {
           </div>
           <div class="detail-row">
             <span class="label">Date</span>
-            <span class="value">${new Date().toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}</span>
+            <span class="value">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
           </div>
         </div>
-
         <div class="balance">
           <p class="balance-label">${newBalance <= 0 ? 'Status' : 'Remaining Balance'}</p>
           <p class="balance-amount">${newBalance <= 0 ? 'PAID IN FULL' : '$' + newBalance.toFixed(2)}</p>
         </div>
       </div>
-      
       <p style="text-align: center; color: #6b7280;">
         Thank you for your payment!<br/>
         Questions? Call us at (510) 800-8262
@@ -159,52 +178,38 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        const emailResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify({
-            from: "Calsan Dumpsters <noreply@calsan.com>",
-            to: [customerEmail],
-            subject: `Payment Receipt - Order #${orderId.slice(0, 8).toUpperCase()}`,
-            html: emailHtml,
-          }),
-        });
-
-        if (emailResponse.ok) {
-          emailSent = true;
-          console.log("Email receipt sent to:", customerEmail);
-        }
-      } catch (e) {
-        console.error("Email send error:", e);
-      }
+      emailResult = await sendEmail(supabase, emailConfig, {
+        to: customerEmail,
+        subject: `Payment Receipt - Order #${orderRef}`,
+        html: emailHtml,
+        entityType: "order",
+        entityId: orderId,
+      });
     }
 
     // Store receipt document reference
-    const receiptDocUrl = `receipt://${paymentId}/${transactionId || 'manual'}`;
-    await supabase.from("documents").insert({
-      order_id: orderId,
-      doc_type: "payment_receipt",
-      file_url: receiptDocUrl,
-      file_name: `Receipt-${transactionId || paymentId.slice(0, 8)}.pdf`,
-      notes: `Payment receipt for $${amount.toFixed(2)} - ${new Date().toISOString()}`,
-    });
+    if (paymentId) {
+      await supabase.from("documents").insert({
+        order_id: orderId,
+        doc_type: "payment_receipt",
+        file_url: `receipt://${paymentId}/${transactionId || 'manual'}`,
+        file_name: `Receipt-${transactionId || (paymentId.length >= 8 ? paymentId.slice(0, 8) : paymentId)}.pdf`,
+        notes: `Payment receipt for $${amount.toFixed(2)} - ${new Date().toISOString()}`,
+      });
 
-    // Update payment record with receipt sent timestamp
-    await supabase
-      .from("payments")
-      .update({ 
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", paymentId);
+      await supabase
+        .from("payments")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", paymentId);
+    }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        smsSent, 
-        emailSent 
+      JSON.stringify({
+        success: true,
+        smsSent,
+        emailSent: emailResult.status === "SENT",
+        emailStatus: emailResult.status,
+        emailMessageId: emailResult.messageId,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

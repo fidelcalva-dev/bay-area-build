@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { Resend } from "npm:resend@2.0.0";
+import { loadEmailConfig, sendEmail } from "../_shared/email-sender.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -252,30 +252,27 @@ Deno.serve(async (req) => {
     // =====================================================
     if (emailRecipients.length > 0) {
       const emailHtml = buildEmailHtml(event_type, entity_type, entity_id, payload, links);
+      const emailConfig = await loadEmailConfig(supabase);
+
+      // Override from for internal alerts
+      const alertConfig = { ...emailConfig, fromName: 'Calsan Alerts' };
 
       if (mode === 'LIVE') {
-        const resendKey = Deno.env.get('RESEND_API_KEY');
-        if (resendKey) {
-          const resend = new Resend(resendKey);
-          for (const recipient of emailRecipients) {
-            try {
-              await resend.emails.send({
-                from: 'Calsan Alerts <alerts@calsandumpsterspro.com>',
-                to: [recipient],
-                subject: title,
-                html: emailHtml,
-              });
-              deliveries.push({ channel: 'EMAIL', recipient, status: 'SENT', provider: 'RESEND' });
-            } catch (e) {
-              const errMsg = e instanceof Error ? e.message : String(e);
-              console.error(`[internal-alert] Email to ${recipient} failed:`, errMsg);
-              deliveries.push({ channel: 'EMAIL', recipient, status: 'FAILED', provider: 'RESEND', error_message: errMsg });
-            }
-          }
-        } else {
-          for (const recipient of emailRecipients) {
-            deliveries.push({ channel: 'EMAIL', recipient, status: 'FAILED', provider: 'RESEND', error_message: 'RESEND_API_KEY not configured' });
-          }
+        for (const recipient of emailRecipients) {
+          const result = await sendEmail(supabase, alertConfig, {
+            to: recipient,
+            subject: title,
+            html: emailHtml,
+            entityType: entity_type,
+            entityId: entity_id,
+          });
+          deliveries.push({
+            channel: 'EMAIL',
+            recipient,
+            status: result.status,
+            provider: 'RESEND',
+            error_message: result.error,
+          });
         }
       } else {
         for (const recipient of emailRecipients) {
