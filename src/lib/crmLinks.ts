@@ -4,7 +4,35 @@
  * Supports login redirect flow and multiple environments.
  */
 
+import type { AppRole } from '@/hooks/useAdminAuth';
+
 const LOGIN_PATH = '/admin/login';
+
+/**
+ * Maps a staff role to its default dashboard path.
+ */
+const ROLE_DASHBOARDS: Record<string, string> = {
+  admin: '/admin',
+  system_admin: '/admin',
+  ops_admin: '/admin',
+  sales: '/sales/calls',
+  sales_admin: '/sales/calls',
+  dispatcher: '/dispatch',
+  finance: '/finance',
+  finance_admin: '/finance',
+  driver: '/driver/runs',
+  owner_operator: '/driver/runs',
+  customer: '/',
+  read_only_admin: '/admin',
+};
+
+/**
+ * Returns the default dashboard path for a given role.
+ */
+export function getRoleDashboard(role: AppRole | null): string {
+  if (!role) return '/admin';
+  return ROLE_DASHBOARDS[role] || '/admin';
+}
 
 /**
  * Returns the canonical base URL for the current environment.
