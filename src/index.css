@@ -349,4 +349,14 @@
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
+
+  /* Hide Lovable badge in production - defensive fallback */
+  [data-lovable-badge],
+  a[href*="lovable.dev"][target="_blank"][style*="position: fixed"],
+  div[id*="lovable"] a[href*="lovable.dev"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
 }
