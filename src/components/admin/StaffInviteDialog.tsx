@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -20,6 +19,7 @@ const INVITE_ROLES = [
   { value: 'sales', label: 'Sales' },
   { value: 'dispatcher', label: 'Dispatch' },
   { value: 'finance', label: 'Finance' },
+  { value: 'cs', label: 'Customer Service' },
   { value: 'driver', label: 'Driver' },
   { value: 'owner_operator', label: 'Owner Operator' },
   { value: 'ops_admin', label: 'Ops Admin' },
@@ -57,9 +57,10 @@ export function StaffInviteDialog({ open, onOpenChange, onSuccess }: StaffInvite
       });
 
       if (response.error) throw response.error;
+      if (response.data?.error) throw new Error(response.data.error);
 
       setSent(true);
-      toast({ title: 'Invite Sent', description: `Temporary password sent to ${email}` });
+      toast({ title: 'Invite Sent', description: `One-time invite link sent to ${email}` });
       onSuccess?.();
     } catch (error: any) {
       console.error('Invite error:', error);
@@ -90,7 +91,7 @@ export function StaffInviteDialog({ open, onOpenChange, onSuccess }: StaffInvite
             Invite Staff Member
           </DialogTitle>
           <DialogDescription>
-            Send a temporary password via email. User must change it on first login.
+            Send a one-time invite link via email. User will set their own password.
           </DialogDescription>
         </DialogHeader>
 
@@ -99,10 +100,10 @@ export function StaffInviteDialog({ open, onOpenChange, onSuccess }: StaffInvite
             <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
             <p className="text-lg font-semibold text-foreground">Invite Sent!</p>
             <p className="text-sm text-muted-foreground mt-1">
-              A temporary password has been emailed to <strong>{email}</strong>.
+              A one-time invite link has been emailed to <strong>{email}</strong>.
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              Password expires in 24 hours. User must reset on first login.
+              Link expires in 24 hours and can only be used once.
             </p>
             <Button className="mt-4" onClick={handleClose}>Done</Button>
           </div>
@@ -163,7 +164,7 @@ export function StaffInviteDialog({ open, onOpenChange, onSuccess }: StaffInvite
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    Send Invite
+                    Send Invite Link
                   </>
                 )}
               </Button>

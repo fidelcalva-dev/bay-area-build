@@ -471,7 +471,7 @@ export default function UsersManager() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setInviteDialogOpen(true)}>
             <Mail className="w-4 h-4 mr-2" />
-            Invite with Temp Password
+            Invite via Link
           </Button>
           <Button onClick={() => { resetForm(); setCreateDialogOpen(true); }}>
             <UserPlus className="w-4 h-4 mr-2" />

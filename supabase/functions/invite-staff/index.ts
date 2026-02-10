@@ -10,16 +10,16 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-function generateTempPassword(length = 14): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
+function generateToken(length = 48): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789";
   const array = new Uint8Array(length);
   crypto.getRandomValues(array);
   return Array.from(array, (b) => chars[b % chars.length]).join("");
 }
 
-async function hashPassword(password: string): Promise<string> {
+async function hashToken(token: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
+  const data = encoder.encode(token);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = new Uint8Array(hashBuffer);
   return new TextDecoder().decode(hexEncode(hashArray));
@@ -82,104 +82,80 @@ serve(async (req: Request) => {
       });
     }
 
-    // Generate temp password
-    const tempPassword = generateTempPassword();
-    const tempPasswordHash = await hashPassword(tempPassword);
+    // Generate secure invite token
+    const inviteToken = generateToken(48);
+    const inviteTokenHash = await hashToken(inviteToken);
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-    // Create or get user in Supabase Auth
-    // First check if user exists
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(
-      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
-    );
-
-    let userId: string;
-
-    if (existingUser) {
-      userId = existingUser.id;
-      // Update password to temp password
-      await supabaseAdmin.auth.admin.updateUserById(userId, {
-        password: tempPassword,
-      });
-    } else {
-      // Create new user
-      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email: email.toLowerCase(),
-        password: tempPassword,
-        email_confirm: true,
-      });
-      if (createError) throw createError;
-      userId = newUser.user.id;
-    }
-
-    // Assign role
-    const { error: roleError } = await supabaseAdmin.from("user_roles").upsert(
-      { user_id: userId, role },
-      { onConflict: "user_id,role" }
-    );
-    if (roleError) console.error("Role assign error:", roleError);
-
-    // Update staff_users record
-    await supabaseAdmin.from("staff_users").upsert(
-      {
-        user_id: userId,
-        email: email.toLowerCase(),
-        full_name: full_name || email.split("@")[0],
-        department: role,
-        status: "active",
-        must_reset_password: true,
-      },
-      { onConflict: "email" }
-    );
-
-    // Save invite record
-    await supabaseAdmin.from("staff_invites").insert({
+    // Save invite record (token is hashed, never stored in plain text)
+    const { error: inviteError } = await supabaseAdmin.from("staff_invites").insert({
       email: email.toLowerCase(),
       role,
-      temp_password_hash: tempPasswordHash,
+      invite_token_hash: inviteTokenHash,
       expires_at: expiresAt,
       created_by: caller.id,
     });
 
+    if (inviteError) {
+      console.error("Invite insert error:", inviteError);
+      throw inviteError;
+    }
+
+    // Create staff_users record if not exists
+    await supabaseAdmin.from("staff_users").upsert(
+      {
+        email: email.toLowerCase(),
+        full_name: full_name || email.split("@")[0],
+        department: role,
+        status: "pending",
+      },
+      { onConflict: "email" }
+    );
+
     // Audit log
     await supabaseAdmin.from("audit_logs").insert({
       action: "create",
-      entity_type: "user_roles",
-      entity_id: userId,
+      entity_type: "staff_invite",
+      entity_id: email.toLowerCase(),
       user_id: caller.id,
       user_email: caller.email,
-      changes_summary: `Invited ${email} with role ${role} (temp password)`,
+      changes_summary: `Created invite link for ${email} with role ${role}`,
     });
+
+    // Build invite link
+    const origin = req.headers.get("origin") || "https://bay-area-build.lovable.app";
+    const inviteLink = `${origin}/set-password?token=${inviteToken}`;
 
     // Send email via Resend
     if (resendKey) {
       const resend = new Resend(resendKey);
-      const loginUrl = `${req.headers.get("origin") || "https://bay-area-build.lovable.app"}/admin/login`;
 
       await resend.emails.send({
-        from: "CRM Access <onboarding@resend.dev>",
+        from: "Calsan CRM <onboarding@resend.dev>",
         to: [email],
-        subject: "Your CRM Access - Temporary Password",
+        subject: "You've been invited to Calsan CRM",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #1a1a2e;">Welcome to Cal's CRM</h1>
-            <p>You've been invited to access the CRM system as <strong>${role}</strong>.</p>
-            <div style="background: #f4f4f8; border-radius: 8px; padding: 20px; margin: 20px 0;">
-              <p style="margin: 0 0 8px;"><strong>Email:</strong> ${email}</p>
-              <p style="margin: 0 0 8px;"><strong>Temporary Password:</strong></p>
-              <code style="background: #fff; padding: 8px 16px; border-radius: 4px; font-size: 18px; letter-spacing: 1px; display: inline-block;">${tempPassword}</code>
+            <h1 style="color: #1a1a2e;">Welcome to Calsan Dumpsters Pro</h1>
+            <p>You've been invited to access the internal CRM as <strong>${role}</strong>.</p>
+            <p>Create your password using the one-time link below:</p>
+            <div style="background: #f4f4f8; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+              <a href="${inviteLink}" style="display: inline-block; background: #1a1a2e; color: #fff; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: bold;">Create Your Password</a>
             </div>
-            <p style="color: #e63946; font-weight: bold;">⚠️ This password expires in 24 hours. You must change it on first login.</p>
-            <a href="${loginUrl}" style="display: inline-block; background: #1a1a2e; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin-top: 16px;">Login to CRM</a>
-            <p style="color: #888; font-size: 12px; margin-top: 24px;">If you did not expect this invite, please ignore this email.</p>
+            <p style="color: #e63946; font-weight: bold;">⚠️ This link expires in 24 hours and can only be used once.</p>
+            <p style="color: #666; font-size: 14px; margin-top: 24px;">After setting your password, log in at:<br/>
+              <a href="${origin}/admin/login" style="color: #1a1a2e;">${origin}/admin/login</a>
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+            <p style="color: #888; font-size: 12px;">— Calsan Dumpsters Pro</p>
+            <p style="color: #888; font-size: 12px;">If you did not expect this invite, please ignore this email.</p>
           </div>
         `,
       });
     }
 
     return new Response(
-      JSON.stringify({ success: true, userId, message: "Invite sent" }),
+      JSON.stringify({ success: true, message: "Invite link sent" }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
