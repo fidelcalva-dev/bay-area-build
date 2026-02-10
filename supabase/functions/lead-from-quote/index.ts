@@ -95,6 +95,36 @@ Deno.serve(async (req) => {
 
     console.log('Lead created from quote:', leadId);
 
+    // Dispatch internal alert (best effort)
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          event_type: 'LEAD_CREATED',
+          entity_type: 'LEAD',
+          entity_id: leadId,
+          source: 'WEBSITE',
+          payload: {
+            customer_name: quote.customer_name,
+            customer_phone: quote.customer_phone,
+            customer_email: quote.customer_email,
+            city: quote.city,
+            zip_code: quote.zip_code,
+            material_type: quote.material_type,
+            source_key: 'WEBSITE_QUOTE',
+          },
+        }),
+      });
+    } catch (alertErr) {
+      console.error('Internal alert failed (non-critical):', alertErr);
+    }
+
     return new Response(
       JSON.stringify({ success: true, lead_id: leadId, action: 'created' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

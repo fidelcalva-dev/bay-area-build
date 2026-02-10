@@ -263,6 +263,35 @@ serve(async (req) => {
 
     console.log('[save-quote] Quote saved successfully:', quote.id);
 
+    // Dispatch internal alert (best effort)
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          event_type: 'QUOTE_SAVED',
+          entity_type: 'QUOTE',
+          entity_id: quote.id,
+          source: 'WEBSITE',
+          payload: {
+            customer_name: payload.customer_name,
+            customer_phone: payload.customer_phone,
+            customer_email: payload.customer_email,
+            zip_code: payload.zip_code,
+            material_type: payload.material_type,
+            size_label: payload.user_selected_size_yards ? `${payload.user_selected_size_yards}` : undefined,
+            subtotal: payload.subtotal,
+            source_key: 'WEBSITE_QUOTE',
+          },
+        }),
+      });
+    } catch (alertErr) {
+      console.error('[save-quote] Internal alert failed (non-critical):', alertErr);
+    }
+
     // Log quote event (best effort)
     try {
       await supabase.from('quote_events').insert({

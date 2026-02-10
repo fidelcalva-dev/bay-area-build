@@ -146,3 +146,6 @@ verify_jwt = false
 
 [functions.google-ads-upload-conversion]
 verify_jwt = false
+
+[functions.internal-alert-dispatcher]
+verify_jwt = false

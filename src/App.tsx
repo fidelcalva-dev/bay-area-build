@@ -122,6 +122,7 @@ const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
 const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
+const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -617,6 +618,10 @@ const App = () => {
                 {/* Calculator Logs */}
                 <Route path="calculator/logs" element={
                   <Suspense fallback={<PageLoader />}><CalculatorLogsPage /></Suspense>
+                } />
+                {/* Internal Alerts */}
+                <Route path="notifications/internal" element={
+                  <Suspense fallback={<PageLoader />}><InternalAlertsPage /></Suspense>
                 } />
                 {/* QA Control Center */}
                 <Route path="qa/control-center" element={
