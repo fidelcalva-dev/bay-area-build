@@ -7393,6 +7393,7 @@ export type Database = {
           final_total: number | null
           fraud_blocked: boolean | null
           fraud_flags_count: number | null
+          gclid: string | null
           heavy_material_code: string | null
           id: string
           included_days: number | null
@@ -7444,6 +7445,11 @@ export type Database = {
           text_before_arrival: boolean | null
           truck_id: string | null
           updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
           weight_risk_level: string | null
           wrong_material_flagged: boolean | null
         }
@@ -7482,6 +7488,7 @@ export type Database = {
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          gclid?: string | null
           heavy_material_code?: string | null
           id?: string
           included_days?: number | null
@@ -7533,6 +7540,11 @@ export type Database = {
           text_before_arrival?: boolean | null
           truck_id?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           weight_risk_level?: string | null
           wrong_material_flagged?: boolean | null
         }
@@ -7571,6 +7583,7 @@ export type Database = {
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          gclid?: string | null
           heavy_material_code?: string | null
           id?: string
           included_days?: number | null
@@ -7622,6 +7635,11 @@ export type Database = {
           text_before_arrival?: boolean | null
           truck_id?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           weight_risk_level?: string | null
           wrong_material_flagged?: boolean | null
         }
@@ -7964,6 +7982,7 @@ export type Database = {
           customer_email: string | null
           customer_id: string | null
           customer_phone: string | null
+          gclid: string | null
           id: string
           order_id: string
           payment_type: string
@@ -7974,6 +7993,11 @@ export type Database = {
           status: string
           transaction_id: string | null
           updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
         }
         Insert: {
           amount: number
@@ -7984,6 +8008,7 @@ export type Database = {
           customer_email?: string | null
           customer_id?: string | null
           customer_phone?: string | null
+          gclid?: string | null
           id?: string
           order_id: string
           payment_type: string
@@ -7994,6 +8019,11 @@ export type Database = {
           status?: string
           transaction_id?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
         }
         Update: {
           amount?: number
@@ -8004,6 +8034,7 @@ export type Database = {
           customer_email?: string | null
           customer_id?: string | null
           customer_phone?: string | null
+          gclid?: string | null
           id?: string
           order_id?: string
           payment_type?: string
@@ -8014,6 +8045,11 @@ export type Database = {
           status?: string
           transaction_id?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
         }
         Relationships: [
           {
@@ -8673,6 +8709,7 @@ export type Database = {
           extra_tons_prepurchased: number | null
           extras: string[] | null
           fraud_flags_count: number | null
+          gclid: string | null
           green_halo_category: string | null
           green_halo_dump_fee: number | null
           green_halo_dump_fee_per_ton: number | null
@@ -8733,6 +8770,11 @@ export type Database = {
           updated_at: string
           user_selected_size_yards: number | null
           user_type: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
           vendor_cost: number | null
           volume_agreement_id: string | null
           volume_commitment_count: number | null
@@ -8782,6 +8824,7 @@ export type Database = {
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
+          gclid?: string | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
@@ -8842,6 +8885,11 @@ export type Database = {
           updated_at?: string
           user_selected_size_yards?: number | null
           user_type?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           vendor_cost?: number | null
           volume_agreement_id?: string | null
           volume_commitment_count?: number | null
@@ -8891,6 +8939,7 @@ export type Database = {
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
+          gclid?: string | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
@@ -8951,6 +9000,11 @@ export type Database = {
           updated_at?: string
           user_selected_size_yards?: number | null
           user_type?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           vendor_cost?: number | null
           volume_agreement_id?: string | null
           volume_commitment_count?: number | null
