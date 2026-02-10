@@ -245,6 +245,29 @@ Deno.serve(async (req) => {
         },
       });
 
+      // Upload offline conversion to Google Ads (best effort)
+      try {
+        const gclid = order.gclid;
+        if (gclid) {
+          await fetch(`${supabaseUrl}/functions/v1/google-ads-upload-conversion`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${supabaseServiceKey}`,
+            },
+            body: JSON.stringify({
+              gclid,
+              conversionDateTime: new Date().toISOString().replace("T", " ").replace("Z", "+00:00"),
+              conversionValue: amount,
+              currencyCode: "USD",
+              orderId,
+            }),
+          });
+        }
+      } catch (e) {
+        console.error("Failed to upload conversion:", e);
+      }
+
       // Trigger receipt notification
       try {
         await fetch(`${supabaseUrl}/functions/v1/send-payment-receipt`, {

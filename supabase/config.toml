@@ -140,3 +140,9 @@ verify_jwt = false
 
 [functions.scan-missing-connections]
 verify_jwt = false
+
+[functions.google-ads-sync-metrics]
+verify_jwt = false
+
+[functions.google-ads-upload-conversion]
+verify_jwt = false

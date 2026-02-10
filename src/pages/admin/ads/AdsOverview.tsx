@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   TrendingUp, DollarSign, MousePointer, Target, 
   AlertTriangle, CheckCircle, Clock, RefreshCw,
-  Play, Pause, Loader2
+  Play, Pause, Loader2, CloudOff, BarChart3
 } from 'lucide-react';
 import { 
   getTodayMetricsSummary, 
@@ -14,6 +14,7 @@ import {
   getUnresolvedAlerts,
   getSyncLogs,
   getAdsMarkets,
+  getAdsMode,
   type AdsMetricsSummary,
   type AdsCampaign,
   type AdsAlert,
@@ -27,6 +28,8 @@ export default function AdsOverview() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRunningCapacityCheck, setIsRunningCapacityCheck] = useState(false);
   const [isGeneratingCampaigns, setIsGeneratingCampaigns] = useState(false);
+  const [isSyncingMetrics, setIsSyncingMetrics] = useState(false);
+  const [adsMode, setAdsMode] = useState<'DRY_RUN' | 'LIVE'>('DRY_RUN');
   
   const [todayMetrics, setTodayMetrics] = useState<AdsMetricsSummary | null>(null);
   const [campaigns, setCampaigns] = useState<AdsCampaign[]>([]);
@@ -48,12 +51,13 @@ export default function AdsOverview() {
   async function loadData() {
     try {
       setIsLoading(true);
-      const [metricsData, campaignsData, alertsData, marketsData, logsData] = await Promise.all([
+      const [metricsData, campaignsData, alertsData, marketsData, logsData, modeData] = await Promise.all([
         getTodayMetricsSummary(),
         getAdsCampaigns(),
         getUnresolvedAlerts(),
         getAdsMarkets(),
-        getSyncLogs(10)
+        getSyncLogs(10),
+        getAdsMode()
       ]);
 
       setTodayMetrics(metricsData);
@@ -61,6 +65,7 @@ export default function AdsOverview() {
       setAlerts(alertsData);
       setMarkets(marketsData);
       setSyncLogs(logsData);
+      setAdsMode(modeData);
     } catch (error) {
       console.error('Failed to load ads data:', error);
       toast({
@@ -162,8 +167,50 @@ export default function AdsOverview() {
     );
   }
 
+  async function syncMetrics() {
+    try {
+      setIsSyncingMetrics(true);
+      const { data, error } = await supabase.functions.invoke('google-ads-sync-metrics');
+      
+      if (error) throw error;
+
+      toast({
+        title: 'Metrics Sync Complete',
+        description: data.mode === 'DRY_RUN' 
+          ? 'Skipped — running in DRY_RUN mode'
+          : `Synced ${data.records_processed} metric records.`
+      });
+
+      loadData();
+    } catch (error) {
+      console.error('Metrics sync failed:', error);
+      toast({
+        title: 'Metrics Sync Failed',
+        description: error instanceof Error ? error.message : 'Unknown error',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsSyncingMetrics(false);
+    }
+  }
+
   return (
     <div className="p-6 space-y-6">
+      {/* Credential Banner */}
+      {adsMode === 'DRY_RUN' && (
+        <Card className="border-yellow-300 bg-yellow-50">
+          <CardContent className="p-4 flex items-center gap-3">
+            <CloudOff className="w-5 h-5 text-yellow-600 shrink-0" />
+            <div>
+              <p className="font-medium text-yellow-800">Google Ads API is not connected</p>
+              <p className="text-sm text-yellow-700">
+                Running in DRY_RUN mode. Configure credentials in Cloud Secrets and set ads.mode to LIVE to enable sync.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -173,6 +220,18 @@ export default function AdsOverview() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={syncMetrics}
+            disabled={isSyncingMetrics}
+          >
+            {isSyncingMetrics ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <BarChart3 className="w-4 h-4 mr-2" />
+            )}
+            Sync Metrics
+          </Button>
           <Button
             variant="outline"
             onClick={runCapacityCheck}
@@ -255,6 +314,28 @@ export default function AdsOverview() {
             <CardTitle className="text-2xl flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-muted-foreground" />
               ${todayMetrics?.cpa.toFixed(2) || '0.00'}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+
+      {/* ROAS Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>ROAS Today</CardDescription>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-muted-foreground" />
+              {todayMetrics?.roas ? `${todayMetrics.roas.toFixed(2)}x` : '—'}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Conversion Value Today</CardDescription>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-muted-foreground" />
+              ${todayMetrics?.conversion_value?.toFixed(2) || '0.00'}
             </CardTitle>
           </CardHeader>
         </Card>

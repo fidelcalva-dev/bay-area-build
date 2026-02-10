@@ -242,6 +242,13 @@ serve(async (req) => {
         green_halo_dump_fee_per_ton: payload.green_halo_dump_fee_per_ton,
         // Quick link reference
         quick_link_id: payload.quick_link_id,
+        // Attribution tracking
+        gclid: payload.gclid || null,
+        utm_source: payload.utm_source || null,
+        utm_campaign: payload.utm_campaign || null,
+        utm_medium: payload.utm_medium || null,
+        utm_term: payload.utm_term || null,
+        utm_content: payload.utm_content || null,
       })
       .select('id')
       .single();
