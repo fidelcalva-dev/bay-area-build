@@ -1,4 +1,5 @@
 // Admin User Manager - Create Users, Assign Roles, Manage Status
+import { StaffInviteDialog } from '@/components/admin/StaffInviteDialog';
 import { useEffect, useState, useMemo } from 'react';
 import { 
   UserCog, Plus, Loader2, Shield, Check, X, Search, 
@@ -129,6 +130,7 @@ export default function UsersManager() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<StaffUser | null>(null);
   
   // Form state
@@ -466,10 +468,16 @@ export default function UsersManager() {
           <h1 className="text-3xl font-bold text-foreground">User Management</h1>
           <p className="text-muted-foreground mt-1">Create users, assign roles, and manage access</p>
         </div>
-        <Button onClick={() => { resetForm(); setCreateDialogOpen(true); }}>
-          <UserPlus className="w-4 h-4 mr-2" />
-          Create User
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setInviteDialogOpen(true)}>
+            <Mail className="w-4 h-4 mr-2" />
+            Invite with Temp Password
+          </Button>
+          <Button onClick={() => { resetForm(); setCreateDialogOpen(true); }}>
+            <UserPlus className="w-4 h-4 mr-2" />
+            Create User
+          </Button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -1010,6 +1018,13 @@ export default function UsersManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Staff Invite Dialog */}
+      <StaffInviteDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
+        onSuccess={() => fetchData()}
+      />
     </div>
   );
 }

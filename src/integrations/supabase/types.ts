@@ -10700,6 +10700,39 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_invites: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          id: string
+          role: string
+          temp_password_hash: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          role: string
+          temp_password_hash: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          role?: string
+          temp_password_hash?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       staff_notifications: {
         Row: {
           action_url: string | null
@@ -10762,6 +10795,7 @@ export type Database = {
           full_name: string
           id: string
           last_login_at: string | null
+          must_reset_password: boolean
           notes: string | null
           phone: string | null
           status: string
@@ -10776,6 +10810,7 @@ export type Database = {
           full_name: string
           id?: string
           last_login_at?: string | null
+          must_reset_password?: boolean
           notes?: string | null
           phone?: string | null
           status?: string
@@ -10790,6 +10825,7 @@ export type Database = {
           full_name?: string
           id?: string
           last_login_at?: string | null
+          must_reset_password?: boolean
           notes?: string | null
           phone?: string | null
           status?: string
