@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { Shield, Mail, Lock, Loader2 } from 'lucide-react';
-import { isValidRedirect } from '@/lib/crmLinks';
+import { isValidRedirect, getRoleDashboard } from '@/lib/crmLinks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const { user, isLoading, signIn, signUp, canAccessAdmin } = useAdminAuth();
+  const { user, isLoading, signIn, signUp, canAccessAdmin, canAccessDriver, getPrimaryRole } = useAdminAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -27,9 +27,11 @@ export default function AdminLogin() {
     );
   }
 
-  // Redirect authenticated users with admin access to dashboard
-  if (user && canAccessAdmin()) {
-    const target = redirectTo && isValidRedirect(redirectTo) ? redirectTo : '/admin';
+  // Redirect authenticated staff to their role-based dashboard (or explicit redirect target)
+  if (user && (canAccessAdmin() || canAccessDriver())) {
+    const target = redirectTo && isValidRedirect(redirectTo)
+      ? redirectTo
+      : getRoleDashboard(getPrimaryRole());
     return <Navigate to={target} replace />;
   }
 
