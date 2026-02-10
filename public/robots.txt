@@ -12,3 +12,18 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /set-password
+Disallow: /portal/dashboard
+Disallow: /portal/orders
+Disallow: /portal/documents
+Disallow: /internal/
+Disallow: /dispatch/
+Disallow: /sales/
+Disallow: /cs/
+Disallow: /driver/
+Disallow: /finance/
+Disallow: /billing/
+
+Sitemap: https://calsandumpsterspro.com/sitemap.xml
