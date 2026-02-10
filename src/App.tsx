@@ -124,6 +124,7 @@ const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
 const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
+const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -447,6 +448,9 @@ const App = () => {
                 } />
                 <Route path="messaging" element={
                   <Suspense fallback={<PageLoader />}><AdminMessaging /></Suspense>
+                } />
+                <Route path="email-test" element={
+                  <Suspense fallback={<PageLoader />}><AdminEmailTest /></Suspense>
                 } />
                 <Route path="ghl" element={
                   <Suspense fallback={<PageLoader />}><GHLIntegrationPage /></Suspense>

@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+import { loadEmailConfig, sendEmail } from "../_shared/email-sender.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -188,118 +187,111 @@ const handler = async (req: Request): Promise<Response> => {
       overageNote = t.overageTon(pricing.overagePerTon);
     }
 
-    // Send Email via Resend REST API
+    // Send Email via shared email sender
     let emailResult = null;
-    if (RESEND_API_KEY) {
-      try {
-        const tonLabel = includedTons !== 1 ? t.tons : t.ton;
-        const emailHtml = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #0F4C3A 0%, #1a6b52 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
-              .header h1 { margin: 0; font-size: 24px; }
-              .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-              .quote-box { background: white; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid #0F4C3A; }
-              .price { font-size: 32px; font-weight: bold; color: #0F4C3A; }
-              .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb; }
-              .detail-row:last-child { border-bottom: none; }
-              .label { color: #6b7280; }
-              .value { font-weight: 600; }
-              .cta-button { display: inline-block; background: #F59E0B; color: #1a1a1a; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
-              .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>🚛 ${t.emailSubject(sizeLabel).replace(/^.*- /, '')}</h1>
-                <p style="margin: 10px 0 0 0; opacity: 0.9;">Calsan Dumpsters Pro</p>
-              </div>
-              <div class="content">
-                <p>${t.emailGreeting(customerName)}</p>
-                <p>${t.emailThanks}</p>
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+      const emailConfig = await loadEmailConfig(supabaseAdmin);
+
+      const tonLabel = includedTons !== 1 ? t.tons : t.ton;
+      const emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #0F4C3A 0%, #1a6b52 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
+            .header h1 { margin: 0; font-size: 24px; }
+            .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+            .quote-box { background: white; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid #0F4C3A; }
+            .price { font-size: 32px; font-weight: bold; color: #0F4C3A; }
+            .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb; }
+            .detail-row:last-child { border-bottom: none; }
+            .label { color: #6b7280; }
+            .value { font-weight: 600; }
+            .cta-button { display: inline-block; background: #F59E0B; color: #1a1a1a; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+            .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🚛 ${t.emailSubject(sizeLabel).replace(/^.*- /, '')}</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">Calsan Dumpsters Pro</p>
+            </div>
+            <div class="content">
+              <p>${t.emailGreeting(customerName)}</p>
+              <p>${t.emailThanks}</p>
+              
+              <div class="quote-box">
+                <div style="text-align: center; margin-bottom: 20px;">
+                  <div class="price">$${estimatedMin} – $${estimatedMax}</div>
+                  <div style="color: #6b7280; font-size: 14px;">${t.estimatedTotal}</div>
+                </div>
                 
-                <div class="quote-box">
-                  <div style="text-align: center; margin-bottom: 20px;">
-                    <div class="price">$${estimatedMin} – $${estimatedMax}</div>
-                    <div style="color: #6b7280; font-size: 14px;">${t.estimatedTotal}</div>
-                  </div>
-                  
-                  <div class="detail-row">
-                    <span class="label">${t.dumpsterSize}</span>
-                    <span class="value">${sizeLabel}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span class="label">${t.materialType}</span>
-                    <span class="value">${materialLabel}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span class="label">${t.rentalPeriod}</span>
-                    <span class="value">${rentalDays} ${t.days}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span class="label">${t.deliveryZip}</span>
-                    <span class="value">${zipCode}</span>
-                  </div>
-                  ${isHeavy ? `
-                  <div class="detail-row">
-                    <span class="label">${t.pricing}</span>
-                    <span class="value" style="color: #16a34a;">${t.flatFee}</span>
-                  </div>
-                  ` : `
-                  <div class="detail-row">
-                    <span class="label">${t.includedWeight}</span>
-                    <span class="value">${includedTons} ${tonLabel}</span>
-                  </div>
-                  `}
-                  <div class="detail-row">
-                    <span class="label">${t.extras}</span>
-                    <span class="value">${extrasText}</span>
-                  </div>
+                <div class="detail-row">
+                  <span class="label">${t.dumpsterSize}</span>
+                  <span class="value">${sizeLabel}</span>
                 </div>
-
-                <p style="font-size: 14px; color: #6b7280;">
-                  <strong>${t.note}</strong> ${overageNote} ${t.validDays}
-                </p>
-
-                <div style="text-align: center;">
-                  <a href="https://app.trashlab.com" class="cta-button">${t.bookNow}</a>
+                <div class="detail-row">
+                  <span class="label">${t.materialType}</span>
+                  <span class="value">${materialLabel}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">${t.rentalPeriod}</span>
+                  <span class="value">${rentalDays} ${t.days}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">${t.deliveryZip}</span>
+                  <span class="value">${zipCode}</span>
+                </div>
+                ${isHeavy ? `
+                <div class="detail-row">
+                  <span class="label">${t.pricing}</span>
+                  <span class="value" style="color: #16a34a;">${t.flatFee}</span>
+                </div>
+                ` : `
+                <div class="detail-row">
+                  <span class="label">${t.includedWeight}</span>
+                  <span class="value">${includedTons} ${tonLabel}</span>
+                </div>
+                `}
+                <div class="detail-row">
+                  <span class="label">${t.extras}</span>
+                  <span class="value">${extrasText}</span>
                 </div>
               </div>
-              <div class="footer">
-                <p>${t.questions} <strong>(510) 680-2150</strong> ${t.orText}</p>
-                <p>Calsan Dumpsters Pro • Oakland, CA</p>
+
+              <p style="font-size: 14px; color: #6b7280;">
+                <strong>${t.note}</strong> ${overageNote} ${t.validDays}
+              </p>
+
+              <div style="text-align: center;">
+                <a href="https://calsandumpsterspro.com/quote" class="cta-button">${t.bookNow}</a>
               </div>
             </div>
-          </body>
-          </html>
-        `;
+            <div class="footer">
+              <p>${t.questions} <strong>(510) 680-2150</strong> ${t.orText}</p>
+              <p>Calsan Dumpsters Pro • Oakland, CA</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
 
-        const emailResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Calsan Dumpsters <onboarding@resend.dev>",
-            to: [customerEmail],
-            subject: t.emailSubject(sizeLabel),
-            html: emailHtml,
-          }),
-        });
+      emailResult = await sendEmail(supabaseAdmin, emailConfig, {
+        to: customerEmail,
+        subject: t.emailSubject(sizeLabel),
+        html: emailHtml,
+        entityType: "quote",
+      });
 
-        emailResult = await emailResponse.json();
-        console.log("Email sent successfully:", emailResult);
-      } catch (emailError) {
-        console.error("Email send error:", emailError);
-      }
-    } else {
-      console.log("Resend API key not configured, skipping email");
+      console.log("Email result:", emailResult);
+    } catch (emailError) {
+      console.error("Email send error:", emailError);
     }
 
     // Send SMS via Twilio

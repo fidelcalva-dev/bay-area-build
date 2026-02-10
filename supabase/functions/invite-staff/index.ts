@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "npm:resend@2.0.0";
+import { loadEmailConfig, sendEmail } from "../_shared/email-sender.ts";
 import { crypto } from "https://deno.land/std@0.190.0/crypto/mod.ts";
 import { encode as hexEncode } from "https://deno.land/std@0.190.0/encoding/hex.ts";
 
@@ -33,7 +33,7 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const resendKey = Deno.env.get("RESEND_API_KEY");
+    
 
     // Validate caller is admin
     const authHeader = req.headers.get("Authorization");
@@ -126,33 +126,34 @@ serve(async (req: Request) => {
     const origin = req.headers.get("origin") || "https://bay-area-build.lovable.app";
     const inviteLink = `${origin}/set-password?token=${inviteToken}`;
 
-    // Send email via Resend
-    if (resendKey) {
-      const resend = new Resend(resendKey);
+    // Send email via shared email sender
+    const emailConfig = await loadEmailConfig(supabaseAdmin);
 
-      await resend.emails.send({
-        from: "Calsan CRM <onboarding@resend.dev>",
-        to: [email],
-        subject: "You've been invited to Calsan CRM",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #1a1a2e;">Welcome to Calsan Dumpsters Pro</h1>
-            <p>You've been invited to access the internal CRM as <strong>${role}</strong>.</p>
-            <p>Create your password using the one-time link below:</p>
-            <div style="background: #f4f4f8; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-              <a href="${inviteLink}" style="display: inline-block; background: #1a1a2e; color: #fff; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: bold;">Create Your Password</a>
-            </div>
-            <p style="color: #e63946; font-weight: bold;">⚠️ This link expires in 24 hours and can only be used once.</p>
-            <p style="color: #666; font-size: 14px; margin-top: 24px;">After setting your password, log in at:<br/>
-              <a href="${origin}/admin/login" style="color: #1a1a2e;">${origin}/admin/login</a>
-            </p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
-            <p style="color: #888; font-size: 12px;">— Calsan Dumpsters Pro</p>
-            <p style="color: #888; font-size: 12px;">If you did not expect this invite, please ignore this email.</p>
-          </div>
-        `,
-      });
-    }
+    const inviteHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #1a1a2e;">Welcome to Calsan Dumpsters Pro</h1>
+        <p>You've been invited to access the internal CRM as <strong>${role}</strong>.</p>
+        <p>Create your password using the one-time link below:</p>
+        <div style="background: #f4f4f8; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+          <a href="${inviteLink}" style="display: inline-block; background: #1a1a2e; color: #fff; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-size: 16px; font-weight: bold;">Create Your Password</a>
+        </div>
+        <p style="color: #e63946; font-weight: bold;">⚠️ This link expires in 24 hours and can only be used once.</p>
+        <p style="color: #666; font-size: 14px; margin-top: 24px;">After setting your password, log in at:<br/>
+          <a href="${origin}/admin/login" style="color: #1a1a2e;">${origin}/admin/login</a>
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #888; font-size: 12px;">— Calsan Dumpsters Pro</p>
+        <p style="color: #888; font-size: 12px;">If you did not expect this invite, please ignore this email.</p>
+      </div>
+    `;
+
+    await sendEmail(supabaseAdmin, emailConfig, {
+      to: email,
+      subject: "You've been invited to Calsan CRM",
+      html: inviteHtml,
+      entityType: "staff_invite",
+      entityId: invite.id,
+    });
 
     return new Response(
       JSON.stringify({ success: true, message: "Invite link sent" }),
