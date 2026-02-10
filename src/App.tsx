@@ -67,6 +67,7 @@ const SustainabilityReport = lazy(() => import("./pages/portal/SustainabilityRep
 
 // Admin pages (rarely accessed)
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const SetPassword = lazy(() => import("./pages/SetPassword"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const ZonesManager = lazy(() => import("./pages/admin/ZonesManager"));
@@ -387,6 +388,11 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><SustainabilityReport /></Suspense>
               } />
               
+              {/* Set Password (invite link) */}
+              <Route path="/set-password" element={
+                <Suspense fallback={<PageLoader />}><SetPassword /></Suspense>
+              } />
+
               {/* Admin Panel */}
               <Route path="/admin/login" element={
                 <Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>

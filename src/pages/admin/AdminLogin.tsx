@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
-import { Shield, Mail, Lock, Loader2, KeyRound } from 'lucide-react';
+import { Shield, Mail, Lock, Loader2 } from 'lucide-react';
 import { isValidRedirect, getRoleDashboard } from '@/lib/crmLinks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,122 +18,12 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
 
-  // Forced password reset state
-  const [mustResetPassword, setMustResetPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isResetting, setIsResetting] = useState(false);
-
   const redirectTo = searchParams.get('redirect');
-
-  // Check if user must reset password
-  useEffect(() => {
-    if (user) {
-      supabase
-        .from('staff_users')
-        .select('must_reset_password')
-        .eq('user_id', user.id)
-        .maybeSingle()
-        .then(({ data }) => {
-          if (data?.must_reset_password) {
-            setMustResetPassword(true);
-          }
-        });
-    }
-  }, [user]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Show forced password reset screen
-  if (user && mustResetPassword) {
-    const handlePasswordReset = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (newPassword.length < 8) {
-        toast({ title: 'Password must be at least 8 characters', variant: 'destructive' });
-        return;
-      }
-      if (newPassword !== confirmPassword) {
-        toast({ title: 'Passwords do not match', variant: 'destructive' });
-        return;
-      }
-
-      setIsResetting(true);
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) {
-        toast({ title: 'Password Reset Failed', description: error.message, variant: 'destructive' });
-        setIsResetting(false);
-        return;
-      }
-
-      // Clear the flag
-      await supabase
-        .from('staff_users')
-        .update({ must_reset_password: false })
-        .eq('user_id', user.id);
-
-      toast({ title: 'Password Updated', description: 'Your password has been changed successfully.' });
-      setMustResetPassword(false);
-      setIsResetting(false);
-    };
-
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-              <KeyRound className="w-8 h-8 text-amber-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Password Reset Required</h1>
-            <p className="text-muted-foreground mt-2">
-              You must set a new password before continuing.
-            </p>
-          </div>
-
-          <form onSubmit={handlePasswordReset} className="space-y-4">
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="New password (min 8 characters)"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="pl-10 py-3 h-auto"
-                required
-                minLength={8}
-              />
-            </div>
-
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="pl-10 py-3 h-auto"
-                required
-                minLength={8}
-              />
-            </div>
-
-            <Button type="submit" className="w-full" size="lg" disabled={isResetting}>
-              {isResetting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  Updating...
-                </>
-              ) : (
-                'Set New Password'
-              )}
-            </Button>
-          </form>
-        </div>
       </div>
     );
   }

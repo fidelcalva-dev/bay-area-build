@@ -152,3 +152,6 @@ verify_jwt = false
 
 [functions.invite-staff]
 verify_jwt = false
+
+[functions.validate-invite]
+verify_jwt = false

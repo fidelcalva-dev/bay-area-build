@@ -10707,8 +10707,9 @@ export type Database = {
           email: string
           expires_at: string
           id: string
+          invite_token_hash: string | null
           role: string
-          temp_password_hash: string
+          temp_password_hash: string | null
           used_at: string | null
         }
         Insert: {
@@ -10717,8 +10718,9 @@ export type Database = {
           email: string
           expires_at: string
           id?: string
+          invite_token_hash?: string | null
           role: string
-          temp_password_hash: string
+          temp_password_hash?: string | null
           used_at?: string | null
         }
         Update: {
@@ -10727,8 +10729,9 @@ export type Database = {
           email?: string
           expires_at?: string
           id?: string
+          invite_token_hash?: string | null
           role?: string
-          temp_password_hash?: string
+          temp_password_hash?: string | null
           used_at?: string | null
         }
         Relationships: []
