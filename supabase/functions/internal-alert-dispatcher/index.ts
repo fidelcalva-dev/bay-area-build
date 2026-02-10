@@ -99,13 +99,25 @@ function buildLinks(entity_type: string, entity_id: string, baseUrl: string): Ar
       links.push({ label: 'Open Lead in CRM', url: `${baseUrl}/admin/leads?id=${entity_id}` });
       break;
     case 'QUOTE':
-      links.push({ label: 'Open Quote', url: `${baseUrl}/admin/orders?quote=${entity_id}` });
+      links.push({ label: 'Open Quote in CRM', url: `${baseUrl}/admin/orders?quote=${entity_id}` });
       break;
     case 'ORDER':
-      links.push({ label: 'Open Order', url: `${baseUrl}/admin/orders?id=${entity_id}` });
+      links.push({ label: 'Open Order in CRM', url: `${baseUrl}/admin/orders?id=${entity_id}` });
       break;
     case 'PAYMENT':
-      links.push({ label: 'Open Payment', url: `${baseUrl}/admin/orders?payment=${entity_id}` });
+      links.push({ label: 'Open Payment in CRM', url: `${baseUrl}/finance/payments/${entity_id}` });
+      break;
+    case 'CUSTOMER':
+      links.push({ label: 'Open Customer in CRM', url: `${baseUrl}/admin/customers/${entity_id}` });
+      break;
+    case 'INVOICE':
+      links.push({ label: 'Open Invoice in CRM', url: `${baseUrl}/finance/invoices/${entity_id}` });
+      break;
+    case 'RUN':
+      links.push({ label: 'Open Run in CRM', url: `${baseUrl}/dispatch/run/${entity_id}` });
+      break;
+    case 'ASSET':
+      links.push({ label: 'Open Asset in CRM', url: `${baseUrl}/admin/assets?asset=${entity_id}` });
       break;
   }
   return links;
