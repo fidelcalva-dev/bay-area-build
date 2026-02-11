@@ -3,6 +3,7 @@ import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculato
 import { CheckCircle, MessageCircle, Shield } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
+import { CalculatorSeoFaq } from '@/components/seo/CalculatorSeoFaq';
 
 const benefits = [
   'All-inclusive pricing — no hidden fees',
@@ -88,6 +89,8 @@ export default function Quote() {
           </div>
         </div>
       </section>
+
+      <CalculatorSeoFaq />
     </Layout>
   );
 }

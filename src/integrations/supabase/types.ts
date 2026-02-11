@@ -9270,6 +9270,92 @@ export type Database = {
         }
         Relationships: []
       }
+      review_requests: {
+        Row: {
+          channel: string
+          city_name: string | null
+          created_at: string
+          customer_id: string
+          email_sent_at: string | null
+          id: string
+          market_code: string | null
+          order_id: string
+          review_link: string
+          review_rating: number | null
+          review_received: boolean | null
+          review_received_at: string | null
+          sent_at: string | null
+          sms_sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          channel?: string
+          city_name?: string | null
+          created_at?: string
+          customer_id: string
+          email_sent_at?: string | null
+          id?: string
+          market_code?: string | null
+          order_id: string
+          review_link: string
+          review_rating?: number | null
+          review_received?: boolean | null
+          review_received_at?: string | null
+          sent_at?: string | null
+          sms_sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          city_name?: string | null
+          created_at?: string
+          customer_id?: string
+          email_sent_at?: string | null
+          id?: string
+          market_code?: string | null
+          order_id?: string
+          review_link?: string
+          review_rating?: number | null
+          review_received?: boolean | null
+          review_received_at?: string | null
+          sent_at?: string | null
+          sms_sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "review_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+        ]
+      }
       risk_score_events: {
         Row: {
           created_at: string
