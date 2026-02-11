@@ -1,9 +1,9 @@
 // Dynamic Sitemap Generator
-// Generates sitemap.xml content for all public routes
+// Generates sitemap.xml content for all public routes + SEO engine pages
 
-import { SERVICE_CITIES } from './cityData';
 import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { BUSINESS_INFO } from './seo';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
   url: string;
@@ -25,6 +25,7 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/capacity-guide', changefreq: 'monthly', priority: 0.7 },
   { url: '/contractors', changefreq: 'monthly', priority: 0.8 },
   { url: '/contractor-best-practices', changefreq: 'monthly', priority: 0.6 },
+  { url: '/contractor-resources', changefreq: 'monthly', priority: 0.7 },
   { url: '/about', changefreq: 'monthly', priority: 0.7 },
   { url: '/contact', changefreq: 'monthly', priority: 0.7 },
   { url: '/blog', changefreq: 'weekly', priority: 0.7 },
@@ -58,33 +59,73 @@ const MATERIAL_PAGES: SitemapEntry[] = [
   { url: '/roofing-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
 ];
 
-// City pages
-const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => ({
-  url: `/dumpster-rental/${city.slug}`,
-  changefreq: 'monthly' as const,
-  priority: 0.8,
-}));
+// Fetch SEO engine pages from database
+async function fetchSeoPages(): Promise<SitemapEntry[]> {
+  try {
+    const { data } = await supabase
+      .from('seo_pages')
+      .select('url_path, page_type, last_generated_at')
+      .eq('is_published', true);
 
-export function generateSitemapXml(): string {
-  const allPages = [...STATIC_PAGES, ...CITY_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES];
-  
-  const entries = allPages.map(page => `  <url>
+    if (!data) return [];
+
+    return data.map(page => {
+      // City mother pages get higher priority
+      const priority = page.page_type === 'CITY' ? 0.9 : 0.8;
+      return {
+        url: page.url_path,
+        lastmod: page.last_generated_at?.split('T')[0] || TODAY,
+        changefreq: 'weekly' as const,
+        priority,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+function renderEntries(entries: SitemapEntry[]): string {
+  return entries.map(page => `  <url>
     <loc>${BASE_URL}${page.url}</loc>
-    <lastmod>${TODAY}</lastmod>
+    <lastmod>${page.lastmod || TODAY}</lastmod>
     <changefreq>${page.changefreq || 'monthly'}</changefreq>
     <priority>${page.priority || 0.5}</priority>
   </url>`).join('\n');
+}
+
+export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
+  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...seoPages];
+
+  // Deduplicate by URL
+  const seen = new Set<string>();
+  const unique = allPages.filter(p => {
+    if (seen.has(p.url)) return false;
+    seen.add(p.url);
+    return true;
+  });
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-${entries}
+${renderEntries(unique)}
 </urlset>`;
+}
+
+// Async version that fetches SEO pages from DB
+export async function generateFullSitemapXml(): Promise<string> {
+  const seoPages = await fetchSeoPages();
+  return generateSitemapXml(seoPages);
 }
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...CITY_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES];
+  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES];
+}
+
+// Get all entries including async SEO pages
+export async function getAllSitemapEntriesWithSeo(): Promise<SitemapEntry[]> {
+  const seoPages = await fetchSeoPages();
+  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...seoPages];
 }
