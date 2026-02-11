@@ -43,6 +43,7 @@ const WasteVision = lazy(() => import("./pages/WasteVision"));
 const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
 const NotABroker = lazy(() => import("./pages/NotABroker"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const StaffLogin = lazy(() => import("./pages/StaffLogin"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -339,6 +340,11 @@ const App = () => {
               } />
               <Route path="/how-it-works" element={
                 <Suspense fallback={<PageLoader />}><HowItWorks /></Suspense>
+              } />
+              
+              {/* Staff CRM Login Redirect */}
+              <Route path="/staff" element={
+                <Suspense fallback={<PageLoader />}><StaffLogin /></Suspense>
               } />
               
               {/* SEO City Engine Routes */}
