@@ -40,7 +40,7 @@ export default function SalesLayout() {
       navigate("/admin/login");
     }
     if (!isLoading && user && !isSales && !isAdmin) {
-      navigate("/admin");
+      navigate("/app");
     }
   }, [isLoading, user, isSales, isAdmin, navigate]);
 

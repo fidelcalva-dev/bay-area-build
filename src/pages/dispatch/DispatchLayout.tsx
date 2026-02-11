@@ -45,20 +45,7 @@ export default function DispatchLayout() {
   }
 
   if (!isAdmin && !isDispatcher) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
-            <Truck className="w-8 h-8 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">
-            You don't have dispatch privileges.
-          </p>
-          <Button variant="ghost" onClick={signOut}>Sign Out</Button>
-        </div>
-      </div>
-    );
+    return <Navigate to="/app" replace />;
   }
 
   // Mobile Layout

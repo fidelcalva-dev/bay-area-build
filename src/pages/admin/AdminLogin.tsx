@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Shield, Mail, Lock, Loader2 } from 'lucide-react';
-import { isValidRedirect, getRoleDashboard } from '@/lib/crmLinks';
+import { isValidRedirect } from '@/lib/crmLinks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+
 
 export default function AdminLogin() {
-  const { user, isLoading, signIn, signUp, canAccessAdmin, canAccessDriver, getPrimaryRole } = useAdminAuth();
+  const { user, isLoading, signIn, signUp } = useAdminAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,35 +28,14 @@ export default function AdminLogin() {
     );
   }
 
-  // Redirect authenticated staff to their role-based dashboard (or explicit redirect target)
-  if (user && (canAccessAdmin() || canAccessDriver())) {
+  // Redirect authenticated users to the role router (handles role-based routing)
+  if (user) {
     const target = redirectTo && isValidRedirect(redirectTo)
       ? redirectTo
-      : getRoleDashboard(getPrimaryRole());
+      : '/app';
     return <Navigate to={target} replace />;
   }
 
-  if (user && !canAccessAdmin()) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-8 h-8 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
-          <p className="text-muted-foreground mb-4">
-            You don't have admin privileges. Contact the administrator to request access.
-          </p>
-          <p className="text-sm text-muted-foreground mb-6">
-            Your account: <strong>{user.email}</strong>
-          </p>
-          <Button variant="outline" onClick={() => window.location.href = '/'}>
-            Return to Home
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
