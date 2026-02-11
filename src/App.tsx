@@ -23,6 +23,7 @@ const Materials = lazy(() => import("./pages/Materials"));
 const CapacityGuide = lazy(() => import("./pages/CapacityGuide"));
 const Contractors = lazy(() => import("./pages/Contractors"));
 const ContractorBestPractices = lazy(() => import("./pages/ContractorBestPractices"));
+const ContractorResources = lazy(() => import("./pages/ContractorResources"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -282,6 +283,9 @@ const App = () => {
               } />
               <Route path="/contractor-best-practices" element={
                 <Suspense fallback={<PageLoader />}><ContractorBestPractices /></Suspense>
+              } />
+              <Route path="/contractor-resources" element={
+                <Suspense fallback={<PageLoader />}><ContractorResources /></Suspense>
               } />
               <Route path="/about" element={
                 <Suspense fallback={<PageLoader />}><About /></Suspense>

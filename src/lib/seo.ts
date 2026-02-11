@@ -367,7 +367,7 @@ export function generateServiceSchema(service: {
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "Service",
+    "@type": ["Service", "WasteManagementService"],
     "serviceType": "Dumpster Rental",
     "name": service.name,
     "description": service.description,
@@ -375,7 +375,7 @@ export function generateServiceSchema(service: {
       "@type": "LocalBusiness",
       "@id": `${BUSINESS_INFO.url}/#organization`
     },
-    "areaServed": (service.areaServed || SERVICE_AREAS).map(area => ({
+    "areaServed": (service.areaServed || SERVICE_AREAS as unknown as string[]).map(area => ({
       "@type": "AdministrativeArea",
       "name": area
     })),
