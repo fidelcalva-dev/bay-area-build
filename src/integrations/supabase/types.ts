@@ -10318,6 +10318,173 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_cities: {
+        Row: {
+          city_name: string
+          city_slug: string
+          common_sizes_json: Json
+          county: string | null
+          created_at: string
+          dump_rules: string | null
+          heavy_sizes_json: Json
+          id: string
+          is_active: boolean
+          is_primary_market: boolean
+          lat: number | null
+          lng: number | null
+          local_intro: string | null
+          market_code: string | null
+          nearby_cities_json: Json | null
+          neighborhoods_json: Json | null
+          permit_info: string | null
+          population: string | null
+          pricing_note: string | null
+          primary_yard_id: string | null
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          city_name: string
+          city_slug: string
+          common_sizes_json?: Json
+          county?: string | null
+          created_at?: string
+          dump_rules?: string | null
+          heavy_sizes_json?: Json
+          id?: string
+          is_active?: boolean
+          is_primary_market?: boolean
+          lat?: number | null
+          lng?: number | null
+          local_intro?: string | null
+          market_code?: string | null
+          nearby_cities_json?: Json | null
+          neighborhoods_json?: Json | null
+          permit_info?: string | null
+          population?: string | null
+          pricing_note?: string | null
+          primary_yard_id?: string | null
+          state?: string
+          updated_at?: string
+        }
+        Update: {
+          city_name?: string
+          city_slug?: string
+          common_sizes_json?: Json
+          county?: string | null
+          created_at?: string
+          dump_rules?: string | null
+          heavy_sizes_json?: Json
+          id?: string
+          is_active?: boolean
+          is_primary_market?: boolean
+          lat?: number | null
+          lng?: number | null
+          local_intro?: string | null
+          market_code?: string | null
+          nearby_cities_json?: Json | null
+          neighborhoods_json?: Json | null
+          permit_info?: string | null
+          population?: string | null
+          pricing_note?: string | null
+          primary_yard_id?: string | null
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      seo_link_rules: {
+        Row: {
+          conditions_json: Json | null
+          created_at: string
+          id: string
+          is_active: boolean
+          output_json: Json | null
+          rule_key: string
+          rule_type: string
+        }
+        Insert: {
+          conditions_json?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          output_json?: Json | null
+          rule_key: string
+          rule_type: string
+        }
+        Update: {
+          conditions_json?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          output_json?: Json | null
+          rule_key?: string
+          rule_type?: string
+        }
+        Relationships: []
+      }
+      seo_pages: {
+        Row: {
+          canonical_url: string | null
+          city_id: string | null
+          created_at: string
+          faq_json: Json | null
+          h1: string
+          id: string
+          is_published: boolean
+          last_generated_at: string | null
+          meta_description: string
+          page_type: string
+          schema_json: Json | null
+          sections_json: Json | null
+          title: string
+          updated_at: string
+          url_path: string
+        }
+        Insert: {
+          canonical_url?: string | null
+          city_id?: string | null
+          created_at?: string
+          faq_json?: Json | null
+          h1: string
+          id?: string
+          is_published?: boolean
+          last_generated_at?: string | null
+          meta_description: string
+          page_type: string
+          schema_json?: Json | null
+          sections_json?: Json | null
+          title: string
+          updated_at?: string
+          url_path: string
+        }
+        Update: {
+          canonical_url?: string | null
+          city_id?: string | null
+          created_at?: string
+          faq_json?: Json | null
+          h1?: string
+          id?: string
+          is_published?: boolean
+          last_generated_at?: string | null
+          meta_description?: string
+          page_type?: string
+          schema_json?: Json | null
+          sections_json?: Json | null
+          title?: string
+          updated_at?: string
+          url_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_pages_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "seo_cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_cost_estimates: {
         Row: {
           alternative_model_cost: number | null
