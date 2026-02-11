@@ -44,6 +44,8 @@ const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
 const NotABroker = lazy(() => import("./pages/NotABroker"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const StaffLogin = lazy(() => import("./pages/StaffLogin"));
+const RoleRouter = lazy(() => import("./pages/RoleRouter"));
+const RequestAccess = lazy(() => import("./pages/RequestAccess"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -345,6 +347,16 @@ const App = () => {
               {/* Staff CRM Login Redirect */}
               <Route path="/staff" element={
                 <Suspense fallback={<PageLoader />}><StaffLogin /></Suspense>
+              } />
+
+              {/* Role Router — post-login redirect */}
+              <Route path="/app" element={
+                <Suspense fallback={<PageLoader />}><RoleRouter /></Suspense>
+              } />
+
+              {/* Request Access — no role assigned */}
+              <Route path="/request-access" element={
+                <Suspense fallback={<PageLoader />}><RequestAccess /></Suspense>
               } />
               
               {/* SEO City Engine Routes */}
