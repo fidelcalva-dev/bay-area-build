@@ -119,6 +119,7 @@ const navSections = [
       { path: '/admin/risk', label: 'Risk Review', icon: Shield },
       { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
       { path: '/admin/users', label: 'User Management', icon: UserCog },
+      { path: '/admin/access-requests', label: 'Access Requests', icon: UserCog },
       { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
     ],
   },

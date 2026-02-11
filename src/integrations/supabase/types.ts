@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_requests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          notes: string | null
+          requested_role: string | null
+          resolved_at: string | null
+          resolved_by_user_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          notes?: string | null
+          requested_role?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          notes?: string | null
+          requested_role?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_permissions: {
         Row: {
           can_approve: boolean | null
@@ -9427,6 +9463,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      role_assignments_audit: {
+        Row: {
+          assigned_by_email: string | null
+          assigned_by_user_id: string
+          assigned_role: string
+          created_at: string
+          id: string
+          reason: string | null
+          source: string
+          target_email: string | null
+          target_user_id: string
+        }
+        Insert: {
+          assigned_by_email?: string | null
+          assigned_by_user_id: string
+          assigned_role: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          source: string
+          target_email?: string | null
+          target_user_id: string
+        }
+        Update: {
+          assigned_by_email?: string | null
+          assigned_by_user_id?: string
+          assigned_role?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          source?: string
+          target_email?: string | null
+          target_user_id?: string
+        }
+        Relationships: []
       }
       role_definitions: {
         Row: {

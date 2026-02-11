@@ -1,42 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserCheck, LogOut, Loader2, CheckCircle } from 'lucide-react';
+import { UserCheck, LogOut, Loader2, CheckCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RequestAccess() {
-  const { user, isLoading, signOut } = useAdminAuth();
+  const { user, isLoading, signOut, roles, getPrimaryRole } = useAdminAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [requesting, setRequesting] = useState(false);
   const [requested, setRequested] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    navigate('/admin/login', { replace: true });
-    return null;
-  }
+  // Auto-create access request on mount
+  useEffect(() => {
+    if (!user || isLoading || roles.length > 0) return;
+    const autoCreate = async () => {
+      try {
+        // Upsert: only create if no OPEN request exists
+        await supabase
+          .from('access_requests')
+          .upsert(
+            { user_id: user.id, email: user.email || '', status: 'OPEN' },
+            { onConflict: 'user_id,status' }
+          );
+      } catch {
+        // Silently fail - non-critical
+      }
+    };
+    autoCreate();
+  }, [user, isLoading, roles]);
 
   const handleRequestAccess = async () => {
     setRequesting(true);
     try {
-      // Create an internal alert for admins
+      // Upsert access request
+      await supabase
+        .from('access_requests')
+        .upsert(
+          { user_id: user!.id, email: user!.email || '', status: 'OPEN' },
+          { onConflict: 'user_id,status' }
+        );
+
+      // Also create an internal alert for admins
       await supabase.from('alerts').insert({
         alert_type: 'access_request',
         entity_type: 'user',
-        entity_id: user.id,
+        entity_id: user!.id,
         severity: 'info',
         title: 'Role Access Request',
-        message: user.email + ' has requested a role assignment. Please review and assign in Admin > Users.',
+        message: user!.email + ' has requested a role assignment. Please review in Admin > Access Requests.',
       });
       setRequested(true);
       toast({
@@ -52,6 +67,19 @@ export default function RequestAccess() {
     }
     setRequesting(false);
   };
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    // Force a session refresh to pick up any new role assignments
+    await supabase.auth.refreshSession();
+    // Small delay to let auth state propagate
+    setTimeout(() => {
+      setRefreshing(false);
+      // Re-check: if roles are now present, the auth listener will update state
+      // and RoleRouter will handle redirect
+      window.location.href = '/app';
+    }, 1000);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30">
@@ -87,6 +115,20 @@ export default function RequestAccess() {
               )}
             </Button>
           )}
+
+          <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="w-full">
+            {refreshing ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                Checking...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Access
+              </>
+            )}
+          </Button>
 
           <Button variant="outline" onClick={() => navigate('/')} className="w-full">
             Return to Home

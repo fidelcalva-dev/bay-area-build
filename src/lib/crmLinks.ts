@@ -30,8 +30,8 @@ const ROLE_DASHBOARDS: Record<string, string> = {
  * Returns the default dashboard path for a given role.
  */
 export function getRoleDashboard(role: AppRole | null): string {
-  if (!role) return '/admin';
-  return ROLE_DASHBOARDS[role] || '/admin';
+  if (!role) return '/request-access';
+  return ROLE_DASHBOARDS[role] || '/request-access';
 }
 
 /**
