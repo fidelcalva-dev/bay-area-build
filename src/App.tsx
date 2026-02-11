@@ -103,6 +103,7 @@ const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const AssetsControlTower = lazy(() => import("./pages/admin/AssetsControlTower"));
 const MovementsLog = lazy(() => import("./pages/admin/MovementsLog"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
+const AccessRequestsPage = lazy(() => import("./pages/admin/AccessRequestsPage"));
 const AlertsPage = lazy(() => import("./pages/admin/AlertsPage"));
 const FraudFlagsPage = lazy(() => import("./pages/admin/FraudFlagsPage"));
 const RiskReviewPage = lazy(() => import("./pages/admin/RiskReviewPage"));
@@ -534,6 +535,9 @@ const App = () => {
                 } />
                 <Route path="users" element={
                   <Suspense fallback={<PageLoader />}><UsersManager /></Suspense>
+                } />
+                <Route path="access-requests" element={
+                  <Suspense fallback={<PageLoader />}><AccessRequestsPage /></Suspense>
                 } />
                 <Route path="alerts" element={
                   <Suspense fallback={<PageLoader />}><AlertsPage /></Suspense>
