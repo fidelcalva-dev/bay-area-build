@@ -125,6 +125,14 @@ const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthD
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
 const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
+const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
+const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
+const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
+
+// SEO City Engine Pages
+const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
+const SeoCitySizePage = lazy(() => import("./pages/seo/SeoCitySizePage"));
+const SeoCityMaterialPage = lazy(() => import("./pages/seo/SeoCityMaterialPage"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -329,6 +337,29 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><HowItWorks /></Suspense>
               } />
               
+              {/* SEO City Engine Routes */}
+              <Route path="/dumpster-rental/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoCityPage /></Suspense>
+              } />
+              <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCitySizePage /></Suspense>
+              } />
+              <Route path="/:citySlug/concrete-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+              <Route path="/:citySlug/dirt-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+              <Route path="/:citySlug/construction-debris-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+              <Route path="/:citySlug/yard-waste-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+              <Route path="/:citySlug/commercial-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+
               {/* Preview Routes (v2 Uber-like experience) */}
               <Route path="/preview/quote" element={
                 <Suspense fallback={<PageLoader />}><PreviewQuote /></Suspense>
@@ -639,6 +670,16 @@ const App = () => {
                 } />
                 <Route path="qa/workflows" element={
                   <Suspense fallback={<PageLoader />}><WorkflowsExplorer /></Suspense>
+                } />
+                {/* SEO Admin Routes */}
+                <Route path="seo/cities" element={
+                  <Suspense fallback={<PageLoader />}><SeoAdminCities /></Suspense>
+                } />
+                <Route path="seo/pages" element={
+                  <Suspense fallback={<PageLoader />}><SeoAdminPages /></Suspense>
+                } />
+                <Route path="seo/sitemap" element={
+                  <Suspense fallback={<PageLoader />}><SeoAdminSitemap /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
