@@ -10581,6 +10581,42 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_locations_registry: {
+        Row: {
+          anchor_variants: string[]
+          city_name: string
+          created_at: string
+          id: string
+          is_active: boolean
+          page_exists: boolean
+          priority: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          anchor_variants?: string[]
+          city_name: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          page_exists?: boolean
+          priority?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          anchor_variants?: string[]
+          city_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          page_exists?: boolean
+          priority?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       seo_pages: {
         Row: {
           canonical_url: string | null
