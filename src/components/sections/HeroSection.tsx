@@ -74,13 +74,13 @@ export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
                 {cityName ? (
                   <>
-                    Dumpster Rental in {cityName}, CA
-                    <span className="block text-accent mt-1">ZIP-Based with Local Yards</span>
+                    Same-Day Dumpster Rental in {cityName}, CA
+                    <span className="block text-accent mt-1">Real Local Yards · Transparent Pricing</span>
                   </>
                 ) : (
                   <>
-                    ZIP-Based Dumpster Rentals
-                    <span className="block text-accent mt-1">with Local Yards</span>
+                    Same-Day Dumpster Rental
+                    <span className="block text-accent mt-1">Oakland, San Jose &amp; San Francisco</span>
                   </>
                 )}
               </h1>
@@ -91,7 +91,7 @@ export function HeroSection({ cityName, countyName }: HeroSectionProps = {}) {
                 Powered by Real Local Yards, Not Brokers
               </p>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
-                Instant estimates · Nearest yard selected · Estimated time windows
+                Transparent pricing. Real local yards. Instant quote in 60 seconds.
               </p>
               
               {/* Price Anchor (P0) - Auto-updates with BASE pricing */}
