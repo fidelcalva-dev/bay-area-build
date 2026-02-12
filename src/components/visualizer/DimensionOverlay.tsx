@@ -112,7 +112,7 @@ export function DimensionOverlay({ size, className, showPickupLoads = true }: Di
               <img
                 src={photo.src}
                 alt={photo.alt}
-                className="w-full h-auto max-h-[320px] object-cover rounded-lg"
+                className="w-full h-auto max-h-[400px] object-cover rounded-lg"
                 loading="lazy"
               />
             </div>
