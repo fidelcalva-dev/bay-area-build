@@ -27,15 +27,24 @@ export function SEOHead({
   const canonicalUrl = canonical ? `${BUSINESS_INFO.url}${canonical}` : undefined;
   const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
-  // Always include LocalBusiness schema
+  // Always include LocalBusiness + Organization schemas
   const localBusinessSchema = generateLocalBusinessSchema();
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": BUSINESS_INFO.name,
+    "url": BUSINESS_INFO.url,
+    "logo": `${BUSINESS_INFO.url}/logo.png`,
+    "image": `${BUSINESS_INFO.url}/logo.png`,
+    "sameAs": Object.values(BUSINESS_INFO.social),
+  };
   
   // Combine schemas
   const allSchemas = schema 
     ? Array.isArray(schema) 
-      ? [localBusinessSchema, ...schema] 
-      : [localBusinessSchema, schema]
-    : [localBusinessSchema];
+      ? [localBusinessSchema, organizationSchema, ...schema] 
+      : [localBusinessSchema, organizationSchema, schema]
+    : [localBusinessSchema, organizationSchema];
 
   return (
     <Helmet>
