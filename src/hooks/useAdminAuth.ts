@@ -33,47 +33,80 @@ export function useAdminAuth() {
     driverId: null,
   });
 
-  useEffect(() => {
+useEffect(() => {
+    let isMounted = true;
+
     const fetchRoles = async (user: User) => {
-      // Fetch all roles for this user
-      const { data: rolesData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id);
+      try {
+        // Fetch all roles for this user
+        const { data: rolesData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id);
 
-      const roles = (rolesData?.map((r) => r.role as AppRole) || []);
+        const roles = (rolesData?.map((r) => r.role as AppRole) || []);
 
-      // Check if user is linked to a driver
-      let driverId: string | null = null;
-      if (roles.includes('driver') || roles.includes('owner_operator')) {
-        const { data: driverData } = await supabase
-          .from('drivers')
-          .select('id')
-          .eq('user_id', user.id)
-          .single();
-        driverId = driverData?.id || null;
+        // Check if user is linked to a driver
+        let driverId: string | null = null;
+        if (roles.includes('driver') || roles.includes('owner_operator')) {
+          const { data: driverData } = await supabase
+            .from('drivers')
+            .select('id')
+            .eq('user_id', user.id)
+            .single();
+          driverId = driverData?.id || null;
+        }
+
+        if (isMounted) {
+          setState({
+            user,
+            isAdmin: roles.includes('admin'),
+            isDispatcher: roles.includes('dispatcher'),
+            isFinance: roles.includes('finance'),
+            isCustomer: roles.includes('customer'),
+            isSales: roles.includes('sales'),
+            isDriver: roles.includes('driver'),
+            isOwnerOperator: roles.includes('owner_operator'),
+            roles,
+            isLoading: false,
+            driverId,
+          });
+        }
+      } catch (error) {
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+          }));
+        }
       }
-
-      setState({
-        user,
-        isAdmin: roles.includes('admin'),
-        isDispatcher: roles.includes('dispatcher'),
-        isFinance: roles.includes('finance'),
-        isCustomer: roles.includes('customer'),
-        isSales: roles.includes('sales'),
-        isDriver: roles.includes('driver'),
-        isOwnerOperator: roles.includes('owner_operator'),
-        roles,
-        isLoading: false,
-        driverId,
-      });
     };
 
-    // Set up auth state listener first
+    // Listener for ONGOING auth changes (does NOT control isLoading)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
+        if (!isMounted) return;
         const user = session?.user ?? null;
 
+        // Update session but don't touch isLoading
+        if (user) {
+          // Dispatch after callback completes to avoid deadlock
+          setTimeout(() => {
+            if (isMounted) fetchRoles(user);
+          }, 0);
+        }
+      }
+    );
+
+    // INITIAL load (controls isLoading)
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!isMounted) return;
+
+        const user = session?.user ?? null;
+
+        // Fetch role BEFORE setting loading false
         if (user) {
           await fetchRoles(user);
         } else {
@@ -91,33 +124,22 @@ export function useAdminAuth() {
             driverId: null,
           });
         }
+      } catch (error) {
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+          }));
+        }
       }
-    );
+    };
 
-    // Then get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const user = session?.user ?? null;
+    initializeAuth();
 
-      if (user) {
-        await fetchRoles(user);
-      } else {
-        setState({
-          user: null,
-          isAdmin: false,
-          isDispatcher: false,
-          isFinance: false,
-          isCustomer: false,
-          isSales: false,
-          isDriver: false,
-          isOwnerOperator: false,
-          roles: [],
-          isLoading: false,
-          driverId: null,
-        });
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
