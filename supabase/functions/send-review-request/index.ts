@@ -79,6 +79,9 @@ serve(async (req) => {
     const reviewLink = REVIEW_LINKS[order.market_code || ""] || REVIEW_LINKS.DEFAULT;
     const cityName = order.delivery_city || "the Bay Area";
     const channel = customer.phone && customer.email ? "both" : customer.phone ? "sms" : "email";
+    
+    // Determine customer type from order context
+    const customerType = "residential"; // default; could be enriched from order data
 
     // Create review request record
     const { data: reviewRequest, error: insertError } = await supabase
@@ -90,6 +93,7 @@ serve(async (req) => {
         market_code: order.market_code,
         review_link: reviewLink,
         channel,
+        customer_type: customerType,
         status: "pending",
       })
       .select()

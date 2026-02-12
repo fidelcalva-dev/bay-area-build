@@ -9312,9 +9312,13 @@ export type Database = {
           city_name: string | null
           created_at: string
           customer_id: string
+          customer_type: string | null
           email_sent_at: string | null
+          followup_1_sent_at: string | null
+          followup_2_sent_at: string | null
           id: string
           market_code: string | null
+          opted_out: boolean | null
           order_id: string
           review_link: string
           review_rating: number | null
@@ -9330,9 +9334,13 @@ export type Database = {
           city_name?: string | null
           created_at?: string
           customer_id: string
+          customer_type?: string | null
           email_sent_at?: string | null
+          followup_1_sent_at?: string | null
+          followup_2_sent_at?: string | null
           id?: string
           market_code?: string | null
+          opted_out?: boolean | null
           order_id: string
           review_link: string
           review_rating?: number | null
@@ -9348,9 +9356,13 @@ export type Database = {
           city_name?: string | null
           created_at?: string
           customer_id?: string
+          customer_type?: string | null
           email_sent_at?: string | null
+          followup_1_sent_at?: string | null
+          followup_2_sent_at?: string | null
           id?: string
           market_code?: string | null
+          opted_out?: boolean | null
           order_id?: string
           review_link?: string
           review_rating?: number | null
