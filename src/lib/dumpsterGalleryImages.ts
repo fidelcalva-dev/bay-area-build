@@ -27,6 +27,9 @@ import photo40yd1 from '@/assets/dumpsters/40yd-photo-1.jpg';
 import photo40yd2 from '@/assets/dumpsters/40yd-photo-2.jpg';
 import photo40yd3 from '@/assets/dumpsters/40yd-photo-3.jpg';
 import photo40yd4 from '@/assets/dumpsters/40yd-photo-4.jpg';
+import photo50yd1 from '@/assets/dumpsters/50yd-photo-1.jpg';
+import photo50yd2 from '@/assets/dumpsters/50yd-photo-2.jpg';
+import photo50yd3 from '@/assets/dumpsters/50yd-photo-3.jpg';
 
 export type DumpsterGalleryPhoto = {
   src: string;
@@ -69,6 +72,11 @@ export const DUMPSTER_GALLERY: Record<number, DumpsterGalleryPhoto[]> = {
     { src: photo40yd2, alt: '40-yard dumpster at commercial site' },
     { src: photo40yd3, alt: '40-yard dumpster being loaded with debris' },
     { src: photo40yd4, alt: '40-yard dumpster at night on residential street' },
+  ],
+  50: [
+    { src: photo50yd1, alt: '50-yard dumpster at warehouse loading dock' },
+    { src: photo50yd2, alt: '50-yard dumpster loaded at commercial property' },
+    { src: photo50yd3, alt: '50-yard dumpster being delivered on residential driveway' },
   ],
 };
 
