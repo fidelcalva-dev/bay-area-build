@@ -157,8 +157,8 @@ export const DUMPSTER_SIZES = [
 // Page-specific SEO configurations
 export const PAGE_SEO = {
   home: {
-    title: 'Dumpster Rental Oakland CA | 6-50 Yard Roll-Off | Same-Day',
-    description: 'Local dumpster rental in Oakland, San Jose & San Francisco. Real local yards, same-day delivery, 6-50 yard roll-off dumpsters. Flat-fee concrete. Transparent pricing. Hablamos Español.',
+    title: 'Same-Day Dumpster Rental Oakland, San Jose & SF | Local Yards',
+    description: 'Affordable dumpster rental in Oakland, San Jose & San Francisco. Same-day delivery, transparent pricing, 6-50 yard roll-off dumpsters from real local yards. Hablamos Español.',
     canonical: '/',
     ogImage: '/og-image.jpg',
   },

@@ -11,8 +11,8 @@ interface SEOHeadProps {
   ogImage?: string;
 }
 
-const DEFAULT_TITLE = `${BUSINESS_INFO.name} | Dumpster Rental SF Bay Area | Same-Day Delivery`;
-const DEFAULT_DESCRIPTION = 'Affordable dumpster rental in the SF Bay Area. Same-day delivery, transparent pricing, all sizes from 6 to 50 yards. Serving Alameda, San Francisco, Santa Clara, and more. Hablamos Español.';
+const DEFAULT_TITLE = `${BUSINESS_INFO.name} | Dumpster Rental Oakland, San Jose & SF`;
+const DEFAULT_DESCRIPTION = 'Same-day dumpster rental in Oakland, San Jose & San Francisco. Transparent pricing, real local yards, 6-50 yard roll-off dumpsters. Instant quote in 60 seconds. Hablamos Español.';
 
 export function SEOHead({ 
   title, 
