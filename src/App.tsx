@@ -52,6 +52,7 @@ const RegionalLandingPage = lazy(() => import("./pages/RegionalLandingPage"));
 const CommercialLandingPage = lazy(() => import("./pages/CommercialLandingPage"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const DumpsterRentalOakland = lazy(() => import("./pages/DumpsterRentalOakland"));
+const DumpsterRentalSanJose = lazy(() => import("./pages/DumpsterRentalSanJose"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -313,6 +314,10 @@ const App = () => {
               {/* Oakland SEO Domination Page */}
               <Route path="/dumpster-rental-oakland-ca" element={
                 <Suspense fallback={<PageLoader />}><DumpsterRentalOakland /></Suspense>
+              } />
+              {/* San Jose SEO Domination Page */}
+              <Route path="/dumpster-rental-san-jose-ca" element={
+                <Suspense fallback={<PageLoader />}><DumpsterRentalSanJose /></Suspense>
               } />
               
               {/* Regional & Commercial SEO Pages */}
