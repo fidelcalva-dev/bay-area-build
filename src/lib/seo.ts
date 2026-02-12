@@ -157,14 +157,14 @@ export const DUMPSTER_SIZES = [
 // Page-specific SEO configurations
 export const PAGE_SEO = {
   home: {
-    title: 'Dumpster Rental SF Bay Area | Same-Day Delivery',
-    description: 'Affordable dumpster rental in the SF Bay Area. Same-day delivery, transparent pricing, 6-50 yard sizes. Serving Oakland, San Francisco, San Jose & 9 counties. Hablamos Español.',
+    title: 'Dumpster Rental Oakland CA | 6-50 Yard Roll-Off | Same-Day',
+    description: 'Local dumpster rental in Oakland, San Jose & San Francisco. Real local yards, same-day delivery, 6-50 yard roll-off dumpsters. Flat-fee concrete. Transparent pricing. Hablamos Español.',
     canonical: '/',
     ogImage: '/og-image.jpg',
   },
   pricing: {
-    title: 'Dumpster Rental Prices | Transparent Pricing',
-    description: 'Get instant dumpster rental pricing. No hidden fees, flat-rate pricing starting at $299. 6-50 yard sizes available across the Bay Area.',
+    title: 'Dumpster Rental Prices Bay Area | Transparent Flat-Rate Pricing',
+    description: 'Bay Area dumpster rental pricing from $390. No hidden fees, flat-rate for concrete & dirt. 6-50 yard sizes. Oakland, San Jose, SF. Get instant quote.',
     canonical: '/pricing',
     ogImage: '/og-image.jpg',
   },
