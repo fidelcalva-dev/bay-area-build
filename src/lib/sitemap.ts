@@ -105,6 +105,30 @@ async function fetchSeoPages(): Promise<SitemapEntry[]> {
   }
 }
 
+// Fetch location registry cities for sitemap
+async function fetchRegistryLocations(): Promise<SitemapEntry[]> {
+  try {
+    const { data } = await supabase
+      .from('seo_locations_registry')
+      .select('slug, page_exists')
+      .eq('is_active', true);
+
+    if (!data) return [];
+
+    // Standalone pages are already in STATIC_PAGES; only add /dumpster-rental/{slug} entries
+    const standalonePages = new Set(['oakland-ca', 'san-jose-ca']);
+    return data
+      .filter(loc => !standalonePages.has(loc.slug))
+      .map(loc => ({
+        url: `/dumpster-rental/${loc.slug}`,
+        changefreq: 'weekly' as const,
+        priority: 0.8,
+      }));
+  } catch {
+    return [];
+  }
+}
+
 function renderEntries(entries: SitemapEntry[]): string {
   return entries.map(page => `  <url>
     <loc>${BASE_URL}${page.url}</loc>
@@ -136,8 +160,11 @@ ${renderEntries(unique)}
 
 // Async version that fetches SEO pages from DB
 export async function generateFullSitemapXml(): Promise<string> {
-  const seoPages = await fetchSeoPages();
-  return generateSitemapXml(seoPages);
+  const [seoPages, registryLocations] = await Promise.all([
+    fetchSeoPages(),
+    fetchRegistryLocations(),
+  ]);
+  return generateSitemapXml([...seoPages, ...registryLocations]);
 }
 
 // Get all entries for programmatic use

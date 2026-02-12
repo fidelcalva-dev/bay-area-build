@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler } from 'lucide-react';
+import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── San Jose-specific data ───────────────────────────────────
 const SJ_YARD = OPERATIONAL_YARDS.find(y => y.id === 'sanjose')!;
@@ -423,31 +424,11 @@ export default function DumpsterRentalSanJose() {
         </div>
       </section>
 
-      {/* ── 10. INTERNAL LINKS ────────────────────────────── */}
-      <section className="py-8 bg-muted/30 border-t border-border">
-        <div className="container-wide">
-          <p className="text-center text-xs text-muted-foreground mb-4 uppercase tracking-wider font-medium">Related Pages</p>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
-            <Link to="/quote" className="text-primary hover:underline">Instant Quote</Link>
-            <span className="text-border">|</span>
-            <Link to="/sizes" className="text-primary hover:underline">All Sizes</Link>
-            <span className="text-border">|</span>
-            <Link to="/green-halo" className="text-primary hover:underline">Green Halo</Link>
-            <span className="text-border">|</span>
-            <Link to="/dumpster-rental-oakland-ca" className="text-primary hover:underline">Oakland</Link>
-            <span className="text-border">|</span>
-            <Link to="/dumpster-rental-san-francisco-ca" className="text-primary hover:underline">San Francisco</Link>
-            <span className="text-border">|</span>
-            <Link to="/concrete-dumpster-rental" className="text-primary hover:underline">Concrete Dumpsters</Link>
-            <span className="text-border">|</span>
-            <Link to="/commercial-dumpster-rental" className="text-primary hover:underline">Commercial</Link>
-            <span className="text-border">|</span>
-            <Link to="/contractors" className="text-primary hover:underline">Contractors</Link>
-            <span className="text-border">|</span>
-            <Link to="/areas" className="text-primary hover:underline">All Service Areas</Link>
-          </div>
-        </div>
-      </section>
+      {/* ── 10. RELATED LOCATIONS ─────────────────────────── */}
+      <RelatedLocations currentCity="san-jose-ca" pageContext="sj-landing" title="Also Serving Nearby Areas" />
+
+      {/* ── 11. INTERNAL LINKS ────────────────────────────── */}
+      <InternalLinkBlock currentCity="san-jose-ca" type="city" pageContext="sj-landing" />
 
       {/* ── STICKY MOBILE CTA ─────────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border md:hidden z-50">

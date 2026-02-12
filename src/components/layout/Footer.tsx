@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
+import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -268,6 +269,9 @@ export function Footer() {
             ))}
           </div>
         </div>
+
+        {/* Dynamic Location Cluster */}
+        <FooterLocationCluster />
 
         {/* Trust Badges & Links */}
         <div className="mt-12 pt-8 border-t border-secondary-foreground/10">
