@@ -45,6 +45,10 @@ const STATIC_PAGES: SitemapEntry[] = [
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.9 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.9 },
+  // Flagship city pages
+  { url: '/dumpster-rental-oakland-ca', changefreq: 'weekly', priority: 0.95 },
+  { url: '/dumpster-rental-san-jose-ca', changefreq: 'weekly', priority: 0.95 },
+  { url: '/dumpster-rental-san-francisco-ca', changefreq: 'weekly', priority: 0.95 },
   // Commercial pages
   { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
@@ -116,7 +120,7 @@ async function fetchRegistryLocations(): Promise<SitemapEntry[]> {
     if (!data) return [];
 
     // Standalone pages are already in STATIC_PAGES; only add /dumpster-rental/{slug} entries
-    const standalonePages = new Set(['oakland-ca', 'san-jose-ca']);
+    const standalonePages = new Set(['oakland-ca', 'san-jose-ca', 'san-francisco-ca']);
     return data
       .filter(loc => !standalonePages.has(loc.slug))
       .map(loc => ({

@@ -25,6 +25,7 @@ export function getCityUrl(slug: string, pageExists: boolean): string {
   const standalonePages: Record<string, string> = {
     'oakland-ca': '/dumpster-rental-oakland-ca',
     'san-jose-ca': '/dumpster-rental-san-jose-ca',
+    'san-francisco-ca': '/dumpster-rental-san-francisco-ca',
   };
   if (standalonePages[slug]) return standalonePages[slug];
   // All others use the dynamic city page route

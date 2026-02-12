@@ -53,6 +53,7 @@ const CommercialLandingPage = lazy(() => import("./pages/CommercialLandingPage")
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const DumpsterRentalOakland = lazy(() => import("./pages/DumpsterRentalOakland"));
 const DumpsterRentalSanJose = lazy(() => import("./pages/DumpsterRentalSanJose"));
+const DumpsterRentalSanFrancisco = lazy(() => import("./pages/DumpsterRentalSanFrancisco"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -140,6 +141,7 @@ const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
 const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
 const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
 const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
+const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 
 // SEO City Engine Pages
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
@@ -318,6 +320,10 @@ const App = () => {
               {/* San Jose SEO Domination Page */}
               <Route path="/dumpster-rental-san-jose-ca" element={
                 <Suspense fallback={<PageLoader />}><DumpsterRentalSanJose /></Suspense>
+              } />
+              {/* San Francisco SEO Domination Page */}
+              <Route path="/dumpster-rental-san-francisco-ca" element={
+                <Suspense fallback={<PageLoader />}><DumpsterRentalSanFrancisco /></Suspense>
               } />
               
               {/* Regional & Commercial SEO Pages */}
@@ -734,6 +740,9 @@ const App = () => {
                   <Suspense fallback={<PageLoader />}><WorkflowsExplorer /></Suspense>
                 } />
                 {/* SEO Admin Routes */}
+                <Route path="seo/dashboard" element={
+                  <Suspense fallback={<PageLoader />}><SeoAdminDashboard /></Suspense>
+                } />
                 <Route path="seo/cities" element={
                   <Suspense fallback={<PageLoader />}><SeoAdminCities /></Suspense>
                 } />
