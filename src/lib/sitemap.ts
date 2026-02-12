@@ -3,6 +3,7 @@
 
 import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { BUSINESS_INFO } from './seo';
+import { SERVICE_CITIES } from './cityData';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
@@ -41,6 +42,20 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/waste-vision', changefreq: 'monthly', priority: 0.5 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
+  // Regional pages
+  { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.9 },
+  { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.9 },
+  // Commercial pages
+  { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
+  { url: '/warehouse-cleanout-dumpsters', changefreq: 'monthly', priority: 0.7 },
+  // Blog articles
+  { url: '/blog/dumpster-cost-oakland', changefreq: 'monthly', priority: 0.7 },
+  { url: '/blog/concrete-disposal-bay-area', changefreq: 'monthly', priority: 0.7 },
+  { url: '/blog/dumpster-permit-san-jose', changefreq: 'monthly', priority: 0.7 },
+  { url: '/blog/heavy-material-dumpsters-explained', changefreq: 'monthly', priority: 0.7 },
+  { url: '/blog/dumpster-sizes-guide', changefreq: 'monthly', priority: 0.7 },
+  { url: '/blog/same-day-dumpster-delivery-bay-area', changefreq: 'monthly', priority: 0.7 },
 ];
 
 // Size-specific pages
@@ -59,6 +74,13 @@ const MATERIAL_PAGES: SitemapEntry[] = [
   { url: '/roofing-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
 ];
 
+// City pages from hardcoded data
+const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => ({
+  url: `/dumpster-rental/${city.slug}`,
+  changefreq: 'weekly' as const,
+  priority: city.slug === 'oakland-ca' || city.slug === 'san-jose-ca' ? 0.9 : 0.8,
+}));
+
 // Fetch SEO engine pages from database
 async function fetchSeoPages(): Promise<SitemapEntry[]> {
   try {
@@ -70,7 +92,6 @@ async function fetchSeoPages(): Promise<SitemapEntry[]> {
     if (!data) return [];
 
     return data.map(page => {
-      // City mother pages get higher priority
       const priority = page.page_type === 'CITY' ? 0.9 : 0.8;
       return {
         url: page.url_path,
@@ -94,7 +115,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();
@@ -121,11 +142,11 @@ export async function generateFullSitemapXml(): Promise<string> {
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES];
+  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES];
 }
 
 // Get all entries including async SEO pages
 export async function getAllSitemapEntriesWithSeo(): Promise<SitemapEntry[]> {
   const seoPages = await fetchSeoPages();
-  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...seoPages];
+  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
 }

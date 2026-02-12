@@ -47,6 +47,11 @@ const StaffLogin = lazy(() => import("./pages/StaffLogin"));
 const RoleRouter = lazy(() => import("./pages/RoleRouter"));
 const RequestAccess = lazy(() => import("./pages/RequestAccess"));
 
+// SEO Landing Pages
+const RegionalLandingPage = lazy(() => import("./pages/RegionalLandingPage"));
+const CommercialLandingPage = lazy(() => import("./pages/CommercialLandingPage"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
 const PreviewHome = lazy(() => import("./pages/preview/PreviewHome"));
@@ -299,6 +304,26 @@ const App = () => {
               } />
               <Route path="/blog" element={
                 <Suspense fallback={<PageLoader />}><Blog /></Suspense>
+              } />
+              <Route path="/blog/:articleSlug" element={
+                <Suspense fallback={<PageLoader />}><BlogArticle /></Suspense>
+              } />
+              
+              {/* Regional & Commercial SEO Pages */}
+              <Route path="/dumpster-rental-east-bay" element={
+                <Suspense fallback={<PageLoader />}><RegionalLandingPage /></Suspense>
+              } />
+              <Route path="/dumpster-rental-south-bay" element={
+                <Suspense fallback={<PageLoader />}><RegionalLandingPage /></Suspense>
+              } />
+              <Route path="/commercial-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><CommercialLandingPage /></Suspense>
+              } />
+              <Route path="/construction-dumpsters" element={
+                <Suspense fallback={<PageLoader />}><CommercialLandingPage /></Suspense>
+              } />
+              <Route path="/warehouse-cleanout-dumpsters" element={
+                <Suspense fallback={<PageLoader />}><CommercialLandingPage /></Suspense>
               } />
               <Route path="/careers" element={
                 <Suspense fallback={<PageLoader />}><Careers /></Suspense>
