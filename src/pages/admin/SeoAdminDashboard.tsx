@@ -268,7 +268,11 @@ export default function SeoAdminDashboard() {
       </div>
 
       {/* ── Quick Links ───────────────────────────────────── */}
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-4 gap-4">
+        <Link to="/admin/seo/gbp-plan" className="bg-card border border-primary/30 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">📍 GBP Domination Plan</h3>
+          <p className="text-xs text-muted-foreground">90-day playbook for Map Pack Top 3.</p>
+        </Link>
         <Link to="/admin/seo/cities" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <h3 className="font-semibold text-foreground group-hover:text-primary">Manage Cities</h3>
           <p className="text-xs text-muted-foreground">Add, edit, and configure SEO cities.</p>

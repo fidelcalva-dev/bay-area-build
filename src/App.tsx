@@ -142,6 +142,7 @@ const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
 const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
 const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
 const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
+const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 
 // SEO City Engine Pages
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
@@ -751,6 +752,9 @@ const App = () => {
                 } />
                 <Route path="seo/sitemap" element={
                   <Suspense fallback={<PageLoader />}><SeoAdminSitemap /></Suspense>
+                } />
+                <Route path="seo/gbp-plan" element={
+                  <Suspense fallback={<PageLoader />}><GbpDominationPlan /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
