@@ -23,7 +23,7 @@ export default function Quote() {
       title="Get Instant Dumpster Quote | CALSAN Dumpsters"
       description="Get an instant dumpster rental quote in 60 seconds. All-inclusive pricing with no hidden fees. Same-day delivery available in the Bay Area."
     >
-      <section className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-muted">
+      <section className="min-h-[calc(100vh-4rem)] bg-[hsl(150_10%_98%)]">
         <div className="container-wide py-8 lg:py-12">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Left - Value Proposition */}
