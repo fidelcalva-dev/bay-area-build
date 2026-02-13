@@ -371,8 +371,8 @@ export function QuoteOrderFlow({
       placement: 'driveway',
     });
 
-    // For now, open a confirmation page or call
-    // In production, this would redirect to TrashLab or HighLevel
+    // Confirm and redirect to internal flow
+    // Legacy flow — V3QuoteFlow is the canonical entry point
     toast({
       title: 'Ready to Book! 🎉',
       description: "We'll call you within 15 minutes to confirm.",
