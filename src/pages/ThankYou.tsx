@@ -3,7 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Phone, ArrowRight } from 'lucide-react';
 
-const TRASHLAB_URL = 'https://app.trashlab.com';
+const QUOTE_URL = '/quote';
 
 export default function ThankYou() {
   const location = useLocation();
@@ -61,10 +61,10 @@ export default function ThankYou() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button asChild variant="cta" size="lg">
-                <a href={TRASHLAB_URL} target="_blank" rel="noopener noreferrer">
-                  Book Instantly Online
+                <Link to={QUOTE_URL}>
+                  Get Another Quote
                   <ArrowRight className="w-4 h-4" />
-                </a>
+                </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <a href="tel:+15106802150">

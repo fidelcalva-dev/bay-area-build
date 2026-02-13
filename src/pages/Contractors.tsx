@@ -71,10 +71,10 @@ export default function Contractors() {
                   </a>
                 </Button>
                 <Button asChild variant="heroSecondary" size="xl">
-                  <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
+                  <Link to="/quote">
                     Order Now
                     <ArrowRight className="w-5 h-5" />
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </div>

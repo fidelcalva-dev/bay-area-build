@@ -698,6 +698,6 @@ export const CTA_LINKS = {
   call: `tel:${BUSINESS_INFO.phone.sales}`,
   text: `sms:${BUSINESS_INFO.phone.sales}`,
   email: `mailto:${BUSINESS_INFO.email}`,
-  trashlab: 'https://app.trashlab.com',
+  trashlab: '/quote',
   recyclingSupport: '/contact?service=recycling-support',
 } as const;

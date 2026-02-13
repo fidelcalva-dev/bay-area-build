@@ -265,9 +265,9 @@ export default function Pricing() {
                     <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{tier.idealFor}</p>
 
                     <Button asChild variant="cta" size="sm" className="w-full">
-                      <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
+                      <Link to="/quote">
                         Get Quote
-                      </a>
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -315,9 +315,9 @@ export default function Pricing() {
                     <p className="text-xs text-muted-foreground mb-4">{tier.idealFor}</p>
 
                     <Button asChild variant="outline" size="sm" className="w-full border-warning/50 hover:bg-warning/10">
-                      <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
+                      <Link to="/quote">
                         Get Quote
-                      </a>
+                      </Link>
                     </Button>
                   </div>
                 </div>
