@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculator';
 import { V3QuoteFlow } from '@/components/quote/v3';
 import { CheckCircle, MessageCircle, Shield } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 import { CalculatorSeoFaq } from '@/components/seo/CalculatorSeoFaq';
-import { fetchFeatureFlags, type FeatureFlags } from '@/lib/featureFlags';
 
 const benefits = [
   'All-inclusive pricing — no hidden fees',
@@ -17,23 +14,9 @@ const benefits = [
   'Español disponible',
 ];
 
-interface QuoteProps {
-  forceV3?: boolean;
-}
-
-export default function Quote({ forceV3 }: QuoteProps = {}) {
-  const [useV3, setUseV3] = useState(forceV3 ?? false);
-  const [flagsLoaded, setFlagsLoaded] = useState(forceV3 ?? false);
-
-  useEffect(() => {
-    if (forceV3) return; // Skip flag check when forced
-    fetchFeatureFlags().then((flags) => {
-      const isPreview = window.location.pathname.startsWith('/preview/');
-      const queryV3 = new URLSearchParams(window.location.search).get('v3') === '1';
-      setUseV3(isPreview || queryV3 || flags['quote_flow.v3']);
-      setFlagsLoaded(true);
-    });
-  }, [forceV3]);
+export default function Quote() {
+  // V3 force-activated for verification — restore flag logic after QA
+  const shouldUseV3 = true;
 
   return (
     <Layout
@@ -88,7 +71,7 @@ export default function Quote({ forceV3 }: QuoteProps = {}) {
 
             {/* Right - Calculator */}
             <div className="lg:pt-0">
-              {useV3 ? <V3QuoteFlow /> : <MinimalQuoteCalculator />}
+              {shouldUseV3 ? <V3QuoteFlow /> : null}
               
               {/* Reassurance below calculator */}
               <div className="mt-6 text-center">
