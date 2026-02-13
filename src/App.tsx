@@ -32,6 +32,8 @@ const ThankYou = lazy(() => import("./pages/ThankYou"));
 const Quote = lazy(() => import("./pages/Quote"));
 const ContractorQuote = lazy(() => import("./pages/ContractorQuote"));
 const QuickOrder = lazy(() => import("./pages/QuickOrder"));
+const QuoteSchedule = lazy(() => import("./pages/QuoteSchedule"));
+const QuotePayment = lazy(() => import("./pages/QuotePayment"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
 const Locations = lazy(() => import("./pages/Locations"));
@@ -354,6 +356,12 @@ const App = () => {
               } />
               <Route path="/quote/contractor" element={
                 <Suspense fallback={<PageLoader />}><ContractorQuote /></Suspense>
+              } />
+              <Route path="/quote/schedule" element={
+                <Suspense fallback={<PageLoader />}><QuoteSchedule /></Suspense>
+              } />
+              <Route path="/quote/pay" element={
+                <Suspense fallback={<PageLoader />}><QuotePayment /></Suspense>
               } />
               <Route path="/quick-order" element={
                 <Suspense fallback={<PageLoader />}><QuickOrder /></Suspense>

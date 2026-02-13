@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   MapPin, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2,
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
@@ -112,6 +113,7 @@ function TrustBlock({ className }: { className?: string }) {
 // ============================================================
 export function V3QuoteFlow() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const pricingData = usePricingData();
   const { sizes: DUMPSTER_SIZES } = pricingData;
 
@@ -313,7 +315,8 @@ export function V3QuoteFlow() {
       if (result.success) {
         setSavedQuoteId(result.quoteId ?? null);
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
-        await supabase.functions.invoke('send-quote-summary', {
+        // Send quote summary (best effort)
+        supabase.functions.invoke('send-quote-summary', {
           body: {
             customerName,
             customerPhone: phoneValidation.formatted,
@@ -325,7 +328,23 @@ export function V3QuoteFlow() {
             estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
             includedTons: quote.includedTons,
           },
-        });
+        }).catch(() => {});
+
+        // Convert quote to order
+        try {
+          const { data: orderData } = await supabase.functions.invoke('create-order-from-quote', {
+            body: { quoteId: result.quoteId },
+          });
+          if (orderData?.orderId) {
+            toast({ title: 'Order Confirmed!', description: 'Choose your delivery date next.' });
+            navigate(`/quote/schedule?orderId=${orderData.orderId}`);
+            return;
+          }
+        } catch (orderErr) {
+          console.error('Order creation failed, falling back to placement:', orderErr);
+        }
+
+        // Fallback: show placement step if order creation fails
         toast({ title: 'Quote Saved', description: "We'll contact you within 15 minutes." });
         setStep('placement');
       } else {
