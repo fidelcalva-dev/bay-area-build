@@ -330,6 +330,16 @@ export function V3QuoteFlow() {
   // Saved quote ID for placement
   const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
 
+  // Placement sub-state: 'prompt' (show buttons) | 'mapping' (show map) | 'done' (success)
+  const [placementPhase, setPlacementPhase] = useState<'prompt' | 'mapping' | 'done'>('prompt');
+
+  // Staff-only internal breakdown toggle (via ?internal=1 query param)
+  const showInternalBreakdown = useMemo(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('internal') === '1';
+    } catch { return false; }
+  }, []);
+
   // ============================================================
   // RENDER
   // ============================================================
@@ -725,6 +735,7 @@ export function V3QuoteFlow() {
                   <ServiceTimeBreakdown
                     estimate={serviceTime}
                     yardName={distanceCalc.distance?.yard.name}
+                    showInternal={showInternalBreakdown}
                   />
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -908,18 +919,9 @@ export function V3QuoteFlow() {
         {/* ============================== */}
         {step === 'placement' && (
           <div className="space-y-5">
-            <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">
-                <CheckCircle className="w-5 h-5 text-success inline mr-2" />
-                {ORDER_CONFIRMED_TITLE}
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                {ORDER_CONFIRMED_SUBTITLE}
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-success/10 border border-success/20 text-sm text-success-foreground">
-              <div className="flex items-center gap-2 font-semibold mb-1">
+            {/* Confirmation banner (always shown) */}
+            <div className="p-4 rounded-xl bg-success/10 border border-success/20 text-sm">
+              <div className="flex items-center gap-2 font-semibold text-foreground mb-1">
                 <CheckCircle className="w-4 h-4 text-success" />
                 {QUOTE_SAVED_TITLE}
               </div>
@@ -928,8 +930,52 @@ export function V3QuoteFlow() {
               </p>
             </div>
 
-            {/* Placement map */}
-            {distanceCalc.geocoding && (
+            {/* Phase: PROMPT — choose or skip */}
+            {placementPhase === 'prompt' && (
+              <>
+                <div>
+                  <h4 className="text-lg font-bold text-foreground mb-1">
+                    {getPlacementCopy().PLACEMENT_TITLE}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    {getPlacementCopy().PLACEMENT_SUBTITLE}
+                  </p>
+                </div>
+
+                <Button
+                  variant="cta"
+                  size="lg"
+                  className="w-full h-14 text-base"
+                  onClick={() => setPlacementPhase('mapping')}
+                  disabled={!distanceCalc.geocoding}
+                >
+                  <MapPin className="w-5 h-5" />
+                  {getPlacementCopy().PLACEMENT_PRIMARY_BUTTON}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="w-full"
+                  onClick={() => {
+                    analytics.quoteStepComplete('placement-skipped', Date.now() - stepStartTime);
+                    setPlacementPhase('done');
+                  }}
+                >
+                  <SkipForward className="w-4 h-4" />
+                  {getPlacementCopy().PLACEMENT_SKIP_BUTTON}
+                </Button>
+
+                {!distanceCalc.geocoding && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    {PLACEMENT_MAP_UNAVAILABLE}
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* Phase: MAPPING — show the map tool */}
+            {placementPhase === 'mapping' && distanceCalc.geocoding && (
               <Suspense
                 fallback={
                   <div className="h-[300px] rounded-xl bg-muted/20 border border-border flex items-center justify-center">
@@ -944,16 +990,21 @@ export function V3QuoteFlow() {
                   distanceMiles={distanceCalc.distance?.distanceMiles}
                   onPlacementConfirmed={(placement) => {
                     analytics.quoteStepComplete('placement', Date.now() - stepStartTime);
+                    setPlacementPhase('done');
                   }}
                 />
               </Suspense>
             )}
 
-            {!distanceCalc.geocoding && (
-              <div className="p-4 rounded-xl border border-border bg-muted/10 text-center">
-                <MapPin className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">
-                  {PLACEMENT_MAP_UNAVAILABLE}
+            {/* Phase: DONE — success message */}
+            {placementPhase === 'done' && (
+              <div className="p-4 rounded-xl bg-muted/20 border border-border text-center">
+                <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
+                <p className="font-semibold text-foreground">
+                  {ORDER_CONFIRMED_TITLE}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {ORDER_CONFIRMED_SUBTITLE}
                 </p>
               </div>
             )}
