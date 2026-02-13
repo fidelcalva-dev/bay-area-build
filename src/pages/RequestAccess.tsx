@@ -81,6 +81,22 @@ export default function RequestAccess() {
     }, 1000);
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30">
       <div className="max-w-md w-full mx-4 bg-card rounded-2xl shadow-card p-8 text-center">
@@ -94,7 +110,7 @@ export default function RequestAccess() {
           Your account is active but hasn't been assigned to a department yet.
         </p>
         <p className="text-sm text-muted-foreground mb-6">
-          Logged in as: <strong>{user.email}</strong>
+          Logged in as: <strong>{user?.email}</strong>
         </p>
 
         <div className="space-y-3">
