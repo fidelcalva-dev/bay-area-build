@@ -500,7 +500,10 @@ export function V3QuoteFlow() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setUseAddress(true)}
+                    onClick={() => {
+                      setUseAddress(true);
+                      setZip('');
+                    }}
                     className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors px-1"
                   >
                     <Navigation className="w-3.5 h-3.5" />
