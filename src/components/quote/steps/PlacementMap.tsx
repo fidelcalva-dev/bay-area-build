@@ -4,11 +4,13 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Move, AlertTriangle, CheckCircle, FileText, Truck, Navigation, Home, Route } from 'lucide-react';
+import { MapPin, Move, AlertTriangle, CheckCircle, FileText, Truck, Navigation, Home, Route, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import type { Yard } from '@/lib/distanceService';
+import { DEFAULT_DUMPSTER_DIMENSIONS, DEFAULT_TRUCK_DIMENSIONS } from '@/types/sitePlacement';
+import { toPng } from 'html-to-image';
 import 'leaflet/dist/leaflet.css';
 
 // ============================================================
@@ -94,11 +96,26 @@ const createDumpsterIcon = () => {
   });
 };
 
-interface PlacementResult {
+export interface PlacementRectPayload {
+  centerLat: number;
+  centerLng: number;
+  widthFt: number;
+  lengthFt: number;
+  rotationDeg: number;
+}
+
+export interface PlacementEntryPayload {
   lat: number;
   lng: number;
-  placementType: 'driveway' | 'street';
+  bearingDeg: number;
+}
+
+export interface PlacementResult {
+  dumpsterRect: PlacementRectPayload;
+  truckRect: PlacementRectPayload;
+  entry: PlacementEntryPayload;
   notes: string;
+  screenshotBlob: Blob | null;
 }
 
 interface PlacementMapProps {
@@ -106,6 +123,7 @@ interface PlacementMapProps {
   addressLng: number;
   onPlacementConfirmed: (placement: PlacementResult) => void;
   value?: PlacementResult | null;
+  dumpsterSizeYd?: number;
   // Optional yard info for distance display
   yard?: Yard | null;
   distanceMiles?: number;
@@ -161,24 +179,31 @@ export function PlacementMap({
   addressLng, 
   onPlacementConfirmed, 
   value,
+  dumpsterSizeYd = 20,
   yard,
   distanceMiles 
 }: PlacementMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [pinPosition, setPinPosition] = useState<[number, number]>([
-    value?.lat || addressLat,
-    value?.lng || addressLng
+    value?.dumpsterRect?.centerLat || addressLat,
+    value?.dumpsterRect?.centerLng || addressLng
   ]);
   const [placementType, setPlacementType] = useState<'driveway' | 'street'>(
-    value?.placementType || 'driveway'
+    'driveway'
   );
+  const [rotationDeg, setRotationDeg] = useState(0);
   const [notes, setNotes] = useState(value?.notes || '');
   const [isConfirmed, setIsConfirmed] = useState(!!value);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [showNotes, setShowNotes] = useState(!!value?.notes);
+
+  // Get dumpster dimensions from defaults
+  const dumpsterDims = DEFAULT_DUMPSTER_DIMENSIONS[dumpsterSizeYd] || DEFAULT_DUMPSTER_DIMENSIONS[20];
+  const truckDims = DEFAULT_TRUCK_DIMENSIONS.ROLLOFF;
 
   // Calculate bounds to fit all markers
   const bounds = useMemo(() => {
     if (yard) {
-      // Include yard, address, and placement pin
       const points = [
         L.latLng(yard.latitude, yard.longitude),
         L.latLng(addressLat, addressLng),
@@ -186,7 +211,6 @@ export function PlacementMap({
       ];
       return L.latLngBounds(points);
     }
-    // Just address and placement pin
     const corner1 = L.latLng(addressLat, addressLng);
     const corner2 = L.latLng(pinPosition[0], pinPosition[1]);
     return L.latLngBounds(corner1, corner2);
@@ -204,15 +228,54 @@ export function PlacementMap({
     setIsConfirmed(false);
   };
 
+  // Capture screenshot of map
+  const captureScreenshot = async (): Promise<Blob | null> => {
+    if (!mapContainerRef.current) return null;
+    try {
+      const dataUrl = await toPng(mapContainerRef.current, { quality: 0.85 });
+      const res = await fetch(dataUrl);
+      return await res.blob();
+    } catch (err) {
+      console.error('Screenshot capture failed:', err);
+      return null;
+    }
+  };
+
   // Confirm placement
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    setIsCapturing(true);
+    const screenshotBlob = await captureScreenshot();
+
+    // Truck is offset behind the dumpster based on bearing
+    const bearingRad = (rotationDeg * Math.PI) / 180;
+    const offsetLat = -0.00015 * Math.cos(bearingRad); // ~50ft behind
+    const offsetLng = -0.00015 * Math.sin(bearingRad);
+
     const result: PlacementResult = {
-      lat: pinPosition[0],
-      lng: pinPosition[1],
-      placementType,
+      dumpsterRect: {
+        centerLat: pinPosition[0],
+        centerLng: pinPosition[1],
+        widthFt: dumpsterDims.width_ft,
+        lengthFt: dumpsterDims.length_ft,
+        rotationDeg,
+      },
+      truckRect: {
+        centerLat: pinPosition[0] + offsetLat,
+        centerLng: pinPosition[1] + offsetLng,
+        widthFt: truckDims.width_ft,
+        lengthFt: truckDims.length_ft,
+        rotationDeg,
+      },
+      entry: {
+        lat: pinPosition[0] + offsetLat * 2,
+        lng: pinPosition[1] + offsetLng * 2,
+        bearingDeg: rotationDeg,
+      },
       notes: notes.trim(),
+      screenshotBlob,
     };
     setIsConfirmed(true);
+    setIsCapturing(false);
     onPlacementConfirmed(result);
   };
 
@@ -256,7 +319,7 @@ export function PlacementMap({
       </div>
 
       {/* Map Container */}
-      <div className="relative rounded-xl overflow-hidden border border-border shadow-sm">
+      <div ref={mapContainerRef} className="relative rounded-xl overflow-hidden border border-border shadow-sm">
         <MapContainer
           center={[addressLat, addressLng]}
           zoom={17}
@@ -304,10 +367,31 @@ export function PlacementMap({
           )}
         </MapContainer>
 
-        {/* Coordinates Overlay */}
+        {/* Coordinates & Dimensions Overlay */}
         <div className="absolute bottom-2 left-2 bg-background/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground font-mono">
           {pinPosition[0].toFixed(6)}, {pinPosition[1].toFixed(6)}
         </div>
+        <div className="absolute bottom-2 right-2 bg-background/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
+          {dumpsterDims.length_ft}ft x {dumpsterDims.width_ft}ft • {rotationDeg}°
+        </div>
+      </div>
+
+      {/* Rotation Control */}
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-muted-foreground whitespace-nowrap">Rotation</span>
+        <input
+          type="range"
+          min={0}
+          max={345}
+          step={15}
+          value={rotationDeg}
+          onChange={(e) => {
+            setRotationDeg(Number(e.target.value));
+            setIsConfirmed(false);
+          }}
+          className="flex-1 accent-primary"
+        />
+        <span className="text-sm font-mono text-foreground w-10 text-right">{rotationDeg}°</span>
       </div>
 
       {/* Legend */}
@@ -430,8 +514,14 @@ export function PlacementMap({
         size="lg"
         className="w-full h-12"
         onClick={handleConfirm}
+        disabled={isCapturing}
       >
-        {isConfirmed ? (
+        {isCapturing ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Capturing...
+          </>
+        ) : isConfirmed ? (
           <>
             <CheckCircle className="w-5 h-5 text-success" />
             Placement Confirmed
