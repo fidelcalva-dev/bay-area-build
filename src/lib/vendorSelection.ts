@@ -217,6 +217,10 @@ export async function saveQuote(params: {
   greenHaloDumpFeePerTon?: number;
   // Quick link reference
   quickLinkId?: string;
+  // Address fields
+  streetAddress?: string;
+  city?: string;
+  state?: string;
 }): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string }> {
   try {
     // Use edge function to bypass RLS (server-side insert with service role)
@@ -292,6 +296,10 @@ export async function saveQuote(params: {
       green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
       // Quick link reference
       quick_link_id: params.quickLinkId,
+      // Address fields
+      street_address: params.streetAddress,
+      city: params.city,
+      state: params.state,
       // Source tracking
       source: 'website',
     };
