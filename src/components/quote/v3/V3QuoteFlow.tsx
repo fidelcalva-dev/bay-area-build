@@ -1110,19 +1110,49 @@ export function V3QuoteFlow() {
                     addressLng={distanceCalc.geocoding.lng}
                     yard={distanceCalc.distance?.yard ?? null}
                     distanceMiles={distanceCalc.distance?.distanceMiles}
+                    dumpsterSizeYd={size}
                     onPlacementConfirmed={async (placement) => {
                       analytics.quoteStepComplete('placement', Date.now() - stepStartTime);
                       if (savedQuoteId) {
                         try {
+                          // 1. Upload screenshot
+                          let screenshotUrl: string | null = null;
+                          if (placement.screenshotBlob) {
+                            const fileName = `quotes/${savedQuoteId}/${Date.now()}_placement.png`;
+                            const { data: uploadData } = await supabase.storage
+                              .from('placements-private')
+                              .upload(fileName, placement.screenshotBlob, {
+                                contentType: 'image/png',
+                                upsert: true,
+                              });
+                            if (uploadData?.path) {
+                              screenshotUrl = uploadData.path;
+                            }
+                          }
+
+                          // 2. Build full geometry payload
+                          const geometryJson = {
+                            dumpsterRect: placement.dumpsterRect,
+                            truckRect: placement.truckRect,
+                            entry: placement.entry,
+                          };
+
+                          // 3. Insert into quote_site_placement
                           await supabase.from('quote_site_placement').insert({
                             quote_id: savedQuoteId,
-                            geometry_json: {
-                              centerLat: placement.lat,
-                              centerLng: placement.lng,
-                              placementType: placement.placementType,
-                            },
+                            geometry_json: geometryJson as never,
+                            screenshot_url: screenshotUrl,
                             notes: placement.notes || null,
-                          });
+                          } as never);
+
+                          // 4. Log timeline event PLACEMENT_SAVED
+                          await supabase.from('timeline_events').insert({
+                            entity_type: 'quote',
+                            entity_id: savedQuoteId,
+                            event_type: 'PLACEMENT_SAVED',
+                            description: `Placement saved: ${placement.dumpsterRect.widthFt}x${placement.dumpsterRect.lengthFt}ft dumpster at (${placement.dumpsterRect.centerLat.toFixed(6)}, ${placement.dumpsterRect.centerLng.toFixed(6)})`,
+                            metadata: geometryJson as any,
+                          } as any);
                         } catch (err) {
                           console.error('Failed to save placement:', err);
                         }

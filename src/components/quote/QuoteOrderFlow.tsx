@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AddressInput } from './steps/AddressInput';
 import { SchedulingStep, type SchedulingResult } from './steps/SchedulingStep';
 import type { Yard } from '@/lib/distanceService';
+import type { PlacementResult } from './steps/PlacementMap';
 
 // Lazy load the map component to avoid react-leaflet causing multiple React instances
 const PlacementMap = lazy(() => import('./steps/PlacementMap').then(m => ({ default: m.PlacementMap })));
@@ -69,12 +70,7 @@ interface AddressResult {
   zip?: string;
 }
 
-interface PlacementResult {
-  lat: number;
-  lng: number;
-  placementType: 'driveway' | 'street';
-  notes: string;
-}
+// PlacementResult is now imported from PlacementMap
 
 interface DistanceInfo {
   yard: Yard;
@@ -233,16 +229,45 @@ export function QuoteOrderFlow({
     
     if (savedQuoteId) {
       try {
+        // Upload screenshot if available
+        let screenshotUrl: string | null = null;
+        if (placementResult.screenshotBlob) {
+          const fileName = `quotes/${savedQuoteId}/${Date.now()}_placement.png`;
+          const { data: uploadData } = await supabase.storage
+            .from('placements-private')
+            .upload(fileName, placementResult.screenshotBlob, {
+              contentType: 'image/png',
+              upsert: true,
+            });
+          if (uploadData?.path) {
+            screenshotUrl = uploadData.path;
+          }
+        }
+
+        const geometryJson = {
+          dumpsterRect: placementResult.dumpsterRect,
+          truckRect: placementResult.truckRect,
+          entry: placementResult.entry,
+        };
+
         await supabase
           .from('quotes')
           .update({
-            placement_lat: placementResult.lat,
-            placement_lng: placementResult.lng,
-            placement_type: placementResult.placementType,
+            placement_lat: placementResult.dumpsterRect.centerLat,
+            placement_lng: placementResult.dumpsterRect.centerLng,
+            placement_type: 'driveway',
             placement_notes: placementResult.notes || null,
             status: 'pinned',
           })
           .eq('id', savedQuoteId);
+
+        // Save to quote_site_placement
+        await supabase.from('quote_site_placement').insert({
+          quote_id: savedQuoteId,
+          geometry_json: geometryJson as never,
+          screenshot_url: screenshotUrl,
+          notes: placementResult.notes || null,
+        } as never);
 
         // Send placement confirmed event to HighLevel
         await supabase.functions.invoke('highlevel-webhook', {
@@ -260,13 +285,10 @@ export function QuoteOrderFlow({
             estimated_total: `$${quoteSummary.estimatedMin} - $${quoteSummary.estimatedMax}`,
             extras: '',
             page: 'quote_order_flow',
-            tags: ['Placement Confirmed', placementResult.placementType === 'street' ? 'Street Placement' : 'Driveway'],
-            // Distance info
+            tags: ['Placement Confirmed'],
             yard_name: distanceInfo?.yard.name,
             distance_miles: distanceInfo?.distanceMiles,
             distance_bracket: distanceInfo?.distanceBracket,
-            // Placement info
-            placement_type: placementResult.placementType,
             placement_notes: placementResult.notes,
             delivery_address: address?.formattedAddress,
           },
@@ -344,9 +366,9 @@ export function QuoteOrderFlow({
       zip: quoteSummary.zipCode,
       total: quoteSummary.estimatedMin.toString(),
       address: address?.formattedAddress || '',
-      lat: placement?.lat.toString() || '',
-      lng: placement?.lng.toString() || '',
-      placement: placement?.placementType || '',
+      lat: placement?.dumpsterRect?.centerLat.toString() || '',
+      lng: placement?.dumpsterRect?.centerLng.toString() || '',
+      placement: 'driveway',
     });
 
     // For now, open a confirmation page or call
@@ -698,7 +720,7 @@ export function QuoteOrderFlow({
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Placement</span>
               <span className="font-medium text-foreground capitalize">
-                {placement?.placementType}
+                Confirmed
               </span>
             </div>
             {scheduling && (
