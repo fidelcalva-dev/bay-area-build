@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
 
 /**
- * /staff route — redirects CRM staff to /admin/login
+ * /staff route — redirects CRM staff to /app (role router)
  */
 export default function StaffLogin() {
-  return <Navigate to="/admin/login" replace />;
+  return <Navigate to="/app" replace />;
 }
