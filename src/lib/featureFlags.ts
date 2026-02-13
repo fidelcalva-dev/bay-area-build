@@ -8,6 +8,8 @@ export interface FeatureFlags {
   'public_theme.v2_uber': boolean;
   // Quote flow v2 (minimal 6-step)
   'quote_flow.v2_minimal': boolean;
+  // Quote flow v3 (Uber-style project cards)
+  'quote_flow.v3': boolean;
   // Portal tracking features
   'portal.tracking_enabled': boolean;
   // Portal placement tool
@@ -20,6 +22,7 @@ export interface FeatureFlags {
 const DEFAULT_FLAGS: FeatureFlags = {
   'public_theme.v2_uber': false,
   'quote_flow.v2_minimal': false,
+  'quote_flow.v3': false,
   'portal.tracking_enabled': true, // Tracking already working
   'portal.placement_enabled': true, // Placement already working
   'preview.enabled': true, // Allow internal preview
@@ -107,6 +110,14 @@ export function shouldUseV2Theme(): boolean {
 export function shouldUseV2QuoteFlow(): boolean {
   if (isPreviewMode()) return true;
   return getFeatureFlag('quote_flow.v2_minimal');
+}
+
+/**
+ * Hook to check if v3 quote flow should be active
+ */
+export function shouldUseV3QuoteFlow(): boolean {
+  if (isPreviewMode()) return true;
+  return getFeatureFlag('quote_flow.v3');
 }
 
 /**

@@ -1,9 +1,12 @@
+import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { MinimalQuoteCalculator } from '@/components/quote/MinimalQuoteCalculator';
+import { V3QuoteFlow } from '@/components/quote/v3';
 import { CheckCircle, MessageCircle, Shield } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 import { CalculatorSeoFaq } from '@/components/seo/CalculatorSeoFaq';
+import { fetchFeatureFlags, type FeatureFlags } from '@/lib/featureFlags';
 
 const benefits = [
   'All-inclusive pricing — no hidden fees',
@@ -15,6 +18,18 @@ const benefits = [
 ];
 
 export default function Quote() {
+  const [useV3, setUseV3] = useState(false);
+  const [flagsLoaded, setFlagsLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchFeatureFlags().then((flags) => {
+      // Preview mode or flag enabled
+      const isPreview = window.location.pathname.startsWith('/preview/');
+      setUseV3(isPreview || flags['quote_flow.v3']);
+      setFlagsLoaded(true);
+    });
+  }, []);
+
   return (
     <Layout
       title="Get Instant Dumpster Quote | CALSAN Dumpsters"
@@ -68,7 +83,7 @@ export default function Quote() {
 
             {/* Right - Calculator */}
             <div className="lg:pt-0">
-              <MinimalQuoteCalculator />
+              {useV3 ? <V3QuoteFlow /> : <MinimalQuoteCalculator />}
               
               {/* Reassurance below calculator */}
               <div className="mt-6 text-center">
