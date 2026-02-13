@@ -187,8 +187,8 @@ export default function QaControlCenter() {
   // Handle feature flag toggle
   const handleFlagToggle = async (key: keyof FeatureFlags, currentValue: boolean) => {
     // Block enabling v2 themes if not go-live ready
-    if (!currentValue && !isGoLiveReady && (key === 'public_theme.v2_uber' || key === 'quote_flow.v2_minimal')) {
-      toast.error('Cannot enable v2 features until all P0 checks pass');
+    if (!currentValue && !isGoLiveReady && (key === 'public_theme.v2_uber' || key === 'quote_flow.v2_minimal' || key === 'quote_flow.v3')) {
+      toast.error('Cannot enable v2/v3 features until all P0 checks pass');
       return;
     }
 
@@ -408,6 +408,22 @@ export default function QaControlCenter() {
                     checked={featureFlags['quote_flow.v2_minimal']}
                     onCheckedChange={() => handleFlagToggle('quote_flow.v2_minimal', featureFlags['quote_flow.v2_minimal'])}
                     disabled={updatingFlag === 'quote_flow.v2_minimal' || (!isGoLiveReady && !featureFlags['quote_flow.v2_minimal'])}
+                  />
+                </div>
+
+                {/* Quote Flow v3 */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Calculator className="w-5 h-5 text-primary" />
+                    <div>
+                      <Label>quote_flow.v3</Label>
+                      <p className="text-xs text-muted-foreground">V3 Uber-style project cards flow</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={featureFlags['quote_flow.v3']}
+                    onCheckedChange={() => handleFlagToggle('quote_flow.v3', featureFlags['quote_flow.v3'])}
+                    disabled={updatingFlag === 'quote_flow.v3' || (!isGoLiveReady && !featureFlags['quote_flow.v3'])}
                   />
                 </div>
 
