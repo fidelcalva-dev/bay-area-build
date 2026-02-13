@@ -1,4 +1,5 @@
 import { Phone, MessageCircle, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { CTA_LINKS } from '@/lib/shared-data';
@@ -12,12 +13,12 @@ export function MobileBottomBar() {
       <div className="relative bg-card border-t border-border shadow-2xl">
         <div className="grid grid-cols-3 divide-x divide-border">
           {/* Quote - Primary CTA */}
-          <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer" className="block">
+          <Link to="/quote" className="block">
             <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[56px]">
               <FileText className="w-5 h-5" strokeWidth={2} />
               <span className="text-xs font-bold">Quote</span>
             </Button>
-          </a>
+          </Link>
           
           {/* Text */}
           <a href={`sms:${BUSINESS_INFO.phone.sales}`} className="block">

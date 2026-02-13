@@ -198,9 +198,9 @@ export function Header() {
 
             {/* Order Now Button */}
             <Button asChild variant="cta" size="sm" className="hidden sm:inline-flex">
-              <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
+              <Link to={CTA_LINKS.trashlab}>
                 {t('nav.orderNow')}
-              </a>
+              </Link>
             </Button>
 
             {/* Mobile Menu Button */}
@@ -284,9 +284,9 @@ export function Header() {
                 </Link>
               </Button>
               <Button asChild variant="cta" size="lg" className="w-full">
-                <a href={CTA_LINKS.trashlab} target="_blank" rel="noopener noreferrer">
+                <Link to={CTA_LINKS.trashlab} onClick={() => setIsMenuOpen(false)}>
                   {t('nav.orderNow')}
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
