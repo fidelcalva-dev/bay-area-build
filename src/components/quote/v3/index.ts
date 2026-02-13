@@ -1,2 +1,3 @@
 export { V3QuoteFlow } from './V3QuoteFlow';
-export type { V3Step, CustomerType, ProjectCard } from './types';
+export type { V3Step, CustomerType, ProjectCard, ServiceTimeEstimate } from './types';
+export { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';

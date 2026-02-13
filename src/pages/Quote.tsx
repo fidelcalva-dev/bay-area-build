@@ -17,18 +17,23 @@ const benefits = [
   'Español disponible',
 ];
 
-export default function Quote() {
-  const [useV3, setUseV3] = useState(false);
-  const [flagsLoaded, setFlagsLoaded] = useState(false);
+interface QuoteProps {
+  forceV3?: boolean;
+}
+
+export default function Quote({ forceV3 }: QuoteProps = {}) {
+  const [useV3, setUseV3] = useState(forceV3 ?? false);
+  const [flagsLoaded, setFlagsLoaded] = useState(forceV3 ?? false);
 
   useEffect(() => {
+    if (forceV3) return; // Skip flag check when forced
     fetchFeatureFlags().then((flags) => {
-      // Preview mode or flag enabled
       const isPreview = window.location.pathname.startsWith('/preview/');
-      setUseV3(isPreview || flags['quote_flow.v3']);
+      const queryV3 = new URLSearchParams(window.location.search).get('v3') === '1';
+      setUseV3(isPreview || queryV3 || flags['quote_flow.v3']);
       setFlagsLoaded(true);
     });
-  }, []);
+  }, [forceV3]);
 
   return (
     <Layout

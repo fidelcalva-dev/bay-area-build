@@ -3,12 +3,12 @@
 // ZIP → Customer Type → Project → Size → Price → Confirm
 // ============================================================
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import {
   MapPin, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2,
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
   Warehouse, UtensilsCrossed, Trees, Hammer, Mountain, Construction,
-  DoorOpen, Store, RefreshCw, Scale, Calendar, Star, Info,
+  DoorOpen, Store, RefreshCw, Scale, Calendar, Star, Info, RotateCcw, SkipForward,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,12 @@ import { BadgePill } from '../ui/BadgePill';
 
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
+import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+
+// Lazy load placement map
+const PlacementMap = lazy(() =>
+  import('../steps/PlacementMap').then((m) => ({ default: m.PlacementMap }))
+);
 
 // ============================================================
 // ICON MAP
@@ -183,9 +189,12 @@ export function V3QuoteFlow() {
 
   // Step index for progress
   const stepIndex = useMemo(() => {
-    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, confirm: 6 };
-    return map[step];
+    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, confirm: 6, placement: 7 };
+    return Math.min(map[step], 6); // Progress bar shows 6 max
   }, [step]);
+
+  // Swap toggle
+  const [wantsSwap, setWantsSwap] = useState(false);
 
   // Navigation
   const goNext = () => {
@@ -197,7 +206,8 @@ export function V3QuoteFlow() {
       project: 'size',
       size: 'price',
       price: 'confirm',
-      confirm: 'confirm',
+      confirm: 'placement',
+      placement: 'placement',
     };
     setStep(next[step]);
   };
@@ -210,6 +220,7 @@ export function V3QuoteFlow() {
       size: 'project',
       price: 'size',
       confirm: 'price',
+      placement: 'confirm',
     };
     setStep(prev[step]);
   };
@@ -273,7 +284,7 @@ export function V3QuoteFlow() {
           },
         });
         toast({ title: 'Quote Saved', description: "We'll contact you within 15 minutes." });
-        setStep('confirm');
+        setStep('placement');
       } else {
         toast({ title: 'Error', description: result.error || 'Failed to save quote', variant: 'destructive' });
       }
@@ -297,6 +308,20 @@ export function V3QuoteFlow() {
     const maxMin = d.durationTrafficMax ?? Math.round(d.distanceMinutes * 1.25);
     return `${minMin}-${maxMin} min from yard`;
   }, [distanceCalc.distance]);
+
+  // Service time estimate
+  const serviceTime = useMemo(() => {
+    if (!distanceCalc.distance) return null;
+    return buildServiceTimeEstimate({
+      driveMinutes: distanceCalc.distance.distanceMinutes,
+      driveToFacilityMinutes: Math.round(distanceCalc.distance.distanceMinutes * 0.8),
+      returnMinutes: Math.round(distanceCalc.distance.distanceMinutes * 1.1),
+      isSwap: wantsSwap,
+    });
+  }, [distanceCalc.distance, wantsSwap]);
+
+  // Saved quote ID for placement
+  const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
 
   // ============================================================
   // RENDER
@@ -672,18 +697,42 @@ export function V3QuoteFlow() {
                 </div>
               )}
 
-              {/* ETA + Facility */}
-              <div className="px-5 py-3 border-t border-border/30 space-y-2">
-                {distanceCalc.distance && (
+              {/* Service Time Breakdown */}
+              <div className="px-5 py-3 border-t border-border/30">
+                {serviceTime ? (
+                  <ServiceTimeBreakdown
+                    estimate={serviceTime}
+                    yardName={distanceCalc.distance?.yard.name}
+                  />
+                ) : (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="w-3.5 h-3.5 text-primary" />
-                    Delivery from {distanceCalc.distance.yard.name} — {etaDisplay}
+                    {etaDisplay ? `Delivery ETA: ${etaDisplay}` : 'Delivery time calculated at checkout'}
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                   <MapPin className="w-3.5 h-3.5 text-primary" />
                   Nearest transfer station selected automatically
                 </div>
+              </div>
+
+              {/* Swap option */}
+              <div className="px-5 py-3 border-t border-border/30">
+                <button
+                  onClick={() => setWantsSwap(!wantsSwap)}
+                  className={cn(
+                    'flex items-center gap-2.5 w-full text-left text-xs rounded-lg p-2 -m-1 transition-colors',
+                    wantsSwap ? 'bg-primary/5 text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <RotateCcw className={cn('w-4 h-4 shrink-0', wantsSwap ? 'text-primary' : '')} />
+                  <span className="flex-1">
+                    {wantsSwap
+                      ? 'Swap requested — full dumpster replaced with empty'
+                      : 'Need a swap? (replace full dumpster)'}
+                  </span>
+                  {wantsSwap && <CheckCircle className="w-3.5 h-3.5 text-success" />}
+                </button>
               </div>
 
               {/* Trust badges */}
@@ -831,6 +880,74 @@ export function V3QuoteFlow() {
             <p className="text-xs text-muted-foreground text-center">
               By confirming, you agree to receive SMS about your order.
             </p>
+          </div>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 7: MAP PLACEMENT */}
+        {/* ============================== */}
+        {step === 'placement' && (
+          <div className="space-y-5">
+            <div>
+              <h4 className="text-lg font-bold text-foreground mb-1">
+                <CheckCircle className="w-5 h-5 text-success inline mr-2" />
+                Order Confirmed
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                We'll contact you within 15 minutes. Meanwhile, help our driver find the perfect spot.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-success/10 border border-success/20 text-sm text-success-foreground">
+              <div className="flex items-center gap-2 font-semibold mb-1">
+                <CheckCircle className="w-4 h-4 text-success" />
+                Quote saved successfully
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {getSizeLabel()} — ${quote.subtotal.toLocaleString()} — {selectedProject?.label || 'General'}
+              </p>
+            </div>
+
+            {/* Placement map */}
+            {distanceCalc.geocoding && (
+              <Suspense
+                fallback={
+                  <div className="h-[300px] rounded-xl bg-muted/20 border border-border flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                  </div>
+                }
+              >
+                <PlacementMap
+                  addressLat={distanceCalc.geocoding.lat}
+                  addressLng={distanceCalc.geocoding.lng}
+                  yard={distanceCalc.distance?.yard ?? null}
+                  distanceMiles={distanceCalc.distance?.distanceMiles}
+                  onPlacementConfirmed={(placement) => {
+                    analytics.quoteStepComplete('placement', Date.now() - stepStartTime);
+                  }}
+                />
+              </Suspense>
+            )}
+
+            {!distanceCalc.geocoding && (
+              <div className="p-4 rounded-xl border border-border bg-muted/10 text-center">
+                <MapPin className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Placement map is available after address verification.
+                  Our team will contact you to confirm placement.
+                </p>
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              size="default"
+              className="w-full"
+              onClick={() => window.open('tel:+15106802150', '_blank')}
+            >
+              <Phone className="w-4 h-4" />
+              Call (510) 680-2150
+            </Button>
           </div>
         )}
       </div>
