@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { getRoleDashboard } from '@/lib/crmLinks';
@@ -32,11 +33,16 @@ export default function RoleRouter() {
   }, [isLoading, user, roles, getPrimaryRole, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30">
-      <div className="text-center space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm text-muted-foreground">Routing to your dashboard...</p>
+    <>
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Routing to your dashboard...</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

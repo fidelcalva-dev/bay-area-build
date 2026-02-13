@@ -25,5 +25,10 @@ Disallow: /cs/
 Disallow: /driver/
 Disallow: /finance/
 Disallow: /billing/
+Disallow: /app
+Disallow: /staff
+Disallow: /request-access
+Disallow: /login
+Disallow: /preview/
 
 Sitemap: https://calsandumpsterspro.com/sitemap.xml
