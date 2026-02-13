@@ -5310,6 +5310,53 @@ export type Database = {
         }
         Relationships: []
       }
+      internal_quote_decisions: {
+        Row: {
+          created_at: string | null
+          decision_type: string | null
+          duration_ms: number | null
+          id: string
+          input_payload: Json
+          output_payload: Json | null
+          user_email: string | null
+          user_id: string | null
+          user_role: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          decision_type?: string | null
+          duration_ms?: number | null
+          id?: string
+          input_payload: Json
+          output_payload?: Json | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          decision_type?: string | null
+          duration_ms?: number | null
+          id?: string
+          input_payload?: Json
+          output_payload?: Json | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "internal_quote_decisions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory: {
         Row: {
           available_count: number
@@ -12027,6 +12074,115 @@ export type Database = {
           },
         ]
       }
+      vendor_quotes: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string | null
+          id: string
+          margin_estimate: number | null
+          notes: string | null
+          quoted_cost: number | null
+          recommended_customer_price: number | null
+          request_payload: Json
+          requested_by: string | null
+          status: string
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          margin_estimate?: number | null
+          notes?: string | null
+          quoted_cost?: number | null
+          recommended_customer_price?: number | null
+          request_payload?: Json
+          requested_by?: string | null
+          status?: string
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          margin_estimate?: number | null
+          notes?: string | null
+          quoted_cost?: number | null
+          recommended_customer_price?: number | null
+          request_payload?: Json
+          requested_by?: string | null
+          status?: string
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_quotes_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_rates: {
+        Row: {
+          base_cost: number
+          city: string | null
+          created_at: string | null
+          effective_date: string | null
+          extra_day_cost: number | null
+          id: string
+          included_tons: number | null
+          is_active: boolean | null
+          market_code: string | null
+          material_category: string
+          overage_cost_per_ton: number | null
+          size_yd: number
+          vendor_id: string
+        }
+        Insert: {
+          base_cost: number
+          city?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          extra_day_cost?: number | null
+          id?: string
+          included_tons?: number | null
+          is_active?: boolean | null
+          market_code?: string | null
+          material_category?: string
+          overage_cost_per_ton?: number | null
+          size_yd: number
+          vendor_id: string
+        }
+        Update: {
+          base_cost?: number
+          city?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          extra_day_cost?: number | null
+          id?: string
+          included_tons?: number | null
+          is_active?: boolean | null
+          market_code?: string | null
+          material_category?: string
+          overage_cost_per_ton?: number | null
+          size_yd?: number
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_rates_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_zones: {
         Row: {
           created_at: string
@@ -12071,36 +12227,57 @@ export type Database = {
           contact_email: string | null
           contact_name: string | null
           contact_phone: string | null
+          coverage_cities: string[] | null
+          coverage_zips: string[] | null
           created_at: string
+          equipment_types: string[] | null
           id: string
           is_active: boolean
+          material_support: string[] | null
           name: string
           notes: string | null
           priority_rank: number
+          reliability_score: number | null
+          response_sla_minutes: number | null
+          size_support: number[] | null
           updated_at: string
         }
         Insert: {
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
+          coverage_cities?: string[] | null
+          coverage_zips?: string[] | null
           created_at?: string
+          equipment_types?: string[] | null
           id?: string
           is_active?: boolean
+          material_support?: string[] | null
           name: string
           notes?: string | null
           priority_rank?: number
+          reliability_score?: number | null
+          response_sla_minutes?: number | null
+          size_support?: number[] | null
           updated_at?: string
         }
         Update: {
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
+          coverage_cities?: string[] | null
+          coverage_zips?: string[] | null
           created_at?: string
+          equipment_types?: string[] | null
           id?: string
           is_active?: boolean
+          material_support?: string[] | null
           name?: string
           notes?: string | null
           priority_rank?: number
+          reliability_score?: number | null
+          response_sla_minutes?: number | null
+          size_support?: number[] | null
           updated_at?: string
         }
         Relationships: []
