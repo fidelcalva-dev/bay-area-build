@@ -32,6 +32,13 @@ import { BadgePill } from '../ui/BadgePill';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+import {
+  getStepTitles, getButtons, getPriceMomentCopy, getPlacementCopy, getEtaCopy,
+  YARD_SELECTED_LINE, ZIP_NOT_SERVICEABLE, PLACEMENT_MAP_UNAVAILABLE,
+  QUOTE_SAVED_TITLE, ORDER_CONFIRMED_TITLE, ORDER_CONFIRMED_SUBTITLE,
+  SWAP_ACTIVE, SWAP_PROMPT, HEAVY_FILL_LINE_TITLE, HEAVY_FILL_LINE_DESC,
+  HEAVY_SIZE_NOTE, FLAT_FEE_LABEL, FACILITY_AUTO_SELECTED, DELIVERY_TIME_FALLBACK,
+} from './copy';
 
 // Lazy load placement map
 const PlacementMap = lazy(() =>
@@ -361,8 +368,8 @@ export function V3QuoteFlow() {
         {step === 'zip' && (
           <div className="space-y-5">
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Where do you need it?</h4>
-              <p className="text-sm text-muted-foreground">We'll match you with the nearest local yard</p>
+            <h4 className="text-lg font-bold text-foreground mb-1">{getStepTitles().ZIP_STEP_TITLE}</h4>
+              <p className="text-sm text-muted-foreground">{getStepTitles().ZIP_STEP_SUBTITLE}</p>
             </div>
 
             <div className="relative">
@@ -407,14 +414,14 @@ export function V3QuoteFlow() {
                   </div>
                 )}
                 <p className="text-xs text-muted-foreground mt-2 ml-8">
-                  Local yard selected automatically for faster delivery and better availability.
+                  {YARD_SELECTED_LINE}
                 </p>
               </div>
             )}
 
             {zip.length === 5 && !zoneResult && !isCheckingZip && (
               <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-sm text-destructive">
-                This ZIP code is outside our current service area. Call us for availability.
+                {ZIP_NOT_SERVICEABLE}
               </div>
             )}
 
@@ -439,7 +446,7 @@ export function V3QuoteFlow() {
               onClick={goNext}
               disabled={zip.length !== 5 || !zoneResult || isCheckingZip}
             >
-              Continue
+              {getButtons().CONTINUE}
               <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
           </div>
@@ -455,8 +462,8 @@ export function V3QuoteFlow() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">What describes you best?</h4>
-              <p className="text-sm text-muted-foreground">This helps us show you the right options</p>
+              <h4 className="text-lg font-bold text-foreground mb-1">{getStepTitles().TYPE_STEP_TITLE}</h4>
+              <p className="text-sm text-muted-foreground">{getStepTitles().TYPE_STEP_SUBTITLE}</p>
             </div>
 
             <div className="space-y-3">
@@ -503,8 +510,8 @@ export function V3QuoteFlow() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">What's your project?</h4>
-              <p className="text-sm text-muted-foreground">Pick the closest match</p>
+              <h4 className="text-lg font-bold text-foreground mb-1">{getStepTitles().PROJECT_STEP_TITLE}</h4>
+              <p className="text-sm text-muted-foreground">{getStepTitles().PROJECT_STEP_SUBTITLE}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -546,9 +553,9 @@ export function V3QuoteFlow() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Recommended for your project</h4>
+              <h4 className="text-lg font-bold text-foreground mb-1">{getStepTitles().SIZE_STEP_TITLE}</h4>
               <p className="text-sm text-muted-foreground">
-                {selectedProject?.label} — {isHeavy ? 'heavy materials require smaller dumpsters' : 'tap to select'}
+                {selectedProject?.label} — {isHeavy ? HEAVY_SIZE_NOTE : 'tap to select'}
               </p>
             </div>
 
@@ -576,7 +583,7 @@ export function V3QuoteFlow() {
                   <p className="text-2xl font-bold text-foreground">{recommendedSize} <span className="text-sm font-normal text-muted-foreground">yard</span></p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {isHeavy
-                      ? 'Flat fee — disposal included'
+                      ? FLAT_FEE_LABEL
                       : `Includes ${INCLUDED_TONS_BY_SIZE[recommendedSize] || 2}T disposal`}
                   </p>
                 </div>
@@ -589,7 +596,7 @@ export function V3QuoteFlow() {
               <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-primary" />
               <span>
                 {isHeavy
-                  ? 'Heavy materials (concrete, dirt) require smaller containers for safe transport. Fill-line rules apply.'
+                  ? `${HEAVY_FILL_LINE_TITLE}. ${HEAVY_FILL_LINE_DESC.split('.')[0]}.`
                   : `Based on typical ${selectedProject?.label?.toLowerCase() || 'project'} volume. Most customers pick this size.`}
               </span>
             </div>
@@ -637,8 +644,8 @@ export function V3QuoteFlow() {
               <div className="flex items-start gap-2 p-3 rounded-xl bg-warning/10 border border-warning/30 text-xs text-warning-foreground">
                 <Scale className="w-4 h-4 mt-0.5 shrink-0" />
                 <div>
-                  <p className="font-semibold">Fill-line required</p>
-                  <p>Heavy materials must stay below the fill line for safe transport. If contamination (trash mixed in) is found, the load is reclassified to general debris at $165/ton overage.</p>
+                   <p className="font-semibold">{HEAVY_FILL_LINE_TITLE}</p>
+                   <p>{HEAVY_FILL_LINE_DESC}</p>
                 </div>
               </div>
             )}
@@ -659,10 +666,16 @@ export function V3QuoteFlow() {
               {/* Price */}
               <div className="p-6 text-center">
                 <div className="mb-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
-                    <CheckCircle className="w-3 h-3" />
-                    Your exact price
-                  </span>
+                  {(() => {
+                    const copy = getPriceMomentCopy(customerType, isHeavy, quote.includedTons);
+                    const c = isHeavy ? copy.heavy : copy.general;
+                    return (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
+                        <CheckCircle className="w-3 h-3" />
+                        {c.headline}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <div className="text-5xl font-bold text-foreground tracking-tight">
                   ${quote.subtotal.toLocaleString()}
@@ -673,27 +686,36 @@ export function V3QuoteFlow() {
               </div>
 
               {/* Included items */}
-              <div className="px-5 py-4 bg-muted/20 border-t border-border/50 space-y-2.5">
-                <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Included</p>
-                {[
-                  { icon: Truck, label: 'Delivery & pickup' },
-                  { icon: Calendar, label: '7 days included' },
-                  quote.isFlatFee
-                    ? { icon: Scale, label: 'Flat fee — no weight charges' }
-                    : { icon: Scale, label: `${quote.includedTons}T disposal included` },
-                  { icon: Shield, label: 'Licensed & insured' },
-                ].map(({ icon: Icon, label }, i) => (
-                  <div key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                    <Icon className="w-4 h-4 text-success shrink-0" />
-                    {label}
+              {(() => {
+                const copy = getPriceMomentCopy(customerType, isHeavy, quote.includedTons);
+                const items = isHeavy ? copy.heavy.includedItems : copy.general.includedItems;
+                const title = isHeavy ? copy.heavy.includedTitle : copy.general.includedTitle;
+                const icons = [Truck, Calendar, Scale, Shield];
+                return (
+                  <div className="px-5 py-4 bg-muted/20 border-t border-border/50 space-y-2.5">
+                    <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{title}</p>
+                    {items.map((label, i) => {
+                      const Icon = icons[i % icons.length];
+                      return (
+                        <div key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                          <Icon className="w-4 h-4 text-success shrink-0" />
+                          {label}
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
+                );
+              })()}
 
               {/* Overage info */}
               {!quote.isFlatFee && (
                 <div className="px-5 py-3 bg-muted/10 border-t border-border/30 text-xs text-muted-foreground">
-                  Additional weight beyond {quote.includedTons}T billed at ${PRICING_POLICIES.overagePerTonGeneral}/ton (scale ticket).
+                  {getPriceMomentCopy(customerType, isHeavy, quote.includedTons).general.overageNote}
+                </div>
+              )}
+              {isHeavy && (
+                <div className="px-5 py-3 bg-muted/10 border-t border-border/30 text-xs text-muted-foreground">
+                  {getPriceMomentCopy(customerType, isHeavy, quote.includedTons).heavy.ruleLine}
                 </div>
               )}
 
@@ -707,12 +729,12 @@ export function V3QuoteFlow() {
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="w-3.5 h-3.5 text-primary" />
-                    {etaDisplay ? `Delivery ETA: ${etaDisplay}` : 'Delivery time calculated at checkout'}
+                    {etaDisplay ? `Delivery ETA: ${etaDisplay}` : DELIVERY_TIME_FALLBACK}
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                   <MapPin className="w-3.5 h-3.5 text-primary" />
-                  Nearest transfer station selected automatically
+                  {FACILITY_AUTO_SELECTED}
                 </div>
               </div>
 
@@ -727,9 +749,7 @@ export function V3QuoteFlow() {
                 >
                   <RotateCcw className={cn('w-4 h-4 shrink-0', wantsSwap ? 'text-primary' : '')} />
                   <span className="flex-1">
-                    {wantsSwap
-                      ? 'Swap requested — full dumpster replaced with empty'
-                      : 'Need a swap? (replace full dumpster)'}
+                     {wantsSwap ? SWAP_ACTIVE : SWAP_PROMPT}
                   </span>
                   {wantsSwap && <CheckCircle className="w-3.5 h-3.5 text-success" />}
                 </button>
@@ -755,7 +775,7 @@ export function V3QuoteFlow() {
               onClick={goNext}
             >
               <CheckCircle className="w-5 h-5" />
-              Reserve This Dumpster
+              {getPriceMomentCopy(customerType, isHeavy, quote.includedTons)[isHeavy ? 'heavy' : 'general'].primaryButton}
             </Button>
 
             <Button
@@ -780,8 +800,8 @@ export function V3QuoteFlow() {
             </button>
 
             <div>
-              <h4 className="text-lg font-bold text-foreground mb-1">Confirm Your Order</h4>
-              <p className="text-sm text-muted-foreground">We'll text you the details within 15 minutes</p>
+              <h4 className="text-lg font-bold text-foreground mb-1">{getStepTitles().CONFIRM_STEP_TITLE}</h4>
+              <p className="text-sm text-muted-foreground">{getButtons().CONFIRM_HELP}</p>
             </div>
 
             {/* Mini summary */}
@@ -852,8 +872,8 @@ export function V3QuoteFlow() {
                 onCheckedChange={(c) => setTermsAccepted(c === true)}
                 className="mt-0.5"
               />
-              <label htmlFor="terms-v3" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                I understand that additional charges may apply for weight over the included amount, extra days, or prohibited items.
+               <label htmlFor="terms-v3" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                {getButtons().TERMS_TEXT}
               </label>
             </div>
 
@@ -866,19 +886,19 @@ export function V3QuoteFlow() {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-5 h-5" />
-                  Confirm Order
-                </>
+                   <Loader2 className="w-5 h-5 animate-spin" />
+                   {getButtons().PROCESSING}
+                 </>
+               ) : (
+                 <>
+                   <CheckCircle className="w-5 h-5" />
+                   {getButtons().CONFIRM_ORDER}
+                 </>
               )}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
-              By confirming, you agree to receive SMS about your order.
+              {getButtons().CONFIRM_FINEPRINT}
             </p>
           </div>
         )}
@@ -891,17 +911,17 @@ export function V3QuoteFlow() {
             <div>
               <h4 className="text-lg font-bold text-foreground mb-1">
                 <CheckCircle className="w-5 h-5 text-success inline mr-2" />
-                Order Confirmed
+                {ORDER_CONFIRMED_TITLE}
               </h4>
               <p className="text-sm text-muted-foreground">
-                We'll contact you within 15 minutes. Meanwhile, help our driver find the perfect spot.
+                {ORDER_CONFIRMED_SUBTITLE}
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-success/10 border border-success/20 text-sm text-success-foreground">
               <div className="flex items-center gap-2 font-semibold mb-1">
                 <CheckCircle className="w-4 h-4 text-success" />
-                Quote saved successfully
+                {QUOTE_SAVED_TITLE}
               </div>
               <p className="text-xs text-muted-foreground">
                 {getSizeLabel()} — ${quote.subtotal.toLocaleString()} — {selectedProject?.label || 'General'}
@@ -933,8 +953,7 @@ export function V3QuoteFlow() {
               <div className="p-4 rounded-xl border border-border bg-muted/10 text-center">
                 <MapPin className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  Placement map is available after address verification.
-                  Our team will contact you to confirm placement.
+                  {PLACEMENT_MAP_UNAVAILABLE}
                 </p>
               </div>
             )}
