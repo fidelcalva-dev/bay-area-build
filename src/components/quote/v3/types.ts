@@ -1,6 +1,6 @@
 // V3 Quote Flow Types
 
-export type V3Step = 'zip' | 'customer-type' | 'project' | 'size' | 'price' | 'confirm';
+export type V3Step = 'zip' | 'customer-type' | 'project' | 'size' | 'price' | 'confirm' | 'placement';
 
 export type CustomerType = 'homeowner' | 'contractor' | 'commercial';
 
@@ -25,6 +25,39 @@ export interface V3QuoteState {
   isFlatFee: boolean;
   isValid: boolean;
 }
+
+// Service time estimate for public/internal display
+export interface ServiceTimeEstimate {
+  yardLoadMin: number;
+  driveToSiteMin: number;
+  driveToSiteMax: number;
+  dropoffMin: number;
+  pickupMin: number;
+  pickupMax: number;
+  driveToFacilityMin: number;
+  driveToFacilityMax: number;
+  dumpTimeMin: number;
+  dumpTimeMax: number;
+  returnToYardMin: number;
+  returnToYardMax: number;
+  totalMin: number;
+  totalMax: number;
+  isSwap: boolean;
+  swapExtraMin?: number;
+  swapExtraMax?: number;
+}
+
+// Default handling constants (minutes)
+export const SERVICE_TIME_DEFAULTS = {
+  yardLoad: 10,
+  dropoff: 15,
+  pickupMin: 10,
+  pickupMax: 20,
+  dumpTimeMin: 25,
+  dumpTimeMax: 45,
+  swapExtraMin: 25, // extra dropoff + pickup for swap
+  swapExtraMax: 35,
+};
 
 // Project cards by customer type
 export const HOMEOWNER_PROJECTS: ProjectCard[] = [
