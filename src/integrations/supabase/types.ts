@@ -8793,6 +8793,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_site_placement: {
+        Row: {
+          created_at: string
+          geometry_json: Json
+          id: string
+          notes: string | null
+          quote_id: string
+          screenshot_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          geometry_json: Json
+          id?: string
+          notes?: string | null
+          quote_id: string
+          screenshot_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          geometry_json?: Json
+          id?: string
+          notes?: string | null
+          quote_id?: string
+          screenshot_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           ai_analysis_id: string | null

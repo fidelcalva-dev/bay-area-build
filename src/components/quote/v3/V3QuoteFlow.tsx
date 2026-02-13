@@ -276,6 +276,7 @@ export function V3QuoteFlow() {
       });
 
       if (result.success) {
+        setSavedQuoteId(result.quoteId ?? null);
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
         await supabase.functions.invoke('send-quote-summary', {
           body: {
@@ -988,8 +989,24 @@ export function V3QuoteFlow() {
                   addressLng={distanceCalc.geocoding.lng}
                   yard={distanceCalc.distance?.yard ?? null}
                   distanceMiles={distanceCalc.distance?.distanceMiles}
-                  onPlacementConfirmed={(placement) => {
+                  onPlacementConfirmed={async (placement) => {
                     analytics.quoteStepComplete('placement', Date.now() - stepStartTime);
+                    // Save placement to DB
+                    if (savedQuoteId) {
+                      try {
+                        await supabase.from('quote_site_placement').insert({
+                          quote_id: savedQuoteId,
+                          geometry_json: {
+                            centerLat: placement.lat,
+                            centerLng: placement.lng,
+                            placementType: placement.placementType,
+                          },
+                          notes: placement.notes || null,
+                        });
+                      } catch (err) {
+                        console.error('Failed to save placement:', err);
+                      }
+                    }
                     setPlacementPhase('done');
                   }}
                 />
