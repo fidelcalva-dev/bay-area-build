@@ -10,7 +10,7 @@ import {
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
   Warehouse, UtensilsCrossed, Trees, Hammer, Mountain, Construction,
   DoorOpen, Store, RefreshCw, Scale, Calendar, Star, Info, RotateCcw, SkipForward,
-  Award, Zap,
+  Award, Zap, Navigation,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,7 @@ import { PRICING_ZONES } from '../constants';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+import { AddressAutocomplete, type AddressResult } from './AddressAutocomplete';
 import {
   getStepTitles, getButtons, getPriceMomentCopy, getPlacementCopy, getEtaCopy,
   YARD_SELECTED_LINE, ZIP_NOT_SERVICEABLE, PLACEMENT_MAP_UNAVAILABLE,
@@ -134,6 +135,10 @@ export function V3QuoteFlow() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  // Address mode
+  const [useAddress, setUseAddress] = useState(false);
+  const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
+
   // Auto-detect ZIP
   const autoDetectZip = useAutoDetectZip();
 
@@ -149,8 +154,8 @@ export function V3QuoteFlow() {
     }
   }, [autoDetectZip.zip]);
 
-  // Distance calculation
-  const distanceCalc = useDistanceCalculation(zip);
+  // Distance calculation — use address lat/lng if available
+  const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
   // Track step timing
   useEffect(() => {
@@ -306,10 +311,13 @@ export function V3QuoteFlow() {
         estimatedMin: quote.subtotal,
         estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
         isCalsanFulfillment: true,
-        customerLat: distanceCalc.geocoding?.lat,
-        customerLng: distanceCalc.geocoding?.lng,
+        customerLat: addressResult?.lat ?? distanceCalc.geocoding?.lat,
+        customerLng: addressResult?.lng ?? distanceCalc.geocoding?.lng,
         yardId: distanceCalc.distance?.yard.id,
         distanceMiles: distanceCalc.distance?.distanceMiles,
+        streetAddress: addressResult?.formattedAddress,
+        city: addressResult?.city,
+        state: addressResult?.state,
       });
 
       if (result.success) {
@@ -471,23 +479,69 @@ export function V3QuoteFlow() {
                 </p>
               </div>
 
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={5}
-                  placeholder="Enter ZIP code"
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                  className="h-14 pl-12 text-lg font-semibold rounded-xl border-border/60 focus:border-primary"
-                  autoFocus
-                />
-                {isCheckingZip && (
-                  <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-primary" />
-                )}
-              </div>
+              {!useAddress ? (
+                <>
+                  <div className="relative">
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={5}
+                      placeholder="Enter ZIP code"
+                      value={zip}
+                      onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                      className="h-14 pl-12 text-lg font-semibold rounded-xl border-border/60 focus:border-primary"
+                      autoFocus
+                    />
+                    {isCheckingZip && (
+                      <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-primary" />
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setUseAddress(true)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors px-1"
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    Enter full address instead
+                  </button>
+                </>
+              ) : (
+                <>
+                  <AddressAutocomplete
+                    onAddressSelect={(result) => {
+                      setAddressResult(result);
+                      if (result.zip) setZip(result.zip);
+                    }}
+                    onClear={() => {
+                      setAddressResult(null);
+                    }}
+                  />
+                  {addressResult && (
+                    <div className="relative">
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        value={addressResult.zip}
+                        readOnly
+                        className="h-11 pl-11 text-sm font-medium rounded-xl border-border/40 bg-muted/30 text-muted-foreground cursor-default"
+                      />
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUseAddress(false);
+                      setAddressResult(null);
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors px-1"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    Use ZIP code instead
+                  </button>
+                </>
+              )}
 
               {/* Yard match result */}
               {zoneResult && (
@@ -499,9 +553,11 @@ export function V3QuoteFlow() {
                       </div>
                       <div>
                         <p className="font-semibold text-foreground text-sm">
-                          {autoDetectZip.cityName || zoneResult.cityName || zoneResult.zoneName}
+                          {addressResult?.city || autoDetectZip.cityName || zoneResult.cityName || zoneResult.zoneName}
                         </p>
-                        <p className="text-[11px] text-muted-foreground">Service area confirmed</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {addressResult ? 'Address verified' : 'Service area confirmed'}
+                        </p>
                       </div>
                     </div>
                     {distanceCalc.distance && (

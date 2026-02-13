@@ -26,7 +26,7 @@ export interface DistanceState {
 /**
  * Hook to calculate distance-based pricing from a ZIP code
  */
-export function useDistanceCalculation(zip: string) {
+export function useDistanceCalculation(zip: string, overrideLat?: number, overrideLng?: number) {
   const [state, setState] = useState<DistanceState>({
     isLoading: false,
     error: null,
@@ -50,7 +50,20 @@ export function useDistanceCalculation(zip: string) {
 
   // Calculate distance when ZIP changes
   useEffect(() => {
-    if (zip.length !== 5 || state.yards.length === 0) {
+    if (state.yards.length === 0) {
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        geocoding: null,
+        distance: null,
+        error: null,
+      }));
+      return;
+    }
+
+    // If we have override coordinates, skip ZIP geocoding
+    const hasOverride = overrideLat != null && overrideLng != null;
+    if (!hasOverride && zip.length !== 5) {
       setState(prev => ({
         ...prev,
         isLoading: false,
@@ -65,8 +78,13 @@ export function useDistanceCalculation(zip: string) {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
       try {
-        // Geocode the ZIP
-        const geocoding = await geocodeZip(zip);
+        // Use override coordinates or geocode ZIP
+        let geocoding: GeocodingResult;
+        if (hasOverride) {
+          geocoding = { success: true, lat: overrideLat!, lng: overrideLng!, displayName: '' };
+        } else {
+          geocoding = await geocodeZip(zip);
+        }
         
         if (!geocoding.success) {
           setState(prev => ({
@@ -171,7 +189,7 @@ export function useDistanceCalculation(zip: string) {
     }
 
     calculate();
-  }, [zip, state.yards, state.brackets]);
+  }, [zip, overrideLat, overrideLng, state.yards, state.brackets]);
 
   // Recalculate function for manual refresh
   const recalculate = useCallback(async () => {
