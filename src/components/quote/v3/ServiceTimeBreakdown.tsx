@@ -30,18 +30,25 @@ export function ServiceTimeBreakdown({
 
   return (
     <div className={cn('space-y-2', className)}>
-      {/* Public-facing delivery estimate */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
-        <span>
-          Estimated delivery: <span className="font-semibold text-foreground">{deliveryWindowMin}–{deliveryWindowMax} min</span>
-          {yardName ? ` from ${yardName}` : ' from yard'}
-        </span>
-      </div>
+      {/* Public-facing service timing */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+          <span>
+            Delivery: <span className="font-semibold text-foreground">{deliveryWindowMin}–{deliveryWindowMax} min</span>
+            {yardName ? ` from ${yardName}` : ' from yard'}
+          </span>
+        </div>
 
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Truck className="w-3.5 h-3.5 text-primary shrink-0" />
-        <span>Pickup + disposal handled by our team</span>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Truck className="w-3.5 h-3.5 text-primary shrink-0" />
+          <span>Pickup: scheduled on request</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+          <span>Disposal handled by our team</span>
+        </div>
       </div>
 
       {estimate.isSwap && (
@@ -51,31 +58,28 @@ export function ServiceTimeBreakdown({
         </div>
       )}
 
-      {/* Internal breakdown toggle */}
+      {/* Internal breakdown toggle (staff-only) */}
       {showInternal && (
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors mt-1"
         >
           <Timer className="w-3 h-3" />
-          <span className="font-medium">Time breakdown</span>
+          <span className="font-medium">Full time breakdown</span>
           {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         </button>
       )}
 
       {showInternal && expanded && (
         <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5 text-xs">
-          <p className="font-semibold text-foreground text-xs uppercase tracking-wider mb-2">Service Time Breakdown</p>
+          <p className="font-semibold text-foreground text-xs uppercase tracking-wider mb-2">Full Time Breakdown</p>
 
           <TimeRow icon={Truck} label="Yard load" min={estimate.yardLoadMin} max={estimate.yardLoadMin} />
           <TimeRow icon={ArrowRight} label="Drive to site" min={estimate.driveToSiteMin} max={estimate.driveToSiteMax} />
-          <TimeRow icon={MapPin} label="Dropoff" min={estimate.dropoffMin} max={estimate.dropoffMin} />
-
-          <div className="border-t border-border/50 my-1.5" />
-
+          <TimeRow icon={MapPin} label="Drop-off" min={estimate.dropoffMin} max={estimate.dropoffMin} />
           <TimeRow icon={Truck} label="Pickup" min={estimate.pickupMin} max={estimate.pickupMax} />
           <TimeRow icon={ArrowRight} label="Drive to facility" min={estimate.driveToFacilityMin} max={estimate.driveToFacilityMax} />
-          <TimeRow icon={Timer} label="Dump time" min={estimate.dumpTimeMin} max={estimate.dumpTimeMax} />
+          <TimeRow icon={Timer} label="Dump" min={estimate.dumpTimeMin} max={estimate.dumpTimeMax} />
           <TimeRow icon={ArrowRight} label="Return to yard" min={estimate.returnToYardMin} max={estimate.returnToYardMax} />
 
           {estimate.isSwap && estimate.swapExtraMin != null && (
@@ -87,7 +91,7 @@ export function ServiceTimeBreakdown({
 
           <div className="border-t border-border my-1.5" />
           <div className="flex items-center justify-between font-semibold text-foreground">
-            <span>Total estimated</span>
+            <span>Total cycle</span>
             <span>{estimate.totalMin}–{estimate.totalMax} min</span>
           </div>
         </div>
