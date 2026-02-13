@@ -15,9 +15,6 @@ const benefits = [
 ];
 
 export default function Quote() {
-  // V3 force-activated for verification — restore flag logic after QA
-  const shouldUseV3 = true;
-
   return (
     <Layout
       title="Get Instant Dumpster Quote | CALSAN Dumpsters"
@@ -71,7 +68,7 @@ export default function Quote() {
 
             {/* Right - Calculator */}
             <div className="lg:pt-0">
-              {shouldUseV3 ? <V3QuoteFlow /> : null}
+              <V3QuoteFlow />
               
               {/* Reassurance below calculator */}
               <div className="mt-6 text-center">
