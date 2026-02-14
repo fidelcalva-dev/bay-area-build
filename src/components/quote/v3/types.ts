@@ -47,16 +47,17 @@ export interface ServiceTimeEstimate {
   swapExtraMax?: number;
 }
 
-// Default handling constants (minutes)
+// Default handling constants (minutes) — aligned with Calsan Standards
+// Canonical source: src/lib/logistics/serviceTimeEngine.ts (CALSAN_STANDARDS)
 export const SERVICE_TIME_DEFAULTS = {
-  yardLoad: 10,
-  dropoff: 15,
-  pickupMin: 10,
-  pickupMax: 20,
-  dumpTimeMin: 25,
-  dumpTimeMax: 45,
-  swapExtraMin: 25, // extra dropoff + pickup for swap
-  swapExtraMax: 35,
+  yardLoad: 10,        // LOAD_ON_TRUCK
+  dropoff: 10,         // DROPOFF_MIN (range: 10–20)
+  pickupMin: 15,       // PICKUP_ONLY
+  pickupMax: 15,       // PICKUP_ONLY (single value)
+  dumpTimeMin: 15,     // DUMP_PROCESS_MIN
+  dumpTimeMax: 25,     // DUMP_PROCESS_MAX
+  swapExtraMin: 25,    // SWAP_PICKUP(30) - PICKUP_ONLY(15) + DROPOFF_MIN(10)
+  swapExtraMax: 35,    // SWAP_PICKUP(30) - PICKUP_ONLY(15) + DROPOFF_MAX(20)
 };
 
 // Project cards by customer type
