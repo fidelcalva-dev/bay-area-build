@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 import { logTimelineEvent } from '@/lib/timelineService';
 import { useToast } from '@/hooks/use-toast';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
@@ -24,6 +25,7 @@ export default function PortalPay() {
   const [orderId, setOrderId] = useState<string | null>(orderParam);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState<'deposit' | 'balance' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [orderInfo, setOrderInfo] = useState<{
     total: number;
@@ -252,12 +254,17 @@ export default function PortalPay() {
           </h3>
 
           <button
-            onClick={() => handlePay('deposit')}
+            onClick={() => setSelectedPaymentOption('deposit')}
             disabled={isProcessing}
-            className="w-full p-4 rounded-xl border-2 border-primary bg-primary/5 text-left transition-all hover:bg-primary/10 disabled:opacity-50"
+            className={cn(
+              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+              selectedPaymentOption === 'deposit'
+                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                : 'border-border bg-card hover:border-primary/40'
+            )}
           >
             <div className="flex items-center justify-between mb-1">
-              <p className="font-semibold text-primary">Pay Deposit</p>
+              <p className={cn('font-semibold', selectedPaymentOption === 'deposit' ? 'text-primary' : 'text-foreground')}>Pay Deposit</p>
               <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
             </div>
             <p className="text-2xl font-bold text-foreground">${depositAmount.toLocaleString()}</p>
@@ -267,16 +274,36 @@ export default function PortalPay() {
           </button>
 
           <button
-            onClick={() => handlePay('balance')}
+            onClick={() => setSelectedPaymentOption('balance')}
             disabled={isProcessing}
-            className="w-full p-4 rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 disabled:opacity-50"
+            className={cn(
+              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+              selectedPaymentOption === 'balance'
+                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                : 'border-border bg-card hover:border-primary/40'
+            )}
           >
-            <p className="font-semibold text-foreground">Pay in Full</p>
+            <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
             <p className="text-2xl font-bold text-foreground">${orderInfo?.total.toLocaleString() || '-'}</p>
             <p className="text-xs text-muted-foreground mt-1">
               Pay the full amount now - no balance remaining
             </p>
           </button>
+
+          {/* Confirm Payment Button */}
+          <Button
+            onClick={() => selectedPaymentOption && handlePay(selectedPaymentOption)}
+            disabled={!selectedPaymentOption || isProcessing}
+            className="w-full h-12 text-base font-semibold gap-2"
+            size="lg"
+          >
+            {isProcessing ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Lock className="w-4 h-4" />
+            )}
+            {isProcessing ? 'Connecting...' : selectedPaymentOption ? 'Proceed to Secure Payment' : 'Select a payment option'}
+          </Button>
         </div>
 
         {isProcessing && (
