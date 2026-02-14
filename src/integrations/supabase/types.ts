@@ -4198,6 +4198,48 @@ export type Database = {
           },
         ]
       }
+      followup_templates: {
+        Row: {
+          body_text: string
+          channel: string
+          created_at: string
+          customer_type: string
+          id: string
+          is_active: boolean
+          lead_quality_band: string
+          stage: string
+          subject: string | null
+          template_key: string
+          variables_json: Json | null
+        }
+        Insert: {
+          body_text: string
+          channel: string
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          lead_quality_band?: string
+          stage?: string
+          subject?: string | null
+          template_key: string
+          variables_json?: Json | null
+        }
+        Update: {
+          body_text?: string
+          channel?: string
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          lead_quality_band?: string
+          stage?: string
+          subject?: string | null
+          template_key?: string
+          variables_json?: Json | null
+        }
+        Relationships: []
+      }
       fraud_actions: {
         Row: {
           action_type: string
