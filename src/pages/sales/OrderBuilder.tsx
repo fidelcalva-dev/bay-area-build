@@ -1,6 +1,6 @@
 // Internal Order Builder — Cart-style multi-item order composition for Sales/CS
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, ShoppingCart, Package, Wrench, HelpCircle, Trash2, Calendar, Clock, MapPin, FileText, AlertCircle, CheckCircle, Send, ArrowLeft } from 'lucide-react';
+import { Plus, ShoppingCart, Package, Wrench, HelpCircle, Trash2, Calendar, Clock, MapPin, FileText, AlertCircle, CheckCircle, Send, ArrowLeft, Shield, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +21,11 @@ import {
   fetchExtraCatalog, fetchCartAuditLog,
   type CartRow, type CartItemRow, type CartScheduleRow, type ExtraCatalogRow,
 } from '@/services/cartService';
+import {
+  fetchFullExtraCatalog, resolveExtraPrice, filterExtrasByContext,
+  calculateMargin, logPricingOverride,
+  type ExtraCatalogItem, type PricingRuleMatch,
+} from '@/services/extrasPricingEngine';
 
 // ── Constants ──────────────────────────────────────────
 const DUMPSTER_SIZES = [6, 8, 10, 20, 30, 40, 50];
@@ -41,6 +46,7 @@ export default function OrderBuilder() {
   const [items, setItems] = useState<CartItemRow[]>([]);
   const [schedules, setSchedules] = useState<Record<string, CartScheduleRow[]>>({});
   const [extras, setExtras] = useState<ExtraCatalogRow[]>([]);
+  const [fullCatalog, setFullCatalog] = useState<ExtraCatalogItem[]>([]);
   const [recentCarts, setRecentCarts] = useState<CartRow[]>([]);
   const [showRecent, setShowRecent] = useState(true);
 
@@ -58,6 +64,7 @@ export default function OrderBuilder() {
     unitPrice: '' as string, sizeYd: 20, materialCategory: 'general',
     extraCode: '',
   });
+  const [resolvedPrice, setResolvedPrice] = useState<PricingRuleMatch | null>(null);
 
   // Schedule dialog
   const [scheduleDialog, setScheduleDialog] = useState<{ itemId: string; cartId: string } | null>(null);
@@ -68,6 +75,7 @@ export default function OrderBuilder() {
   // Load extras catalog on mount
   useEffect(() => {
     fetchExtraCatalog().then(setExtras).catch(console.error);
+    fetchFullExtraCatalog().then(setFullCatalog).catch(console.error);
     fetchMyCarts('DRAFT').then(setRecentCarts).catch(console.error);
   }, []);
 
@@ -193,6 +201,7 @@ export default function OrderBuilder() {
 
   const resetItemForm = () => {
     setItemForm({ title: '', description: '', qty: 1, unit: 'each', unitPrice: '', sizeYd: 20, materialCategory: 'general', extraCode: '' });
+    setResolvedPrice(null);
   };
 
   // Computed
@@ -485,28 +494,98 @@ export default function OrderBuilder() {
 
             {/* Extra-specific */}
             {addMode === 'extra' && (
-              <div>
-                <label className="text-xs font-medium">Select Extra</label>
-                <Select value={itemForm.extraCode} onValueChange={v => {
-                  const extra = extras.find(e => e.code === v);
-                  setItemForm(f => ({
-                    ...f,
-                    extraCode: v,
-                    title: extra?.name ?? '',
-                    description: extra?.description ?? '',
-                    unit: extra?.unit ?? 'each',
-                    unitPrice: extra?.default_price != null ? String(extra.default_price) : '',
-                  }));
-                }}>
-                  <SelectTrigger><SelectValue placeholder="Choose..." /></SelectTrigger>
-                  <SelectContent>
-                    {extras.map(e => (
-                      <SelectItem key={e.code} value={e.code}>
-                        {e.name} {e.default_price != null ? `($${e.default_price})` : '(TBD)'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-medium">Select Extra</label>
+                  <Select value={itemForm.extraCode} onValueChange={async (v) => {
+                    const catalogItem = fullCatalog.find(e => e.code === v);
+                    const extra = extras.find(e => e.code === v);
+                    setItemForm(f => ({
+                      ...f,
+                      extraCode: v,
+                      title: extra?.name ?? catalogItem?.name ?? '',
+                      description: extra?.description ?? catalogItem?.description ?? '',
+                      unit: extra?.unit ?? catalogItem?.unit ?? 'each',
+                      unitPrice: '',
+                    }));
+                    // Resolve price via engine
+                    if (catalogItem) {
+                      const result = await resolveExtraPrice(catalogItem, {
+                        zoneId: undefined, // TODO: resolve from zip
+                        sizeYd: itemForm.sizeYd,
+                        materialType: itemForm.materialCategory,
+                        basePrice: estimatedTotal,
+                        totalPrice: estimatedTotal,
+                      });
+                      setResolvedPrice(result);
+                      if (result.price != null) {
+                        setItemForm(f => ({ ...f, unitPrice: String(result.price) }));
+                      }
+                    }
+                  }}>
+                    <SelectTrigger><SelectValue placeholder="Choose..." /></SelectTrigger>
+                    <SelectContent>
+                      {fullCatalog.map(e => (
+                        <SelectItem key={e.code} value={e.code}>
+                          <span className="flex items-center gap-2">
+                            {e.name}
+                            {e.requires_approval && <Shield className="w-3 h-3 text-destructive" />}
+                            <Badge variant="outline" className="text-[10px] ml-1">{e.pricing_model}</Badge>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Pricing resolution info */}
+                {resolvedPrice && itemForm.extraCode && (
+                  <div className="rounded-lg border border-border p-3 space-y-1.5 bg-muted/30">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Source</span>
+                      <Badge variant="secondary" className="text-[10px]">{resolvedPrice.source}</Badge>
+                    </div>
+                    {resolvedPrice.price != null && (
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Resolved Price</span>
+                        <span className="font-semibold text-foreground">${resolvedPrice.price.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {resolvedPrice.vendorCost != null && (
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Vendor Cost</span>
+                        <span className="text-foreground">${resolvedPrice.vendorCost.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {resolvedPrice.vendorCost != null && resolvedPrice.price != null && (
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Margin</span>
+                        {(() => {
+                          const m = calculateMargin(resolvedPrice.price, resolvedPrice.vendorCost!);
+                          return (
+                            <span className={cn('font-medium',
+                              m.band === 'green' && 'text-primary',
+                              m.band === 'yellow' && 'text-muted-foreground',
+                              m.band === 'red' && 'text-destructive'
+                            )}>
+                              {(m.marginPercent * 100).toFixed(0)}%
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    )}
+                    {resolvedPrice.isPending && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> Price pending — requires manual entry
+                      </p>
+                    )}
+                    {resolvedPrice.requiresApproval && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Shield className="w-3 h-3" /> Requires manager approval
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
