@@ -85,34 +85,52 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Calsan Service Time Breakdown */}
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+        {/* Calsan Service Time Breakdown — Full Cycle */}
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Service Time — Calsan Standards
           </p>
-          <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
-            {primary.breakdown.map((seg, i) => {
-              const Icon = labelIcon[seg.label] || Clock;
-              return (
-                <div key={i} className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <Icon className="w-3.5 h-3.5 text-primary/60 shrink-0" />
-                    {seg.label}
-                  </span>
-                  <span className="font-mono text-foreground/80 text-xs">
-                    {formatTimeRange(seg.min, seg.max)}
-                  </span>
-                </div>
-              );
-            })}
 
-            <div className="border-t border-border my-1.5" />
+          {/* Delivery Leg (always shown for DELIVERY and SWAP) */}
+          {(serviceType === 'DELIVERY' || serviceType === 'SWAP') && (
+            <div>
+              <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-1.5">
+                {serviceType === 'SWAP' ? 'Outbound (Deliver Replacement)' : 'Delivery Leg'}
+              </p>
+              <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
+                {serviceTime.delivery.breakdown.map((seg, i) => (
+                  <SegmentRow key={`d-${i}`} seg={seg} labelIcon={labelIcon} />
+                ))}
+                <div className="border-t border-border my-1.5" />
+                <TotalRow label="Delivery subtotal" min={serviceTime.delivery.min} max={serviceTime.delivery.max} />
+              </div>
+            </div>
+          )}
+
+          {/* Pickup / Return Leg (shown for PICKUP and SWAP) */}
+          {(serviceType === 'PICKUP' || serviceType === 'SWAP') && (
+            <div>
+              <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-1.5">
+                {serviceType === 'SWAP' ? 'Inbound (Pickup Full → Dump → Yard)' : 'Pickup & Return Leg'}
+              </p>
+              <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
+                {serviceTime.pickup.breakdown.map((seg, i) => (
+                  <SegmentRow key={`p-${i}`} seg={seg} labelIcon={labelIcon} />
+                ))}
+                <div className="border-t border-border my-1.5" />
+                <TotalRow label="Pickup subtotal" min={serviceTime.pickup.min} max={serviceTime.pickup.max} />
+              </div>
+            </div>
+          )}
+
+          {/* Full Cycle Total */}
+          <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-3">
             <div className="flex items-center justify-between font-semibold text-foreground text-sm">
               <span className="flex items-center gap-2">
                 <Timer className="w-3.5 h-3.5 text-primary shrink-0" />
-                Total cycle
+                Total {serviceType.toLowerCase()} cycle
               </span>
-              <span className="font-mono">
+              <span className="font-mono text-primary">
                 {formatTimeRange(primary.min, primary.max)}
               </span>
             </div>
@@ -190,5 +208,31 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
         )}
       </CardContent>
     </Card>
+  );
+}
+
+/* ── Sub-components ──────────────────────────────────── */
+
+function SegmentRow({ seg, labelIcon }: { seg: TimeSegment; labelIcon: Record<string, React.ElementType> }) {
+  const Icon = labelIcon[seg.label] || Clock;
+  return (
+    <div className="flex items-center justify-between text-sm text-muted-foreground">
+      <span className="flex items-center gap-2">
+        <Icon className="w-3.5 h-3.5 text-primary/60 shrink-0" />
+        {seg.label}
+      </span>
+      <span className="font-mono text-foreground/80 text-xs">
+        {formatTimeRange(seg.min, seg.max)}
+      </span>
+    </div>
+  );
+}
+
+function TotalRow({ label, min, max }: { label: string; min: number; max: number }) {
+  return (
+    <div className="flex items-center justify-between font-medium text-foreground text-sm">
+      <span>{label}</span>
+      <span className="font-mono text-xs">{formatTimeRange(min, max)}</span>
+    </div>
   );
 }
