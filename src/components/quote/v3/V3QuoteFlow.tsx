@@ -34,7 +34,7 @@ import { PRICING_ZONES } from '../constants';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
-import { ServiceCycleVisualizer } from './ServiceCycleVisualizer';
+import { ServiceCycleBar } from './components/ServiceCycleBar';
 import {
   calculateServiceTime,
   buildRouteMinutes,
@@ -1066,13 +1066,22 @@ export function V3QuoteFlow() {
                   </div>
                 )}
 
-                {/* Service Cycle — Premium animated timeline */}
+                {/* Service Cycle — Premium mini bar */}
                 {serviceTime && (
                   <div className="px-5 py-4 border-t border-border/50">
-                    <ServiceCycleVisualizer
+                    <ServiceCycleBar
                       estimate={serviceTime}
-                      showInternal={showInternalBreakdown}
+                      showInternalLink={showInternalBreakdown}
+                      onToggleInternal={() => {
+                        const el = document.getElementById('internal-breakdown');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
                     />
+                    {showInternalBreakdown && (
+                      <div id="internal-breakdown" className="mt-4">
+                        <ServiceTimeBreakdown estimate={serviceTime} />
+                      </div>
+                    )}
                   </div>
                 )}
 
