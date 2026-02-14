@@ -34,6 +34,7 @@ import { PRICING_ZONES } from '../constants';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+import { ServiceCycleVisualizer } from './ServiceCycleVisualizer';
 import {
   calculateServiceTime,
   buildRouteMinutes,
@@ -1065,49 +1066,25 @@ export function V3QuoteFlow() {
                   </div>
                 )}
 
-                {/* Service Timing — Premium customer display */}
-                <div className="px-5 py-4 border-t border-border/50">
-                  <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-3">Service Time (Estimated)</p>
+                {/* Service Cycle — Premium animated timeline */}
+                {serviceTime && (
+                  <div className="px-5 py-4 border-t border-border/50">
+                    <ServiceCycleVisualizer
+                      estimate={serviceTime}
+                      showInternal={showInternalBreakdown}
+                    />
+                  </div>
+                )}
 
-                  {totalCycleDisplay ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <Clock className="w-4 h-4 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            {totalCycleDisplay.label}: {totalCycleDisplay.minHours} – {totalCycleDisplay.maxHours} hours
-                          </p>
-                          <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
-                            Includes travel, placement, secure transport, legal disposal, and return routing.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
+                {/* Fallback if no service time data */}
+                {!serviceTime && (
+                  <div className="px-5 py-4 border-t border-border/50">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="w-3.5 h-3.5 text-primary" />
                       {etaDisplay ? `Delivery ETA: ${etaDisplay}` : DELIVERY_TIME_FALLBACK}
                     </div>
-                  )}
-
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2.5">
-                    <MapPin className="w-3.5 h-3.5 text-primary" />
-                    {FACILITY_AUTO_SELECTED}
                   </div>
-
-                  {/* Internal breakdown — staff only via ?internal=1 */}
-                  {showInternalBreakdown && serviceTime && (
-                    <div className="mt-3 pt-3 border-t border-dashed border-border/50">
-                      <ServiceTimeBreakdown
-                        estimate={serviceTime}
-                        yardName={distanceCalc.distance?.yard.name}
-                        showInternal
-                      />
-                    </div>
-                  )}
-                </div>
+                )}
 
                 {/* Swap */}
                 <div className="px-5 py-3 border-t border-border/50">
