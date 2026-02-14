@@ -35,6 +35,8 @@ import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
 import { ServiceCycleBar } from './components/ServiceCycleBar';
+import { AvailabilityMeter } from './components/AvailabilityMeter';
+import { useAvailabilityConfidence } from './hooks/useAvailabilityConfidence';
 import {
   calculateServiceTime,
   buildRouteMinutes,
@@ -499,6 +501,12 @@ export function V3QuoteFlow() {
     };
   }, [distanceCalc.distance, wantsSwap]);
 
+  // Availability confidence meter
+  const availability = useAvailabilityConfidence(
+    distanceCalc.distance?.yard?.id,
+    size,
+  );
+
   // Saved quote ID for placement
   const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
 
@@ -610,9 +618,7 @@ export function V3QuoteFlow() {
             </div>
           </div>
         </div>
-      )}
-
-
+               )}
       {/* Content */}
       <div className="p-5 md:p-6">
         {/* ============================== */}
@@ -737,6 +743,15 @@ export function V3QuoteFlow() {
                     </p>
                   </div>
                 </div>
+              )}
+
+              {/* Availability Meter — Step 1 */}
+              {zoneResult && distanceCalc.distance && (
+                <AvailabilityMeter
+                  confidence={availability.confidence}
+                  sameDayLikely={availability.sameDayLikely}
+                  loading={availability.loading}
+                />
               )}
 
               {zip.length === 5 && !zoneResult && !isCheckingZip && (
@@ -1084,6 +1099,15 @@ export function V3QuoteFlow() {
                     )}
                   </div>
                 )}
+
+                {/* Availability Meter — Price Moment */}
+                <div className="px-5 py-4 border-t border-border/50">
+                  <AvailabilityMeter
+                    confidence={availability.confidence}
+                    sameDayLikely={availability.sameDayLikely}
+                    loading={availability.loading}
+                  />
+                </div>
 
                 {/* Fallback if no service time data */}
                 {!serviceTime && (
