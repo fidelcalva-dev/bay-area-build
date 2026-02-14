@@ -17,6 +17,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
 import FollowUpPanel from "@/components/sales/FollowUpPanel";
+import { RiskCheckPanel } from "@/components/fraud";
 
 interface LeadData {
   id: string;
@@ -283,6 +284,19 @@ export default function LeadDetail() {
         </Card>
       )}
 
+      {/* Risk Check Panel (compact) */}
+      <RiskCheckPanel
+        entityType="LEAD"
+        entityId={lead.id}
+        email={lead.customer_email}
+        phone={lead.customer_phone}
+        customerName={lead.customer_name}
+        companyName={lead.company_name}
+        address={lead.address}
+        zip={lead.zip}
+        compact
+      />
+
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="outline" onClick={() => {
@@ -315,6 +329,7 @@ export default function LeadDetail() {
           <TabsTrigger value="timeline">Timeline ({actions.length})</TabsTrigger>
           <TabsTrigger value="attribution">Source & Attribution</TabsTrigger>
           <TabsTrigger value="scoring">Risk & Quality</TabsTrigger>
+          <TabsTrigger value="riskcheck">Risk Check</TabsTrigger>
           <TabsTrigger value="followup">Follow-Up</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
@@ -485,6 +500,20 @@ export default function LeadDetail() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Risk Check (full) */}
+        <TabsContent value="riskcheck">
+          <RiskCheckPanel
+            entityType="LEAD"
+            entityId={lead.id}
+            email={lead.customer_email}
+            phone={lead.customer_phone}
+            customerName={lead.customer_name}
+            companyName={lead.company_name}
+            address={lead.address}
+            zip={lead.zip}
+          />
         </TabsContent>
 
         {/* Follow-Up Scripts */}
