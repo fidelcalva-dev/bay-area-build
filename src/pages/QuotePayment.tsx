@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   CreditCard, Loader2, ArrowLeft, ChevronRight, CheckCircle,
-  Calendar, Lock, Shield, Phone, ShieldAlert,
+  Calendar, Lock, Shield, Phone, ShieldAlert, AlertTriangle, RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,7 +21,8 @@ export default function QuotePayment() {
 
   const orderId = searchParams.get('orderId');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [selectedPaymentOption, setSelectedPaymentOption] = useState<'deposit' | 'balance' | null>(null);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState<'deposit' | 'balance' | 'pay_later' | null>(null);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [orderInfo, setOrderInfo] = useState<{
     total: number;
     size: string;
@@ -69,6 +70,44 @@ export default function QuotePayment() {
     }
   }, [hostedData]);
 
+  // Computed amounts
+  const fullAmount = orderInfo?.total ?? 0;
+  const depositAmount = fullAmount > 0 ? Math.min(fullAmount, Math.max(100, Math.round(fullAmount * 0.5))) : 0;
+  const paymentRequired = fullAmount > 0;
+
+  // Auto-select logic
+  useEffect(() => {
+    if (!orderInfo || selectedPaymentOption) return;
+    if (depositAmount > 0) {
+      setSelectedPaymentOption('deposit');
+    } else if (fullAmount > 0) {
+      setSelectedPaymentOption('balance');
+    }
+  }, [orderInfo, depositAmount, fullAmount, selectedPaymentOption]);
+
+  // Auto-skip if no payment needed
+  useEffect(() => {
+    if (orderInfo && fullAmount <= 0) {
+      console.log('[QuotePayment] fullAmount <= 0, auto-skipping payment step');
+      navigate(`/thank-you?orderId=${orderId}`);
+    }
+  }, [orderInfo, fullAmount, orderId, navigate]);
+
+  // Diagnostic logging
+  useEffect(() => {
+    if (orderInfo) {
+      console.log('[QuotePayment] Diagnostic:', {
+        orderId,
+        fullAmount,
+        depositAmount,
+        selectedPaymentOption,
+        paymentRequired,
+        riskBand: guardrail?.riskBand ?? 'GREEN',
+        paymentBlocked: guardrail && !guardrail.allowed,
+      });
+    }
+  }, [orderInfo, orderId, fullAmount, depositAmount, selectedPaymentOption, paymentRequired, guardrail]);
+
   if (!orderId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -77,19 +116,20 @@ export default function QuotePayment() {
     );
   }
 
-  const handlePayDeposit = async () => {
+  const handlePay = async (type: 'deposit' | 'balance') => {
     if (!orderInfo) return;
     setIsProcessing(true);
+    setSessionError(null);
 
     try {
-      const depositAmount = Math.min(orderInfo.total, Math.max(100, Math.round(orderInfo.total * 0.5)));
+      const amount = type === 'deposit' ? depositAmount : fullAmount;
       const origin = window.location.origin;
 
       const { data, error } = await supabase.functions.invoke('create-hosted-session', {
         body: {
           orderId,
-          paymentType: 'deposit',
-          amount: depositAmount,
+          paymentType: type,
+          amount,
           returnUrl: `${origin}/portal/payment-complete?orderId=${orderId}`,
           cancelUrl: `${origin}/quote/pay?orderId=${orderId}`,
         },
@@ -106,54 +146,38 @@ export default function QuotePayment() {
       } else {
         throw new Error(data?.error || 'Failed to create payment session');
       }
-    } catch (err) {
-      console.error('Payment error:', err);
-      toast({ title: 'Payment Error', description: 'Failed to start payment. Please try again.', variant: 'destructive' });
+    } catch (err: any) {
+      console.error('[QuotePayment] Payment session error:', err);
+      const msg = err?.message || 'Failed to start payment session.';
+      setSessionError(msg);
+      toast({ title: 'Payment Error', description: msg, variant: 'destructive' });
       setIsProcessing(false);
     }
   };
 
-  const handlePayFull = async () => {
-    if (!orderInfo) return;
-    setIsProcessing(true);
+  const handlePayLater = () => {
+    toast({
+      title: 'No problem!',
+      description: 'Our team will reach out about payment options.',
+    });
+    navigate(`/thank-you?orderId=${orderId}`);
+  };
 
-    try {
-      const origin = window.location.origin;
-
-      const { data, error } = await supabase.functions.invoke('create-hosted-session', {
-        body: {
-          orderId,
-          paymentType: 'balance',
-          amount: orderInfo.total,
-          returnUrl: `${origin}/portal/payment-complete?orderId=${orderId}`,
-          cancelUrl: `${origin}/quote/pay?orderId=${orderId}`,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data?.success && data?.token) {
-        setHostedData({
-          token: data.token,
-          formPostUrl: data.formPostUrl,
-          paymentId: data.paymentId,
-        });
-      } else {
-        throw new Error(data?.error || 'Failed to create payment session');
-      }
-    } catch (err) {
-      console.error('Payment error:', err);
-      toast({ title: 'Payment Error', description: 'Failed to start payment. Please try again.', variant: 'destructive' });
-      setIsProcessing(false);
+  const handleContinue = () => {
+    if (!selectedPaymentOption) return;
+    if (selectedPaymentOption === 'pay_later') {
+      handlePayLater();
+    } else {
+      handlePay(selectedPaymentOption);
     }
   };
 
-  const depositAmount = orderInfo ? Math.min(orderInfo.total, Math.max(100, Math.round(orderInfo.total * 0.5))) : 0;
-  const paymentBlocked = guardrail && !guardrail.allowed;
+  const isRed = guardrail?.riskBand === 'RED';
+  const isAmber = guardrail?.riskBand === 'AMBER';
+  const paymentBlocked = isRed || isAmber;
 
   return (
     <div className="min-h-screen bg-[hsl(150_10%_98%)]">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
@@ -192,7 +216,7 @@ export default function QuotePayment() {
                   <p className="font-semibold text-foreground">{orderInfo.size}</p>
                   <p className="text-xs text-muted-foreground">Order #{orderId.slice(0, 8)}</p>
                 </div>
-                <p className="font-bold text-foreground text-xl">${orderInfo.total.toLocaleString()}</p>
+                <p className="font-bold text-foreground text-xl">${fullAmount.toLocaleString()}</p>
               </div>
               {orderInfo.schedDate && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg px-3 py-2">
@@ -208,53 +232,72 @@ export default function QuotePayment() {
         )}
 
         {/* Risk guardrail warning */}
-        {paymentBlocked && (
+        {isRed && (
           <Card className="border-destructive/50 bg-destructive/5">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <ShieldAlert className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
                 <div>
-                  <p className="font-semibold text-destructive text-sm">Payment Blocked</p>
-                  <p className="text-sm text-muted-foreground mt-1">{guardrail?.reason}</p>
-                  <p className="text-xs text-muted-foreground mt-2">Please contact us at (510) 000-0000 to proceed.</p>
+                  <p className="font-semibold text-destructive text-sm">Verification Required</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Verification required before payment. Please call us at (510) 680-2150.
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Payment options */}
+        {isAmber && (
+          <Card className="border-amber-500/50 bg-amber-50">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-amber-700 text-sm">Details Confirmation Needed</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    We need to confirm a few details before payment. Please call (510) 680-2150.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Payment options — always visible */}
         <div className="space-y-3">
           <h3 className="font-bold text-foreground flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-primary" />
             Choose Payment Option
           </h3>
 
-          {/* Pay Deposit */}
-          <button
-            onClick={() => setSelectedPaymentOption('deposit')}
-            disabled={isProcessing || !!paymentBlocked}
-            className={cn(
-              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
-              selectedPaymentOption === 'deposit'
-                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                : 'border-border bg-card hover:border-primary/40'
-            )}
-          >
-            <div className="flex items-center justify-between mb-1">
-              <p className={cn('font-semibold', selectedPaymentOption === 'deposit' ? 'text-primary' : 'text-foreground')}>Pay Deposit</p>
-              <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
-            </div>
-            <p className="text-2xl font-bold text-foreground">${depositAmount.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              50% deposit — remaining balance due before delivery
-            </p>
-          </button>
+          {/* Pay Deposit — only show if deposit > 0 */}
+          {depositAmount > 0 && (
+            <button
+              onClick={() => setSelectedPaymentOption('deposit')}
+              disabled={isProcessing || paymentBlocked}
+              className={cn(
+                'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+                selectedPaymentOption === 'deposit'
+                  ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                  : 'border-border bg-card hover:border-primary/40'
+              )}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <p className={cn('font-semibold', selectedPaymentOption === 'deposit' ? 'text-primary' : 'text-foreground')}>Pay Deposit</p>
+                <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
+              </div>
+              <p className="text-2xl font-bold text-foreground">${depositAmount.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                50% deposit — remaining ${(fullAmount - depositAmount).toLocaleString()} due before delivery
+              </p>
+            </button>
+          )}
 
           {/* Pay Full */}
           <button
             onClick={() => setSelectedPaymentOption('balance')}
-            disabled={isProcessing || !!paymentBlocked}
+            disabled={isProcessing || paymentBlocked}
             className={cn(
               'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
               selectedPaymentOption === 'balance'
@@ -263,28 +306,81 @@ export default function QuotePayment() {
             )}
           >
             <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
-            <p className="text-2xl font-bold text-foreground">${orderInfo?.total.toLocaleString() || '—'}</p>
+            <p className="text-2xl font-bold text-foreground">${fullAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">
               Pay the full amount now — no balance remaining
             </p>
           </button>
 
-          {/* Confirm Payment Button */}
+          {/* Pay Later — always available */}
+          <button
+            onClick={() => setSelectedPaymentOption('pay_later')}
+            disabled={isProcessing}
+            className={cn(
+              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+              selectedPaymentOption === 'pay_later'
+                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                : 'border-border bg-card hover:border-primary/40'
+            )}
+          >
+            <p className={cn('font-semibold', selectedPaymentOption === 'pay_later' ? 'text-primary' : 'text-foreground')}>Reserve Now / Pay Later</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              No charge now — our team will reach out about payment options
+            </p>
+          </button>
+
+          {/* Session error fallback */}
+          {sessionError && (
+            <Card className="border-destructive/30 bg-destructive/5">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-destructive text-sm">Payment could not be started</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Please call (510) 680-2150 or try again.
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2 gap-1.5"
+                      onClick={() => {
+                        setSessionError(null);
+                        if (selectedPaymentOption && selectedPaymentOption !== 'pay_later') {
+                          handlePay(selectedPaymentOption);
+                        }
+                      }}
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Retry
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Confirm Payment Button — always present */}
           <Button
-            onClick={() => {
-              if (selectedPaymentOption === 'deposit') handlePayDeposit();
-              else if (selectedPaymentOption === 'balance') handlePayFull();
-            }}
-            disabled={!selectedPaymentOption || isProcessing || !!paymentBlocked}
+            onClick={handleContinue}
+            disabled={!selectedPaymentOption || isProcessing}
             className="w-full h-12 text-base font-semibold gap-2"
             size="lg"
           >
             {isProcessing ? (
               <Loader2 className="w-5 h-5 animate-spin" />
+            ) : selectedPaymentOption === 'pay_later' ? (
+              <Phone className="w-4 h-4" />
             ) : (
               <Lock className="w-4 h-4" />
             )}
-            {isProcessing ? 'Connecting...' : selectedPaymentOption ? 'Proceed to Secure Payment' : 'Select a payment option'}
+            {isProcessing
+              ? 'Connecting...'
+              : selectedPaymentOption === 'pay_later'
+                ? 'Confirm Reservation'
+                : selectedPaymentOption
+                  ? 'Proceed to Secure Payment'
+                  : 'Select a payment option'}
           </Button>
         </div>
 
@@ -303,30 +399,8 @@ export default function QuotePayment() {
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Shield className="w-3 h-3" />
-            Powered by Authorize.Net — your card info never touches our servers
+            Powered by Authorize.Net
           </div>
-        </div>
-
-        {/* Skip payment option */}
-        <div className="text-center pt-2">
-          <p className="text-xs text-muted-foreground mb-2">
-            Prefer to pay later or by phone?
-          </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-primary"
-            onClick={() => {
-              toast({
-                title: 'No problem!',
-                description: 'Our team will reach out about payment options.',
-              });
-              navigate(`/thank-you?orderId=${orderId}`);
-            }}
-          >
-            <Phone className="w-3.5 h-3.5 mr-1" />
-            Pay Later / Call Us
-          </Button>
         </div>
       </main>
 
