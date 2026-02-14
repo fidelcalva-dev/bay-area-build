@@ -11,6 +11,9 @@ import { QuoteSendPanel } from '@/components/calculator/QuoteSendPanel';
 import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
 import { VendorFinderPanel } from '@/components/calculator/VendorFinderPanel';
 import { ScriptGenerator } from '@/components/calculator/ScriptGenerator';
+import { LiveLoadPanel, type LiveLoadState } from '@/components/calculator/LiveLoadPanel';
+import { ExtrasLibraryPanel, type SelectedExtra } from '@/components/calculator/ExtrasLibraryPanel';
+import { QuotePdfExport } from '@/components/calculator/QuotePdfExport';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -51,6 +54,8 @@ export default function InternalCalculator() {
   const [selectedTier, setSelectedTier] = useState<PricingTier | undefined>();
   const [tierConfigs, setTierConfigs] = useState<Record<PricingTier, import('@/services/pricingTierService').TierConfig> | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [liveLoadState, setLiveLoadState] = useState<LiveLoadState>({ enabled: false, estimatedMinutes: 30, extraCharge: 0, billableIncrements: 0 });
+  const [selectedExtras, setSelectedExtras] = useState<SelectedExtra[]>([]);
 
   const hasAccess = roles.some(r => ALLOWED_ROLES.includes(r));
   const isAdmin = hasAnyRole('admin', 'system_admin', 'ops_admin');
@@ -166,6 +171,14 @@ export default function InternalCalculator() {
       toast({ title: 'Error', description: 'Could not submit request. Please try again.', variant: 'destructive' });
     }
   };
+
+  const handleAddExtra = useCallback((extra: SelectedExtra) => {
+    setSelectedExtras(prev => [...prev, extra]);
+  }, []);
+
+  const handleRemoveExtra = useCallback((code: string) => {
+    setSelectedExtras(prev => prev.filter(e => e.catalogItem.code !== code));
+  }, []);
 
   const showVendorFinder = result && (result.is_blocked || !result.success);
 
@@ -294,10 +307,17 @@ export default function InternalCalculator() {
         <main className="container mx-auto px-4 py-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column - Inputs */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 space-y-4">
               <MasterCalculatorInputs
                 onCalculate={handleCalculate}
                 isCalculating={isCalculating}
+                userRole={userRole}
+              />
+              <LiveLoadPanel onStateChange={setLiveLoadState} />
+              <ExtrasLibraryPanel
+                selectedExtras={selectedExtras}
+                onAddExtra={handleAddExtra}
+                onRemoveExtra={handleRemoveExtra}
                 userRole={userRole}
               />
             </div>
@@ -364,6 +384,26 @@ export default function InternalCalculator() {
                             is_same_day: lastInputs?.is_same_day,
                           }}
                         />
+                      )}
+
+                      {/* PDF Export + Share */}
+                      {tierResult && selectedTier && (
+                        <Card>
+                          <CardContent className="py-3 flex items-center justify-between">
+                            <p className="text-xs text-muted-foreground">Export or share this quote</p>
+                            <QuotePdfExport
+                              serviceAddress={lastInputs?.destination_address}
+                              dumpsterSize={result.estimate.dumpster_size}
+                              materialCategory={lastInputs?.material_category || 'DEBRIS'}
+                              serviceType={lastInputs?.service_type || 'DELIVERY'}
+                              selectedTier={selectedTier}
+                              tierPricing={tierResult.tiers[selectedTier]}
+                              liveLoad={liveLoadState}
+                              selectedExtras={selectedExtras}
+                              userRole={userRole}
+                            />
+                          </CardContent>
+                        </Card>
                       )}
 
                       <ScriptGenerator
