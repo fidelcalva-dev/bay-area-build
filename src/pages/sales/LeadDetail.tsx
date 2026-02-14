@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
+import FollowUpPanel from "@/components/sales/FollowUpPanel";
 
 interface LeadData {
   id: string;
@@ -314,6 +315,7 @@ export default function LeadDetail() {
           <TabsTrigger value="timeline">Timeline ({actions.length})</TabsTrigger>
           <TabsTrigger value="attribution">Source & Attribution</TabsTrigger>
           <TabsTrigger value="scoring">Risk & Quality</TabsTrigger>
+          <TabsTrigger value="followup">Follow-Up</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
@@ -483,6 +485,17 @@ export default function LeadDetail() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Follow-Up Scripts */}
+        <TabsContent value="followup">
+          {user && (
+            <FollowUpPanel
+              lead={lead}
+              userId={user.id}
+              onActionLogged={fetchAll}
+            />
+          )}
         </TabsContent>
 
         {/* Notes */}
