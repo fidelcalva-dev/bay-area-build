@@ -9533,6 +9533,60 @@ export type Database = {
           },
         ]
       }
+      quote_drafts: {
+        Row: {
+          address: string | null
+          created_at: string
+          customer_type: string | null
+          draft_token: string
+          email: string | null
+          expires_at: string
+          id: string
+          name: string | null
+          phone: string | null
+          project_id: string | null
+          size: number | null
+          step: string | null
+          updated_at: string
+          wants_swap: boolean | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          customer_type?: string | null
+          draft_token?: string
+          email?: string | null
+          expires_at?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          project_id?: string | null
+          size?: number | null
+          step?: string | null
+          updated_at?: string
+          wants_swap?: boolean | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          customer_type?: string | null
+          draft_token?: string
+          email?: string | null
+          expires_at?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          project_id?: string | null
+          size?: number | null
+          step?: string | null
+          updated_at?: string
+          wants_swap?: boolean | null
+          zip?: string | null
+        }
+        Relationships: []
+      }
       quote_events: {
         Row: {
           created_at: string

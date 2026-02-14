@@ -3,8 +3,10 @@
 // ZIP → Customer Type → Project → Size → Price → Confirm
 // ============================================================
 
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
+import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
 import {
   MapPin, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2,
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
@@ -115,8 +117,14 @@ function TrustBlock({ className }: { className?: string }) {
 export function V3QuoteFlow() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const pricingData = usePricingData();
   const { sizes: DUMPSTER_SIZES } = pricingData;
+
+  // Draft autosave
+  const urlDraftToken = searchParams.get('draft');
+  const draft = useQuoteDraftAutosave(urlDraftToken);
+  const draftApplied = useRef(false);
 
   // Step state
   const [step, setStep] = useState<V3Step>('zip');
@@ -138,6 +146,72 @@ export function V3QuoteFlow() {
   // Address mode
   const [useAddress, setUseAddress] = useState(false);
   const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
+
+  // Swap toggle (declared early for draft effects)
+  const [wantsSwap, setWantsSwap] = useState(false);
+
+  // Restore draft state when user accepts resume
+  useEffect(() => {
+    if (draft.loadedDraft && !draft.showResumeBanner && !draftApplied.current) {
+      draftApplied.current = true;
+      const d = draft.loadedDraft;
+      if (d.zip) setZip(d.zip);
+      if (d.customerType) setCustomerType(d.customerType);
+      if (d.selectedProjectId) {
+        const allProjects = [...HOMEOWNER_PROJECTS, ...CONTRACTOR_PROJECTS, ...COMMERCIAL_PROJECTS];
+        const found = allProjects.find(p => p.id === d.selectedProjectId);
+        if (found) setSelectedProject(found);
+      }
+      if (d.size) setSize(d.size);
+      if (d.wantsSwap) setWantsSwap(true);
+      if (d.customerName) setCustomerName(d.customerName);
+      if (d.customerPhone) setCustomerPhone(d.customerPhone);
+      if (d.customerEmail) setCustomerEmail(d.customerEmail);
+      if (d.termsAccepted) setTermsAccepted(d.termsAccepted);
+      if (d.useAddress) setUseAddress(true);
+      setStep(d.step);
+    }
+  }, [draft.loadedDraft, draft.showResumeBanner]);
+
+  // Autosave on meaningful changes (debounced inside the hook)
+  useEffect(() => {
+    if (step === 'placement') return; // don't save post-submit
+    draft.saveDraft({
+      step,
+      zip,
+      customerType,
+      selectedProjectId: selectedProject?.id || null,
+      size,
+      wantsSwap,
+      customerName: customerName || undefined,
+      customerPhone: customerPhone || undefined,
+      customerEmail: customerEmail || undefined,
+      termsAccepted,
+      useAddress,
+      formattedAddress: addressResult?.formattedAddress,
+      lat: addressResult?.lat,
+      lng: addressResult?.lng,
+    });
+  }, [step, zip, customerType, selectedProject, size, customerName, customerPhone, customerEmail, termsAccepted, useAddress, addressResult]);
+
+  // Handle "Start Over"
+  const handleStartOver = useCallback(() => {
+    draft.resetDraft();
+    setStep('zip');
+    setZip('');
+    setCustomerType(null);
+    setSelectedProject(null);
+    setSize(20);
+    setCustomerName('');
+    setCustomerPhone('');
+    setCustomerEmail('');
+    setTermsAccepted(false);
+    setUseAddress(false);
+    setAddressResult(null);
+    setZoneResult(null);
+    setWantsSwap(false);
+    draftApplied.current = false;
+  }, [draft]);
 
   // Auto-detect ZIP
   const autoDetectZip = useAutoDetectZip();
@@ -242,8 +316,7 @@ export function V3QuoteFlow() {
     return Math.min(map[step], 6);
   }, [step]);
 
-  // Swap toggle
-  const [wantsSwap, setWantsSwap] = useState(false);
+  // Swap toggle (moved up for draft effects)
 
   // Navigation
   const goNext = () => {
@@ -322,6 +395,7 @@ export function V3QuoteFlow() {
 
       if (result.success) {
         setSavedQuoteId(result.quoteId ?? null);
+        draft.resetDraft(); // Clear draft after successful submission
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
         // Send quote summary (best effort)
         supabase.functions.invoke('send-quote-summary', {
@@ -431,12 +505,22 @@ export function V3QuoteFlow() {
               <p className="text-[11px] text-muted-foreground">All-inclusive pricing</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-success/10 rounded-full">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-success" />
-            </span>
-            <span className="text-[10px] font-semibold text-success tracking-wide uppercase">Live</span>
+          <div className="flex items-center gap-2">
+            {step !== 'zip' && step !== 'placement' && (
+              <button
+                onClick={handleStartOver}
+                className="text-[10px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5"
+              >
+                Start over
+              </button>
+            )}
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-success/10 rounded-full">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-success" />
+              </span>
+              <span className="text-[10px] font-semibold text-success tracking-wide uppercase">Live</span>
+            </div>
           </div>
         </div>
         {/* Progress — thin line */}
@@ -461,6 +545,38 @@ export function V3QuoteFlow() {
           </div>
         </div>
       </div>
+
+      {/* Resume Banner */}
+      {draft.showResumeBanner && (
+        <div className="px-5 py-3 bg-primary/5 border-b border-border/50 animate-fade-in">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <RotateCcw className="w-4 h-4 text-primary shrink-0" />
+              <p className="text-xs text-foreground font-medium truncate">
+                We saved your progress. Continue where you left off?
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-muted-foreground"
+                onClick={draft.declineResume}
+              >
+                Start over
+              </Button>
+              <Button
+                size="sm"
+                className="h-7 text-xs"
+                onClick={draft.acceptResume}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Content */}
       <div className="p-5 md:p-6">
