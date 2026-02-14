@@ -211,6 +211,7 @@ const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
 const SalesLayout = lazy(() => import("./pages/sales/SalesLayout"));
 const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
+const SalesLeadDetail = lazy(() => import("./pages/sales/LeadDetail"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
 const SalesLeadInbox = lazy(() => import("./pages/sales/SalesLeadInbox"));
@@ -812,6 +813,9 @@ const App = () => {
                 } />
                 <Route path="leads" element={
                   <Suspense fallback={<PageLoader />}><SalesLeads /></Suspense>
+                } />
+                <Route path="leads/:id" element={
+                  <Suspense fallback={<PageLoader />}><SalesLeadDetail /></Suspense>
                 } />
                 <Route path="quotes" element={
                   <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>

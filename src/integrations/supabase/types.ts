@@ -5758,6 +5758,100 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_actions: {
+        Row: {
+          action_status: string | null
+          action_type: string
+          created_at: string
+          id: string
+          lead_id: string
+          performed_by_user_id: string | null
+          provider: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          summary: string | null
+        }
+        Insert: {
+          action_status?: string | null
+          action_type: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          performed_by_user_id?: string | null
+          provider?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          summary?: string | null
+        }
+        Update: {
+          action_status?: string | null
+          action_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          performed_by_user_id?: string | null
+          provider?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_actions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_alerts: {
+        Row: {
+          alert_type: string
+          assigned_team: string | null
+          created_at: string
+          id: string
+          is_resolved: boolean
+          lead_id: string
+          message: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+        }
+        Insert: {
+          alert_type: string
+          assigned_team?: string | null
+          created_at?: string
+          id?: string
+          is_resolved?: boolean
+          lead_id: string
+          message?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+        }
+        Update: {
+          alert_type?: string
+          assigned_team?: string | null
+          created_at?: string
+          id?: string
+          is_resolved?: boolean
+          lead_id?: string
+          message?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_alerts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_assignment_rules: {
         Row: {
           assign_to_team: string | null
@@ -5965,6 +6059,101 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      lead_sla_rules: {
+        Row: {
+          created_at: string
+          customer_type: string | null
+          escalation_minutes: number
+          id: string
+          is_active: boolean
+          response_minutes: number
+          rule_name: string
+          source_channel: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_type?: string | null
+          escalation_minutes?: number
+          id?: string
+          is_active?: boolean
+          response_minutes?: number
+          rule_name: string
+          source_channel?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_type?: string | null
+          escalation_minutes?: number
+          id?: string
+          is_active?: boolean
+          response_minutes?: number
+          rule_name?: string
+          source_channel?: string | null
+        }
+        Relationships: []
+      }
+      lead_source_metadata: {
+        Row: {
+          approx_city: string | null
+          approx_lat: number | null
+          approx_lng: number | null
+          approx_region: string | null
+          approx_zip: string | null
+          browser: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          ip_hash: string | null
+          lead_id: string
+          os: string | null
+          timezone: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          approx_city?: string | null
+          approx_lat?: number | null
+          approx_lng?: number | null
+          approx_region?: string | null
+          approx_zip?: string | null
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          ip_hash?: string | null
+          lead_id: string
+          os?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          approx_city?: string | null
+          approx_lat?: number | null
+          approx_lng?: number | null
+          approx_region?: string | null
+          approx_zip?: string | null
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          ip_hash?: string | null
+          lead_id?: string
+          os?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_source_metadata_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lead_sources: {
         Row: {
@@ -10402,6 +10591,7 @@ export type Database = {
           capture_user_agent: string | null
           channel_key: string | null
           city: string | null
+          company_domain: string | null
           company_name: string | null
           consent_status: string | null
           converted_at: string | null
@@ -10410,10 +10600,18 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           customer_type_detected: string | null
+          first_response_at: string | null
           first_response_sent_at: string | null
           gclid: string | null
           id: string
           is_existing_customer: boolean | null
+          landing_url: string | null
+          last_activity_at: string | null
+          last_contacted_at: string | null
+          last_contacted_by_user_id: string | null
+          lead_quality_label: string | null
+          lead_quality_score: number | null
+          lead_risk_score: number | null
           lead_source: string | null
           lead_status: string
           linked_contact_id: string | null
@@ -10425,6 +10623,7 @@ export type Database = {
           project_category: string | null
           quote_id: string | null
           raw_payload_json: Json | null
+          referrer_url: string | null
           requested_service: string | null
           routing_tags: string[] | null
           sales_notes: string | null
@@ -10433,6 +10632,7 @@ export type Database = {
           updated_at: string
           urgency_score: number | null
           utm_campaign: string | null
+          utm_content: string | null
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
@@ -10451,6 +10651,7 @@ export type Database = {
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
+          company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
           converted_at?: string | null
@@ -10459,10 +10660,18 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          first_response_at?: string | null
           first_response_sent_at?: string | null
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
+          landing_url?: string | null
+          last_activity_at?: string | null
+          last_contacted_at?: string | null
+          last_contacted_by_user_id?: string | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_risk_score?: number | null
           lead_source?: string | null
           lead_status?: string
           linked_contact_id?: string | null
@@ -10474,6 +10683,7 @@ export type Database = {
           project_category?: string | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          referrer_url?: string | null
           requested_service?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
@@ -10482,6 +10692,7 @@ export type Database = {
           updated_at?: string
           urgency_score?: number | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
@@ -10500,6 +10711,7 @@ export type Database = {
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
+          company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
           converted_at?: string | null
@@ -10508,10 +10720,18 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          first_response_at?: string | null
           first_response_sent_at?: string | null
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
+          landing_url?: string | null
+          last_activity_at?: string | null
+          last_contacted_at?: string | null
+          last_contacted_by_user_id?: string | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_risk_score?: number | null
           lead_source?: string | null
           lead_status?: string
           linked_contact_id?: string | null
@@ -10523,6 +10743,7 @@ export type Database = {
           project_category?: string | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          referrer_url?: string | null
           requested_service?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
@@ -10531,6 +10752,7 @@ export type Database = {
           updated_at?: string
           urgency_score?: number | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null

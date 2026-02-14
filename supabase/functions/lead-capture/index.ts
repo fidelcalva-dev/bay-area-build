@@ -1,5 +1,43 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// Inline scoring logic for edge function context
+function scoreLead(input: Record<string, unknown>) {
+  const FREE_DOMAINS = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','mail.com','protonmail.com','live.com'];
+  const DISPOSABLE = ['mailinator.com','guerrillamail.com','tempmail.com','throwaway.email','yopmail.com'];
+  
+  let qs = 0, rs = 0;
+  const email = (input.customer_email || input.email) as string || '';
+  const domain = email.split('@')[1]?.toLowerCase();
+  let companyDomain: string|null = null;
+  let custType = 'unknown';
+  
+  if (domain && !FREE_DOMAINS.includes(domain) && !DISPOSABLE.includes(domain)) { qs += 15; companyDomain = domain; custType = 'contractor'; }
+  else if (domain && FREE_DOMAINS.includes(domain)) { qs += 5; custType = 'homeowner'; }
+  if (domain && DISPOSABLE.includes(domain)) rs += 30;
+  
+  const name = (input.customer_name || input.contact_name) as string || '';
+  if (name.trim().length > 2) qs += 10; else rs += 10;
+  
+  const phone = (input.customer_phone || input.phone) as string || '';
+  if (phone.replace(/\D/g,'').length >= 10) qs += 10; else if (phone) rs += 20;
+  
+  if (input.address || input.city) qs += 10;
+  if (input.zip) qs += 15;
+  if (input.project_category) qs += 10;
+  if (input.company_name) { qs += 10; if (custType === 'unknown') custType = 'contractor'; }
+  
+  const text = [input.notes, input.message_excerpt].filter(Boolean).join(' ').toLowerCase();
+  if (/need today|ready to book|asap|urgent|same day|tomorrow|this week/.test(text)) qs += 15;
+  if (/free|test|testing|asdf|xxx|fake/.test(text)) rs += 20;
+  if (name.trim().length === 1) rs += 15;
+  
+  qs = Math.min(100, qs);
+  rs = Math.min(100, rs);
+  const label = rs >= 50 || qs < 20 ? 'RED' : rs >= 25 || qs < 40 ? 'AMBER' : 'GREEN';
+  
+  return { quality_score: qs, risk_score: rs, quality_label: label, company_domain: companyDomain, customer_type_inferred: custType };
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -39,6 +77,11 @@ Deno.serve(async (req) => {
 
     const payload: LeadPayload = await req.json();
     console.log('Lead capture payload:', payload);
+
+    // Capture IP and User-Agent from request headers
+    const captureIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
+      || req.headers.get('x-real-ip') || null;
+    const captureUserAgent = req.headers.get('user-agent') || null;
 
     // Validate required fields
     if (!payload.source_key) {
@@ -90,6 +133,48 @@ Deno.serve(async (req) => {
     }
 
     console.log('Lead created/updated:', leadId);
+
+    // Score the lead
+    const scoring = scoreLead(payload);
+    await supabase.from('sales_leads').update({
+      lead_quality_score: scoring.quality_score,
+      lead_risk_score: scoring.risk_score,
+      lead_quality_label: scoring.quality_label,
+      company_domain: scoring.company_domain,
+      customer_type_detected: scoring.customer_type_inferred !== 'unknown' 
+        ? scoring.customer_type_inferred 
+        : (payload.raw_payload as Record<string, unknown>)?.customer_type as string || null,
+      landing_url: (payload.raw_payload as Record<string, unknown>)?.landing_url as string || null,
+      referrer_url: (payload.raw_payload as Record<string, unknown>)?.referrer_url as string || null,
+      utm_content: (payload.raw_payload as Record<string, unknown>)?.utm_content as string || null,
+      capture_ip: captureIp,
+      capture_user_agent: captureUserAgent,
+    }).eq('id', leadId);
+
+    // Store source metadata (staff-only table)
+    if (captureIp || captureUserAgent) {
+      const ua = captureUserAgent || '';
+      const deviceType = /mobile|android|iphone/i.test(ua) ? 'mobile' : /tablet|ipad/i.test(ua) ? 'tablet' : 'desktop';
+      const os = /windows/i.test(ua) ? 'Windows' : /mac/i.test(ua) ? 'macOS' : /linux/i.test(ua) ? 'Linux' : /android/i.test(ua) ? 'Android' : /iphone|ipad/i.test(ua) ? 'iOS' : 'Unknown';
+      const browser = /chrome/i.test(ua) ? 'Chrome' : /firefox/i.test(ua) ? 'Firefox' : /safari/i.test(ua) ? 'Safari' : /edge/i.test(ua) ? 'Edge' : 'Unknown';
+
+      await supabase.from('lead_source_metadata').insert({
+        lead_id: leadId,
+        ip_address: captureIp,
+        user_agent: captureUserAgent,
+        device_type: deviceType,
+        os,
+        browser,
+      });
+    }
+
+    // Log initial action
+    await supabase.from('lead_actions').insert({
+      lead_id: leadId,
+      action_type: 'STATUS_CHANGE',
+      summary: `Lead captured from ${payload.source_key}`,
+      provider: 'SYSTEM',
+    });
 
     // Dispatch internal alert (best effort)
     try {
