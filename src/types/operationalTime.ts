@@ -1,6 +1,6 @@
 // Operational Time Calculator Types
 
-export type ServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP';
+export type ServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP' | 'DUMP_AND_RETURN';
 export type MaterialCategory = 'DEBRIS' | 'HEAVY' | 'DEBRIS_HEAVY' | 'CLEAN_RECYCLING';
 export type TrafficMode = 'REAL_TIME' | 'AVERAGE';
 export type SlaClass = 'FAST' | 'STANDARD' | 'LONG';

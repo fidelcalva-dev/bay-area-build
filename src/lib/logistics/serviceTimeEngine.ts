@@ -15,7 +15,7 @@ export const CALSAN_STANDARDS = {
   DUMP_PROCESS_MAX: 25,
 } as const;
 
-export type LogisticsServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP';
+export type LogisticsServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP' | 'DUMP_AND_RETURN';
 
 export interface RouteMinutes {
   yardToSiteMin: number;

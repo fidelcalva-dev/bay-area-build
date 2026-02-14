@@ -31,6 +31,7 @@ const SERVICE_TYPES: { value: ServiceType; label: string; description: string }[
   { value: 'DELIVERY', label: 'Delivery', description: 'Drop off empty container' },
   { value: 'PICKUP', label: 'Pickup', description: 'Pick up full container' },
   { value: 'SWAP', label: 'Swap', description: 'Swap full for empty' },
+  { value: 'DUMP_AND_RETURN', label: 'Dump & Return', description: 'Customer-owned container haul' },
 ];
 
 const MATERIAL_CATEGORIES: { value: MaterialCategory; label: string; icon: string }[] = [
@@ -247,7 +248,7 @@ export function MasterCalculatorInputs({ onCalculate, isCalculating, userRole }:
 
           <div className="space-y-1.5">
             <Label className="text-xs">Service Type</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {SERVICE_TYPES.map(type => (
                 <button
                   key={type.value}
@@ -259,7 +260,8 @@ export function MasterCalculatorInputs({ onCalculate, isCalculating, userRole }:
                       : 'border-border hover:border-primary/40'
                   }`}
                 >
-                  {type.label}
+                  <span className="block">{type.label}</span>
+                  <span className="block text-[10px] text-muted-foreground font-normal mt-0.5">{type.description}</span>
                 </button>
               ))}
             </div>
