@@ -2,13 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   CreditCard, Loader2, ArrowLeft, ChevronRight, CheckCircle,
-  Calendar, Lock, Shield, Phone,
+  Calendar, Lock, Shield, Phone, ShieldAlert,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { checkGuardrail, type GuardrailResult } from '@/services/riskCheckService';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 export default function QuotePayment() {
@@ -30,6 +31,7 @@ export default function QuotePayment() {
     formPostUrl: string;
     paymentId: string;
   } | null>(null);
+  const [guardrail, setGuardrail] = useState<GuardrailResult | null>(null);
 
   // Fetch order info
   useEffect(() => {
@@ -50,6 +52,12 @@ export default function QuotePayment() {
           });
         }
       });
+  }, [orderId]);
+
+  // Check guardrails for payment
+  useEffect(() => {
+    if (!orderId) return;
+    checkGuardrail('ORDER', orderId, 'SEND_PAYMENT_LINK').then(setGuardrail);
   }, [orderId]);
 
   // Auto-submit form when hosted data is ready
@@ -139,6 +147,7 @@ export default function QuotePayment() {
   };
 
   const depositAmount = orderInfo ? Math.min(orderInfo.total, Math.max(100, Math.round(orderInfo.total * 0.5))) : 0;
+  const paymentBlocked = guardrail && !guardrail.allowed;
 
   return (
     <div className="min-h-screen bg-[hsl(150_10%_98%)]">
@@ -196,6 +205,22 @@ export default function QuotePayment() {
           </Card>
         )}
 
+        {/* Risk guardrail warning */}
+        {paymentBlocked && (
+          <Card className="border-destructive/50 bg-destructive/5">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <ShieldAlert className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-destructive text-sm">Payment Blocked</p>
+                  <p className="text-sm text-muted-foreground mt-1">{guardrail?.reason}</p>
+                  <p className="text-xs text-muted-foreground mt-2">Please contact us at (510) 000-0000 to proceed.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Payment options */}
         <div className="space-y-3">
           <h3 className="font-bold text-foreground flex items-center gap-2">
@@ -206,7 +231,7 @@ export default function QuotePayment() {
           {/* Pay Deposit */}
           <button
             onClick={handlePayDeposit}
-            disabled={isProcessing}
+            disabled={isProcessing || !!paymentBlocked}
             className="w-full p-4 rounded-xl border-2 border-primary bg-primary/5 text-left transition-all hover:bg-primary/10 disabled:opacity-50"
           >
             <div className="flex items-center justify-between mb-1">
@@ -222,7 +247,7 @@ export default function QuotePayment() {
           {/* Pay Full */}
           <button
             onClick={handlePayFull}
-            disabled={isProcessing}
+            disabled={isProcessing || !!paymentBlocked}
             className="w-full p-4 rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 disabled:opacity-50"
           >
             <p className="font-semibold text-foreground">Pay in Full</p>

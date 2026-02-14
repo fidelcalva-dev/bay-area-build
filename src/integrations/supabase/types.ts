@@ -4282,6 +4282,8 @@ export type Database = {
         Row: {
           created_at: string
           customer_id: string | null
+          entity_id: string | null
+          entity_type: string | null
           evidence_json: Json | null
           flag_type: string
           id: string
@@ -4293,6 +4295,7 @@ export type Database = {
           resolved_at: string | null
           resolved_by: string | null
           resolved_notes: string | null
+          risk_check_id: string | null
           risk_level: string | null
           risk_score: number | null
           severity: string
@@ -4301,6 +4304,8 @@ export type Database = {
         Insert: {
           created_at?: string
           customer_id?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
           evidence_json?: Json | null
           flag_type: string
           id?: string
@@ -4312,6 +4317,7 @@ export type Database = {
           resolved_at?: string | null
           resolved_by?: string | null
           resolved_notes?: string | null
+          risk_check_id?: string | null
           risk_level?: string | null
           risk_score?: number | null
           severity: string
@@ -4320,6 +4326,8 @@ export type Database = {
         Update: {
           created_at?: string
           customer_id?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
           evidence_json?: Json | null
           flag_type?: string
           id?: string
@@ -4331,6 +4339,7 @@ export type Database = {
           resolved_at?: string | null
           resolved_by?: string | null
           resolved_notes?: string | null
+          risk_check_id?: string | null
           risk_level?: string | null
           risk_score?: number | null
           severity?: string
@@ -4370,6 +4379,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_flags_risk_check_id_fkey"
+            columns: ["risk_check_id"]
+            isOneToOne: false
+            referencedRelation: "risk_checks"
             referencedColumns: ["id"]
           },
         ]
@@ -9839,6 +9855,51 @@ export type Database = {
             referencedColumns: ["order_id"]
           },
         ]
+      }
+      risk_checks: {
+        Row: {
+          created_at: string
+          email_input: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          phone_input: string | null
+          phone_normalized: string | null
+          provider_results_json: Json | null
+          reasons_json: Json | null
+          requested_by_user_id: string | null
+          risk_band: string
+          risk_score: number
+        }
+        Insert: {
+          created_at?: string
+          email_input?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          phone_input?: string | null
+          phone_normalized?: string | null
+          provider_results_json?: Json | null
+          reasons_json?: Json | null
+          requested_by_user_id?: string | null
+          risk_band?: string
+          risk_score?: number
+        }
+        Update: {
+          created_at?: string
+          email_input?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          phone_input?: string | null
+          phone_normalized?: string | null
+          provider_results_json?: Json | null
+          reasons_json?: Json | null
+          requested_by_user_id?: string | null
+          risk_band?: string
+          risk_score?: number
+        }
+        Relationships: []
       }
       risk_score_events: {
         Row: {
