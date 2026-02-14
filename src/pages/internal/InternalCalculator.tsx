@@ -12,6 +12,7 @@ import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
 import { VendorFinderPanel } from '@/components/calculator/VendorFinderPanel';
 import { ScriptGenerator } from '@/components/calculator/ScriptGenerator';
 import { LiveLoadPanel, type LiveLoadState } from '@/components/calculator/LiveLoadPanel';
+import { DumpReturnPanel, type DumpReturnState } from '@/components/calculator/DumpReturnPanel';
 import { ExtrasLibraryPanel, type SelectedExtra } from '@/components/calculator/ExtrasLibraryPanel';
 import { QuotePdfExport } from '@/components/calculator/QuotePdfExport';
 import { useCalculator } from '@/hooks/useCalculator';
@@ -55,6 +56,7 @@ export default function InternalCalculator() {
   const [tierConfigs, setTierConfigs] = useState<Record<PricingTier, import('@/services/pricingTierService').TierConfig> | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [liveLoadState, setLiveLoadState] = useState<LiveLoadState>({ enabled: false, estimatedMinutes: 30, extraCharge: 0, billableIncrements: 0 });
+  const [dumpReturnState, setDumpReturnState] = useState<DumpReturnState>({ enabled: false, estimatedDriveMinutes: 60, estimatedDumpFee: 350, materialStream: 'general', notes: '', estimate: null });
   const [selectedExtras, setSelectedExtras] = useState<SelectedExtra[]>([]);
 
   const hasAccess = roles.some(r => ALLOWED_ROLES.includes(r));
@@ -314,6 +316,7 @@ export default function InternalCalculator() {
                 userRole={userRole}
               />
               <LiveLoadPanel onStateChange={setLiveLoadState} />
+              <DumpReturnPanel onStateChange={setDumpReturnState} />
               <ExtrasLibraryPanel
                 selectedExtras={selectedExtras}
                 onAddExtra={handleAddExtra}

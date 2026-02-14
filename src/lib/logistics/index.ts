@@ -33,3 +33,13 @@ export {
   canCustomerViewDumpTicket,
   type DumpTicketDetails,
 } from './dumpTicketService';
+
+export {
+  estimateDumpReturn,
+  reconcileDumpReturn,
+  buildDumpReturnInvoiceLines,
+  DUMP_RETURN_DEFAULTS,
+  type DumpReturnEstimate,
+  type DumpReturnActuals,
+  type DumpReturnConfig,
+} from './dumpReturnEngine';

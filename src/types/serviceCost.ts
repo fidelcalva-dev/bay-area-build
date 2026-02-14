@@ -1,6 +1,6 @@
 // Service Cost Engine Types
 
-export type ServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP';
+export type ServiceType = 'DELIVERY' | 'PICKUP' | 'SWAP' | 'DUMP_AND_RETURN';
 export type MaterialCategory = 'DEBRIS' | 'HEAVY' | 'DEBRIS_HEAVY' | 'CLEAN_RECYCLING';
 export type CostModel = 'IN_HOUSE' | 'OWNER_OPERATOR';
 export type VehicleType = 'ROLLOFF' | 'HIGHSIDE' | 'END_DUMP' | 'SUPER10' | 'TENWHEEL' | 'PICKUP';
