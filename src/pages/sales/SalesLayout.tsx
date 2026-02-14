@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { 
   Users, FileText, Settings, LogOut, 
-  Menu, X, Home, MessageSquare, Search, TrendingUp, Phone, ShoppingCart
+  Menu, X, Home, MessageSquare, Search, TrendingUp, Phone, ShoppingCart, Calculator
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -18,6 +18,7 @@ const SALES_NAV = [
   { label: "Quotes", href: "/sales/quotes", icon: FileText },
   { label: "Order Builder", href: "/sales/order-builder", icon: ShoppingCart },
   { label: "Calls", href: "/sales/calls", icon: Phone },
+  { label: "Calculator", href: "/internal/calculator", icon: Calculator },
   { label: "New Quote", href: "/quote", icon: MessageSquare },
 ];
 

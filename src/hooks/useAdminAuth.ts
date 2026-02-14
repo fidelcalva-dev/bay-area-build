@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
-export type AppRole = 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin';
+export type AppRole = 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin' | 'cs' | 'cs_agent' | 'billing_specialist' | 'executive';
 
 interface AdminAuthState {
   user: User | null;
@@ -13,6 +13,7 @@ interface AdminAuthState {
   isSales: boolean;
   isDriver: boolean;
   isOwnerOperator: boolean;
+  isCS: boolean;
   roles: AppRole[];
   isLoading: boolean;
   driverId: string | null;
@@ -28,6 +29,7 @@ export function useAdminAuth() {
     isSales: false,
     isDriver: false,
     isOwnerOperator: false,
+    isCS: false,
     roles: [],
     isLoading: true,
     driverId: null,
@@ -67,6 +69,7 @@ useEffect(() => {
             isSales: roles.includes('sales'),
             isDriver: roles.includes('driver'),
             isOwnerOperator: roles.includes('owner_operator'),
+            isCS: roles.includes('cs') || roles.includes('cs_agent'),
             roles,
             isLoading: false,
             driverId,
@@ -119,6 +122,7 @@ useEffect(() => {
             isSales: false,
             isDriver: false,
             isOwnerOperator: false,
+            isCS: false,
             roles: [],
             isLoading: false,
             driverId: null,
@@ -169,7 +173,7 @@ useEffect(() => {
 
   // Check if user can access admin portal (any staff role)
   const canAccessAdmin = () => {
-    return state.isAdmin || state.isDispatcher || state.isFinance || state.isSales;
+    return state.isAdmin || state.isDispatcher || state.isFinance || state.isSales || state.isCS;
   };
 
   // Check if user can access driver app
@@ -181,6 +185,7 @@ useEffect(() => {
   const getPrimaryRole = (): AppRole | null => {
     if (state.isAdmin) return 'admin';
     if (state.isSales) return 'sales';
+    if (state.isCS) return 'cs';
     if (state.isDispatcher) return 'dispatcher';
     if (state.isFinance) return 'finance';
     if (state.isOwnerOperator) return 'owner_operator';

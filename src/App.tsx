@@ -894,8 +894,21 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><PaymentRedirect /></Suspense>
               } />
 
-              {/* Internal Calculator */}
+              {/* Internal Calculator — canonical route */}
               <Route path="/internal/calculator" element={
+                <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
+              } />
+              {/* Calculator route aliases */}
+              <Route path="/ops/calculator" element={
+                <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
+              } />
+              <Route path="/sales/calculator" element={
+                <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
+              } />
+              <Route path="/cs/calculator" element={
+                <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
+              } />
+              <Route path="/dispatch/calculator" element={
                 <Suspense fallback={<PageLoader />}><InternalCalculator /></Suspense>
               } />
               
