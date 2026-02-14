@@ -1,10 +1,19 @@
-// Card 3: "Dispatch Plan" result card
+// Card 3: "Dispatch Plan" result card — Calsan Service Time Standards
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Truck, Clock, MapPin, Route, ClipboardList } from 'lucide-react';
+import { Truck, Clock, MapPin, Route, ClipboardList, ArrowRight, RotateCcw, Timer, Factory } from 'lucide-react';
 import { formatDuration, getSlaClassInfo } from '@/services/operationalTimeService';
+import {
+  calculateServiceTime,
+  buildRouteMinutes,
+  formatTimeRange,
+  CALSAN_STANDARDS,
+  type LogisticsServiceType,
+  type CycleEstimate,
+  type TimeSegment,
+} from '@/lib/logistics/serviceTimeEngine';
 import type { CalculatorEstimate } from '@/types/calculator';
 
 interface DispatchPlanCardProps {
@@ -13,10 +22,38 @@ interface DispatchPlanCardProps {
   onCreateRun?: () => void;
 }
 
+/** Map route miles → approximate drive minutes (avg 25 mph) */
+function milesToMinutes(miles?: number): number | undefined {
+  return miles != null ? Math.round((miles / 25) * 60) : undefined;
+}
+
 export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPlanCardProps) {
   const slaInfo = estimate.sla_class ? getSlaClassInfo(estimate.sla_class) : null;
-  const breakdown = estimate.time_breakdown;
   const route = estimate.route_details;
+
+  // Build Calsan service time from route distances
+  const routeMinutes = buildRouteMinutes({
+    yardToSiteMinutes: milesToMinutes(route?.yard_to_site_miles),
+    siteToFacilityMinutes: milesToMinutes(route?.site_to_dump_miles),
+    facilityToYardMinutes: milesToMinutes(route?.dump_to_yard_miles),
+  });
+
+  const serviceType = (estimate.service_type || 'DELIVERY') as LogisticsServiceType;
+  const serviceTime = calculateServiceTime(serviceType, routeMinutes);
+  const primary = serviceTime.primary;
+
+  // Icon map for breakdown labels
+  const labelIcon: Record<string, React.ElementType> = {
+    'Load on truck': Truck,
+    'Load replacement': Truck,
+    'Drive to site': ArrowRight,
+    'Drop-off': MapPin,
+    'Pickup secure': MapPin,
+    'Swap (pick + drop)': RotateCcw,
+    'Drive to facility': ArrowRight,
+    'Dump processing': Factory,
+    'Return to yard': ArrowRight,
+  };
 
   // Generate dispatch notes template
   const dispatchNotes = [
@@ -35,40 +72,52 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
             <Truck className="h-5 w-5" />
             Dispatch Plan
           </CardTitle>
-          {slaInfo && (
-            <Badge className={`${slaInfo.bgColor} ${slaInfo.color} border-0 text-xs`}>
-              {slaInfo.label} SLA
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-[10px] font-mono">
+              {serviceType}
             </Badge>
-          )}
+            {slaInfo && (
+              <Badge className={`${slaInfo.bgColor} ${slaInfo.color} border-0 text-xs`}>
+                {slaInfo.label} SLA
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Time breakdown */}
-        {breakdown && (
-          <div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Service Time Breakdown</p>
-            <div className="grid grid-cols-5 gap-1.5">
-              {[
-                { label: 'Yard', value: breakdown.yard_time },
-                { label: 'Drive', value: breakdown.drive_time },
-                { label: 'Site', value: breakdown.jobsite_time },
-                { label: 'Dump', value: breakdown.dump_time },
-                { label: 'Buffer', value: breakdown.buffer },
-              ].map(item => (
-                <div key={item.label} className="text-center p-2 rounded-md bg-muted/50">
-                  <p className="text-sm font-semibold">{item.value}m</p>
-                  <p className="text-[10px] text-muted-foreground">{item.label}</p>
+        {/* Calsan Service Time Breakdown */}
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+            Service Time — Calsan Standards
+          </p>
+          <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
+            {primary.breakdown.map((seg, i) => {
+              const Icon = labelIcon[seg.label] || Clock;
+              return (
+                <div key={i} className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <Icon className="w-3.5 h-3.5 text-primary/60 shrink-0" />
+                    {seg.label}
+                  </span>
+                  <span className="font-mono text-foreground/80 text-xs">
+                    {formatTimeRange(seg.min, seg.max)}
+                  </span>
                 </div>
-              ))}
-            </div>
-            <div className="mt-2 flex items-center justify-between text-sm px-1">
-              <span className="text-muted-foreground">Total Cycle</span>
-              <span className="font-semibold">
-                {estimate.total_time_minutes ? formatDuration(estimate.total_time_minutes) : '--'}
+              );
+            })}
+
+            <div className="border-t border-border my-1.5" />
+            <div className="flex items-center justify-between font-semibold text-foreground text-sm">
+              <span className="flex items-center gap-2">
+                <Timer className="w-3.5 h-3.5 text-primary shrink-0" />
+                Total cycle
+              </span>
+              <span className="font-mono">
+                {formatTimeRange(primary.min, primary.max)}
               </span>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Route distances */}
         {route && (
@@ -77,19 +126,19 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
             <div className="space-y-1.5 text-sm">
               {route.yard_to_site_miles != null && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Yard to Site</span>
+                  <span className="text-muted-foreground">Yard → Site</span>
                   <span>{route.yard_to_site_miles.toFixed(1)} mi</span>
                 </div>
               )}
               {route.site_to_dump_miles != null && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Site to Facility</span>
+                  <span className="text-muted-foreground">Site → Facility</span>
                   <span>{route.site_to_dump_miles.toFixed(1)} mi</span>
                 </div>
               )}
               {route.dump_to_yard_miles != null && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Facility to Yard</span>
+                  <span className="text-muted-foreground">Facility → Yard</span>
                   <span>{route.dump_to_yard_miles.toFixed(1)} mi</span>
                 </div>
               )}
@@ -105,14 +154,24 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
 
         {/* Swap logic note */}
         {estimate.service_type === 'SWAP' && (
-          <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-100 text-xs text-blue-700">
+          <div className="p-2.5 rounded-lg bg-accent/50 border border-accent text-xs text-accent-foreground">
             <p className="font-medium mb-1">Swap Workflow</p>
-            <p>1. Deliver empty to site</p>
-            <p>2. Pick up full from site</p>
-            <p>3. Transport to facility</p>
+            <p>1. Load replacement at yard</p>
+            <p>2. Drive to site → swap (pick full + drop empty)</p>
+            <p>3. Transport to facility → dump</p>
             <p>4. Return to yard</p>
           </div>
         )}
+
+        {/* Calsan assumptions */}
+        <div className="text-[10px] text-muted-foreground/70 flex flex-wrap gap-x-3 gap-y-0.5">
+          <span>Load: {CALSAN_STANDARDS.LOAD_ON_TRUCK}m</span>
+          <span>Drop: {CALSAN_STANDARDS.DROPOFF_MIN}–{CALSAN_STANDARDS.DROPOFF_MAX}m</span>
+          <span>Pickup: {CALSAN_STANDARDS.PICKUP_ONLY}m</span>
+          <span>Swap: {CALSAN_STANDARDS.SWAP_PICKUP}m</span>
+          <span>Dump: {CALSAN_STANDARDS.DUMP_PROCESS_MIN}–{CALSAN_STANDARDS.DUMP_PROCESS_MAX}m</span>
+          <span>Traffic: ±15%</span>
+        </div>
 
         {/* Dispatch notes preview */}
         <div>
