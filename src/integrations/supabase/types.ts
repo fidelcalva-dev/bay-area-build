@@ -468,6 +468,13 @@ export type Database = {
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ads_markets_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ads_metrics: {
@@ -1143,6 +1150,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "assets_dumpsters_home_yard_id_fkey"
             columns: ["home_yard_id"]
             isOneToOne: false
@@ -1154,6 +1168,13 @@ export type Database = {
             columns: ["home_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_home_yard_id_fkey"
+            columns: ["home_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
           {
@@ -1399,6 +1420,13 @@ export type Database = {
             columns: ["yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calculator_estimates_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3862,6 +3890,13 @@ export type Database = {
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "drivers_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       dump_fee_profiles: {
@@ -5640,6 +5675,13 @@ export type Database = {
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "inventory_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       inventory_movements: {
@@ -6639,6 +6681,13 @@ export type Database = {
             referencedRelation: "yards"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "market_onboarding_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       market_price_adjustments: {
@@ -6962,6 +7011,13 @@ export type Database = {
             columns: ["default_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "markets_default_yard_id_fkey"
+            columns: ["default_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
         ]
@@ -8133,6 +8189,7 @@ export type Database = {
           driver_notes: string | null
           driver_notes_internal: string | null
           dry_run_reason: string | null
+          dump_details: Json | null
           dump_ticket_url: string | null
           estimated_fill_pct: number | null
           estimated_weight_tons_max: number | null
@@ -8173,6 +8230,7 @@ export type Database = {
           placement_photo_url: string | null
           portal_link_id: string | null
           portal_link_sent_at: string | null
+          portal_show_dump_ticket: boolean | null
           primary_dumpster_id: string | null
           quick_link_id: string | null
           quote_id: string | null
@@ -8228,6 +8286,7 @@ export type Database = {
           driver_notes?: string | null
           driver_notes_internal?: string | null
           dry_run_reason?: string | null
+          dump_details?: Json | null
           dump_ticket_url?: string | null
           estimated_fill_pct?: number | null
           estimated_weight_tons_max?: number | null
@@ -8268,6 +8327,7 @@ export type Database = {
           placement_photo_url?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
+          portal_show_dump_ticket?: boolean | null
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
@@ -8323,6 +8383,7 @@ export type Database = {
           driver_notes?: string | null
           driver_notes_internal?: string | null
           dry_run_reason?: string | null
+          dump_details?: Json | null
           dump_ticket_url?: string | null
           estimated_fill_pct?: number | null
           estimated_weight_tons_max?: number | null
@@ -8363,6 +8424,7 @@ export type Database = {
           placement_photo_url?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
+          portal_show_dump_ticket?: boolean | null
           primary_dumpster_id?: string | null
           quick_link_id?: string | null
           quote_id?: string | null
@@ -8415,6 +8477,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
@@ -8433,6 +8502,13 @@ export type Database = {
             columns: ["destination_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
           {
@@ -8468,6 +8544,13 @@ export type Database = {
             columns: ["origin_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
           {
@@ -9529,6 +9612,13 @@ export type Database = {
             columns: ["preset_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quick_links_preset_yard_id_fkey"
+            columns: ["preset_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
         ]
@@ -10842,6 +10932,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "runs_destination_yard_id_fkey"
+            columns: ["destination_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "runs_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -10881,6 +10978,13 @@ export type Database = {
             columns: ["origin_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runs_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
           {
@@ -12463,6 +12567,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "toll_surcharges_origin_yard_id_fkey"
+            columns: ["origin_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "toll_surcharges_zone_id_fkey"
             columns: ["zone_id"]
             isOneToOne: false
@@ -12645,6 +12756,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "trucks_assigned_yard_id_fkey"
+            columns: ["assigned_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trucks_current_yard_id_fkey"
             columns: ["current_yard_id"]
             isOneToOne: false
@@ -12659,6 +12777,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "trucks_current_yard_id_fkey"
+            columns: ["current_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trucks_home_yard_id_fkey"
             columns: ["home_yard_id"]
             isOneToOne: false
@@ -12670,6 +12795,13 @@ export type Database = {
             columns: ["home_yard_id"]
             isOneToOne: false
             referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_home_yard_id_fkey"
+            columns: ["home_yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
         ]
@@ -13753,6 +13885,50 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      yards_public: {
+        Row: {
+          id: string | null
+          is_active: boolean | null
+          latitude: number | null
+          longitude: number | null
+          market: string | null
+          market_id: string | null
+          name: string | null
+          priority_rank: number | null
+          slug: string | null
+        }
+        Insert: {
+          id?: string | null
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          market?: string | null
+          market_id?: string | null
+          name?: string | null
+          priority_rank?: number | null
+          slug?: string | null
+        }
+        Update: {
+          id?: string | null
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          market?: string | null
+          market_id?: string | null
+          name?: string | null
+          priority_rank?: number | null
+          slug?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yards_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
             referencedColumns: ["id"]
           },
         ]

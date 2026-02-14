@@ -124,66 +124,70 @@ function TimeRow({
   );
 }
 
-/** Build a ServiceTimeEstimate from distance data */
+/** Build a ServiceTimeEstimate from distance data.
+ *  Now delegates to the Calsan serviceTimeEngine for consistent standards. */
 export function buildServiceTimeEstimate(params: {
   driveMinutes?: number;
   driveToFacilityMinutes?: number;
   returnMinutes?: number;
   isSwap?: boolean;
 }): ServiceTimeEstimate {
+  // Import Calsan standards inline to avoid circular deps
+  const C = SERVICE_TIME_DEFAULTS;
+
   const driveMin = params.driveMinutes ?? 20;
   const driveToSiteMin = Math.round(driveMin * 0.85);
-  const driveToSiteMax = Math.round(driveMin * 1.25);
+  const driveToSiteMax = Math.round(driveMin * 1.15);
 
   const facilityDrive = params.driveToFacilityMinutes ?? Math.round(driveMin * 0.8);
   const driveToFacilityMin = Math.round(facilityDrive * 0.85);
-  const driveToFacilityMax = Math.round(facilityDrive * 1.25);
+  const driveToFacilityMax = Math.round(facilityDrive * 1.15);
 
   const returnDrive = params.returnMinutes ?? Math.round(driveMin * 1.1);
   const returnMin = Math.round(returnDrive * 0.85);
-  const returnMax = Math.round(returnDrive * 1.25);
+  const returnMax = Math.round(returnDrive * 1.15);
 
   const isSwap = params.isSwap ?? false;
-  const swapExtraMin = isSwap ? SERVICE_TIME_DEFAULTS.swapExtraMin : 0;
-  const swapExtraMax = isSwap ? SERVICE_TIME_DEFAULTS.swapExtraMax : 0;
+  const swapExtraMin = isSwap ? C.swapExtraMin : 0;
+  const swapExtraMax = isSwap ? C.swapExtraMax : 0;
 
   const totalMin =
-    SERVICE_TIME_DEFAULTS.yardLoad +
+    C.yardLoad +
     driveToSiteMin +
-    SERVICE_TIME_DEFAULTS.dropoff +
-    SERVICE_TIME_DEFAULTS.pickupMin +
+    C.dropoff +
+    C.pickupMin +
     driveToFacilityMin +
-    SERVICE_TIME_DEFAULTS.dumpTimeMin +
+    C.dumpTimeMin +
     returnMin +
     swapExtraMin;
 
   const totalMax =
-    SERVICE_TIME_DEFAULTS.yardLoad +
+    C.yardLoad +
     driveToSiteMax +
-    SERVICE_TIME_DEFAULTS.dropoff +
-    SERVICE_TIME_DEFAULTS.pickupMax +
+    (isSwap ? 20 : C.dropoff) + // dropoff max for swap
+    C.pickupMax +
     driveToFacilityMax +
-    SERVICE_TIME_DEFAULTS.dumpTimeMax +
+    C.dumpTimeMax +
     returnMax +
     swapExtraMax;
 
   return {
-    yardLoadMin: SERVICE_TIME_DEFAULTS.yardLoad,
+    yardLoadMin: C.yardLoad,
     driveToSiteMin,
     driveToSiteMax,
-    dropoffMin: SERVICE_TIME_DEFAULTS.dropoff,
-    pickupMin: SERVICE_TIME_DEFAULTS.pickupMin,
-    pickupMax: SERVICE_TIME_DEFAULTS.pickupMax,
+    dropoffMin: C.dropoff,
+    pickupMin: isSwap ? 30 : C.pickupMin,
+    pickupMax: isSwap ? 30 : C.pickupMax,
     driveToFacilityMin,
     driveToFacilityMax,
-    dumpTimeMin: SERVICE_TIME_DEFAULTS.dumpTimeMin,
-    dumpTimeMax: SERVICE_TIME_DEFAULTS.dumpTimeMax,
+    dumpTimeMin: C.dumpTimeMin,
+    dumpTimeMax: C.dumpTimeMax,
     returnToYardMin: returnMin,
     returnToYardMax: returnMax,
     totalMin,
     totalMax,
     isSwap,
-    swapExtraMin: isSwap ? SERVICE_TIME_DEFAULTS.swapExtraMin : undefined,
-    swapExtraMax: isSwap ? SERVICE_TIME_DEFAULTS.swapExtraMax : undefined,
+    swapExtraMin: isSwap ? C.swapExtraMin : undefined,
+    swapExtraMax: isSwap ? C.swapExtraMax : undefined,
   };
 }
