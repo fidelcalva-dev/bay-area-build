@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Headphones, Package, MessageSquare, FileText, LogOut, 
-  Home, Loader2, ClipboardList, Search, Phone
+  Home, Loader2, ClipboardList, Search, Phone, Calculator
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -18,6 +18,7 @@ const navItems = [
   { path: '/cs/calls', label: 'Calls', icon: Phone },
   { path: '/cs/messages', label: 'Messages', icon: MessageSquare },
   { path: '/cs/templates', label: 'SMS Templates', icon: FileText },
+  { path: '/internal/calculator', label: 'Calculator', icon: Calculator },
 ];
 
 const mobileNavItems: MobileNavItem[] = [
