@@ -1,13 +1,12 @@
 // Internal Master Calculator Page
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { MasterCalculatorInputs } from '@/components/calculator/MasterCalculatorInputs';
 import { ServiceabilityCard } from '@/components/calculator/ServiceabilityCard';
-import { QuoteCard } from '@/components/calculator/QuoteCard';
+import { TierSelector } from '@/components/calculator/TierSelector';
 import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
-import { DiscountPanel } from '@/components/calculator/DiscountPanel';
 import { VendorFinderPanel } from '@/components/calculator/VendorFinderPanel';
 import { ScriptGenerator } from '@/components/calculator/ScriptGenerator';
 import { useCalculator } from '@/hooks/useCalculator';
@@ -16,6 +15,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calculator, Shield, User, RotateCcw } from 'lucide-react';
+import {
+  fetchTierConfigs,
+  calculateTiers,
+  buildRiskFlags,
+  type PricingTier,
+  type TierCalculationResult,
+} from '@/services/pricingTierService';
+import { logCalculatorAction } from '@/services/calculatorService';
 import type { CalculatorInputs as CalculatorInputsType } from '@/types/calculator';
 
 const ROLE_DISPLAY: Record<string, { label: string; color: string }> = {
@@ -32,9 +39,47 @@ export default function InternalCalculator() {
   const { toast } = useToast();
   const { result, isCalculating, calculate, saveEstimate, applyDiscount, reset } = useCalculator();
   const [lastInputs, setLastInputs] = useState<any>(null);
+  const [tierResult, setTierResult] = useState<TierCalculationResult | null>(null);
+  const [selectedTier, setSelectedTier] = useState<PricingTier | undefined>();
 
   const userRole = role || 'sales';
   const roleInfo = ROLE_DISPLAY[userRole] || ROLE_DISPLAY.sales;
+
+  // Compute tiers when result changes
+  useEffect(() => {
+    if (result?.success && !result.is_blocked && result.estimate?.internal_cost) {
+      computeTiers(result.estimate.internal_cost);
+    } else {
+      setTierResult(null);
+      setSelectedTier(undefined);
+    }
+  }, [result]);
+
+  const computeTiers = async (internalCost: number) => {
+    try {
+      const configs = await fetchTierConfigs();
+      const riskFlags = buildRiskFlags({
+        is_same_day: lastInputs?.is_same_day || false,
+        material_category: lastInputs?.material_category || 'DEBRIS',
+        access_notes: lastInputs?.access_notes,
+        warnings: result?.estimate?.warnings,
+      });
+
+      const tiers = calculateTiers(
+        internalCost,
+        riskFlags,
+        lastInputs?.customer_type || 'homeowner',
+        configs.tiers,
+        configs.surcharges,
+        configs.roundingRule,
+      );
+
+      setTierResult(tiers);
+      setSelectedTier(tiers.recommended_tier);
+    } catch (err) {
+      console.error('Failed to compute tiers:', err);
+    }
+  };
 
   const handleCalculate = useCallback(async (inputs: CalculatorInputsType & {
     delivery_date?: string;
@@ -56,18 +101,27 @@ export default function InternalCalculator() {
     }
   }, [saveEstimate, toast]);
 
-  const handleApplyDiscount = useCallback(async (type: string, value: number, reason?: string) => {
-    if (!result?.estimate?.id) {
-      const saved = await saveEstimate();
-      if (saved) {
-        await applyDiscount(saved.id, type, value, reason);
-      }
-    } else {
-      await applyDiscount(result.estimate.id, type, value, reason);
-    }
-  }, [result, saveEstimate, applyDiscount]);
+  const handleSelectTier = useCallback(async (tier: PricingTier, overridePrice?: number, overrideReason?: string) => {
+    setSelectedTier(tier);
 
-  const canApplyDiscounts = userRole === 'admin' || userRole === 'sales';
+    // Log tier selection (and override if applicable)
+    await logCalculatorAction({
+      action_type: overridePrice ? 'OVERRIDE' : 'CALCULATE',
+      inputs_json: lastInputs,
+      outputs_json: {
+        selected_tier: tier,
+        tier_price: tierResult?.tiers[tier]?.customer_price,
+        override_price: overridePrice,
+      } as any,
+      override_details: overridePrice ? {
+        field: 'customer_price',
+        original_value: tierResult?.tiers[tier]?.customer_price,
+        new_value: overridePrice,
+      } : undefined,
+      notes: overrideReason || `Tier ${tier} selected`,
+    });
+  }, [lastInputs, tierResult]);
+
   const showVendorFinder = result && (result.is_blocked || !result.success);
 
   if (authLoading) {
@@ -148,34 +202,35 @@ export default function InternalCalculator() {
                       dumpsterSize={lastInputs.dumpster_size}
                       customerPrice={result.estimate?.customer_price || 0}
                       userRole={userRole}
+                      customerType={lastInputs.customer_type || 'homeowner'}
+                      isSameDay={lastInputs.is_same_day || false}
+                      accessNotes={lastInputs.access_notes}
                     />
                   )}
 
-                  {/* Card 2: Quote (if serviceable) */}
+                  {/* Card 2: Tier Quote (if serviceable) */}
                   {result.success && !result.is_blocked && (
                     <>
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                        <QuoteCard
-                          result={result}
-                          userRole={userRole}
-                          onSave={handleSave}
-                        />
+                        {tierResult ? (
+                          <TierSelector
+                            tierResult={tierResult}
+                            userRole={userRole}
+                            dumpsterSize={result.estimate.dumpster_size}
+                            onSelectTier={handleSelectTier}
+                            onSave={handleSave}
+                            selectedTier={selectedTier}
+                          />
+                        ) : (
+                          <Card className="flex items-center justify-center p-8">
+                            <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                          </Card>
+                        )}
                         <DispatchPlanCard
                           estimate={result.estimate}
                           userRole={userRole}
                         />
                       </div>
-
-                      {/* Discount Panel */}
-                      {canApplyDiscounts && result.estimate && (
-                        <DiscountPanel
-                          userRole={userRole}
-                          customerTier={result.estimate.customer_tier || 'standard'}
-                          currentPrice={result.estimate.customer_price || 0}
-                          internalCost={result.estimate.internal_cost || 0}
-                          onApplyDiscount={handleApplyDiscount}
-                        />
-                      )}
 
                       {/* Scripts */}
                       <ScriptGenerator
@@ -194,7 +249,7 @@ export default function InternalCalculator() {
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1 max-w-md">
                       Enter a ZIP or address, select service details, and click Calculate.
-                      Results include serviceability, pricing, logistics, vendor options, and ready-to-use scripts.
+                      Results include serviceability, pricing tiers, logistics, vendor options, and ready-to-use scripts.
                     </p>
                   </CardContent>
                 </Card>
@@ -207,11 +262,11 @@ export default function InternalCalculator() {
         <footer className="border-t bg-background mt-6">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <p>Internal use only. All calculations are logged for audit.</p>
+              <p>Internal use only. All tier selections and overrides are logged for audit.</p>
               <div className="flex items-center gap-4">
-                <span className="text-green-600 font-medium">Margin 30%+</span>
-                <span className="text-amber-600 font-medium">Margin 20-30%</span>
-                <span className="text-red-600 font-medium">Margin &lt;20% (approval)</span>
+                <span className="text-blue-600 font-medium">BASE 18-25%</span>
+                <span className="text-primary font-medium">CORE 25-35%</span>
+                <span className="text-amber-600 font-medium">PREMIUM 35-50%</span>
               </div>
             </div>
           </div>
