@@ -34,6 +34,11 @@ import { PRICING_ZONES } from '../constants';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+import {
+  calculateServiceTime,
+  buildRouteMinutes,
+  type LogisticsServiceType,
+} from '@/lib/logistics/serviceTimeEngine';
 import { AddressAutocomplete, type AddressResult } from './AddressAutocomplete';
 import {
   getStepTitles, getButtons, getPriceMomentCopy, getPlacementCopy, getEtaCopy,
@@ -453,7 +458,7 @@ export function V3QuoteFlow() {
     return `${minMin}-${maxMin} min from yard`;
   }, [distanceCalc.distance]);
 
-  // Service time estimate
+  // Service time estimate (legacy for internal breakdown)
   const serviceTime = useMemo(() => {
     if (!distanceCalc.distance) return null;
     return buildServiceTimeEstimate({
@@ -462,6 +467,35 @@ export function V3QuoteFlow() {
       returnMinutes: Math.round(distanceCalc.distance.distanceMinutes * 1.1),
       isSwap: wantsSwap,
     });
+  }, [distanceCalc.distance, wantsSwap]);
+
+  // Calsan total cycle for customer display
+  const totalCycleDisplay = useMemo(() => {
+    if (!distanceCalc.distance) return null;
+    const driveMin = distanceCalc.distance.distanceMinutes;
+    const route = buildRouteMinutes({
+      yardToSiteMinutes: driveMin,
+      siteToFacilityMinutes: Math.round(driveMin * 0.8),
+      facilityToYardMinutes: Math.round(driveMin * 1.1),
+    });
+    const svcType: LogisticsServiceType = wantsSwap ? 'SWAP' : 'DELIVERY';
+    const result = calculateServiceTime(svcType, route);
+
+    if (wantsSwap) {
+      return {
+        label: 'Swap cycle estimated',
+        minHours: (result.swap.min / 60).toFixed(1),
+        maxHours: (result.swap.max / 60).toFixed(1),
+      };
+    }
+    // Delivery + Pickup combined
+    const totalMin = result.delivery.min + result.pickup.min;
+    const totalMax = result.delivery.max + result.pickup.max;
+    return {
+      label: 'Total service cycle',
+      minHours: (totalMin / 60).toFixed(1),
+      maxHours: (totalMax / 60).toFixed(1),
+    };
   }, [distanceCalc.distance, wantsSwap]);
 
   // Saved quote ID for placement
@@ -1031,25 +1065,48 @@ export function V3QuoteFlow() {
                   </div>
                 )}
 
-                {/* Service Timing */}
+                {/* Service Timing — Premium customer display */}
                 <div className="px-5 py-4 border-t border-border/50">
-                  <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-3">Service Timing (Estimated)</p>
-                  {serviceTime ? (
-                    <ServiceTimeBreakdown
-                      estimate={serviceTime}
-                      yardName={distanceCalc.distance?.yard.name}
-                      showInternal={showInternalBreakdown}
-                    />
+                  <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-3">Service Time (Estimated)</p>
+
+                  {totalCycleDisplay ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <Clock className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {totalCycleDisplay.label}: {totalCycleDisplay.minHours} – {totalCycleDisplay.maxHours} hours
+                          </p>
+                          <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                            Includes travel, placement, secure transport, legal disposal, and return routing.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="w-3.5 h-3.5 text-primary" />
                       {etaDisplay ? `Delivery ETA: ${etaDisplay}` : DELIVERY_TIME_FALLBACK}
                     </div>
                   )}
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2.5">
                     <MapPin className="w-3.5 h-3.5 text-primary" />
                     {FACILITY_AUTO_SELECTED}
                   </div>
+
+                  {/* Internal breakdown — staff only via ?internal=1 */}
+                  {showInternalBreakdown && serviceTime && (
+                    <div className="mt-3 pt-3 border-t border-dashed border-border/50">
+                      <ServiceTimeBreakdown
+                        estimate={serviceTime}
+                        yardName={distanceCalc.distance?.yard.name}
+                        showInternal
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Swap */}
