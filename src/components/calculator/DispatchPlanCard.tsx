@@ -27,6 +27,13 @@ function milesToMinutes(miles?: number): number | undefined {
   return miles != null ? Math.round((miles / 25) * 60) : undefined;
 }
 
+/** Format a min–max range in hours, e.g. "2.1 – 3.4 hours" */
+function formatHoursRange(min: number, max: number): string {
+  const hMin = (min / 60).toFixed(1);
+  const hMax = (max / 60).toFixed(1);
+  return hMin === hMax ? `${hMin} hours` : `${hMin} – ${hMax} hours`;
+}
+
 export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPlanCardProps) {
   const slaInfo = estimate.sla_class ? getSlaClassInfo(estimate.sla_class) : null;
   const route = estimate.route_details;
@@ -123,17 +130,21 @@ export function DispatchPlanCard({ estimate, userRole, onCreateRun }: DispatchPl
             </div>
           )}
 
-          {/* Full Cycle Total */}
-          <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-3">
+          {/* Full Cycle Total — Delivery + Pickup combined */}
+          <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-3 space-y-1">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              Estimated Total Cycle
+            </p>
             <div className="flex items-center justify-between font-semibold text-foreground text-sm">
               <span className="flex items-center gap-2">
                 <Timer className="w-3.5 h-3.5 text-primary shrink-0" />
-                Total {serviceType.toLowerCase()} cycle
+                Delivery + Pickup
               </span>
               <span className="font-mono text-primary">
-                {formatTimeRange(primary.min, primary.max)}
+                {formatHoursRange(serviceTime.delivery.min + serviceTime.pickup.min, serviceTime.delivery.max + serviceTime.pickup.max)}
               </span>
             </div>
+            <p className="text-[10px] text-muted-foreground text-right">depending on traffic</p>
           </div>
         </div>
 
