@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { checkGuardrail, type GuardrailResult } from '@/services/riskCheckService';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
@@ -20,6 +21,7 @@ export default function QuotePayment() {
 
   const orderId = searchParams.get('orderId');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState<'deposit' | 'balance' | null>(null);
   const [orderInfo, setOrderInfo] = useState<{
     total: number;
     size: string;
@@ -230,12 +232,17 @@ export default function QuotePayment() {
 
           {/* Pay Deposit */}
           <button
-            onClick={handlePayDeposit}
+            onClick={() => setSelectedPaymentOption('deposit')}
             disabled={isProcessing || !!paymentBlocked}
-            className="w-full p-4 rounded-xl border-2 border-primary bg-primary/5 text-left transition-all hover:bg-primary/10 disabled:opacity-50"
+            className={cn(
+              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+              selectedPaymentOption === 'deposit'
+                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                : 'border-border bg-card hover:border-primary/40'
+            )}
           >
             <div className="flex items-center justify-between mb-1">
-              <p className="font-semibold text-primary">Pay Deposit</p>
+              <p className={cn('font-semibold', selectedPaymentOption === 'deposit' ? 'text-primary' : 'text-foreground')}>Pay Deposit</p>
               <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
             </div>
             <p className="text-2xl font-bold text-foreground">${depositAmount.toLocaleString()}</p>
@@ -246,16 +253,39 @@ export default function QuotePayment() {
 
           {/* Pay Full */}
           <button
-            onClick={handlePayFull}
+            onClick={() => setSelectedPaymentOption('balance')}
             disabled={isProcessing || !!paymentBlocked}
-            className="w-full p-4 rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 disabled:opacity-50"
+            className={cn(
+              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+              selectedPaymentOption === 'balance'
+                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                : 'border-border bg-card hover:border-primary/40'
+            )}
           >
-            <p className="font-semibold text-foreground">Pay in Full</p>
+            <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
             <p className="text-2xl font-bold text-foreground">${orderInfo?.total.toLocaleString() || '—'}</p>
             <p className="text-xs text-muted-foreground mt-1">
               Pay the full amount now — no balance remaining
             </p>
           </button>
+
+          {/* Confirm Payment Button */}
+          <Button
+            onClick={() => {
+              if (selectedPaymentOption === 'deposit') handlePayDeposit();
+              else if (selectedPaymentOption === 'balance') handlePayFull();
+            }}
+            disabled={!selectedPaymentOption || isProcessing || !!paymentBlocked}
+            className="w-full h-12 text-base font-semibold gap-2"
+            size="lg"
+          >
+            {isProcessing ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Lock className="w-4 h-4" />
+            )}
+            {isProcessing ? 'Connecting...' : selectedPaymentOption ? 'Proceed to Secure Payment' : 'Select a payment option'}
+          </Button>
         </div>
 
         {isProcessing && (
