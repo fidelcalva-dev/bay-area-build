@@ -6,6 +6,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { MasterCalculatorInputs } from '@/components/calculator/MasterCalculatorInputs';
 import { ServiceabilityCard } from '@/components/calculator/ServiceabilityCard';
 import { TierSelector } from '@/components/calculator/TierSelector';
+import { QuoteSendPanel } from '@/components/calculator/QuoteSendPanel';
 import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
 import { VendorFinderPanel } from '@/components/calculator/VendorFinderPanel';
 import { ScriptGenerator } from '@/components/calculator/ScriptGenerator';
@@ -41,6 +42,7 @@ export default function InternalCalculator() {
   const [lastInputs, setLastInputs] = useState<any>(null);
   const [tierResult, setTierResult] = useState<TierCalculationResult | null>(null);
   const [selectedTier, setSelectedTier] = useState<PricingTier | undefined>();
+  const [tierConfigs, setTierConfigs] = useState<Record<PricingTier, import('@/services/pricingTierService').TierConfig> | null>(null);
 
   const userRole = role || 'sales';
   const roleInfo = ROLE_DISPLAY[userRole] || ROLE_DISPLAY.sales;
@@ -64,6 +66,8 @@ export default function InternalCalculator() {
         access_notes: lastInputs?.access_notes,
         warnings: result?.estimate?.warnings,
       });
+
+      setTierConfigs(configs.tiers);
 
       const tiers = calculateTiers(
         internalCost,
@@ -232,7 +236,25 @@ export default function InternalCalculator() {
                         />
                       </div>
 
-                      {/* Scripts */}
+                      {/* Quote Send Panel */}
+                      {tierResult && selectedTier && tierConfigs && user && (
+                        <QuoteSendPanel
+                          activeTier={selectedTier}
+                          activePricing={tierResult.tiers[selectedTier]}
+                          tierConfig={tierConfigs[selectedTier]}
+                          dumpsterSize={result.estimate.dumpster_size}
+                          customerType={lastInputs?.customer_type || 'homeowner'}
+                          materialCategory={lastInputs?.material_category || 'DEBRIS'}
+                          userId={user.id}
+                          userRole={userRole}
+                          inputs={{
+                            zip_code: lastInputs?.zip_code,
+                            address_text: lastInputs?.destination_address,
+                            is_same_day: lastInputs?.is_same_day,
+                          }}
+                        />
+                      )}
+
                       <ScriptGenerator
                         estimate={result.estimate}
                         userRole={userRole}

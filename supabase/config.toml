@@ -158,3 +158,6 @@ verify_jwt = false
 
 [functions.send-test-email]
 verify_jwt = false
+
+[functions.send-outbound-quote]
+verify_jwt = false
