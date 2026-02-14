@@ -69,6 +69,9 @@ const CustomerDocuments = lazy(() => import("./pages/portal/CustomerDocuments"))
 const CustomerOrderDetail = lazy(() => import("./pages/portal/CustomerOrderDetail"));
 const PaymentComplete = lazy(() => import("./pages/portal/PaymentComplete"));
 const PortalTrack = lazy(() => import("./pages/portal/PortalTrack"));
+const PortalQuoteView = lazy(() => import("./pages/portal/PortalQuoteView"));
+const PortalSchedule = lazy(() => import("./pages/portal/PortalSchedule"));
+const PortalPay = lazy(() => import("./pages/portal/PortalPay"));
 
 // Portal Auth Guard
 import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
@@ -478,6 +481,17 @@ const App = () => {
                 <PortalAuthGuard>
                   <Suspense fallback={<PageLoader />}><PaymentComplete /></Suspense>
                 </PortalAuthGuard>
+              } />
+
+              {/* Portal Quote/Schedule/Pay (accessible via SMS links, no OTP required) */}
+              <Route path="/portal/quote/:quoteId" element={
+                <Suspense fallback={<PageLoader />}><PortalQuoteView /></Suspense>
+              } />
+              <Route path="/portal/schedule" element={
+                <Suspense fallback={<PageLoader />}><PortalSchedule /></Suspense>
+              } />
+              <Route path="/portal/pay" element={
+                <Suspense fallback={<PageLoader />}><PortalPay /></Suspense>
               } />
 
               {/* Green Halo Client Portal */}

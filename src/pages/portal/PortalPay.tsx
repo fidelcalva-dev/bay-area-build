@@ -1,0 +1,331 @@
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import {
+  CreditCard, Loader2, ArrowLeft, ChevronRight, CheckCircle,
+  Calendar, Lock, Shield, Phone, AlertCircle,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { logTimelineEvent } from '@/lib/timelineService';
+import { useToast } from '@/hooks/use-toast';
+import logoCalsan from '@/assets/logo-calsan.jpeg';
+
+export default function PortalPay() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const quoteParam = searchParams.get('quote');
+  const orderParam = searchParams.get('orderId');
+
+  const [orderId, setOrderId] = useState<string | null>(orderParam);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [orderInfo, setOrderInfo] = useState<{
+    total: number;
+    size: string;
+    schedDate: string | null;
+    schedWindow: string | null;
+    name: string;
+  } | null>(null);
+  const [hostedData, setHostedData] = useState<{
+    token: string;
+    formPostUrl: string;
+    paymentId: string;
+  } | null>(null);
+
+  // Resolve quote to order, then load order info
+  useEffect(() => {
+    const resolve = async () => {
+      try {
+        let resolvedOrderId = orderParam;
+
+        if (quoteParam && !resolvedOrderId) {
+          const { data: oq } = await supabase
+            .from('outbound_quotes')
+            .select('order_id, quote_id, size_yd, customer_price, customer_name')
+            .eq('id', quoteParam)
+            .single();
+
+          if (!oq) {
+            setError('Quote not found.');
+            return;
+          }
+
+          if (oq.order_id) {
+            resolvedOrderId = oq.order_id;
+          } else if (oq.quote_id) {
+            const { data: existingOrder } = await supabase
+              .from('orders')
+              .select('id')
+              .eq('quote_id', oq.quote_id)
+              .single();
+
+            if (existingOrder) {
+              resolvedOrderId = existingOrder.id;
+            } else {
+              setError('Please schedule delivery first before paying.');
+              return;
+            }
+          } else {
+            setError('No linked order found. Please contact support.');
+            return;
+          }
+        }
+
+        if (!resolvedOrderId) {
+          setError('Missing order information.');
+          return;
+        }
+
+        setOrderId(resolvedOrderId);
+
+        // Load order details
+        const { data: order } = await supabase
+          .from('orders')
+          .select('final_total, balance_due, amount_due, scheduled_delivery_date, scheduled_delivery_window, quotes(size_id, customer_name, dumpster_sizes:size_id(label))')
+          .eq('id', resolvedOrderId)
+          .single();
+
+        if (order) {
+          const q = order.quotes as any;
+          setOrderInfo({
+            total: order.balance_due || order.amount_due || order.final_total || 0,
+            size: q?.dumpster_sizes?.label || 'Dumpster',
+            schedDate: order.scheduled_delivery_date,
+            schedWindow: order.scheduled_delivery_window,
+            name: q?.customer_name || 'Customer',
+          });
+        }
+      } catch {
+        setError('Something went wrong.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    resolve();
+  }, [quoteParam, orderParam]);
+
+  // Auto-submit form when hosted data ready
+  useEffect(() => {
+    if (hostedData && formRef.current) {
+      formRef.current.submit();
+    }
+  }, [hostedData]);
+
+  const handlePay = async (type: 'deposit' | 'balance') => {
+    if (!orderInfo || !orderId) return;
+    setIsProcessing(true);
+
+    try {
+      const amount = type === 'deposit'
+        ? Math.min(orderInfo.total, Math.max(100, Math.round(orderInfo.total * 0.5)))
+        : orderInfo.total;
+
+      const origin = window.location.origin;
+
+      const { data, error: invokeErr } = await supabase.functions.invoke('create-hosted-session', {
+        body: {
+          orderId,
+          paymentType: type,
+          amount,
+          returnUrl: `${origin}/portal/payment-complete?orderId=${orderId}`,
+          cancelUrl: `${origin}/portal/pay?orderId=${orderId}`,
+        },
+      });
+
+      if (invokeErr) throw invokeErr;
+
+      if (data?.success && data?.token) {
+        // Log timeline event
+        await logTimelineEvent({
+          entityType: 'ORDER',
+          entityId: orderId,
+          eventType: 'PAYMENT',
+          eventAction: 'CREATED',
+          summary: `Customer initiated ${type} payment of $${amount}`,
+          orderId,
+          source: 'USER',
+          visibility: 'CUSTOMER',
+          actorRole: 'customer',
+          details: { payment_type: type, amount },
+        });
+
+        setHostedData({
+          token: data.token,
+          formPostUrl: data.formPostUrl,
+          paymentId: data.paymentId,
+        });
+      } else {
+        throw new Error(data?.error || 'Failed to create payment session');
+      }
+    } catch (err) {
+      console.error('Payment error:', err);
+      toast({ title: 'Payment Error', description: 'Failed to start payment.', variant: 'destructive' });
+      setIsProcessing(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="max-w-md w-full text-center p-8">
+          <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => navigate('/portal')}>Go to Portal</Button>
+        </Card>
+      </div>
+    );
+  }
+
+  const depositAmount = orderInfo ? Math.min(orderInfo.total, Math.max(100, Math.round(orderInfo.total * 0.5))) : 0;
+
+  return (
+    <div className="min-h-screen bg-[hsl(150_10%_98%)]">
+      <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <p className="font-semibold text-foreground">Secure Payment</p>
+            <p className="text-xs text-muted-foreground">Step 2 of 2</p>
+          </div>
+          <img src={logoCalsan} alt="Calsan" className="h-8 w-auto rounded" />
+        </div>
+      </header>
+
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        {/* Progress */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+            <CheckCircle className="w-3 h-3 mr-1" /> Scheduled
+          </Badge>
+          <ChevronRight className="w-3 h-3" />
+          <Badge className="bg-primary text-primary-foreground">
+            <CreditCard className="w-3 h-3 mr-1" /> Payment
+          </Badge>
+        </div>
+
+        {/* Order summary */}
+        {orderInfo && (
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-foreground">{orderInfo.size}</p>
+                  <p className="text-xs text-muted-foreground">{orderInfo.name}</p>
+                </div>
+                <p className="font-bold text-foreground text-xl">${orderInfo.total.toLocaleString()}</p>
+              </div>
+              {orderInfo.schedDate && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg px-3 py-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <span>
+                    {new Date(orderInfo.schedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                    {orderInfo.schedWindow && ` - ${orderInfo.schedWindow}`}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Payment options */}
+        <div className="space-y-3">
+          <h3 className="font-bold text-foreground flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-primary" />
+            Choose Payment Option
+          </h3>
+
+          <button
+            onClick={() => handlePay('deposit')}
+            disabled={isProcessing}
+            className="w-full p-4 rounded-xl border-2 border-primary bg-primary/5 text-left transition-all hover:bg-primary/10 disabled:opacity-50"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <p className="font-semibold text-primary">Pay Deposit</p>
+              <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
+            </div>
+            <p className="text-2xl font-bold text-foreground">${depositAmount.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              50% deposit - remaining balance due before delivery
+            </p>
+          </button>
+
+          <button
+            onClick={() => handlePay('balance')}
+            disabled={isProcessing}
+            className="w-full p-4 rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 disabled:opacity-50"
+          >
+            <p className="font-semibold text-foreground">Pay in Full</p>
+            <p className="text-2xl font-bold text-foreground">${orderInfo?.total.toLocaleString() || '-'}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Pay the full amount now - no balance remaining
+            </p>
+          </button>
+        </div>
+
+        {isProcessing && (
+          <div className="flex items-center justify-center gap-3 p-4 bg-primary/5 rounded-xl border border-primary/20">
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+            <p className="text-sm text-foreground font-medium">Connecting to secure payment...</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Lock className="w-3 h-3" />
+            256-bit encryption - PCI-DSS compliant
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Shield className="w-3 h-3" />
+            Powered by Authorize.Net
+          </div>
+        </div>
+
+        <div className="text-center pt-2">
+          <p className="text-xs text-muted-foreground mb-2">Prefer to pay later or by phone?</p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary"
+            onClick={() => {
+              toast({ title: 'No problem!', description: 'Our team will reach out about payment options.' });
+              if (orderId) navigate(`/portal/order/${orderId}`);
+              else navigate('/portal');
+            }}
+          >
+            <Phone className="w-3.5 h-3.5 mr-1" />
+            Pay Later / Call Us
+          </Button>
+        </div>
+      </main>
+
+      {hostedData && (
+        <form
+          ref={formRef}
+          method="POST"
+          action={hostedData.formPostUrl}
+          target="_self"
+          style={{ display: 'none' }}
+        >
+          <input type="hidden" name="token" value={hostedData.token} />
+        </form>
+      )}
+    </div>
+  );
+}
