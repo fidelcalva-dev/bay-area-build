@@ -10,6 +10,9 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Building2, Phone, Mail, Star, Clock, DollarSign, Send, UserPlus, CheckCircle2, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { VendorTierPricing } from '@/components/calculator/VendorTierPricing';
+import { fetchTierConfigs, calculateVendorTiers, buildRiskFlags, type TierCalculationResult } from '@/services/pricingTierService';
+import type { CustomerType, MaterialCategory } from '@/types/calculator';
 
 interface Vendor {
   id: string;
@@ -43,6 +46,9 @@ interface VendorFinderPanelProps {
   dumpsterSize: number;
   customerPrice: number;
   userRole: string;
+  customerType?: string;
+  isSameDay?: boolean;
+  accessNotes?: string;
 }
 
 export function VendorFinderPanel({
@@ -51,12 +57,16 @@ export function VendorFinderPanel({
   dumpsterSize,
   customerPrice,
   userRole,
+  customerType = 'homeowner',
+  isSameDay = false,
+  accessNotes,
 }: VendorFinderPanelProps) {
   const [vendors, setVendors] = useState<(Vendor & { rate?: VendorRate })[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
   const [rfqNotes, setRfqNotes] = useState('');
   const [rfqSent, setRfqSent] = useState<Set<string>>(new Set());
+  const [vendorTierResults, setVendorTierResults] = useState<Map<string, TierCalculationResult>>(new Map());
 
   useEffect(() => {
     searchVendors();
@@ -99,6 +109,34 @@ export function VendorFinderPanel({
         (rates || []).forEach((r: any) => rateMap.set(r.vendor_id, r));
 
         setVendors(matched.map(v => ({ ...v, rate: rateMap.get(v.id) })));
+
+        // Compute tier pricing for vendors with rates
+        try {
+          const configs = await fetchTierConfigs();
+          const riskFlags = buildRiskFlags({
+            is_same_day: isSameDay,
+            material_category: materialCategory as MaterialCategory,
+            access_notes: accessNotes,
+          });
+          const newTierResults = new Map<string, TierCalculationResult>();
+          for (const v of matched) {
+            const rate = rateMap.get(v.id);
+            if (rate) {
+              const tr = calculateVendorTiers(
+                rate.base_cost,
+                riskFlags,
+                customerType as CustomerType,
+                configs.tiers,
+                configs.surcharges,
+                configs.roundingRule,
+              );
+              newTierResults.set(v.id, tr);
+            }
+          }
+          setVendorTierResults(newTierResults);
+        } catch (err) {
+          console.error('Vendor tier calc failed:', err);
+        }
       } else {
         setVendors([]);
       }
@@ -232,6 +270,17 @@ export function VendorFinderPanel({
                         <p className="font-semibold">{margin?.toFixed(1) || '--'}%</p>
                         <p className="text-muted-foreground">Margin</p>
                       </div>
+                    </div>
+                    )}
+
+                  {/* Vendor Tier Pricing */}
+                  {vendor.rate && vendorTierResults.has(vendor.id) && (
+                    <div className="mb-2">
+                      <VendorTierPricing
+                        vendorName={vendor.name}
+                        vendorPayout={vendor.rate.base_cost}
+                        tierResult={vendorTierResults.get(vendor.id)!}
+                      />
                     </div>
                   )}
 
