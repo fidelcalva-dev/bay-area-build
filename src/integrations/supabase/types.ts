@@ -4049,42 +4049,124 @@ export type Database = {
       }
       extra_catalog: {
         Row: {
+          applies_to_material: string
+          applies_to_sizes_json: Json | null
+          category: string | null
           code: string
           created_at: string
           default_price: number | null
           description: string | null
           display_order: number
+          formula_expression: string | null
           id: string
           is_active: boolean
           name: string
+          pricing_model: string
+          requires_approval: boolean
           requires_pricing: boolean
           unit: string
         }
         Insert: {
+          applies_to_material?: string
+          applies_to_sizes_json?: Json | null
+          category?: string | null
           code: string
           created_at?: string
           default_price?: number | null
           description?: string | null
           display_order?: number
+          formula_expression?: string | null
           id?: string
           is_active?: boolean
           name: string
+          pricing_model?: string
+          requires_approval?: boolean
           requires_pricing?: boolean
           unit?: string
         }
         Update: {
+          applies_to_material?: string
+          applies_to_sizes_json?: Json | null
+          category?: string | null
           code?: string
           created_at?: string
           default_price?: number | null
           description?: string | null
           display_order?: number
+          formula_expression?: string | null
           id?: string
           is_active?: boolean
           name?: string
+          pricing_model?: string
+          requires_approval?: boolean
           requires_pricing?: boolean
           unit?: string
         }
         Relationships: []
+      }
+      extra_pricing_rules: {
+        Row: {
+          created_at: string
+          extra_id: string
+          id: string
+          is_active: boolean
+          margin_percent: number | null
+          material_type: string | null
+          price: number
+          size_yd: number | null
+          vendor_cost: number | null
+          vendor_id: string | null
+          zone_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          extra_id: string
+          id?: string
+          is_active?: boolean
+          margin_percent?: number | null
+          material_type?: string | null
+          price: number
+          size_yd?: number | null
+          vendor_cost?: number | null
+          vendor_id?: string | null
+          zone_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          extra_id?: string
+          id?: string
+          is_active?: boolean
+          margin_percent?: number | null
+          material_type?: string | null
+          price?: number
+          size_yd?: number | null
+          vendor_cost?: number | null
+          vendor_id?: string | null
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extra_pricing_rules_extra_id_fkey"
+            columns: ["extra_id"]
+            isOneToOne: false
+            referencedRelation: "extra_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extra_pricing_rules_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extra_pricing_rules_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_zones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       facilities: {
         Row: {
@@ -9088,6 +9170,53 @@ export type Database = {
           value?: string
         }
         Relationships: []
+      }
+      pricing_override_log: {
+        Row: {
+          cart_id: string | null
+          created_at: string
+          extra_code: string | null
+          id: string
+          item_id: string | null
+          new_price: number
+          order_id: string | null
+          original_price: number
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          cart_id?: string | null
+          created_at?: string
+          extra_code?: string | null
+          id?: string
+          item_id?: string | null
+          new_price: number
+          order_id?: string | null
+          original_price: number
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          cart_id?: string | null
+          created_at?: string
+          extra_code?: string | null
+          id?: string
+          item_id?: string | null
+          new_price?: number
+          order_id?: string | null
+          original_price?: number
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_override_log_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "order_carts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pricing_zones: {
         Row: {
