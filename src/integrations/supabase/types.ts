@@ -1960,6 +1960,41 @@ export type Database = {
           },
         ]
       }
+      cart_audit_log: {
+        Row: {
+          action: string
+          cart_id: string
+          created_at: string
+          details_json: Json | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          cart_id: string
+          created_at?: string
+          details_json?: Json | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          cart_id?: string
+          created_at?: string
+          details_json?: Json | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_audit_log_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "order_carts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certified_sources: {
         Row: {
           city_or_market: string
@@ -4009,6 +4044,45 @@ export type Database = {
           meet_event_id?: string | null
           meet_link?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      extra_catalog: {
+        Row: {
+          code: string
+          created_at: string
+          default_price: number | null
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          requires_pricing: boolean
+          unit: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          default_price?: number | null
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          requires_pricing?: boolean
+          unit?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          default_price?: number | null
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          requires_pricing?: boolean
+          unit?: string
         }
         Relationships: []
       }
@@ -7534,6 +7608,183 @@ export type Database = {
             columns: ["stage_id"]
             isOneToOne: false
             referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_cart_items: {
+        Row: {
+          amount: number | null
+          cart_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_price_pending: boolean
+          item_type: string
+          pricing_source: string
+          qty: number
+          related_material_category: string | null
+          related_size_yd: number | null
+          sort_order: number
+          title: string
+          unit: string
+          unit_price: number | null
+        }
+        Insert: {
+          amount?: number | null
+          cart_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_price_pending?: boolean
+          item_type?: string
+          pricing_source?: string
+          qty?: number
+          related_material_category?: string | null
+          related_size_yd?: number | null
+          sort_order?: number
+          title: string
+          unit?: string
+          unit_price?: number | null
+        }
+        Update: {
+          amount?: number | null
+          cart_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_price_pending?: boolean
+          item_type?: string
+          pricing_source?: string
+          qty?: number
+          related_material_category?: string | null
+          related_size_yd?: number | null
+          sort_order?: number
+          title?: string
+          unit?: string
+          unit_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_cart_items_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "order_carts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_cart_schedules: {
+        Row: {
+          cart_item_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          schedule_type: string
+          scheduled_date: string
+          status: string
+          time_window: string
+        }
+        Insert: {
+          cart_item_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          schedule_type?: string
+          scheduled_date: string
+          status?: string
+          time_window?: string
+        }
+        Update: {
+          cart_item_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          schedule_type?: string
+          scheduled_date?: string
+          status?: string
+          time_window?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_cart_schedules_cart_item_id_fkey"
+            columns: ["cart_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_cart_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_carts: {
+        Row: {
+          converted_order_id: string | null
+          created_at: string
+          created_by_user_id: string
+          customer_id: string | null
+          customer_type: string | null
+          id: string
+          lead_id: string | null
+          notes_customer: string | null
+          notes_internal: string | null
+          portal_token: string | null
+          portal_token_expires_at: string | null
+          service_address_text: string | null
+          service_lat: number | null
+          service_lng: number | null
+          status: string
+          total_estimated: number | null
+          total_final: number | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          converted_order_id?: string | null
+          created_at?: string
+          created_by_user_id: string
+          customer_id?: string | null
+          customer_type?: string | null
+          id?: string
+          lead_id?: string | null
+          notes_customer?: string | null
+          notes_internal?: string | null
+          portal_token?: string | null
+          portal_token_expires_at?: string | null
+          service_address_text?: string | null
+          service_lat?: number | null
+          service_lng?: number | null
+          status?: string
+          total_estimated?: number | null
+          total_final?: number | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          converted_order_id?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          customer_id?: string | null
+          customer_type?: string | null
+          id?: string
+          lead_id?: string | null
+          notes_customer?: string | null
+          notes_internal?: string | null
+          portal_token?: string | null
+          portal_token_expires_at?: string | null
+          service_address_text?: string | null
+          service_lat?: number | null
+          service_lng?: number | null
+          status?: string
+          total_estimated?: number | null
+          total_final?: number | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_carts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]

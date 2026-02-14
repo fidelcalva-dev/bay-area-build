@@ -215,6 +215,7 @@ const SalesLeadDetail = lazy(() => import("./pages/sales/LeadDetail"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
 const SalesLeadInbox = lazy(() => import("./pages/sales/SalesLeadInbox"));
+const OrderBuilder = lazy(() => import("./pages/sales/OrderBuilder"));
 
 // CS Lead Inbox
 const CSLeadInbox = lazy(() => import("./pages/cs/CSLeadInbox"));
@@ -828,6 +829,9 @@ const App = () => {
                 } />
                 <Route path="lead-hub" element={
                   <Suspense fallback={<PageLoader />}><SalesLeadInbox /></Suspense>
+                } />
+                <Route path="order-builder" element={
+                  <Suspense fallback={<PageLoader />}><OrderBuilder /></Suspense>
                 } />
               </Route>
 
