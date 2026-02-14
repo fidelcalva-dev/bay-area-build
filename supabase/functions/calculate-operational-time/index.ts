@@ -277,16 +277,38 @@ serve(async (req) => {
     let jobSiteCity = '';
 
     if (!destLat || !destLng) {
-      if (!destination_address) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'Destination coordinates or address required' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-        );
+      if (destination_address) {
+        // Try geocoding via the geocode-address function
+        try {
+          const geocodeResp = await fetch(
+            `${supabaseUrl}/functions/v1/geocode-address`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseKey}`,
+              },
+              body: JSON.stringify({ query: destination_address }),
+            }
+          );
+          const geocodeData = await geocodeResp.json();
+          if (geocodeData.results && geocodeData.results.length > 0) {
+            destLat = parseFloat(geocodeData.results[0].lat);
+            destLng = parseFloat(geocodeData.results[0].lon);
+            jobSiteCity = geocodeData.results[0].address?.city || destination_address.split(',')[0] || 'Unknown';
+          }
+        } catch (geoErr) {
+          console.warn('Geocode failed, using yard as fallback:', geoErr);
+        }
       }
-      // Use a default location for now (would normally geocode)
-      destLat = 37.8;
-      destLng = -122.2;
-      jobSiteCity = destination_address.split(',')[0] || 'Unknown';
+
+      // Final fallback: use yard coordinates (zero-distance estimate)
+      if (!destLat || !destLng) {
+        console.warn('No destination provided, using yard coordinates as fallback for estimation');
+        destLat = yard.latitude;
+        destLng = yard.longitude;
+        jobSiteCity = 'Same as yard (no destination provided)';
+      }
     }
 
     // Get disposal facility if needed
