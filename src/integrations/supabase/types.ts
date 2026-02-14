@@ -7948,6 +7948,134 @@ export type Database = {
           },
         ]
       }
+      outbound_quote_messages: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          message_body: string
+          outbound_quote_id: string
+          provider: string
+          provider_message_id: string | null
+          status: string
+          to_address: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          message_body: string
+          outbound_quote_id: string
+          provider: string
+          provider_message_id?: string | null
+          status?: string
+          to_address: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          message_body?: string
+          outbound_quote_id?: string
+          provider?: string
+          provider_message_id?: string | null
+          status?: string
+          to_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outbound_quote_messages_outbound_quote_id_fkey"
+            columns: ["outbound_quote_id"]
+            isOneToOne: false
+            referencedRelation: "outbound_quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      outbound_quotes: {
+        Row: {
+          address_text: string | null
+          created_at: string
+          created_by_user_id: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          customer_price: number
+          customer_type: string
+          error_message: string | null
+          id: string
+          included_days: number
+          included_tons: string
+          material_category: string
+          order_id: string | null
+          overage_rule_text: string
+          payment_link: string | null
+          portal_link: string | null
+          quote_id: string | null
+          quote_source: string
+          same_day_flag: boolean
+          schedule_link: string | null
+          size_yd: number
+          status: string
+          tier: string
+          zip: string | null
+        }
+        Insert: {
+          address_text?: string | null
+          created_at?: string
+          created_by_user_id: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          customer_price: number
+          customer_type?: string
+          error_message?: string | null
+          id?: string
+          included_days?: number
+          included_tons?: string
+          material_category?: string
+          order_id?: string | null
+          overage_rule_text?: string
+          payment_link?: string | null
+          portal_link?: string | null
+          quote_id?: string | null
+          quote_source?: string
+          same_day_flag?: boolean
+          schedule_link?: string | null
+          size_yd: number
+          status?: string
+          tier: string
+          zip?: string | null
+        }
+        Update: {
+          address_text?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          customer_price?: number
+          customer_type?: string
+          error_message?: string | null
+          id?: string
+          included_days?: number
+          included_tons?: string
+          material_category?: string
+          order_id?: string | null
+          overage_rule_text?: string
+          payment_link?: string | null
+          portal_link?: string | null
+          quote_id?: string | null
+          quote_source?: string
+          same_day_flag?: boolean
+          schedule_link?: string | null
+          size_yd?: number
+          status?: string
+          tier?: string
+          zip?: string | null
+        }
+        Relationships: []
+      }
       overdue_billing_state: {
         Row: {
           asset_id: string
