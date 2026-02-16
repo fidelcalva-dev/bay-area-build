@@ -34,10 +34,10 @@ export function CTASection({
         {/* CTAs */}
         <div className="flex flex-wrap justify-center gap-3 mb-6">
           <Button asChild variant="cta" size="lg" className="group">
-            <Link to="/#quote">
+            <a href="#quote">
               Get instant estimate
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            </a>
           </Button>
           <Button asChild variant="outline" size="lg" className="bg-transparent border-current hover:bg-white/10">
             <a href={`tel:${CTA_CONFIG.phone}`}>
