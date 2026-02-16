@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
 import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
+import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -26,12 +27,13 @@ const blogPosts = [
   },
   {
     id: 2,
-    title: 'Do You Need a Permit for a Dumpster in the Bay Area?',
-    excerpt: 'Learn when you need a dumpster permit and how to get one in Oakland, San Francisco, San Jose, and other Bay Area cities.',
-    category: 'Permits',
-    date: 'December 28, 2025',
+    title: 'The Positive Impact of Dumpster Rentals in the Oakland Community',
+    excerpt: 'At Calsan Dumpsters Pro, we believe that a cleaner community is a stronger community — and dumpster rentals play a bigger role in Oakland\'s progress than many people realize.',
+    category: 'Community',
+    date: 'February 14, 2026',
     readTime: '4 min read',
-    slug: 'dumpster-permit-bay-area',
+    slug: 'positive-impact-dumpster-rentals-oakland',
+    image: positiveImpactOaklandImg,
   },
   {
     id: 3,
