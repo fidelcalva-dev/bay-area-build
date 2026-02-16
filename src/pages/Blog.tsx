@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
+import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -15,12 +16,13 @@ const blogCategories = [
 const blogPosts = [
   {
     id: 1,
-    title: 'How to Choose the Right Dumpster Size for Your Project',
-    excerpt: 'Not sure which dumpster size you need? This guide covers everything from small garage cleanouts to major renovations.',
-    category: 'Dumpster Sizes',
-    date: 'January 5, 2026',
-    readTime: '5 min read',
-    slug: 'choose-right-dumpster-size',
+    title: 'Benefits of Working with the Same Dumpster Provider',
+    excerpt: 'In construction, remodeling, and commercial projects, waste management is not something you want to leave to chance. Having a regular contract with a single dumpster rental provider brings efficiency, cost savings, and peace of mind.',
+    category: 'Contractor Tips',
+    date: 'February 16, 2026',
+    readTime: '4 min read',
+    slug: 'benefits-same-dumpster-provider',
+    image: benefitsSameProviderImg,
   },
   {
     id: 2,
@@ -116,11 +118,15 @@ export default function Blog() {
                 key={post.id}
                 className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group"
               >
-                {/* Image Placeholder */}
-                <div className="aspect-video bg-muted flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Tag className="w-8 h-8 text-primary" />
-                  </div>
+                {/* Image */}
+                <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
+                  {(post as any).image ? (
+                    <img src={(post as any).image} alt={post.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Tag className="w-8 h-8 text-primary" />
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-6">
