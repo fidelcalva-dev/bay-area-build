@@ -129,7 +129,7 @@ export default function Blog() {
                 className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group"
               >
                 {/* Image */}
-                <div className="aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">
+                <div className="aspect-[3/4] bg-muted flex items-center justify-center overflow-hidden">
                   {(post as any).image ? (
                     <img src={(post as any).image} alt={post.title} className="w-full h-full object-cover object-top" />
                   ) : (
