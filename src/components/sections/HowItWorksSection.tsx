@@ -138,10 +138,10 @@ export function HowItWorksSection() {
         {/* CTA - Minimal */}
         <AnimatedSection delay={0.4} className="text-center mt-10">
           <Button asChild variant="default" size="lg" className="group">
-            <Link to="/#quote">
+            <a href="#quote">
               Get instant estimate
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
-            </Link>
+            </a>
           </Button>
         </AnimatedSection>
       </div>
