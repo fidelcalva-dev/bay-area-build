@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Clock, Phone, Mail, MessageSquare, FileText, User,
   AlertTriangle, CheckCircle2, Shield, Globe, Loader2, MapPin,
-  Building2, Tag, ExternalLink, TrendingUp
+  Building2, Tag, ExternalLink, TrendingUp, Pencil, Save, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -117,6 +119,8 @@ export default function LeadDetail() {
   const [noteText, setNoteText] = useState("");
   const [saving, setSaving] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Partial<LeadData>>({});
 
   // Live timer
   useEffect(() => {
@@ -164,6 +168,52 @@ export default function LeadDetail() {
       fetchAll();
     } catch (err) {
       toast({ title: "Error adding note", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startEditing = () => {
+    if (!lead) return;
+    setEditForm({
+      customer_name: lead.customer_name,
+      customer_phone: lead.customer_phone,
+      customer_email: lead.customer_email,
+      customer_type_detected: lead.customer_type_detected,
+      consent_status: lead.consent_status,
+      company_name: lead.company_name,
+      company_domain: lead.company_domain,
+      address: lead.address,
+      city: lead.city,
+      zip: lead.zip,
+      project_category: lead.project_category,
+      lead_status: lead.lead_status,
+      assignment_type: lead.assignment_type,
+      notes: lead.notes,
+      sales_notes: lead.sales_notes,
+    });
+    setEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setEditing(false);
+    setEditForm({});
+  };
+
+  const saveEdits = async () => {
+    if (!id) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("sales_leads")
+        .update(editForm)
+        .eq("id", id);
+      if (error) throw error;
+      toast({ title: "Lead updated" });
+      setEditing(false);
+      fetchAll();
+    } catch {
+      toast({ title: "Error saving lead", variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -337,29 +387,65 @@ export default function LeadDetail() {
 
         {/* Overview */}
         <TabsContent value="overview" className="space-y-4">
+          <div className="flex justify-end">
+            {editing ? (
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={cancelEditing}><X className="w-4 h-4 mr-1" /> Cancel</Button>
+                <Button size="sm" onClick={saveEdits} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                </Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="outline" onClick={startEditing}><Pencil className="w-4 h-4 mr-1" /> Edit</Button>
+            )}
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2"><User className="w-4 h-4" /> Contact</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span>{lead.customer_name || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{lead.customer_phone || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{lead.customer_email || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Type</span><span>{lead.customer_type_detected || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Consent</span><span>{lead.consent_status || '—'}</span></div>
+              <CardContent className="space-y-3 text-sm">
+                {editing ? (
+                  <>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Name</label><Input value={editForm.customer_name || ''} onChange={e => setEditForm({...editForm, customer_name: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Phone</label><Input value={editForm.customer_phone || ''} onChange={e => setEditForm({...editForm, customer_phone: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Email</label><Input value={editForm.customer_email || ''} onChange={e => setEditForm({...editForm, customer_email: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Type</label><Input value={editForm.customer_type_detected || ''} onChange={e => setEditForm({...editForm, customer_type_detected: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Consent</label><Input value={editForm.consent_status || ''} onChange={e => setEditForm({...editForm, consent_status: e.target.value})} /></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span>{lead.customer_name || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{lead.customer_phone || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{lead.customer_email || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Type</span><span>{lead.customer_type_detected || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Consent</span><span>{lead.consent_status || '—'}</span></div>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2"><Building2 className="w-4 h-4" /> Company & Location</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Company</span><span>{lead.company_name || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Domain</span><span>{lead.company_domain || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span>{lead.address || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">City</span><span>{lead.city || '—'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">ZIP</span><span>{lead.zip || '—'}</span></div>
+              <CardContent className="space-y-3 text-sm">
+                {editing ? (
+                  <>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Company</label><Input value={editForm.company_name || ''} onChange={e => setEditForm({...editForm, company_name: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Domain</label><Input value={editForm.company_domain || ''} onChange={e => setEditForm({...editForm, company_domain: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">Address</label><Input value={editForm.address || ''} onChange={e => setEditForm({...editForm, address: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">City</label><Input value={editForm.city || ''} onChange={e => setEditForm({...editForm, city: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-xs text-muted-foreground">ZIP</label><Input value={editForm.zip || ''} onChange={e => setEditForm({...editForm, zip: e.target.value})} /></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Company</span><span>{lead.company_name || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Domain</span><span>{lead.company_domain || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span>{lead.address || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">City</span><span>{lead.city || '—'}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">ZIP</span><span>{lead.zip || '—'}</span></div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -369,15 +455,36 @@ export default function LeadDetail() {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2"><Tag className="w-4 h-4" /> Project Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Category</span><span>{lead.project_category || '—'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Source</span><span>{lead.source_key || lead.channel_key || lead.lead_source || '—'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge variant="outline">{lead.lead_status}</Badge></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Assignment</span><span>{lead.assignment_type || '—'}</span></div>
-              {lead.notes && (
+            <CardContent className="space-y-3 text-sm">
+              {editing ? (
                 <>
-                  <Separator />
-                  <p className="text-muted-foreground">{lead.notes}</p>
+                  <div className="space-y-1"><label className="text-xs text-muted-foreground">Category</label><Input value={editForm.project_category || ''} onChange={e => setEditForm({...editForm, project_category: e.target.value})} /></div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">Status</label>
+                    <Select value={editForm.lead_status || 'new'} onValueChange={v => setEditForm({...editForm, lead_status: v})}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {['new','contacted','qualified','quoted','booked','converted','lost'].map(s => (
+                          <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1"><label className="text-xs text-muted-foreground">Assignment</label><Input value={editForm.assignment_type || ''} onChange={e => setEditForm({...editForm, assignment_type: e.target.value})} /></div>
+                  <div className="space-y-1"><label className="text-xs text-muted-foreground">Notes</label><Textarea value={editForm.notes || ''} onChange={e => setEditForm({...editForm, notes: e.target.value})} rows={3} /></div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Category</span><span>{lead.project_category || '—'}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Source</span><span>{lead.source_key || lead.channel_key || lead.lead_source || '—'}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge variant="outline">{lead.lead_status}</Badge></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Assignment</span><span>{lead.assignment_type || '—'}</span></div>
+                  {lead.notes && (
+                    <>
+                      <Separator />
+                      <p className="text-muted-foreground">{lead.notes}</p>
+                    </>
+                  )}
                 </>
               )}
             </CardContent>
