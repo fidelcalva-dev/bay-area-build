@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
 import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
 import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
+import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -37,12 +38,13 @@ const blogPosts = [
   },
   {
     id: 3,
-    title: 'How to Protect Your Driveway When Renting a Dumpster',
-    excerpt: 'Worried about driveway damage? Here are proven tips to protect your concrete or asphalt from dumpster placement.',
-    category: 'Driveway Protection',
-    date: 'December 20, 2025',
-    readTime: '3 min read',
-    slug: 'protect-driveway-dumpster',
+    title: 'Checklist: Everything You Need Before Your Dumpster Arrives',
+    excerpt: 'Before your dumpster arrives, make sure your jobsite or home is ready with this easy checklist to avoid delays and protect your property.',
+    category: 'Tips & Guides',
+    date: 'February 12, 2026',
+    readTime: '5 min read',
+    slug: 'checklist-before-dumpster-arrives',
+    image: checklistBeforeDumpsterImg,
   },
   {
     id: 4,
