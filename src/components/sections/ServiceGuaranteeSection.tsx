@@ -32,7 +32,7 @@ export function ServiceGuaranteeSection() {
                 <img 
                   src={calsanPromiseImage} 
                   alt="Dumpster delivery" 
-                  className="w-56 md:w-72 h-auto rounded-lg object-cover"
+                  className="w-64 md:w-80 h-auto rounded-lg object-cover"
                 />
               </div>
             </AnimatedItem>
