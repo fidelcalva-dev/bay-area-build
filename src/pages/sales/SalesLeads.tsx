@@ -19,6 +19,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
+import { AddressesCell } from "@/components/leads/LeadAddresses";
+import { LeadAddress } from "@/hooks/useLeadAddresses";
 
 interface Lead {
   id: string;
@@ -71,6 +73,7 @@ export default function SalesLeads() {
   const { user, isSales, isAdmin } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [leadAddressesMap, setLeadAddressesMap] = useState<Record<string, LeadAddress[]>>({});
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
@@ -103,6 +106,23 @@ export default function SalesLeads() {
 
       if (error) throw error;
       setLeads(data as Lead[]);
+
+      // Fetch all addresses for these leads
+      const leadIds = (data || []).map(l => l.id);
+      if (leadIds.length > 0) {
+        const { data: addrs } = await supabase
+          .from("lead_addresses")
+          .select("*")
+          .in("lead_id", leadIds)
+          .order("is_primary", { ascending: false });
+        
+        const map: Record<string, LeadAddress[]> = {};
+        (addrs || []).forEach((a: any) => {
+          if (!map[a.lead_id]) map[a.lead_id] = [];
+          map[a.lead_id].push(a as LeadAddress);
+        });
+        setLeadAddressesMap(map);
+      }
     } catch (err) {
       console.error(err);
       toast({ title: "Error loading leads", variant: "destructive" });
@@ -243,6 +263,7 @@ export default function SalesLeads() {
             <TableHeader>
               <TableRow>
                 <TableHead>Contact</TableHead>
+                <TableHead>Addresses</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>SLA</TableHead>
@@ -254,7 +275,7 @@ export default function SalesLeads() {
             <TableBody>
               {filteredLeads.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">No leads found</TableCell>
+                   <TableCell colSpan={8} className="text-center text-muted-foreground py-8">No leads found</TableCell>
                 </TableRow>
               ) : (
                 filteredLeads.map(lead => {
@@ -277,6 +298,12 @@ export default function SalesLeads() {
                           <p className="text-xs text-muted-foreground">{lead.customer_phone}</p>
                           {lead.city && <p className="text-xs text-muted-foreground">{lead.city}{lead.zip ? `, ${lead.zip}` : ''}</p>}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <AddressesCell 
+                          addresses={leadAddressesMap[lead.id] || []} 
+                          leadZip={lead.zip} 
+                        />
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-xs">

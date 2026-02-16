@@ -6061,6 +6061,56 @@ export type Database = {
           },
         ]
       }
+      lead_addresses: {
+        Row: {
+          address_line: string
+          city: string | null
+          created_at: string
+          id: string
+          is_primary: boolean | null
+          label: string | null
+          lead_id: string
+          notes: string | null
+          state: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address_line: string
+          city?: string | null
+          created_at?: string
+          id?: string
+          is_primary?: boolean | null
+          label?: string | null
+          lead_id: string
+          notes?: string | null
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address_line?: string
+          city?: string | null
+          created_at?: string
+          id?: string
+          is_primary?: boolean | null
+          label?: string | null
+          lead_id?: string
+          notes?: string | null
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_addresses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_alerts: {
         Row: {
           alert_type: string
