@@ -5,6 +5,7 @@ import { ArrowRight, Calendar, Clock, User, Tag } from 'lucide-react';
 import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
 import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
 import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
+import separateRecyclableImg from '@/assets/blog/separate-recyclable-materials.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -48,12 +49,13 @@ const blogPosts = [
   },
   {
     id: 4,
-    title: 'Disposing of Concrete and Dirt: What You Need to Know',
-    excerpt: 'Concrete and clean dirt require special handling. Learn about weight limits, pricing, and disposal requirements.',
-    category: 'Concrete & Dirt',
-    date: 'December 15, 2025',
+    title: 'How to Separate Recyclable Materials in Your Construction Dumpster',
+    excerpt: 'Recycling on construction and demolition sites helps reduce landfill waste, keeps your jobsite organized, and can even lower disposal costs.',
+    category: 'Recycling',
+    date: 'February 10, 2026',
     readTime: '4 min read',
-    slug: 'disposing-concrete-dirt',
+    slug: 'separate-recyclable-materials-construction-dumpster',
+    image: separateRecyclableImg,
   },
   {
     id: 5,
