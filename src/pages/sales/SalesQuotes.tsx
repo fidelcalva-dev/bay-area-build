@@ -131,7 +131,7 @@ export default function SalesQuotes() {
           <p className="text-muted-foreground">View and manage customer quotes</p>
         </div>
         <Button asChild>
-          <Link to="/quote">
+          <Link to="/sales/quotes/new">
             <FileText className="w-4 h-4 mr-2" /> New Quote
           </Link>
         </Button>
