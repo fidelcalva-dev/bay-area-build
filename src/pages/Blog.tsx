@@ -6,6 +6,7 @@ import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
 import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
 import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
 import separateRecyclableImg from '@/assets/blog/separate-recyclable-materials.jpg';
+import dumpstersBigMovesImg from '@/assets/blog/dumpsters-big-moves.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -59,12 +60,13 @@ const blogPosts = [
   },
   {
     id: 5,
-    title: 'Construction & Demolition Debris: A Complete Guide',
-    excerpt: 'What counts as C&D debris? What can and can\'t go in your dumpster? Everything contractors need to know.',
-    category: 'C&D Debris',
-    date: 'December 10, 2025',
-    readTime: '6 min read',
-    slug: 'construction-demolition-debris-guide',
+    title: 'Using Dumpsters for Big Moves: When and Why It\'s Worth It',
+    excerpt: 'Moving to a new home is exciting — but when it\'s a big move, the process can quickly become overwhelming. Here\'s when a dumpster makes sense for your move.',
+    category: 'Tips & Guides',
+    date: 'February 8, 2026',
+    readTime: '5 min read',
+    slug: 'using-dumpsters-for-big-moves',
+    image: dumpstersBigMovesImg,
   },
   {
     id: 6,
