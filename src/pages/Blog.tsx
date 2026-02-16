@@ -131,7 +131,7 @@ export default function Blog() {
                 {/* Image */}
                 <div className="aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">
                   {(post as any).image ? (
-                    <img src={(post as any).image} alt={post.title} className="w-full h-full object-cover" />
+                    <img src={(post as any).image} alt={post.title} className="w-full h-full object-cover object-top" />
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                       <Tag className="w-8 h-8 text-primary" />
