@@ -19,7 +19,7 @@ const SALES_NAV = [
   { label: "Order Builder", href: "/sales/order-builder", icon: ShoppingCart },
   { label: "Calls", href: "/sales/calls", icon: Phone },
   { label: "Calculator", href: "/internal/calculator", icon: Calculator },
-  { label: "New Quote", href: "/quote", icon: MessageSquare },
+  { label: "New Quote", href: "/sales/quotes/new", icon: MessageSquare },
 ];
 
 const mobileNavItems: MobileNavItem[] = [
