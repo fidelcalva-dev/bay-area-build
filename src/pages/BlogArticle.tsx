@@ -357,7 +357,7 @@ export default function BlogArticle() {
       {article.image && (
         <section className="bg-background pt-8">
           <div className="container-narrow">
-            <img src={article.image} alt={article.h1} className="w-full rounded-2xl object-cover object-top max-h-[600px]" />
+            <img src={article.image} alt={article.h1} className="w-full rounded-2xl object-contain max-h-[350px]" />
           </div>
         </section>
       )}
