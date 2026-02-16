@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Users, FileText, Phone, Plus, Search, Filter, 
   Clock, CheckCircle2, XCircle, Loader2, TrendingUp,
-  AlertTriangle, Shield, MessageSquare
+  AlertTriangle, Shield, MessageSquare, Calendar
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -77,6 +78,9 @@ export default function SalesLeads() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
+  const [activityFrom, setActivityFrom] = useState("");
+  const [activityTo, setActivityTo] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({
     customer_name: "",
@@ -87,6 +91,16 @@ export default function SalesLeads() {
     notes: "",
   });
   const [now, setNow] = useState(new Date());
+
+  // Derive unique sources from leads for the filter
+  const uniqueSources = useMemo(() => {
+    const set = new Set<string>();
+    leads.forEach(l => {
+      const src = l.source_key || l.channel_key || l.lead_source;
+      if (src) set.add(src);
+    });
+    return Array.from(set).sort();
+  }, [leads]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30000);
@@ -165,17 +179,32 @@ export default function SalesLeads() {
       lead.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || lead.lead_status === statusFilter;
     const matchesQuality = qualityFilter === "all" || lead.lead_quality_label === qualityFilter;
+    const leadSource = lead.source_key || lead.channel_key || lead.lead_source || "";
+    const matchesSource = sourceFilter === "all" || leadSource === sourceFilter;
+
+    // Activity date range filter
+    let matchesActivity = true;
+    if (activityFrom) {
+      const fromDate = new Date(activityFrom);
+      const actDate = lead.last_activity_at ? new Date(lead.last_activity_at) : null;
+      if (!actDate || actDate < fromDate) matchesActivity = false;
+    }
+    if (activityTo && matchesActivity) {
+      const toDate = new Date(activityTo + "T23:59:59");
+      const actDate = lead.last_activity_at ? new Date(lead.last_activity_at) : null;
+      if (!actDate || actDate > toDate) matchesActivity = false;
+    }
 
     // Special filters
     if (statusFilter === "sla_breached") {
       const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
-      return matchesSearch && matchesQuality && sla.status === 'breached';
+      return matchesSearch && matchesQuality && matchesSource && matchesActivity && sla.status === 'breached';
     }
     if (statusFilter === "uncontacted") {
-      return matchesSearch && matchesQuality && lead.lead_status === 'new' && !lead.first_response_at && !lead.first_response_sent_at;
+      return matchesSearch && matchesQuality && matchesSource && matchesActivity && lead.lead_status === 'new' && !lead.first_response_at && !lead.first_response_sent_at;
     }
 
-    return matchesSearch && matchesStatus && matchesQuality;
+    return matchesSearch && matchesStatus && matchesQuality && matchesSource && matchesActivity;
   });
 
   const stats = {
@@ -254,6 +283,39 @@ export default function SalesLeads() {
             <SelectItem value="RED">🔴 Red</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={sourceFilter} onValueChange={setSourceFilter}>
+          <SelectTrigger className="w-40"><SelectValue placeholder="All Sources" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Sources</SelectItem>
+            {uniqueSources.map(s => (
+              <SelectItem key={s} value={s}>{s}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="default" className={`gap-2 ${activityFrom || activityTo ? 'border-primary text-primary' : ''}`}>
+              <Calendar className="w-4 h-4" />
+              {activityFrom || activityTo ? 'Activity ✓' : 'Last Activity'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-72 space-y-3" align="end">
+            <p className="text-sm font-medium">Filter by Last Activity</p>
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">From</label>
+              <Input type="date" value={activityFrom} onChange={e => setActivityFrom(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">To</label>
+              <Input type="date" value={activityTo} onChange={e => setActivityTo(e.target.value)} />
+            </div>
+            {(activityFrom || activityTo) && (
+              <Button variant="ghost" size="sm" className="w-full" onClick={() => { setActivityFrom(''); setActivityTo(''); }}>
+                Clear dates
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Leads Table */}
