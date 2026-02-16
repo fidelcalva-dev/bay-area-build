@@ -16,6 +16,7 @@ import { format } from "date-fns";
 
 interface Quote {
   id: string;
+  display_id: string | null;
   customer_name: string | null;
   customer_phone: string | null;
   customer_email: string | null;
@@ -202,6 +203,7 @@ export default function SalesQuotes() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>ID</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Material</TableHead>
@@ -214,7 +216,7 @@ export default function SalesQuotes() {
             <TableBody>
               {filteredQuotes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     No quotes found
                   </TableCell>
                 </TableRow>
@@ -225,6 +227,11 @@ export default function SalesQuotes() {
 
                   return (
                     <TableRow key={quote.id}>
+                      <TableCell>
+                        <span className="font-mono text-xs font-semibold text-primary">
+                          {quote.display_id || '—'}
+                        </span>
+                      </TableCell>
                       <TableCell>
                         <div>
                           <p className="font-medium">{quote.customer_name || "—"}</p>
