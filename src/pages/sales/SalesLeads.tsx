@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { 
   Users, FileText, Phone, Plus, Search, Filter, 
   Clock, CheckCircle2, XCircle, Loader2, TrendingUp,
-  AlertTriangle, Shield, MessageSquare, Calendar
+  AlertTriangle, Shield, MessageSquare, Calendar, Download
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
 import { AddressesCell } from "@/components/leads/LeadAddresses";
 import { LeadAddress } from "@/hooks/useLeadAddresses";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Lead {
   id: string;
@@ -225,6 +227,45 @@ export default function SalesLeads() {
     );
   }
 
+  const exportPDF = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFontSize(16);
+    doc.text("Sales Leads Report", 14, 18);
+    doc.setFontSize(9);
+    doc.text(`Generated: ${format(new Date(), "MMM d, yyyy h:mm a")} — ${filteredLeads.length} leads`, 14, 25);
+
+    const rows = filteredLeads.map(lead => {
+      const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
+      const ageMin = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
+      const lastActMin = lead.last_activity_at ? Math.floor((now.getTime() - new Date(lead.last_activity_at).getTime()) / 60000) : null;
+      const addrs = leadAddressesMap[lead.id] || [];
+      const addrZips = addrs.length > 0
+        ? [...new Set(addrs.map(a => a.zip).filter(Boolean))].join(', ')
+        : lead.zip || 'n/a';
+
+      return [
+        `${lead.customer_name || '—'}\n${lead.customer_phone || ''}\n${lead.city || ''}`,
+        addrZips,
+        lead.source_key || lead.channel_key || lead.lead_source || '—',
+        formatElapsed(ageMin),
+        `${sla.status} ${sla.responseMinutes !== null ? formatElapsed(sla.responseMinutes) : formatElapsed(sla.elapsedMinutes)}`,
+        `${lead.lead_quality_label || 'GREEN'} ${lead.lead_quality_score ?? 0}`,
+        (STATUS_CONFIG[lead.lead_status] || STATUS_CONFIG.new).label,
+        lastActMin !== null ? formatElapsed(lastActMin) + ' ago' : '—',
+      ];
+    });
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Contact', 'Addresses', 'Source', 'Age', 'SLA', 'Quality', 'Status', 'Last Activity']],
+      body: rows,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    doc.save(`sales-leads-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -232,9 +273,14 @@ export default function SalesLeads() {
           <h1 className="text-2xl font-bold">Sales Leads</h1>
           <p className="text-muted-foreground">Lead intelligence & follow-up monitoring</p>
         </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="w-4 h-4 mr-2" /> Add Lead
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportPDF}>
+            <Download className="w-4 h-4 mr-2" /> Export PDF
+          </Button>
+          <Button onClick={openAddDialog}>
+            <Plus className="w-4 h-4 mr-2" /> Add Lead
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
