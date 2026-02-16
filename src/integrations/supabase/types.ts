@@ -9846,6 +9846,7 @@ export type Database = {
           delivery_lng: number | null
           discount_cap_applied: boolean | null
           discount_percent: number | null
+          display_id: string | null
           distance_bracket: string | null
           distance_miles: number | null
           driver_id: string | null
@@ -9961,6 +9962,7 @@ export type Database = {
           delivery_lng?: number | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
+          display_id?: string | null
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
@@ -10076,6 +10078,7 @@ export type Database = {
           delivery_lng?: number | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
+          display_id?: string | null
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
