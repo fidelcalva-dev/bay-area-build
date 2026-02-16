@@ -6,7 +6,12 @@ import { BUSINESS_INFO, generateBreadcrumbSchema, generateFAQSchema } from '@/li
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { ArrowRight, Phone, Calendar, Clock, User } from 'lucide-react';
 import NotFound from './NotFound';
-
+import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
+import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
+import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
+import separateRecyclableImg from '@/assets/blog/separate-recyclable-materials.jpg';
+import dumpstersBigMovesImg from '@/assets/blog/dumpsters-big-moves.jpg';
+import postStormCleanupImg from '@/assets/blog/post-storm-cleanup.jpg';
 interface BlogArticleData {
   slug: string;
   title: string;
@@ -16,6 +21,7 @@ interface BlogArticleData {
   date: string;
   readTime: string;
   category: string;
+  image?: string;
   sections: { heading: string; body: string }[];
   faqs: { question: string; answer: string }[];
   relatedArticles: string[];
@@ -161,6 +167,135 @@ const ARTICLES: Record<string, BlogArticleData> = {
     ],
     relatedArticles: ['dumpster-cost-oakland', 'dumpster-sizes-guide', 'dumpster-permit-san-jose'],
   },
+  'benefits-same-dumpster-provider': {
+    slug: 'benefits-same-dumpster-provider',
+    title: 'Benefits of Working with the Same Dumpster Provider',
+    metaTitle: 'Benefits of Working with the Same Dumpster Provider | Calsan Dumpsters Pro',
+    metaDescription: 'Discover why having a regular contract with one dumpster provider brings consistency, savings, and priority service for your construction projects.',
+    h1: 'Benefits of Working with the Same Dumpster Provider',
+    date: 'February 16, 2026',
+    readTime: '4 min read',
+    category: 'Contractor Tips',
+    image: benefitsSameProviderImg,
+    sections: [
+      { heading: 'Why One Provider Makes a Difference', body: 'In construction, remodeling, and commercial projects, waste management is not something you want to leave to chance. Having a regular collection contract with a single dumpster rental provider brings efficiency, cost savings, and peace of mind.' },
+      { heading: 'Consistent Service You Can Rely On', body: 'When you work with one provider, you know exactly what to expect. Delivery times, pickup schedules, pricing, and service quality stay consistent.' },
+      { heading: 'Better Pricing & Exclusive Benefits', body: 'Long-term relationships come with rewards. A regular contract often means special pricing, discounts, and priority service that occasional customers don\'t receive.' },
+      { heading: 'Priority Scheduling & Faster Turnarounds', body: 'When dumpsters are needed urgently, regular customers come first.' },
+      { heading: 'Simplified Communication & Management', body: 'One provider means one point of contact. No more juggling multiple vendors, invoices, or service standards.' },
+      { heading: 'Calsan Dumpsters Pro Membership Plans', body: 'At Calsan Dumpsters Pro, we offer three membership levels to support our clients at every stage of growth:\n\nBLACK Membership\n- List prices\n- Eventual discounts\n- Ideal for occasional customers\n\nGOLD Membership\n- Special pricing\n- Discounts on other services\n- Preference in delivery & pickup scheduling\n- Designed for regular customers\n- Up to 5 rentals per month\n\nPLATINUM Membership\n- Lowest prices on dumpster rentals\n- Discounts on other services\n- Priority delivery & pickup scheduling\n- Built for our best clients\n- 6+ rentals per month' },
+      { heading: 'Build Smarter with the Right Partner', body: 'Establishing a regular contract with one trusted provider isn\'t just convenient — it\'s a smart business decision. With Calsan Dumpsters Pro, you gain consistency, savings, and a team that understands your projects and priorities.' },
+    ],
+    faqs: [],
+    relatedArticles: ['dumpster-cost-oakland', 'dumpster-sizes-guide'],
+  },
+  'positive-impact-dumpster-rentals-oakland': {
+    slug: 'positive-impact-dumpster-rentals-oakland',
+    title: 'The Positive Impact of Dumpster Rentals in the Oakland Community',
+    metaTitle: 'Positive Impact of Dumpster Rentals in Oakland | Calsan Dumpsters Pro',
+    metaDescription: 'Learn how reliable dumpster services help keep Oakland thriving — from cleaner neighborhoods to safer job sites and supporting sustainability.',
+    h1: 'The Positive Impact of Dumpster Rentals in the Oakland Community',
+    date: 'February 14, 2026',
+    readTime: '4 min read',
+    category: 'Community',
+    image: positiveImpactOaklandImg,
+    sections: [
+      { heading: 'A Cleaner Community Is a Stronger Community', body: 'At Calsan Dumpsters Pro, we believe that a cleaner community is a stronger community — and dumpster rentals play a bigger role in Oakland\'s progress than many people realize.' },
+      { heading: 'Cleaner Neighborhoods', body: 'Dumpsters make it easier for residents and businesses to properly dispose of excess waste, bulky items, and debris. This reduces illegal dumping and keeps our streets, parks, and neighborhoods looking clean and welcoming.' },
+      { heading: 'Safer Job Sites', body: 'Construction and renovation projects generate a lot of debris. Having the right dumpster on-site helps contractors maintain organized, hazard-free work areas — protecting crews and keeping projects running smoothly.' },
+      { heading: 'Supporting Sustainability', body: 'A big part of Oakland\'s identity is its commitment to sustainability. Dumpster rentals encourage proper sorting, recycling, and responsible waste management, helping reduce landfill impact.' },
+      { heading: 'Better Home Improvements', body: 'From remodels to yard cleanups, homeowners benefit from the convenience and efficiency of having a dumpster delivered right to their driveway. It speeds up projects and keeps clutter under control.' },
+      { heading: 'Strengthening the Community', body: 'Cleaner spaces create healthier, happier neighborhoods. When individuals and businesses choose responsible waste solutions, everyone benefits — and local pride grows.' },
+    ],
+    faqs: [],
+    relatedArticles: ['dumpster-cost-oakland', 'same-day-dumpster-delivery-bay-area'],
+  },
+  'checklist-before-dumpster-arrives': {
+    slug: 'checklist-before-dumpster-arrives',
+    title: 'Checklist: Everything You Need Before Your Dumpster Arrives',
+    metaTitle: 'Dumpster Delivery Checklist | Everything You Need Before It Arrives',
+    metaDescription: 'Prepare your jobsite or home for dumpster delivery with this easy checklist. Avoid delays and protect your property with these simple steps.',
+    h1: 'Everything You Need Before Your Dumpster Arrives',
+    date: 'February 12, 2026',
+    readTime: '5 min read',
+    category: 'Tips & Guides',
+    image: checklistBeforeDumpsterImg,
+    sections: [
+      { heading: 'Be Ready for a Smooth Delivery', body: 'At Calsan Dumpsters Pro, we want your rental to be fast, smooth, and stress-free. Before your dumpster arrives, make sure your jobsite or home is ready with this easy checklist to avoid delays and protect your property.' },
+      { heading: '1. Secure a Clear Drop-Off Area', body: '- Make sure you have a designated spot available on the street or in your driveway.\n- If placing it on the street, put cones, chairs, or markers ahead of time so no one parks in the space before delivery.\n- If placing it in your driveway, lay down wood planks or thick plywood to prevent the dumpster from scratching or cracking the concrete.' },
+      { heading: '2. Check Local Permits (If Using the Street)', body: 'Some cities require a permit to place a dumpster on public streets.\n- Check with your city or local Public Works Department\n- Apply early if needed\n- Keep your permit visible' },
+      { heading: '3. Ensure Clear Access for the Truck', body: 'Our delivery trucks need enough room to enter, drop the dumpster, and exit safely. Make sure:\n- Cars are moved\n- Gates are open\n- The route is free of low branches, wires, or obstacles' },
+      { heading: '4. Know the Dumpster Size You Ordered', body: 'Double-check the size you\'re expecting so the space matches. This avoids surprises and ensures a safe delivery.' },
+      { heading: '5. Prepare Your Materials', body: 'Having everything ready helps you load efficiently:\n- Separate recyclables (wood, metals, concrete)\n- Keep hazardous items aside — these cannot go inside a dumpster\n- Make a plan for heavy materials so weight is distributed evenly' },
+      { heading: '6. Protect Your Lawn & Property', body: 'If the dumpster must go on dirt or grass, place:\n- Wood sheets\n- Pavers\n- Boards\nThis prevents sinking, rutting, or mud issues.' },
+      { heading: '7. Bonus Tips From Calsan', body: '- Keep kids and pets away from the drop-off zone\n- Avoid overloading — keep debris below the top rail\n- Don\'t block walkways or garage access\n- Plan for weather (rain makes debris heavier!)' },
+    ],
+    faqs: [],
+    relatedArticles: ['dumpster-sizes-guide', 'dumpster-permit-san-jose'],
+  },
+  'separate-recyclable-materials-construction-dumpster': {
+    slug: 'separate-recyclable-materials-construction-dumpster',
+    title: 'How to Separate Recyclable Materials in Your Construction Dumpster',
+    metaTitle: 'How to Separate Recyclable Materials in Your Construction Dumpster',
+    metaDescription: 'A quick guide to recycling on construction sites. Learn how to identify, separate, and manage recyclable materials in your dumpster.',
+    h1: 'How to Separate Recyclable Materials in Your Construction Dumpster',
+    date: 'February 10, 2026',
+    readTime: '4 min read',
+    category: 'Recycling',
+    image: separateRecyclableImg,
+    sections: [
+      { heading: 'Why Recycling on Jobsites Matters', body: 'Recycling on construction and demolition sites helps reduce landfill waste, keeps your jobsite organized, and can even lower disposal costs. At Calsan Dumpsters Pro, we support smarter waste management across Oakland & the Bay Area.' },
+      { heading: '1. Identify What Can Be Recycled', body: 'Common recyclable materials on jobsites include:\n- Concrete & asphalt\n- Metal (steel, aluminum, copper)\n- Clean wood\n- Cardboard & paper\n- Certain plastics' },
+      { heading: '2. Separate Materials Inside the Dumpster', body: 'Dedicate simple sections:\n- One side: concrete, asphalt, bricks\n- Other side: wood\n- Back: metals\n- Top/side area: cardboard & packaging\n\nIf possible, use small onsite bins and load them last.' },
+      { heading: '3. Keep Recyclables Clean', body: 'To avoid contamination:\n- Keep cardboard dry\n- Separate treated wood from clean wood\n- Avoid mixing concrete dust with other materials' },
+      { heading: '4. Don\'t Mix in Non-Recyclables', body: 'Keep these out of the recyclable sections:\n- Insulation\n- Painted or contaminated wood\n- Mixed drywall\n- Hazardous materials' },
+      { heading: 'A Cleaner Jobsite Starts with Good Sorting', body: 'Proper separation makes recycling easier, faster, and more cost-effective. And if you ever need guidance, our team is here to help.' },
+    ],
+    faqs: [],
+    relatedArticles: ['concrete-disposal-bay-area', 'heavy-material-dumpsters-explained'],
+  },
+  'using-dumpsters-for-big-moves': {
+    slug: 'using-dumpsters-for-big-moves',
+    title: 'Using Dumpsters for Big Moves: When and Why It\'s Worth It',
+    metaTitle: 'Using Dumpsters for Big Moves | When and Why It\'s Worth It',
+    metaDescription: 'Moving to a new home? Learn when renting a dumpster makes sense for your big move — from downsizing to pre-sale cleanouts.',
+    h1: 'Using Dumpsters for Big Moves: When and Why It\'s Worth It',
+    date: 'February 8, 2026',
+    readTime: '5 min read',
+    category: 'Tips & Guides',
+    image: dumpstersBigMovesImg,
+    sections: [
+      { heading: 'When a Dumpster Makes Sense for Your Move', body: 'Moving to a new home is exciting — but when it\'s a big move, the process can quickly become overwhelming.' },
+      { heading: '1. You\'re Downsizing or Decluttering Heavily', body: 'If you\'re moving to a smaller home or taking the opportunity to declutter, you may end up with large volumes of unwanted furniture, boxes, old belongings, and general junk.' },
+      { heading: '2. You\'re Cleaning Out a Property Before Selling', body: 'Pre-sale cleanouts often require removing items from basements, garages, sheds, and storage units.' },
+      { heading: '3. You\'re Handling a Move-Out After Years in the Same Home', body: 'The longer you\'ve lived somewhere, the more stuff you accumulate. A large move-out often reveals forgotten clutter, outdated items, or damaged belongings that aren\'t worth taking with you.' },
+      { heading: '4. You Have Bulky or Heavy Materials', body: 'Old couches, mattresses, broken appliances, wood, drywall, or renovation debris from last-minute repairs — all of these can go straight into a dumpster without hassle.' },
+      { heading: '5. You Need to Stick to a Tight Timeline', body: 'Whether you\'re facing a move-out deadline or just want to avoid stress, a dumpster gives you the ability to toss everything quickly and keep the entire process moving.' },
+      { heading: 'Why Renting a Dumpster Is Worth It', body: 'Saves Time — Instead of loading up your car or renting a truck for multiple dump runs, you can dispose of everything at once.\n\nMore Efficient and Organized — With a designated disposal spot, your home stays cleaner and your move stays on track.\n\nCost-Effective for Large Cleanouts — When you consider gas, dump fees, truck rentals, and hours of labor, a dumpster often costs less than handling it all manually.\n\nSafe and Convenient — You avoid hazards like stacked trash bags, loose debris, and multiple heavy lifting trips.\n\nPerfect for All Property Types — Single-family homes, apartments, estates, or multi-unit buildings — dumpsters streamline move-outs anywhere.' },
+    ],
+    faqs: [],
+    relatedArticles: ['dumpster-sizes-guide', 'dumpster-cost-oakland'],
+  },
+  'dumpster-post-storm-cleanup-bay-area': {
+    slug: 'dumpster-post-storm-cleanup-bay-area',
+    title: 'How to Choose the Right Dumpster for Post-Storm Clean-Ups in the Bay Area',
+    metaTitle: 'Post-Storm Dumpster Clean-Up Bay Area | Size Guide & Tips',
+    metaDescription: 'Rainy season in the Bay Area? Learn how to choose the right dumpster size for post-storm cleanup. Fast delivery across Oakland & the Bay Area.',
+    h1: 'How to Choose the Right Dumpster for Post-Storm Clean-Ups in the Bay Area',
+    date: 'February 5, 2026',
+    readTime: '4 min read',
+    category: 'Bay Area',
+    image: postStormCleanupImg,
+    sections: [
+      { heading: 'Storm Season in the Bay Area', body: 'Rainy season in the San Francisco Bay Area usually runs from November through April, bringing heavy rain, wind, and debris. When a storm hits, cleanup can get overwhelming — that\'s when having the right dumpster makes all the difference.' },
+      { heading: 'Why You Need a Dumpster After a Storm', body: 'Storms can leave behind fallen branches, soaked drywall, roof debris, and general trash. Renting a roll-off dumpster helps you keep everything in one place and get your property back to normal fast.' },
+      { heading: 'Choosing the Right Size', body: '10-15 yards — Ideal for smaller cleanups (yard waste, branches, light debris).\n\n20-30 yards — Best for larger jobs (roof repairs, water-damaged materials, full-property cleanouts).\n\nMake sure the drop-off spot is accessible and not in a flooded area. Cover the dumpster if more rain is expected — it helps keep debris lighter and easier to manage.' },
+      { heading: 'Local Tip for the Bay Area', body: 'Book early during rainy season — demand goes up fast when big storms hit. Flexible scheduling and weekend availability make cleanup easier when you\'re on a tight timeline.' },
+      { heading: 'Choose Calsan Dumpsters Pro', body: 'At Calsan Dumpsters Pro LLC, we provide:\n- Fast delivery across Oakland & the Bay Area\n- Dumpsters from 8 to 40 yards\n- Weekend service and flexible pickup options' },
+    ],
+    faqs: [],
+    relatedArticles: ['same-day-dumpster-delivery-bay-area', 'dumpster-sizes-guide'],
+  },
 };
 
 const ALL_ARTICLE_SLUGS = Object.keys(ARTICLES);
@@ -217,6 +352,15 @@ export default function BlogArticle() {
           </div>
         </div>
       </section>
+
+      {/* Banner Image */}
+      {article.image && (
+        <section className="bg-background pt-8">
+          <div className="container-narrow">
+            <img src={article.image} alt={article.h1} className="w-full rounded-2xl object-cover object-top max-h-[600px]" />
+          </div>
+        </section>
+      )}
 
       {/* Content */}
       <article className="section-padding bg-background">
