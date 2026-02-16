@@ -7,6 +7,7 @@ import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg'
 import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
 import separateRecyclableImg from '@/assets/blog/separate-recyclable-materials.jpg';
 import dumpstersBigMovesImg from '@/assets/blog/dumpsters-big-moves.jpg';
+import postStormCleanupImg from '@/assets/blog/post-storm-cleanup.jpg';
 import { PAGE_SEO } from '@/lib/seo';
 
 const blogCategories = [
@@ -70,12 +71,13 @@ const blogPosts = [
   },
   {
     id: 6,
-    title: 'Same-Day Dumpster Delivery: How It Works',
-    excerpt: 'Need a dumpster fast? Learn how our same-day delivery service works and how to qualify.',
-    category: 'Dumpster Sizes',
-    date: 'December 5, 2025',
-    readTime: '3 min read',
-    slug: 'same-day-dumpster-delivery',
+    title: 'How to Choose the Right Dumpster for Post-Storm Clean-Ups in the Bay Area',
+    excerpt: 'Rainy season in the Bay Area brings heavy rain, wind, and debris. When a storm hits, cleanup can get overwhelming — that\'s when having the right dumpster makes all the difference.',
+    category: 'Bay Area',
+    date: 'February 5, 2026',
+    readTime: '4 min read',
+    slug: 'dumpster-post-storm-cleanup-bay-area',
+    image: postStormCleanupImg,
   },
 ];
 
