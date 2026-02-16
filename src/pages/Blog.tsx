@@ -124,9 +124,9 @@ export default function Blog() {
         <div className="container-wide">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {blogPosts.map((post) => (
+              <Link to={`/blog/${post.slug}`} key={post.id}>
               <article
-                key={post.id}
-                className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group"
+                className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group h-full"
               >
                 {/* Image */}
                 <div className="aspect-[3/4] bg-muted flex items-center justify-center overflow-hidden">
@@ -168,6 +168,7 @@ export default function Blog() {
                   </div>
                 </div>
               </article>
+              </Link>
             ))}
           </div>
         </div>
