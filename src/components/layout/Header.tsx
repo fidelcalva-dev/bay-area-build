@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ga4 } from '@/lib/analytics/ga4';
 import { Menu, X, Phone, Instagram, Youtube, Facebook, ChevronDown, HardHat, BookOpen, FileText, Globe, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -175,6 +176,7 @@ export function Header() {
             {/* Phone */}
             <a
               href={`tel:${BUSINESS_INFO.phone.sales}`}
+              onClick={() => ga4.clickCall({ page: location.pathname })}
               className="hidden md:flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60"
             >
               <Phone className="w-4 h-4" strokeWidth={1.75} />

@@ -24,6 +24,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 import { analytics } from '@/lib/analytics';
+import { ga4, zipPrefix } from '@/lib/analytics/ga4';
 import { PRICING_POLICIES, INCLUDED_TONS_BY_SIZE } from '@/lib/shared-data';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 
@@ -133,6 +134,7 @@ export function V3QuoteFlow() {
   const urlDraftToken = searchParams.get('draft');
   const draft = useQuoteDraftAutosave(urlDraftToken);
   const draftApplied = useRef(false);
+  const quoteStartedFired = useRef(false);
 
   // Step state
   const [step, setStep] = useState<V3Step>('zip');
@@ -239,9 +241,15 @@ export function V3QuoteFlow() {
   // Distance calculation — use address lat/lng if available
   const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
-  // Track step timing
+  // Track step timing + GA4 step viewed
+  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, confirm: 6, placement: 7 };
   useEffect(() => {
     setStepStartTime(Date.now());
+    ga4.quoteStepViewed({ flow_version: 'v3', step_name: step, step_index: stepIndexMap[step] });
+    // Fire price_viewed when entering price step
+    if (step === 'price' && quote.isValid) {
+      ga4.quotePriceViewed({ size_yd: size, material_category: materialTypeForPricing, value_estimated: quote.subtotal, included_tons: quote.includedTons });
+    }
   }, [step]);
 
   // Zone lookup
@@ -330,6 +338,12 @@ export function V3QuoteFlow() {
   const goNext = () => {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
+    ga4.quoteStepCompleted({ flow_version: 'v3', step_name: step, time_on_step_sec: Math.round(duration / 1000) });
+    // Fire quote_started on first progression from zip
+    if (step === 'zip' && !quoteStartedFired.current) {
+      quoteStartedFired.current = true;
+      ga4.quoteStarted({ flow_version: 'v3', entry_point: 'quote_page', city: zoneResult?.cityName, zip });
+    }
     const next: Record<V3Step, V3Step> = {
       zip: 'customer-type',
       'customer-type': 'project',
@@ -359,12 +373,14 @@ export function V3QuoteFlow() {
   const handleProjectSelect = (project: ProjectCard) => {
     setSelectedProject(project);
     setSize(project.suggestedSize);
+    ga4.quoteRecommendedSizeShown({ size_yd: project.suggestedSize, material_category: project.isHeavy ? 'heavy' : 'general', customer_type: customerType || 'unknown' });
     setTimeout(() => setStep('size'), 200);
   };
 
   // Handle size tap
   const handleSizeSelect = (s: number) => {
     setSize(s);
+    ga4.quoteSizeSelected({ size_yd: s, was_recommended: s === recommendedSize });
     setTimeout(() => setStep('price'), 200);
   };
 
@@ -405,6 +421,7 @@ export function V3QuoteFlow() {
         setSavedQuoteId(result.quoteId ?? null);
         draft.resetDraft(); // Clear draft after successful submission
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
+        ga4.quoteSubmitted({ flow_version: 'v3', size_yd: size, material_category: materialTypeForPricing, value_estimated: quote.subtotal, city: zoneResult?.cityName, zip, serviceable: true });
         // Send quote summary (best effort)
         supabase.functions.invoke('send-quote-summary', {
           body: {

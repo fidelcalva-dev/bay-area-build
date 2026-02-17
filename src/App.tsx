@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { captureAttribution } from "@/lib/attributionTracker";
 import { initTracking } from "@/lib/trackingService";
 import { initVisitorTracking } from "@/lib/visitorTracker";
+import { usePageTracking } from "@/lib/analytics/usePageTracking";
 
 // Critical pages loaded immediately
 import Index from "./pages/Index";
@@ -155,6 +156,7 @@ const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDas
 const SessionsDashboard = lazy(() => import("./pages/admin/marketing/SessionsDashboard"));
 const GoogleSetupWizard = lazy(() => import("./pages/admin/marketing/GoogleSetupWizard"));
 const MarketingDashboard = lazy(() => import("./pages/admin/marketing/MarketingDashboard"));
+const GA4DebugPanel = lazy(() => import("./pages/admin/marketing/GA4DebugPanel"));
 
 // SEO City Engine Pages
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
@@ -269,6 +271,12 @@ const PageLoader = () => (
   </div>
 );
 
+// SPA page view tracker (must be inside BrowserRouter)
+function PageTracker() {
+  usePageTracking();
+  return null;
+}
+
 const App = () => {
   useEffect(() => {
     captureAttribution();
@@ -285,6 +293,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <PageTracker />
             <Routes>
               {/* Home page - loaded immediately */}
               <Route path="/" element={<Index />} />
@@ -804,6 +813,9 @@ const App = () => {
                 } />
                 <Route path="marketing/dashboard" element={
                   <Suspense fallback={<PageLoader />}><MarketingDashboard /></Suspense>
+                } />
+                <Route path="marketing/ga4-debug" element={
+                  <Suspense fallback={<PageLoader />}><GA4DebugPanel /></Suspense>
                 } />
               </Route>
 
