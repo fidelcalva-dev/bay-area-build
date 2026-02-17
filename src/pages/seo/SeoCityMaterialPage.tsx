@@ -8,6 +8,7 @@ import { BUSINESS_INFO, OPERATIONAL_YARDS } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { ArrowRight, Phone, CheckCircle } from 'lucide-react';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import NotFound from '../NotFound';
 
 export default function SeoCityMaterialPage() {
@@ -53,6 +54,7 @@ export default function SeoCityMaterialPage() {
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY_MATERIAL', allCities || []);
   const isHeavy = material.category === 'heavy';
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_material', city: city.city_name, material: material.slug, slug: city.city_slug });
 
   const pageTitle = page?.title || `${material.name} Dumpster Rental ${city.city_name} CA`;
   const pageDescription = page?.meta_description || `${material.name} dumpster rental in ${city.city_name}, CA. ${material.description} Available in ${material.sizes.join(', ')} yard sizes.`;

@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { type SeoCity } from '@/lib/seo-engine';
 import { getJobTypeBySlug, SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { ArrowRight, Phone, CheckCircle, Wrench, HardHat, Building2 } from 'lucide-react';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import NotFound from '../NotFound';
 
 const CATEGORY_ICONS = { residential: HardHat, commercial: Building2, contractor: Wrench };
@@ -34,6 +35,7 @@ export default function SeoCityJobPage() {
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const Icon = CATEGORY_ICONS[job.category];
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_job', city: city.city_name, jobType: job.slug, slug: city.city_slug });
 
   const pageTitle = `${job.name} Dumpster Rental ${city.city_name} CA | Calsan`;
   const pageDescription = `${job.name} dumpster rental in ${city.city_name}, CA. ${job.recommendedSizes.join(', ')} yard sizes. Same-day delivery from our ${yard?.city || 'local'} yard. Transparent pricing.`;
