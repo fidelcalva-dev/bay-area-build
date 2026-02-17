@@ -7049,6 +7049,36 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_snapshots: {
+        Row: {
+          created_at: string
+          date_range: string
+          fetched_by: string | null
+          id: string
+          market: string | null
+          payload_json: Json
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          date_range: string
+          fetched_by?: string | null
+          id?: string
+          market?: string | null
+          payload_json?: Json
+          source: string
+        }
+        Update: {
+          created_at?: string
+          date_range?: string
+          fetched_by?: string | null
+          id?: string
+          market?: string | null
+          payload_json?: Json
+          source?: string
+        }
+        Relationships: []
+      }
       markets: {
         Row: {
           created_at: string

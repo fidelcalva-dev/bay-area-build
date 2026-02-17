@@ -153,6 +153,8 @@ const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 // Marketing / Visitor Intelligence
 const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
 const SessionsDashboard = lazy(() => import("./pages/admin/marketing/SessionsDashboard"));
+const GoogleSetupWizard = lazy(() => import("./pages/admin/marketing/GoogleSetupWizard"));
+const MarketingDashboard = lazy(() => import("./pages/admin/marketing/MarketingDashboard"));
 
 // SEO City Engine Pages
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
@@ -796,6 +798,12 @@ const App = () => {
                 } />
                 <Route path="marketing/sessions" element={
                   <Suspense fallback={<PageLoader />}><SessionsDashboard /></Suspense>
+                } />
+                <Route path="marketing/google-setup" element={
+                  <Suspense fallback={<PageLoader />}><GoogleSetupWizard /></Suspense>
+                } />
+                <Route path="marketing/dashboard" element={
+                  <Suspense fallback={<PageLoader />}><MarketingDashboard /></Suspense>
                 } />
               </Route>
 

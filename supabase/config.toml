@@ -167,3 +167,12 @@ verify_jwt = false
 
 [functions.track-event]
 verify_jwt = false
+
+[functions.ga4-fetch]
+verify_jwt = false
+
+[functions.gsc-fetch]
+verify_jwt = false
+
+[functions.gbp-fetch-insights]
+verify_jwt = false
