@@ -12498,6 +12498,48 @@ export type Database = {
         }
         Relationships: []
       }
+      system_errors: {
+        Row: {
+          created_at: string
+          error_message: string
+          error_stack: string | null
+          function_name: string
+          id: string
+          payload_json: Json | null
+          resolved_at: string | null
+          resolved_by: string | null
+          route: string | null
+          severity: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message: string
+          error_stack?: string | null
+          function_name: string
+          id?: string
+          payload_json?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          route?: string | null
+          severity?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string
+          error_stack?: string | null
+          function_name?: string
+          id?: string
+          payload_json?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          route?: string | null
+          severity?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       system_health_events: {
         Row: {
           created_at: string
