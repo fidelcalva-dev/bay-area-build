@@ -270,17 +270,19 @@ export function useCalculator() {
   };
 }
 
-// Helper to get base pricing
+// Helper to get base pricing — must match quote calculator (shared-data.ts v56 Plan A)
 function getBasePrice(size: number, material: string): number {
   const basePrices: Record<number, number> = {
-    10: 350,
-    15: 400,
-    20: 450,
-    30: 550,
-    40: 650,
+    10: 390,
+    15: 460,
+    20: 580,
+    25: 620,
+    30: 770,
+    35: 895,
+    40: 1135,
   };
   
-  let price = basePrices[size] || 400;
+  let price = basePrices[size] || 580;
   
   // Heavy material surcharge
   if (material === 'HEAVY' || material === 'DEBRIS_HEAVY') {
