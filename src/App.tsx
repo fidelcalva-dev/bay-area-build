@@ -152,6 +152,7 @@ const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 const AdminAIChat = lazy(() => import("./pages/admin/AdminAIChat"));
 const SeoHealthPage = lazy(() => import("./pages/admin/SeoHealthPage"));
+const SeoIndexingPage = lazy(() => import("./pages/admin/SeoIndexingPage"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Marketing / Visitor Intelligence
@@ -820,6 +821,9 @@ const App = () => {
                 } />
                 <Route path="seo/health" element={
                   <Suspense fallback={<PageLoader />}><SeoHealthPage /></Suspense>
+                } />
+                <Route path="seo/indexing" element={
+                  <Suspense fallback={<PageLoader />}><SeoIndexingPage /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

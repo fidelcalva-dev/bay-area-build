@@ -289,6 +289,10 @@ export default function SeoAdminDashboard() {
           <h3 className="font-semibold text-foreground group-hover:text-primary">🏥 Health Check</h3>
           <p className="text-xs text-muted-foreground">Quality gates & content validation.</p>
         </Link>
+        <Link to="/admin/seo/indexing" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">🚀 Indexation</h3>
+          <p className="text-xs text-muted-foreground">Track pages & ping Google.</p>
+        </Link>
       </div>
 
       {/* ── Backlink Strategy Checklist ────────────────────── */}

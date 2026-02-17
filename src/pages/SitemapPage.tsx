@@ -4,6 +4,7 @@ import { SEO_ZIP_DATA } from '@/lib/seo-zips';
 import { SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { SEO_MATERIALS } from '@/lib/seo-engine';
 import { BUSINESS_INFO } from '@/lib/seo';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Dynamic Sitemap Page
@@ -43,6 +44,29 @@ export default function SitemapPage() {
   </url>`);
           }
         }
+
+        // Generate entries for city+job and city+material pages from DB cities
+        try {
+          const { data: cities } = await supabase.from('seo_cities').select('city_slug, common_sizes_json').eq('is_active', true);
+          if (cities) {
+            for (const city of cities) {
+              // Job pages
+              for (const j of SEO_JOB_TYPES) {
+                const url = `${BUSINESS_INFO.url}/${city.city_slug}/${j.slug}`;
+                if (!existingUrls.has(url)) {
+                  additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.75</priority>\n  </url>`);
+                }
+              }
+              // Material pages
+              for (const m of SEO_MATERIALS) {
+                const url = `${BUSINESS_INFO.url}/${city.city_slug}/${m.slug}`;
+                if (!existingUrls.has(url)) {
+                  additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`);
+                }
+              }
+            }
+          }
+        } catch { /* silent */ }
 
         // Generate entries for job type pages (for active cities from DB)
         // These are generated from the SEO_JOB_TYPES data

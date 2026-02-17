@@ -7,6 +7,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS } from '@/lib/seo-engine';
 import { getZipData } from '@/lib/seo-zips';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, CheckCircle } from 'lucide-react';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import NotFound from '../NotFound';
 
 export default function SeoZipPage() {
@@ -16,6 +17,7 @@ export default function SeoZipPage() {
   if (!zipData) return <NotFound />;
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === zipData.yardId);
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'zip', city: zipData.city, zip: zipData.zip, slug: zipData.zip });
   const pageTitle = `Dumpster Rental ${zipData.zip} | ${zipData.city}, CA | Calsan`;
   const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 6-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
   const canonicalUrl = `${BUSINESS_INFO.url}/service-area/${zipData.zip}/dumpster-rental`;
