@@ -6497,6 +6497,38 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_visitor_links: {
+        Row: {
+          first_linked_at: string
+          id: string
+          lead_id: string
+          source: string
+          visitor_id: string
+        }
+        Insert: {
+          first_linked_at?: string
+          id?: string
+          lead_id: string
+          source: string
+          visitor_id: string
+        }
+        Update: {
+          first_linked_at?: string
+          id?: string
+          lead_id?: string
+          source?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_visitor_links_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       logistics_events: {
         Row: {
           actor_id: string | null
@@ -11330,6 +11362,7 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          visitor_id: string | null
           zip: string | null
         }
         Insert: {
@@ -11390,6 +11423,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          visitor_id?: string | null
           zip?: string | null
         }
         Update: {
@@ -11450,6 +11484,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          visitor_id?: string | null
           zip?: string | null
         }
         Relationships: [
@@ -11472,6 +11507,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_leads_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -13353,6 +13395,161 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      visitor_events: {
+        Row: {
+          event_name: string
+          event_time: string
+          id: string
+          page_url: string | null
+          properties_json: Json | null
+          session_id: string
+          visitor_id: string
+        }
+        Insert: {
+          event_name: string
+          event_time?: string
+          id?: string
+          page_url?: string | null
+          properties_json?: Json | null
+          session_id: string
+          visitor_id: string
+        }
+        Update: {
+          event_name?: string
+          event_time?: string
+          id?: string
+          page_url?: string | null
+          properties_json?: Json | null
+          session_id?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visitor_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visitor_events_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visitor_profiles: {
+        Row: {
+          consent_status: string
+          device_summary: string | null
+          first_referrer: string | null
+          first_seen_at: string
+          first_utm_json: Json | null
+          id: string
+          last_known_city: string | null
+          last_known_region: string | null
+          last_referrer: string | null
+          last_seen_at: string
+          last_utm_json: Json | null
+          total_pageviews: number
+          total_sessions: number
+          visit_count: number
+        }
+        Insert: {
+          consent_status?: string
+          device_summary?: string | null
+          first_referrer?: string | null
+          first_seen_at?: string
+          first_utm_json?: Json | null
+          id: string
+          last_known_city?: string | null
+          last_known_region?: string | null
+          last_referrer?: string | null
+          last_seen_at?: string
+          last_utm_json?: Json | null
+          total_pageviews?: number
+          total_sessions?: number
+          visit_count?: number
+        }
+        Update: {
+          consent_status?: string
+          device_summary?: string | null
+          first_referrer?: string | null
+          first_seen_at?: string
+          first_utm_json?: Json | null
+          id?: string
+          last_known_city?: string | null
+          last_known_region?: string | null
+          last_referrer?: string | null
+          last_seen_at?: string
+          last_utm_json?: Json | null
+          total_pageviews?: number
+          total_sessions?: number
+          visit_count?: number
+        }
+        Relationships: []
+      }
+      visitor_sessions: {
+        Row: {
+          approx_geo_json: Json | null
+          consent_status: string
+          device_json: Json | null
+          duration_seconds: number | null
+          ended_at: string | null
+          gclid: string | null
+          id: string
+          ip_hash: string | null
+          landing_url: string | null
+          referrer_url: string | null
+          started_at: string
+          timezone: string | null
+          utm_json: Json | null
+          visitor_id: string
+        }
+        Insert: {
+          approx_geo_json?: Json | null
+          consent_status?: string
+          device_json?: Json | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          gclid?: string | null
+          id: string
+          ip_hash?: string | null
+          landing_url?: string | null
+          referrer_url?: string | null
+          started_at?: string
+          timezone?: string | null
+          utm_json?: Json | null
+          visitor_id: string
+        }
+        Update: {
+          approx_geo_json?: Json | null
+          consent_status?: string
+          device_json?: Json | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          gclid?: string | null
+          id?: string
+          ip_hash?: string | null
+          landing_url?: string | null
+          referrer_url?: string | null
+          started_at?: string
+          timezone?: string | null
+          utm_json?: Json | null
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visitor_sessions_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       voicemails: {
         Row: {

@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { captureAttribution } from "@/lib/attributionTracker";
 import { initTracking } from "@/lib/trackingService";
+import { initVisitorTracking } from "@/lib/visitorTracker";
 
 // Critical pages loaded immediately
 import Index from "./pages/Index";
@@ -149,6 +150,10 @@ const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
 const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 
+// Marketing / Visitor Intelligence
+const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
+const SessionsDashboard = lazy(() => import("./pages/admin/marketing/SessionsDashboard"));
+
 // SEO City Engine Pages
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
 const SeoCitySizePage = lazy(() => import("./pages/seo/SeoCitySizePage"));
@@ -266,6 +271,7 @@ const App = () => {
   useEffect(() => {
     captureAttribution();
     initTracking();
+    initVisitorTracking();
   }, []);
 
   return (
@@ -783,6 +789,13 @@ const App = () => {
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
+                } />
+                {/* Marketing / Visitor Intelligence */}
+                <Route path="marketing/visitors" element={
+                  <Suspense fallback={<PageLoader />}><VisitorsDashboard /></Suspense>
+                } />
+                <Route path="marketing/sessions" element={
+                  <Suspense fallback={<PageLoader />}><SessionsDashboard /></Suspense>
                 } />
               </Route>
 
