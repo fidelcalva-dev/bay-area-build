@@ -1124,6 +1124,19 @@ export function V3QuoteFlow() {
                     sameDayLikely={availability.sameDayLikely}
                     loading={availability.loading}
                   />
+                  {/* Conversion Boosters — Scarcity + Social Proof */}
+                  <div className="mt-3 space-y-1.5">
+                    {availability.confidence === 'limited' && (
+                      <p className="text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                        <Zap className="w-3 h-3" />
+                        Limited availability in your area today
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Star className="w-3 h-3 text-primary" />
+                      Trusted by Bay Area homeowners and contractors since 2010
+                    </p>
+                  </div>
                 </div>
 
                 {/* Fallback if no service time data */}

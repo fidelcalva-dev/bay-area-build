@@ -81,6 +81,10 @@ export const RealWorkSection = () => {
               <img 
                 src={image.src} 
                 alt={image.alt}
+                width={191}
+                height={191}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
@@ -95,6 +99,7 @@ export const RealWorkSection = () => {
           <video 
             src={operationsVideo}
             controls
+            preload="none"
             className="w-full rounded-xl border border-background/10"
             poster=""
           >

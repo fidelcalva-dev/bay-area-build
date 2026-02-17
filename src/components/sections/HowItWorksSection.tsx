@@ -124,7 +124,7 @@ export function HowItWorksSection() {
               className="w-full aspect-video"
               controls
               playsInline
-              preload="metadata"
+              preload="none"
             >
               <source src={calsanVideo} type="video/mp4" />
               Your browser does not support the video tag.

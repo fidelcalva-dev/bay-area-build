@@ -32,6 +32,10 @@ export function ServiceGuaranteeSection() {
                 <img 
                   src={calsanPromiseImage} 
                   alt="Dumpster delivery" 
+                  width={320}
+                  height={180}
+                  loading="lazy"
+                  decoding="async"
                   className="w-64 md:w-80 h-auto rounded-lg object-cover"
                 />
               </div>
