@@ -4,92 +4,117 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── Oakland-specific data ────────────────────────────────────
 const OAKLAND_YARD = OPERATIONAL_YARDS.find(y => y.id === 'oakland')!;
 
 const META = {
-  title: 'Dumpster Rental Oakland CA | 10-40 Yard Roll Off | Same-Day Delivery',
-  description: 'Local dumpster rental in Oakland, CA with real yard support. 10, 20, 30 & 40 yard roll-off dumpsters. Transparent pricing. Same-day delivery available. Get an instant quote in 60 seconds.',
+  title: 'Dumpster Rental Oakland CA | Roll Off Dumpsters | Calsan Dumpsters Pro',
+  description: 'Professional dumpster rental in Oakland, CA. 10-40 yard roll-off dumpsters. Local yard dispatch. Transparent pricing. Same-day availability.',
   slug: 'dumpster-rental-oakland-ca',
 };
 
-const NEIGHBORHOODS = [
-  'Downtown Oakland', 'Rockridge', 'Montclair', 'Fruitvale',
-  'East Oakland', 'West Oakland', 'Lake Merritt', 'Temescal',
-  'Oakland Hills', 'Piedmont Avenue', 'Grand Lake', 'Dimond District',
-];
-
-const SIZE_DETAILS: { yards: number; title: string; description: string; useCases: string[] }[] = [
+const SIZE_DETAILS: { yards: number; title: string; description: string; includes: string[] }[] = [
   {
     yards: 10,
-    title: '10 Yard Dumpster — Oakland',
-    description: 'Ideal for small home cleanouts, bathroom remodels, and concrete or dirt removal in Oakland. This is our most popular size for heavy material jobs.',
-    useCases: ['Bathroom remodel debris', 'Concrete slab removal', 'Small garage cleanout', 'Yard waste & dirt'],
+    title: '10 Yard Dumpster',
+    description: 'Best for cleanouts and small remodels.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
   },
   {
     yards: 20,
-    title: '20 Yard Dumpster — Oakland',
-    description: 'Our best seller for Oakland home renovations. Perfect for kitchen remodels, roofing tear-offs, and medium-sized cleanouts.',
-    useCases: ['Kitchen renovation', 'Roofing tear-off', 'Full room cleanout', 'Deck removal'],
+    title: '20 Yard Dumpster',
+    description: 'Ideal for kitchen remodels and medium construction projects.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
   },
   {
     yards: 30,
-    title: '30 Yard Dumpster — Oakland',
-    description: 'Great for major renovations and new construction in Oakland. High sidewalls handle bulky furniture and framing debris.',
-    useCases: ['Major home renovation', 'New construction debris', 'Estate cleanout', 'Multi-room remodel'],
+    title: '30 Yard Dumpster',
+    description: 'Great for large renovations and commercial cleanouts.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
   },
   {
     yards: 40,
-    title: '40 Yard Dumpster — Oakland',
-    description: 'Commercial-grade capacity for large Oakland projects. Ideal for demolition, warehouse cleanouts, and industrial sites.',
-    useCases: ['Commercial demolition', 'Warehouse cleanout', 'Large construction site', 'Industrial waste removal'],
+    title: '40 Yard Dumpster',
+    description: 'Designed for major construction and demolition.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
   },
+];
+
+const WHO_WE_SERVE = [
+  'Homeowners',
+  'General Contractors',
+  'Excavation Crews',
+  'Roofers',
+  'Property Managers',
+  'Retail Businesses',
+  'Warehouses',
+  'Multi-family Properties',
+];
+
+const WHY_CHOOSE = [
+  { title: 'Real Local Yard', desc: `Our fleet operates from ${OAKLAND_YARD.address}. We own the trucks and dumpsters.` },
+  { title: 'Fast Dispatch', desc: 'Delivery times under 2 hours for most Oakland neighborhoods from our centrally located yard.' },
+  { title: 'Licensed and Insured', desc: 'Fully licensed waste hauler with comprehensive insurance coverage for every job.' },
+  { title: 'Professional Drivers', desc: 'Experienced drivers who know Oakland streets, from narrow hillside driveways to downtown loading zones.' },
+  { title: 'Transparent Weight Policy', desc: `Flat-fee pricing for heavy materials. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton, verified by scale ticket.` },
+  { title: 'Same-Day Availability', desc: 'Order before noon for same-day delivery to most Oakland addresses, based on inventory.' },
 ];
 
 const FAQS = [
   {
+    question: 'What size dumpster do I need in Oakland?',
+    answer: 'For small cleanouts or concrete removal, a 10-yard dumpster is typically sufficient. Kitchen and bathroom remodels usually require a 20-yard. For major renovations or commercial projects, 30 or 40-yard dumpsters provide the capacity you need. Call us at (510) 680-2150 for a recommendation based on your specific project.',
+  },
+  {
     question: 'How much does dumpster rental cost in Oakland?',
-    answer: `Dumpster rental in Oakland starts at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. Pricing depends on size, material type, ZIP code, and rental duration. Heavy materials like concrete use flat-fee pricing with no weight overage. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton beyond included tonnage.`,
+    answer: `Dumpster rental in Oakland starts at $${DUMPSTER_SIZES_DATA[0]?.priceFrom || 390} for a ${DUMPSTER_SIZES_DATA[0]?.yards || 6}-yard dumpster. Final pricing depends on dumpster size, material type, your ZIP code, and distance from our yard. Heavy material dumpsters (concrete, dirt) use flat-fee pricing with no weight overage. Use our online calculator for an instant, exact quote.`,
   },
   {
-    question: 'Do I need a permit for a dumpster in Oakland?',
-    answer: 'If the dumpster is placed on your private property (driveway, yard), no permit is required in Oakland. If you need to place it on a public street or right-of-way, you will need an encroachment permit from the City of Oakland. We can help guide you through the process.',
+    question: 'Do I need a permit in Oakland?',
+    answer: 'If the dumpster is placed on your private property (driveway, yard, or job site), no permit is required. If placement on a public street or right-of-way is necessary, you will need an encroachment permit from the City of Oakland Public Works Department. We can advise you on the process.',
   },
   {
-    question: 'What size dumpster do I need?',
-    answer: 'For small cleanouts and concrete jobs, a 10-yard dumpster works well. For home renovations, most Oakland customers choose a 20-yard. For major construction or commercial projects, 30 or 40 yard sizes are recommended. Call us at (510) 680-2150 and we will help you pick the right size.',
+    question: 'Can I dispose of concrete in a roll-off dumpster?',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing and no weight overage. Clean concrete (no rebar, no mixed debris) qualifies for our lowest rate. If you mix concrete with general debris, the load may be reclassified and priced as general debris. The dumpster must not be loaded above the fill line for safe transport.',
   },
   {
-    question: 'Can I put concrete in a dumpster?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced differently. The dumpster must not be loaded above the fill line.',
-  },
-  {
-    question: 'Are you a broker?',
-    answer: `No. Calsan Dumpsters Pro is NOT a broker. We own our trucks and dumpsters. Our Oakland yard is at ${OAKLAND_YARD.address}. When you call us, you are talking to the company that delivers your dumpster.`,
-  },
-  {
-    question: 'How fast can you deliver a dumpster in Oakland?',
-    answer: 'Same-day delivery is available for most Oakland addresses when you order before noon. Our Oakland yard is centrally located, so delivery times are typically under 2 hours for most neighborhoods.',
-  },
-  {
-    question: 'What weight is included in the rental price?',
-    answer: 'Each dumpster size includes a base tonnage allowance. For example, a 10-yard includes 1 ton and a 20-yard includes 2 tons of general debris. Heavy material dumpsters (concrete, dirt) are flat-fee with no weight overage. Any excess weight on general debris is billed at $165/ton based on scale ticket.',
-  },
-  {
-    question: 'How do I book a dumpster in Oakland?',
-    answer: 'You can get an instant quote online in 60 seconds at calsandumpsterspro.com/quote. Or call us at (510) 680-2150. We accept same-day orders before noon for most Oakland locations.',
+    question: 'How fast can you deliver in Oakland?',
+    answer: 'Same-day delivery is available for most Oakland addresses when you order before noon. Our yard is centrally located in Oakland, so delivery times are typically under 2 hours. We serve every neighborhood from Downtown to the Oakland Hills.',
   },
 ];
 
 // ── Schema generators ────────────────────────────────────────
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: BUSINESS_INFO.name,
+  description: META.description,
+  url: BUSINESS_INFO.url,
+  telephone: BUSINESS_INFO.phone.salesFormatted,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: OAKLAND_YARD.address.split(',')[0],
+    addressLocality: 'Oakland',
+    addressRegion: 'CA',
+    postalCode: '94601',
+    addressCountry: 'US',
+  },
+  areaServed: {
+    '@type': 'City',
+    name: 'Oakland',
+    sameAs: 'https://en.wikipedia.org/wiki/Oakland,_California',
+  },
+  priceRange: `$${DUMPSTER_SIZES_DATA[0]?.priceFrom || 390} - $${DUMPSTER_SIZES_DATA[DUMPSTER_SIZES_DATA.length - 1]?.priceFrom || 1135}`,
+};
+
 const serviceSchema = generateServiceSchema({
   name: 'Dumpster Rental Oakland CA',
   description: META.description,
-  areaServed: ['Oakland', 'Alameda County'],
-  price: '390',
+  areaServed: ['Oakland', 'Alameda County', 'East Bay'],
+  price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 390),
 });
 
 const breadcrumbSchema = generateBreadcrumbSchema([
@@ -105,16 +130,16 @@ export default function DumpsterRentalOakland() {
     <Layout title={META.title} description={META.description}>
       <Helmet>
         <link rel="canonical" href={`${BUSINESS_INFO.url}/${META.slug}`} />
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 
-      {/* ── 1. HERO ───────────────────────────────────────── */}
+      {/* ── HERO ───────────────────────────────────────── */}
       <section className="bg-background section-padding border-b border-border">
         <div className="container-wide">
           <div className="max-w-3xl">
-            {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4">
               <Link to="/" className="hover:text-primary transition-colors">Home</Link>
               <span>/</span>
@@ -122,26 +147,29 @@ export default function DumpsterRentalOakland() {
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight mb-4">
-              Dumpster Rental Oakland, CA
+              Dumpster Rental in Oakland, CA
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground font-medium mb-3">
-              Fast Local Roll-Off Dumpster Delivery from Our Oakland Yard
+            <p className="text-xl md:text-2xl text-muted-foreground font-medium mb-4">
+              Professional Roll-Off Dumpster Logistics for Residential, Contractor, and Commercial Projects.
+            </p>
+            <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">
+              Calsan Dumpsters Pro provides fast, transparent, and professional dumpster rental services across Oakland
+              and surrounding East Bay communities. Local yard dispatch. No hidden fees.
             </p>
 
-            {/* Trust line */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground mb-8">
               <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-primary" />Real Oakland Yard</span>
-              <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-primary" />Transparent Pricing</span>
+              <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-primary" />Licensed and Insured</span>
               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-primary" />Same-Day Available</span>
             </div>
 
             <div className="flex flex-wrap gap-4">
               <Button asChild variant="cta" size="lg">
-                <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
+                <Link to="/quote">Get Your Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg">
                 <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                  <Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}
+                  <Phone className="w-4 h-4 mr-2" />Call {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
             </div>
@@ -149,60 +177,44 @@ export default function DumpsterRentalOakland() {
         </div>
       </section>
 
-      {/* ── 2. LOCAL AUTHORITY ─────────────────────────────── */}
+      {/* ── SECTION 1: LOCAL AUTHORITY ──────────────────── */}
       <section className="section-padding bg-muted/30">
         <div className="container-narrow">
-          <h2 className="heading-lg text-foreground mb-3 text-center">Why Oakland Chooses Calsan</h2>
-          <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-            When you need dumpster rental in Oakland, you deserve a company with a real local yard — not a broker
-            who farms out your order to the lowest bidder.
-          </p>
+          <h2 className="heading-lg text-foreground mb-6 text-center">Local Dumpster Rental Company Serving Oakland</h2>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              {
-                title: 'Real Oakland Yard',
-                desc: `Our fleet is based at ${OAKLAND_YARD.address}. We own the trucks and the dumpsters — not a broker office, an operational yard.`,
-              },
-              {
-                title: 'Faster Delivery',
-                desc: 'Because our yard is in Oakland, delivery times are under 2 hours for most neighborhoods. Same-day service when you order before noon.',
-              },
-              {
-                title: 'Direct Dispatch',
-                desc: 'No middlemen. When you call (510) 680-2150, you talk directly to the team that delivers your dumpster rental in Oakland.',
-              },
-              {
-                title: 'Transparent Pricing',
-                desc: `Flat-fee pricing for heavy materials. General debris starts at $${DUMPSTER_SIZES_DATA[0].priceFrom}. No hidden fuel surcharges or environmental fees.`,
-              },
-              {
-                title: 'Not a Broker',
-                desc: 'Calsan Dumpsters Pro is a locally owned company with real inventory. We control quality, timing, and pricing from our Oakland yard.',
-              },
-              {
-                title: 'Real Inventory Control',
-                desc: 'We know exactly which dumpsters are available because they sit in our yard. No guessing, no delays, no excuses.',
-              },
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-5 bg-card border border-border rounded-xl">
-                <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
-                </div>
-              </div>
-            ))}
+          <div className="prose prose-sm max-w-none text-muted-foreground space-y-4">
+            <p>
+              Calsan Dumpsters Pro is a locally owned and operated dumpster rental company serving all of Oakland, California.
+              From <strong className="text-foreground">Downtown Oakland</strong> office renovations to <strong className="text-foreground">West Oakland</strong> warehouse
+              cleanouts, <strong className="text-foreground">East Oakland</strong> residential projects, and job sites
+              near <strong className="text-foreground">Jack London Square</strong>, our team delivers roll-off dumpsters directly
+              from our local Bay Area yard.
+            </p>
+            <p>
+              Oakland's <strong className="text-foreground">industrial corridors</strong> along San Leandro Street and International Boulevard
+              see consistent demand for construction and demolition dumpsters. We serve these areas daily alongside
+              Oakland's <strong className="text-foreground">residential neighborhoods</strong> — from Rockridge and Montclair
+              to Fruitvale, Temescal, and the Oakland Hills.
+            </p>
+            <p>
+              Whether your project involves an <strong className="text-foreground">ADU (accessory dwelling unit) build</strong> in the Oakland Hills,
+              a <strong className="text-foreground">tenant improvement</strong> in a Downtown office space, or a full-scale commercial demolition,
+              we have the right dumpster size and the local dispatch capability to keep your project on schedule.
+            </p>
+            <p>
+              We operate from a local Bay Area yard and dispatch directly to Oakland job sites for faster delivery
+              and tighter scheduling. No brokers, no middlemen, no delays.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ── 3. DUMPSTER SIZES ─────────────────────────────── */}
+      {/* ── SECTION 2: DUMPSTER SIZES ──────────────────── */}
       <section className="section-padding bg-background">
         <div className="container-wide">
-          <h2 className="heading-lg text-foreground mb-3 text-center">Dumpster Sizes Available in Oakland</h2>
+          <h2 className="heading-lg text-foreground mb-3 text-center">Available Dumpster Sizes in Oakland</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Every dumpster rental in Oakland includes 7-day rental, delivery, and pickup. Choose the right size for your project.
+            Every dumpster rental in Oakland includes delivery, pickup, and a 7-day rental period. Choose the right size for your project.
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -218,24 +230,23 @@ export default function DumpsterRentalOakland() {
                     </div>
                     <div>
                       <h3 className="font-bold text-foreground text-lg">{size.title}</h3>
-                      <p className="text-sm text-muted-foreground">{sizeData.dimensions}</p>
+                      {sizeData.dimensions && (
+                        <p className="text-sm text-muted-foreground">{sizeData.dimensions}</p>
+                      )}
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3">{size.description}</p>
-                  <ul className="space-y-1.5 mb-4">
-                    {size.useCases.map((uc, i) => (
+                  <p className="text-sm text-muted-foreground mb-4">{size.description}</p>
+                  <ul className="space-y-2">
+                    {size.includes.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />{uc}
+                        <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <div>
-                      <span className="text-lg font-bold text-primary">From ${sizeData.priceFrom}</span>
-                      <span className="text-xs text-muted-foreground ml-2">{sizeData.includedTons}T included</span>
-                    </div>
-                    <Link to={`/${size.yards}-yard-dumpster`} className="text-sm text-primary font-medium hover:underline">
-                      Details →
+                  <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+                    <span className="text-lg font-bold text-primary">From ${sizeData.priceFrom}</span>
+                    <Link to="/quote" className="text-sm text-primary font-medium hover:underline">
+                      Get Price
                     </Link>
                   </div>
                 </div>
@@ -245,130 +256,109 @@ export default function DumpsterRentalOakland() {
 
           <div className="text-center mt-8">
             <Link to="/sizes" className="text-primary font-medium hover:underline text-sm">
-              View all 7 dumpster sizes (6-50 yard) →
+              View all 7 dumpster sizes (6-50 yard)
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── 4. HEAVY MATERIAL ─────────────────────────────── */}
+      {/* ── SECTION 3: HEAVY MATERIAL ──────────────────── */}
       <section className="section-padding bg-muted/30">
         <div className="container-narrow">
-          <h2 className="heading-lg text-foreground mb-3 text-center">Concrete & Dirt Dumpsters in Oakland</h2>
+          <h2 className="heading-lg text-foreground mb-3 text-center">Concrete and Heavy Material Dumpsters in Oakland</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Need a concrete dumpster in Oakland? We offer dedicated heavy material dumpsters with flat-rate pricing — no weight overage surprises.
+            Specialized heavy material dumpsters for Oakland construction, demolition, and excavation projects.
           </p>
 
-          <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-4">
+          <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-5">
             {[
-              { label: 'Available Sizes', value: '6, 8, and 10 yard dumpsters for heavy materials. 10-yard is most popular for Oakland concrete jobs.' },
-              { label: 'Fill-Line Required', value: 'Heavy material dumpsters must not be loaded above the fill line for safe transport.' },
-              { label: 'Flat-Rate Pricing', value: 'Concrete and dirt dumpsters use flat-fee pricing. No weight overage charges — the price you see is the price you pay.' },
-              { label: 'Clean Concrete', value: 'Clean concrete (no rebar, no dirt mixed in) is fully recyclable and qualifies for our lowest heavy material rate.' },
-              { label: 'Mixed Loads', value: 'If you mix concrete with general debris, the load will be reclassified as general debris and priced accordingly.' },
+              { icon: Weight, label: 'Clean Concrete Dumpsters', value: 'Dedicated dumpsters for clean concrete disposal. Fully recyclable material qualifies for our lowest heavy material rate. Available in 6, 8, and 10-yard sizes.' },
+              { icon: Truck, label: 'Dirt and Soil Dumpsters', value: 'Separate hauling for dirt, soil, and fill material. Flat-fee pricing with no weight overage surprises.' },
+              { icon: Shield, label: 'Fill-Line Enforcement', value: 'Heavy material dumpsters must not be loaded above the fill line. This is a non-negotiable safety requirement for transport on Oakland roads.' },
+              { icon: FileCheck, label: 'Reclassification Policy', value: 'If a concrete dumpster is contaminated with general debris, the load will be reclassified and priced as general debris. Keep materials separated for the best rate.' },
+              { icon: Scale, label: 'Scale Ticket Transparency', value: 'Every load is weighed at the disposal facility. You receive a copy of the scale ticket so you can verify the exact weight of your material.' },
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" />
+              <div key={i} className="flex items-start gap-4">
+                <item.icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
-                  <span className="font-semibold text-foreground">{item.label}: </span>
-                  <span className="text-muted-foreground text-sm">{item.value}</span>
+                  <span className="font-semibold text-foreground">{item.label}</span>
+                  <p className="text-sm text-muted-foreground mt-0.5">{item.value}</p>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-6">
-            <Link to="/concrete-dumpster-rental" className="text-primary font-medium hover:underline text-sm">
-              Learn more about concrete dumpster rental →
-            </Link>
+      {/* ── SECTION 4: WHO WE SERVE ────────────────────── */}
+      <section className="section-padding bg-background">
+        <div className="container-narrow">
+          <h2 className="heading-lg text-foreground mb-8 text-center">Who We Serve in Oakland</h2>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {WHO_WE_SERVE.map((client) => (
+              <div key={client} className="flex items-center gap-2.5 bg-card border border-border rounded-xl px-4 py-3.5 text-sm">
+                <Users className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-foreground font-medium">{client}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 5. PRICING EDUCATION ──────────────────────────── */}
-      <section className="section-padding bg-background">
+      {/* ── SECTION 5: PRICING TRANSPARENCY ────────────── */}
+      <section className="section-padding bg-muted/30">
         <div className="container-narrow">
-          <h2 className="heading-lg text-foreground mb-3 text-center">How Much Does Dumpster Rental Cost in Oakland?</h2>
+          <h2 className="heading-lg text-foreground mb-3 text-center">Transparent Dumpster Pricing in Oakland</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Pricing for dumpster rental in Oakland depends on four factors: size, material type, your ZIP code, and rental duration.
+            We do not publish misleading price ranges. Your exact rate depends on four factors:
           </p>
 
           <div className="grid sm:grid-cols-2 gap-4 mb-8">
             <div className="bg-card border border-border rounded-xl p-5">
+              <MapPin className="w-5 h-5 text-primary mb-2" />
+              <h3 className="font-semibold text-foreground mb-1">ZIP Code</h3>
+              <p className="text-sm text-muted-foreground">Delivery distance from our Oakland yard directly affects your rate. Central Oakland ZIPs get the best pricing.</p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-5">
               <Ruler className="w-5 h-5 text-primary mb-2" />
-              <h3 className="font-semibold text-foreground mb-1">Size</h3>
-              <p className="text-sm text-muted-foreground">Larger dumpsters cost more. 10-yard starts at ${DUMPSTER_SIZES_DATA.find(s => s.yards === 10)?.priceFrom}, 40-yard at ${DUMPSTER_SIZES_DATA.find(s => s.yards === 40)?.priceFrom}.</p>
+              <h3 className="font-semibold text-foreground mb-1">Distance from Yard</h3>
+              <p className="text-sm text-muted-foreground">Closer job sites benefit from lower delivery costs. Our yard serves all of Oakland and surrounding East Bay cities.</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-5">
               <Truck className="w-5 h-5 text-primary mb-2" />
-              <h3 className="font-semibold text-foreground mb-1">Material</h3>
+              <h3 className="font-semibold text-foreground mb-1">Dumpster Size</h3>
+              <p className="text-sm text-muted-foreground">
+                10-yard starts at ${DUMPSTER_SIZES_DATA.find(s => s.yards === 10)?.priceFrom || 499}.
+                40-yard starts at ${DUMPSTER_SIZES_DATA.find(s => s.yards === 40)?.priceFrom || 899}.
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-5">
+              <Weight className="w-5 h-5 text-primary mb-2" />
+              <h3 className="font-semibold text-foreground mb-1">Material Type</h3>
               <p className="text-sm text-muted-foreground">Heavy materials (concrete, dirt) use flat-fee pricing. General debris includes base tonnage with ${PRICING_POLICIES.overagePerTonGeneral}/ton overage.</p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-5">
-              <MapPin className="w-5 h-5 text-primary mb-2" />
-              <h3 className="font-semibold text-foreground mb-1">ZIP Code</h3>
-              <p className="text-sm text-muted-foreground">Delivery distance from our Oakland yard affects pricing. Central Oakland ZIPs get the best rates.</p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-5">
-              <Clock className="w-5 h-5 text-primary mb-2" />
-              <h3 className="font-semibold text-foreground mb-1">Rental Duration</h3>
-              <p className="text-sm text-muted-foreground">Standard 7-day rental included. Extended rentals available at a daily rate.</p>
             </div>
           </div>
 
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center">
-            <p className="text-lg font-semibold text-foreground mb-1">Oakland dumpster rental starting at ${DUMPSTER_SIZES_DATA[0].priceFrom}</p>
-            <p className="text-sm text-muted-foreground mb-4">7-day rental, delivery & pickup included</p>
+            <p className="text-lg font-semibold text-foreground mb-1">Use our instant calculator to get your exact rate.</p>
+            <p className="text-sm text-muted-foreground mb-4">No guesswork. Enter your ZIP and project details for a real price.</p>
             <Button asChild variant="cta" size="lg">
-              <Link to="/quote">Check Exact Price by ZIP <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Get Your Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* ── 6. SERVICE AREAS / NEIGHBORHOODS ──────────────── */}
-      <section className="section-padding bg-muted/30">
-        <div className="container-narrow">
-          <h2 className="heading-lg text-foreground mb-3 text-center">Serving All Oakland Neighborhoods</h2>
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Whether you need a dumpster rental near me in Oakland or a roll-off for a job across town,
-            our centrally located yard covers every neighborhood.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {NEIGHBORHOODS.map(hood => (
-              <div key={hood} className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-3 text-sm">
-                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span className="text-foreground">{hood}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-6">
-            <Link to="/areas" className="text-primary font-medium hover:underline text-sm">
-              View all Bay Area service areas →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 7. CONTRACTOR SECTION ─────────────────────────── */}
+      {/* ── SECTION 6: WHY CHOOSE CALSAN ───────────────── */}
       <section className="section-padding bg-background">
         <div className="container-narrow">
-          <h2 className="heading-lg text-foreground mb-3 text-center">Contractor Dumpster Rentals in Oakland</h2>
-          <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Oakland contractors trust Calsan for reliable dumpster rental with priority scheduling, fast swaps, and dedicated support.
-          </p>
+          <h2 className="heading-lg text-foreground mb-8 text-center">Why Oakland Customers Choose Calsan Dumpsters Pro</h2>
 
           <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              { icon: HardHat, title: 'Job Site Priority', desc: 'Contractors get priority scheduling for time-sensitive Oakland job sites.' },
-              { icon: Truck, title: 'Concrete Dumpsters', desc: 'Dedicated heavy material dumpsters for Oakland foundation, demo, and flatwork jobs.' },
-              { icon: Building2, title: 'Volume Pricing', desc: 'Multi-dumpster and recurring service discounts for Oakland contractors.' },
-              { icon: Clock, title: 'Fast Swaps', desc: 'Need a swap? We can swap dumpsters on Oakland job sites within hours, not days.' },
-            ].map((item, i) => (
+            {WHY_CHOOSE.map((item, i) => (
               <div key={i} className="flex items-start gap-3 p-5 bg-card border border-border rounded-xl">
-                <item.icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.desc}</p>
@@ -376,20 +366,37 @@ export default function DumpsterRentalOakland() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-6 space-x-4">
-            <Link to="/contractors" className="text-primary font-medium hover:underline text-sm">
-              Contractor programs →
-            </Link>
-            <Link to="/contractor-best-practices" className="text-primary font-medium hover:underline text-sm">
-              Best practices guide →
-            </Link>
+      {/* ── SECTION 7: INTERNAL LINKING ────────────────── */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-narrow">
+          <h2 className="heading-lg text-foreground mb-8 text-center">Explore More Services</h2>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { to: '/dumpster-rental-san-jose-ca', label: 'Dumpster Rental San Jose', desc: 'South Bay dumpster delivery from our San Jose yard.' },
+              { to: '/dumpster-rental-san-francisco-ca', label: 'Dumpster Rental San Francisco', desc: 'Roll-off dumpsters delivered to SF job sites.' },
+              { to: '/contractor-dumpster-rental', label: 'Contractor Dumpster Rental', desc: 'Priority scheduling and volume pricing for licensed contractors.' },
+              { to: '/heavy-material-dumpsters', label: 'Heavy Material Dumpsters', desc: 'Concrete, dirt, and demolition debris hauling.' },
+              { to: '/commercial-dumpster-rental', label: 'Commercial Dumpster Rental', desc: 'Large-capacity dumpsters for commercial and industrial projects.' },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition-colors group"
+              >
+                <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">{link.label}</h3>
+                <p className="text-sm text-muted-foreground">{link.desc}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── 8. FAQ SECTION ────────────────────────────────── */}
-      <section className="section-padding bg-muted/30">
+      {/* ── SECTION 8: FAQ ─────────────────────────────── */}
+      <section className="section-padding bg-background">
         <div className="container-narrow">
           <h2 className="heading-lg text-foreground mb-8 text-center">Oakland Dumpster Rental FAQ</h2>
           <div className="space-y-3">
@@ -406,16 +413,16 @@ export default function DumpsterRentalOakland() {
         </div>
       </section>
 
-      {/* ── 9. FINAL CTA ──────────────────────────────────── */}
+      {/* ── FINAL CTA ──────────────────────────────────── */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
           <h2 className="heading-lg mb-4">Ready to Rent a Dumpster in Oakland?</h2>
-          <p className="text-lg text-primary-foreground/80 mb-8">
+          <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
             Get an instant quote in 60 seconds or call us now. Same-day delivery available for most Oakland addresses.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Get Your Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
@@ -426,17 +433,17 @@ export default function DumpsterRentalOakland() {
         </div>
       </section>
 
-      {/* ── 10. RELATED LOCATIONS ─────────────────────────── */}
+      {/* ── RELATED LOCATIONS ─────────────────────────── */}
       <RelatedLocations currentCity="oakland-ca" pageContext="oak-landing" title="Also Serving Nearby Areas" />
 
-      {/* ── 11. INTERNAL LINKS ────────────────────────────── */}
+      {/* ── INTERNAL LINKS ────────────────────────────── */}
       <InternalLinkBlock currentCity="oakland-ca" type="city" pageContext="oak-landing" />
 
-      {/* ── STICKY MOBILE CTA ─────────────────────────────── */}
+      {/* ── STICKY MOBILE CTA ─────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border md:hidden z-50">
         <Button asChild variant="cta" size="lg" className="w-full h-14 text-base shadow-lg">
           <Link to="/quote">
-            Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" />
+            Get Your Exact Price <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
         </Button>
       </div>
