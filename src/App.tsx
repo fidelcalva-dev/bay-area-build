@@ -151,6 +151,8 @@ const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
 const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 const AdminAIChat = lazy(() => import("./pages/admin/AdminAIChat"));
+const SeoHealthPage = lazy(() => import("./pages/admin/SeoHealthPage"));
+const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Marketing / Visitor Intelligence
 const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
@@ -342,6 +344,11 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><BlogArticle /></Suspense>
               } />
               
+              {/* Dynamic Sitemap */}
+              <Route path="/sitemap.xml" element={
+                <Suspense fallback={<PageLoader />}><SitemapPage /></Suspense>
+              } />
+
               {/* Oakland SEO Domination Page */}
               <Route path="/dumpster-rental-oakland-ca" element={
                 <Suspense fallback={<PageLoader />}><DumpsterRentalOakland /></Suspense>
@@ -465,29 +472,8 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><SeoZipPage /></Suspense>
               } />
 
-              {/* SEO City + Job Type Pages */}
-              <Route path="/:citySlug/roofing-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/demolition-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/adu-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/home-remodel-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/garage-cleanout-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/estate-cleanout-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/concrete-removal-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
-              <Route path="/:citySlug/commercial-cleanout-dumpster" element={
+              {/* SEO City + Job Type Pages (wildcard — SeoCityJobPage validates slug) */}
+              <Route path="/:citySlug/:jobSlug" element={
                 <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
               } />
 
@@ -831,6 +817,9 @@ const App = () => {
                 } />
                 <Route path="seo/gbp-plan" element={
                   <Suspense fallback={<PageLoader />}><GbpDominationPlan /></Suspense>
+                } />
+                <Route path="seo/health" element={
+                  <Suspense fallback={<PageLoader />}><SeoHealthPage /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

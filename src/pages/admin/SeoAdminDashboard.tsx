@@ -268,7 +268,7 @@ export default function SeoAdminDashboard() {
       </div>
 
       {/* ── Quick Links ───────────────────────────────────── */}
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid sm:grid-cols-5 gap-4">
         <Link to="/admin/seo/gbp-plan" className="bg-card border border-primary/30 rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <h3 className="font-semibold text-foreground group-hover:text-primary">📍 GBP Domination Plan</h3>
           <p className="text-xs text-muted-foreground">90-day playbook for Map Pack Top 3.</p>
@@ -284,6 +284,10 @@ export default function SeoAdminDashboard() {
         <Link to="/admin/seo/sitemap" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <h3 className="font-semibold text-foreground group-hover:text-primary">Sitemap</h3>
           <p className="text-xs text-muted-foreground">View and regenerate sitemap.xml.</p>
+        </Link>
+        <Link to="/admin/seo/health" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">🏥 Health Check</h3>
+          <p className="text-xs text-muted-foreground">Quality gates & content validation.</p>
         </Link>
       </div>
 
