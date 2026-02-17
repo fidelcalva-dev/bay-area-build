@@ -2082,6 +2082,101 @@ export type Database = {
           },
         ]
       }
+      chat_conversations: {
+        Row: {
+          context_json: Json | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          escalation_reason: string | null
+          handled_at: string | null
+          handled_by: string | null
+          id: string
+          lead_id: string | null
+          session_id: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          visitor_id: string | null
+        }
+        Insert: {
+          context_json?: Json | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          escalation_reason?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          lead_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          visitor_id?: string | null
+        }
+        Update: {
+          context_json?: Json | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          escalation_reason?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          lead_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          next_action: string | null
+          quick_replies: Json | null
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          next_action?: string | null
+          quick_replies?: Json | null
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          next_action?: string | null
+          quick_replies?: Json | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       city_facility_rules: {
         Row: {
           city: string

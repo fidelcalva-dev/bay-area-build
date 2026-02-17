@@ -150,6 +150,7 @@ const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
 const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
 const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
+const AdminAIChat = lazy(() => import("./pages/admin/AdminAIChat"));
 
 // Marketing / Visitor Intelligence
 const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
@@ -800,6 +801,9 @@ const App = () => {
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
+                } />
+                <Route path="ai/chat" element={
+                  <Suspense fallback={<PageLoader />}><AdminAIChat /></Suspense>
                 } />
                 {/* Marketing / Visitor Intelligence */}
                 <Route path="marketing/visitors" element={

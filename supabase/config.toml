@@ -176,3 +176,6 @@ verify_jwt = false
 
 [functions.gbp-fetch-insights]
 verify_jwt = false
+
+[functions.calsan-dumpster-ai]
+verify_jwt = false
