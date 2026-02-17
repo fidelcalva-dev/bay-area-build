@@ -1,0 +1,85 @@
+{
+  "company": {
+    "name": "Calsan Dumpsters Pro",
+    "phone": "(510) 680-2150",
+    "email": "info@calsandumpsterspro.com",
+    "website": "https://calsandumpsterspro.com",
+    "hours": "Monday - Sunday, 6:00 AM - 9:00 PM PT",
+    "quoteUrl": "/quote"
+  },
+  "serviceAreas": {
+    "primary": ["Oakland", "San Jose", "San Francisco", "Berkeley", "Fremont", "Hayward", "Richmond", "Concord", "Walnut Creek", "Palo Alto", "Mountain View", "Sunnyvale", "Santa Clara", "Daly City", "San Mateo", "Redwood City"],
+    "extended": ["Marin County", "Sonoma County", "Napa County", "Solano County"],
+    "description": "We serve the entire San Francisco Bay Area from local yards in Oakland and San Jose."
+  },
+  "dumpsterSizes": {
+    "heavyMaterial": [
+      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Small concrete removal, dirt, driveway work"},
+      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Foundation demo, brick and block, garage cleanouts"},
+      {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal"}
+    ],
+    "generalDebris": [
+      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "bestFor": "Small cleanouts, yard debris"},
+      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "bestFor": "Bathroom remodel, garage cleanouts"},
+      {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "bestFor": "Small renovations, deck removal"},
+      {"yards": 20, "dimensions": "18' L x 7.5' W x 4' H", "includedTons": 2, "bestFor": "Full room renovations, roofing, large cleanouts"},
+      {"yards": 30, "dimensions": "18' L x 7.5' W x 6' H", "includedTons": 3, "bestFor": "Major renovations, new construction, estate cleanouts"},
+      {"yards": 40, "dimensions": "24' L x 7.5' W x 6' H", "includedTons": 4, "bestFor": "Commercial projects, large demolition"},
+      {"yards": 50, "dimensions": "24' L x 7.5' W x 7.5' H", "includedTons": 5, "bestFor": "Industrial sites, warehouse cleanouts"}
+    ]
+  },
+  "materials": {
+    "general": {
+      "label": "General Debris",
+      "allowedSizes": [6, 8, 10, 20, 30, 40, 50],
+      "examples": ["Household junk", "Furniture", "Drywall", "Wood", "Carpet", "Roofing shingles", "Mixed C&D debris"],
+      "overagePolicy": "$165 per ton beyond included tonnage, based on certified scale ticket"
+    },
+    "heavy": {
+      "label": "Heavy / Inert Materials",
+      "allowedSizes": [6, 8, 10],
+      "examples": ["Concrete", "Dirt", "Soil", "Brick", "Block", "Asphalt", "Rock"],
+      "overagePolicy": "Flat fee pricing. Disposal is included. No extra weight charges.",
+      "rules": [
+        "Must be clean / uncontaminated loads only",
+        "If trash or mixed debris is found, load is reclassified to General Debris at $165/ton overage",
+        "Fill-line enforcement: do not exceed the marked fill line for safety",
+        "Maximum sizes: 6, 8, or 10 yard only"
+      ]
+    }
+  },
+  "rentalPolicy": {
+    "standardDays": 7,
+    "extraDayCost": 35,
+    "maxRentalDays": "Flexible, just call to extend",
+    "overfillPolicy": "Materials must not extend above the top of the dumpster walls. Overfilled dumpsters cannot be legally transported and may incur additional fees."
+  },
+  "prohibitedItems": [
+    "Hazardous waste",
+    "Paint and chemicals",
+    "Batteries",
+    "Medical waste",
+    "Pressurized tanks or cylinders",
+    "Electronics (TVs, monitors)",
+    "Flammable liquids",
+    "Asbestos"
+  ],
+  "specialItems": {
+    "mattress": {"price": 50, "note": "CA recycling fee, per mattress"},
+    "applianceWithFreon": {"price": 75, "note": "Fridge, freezer, AC unit"},
+    "tires": {"price": 25, "note": "Per tire, passenger car tires"}
+  },
+  "deliveryInfo": {
+    "sameDaySurcharge": 100,
+    "sameDayCutoff": "Orders placed before 12:00 PM local time",
+    "standardLeadTime": "Typically next business day",
+    "deliveryWindows": ["Morning (7-11 AM)", "Midday (11 AM-3 PM)", "Afternoon (3-6 PM)"],
+    "note": "Delivery times are estimated windows, not guaranteed exact times."
+  },
+  "permitGuidance": {
+    "general": "If the dumpster is placed on your private property (driveway, yard), no permit is typically needed. If it must go on the street or public right-of-way, you will likely need a permit from your city.",
+    "recommendation": "We recommend placing the dumpster on your driveway whenever possible to avoid permit requirements.",
+    "disclaimer": "Permit rules vary by city. Contact your local public works department for specific requirements. We can point you in the right direction."
+  },
+  "pricingDisclaimer": "Exact pricing depends on your ZIP code, dumpster size, material type, and distance from our yard. Use our instant calculator for an accurate quote."
+}
