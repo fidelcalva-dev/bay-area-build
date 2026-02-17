@@ -163,6 +163,8 @@ const GA4DebugPanel = lazy(() => import("./pages/admin/marketing/GA4DebugPanel")
 const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
 const SeoCitySizePage = lazy(() => import("./pages/seo/SeoCitySizePage"));
 const SeoCityMaterialPage = lazy(() => import("./pages/seo/SeoCityMaterialPage"));
+const SeoZipPage = lazy(() => import("./pages/seo/SeoZipPage"));
+const SeoCityJobPage = lazy(() => import("./pages/seo/SeoCityJobPage"));
 
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
@@ -456,6 +458,37 @@ const App = () => {
               } />
               <Route path="/:citySlug/commercial-dumpster-rental" element={
                 <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
+              } />
+
+              {/* SEO ZIP Pages */}
+              <Route path="/service-area/:zip/dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoZipPage /></Suspense>
+              } />
+
+              {/* SEO City + Job Type Pages */}
+              <Route path="/:citySlug/roofing-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/demolition-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/adu-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/home-remodel-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/garage-cleanout-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/estate-cleanout-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/concrete-removal-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
+              } />
+              <Route path="/:citySlug/commercial-cleanout-dumpster" element={
+                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
               } />
 
               {/* Preview Routes (v2 Uber-like experience) */}
