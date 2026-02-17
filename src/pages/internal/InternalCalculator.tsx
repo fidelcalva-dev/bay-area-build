@@ -1,34 +1,25 @@
-// Internal Master Calculator Page
+// Internal Master Calculator Page — Single Price from Official Price List
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { MasterCalculatorInputs } from '@/components/calculator/MasterCalculatorInputs';
 import { ServiceabilityCard } from '@/components/calculator/ServiceabilityCard';
-import { TierSelector } from '@/components/calculator/TierSelector';
-import { QuoteSendPanel } from '@/components/calculator/QuoteSendPanel';
-import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
 import { VendorFinderPanel } from '@/components/calculator/VendorFinderPanel';
 import { ScriptGenerator } from '@/components/calculator/ScriptGenerator';
 import { LiveLoadPanel, type LiveLoadState } from '@/components/calculator/LiveLoadPanel';
 import { DumpReturnPanel, type DumpReturnState } from '@/components/calculator/DumpReturnPanel';
 import { ExtrasLibraryPanel, type SelectedExtra } from '@/components/calculator/ExtrasLibraryPanel';
-import { QuotePdfExport } from '@/components/calculator/QuotePdfExport';
+import { DispatchPlanCard } from '@/components/calculator/DispatchPlanCard';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calculator, Shield, User, RotateCcw, Lock, AlertTriangle } from 'lucide-react';
-import {
-  fetchTierConfigs,
-  calculateTiers,
-  buildRiskFlags,
-  type PricingTier,
-  type TierCalculationResult,
-} from '@/services/pricingTierService';
+import { Calculator, Shield, User, RotateCcw, Lock, AlertTriangle, DollarSign, Package, Clock, CheckCircle } from 'lucide-react';
 import { logCalculatorAction } from '@/services/calculatorService';
+import { getPriceFromList, INCLUDED_TONS } from '@/lib/price-list-data';
 import type { CalculatorInputs as CalculatorInputsType } from '@/types/calculator';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -49,12 +40,9 @@ export default function InternalCalculator() {
   const navigate = useNavigate();
   const role = getPrimaryRole();
   const { toast } = useToast();
-  const { result, isCalculating, calculate, saveEstimate, applyDiscount, reset } = useCalculator();
+  const { result, isCalculating, calculate, saveEstimate, reset } = useCalculator();
   const [lastInputs, setLastInputs] = useState<any>(null);
-  const [tierResult, setTierResult] = useState<TierCalculationResult | null>(null);
-  const [selectedTier, setSelectedTier] = useState<PricingTier | undefined>();
-  const [tierConfigs, setTierConfigs] = useState<Record<PricingTier, import('@/services/pricingTierService').TierConfig> | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [priceInfo, setPriceInfo] = useState<{ price: number; cityFound: boolean; cityUsed: string } | null>(null);
   const [liveLoadState, setLiveLoadState] = useState<LiveLoadState>({ enabled: false, estimatedMinutes: 30, extraCharge: 0, billableIncrements: 0 });
   const [dumpReturnState, setDumpReturnState] = useState<DumpReturnState>({ enabled: false, estimatedDriveMinutes: 60, estimatedDumpFee: 350, materialStream: 'general', notes: '', estimate: null });
   const [selectedExtras, setSelectedExtras] = useState<SelectedExtra[]>([]);
@@ -65,59 +53,22 @@ export default function InternalCalculator() {
   const userRole = role || 'sales';
   const roleInfo = ROLE_DISPLAY[userRole] || ROLE_DISPLAY.sales;
 
-  // Compute tiers when result changes
-  useEffect(() => {
-    if (result?.success && !result.is_blocked && result.estimate?.internal_cost) {
-      computeTiers(result.estimate.internal_cost);
-    } else {
-      setTierResult(null);
-      setSelectedTier(undefined);
-    }
-  }, [result]);
-
-  const computeTiers = async (internalCost: number) => {
-    try {
-      setLoadError(null);
-      const configs = await fetchTierConfigs();
-      const riskFlags = buildRiskFlags({
-        is_same_day: lastInputs?.is_same_day || false,
-        material_category: lastInputs?.material_category || 'DEBRIS',
-        access_notes: lastInputs?.access_notes,
-        warnings: result?.estimate?.warnings,
-      });
-
-      setTierConfigs(configs.tiers);
-
-      const tiers = calculateTiers(
-        internalCost,
-        riskFlags,
-        lastInputs?.customer_type || 'homeowner',
-        configs.tiers,
-        configs.surcharges,
-        configs.roundingRule,
-      );
-
-      setTierResult(tiers);
-      setSelectedTier(tiers.recommended_tier);
-    } catch (err) {
-      console.error('Failed to compute tiers:', err);
-      setLoadError('Pricing tier configuration could not be loaded. Please try again.');
-    }
-  };
-
   const handleCalculate = useCallback(async (inputs: CalculatorInputsType & {
     delivery_date?: string;
     delivery_window?: string;
     access_notes?: string;
     zip_code?: string;
+    city_name?: string;
   }) => {
     try {
-      setLoadError(null);
       setLastInputs(inputs);
+      // Look up the price from the official price list
+      const cityName = inputs.city_name || '';
+      const pResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
+      setPriceInfo(pResult);
       await calculate(inputs);
     } catch (err) {
       console.error('Calculator error:', err);
-      setLoadError('Calculation failed. Please check inputs and try again.');
     }
   }, [calculate]);
 
@@ -128,36 +79,9 @@ export default function InternalCalculator() {
     }
     const saved = await saveEstimate();
     if (saved) {
-      toast({
-        title: 'Estimate Saved',
-        description: `Estimate ID: ${saved.id.slice(0, 8)}...`,
-      });
+      toast({ title: 'Estimate Saved', description: `Estimate ID: ${saved.id.slice(0, 8)}...` });
     }
   }, [saveEstimate, toast, isFinanceOnly]);
-
-  const handleSelectTier = useCallback(async (tier: PricingTier, overridePrice?: number, overrideReason?: string) => {
-    if (overridePrice && !isAdmin) {
-      toast({ title: 'Admin Required', description: 'Only admins can override pricing.', variant: 'destructive' });
-      return;
-    }
-    setSelectedTier(tier);
-
-    await logCalculatorAction({
-      action_type: overridePrice ? 'OVERRIDE' : 'CALCULATE',
-      inputs_json: lastInputs,
-      outputs_json: {
-        selected_tier: tier,
-        tier_price: tierResult?.tiers[tier]?.customer_price,
-        override_price: overridePrice,
-      } as any,
-      override_details: overridePrice ? {
-        field: 'customer_price',
-        original_value: tierResult?.tiers[tier]?.customer_price,
-        new_value: overridePrice,
-      } : undefined,
-      notes: overrideReason || `Tier ${tier} selected`,
-    });
-  }, [lastInputs, tierResult, isAdmin, toast]);
 
   const handleRequestAccess = async () => {
     if (!user) return;
@@ -184,6 +108,12 @@ export default function InternalCalculator() {
 
   const showVendorFinder = result && (result.is_blocked || !result.success);
 
+  // Compute extras total
+  const extrasTotal = selectedExtras.reduce((sum, e) => sum + (e.unitPrice * e.quantity), 0);
+  const liveLoadTotal = liveLoadState.enabled ? liveLoadState.extraCharge : 0;
+  const finalPrice = (priceInfo?.price || 0) + extrasTotal + liveLoadTotal;
+  const includedTons = lastInputs ? (INCLUDED_TONS[lastInputs.dumpster_size] || 4) : 4;
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -207,24 +137,18 @@ export default function InternalCalculator() {
                 <Lock className="w-7 h-7 text-amber-600" />
               </div>
               <CardTitle>Calculator Access Required</CardTitle>
-              <CardDescription>
+              <p className="text-sm text-muted-foreground mt-2">
                 The Master Calculator is available to Sales, CS, Dispatch, and Admin staff.
                 {user ? ` Your current role (${role || 'none'}) does not have access.` : ' Please sign in first.'}
-              </CardDescription>
+              </p>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 items-center">
               {user ? (
-                <Button onClick={handleRequestAccess}>
-                  Request Access
-                </Button>
+                <Button onClick={handleRequestAccess}>Request Access</Button>
               ) : (
-                <Button onClick={() => navigate('/admin/login')}>
-                  Sign In
-                </Button>
+                <Button onClick={() => navigate('/admin/login')}>Sign In</Button>
               )}
-              <Button variant="ghost" size="sm" onClick={() => navigate('/app')}>
-                Return to Dashboard
-              </Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/app')}>Return to Dashboard</Button>
             </CardContent>
           </Card>
         </div>
@@ -250,14 +174,12 @@ export default function InternalCalculator() {
                 </div>
                 <div>
                   <h1 className="text-lg font-semibold">Master Calculator</h1>
-                  <p className="text-xs text-muted-foreground">
-                    Pricing, Logistics, Vendor & Scripts
-                  </p>
+                  <p className="text-xs text-muted-foreground">Official Price List</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 {result && (
-                  <Button variant="ghost" size="sm" onClick={reset} className="text-xs">
+                  <Button variant="ghost" size="sm" onClick={() => { reset(); setPriceInfo(null); }} className="text-xs">
                     <RotateCcw className="h-3.5 w-3.5 mr-1" />
                     Reset
                   </Button>
@@ -274,24 +196,6 @@ export default function InternalCalculator() {
             </div>
           </div>
         </header>
-
-        {/* Error Banner */}
-        {loadError && (
-          <div className="container mx-auto px-4 pt-3">
-            <Card className="border-destructive bg-destructive/5">
-              <CardContent className="py-3 flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-destructive">{loadError}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">ERR_CALC_LOAD</p>
-                </div>
-                <Button variant="outline" size="sm" onClick={() => setLoadError(null)}>
-                  Dismiss
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Finance Read-Only Banner */}
         {isFinanceOnly && (
@@ -338,7 +242,7 @@ export default function InternalCalculator() {
                       zipCode={lastInputs.zip_code || ''}
                       materialCategory={lastInputs.material_category}
                       dumpsterSize={lastInputs.dumpster_size}
-                      customerPrice={result.estimate?.customer_price || 0}
+                      customerPrice={priceInfo?.price || 0}
                       userRole={userRole}
                       customerType={lastInputs.customer_type || 'homeowner'}
                       isSameDay={lastInputs.is_same_day || false}
@@ -346,68 +250,99 @@ export default function InternalCalculator() {
                     />
                   )}
 
-                  {/* Card 2: Tier Quote (if serviceable) */}
-                  {result.success && !result.is_blocked && (
+                  {/* Card 2: Single Price from Official Price List */}
+                  {result.success && !result.is_blocked && priceInfo && (
                     <>
-                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                        {tierResult ? (
-                          <TierSelector
-                            tierResult={tierResult}
-                            userRole={userRole}
-                            dumpsterSize={result.estimate.dumpster_size}
-                            onSelectTier={handleSelectTier}
-                            onSave={isFinanceOnly ? undefined : handleSave}
-                            selectedTier={selectedTier}
-                          />
-                        ) : (
-                          <Card className="flex items-center justify-center p-8">
-                            <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-                          </Card>
-                        )}
-                        <DispatchPlanCard
-                          estimate={result.estimate}
-                          userRole={userRole}
-                        />
-                      </div>
+                      <Card className="border-primary/30">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <DollarSign className="h-5 w-5 text-primary" />
+                              Customer Price
+                            </CardTitle>
+                            {!priceInfo.cityFound && (
+                              <Badge variant="outline" className="text-amber-600 border-amber-300 text-xs">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                City not found — using Oakland default
+                              </Badge>
+                            )}
+                            {priceInfo.cityFound && (
+                              <Badge variant="outline" className="text-green-600 border-green-300 text-xs">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                {priceInfo.cityUsed.replace(/\b\w/g, c => c.toUpperCase())}
+                              </Badge>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {/* Main Price */}
+                          <div className="bg-primary/5 rounded-xl p-6 text-center">
+                            <p className="text-sm text-muted-foreground mb-1">
+                              {lastInputs?.dumpster_size}yd {lastInputs?.material_category === 'HEAVY' ? 'Heavy' : 'General Debris'}
+                            </p>
+                            <p className="text-5xl font-bold text-foreground tracking-tight">
+                              ${priceInfo.price.toLocaleString()}
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-2">
+                              Includes delivery, pickup, {includedTons} ton{includedTons !== 1 ? 's' : ''}, 7 business days
+                            </p>
+                          </div>
 
-                      {/* Quote Send Panel — hidden for finance */}
-                      {!isFinanceOnly && tierResult && selectedTier && tierConfigs && user && (
-                        <QuoteSendPanel
-                          activeTier={selectedTier}
-                          activePricing={tierResult.tiers[selectedTier]}
-                          tierConfig={tierConfigs[selectedTier]}
-                          dumpsterSize={result.estimate.dumpster_size}
-                          customerType={lastInputs?.customer_type || 'homeowner'}
-                          materialCategory={lastInputs?.material_category || 'DEBRIS'}
-                          userId={user.id}
-                          userRole={userRole}
-                          inputs={{
-                            zip_code: lastInputs?.zip_code,
-                            address_text: lastInputs?.destination_address,
-                            is_same_day: lastInputs?.is_same_day,
-                          }}
-                        />
-                      )}
+                          {/* Add-ons breakdown */}
+                          {(extrasTotal > 0 || liveLoadTotal > 0) && (
+                            <div className="space-y-2 border-t pt-3">
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Add-ons</p>
+                              {selectedExtras.map(e => (
+                                <div key={e.catalogItem.code} className="flex justify-between text-sm">
+                                  <span>{e.catalogItem.name} x{e.quantity}</span>
+                                  <span className="font-medium">${(e.unitPrice * e.quantity).toLocaleString()}</span>
+                                </div>
+                              ))}
+                              {liveLoadTotal > 0 && (
+                                <div className="flex justify-between text-sm">
+                                  <span>Live Load ({liveLoadState.estimatedMinutes} min)</span>
+                                  <span className="font-medium">${liveLoadTotal.toLocaleString()}</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between text-base font-bold border-t pt-2 mt-2">
+                                <span>Total</span>
+                                <span>${finalPrice.toLocaleString()}</span>
+                              </div>
+                            </div>
+                          )}
 
-                      {/* PDF Export + Share */}
-                      {tierResult && selectedTier && (
-                        <Card>
-                          <CardContent className="py-3 flex items-center justify-between">
-                            <p className="text-xs text-muted-foreground">Export or share this quote</p>
-                            <QuotePdfExport
-                              serviceAddress={lastInputs?.destination_address}
-                              dumpsterSize={result.estimate.dumpster_size}
-                              materialCategory={lastInputs?.material_category || 'DEBRIS'}
-                              serviceType={lastInputs?.service_type || 'DELIVERY'}
-                              selectedTier={selectedTier}
-                              tierPricing={tierResult.tiers[selectedTier]}
-                              liveLoad={liveLoadState}
-                              selectedExtras={selectedExtras}
-                              userRole={userRole}
-                            />
-                          </CardContent>
-                        </Card>
-                      )}
+                          {/* Details row */}
+                          <div className="grid grid-cols-3 gap-3 text-center border-t pt-3">
+                            <div>
+                              <Package className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+                              <p className="text-sm font-semibold">{lastInputs?.dumpster_size}yd</p>
+                              <p className="text-xs text-muted-foreground">Container</p>
+                            </div>
+                            <div>
+                              <DollarSign className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+                              <p className="text-sm font-semibold">{includedTons}T</p>
+                              <p className="text-xs text-muted-foreground">Included</p>
+                            </div>
+                            <div>
+                              <Clock className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+                              <p className="text-sm font-semibold">7 days</p>
+                              <p className="text-xs text-muted-foreground">Rental</p>
+                            </div>
+                          </div>
+
+                          {/* Save button */}
+                          {!isFinanceOnly && (
+                            <Button onClick={handleSave} className="w-full" size="lg">
+                              Save Estimate
+                            </Button>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      <DispatchPlanCard
+                        estimate={result.estimate}
+                        userRole={userRole}
+                      />
 
                       <ScriptGenerator
                         estimate={result.estimate}
@@ -425,7 +360,7 @@ export default function InternalCalculator() {
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1 max-w-md">
                       Enter a ZIP or address, select service details, and click Calculate.
-                      Results include serviceability, pricing tiers, logistics, vendor options, and ready-to-use scripts.
+                      The price shown comes from the official price list.
                     </p>
                   </CardContent>
                 </Card>
@@ -437,14 +372,9 @@ export default function InternalCalculator() {
         {/* Footer */}
         <footer className="border-t bg-background mt-6">
           <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <p>Internal use only. All tier selections and overrides are logged for audit.</p>
-              <div className="flex items-center gap-4">
-                <span className="text-blue-600 font-medium">BASE 18-25%</span>
-                <span className="text-primary font-medium">CORE 25-35%</span>
-                <span className="text-amber-600 font-medium">PREMIUM 35-50%</span>
-              </div>
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Internal use only. Prices from official META 2026 price list. All actions are logged for audit.
+            </p>
           </div>
         </footer>
       </div>
