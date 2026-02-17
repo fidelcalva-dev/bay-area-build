@@ -8,6 +8,7 @@ import { SEO_MATERIALS } from '@/lib/seo-engine';
 import { getZipData } from '@/lib/seo-zips';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
+import { cityUrl, citySizeUrl, cityMaterialUrl, zipUrl } from '@/lib/seo-urls';
 import NotFound from '../NotFound';
 
 export default function SeoZipPage() {
@@ -20,7 +21,8 @@ export default function SeoZipPage() {
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'zip', city: zipData.city, zip: zipData.zip, slug: zipData.zip });
   const pageTitle = `Dumpster Rental ${zipData.zip} | ${zipData.city}, CA | Calsan`;
   const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 6-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
-  const canonicalUrl = `${BUSINESS_INFO.url}/service-area/${zipData.zip}/dumpster-rental`;
+  const canonicalPath = zipUrl(zipData.zip);
+  const canonicalUrlFull = `${BUSINESS_INFO.url}${canonicalPath}`;
 
   const faqs = [
     { question: `How much is a dumpster rental in ${zipData.zip}?`, answer: `Dumpster rental in ${zipData.zip} (${zipData.city}) starts from $390 for a 6-yard container. Price depends on size and material type. Heavy materials are flat-fee. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
@@ -43,15 +45,15 @@ export default function SeoZipPage() {
     generateFAQSchema(faqs),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: zipData.city, url: `/dumpster-rental/${zipData.citySlug}` },
-      { name: zipData.zip, url: `/service-area/${zipData.zip}/dumpster-rental` },
+      { name: zipData.city, url: cityUrl(zipData.citySlug) },
+      { name: zipData.zip, url: canonicalPath },
     ]),
   ];
 
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
-        <link rel="canonical" href={canonicalUrl} />
+        <link rel="canonical" href={canonicalUrlFull} />
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -64,7 +66,7 @@ export default function SeoZipPage() {
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
               <Link to="/" className="hover:text-primary-foreground">Home</Link>
               <span>/</span>
-              <Link to={`/dumpster-rental/${zipData.citySlug}`} className="hover:text-primary-foreground">{zipData.city}</Link>
+              <Link to={cityUrl(zipData.citySlug)} className="hover:text-primary-foreground">{zipData.city}</Link>
               <span>/</span>
               <span className="text-primary-foreground">{zipData.zip}</span>
             </div>
@@ -117,7 +119,7 @@ export default function SeoZipPage() {
           <h2 className="heading-lg text-foreground mb-8 text-center">Dumpster Sizes for {zipData.zip}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
             {DUMPSTER_SIZES_DATA.map(size => (
-              <Link key={size.yards} to={`/${zipData.citySlug}/${size.yards}-yard-dumpster`}
+              <Link key={size.yards} to={citySizeUrl(zipData.citySlug, size.yards)}
                 className="bg-card border border-border rounded-xl p-4 text-center hover:border-primary/50 hover:shadow-md transition-all group">
                 <div className="text-3xl font-black text-foreground group-hover:text-primary transition-colors">{size.yards}</div>
                 <div className="text-xs text-muted-foreground mb-2">YARD</div>
@@ -224,10 +226,10 @@ export default function SeoZipPage() {
       <section className="py-8 bg-muted/30 border-t border-border">
         <div className="container-wide">
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link to={`/dumpster-rental/${zipData.citySlug}`} className="text-primary hover:underline">All {zipData.city} Dumpsters</Link>
+            <Link to={cityUrl(zipData.citySlug)} className="text-primary hover:underline">All {zipData.city} Dumpsters</Link>
             <span className="text-muted-foreground hidden sm:inline">|</span>
             {SEO_MATERIALS.slice(0, 3).map(m => (
-              <Link key={m.slug} to={`/${zipData.citySlug}/${m.slug}`} className="text-primary hover:underline">{m.name} in {zipData.city}</Link>
+              <Link key={m.slug} to={cityMaterialUrl(zipData.citySlug, m.slug)} className="text-primary hover:underline">{m.name} in {zipData.city}</Link>
             ))}
             <span className="text-muted-foreground hidden sm:inline">|</span>
             <Link to="/sizes" className="text-primary hover:underline">All Sizes</Link>

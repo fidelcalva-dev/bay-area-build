@@ -30,13 +30,13 @@ export default function SeoIndexingPage() {
     allUrls.push({ url: `/dumpster-rental/${city.city_slug}`, type: 'City', status: 'live' });
     const sizes: number[] = Array.isArray(city.common_sizes_json) ? (city.common_sizes_json as number[]) : [10, 20, 30, 40];
     for (const sz of sizes) {
-      allUrls.push({ url: `/${city.city_slug}/${sz}-yard-dumpster`, type: 'City+Size', status: 'live' });
+      allUrls.push({ url: `/dumpster-rental/${city.city_slug}/${sz}-yard`, type: 'City+Size', status: 'live' });
     }
     for (const m of SEO_MATERIALS) {
-      allUrls.push({ url: `/${city.city_slug}/${m.slug}`, type: 'City+Material', status: 'live' });
+      allUrls.push({ url: `/dumpster-rental/${city.city_slug}/${m.slug}`, type: 'City+Material', status: 'live' });
     }
     for (const j of SEO_JOB_TYPES) {
-      allUrls.push({ url: `/${city.city_slug}/${j.slug}`, type: 'City+Job', status: 'live' });
+      allUrls.push({ url: `/dumpster-rental/${city.city_slug}/${j.slug}`, type: 'City+Job', status: 'live' });
     }
   }
 

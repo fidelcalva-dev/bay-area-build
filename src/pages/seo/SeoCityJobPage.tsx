@@ -10,6 +10,7 @@ import { type SeoCity } from '@/lib/seo-engine';
 import { getJobTypeBySlug, SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { ArrowRight, Phone, CheckCircle, Wrench, HardHat, Building2 } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
+import { cityUrl, cityJobUrl, citySizeUrl } from '@/lib/seo-urls';
 import NotFound from '../NotFound';
 
 const CATEGORY_ICONS = { residential: HardHat, commercial: Building2, contractor: Wrench };
@@ -39,14 +40,14 @@ export default function SeoCityJobPage() {
 
   const pageTitle = `${job.name} Dumpster Rental ${city.city_name} CA | Calsan`;
   const pageDescription = `${job.name} dumpster rental in ${city.city_name}, CA. ${job.recommendedSizes.join(', ')} yard sizes. Same-day delivery from our ${yard?.city || 'local'} yard. Transparent pricing.`;
-  const canonicalUrl = `${BUSINESS_INFO.url}/${city.city_slug}/${job.slug}`;
+  const canonicalPath = cityJobUrl(city.city_slug, job.slug);
+  const canonicalUrl = `${BUSINESS_INFO.url}${canonicalPath}`;
 
   // Localize FAQs
   const faqs = job.faqs.map(f => ({
     question: f.question.replace(/{city}/g, city.city_name),
     answer: f.answer.replace(/{city}/g, city.city_name),
   }));
-  // Add city-specific FAQs
   faqs.push(
     { question: `How fast can I get a ${job.name.toLowerCase()} dumpster in ${city.city_name}?`, answer: `Same-day delivery is available for most ${city.city_name} addresses when ordered before noon. Our ${yard?.name || 'local yard'} is close by for fast turnaround.` },
     { question: `What is included in ${job.name.toLowerCase()} dumpster rental?`, answer: `Every rental includes delivery, pickup, base tonnage, and ${PRICING_POLICIES.standardRentalDays}-day rental period. Extra days are $${PRICING_POLICIES.extraDayCost}/day. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
@@ -64,8 +65,8 @@ export default function SeoCityJobPage() {
     generateFAQSchema(faqs),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: city.city_name, url: `/dumpster-rental/${city.city_slug}` },
-      { name: job.name, url: `/${city.city_slug}/${job.slug}` },
+      { name: city.city_name, url: cityUrl(city.city_slug) },
+      { name: job.name, url: canonicalPath },
     ]),
   ];
 
@@ -85,7 +86,7 @@ export default function SeoCityJobPage() {
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
               <Link to="/" className="hover:text-primary-foreground">Home</Link>
               <span>/</span>
-              <Link to={`/dumpster-rental/${city.city_slug}`} className="hover:text-primary-foreground">{city.city_name}</Link>
+              <Link to={cityUrl(city.city_slug)} className="hover:text-primary-foreground">{city.city_name}</Link>
               <span>/</span>
               <span className="text-primary-foreground">{job.name}</span>
             </div>
@@ -131,7 +132,7 @@ export default function SeoCityJobPage() {
               const s = DUMPSTER_SIZES_DATA.find(d => d.yards === sz);
               if (!s) return null;
               return (
-                <Link key={sz} to={`/${city.city_slug}/${sz}-yard-dumpster`}
+                <Link key={sz} to={citySizeUrl(city.city_slug, sz)}
                   className="bg-card border border-border rounded-xl p-5 text-center hover:border-primary/50 hover:shadow-md transition-all group">
                   <div className="text-3xl font-black text-foreground group-hover:text-primary transition-colors">{sz}</div>
                   <div className="text-xs text-muted-foreground mb-2">YARD</div>
@@ -198,10 +199,10 @@ export default function SeoCityJobPage() {
       <section className="py-8 bg-muted/30 border-t border-border">
         <div className="container-wide">
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link to={`/dumpster-rental/${city.city_slug}`} className="text-primary hover:underline">All {city.city_name} Dumpsters</Link>
+            <Link to={cityUrl(city.city_slug)} className="text-primary hover:underline">All {city.city_name} Dumpsters</Link>
             <span className="text-muted-foreground hidden sm:inline">|</span>
             {SEO_JOB_TYPES.filter(j => j.slug !== job.slug).slice(0, 4).map(j => (
-              <Link key={j.slug} to={`/${city.city_slug}/${j.slug}`} className="text-primary hover:underline">{j.name} in {city.city_name}</Link>
+              <Link key={j.slug} to={cityJobUrl(city.city_slug, j.slug)} className="text-primary hover:underline">{j.name} in {city.city_name}</Link>
             ))}
             <span className="text-muted-foreground hidden sm:inline">|</span>
             <Link to="/sizes" className="text-primary hover:underline">All Sizes</Link>

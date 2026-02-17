@@ -19,16 +19,8 @@ export function pickAnchor(anchors: string[], citySlug: string, pageContext: str
   return anchors[hash % anchors.length];
 }
 
-// Get the URL for a city based on whether it has a standalone page or uses /dumpster-rental/{slug}
-export function getCityUrl(slug: string, pageExists: boolean): string {
-  // Flagship cities with standalone SEO pages
-  const standalonePages: Record<string, string> = {
-    'oakland-ca': '/dumpster-rental-oakland-ca',
-    'san-jose-ca': '/dumpster-rental-san-jose-ca',
-    'san-francisco-ca': '/dumpster-rental-san-francisco-ca',
-  };
-  if (standalonePages[slug]) return standalonePages[slug];
-  // All others use the dynamic city page route
+// Get the canonical URL for a city — always /dumpster-rental/{slug}
+export function getCityUrl(slug: string, _pageExists?: boolean): string {
   return `/dumpster-rental/${slug}`;
 }
 
