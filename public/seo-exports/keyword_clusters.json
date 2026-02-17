@@ -1,0 +1,223 @@
+{
+  "generated": "2026-02-17",
+  "business": "Calsan Dumpsters Pro",
+  "totalKeywords": 287,
+  "clusters": [
+    {
+      "id": "city_core",
+      "name": "City Core — Service Keywords",
+      "description": "Primary service keywords combined with city names. Highest volume, highest intent.",
+      "priority": "HIGH",
+      "adgroup": "Core Rental — {City}",
+      "landingPagePattern": "/dumpster-rental/{city-slug}-ca",
+      "suggestedH1": "Dumpster Rental in {City}, CA — Same-Day Delivery from Local Yards",
+      "suggestedTitle": "Dumpster Rental {City} CA | Same-Day Delivery | Calsan Dumpsters Pro",
+      "keywords": [
+        "dumpster rental {city}",
+        "roll off dumpster rental {city}",
+        "dumpster rental {city} ca",
+        "roll off dumpster {city}",
+        "dumpster rental near me {city}",
+        "same day dumpster rental {city}",
+        "next day dumpster delivery {city}",
+        "residential dumpster rental {city}",
+        "dumpster delivery {city}",
+        "dumpster pickup {city}",
+        "dumpster swap service {city}"
+      ],
+      "tierACities": ["Oakland", "Berkeley", "Alameda", "San Leandro", "Hayward", "Emeryville", "Richmond", "El Cerrito", "Albany", "San Lorenzo", "Castro Valley"],
+      "tierBCities": ["Fremont", "Union City", "Newark", "Dublin", "Pleasanton", "Livermore", "Walnut Creek", "Concord", "San Ramon"],
+      "tierCCities": ["San Jose", "San Francisco"]
+    },
+    {
+      "id": "size_city",
+      "name": "Size + City",
+      "description": "Dumpster size combined with city. Very high commercial intent — user knows what they need.",
+      "priority": "HIGH",
+      "adgroup": "{Size}yd — {City}",
+      "landingPagePattern": "/{city-slug}/{size}-yard-dumpster",
+      "suggestedH1": "{Size} Yard Dumpster Rental in {City}, CA",
+      "suggestedTitle": "{Size} Yard Dumpster Rental {City} CA | From ${price} | Calsan",
+      "keywords": [
+        "{size} yard dumpster rental {city}",
+        "{size} yard roll off {city}",
+        "{size} yard dumpster {city}",
+        "{size} yd dumpster {city}"
+      ],
+      "sizes": [6, 8, 10, 15, 20, 30, 40, 50]
+    },
+    {
+      "id": "heavy_material",
+      "name": "Concrete / Heavy Material + City",
+      "description": "Heavy inert material keywords. Premium flat-fee pricing. High margin.",
+      "priority": "HIGH",
+      "adgroup": "Heavy Material — {City}",
+      "landingPagePattern": "/{city-slug}/concrete-dumpster-rental",
+      "suggestedH1": "Concrete Dumpster Rental in {City}, CA — Flat-Fee Pricing",
+      "suggestedTitle": "Concrete Dumpster Rental {City} CA | Flat Fee | Calsan Dumpsters Pro",
+      "keywords": [
+        "concrete dumpster rental {city}",
+        "clean concrete dumpster {city}",
+        "dirt dumpster rental {city}",
+        "clean dirt dumpster {city}",
+        "soil dumpster rental {city}",
+        "asphalt dumpster rental {city}",
+        "brick dumpster rental {city}",
+        "rock dumpster rental {city}",
+        "gravel dumpster {city}",
+        "concrete removal dumpster {city}",
+        "landscaping dirt removal {city}"
+      ],
+      "materials": ["concrete", "dirt", "soil", "asphalt", "brick", "rock", "gravel"]
+    },
+    {
+      "id": "contractor",
+      "name": "Contractor / Job Type + City",
+      "description": "Construction, remodel, and job-specific keywords. High intent, repeat customer potential.",
+      "priority": "HIGH",
+      "adgroup": "Contractor — {City}",
+      "landingPagePattern": "/{city-slug}/{job-type}-dumpster-rental",
+      "suggestedH1": "{JobType} Dumpster Rental in {City}, CA",
+      "suggestedTitle": "{JobType} Dumpster Rental {City} CA | Calsan Dumpsters Pro",
+      "keywords": [
+        "construction dumpster rental {city}",
+        "contractor dumpster rental {city}",
+        "roofing dumpster rental {city}",
+        "demolition dumpster rental {city}",
+        "adu dumpster rental {city}",
+        "home remodel dumpster {city}",
+        "kitchen remodel dumpster {city}",
+        "bathroom remodel dumpster {city}",
+        "garage cleanout dumpster {city}",
+        "estate cleanout dumpster {city}",
+        "tenant move out dumpster {city}",
+        "concrete removal dumpster {city}"
+      ],
+      "jobTypes": ["roofing", "demolition", "adu", "home-remodel", "kitchen-remodel", "bathroom-remodel", "garage-cleanout", "estate-cleanout", "concrete-removal", "landscaping"]
+    },
+    {
+      "id": "commercial",
+      "name": "Commercial + City",
+      "description": "Commercial and industrial dumpster keywords. Lower volume but high LTV.",
+      "priority": "MEDIUM",
+      "adgroup": "Commercial — {City}",
+      "landingPagePattern": "/{city-slug}/commercial-dumpster-rental",
+      "suggestedH1": "Commercial Dumpster Rental in {City}, CA",
+      "suggestedTitle": "Commercial Dumpster Rental {City} CA | Calsan Dumpsters Pro",
+      "keywords": [
+        "commercial dumpster rental {city}",
+        "commercial cleanout dumpster {city}",
+        "warehouse cleanout dumpster {city}",
+        "restaurant remodel dumpster {city}"
+      ]
+    },
+    {
+      "id": "permit",
+      "name": "Permit + City",
+      "description": "Permit-related searches. High intent in SF (SFMTA). Informational but captures ready-to-buy users.",
+      "priority": "MEDIUM",
+      "adgroup": "Permit Info — {City}",
+      "landingPagePattern": "/{city-slug}/dumpster-permit",
+      "suggestedH1": "Dumpster Permit Guide for {City}, CA",
+      "suggestedTitle": "Do You Need a Dumpster Permit in {City}? | Calsan Dumpsters Pro",
+      "keywords": [
+        "dumpster rental permit {city}",
+        "dumpster permit {city} ca",
+        "street permit dumpster {city}",
+        "dumpster on street {city}",
+        "driveway dumpster placement {city}"
+      ]
+    },
+    {
+      "id": "pricing",
+      "name": "Pricing + City",
+      "description": "Price/cost queries combined with city. Commercial intent — comparison shoppers.",
+      "priority": "HIGH",
+      "adgroup": "Pricing — {City}",
+      "landingPagePattern": "/{city-slug}/dumpster-rental-prices",
+      "suggestedH1": "Dumpster Rental Prices in {City}, CA — Transparent Pricing",
+      "suggestedTitle": "Dumpster Rental Prices {City} CA | Instant Quote | Calsan",
+      "keywords": [
+        "dumpster rental prices {city}",
+        "dumpster rental cost {city}",
+        "how much is a dumpster rental {city}",
+        "dumpster rental quote {city}",
+        "instant dumpster quote {city}",
+        "{size} yard dumpster cost {city}",
+        "cheap dumpster rental {city}"
+      ]
+    },
+    {
+      "id": "zip",
+      "name": "ZIP Code Pages (SEO)",
+      "description": "ZIP-targeted landing pages for hyper-local SEO. Capture long-tail traffic.",
+      "priority": "MEDIUM",
+      "adgroup": null,
+      "landingPagePattern": "/dumpster-rental/{zip}",
+      "suggestedH1": "Dumpster Rental in {ZIP} — {City}, CA",
+      "suggestedTitle": "Dumpster Rental {ZIP} | {City} CA | Calsan Dumpsters Pro",
+      "keywords": [
+        "dumpster rental {zip}",
+        "{size} yard dumpster {zip}",
+        "concrete dumpster {zip}",
+        "roll off dumpster {zip}",
+        "same day dumpster {zip}"
+      ],
+      "priorityZIPs": {
+        "tierA_oakland": ["94601", "94603", "94605", "94606", "94607", "94608", "94609", "94610", "94611", "94612", "94618", "94619", "94621"],
+        "tierA_berkeley": ["94702", "94703", "94704", "94705", "94707", "94708", "94709", "94710"],
+        "tierA_alameda": ["94501", "94502"],
+        "tierA_sanleandro": ["94577", "94578", "94579"],
+        "tierA_hayward": ["94541", "94542", "94544", "94545"],
+        "tierA_richmond": ["94801", "94804", "94805", "94806"],
+        "tierA_other": ["94608", "94530", "94706", "94580", "94546", "94552"]
+      }
+    },
+    {
+      "id": "near_me",
+      "name": "Near Me — Generic",
+      "description": "Non-localized 'near me' searches. Captured by GMB + homepage SEO.",
+      "priority": "MEDIUM",
+      "adgroup": "Near Me — General",
+      "landingPagePattern": "/",
+      "suggestedH1": "Bay Area Dumpster Rental — Same-Day Delivery Near You",
+      "suggestedTitle": "Dumpster Rental Near Me | Bay Area | Calsan Dumpsters Pro",
+      "keywords": [
+        "dumpster rental near me",
+        "roll off dumpster near me",
+        "concrete dumpster near me",
+        "same day dumpster near me",
+        "20 yard dumpster near me",
+        "30 yard dumpster near me",
+        "dumpster rental prices near me",
+        "dumpster rental open now",
+        "weekend dumpster delivery",
+        "cheap dumpster rental near me"
+      ]
+    },
+    {
+      "id": "faq",
+      "name": "FAQ / Informational",
+      "description": "Question-based queries. Build topical authority. Low direct conversion but high for featured snippets.",
+      "priority": "LOW",
+      "adgroup": null,
+      "landingPagePattern": "/faq",
+      "suggestedH1": "Dumpster Rental FAQ — Everything You Need to Know",
+      "suggestedTitle": "Dumpster Rental FAQ | Sizes, Prices, Permits | Calsan",
+      "keywords": [
+        "how much is a dumpster rental",
+        "what size dumpster do i need",
+        "do i need a permit for a dumpster",
+        "can i put concrete in a dumpster",
+        "how long can i keep a dumpster",
+        "what is included in dumpster rental",
+        "how much does a 20 yard dumpster cost",
+        "how much does a 10 yard dumpster cost",
+        "dumpster rental weight limit",
+        "dumpster overage fee",
+        "dumpster rental included tons",
+        "dumpster driveway placement tips"
+      ]
+    }
+  ]
+}
