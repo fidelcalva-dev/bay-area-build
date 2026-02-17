@@ -40,6 +40,10 @@ export const GOOGLE_SCOPES = [
   'https://www.googleapis.com/auth/gmail.readonly',
   'https://www.googleapis.com/auth/calendar.events',
   'https://www.googleapis.com/auth/drive.file',
+  // Marketing Intelligence scopes
+  'https://www.googleapis.com/auth/analytics.readonly',
+  'https://www.googleapis.com/auth/webmasters.readonly',
+  'https://www.googleapis.com/auth/business.manage',
 ].join(' ');
 
 // Simple encryption using base64 + XOR (for demo - use proper encryption in production)
