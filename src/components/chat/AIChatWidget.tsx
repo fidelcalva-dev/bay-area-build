@@ -28,7 +28,7 @@ function ChatBubble({ onClick }: { onClick: () => void }) {
       aria-label="Chat with Calsan"
     >
       <MessageCircle className="w-5 h-5" />
-      <span className="text-sm font-medium hidden sm:inline">Chat with Calsan</span>
+      <span className="text-sm font-medium hidden sm:inline">Instant Quote</span>
     </button>
   );
 }
