@@ -6,6 +6,7 @@ import { SEO_MATERIALS } from './seo-engine';
 import { SEO_JOB_TYPES } from './seo-jobs';
 import { SEO_ZIP_DATA } from './seo-zips';
 import { DUMPSTER_SIZES_DATA } from './shared-data';
+import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 
 export interface SitemapEntry {
   url: string;
@@ -38,14 +39,27 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
 ];
 
-// Blog articles (static for now)
+// Blog articles — generated from seo-blog-topics.ts + editorial articles
 const BLOG_ARTICLES: SitemapEntry[] = [
-  { url: '/blog/dumpster-cost-oakland', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/concrete-disposal-bay-area', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/dumpster-permit-san-jose', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/heavy-material-dumpsters-explained', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/dumpster-sizes-guide', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/same-day-dumpster-delivery-bay-area', changefreq: 'monthly', priority: 0.7 },
+  ...SEO_BLOG_TOPICS.map(topic => ({
+    url: `/blog/${topic.slug}`,
+    changefreq: 'monthly' as const,
+    priority: 0.7,
+  })),
+  // Editorial articles with images (not in SEO_BLOG_TOPICS)
+  ...[
+    'benefits-same-dumpster-provider',
+    'positive-impact-dumpster-rentals-oakland',
+    'checklist-before-dumpster-arrives',
+    'separate-recyclable-materials-construction-dumpster',
+    'using-dumpsters-for-big-moves',
+    'dumpster-post-storm-cleanup-bay-area',
+  ].filter(slug => !SEO_BLOG_TOPICS.some(t => t.slug === slug))
+   .map(slug => ({
+    url: `/blog/${slug}`,
+    changefreq: 'monthly' as const,
+    priority: 0.7,
+  })),
 ];
 
 export interface CityForSitemap {
