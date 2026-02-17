@@ -169,6 +169,9 @@ const SeoCityMaterialPage = lazy(() => import("./pages/seo/SeoCityMaterialPage")
 const SeoZipPage = lazy(() => import("./pages/seo/SeoZipPage"));
 const SeoCityJobPage = lazy(() => import("./pages/seo/SeoCityJobPage"));
 
+// Legacy SEO URL redirects
+import { LegacySizeRedirect, LegacySubpageRedirect } from './components/seo/SeoLegacyRedirects';
+
 // Internal Calculator
 const InternalCalculator = lazy(() => import("./pages/internal/InternalCalculator"));
 
@@ -445,26 +448,14 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><RequestAccess /></Suspense>
               } />
               
-              {/* SEO City Engine Routes */}
+              {/* SEO City Engine Routes — canonical /dumpster-rental/{citySlug}/... */}
               <Route path="/dumpster-rental/:citySlug" element={
                 <Suspense fallback={<PageLoader />}><SeoCityPage /></Suspense>
               } />
-              <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={
+              <Route path="/dumpster-rental/:citySlug/:sizeSlug-yard" element={
                 <Suspense fallback={<PageLoader />}><SeoCitySizePage /></Suspense>
               } />
-              <Route path="/:citySlug/concrete-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
-              } />
-              <Route path="/:citySlug/dirt-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
-              } />
-              <Route path="/:citySlug/construction-debris-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
-              } />
-              <Route path="/:citySlug/yard-waste-dumpster" element={
-                <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
-              } />
-              <Route path="/:citySlug/commercial-dumpster-rental" element={
+              <Route path="/dumpster-rental/:citySlug/:materialSlug" element={
                 <Suspense fallback={<PageLoader />}><SeoCityMaterialPage /></Suspense>
               } />
 
@@ -473,10 +464,9 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><SeoZipPage /></Suspense>
               } />
 
-              {/* SEO City + Job Type Pages (wildcard — SeoCityJobPage validates slug) */}
-              <Route path="/:citySlug/:jobSlug" element={
-                <Suspense fallback={<PageLoader />}><SeoCityJobPage /></Suspense>
-              } />
+              {/* Legacy URL redirects — 301 to canonical */}
+              <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={<LegacySizeRedirect />} />
+              <Route path="/:citySlug/:subSlug" element={<LegacySubpageRedirect />} />
 
               {/* Preview Routes (v2 Uber-like experience) */}
               <Route path="/preview/quote" element={

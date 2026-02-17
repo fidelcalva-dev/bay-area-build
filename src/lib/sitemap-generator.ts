@@ -76,7 +76,7 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
     const sizes = city.common_sizes_json?.length ? city.common_sizes_json : [10, 20, 30, 40];
     for (const sz of sizes) {
       entries.push({
-        url: `/${city.city_slug}/${sz}-yard-dumpster`,
+        url: `/dumpster-rental/${city.city_slug}/${sz}-yard`,
         changefreq: 'monthly',
         priority: isPrimary ? 0.85 : 0.75,
         lastmod: today,
@@ -86,7 +86,7 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
     // City + Material pages
     for (const m of SEO_MATERIALS) {
       entries.push({
-        url: `/${city.city_slug}/${m.slug}`,
+        url: `/dumpster-rental/${city.city_slug}/${m.slug}`,
         changefreq: 'monthly',
         priority: isPrimary ? 0.85 : 0.75,
         lastmod: today,
@@ -96,7 +96,7 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
     // City + Job pages
     for (const j of SEO_JOB_TYPES) {
       entries.push({
-        url: `/${city.city_slug}/${j.slug}`,
+        url: `/dumpster-rental/${city.city_slug}/${j.slug}`,
         changefreq: 'monthly',
         priority: isPrimary ? 0.8 : 0.7,
         lastmod: today,

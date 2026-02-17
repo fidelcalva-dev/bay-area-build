@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { ArrowRight, Phone, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
+import { cityUrl, cityMaterialUrl, citySizeUrl } from '@/lib/seo-urls';
 import NotFound from '../NotFound';
 
 export default function SeoCityMaterialPage() {
@@ -28,7 +29,7 @@ export default function SeoCityMaterialPage() {
   const { data: page } = useQuery({
     queryKey: ['seo-page', citySlug, materialSlug],
     queryFn: async () => {
-      const urlPath = `/${citySlug}/${materialSlug}`;
+      const urlPath = `/dumpster-rental/${citySlug}/${materialSlug}`;
       const { data } = await supabase.from('seo_pages').select('*').eq('url_path', urlPath).eq('is_published', true).single();
       return data;
     },
@@ -62,7 +63,7 @@ export default function SeoCityMaterialPage() {
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
-        <link rel="canonical" href={`${BUSINESS_INFO.url}/${city.city_slug}/${material.slug}`} />
+        <link rel="canonical" href={`${BUSINESS_INFO.url}${cityMaterialUrl(city.city_slug, material.slug)}`} />
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -75,7 +76,7 @@ export default function SeoCityMaterialPage() {
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
               <Link to="/" className="hover:text-primary-foreground">Home</Link>
               <span>/</span>
-              <Link to={`/dumpster-rental/${city.city_slug}`} className="hover:text-primary-foreground">{city.city_name}</Link>
+              <Link to={cityUrl(city.city_slug)} className="hover:text-primary-foreground">{city.city_name}</Link>
               <span>/</span>
               <span className="text-primary-foreground">{material.name}</span>
             </div>
@@ -104,7 +105,7 @@ export default function SeoCityMaterialPage() {
               const s = DUMPSTER_SIZES_DATA.find(d => d.yards === sz);
               if (!s) return null;
               return (
-                <Link key={sz} to={`/${city.city_slug}/${sz}-yard-dumpster`}
+                <Link key={sz} to={citySizeUrl(city.city_slug, sz)}
                   className="bg-card border border-border rounded-xl p-5 text-center hover:border-primary/50 hover:shadow-md transition-all group">
                   <div className="text-3xl font-black text-foreground group-hover:text-primary transition-colors">{sz}</div>
                   <div className="text-xs text-muted-foreground mb-2">YARD</div>

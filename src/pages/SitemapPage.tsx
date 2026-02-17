@@ -52,14 +52,14 @@ export default function SitemapPage() {
             for (const city of cities) {
               // Job pages
               for (const j of SEO_JOB_TYPES) {
-                const url = `${BUSINESS_INFO.url}/${city.city_slug}/${j.slug}`;
+                const url = `${BUSINESS_INFO.url}/dumpster-rental/${city.city_slug}/${j.slug}`;
                 if (!existingUrls.has(url)) {
                   additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.75</priority>\n  </url>`);
                 }
               }
               // Material pages
               for (const m of SEO_MATERIALS) {
-                const url = `${BUSINESS_INFO.url}/${city.city_slug}/${m.slug}`;
+                const url = `${BUSINESS_INFO.url}/dumpster-rental/${city.city_slug}/${m.slug}`;
                 if (!existingUrls.has(url)) {
                   additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`);
                 }

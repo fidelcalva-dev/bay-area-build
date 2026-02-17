@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { type SeoCity, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { ArrowRight, Phone, Ruler, Weight, Clock, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
+import { citySizeUrl, cityUrl } from '@/lib/seo-urls';
 import NotFound from '../NotFound';
 
 export default function SeoCitySizePage() {
@@ -27,7 +28,7 @@ export default function SeoCitySizePage() {
   const { data: page } = useQuery({
     queryKey: ['seo-page', citySlug, sizeSlug],
     queryFn: async () => {
-      const urlPath = `/${citySlug}/${sizeSlug}-yard-dumpster`;
+      const urlPath = `/dumpster-rental/${citySlug}/${sizeSlug}-yard`;
       const { data } = await supabase.from('seo_pages').select('*').eq('url_path', urlPath).eq('is_published', true).single();
       return data;
     },
@@ -62,7 +63,7 @@ export default function SeoCitySizePage() {
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
-        <link rel="canonical" href={`${BUSINESS_INFO.url}/${city.city_slug}/${yards}-yard-dumpster`} />
+        <link rel="canonical" href={`${BUSINESS_INFO.url}${citySizeUrl(city.city_slug, yards)}`} />
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -75,7 +76,7 @@ export default function SeoCitySizePage() {
             <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
               <Link to="/" className="hover:text-primary-foreground">Home</Link>
               <span>/</span>
-              <Link to={`/dumpster-rental/${city.city_slug}`} className="hover:text-primary-foreground">{city.city_name}</Link>
+              <Link to={cityUrl(city.city_slug)} className="hover:text-primary-foreground">{city.city_name}</Link>
               <span>/</span>
               <span className="text-primary-foreground">{yards} Yard</span>
             </div>
@@ -144,7 +145,7 @@ export default function SeoCitySizePage() {
           <h2 className="heading-md text-foreground mb-6 text-center">Other Sizes in {city.city_name}</h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 max-w-3xl mx-auto">
             {DUMPSTER_SIZES_DATA.filter(s => s.yards !== yards).map(s => (
-              <Link key={s.yards} to={`/${city.city_slug}/${s.yards}-yard-dumpster`}
+              <Link key={s.yards} to={citySizeUrl(city.city_slug, s.yards)}
                 className="bg-card border border-border rounded-xl p-3 text-center hover:border-primary/50 transition-all">
                 <div className="text-xl font-black text-foreground">{s.yards}</div>
                 <div className="text-xs text-muted-foreground">YARD</div>

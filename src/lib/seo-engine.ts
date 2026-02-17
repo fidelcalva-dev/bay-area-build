@@ -3,6 +3,7 @@
 
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from './seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from './shared-data';
+import { cityUrl, citySizeUrl, cityMaterialUrl } from './seo-urls';
 
 // ============================================================
 // TYPES
@@ -109,7 +110,7 @@ export function generateCityPageContent(city: SeoCity): Omit<SeoPage, 'id' | 'ci
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const market = MARKET_VARIATIONS[city.market_code || ''] || MARKET_VARIATIONS['OAK_EAST_BAY'];
   const neighborhoods = city.neighborhoods_json || [];
-  const urlPath = `/dumpster-rental/${city.city_slug}`;
+  const urlPath = cityUrl(city.city_slug);
 
   const title = `Dumpster Rental ${city.city_name} CA | Same-Day Delivery | Local Yard`;
   const metaDescription = `Local dumpster rental in ${city.city_name}, CA. Same-day delivery from our ${yard?.city || 'Bay Area'} yard. 6-50 yard sizes, flat-fee concrete, transparent pricing. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
@@ -128,7 +129,7 @@ export function generateCityPageContent(city: SeoCity): Omit<SeoPage, 'id' | 'ci
       items: DUMPSTER_SIZES_DATA.map(s => ({
         label: `${s.yards} Yard`,
         value: `From $${s.priceFrom}`,
-        link: `/${city.city_slug}/${s.yards}-yard-dumpster`,
+        link: citySizeUrl(city.city_slug, s.yards),
       })),
     },
     {
@@ -137,7 +138,7 @@ export function generateCityPageContent(city: SeoCity): Omit<SeoPage, 'id' | 'ci
       items: SEO_MATERIALS.map(m => ({
         label: m.name,
         value: m.description,
-        link: `/${city.city_slug}/${m.slug}`,
+        link: cityMaterialUrl(city.city_slug, m.slug),
       })),
     },
     {
@@ -196,7 +197,7 @@ export function generateCitySizePageContent(city: SeoCity, sizeYards: number): O
   if (!sizeData) throw new Error(`Invalid size: ${sizeYards}`);
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
-  const urlPath = `/${city.city_slug}/${sizeYards}-yard-dumpster`;
+  const urlPath = citySizeUrl(city.city_slug, sizeYards);
   const title = `${sizeYards} Yard Dumpster Rental ${city.city_name} CA | From $${sizeData.priceFrom}`;
   const metaDescription = `Rent a ${sizeYards}-yard dumpster in ${city.city_name}, CA. ${sizeData.dimensions}, ${sizeData.loads}. From $${sizeData.priceFrom} with ${sizeData.includedTons}-ton included. Same-day delivery from our local yard.`;
   const h1 = `${sizeYards} Yard Dumpster Rental in ${city.city_name}, CA`;
@@ -218,7 +219,7 @@ export function generateCitySizePageContent(city: SeoCity, sizeYards: number): O
       items: DUMPSTER_SIZES_DATA.filter(s => s.yards !== sizeYards).map(s => ({
         label: `${s.yards} Yard`,
         value: `From $${s.priceFrom}`,
-        link: `/${city.city_slug}/${s.yards}-yard-dumpster`,
+        link: citySizeUrl(city.city_slug, s.yards),
       })),
     },
   ];
@@ -239,7 +240,7 @@ export function generateCitySizePageContent(city: SeoCity, sizeYards: number): O
     generateFAQSchema(faqs),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: city.city_name, url: `/dumpster-rental/${city.city_slug}` },
+      { name: city.city_name, url: cityUrl(city.city_slug) },
       { name: `${sizeYards} Yard`, url: urlPath },
     ]),
   ];
@@ -262,7 +263,7 @@ export function generateCityMaterialPageContent(city: SeoCity, materialSlug: str
   if (!material) throw new Error(`Invalid material: ${materialSlug}`);
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
-  const urlPath = `/${city.city_slug}/${material.slug}`;
+  const urlPath = cityMaterialUrl(city.city_slug, material.slug);
   const title = `${material.name} Dumpster Rental ${city.city_name} CA | ${material.category === 'heavy' ? 'Flat Fee' : `From $${DUMPSTER_SIZES_DATA.find(s => (material.sizes as readonly number[]).includes(s.yards))?.priceFrom || 390}`}`;
   const metaDescription = `${material.name} dumpster rental in ${city.city_name}, CA. ${material.description} Available in ${material.sizes.join(', ')} yard sizes. Same-day delivery from our ${yard?.city || 'local'} yard.`;
   const h1 = `${material.name} Dumpster Rental in ${city.city_name}, CA`;
@@ -282,7 +283,7 @@ export function generateCityMaterialPageContent(city: SeoCity, materialSlug: str
       heading: `Recommended Sizes for ${material.name} in ${city.city_name}`,
       items: material.sizes.map(sz => {
         const s = DUMPSTER_SIZES_DATA.find(d => d.yards === sz);
-        return s ? { label: `${s.yards} Yard`, value: `From $${s.priceFrom} — ${s.loads}`, link: `/${city.city_slug}/${s.yards}-yard-dumpster` } : { label: `${sz} Yard`, value: '' };
+        return s ? { label: `${s.yards} Yard`, value: `From $${s.priceFrom} — ${s.loads}`, link: citySizeUrl(city.city_slug, s.yards) } : { label: `${sz} Yard`, value: '' };
       }),
     },
     {
@@ -311,7 +312,7 @@ export function generateCityMaterialPageContent(city: SeoCity, materialSlug: str
     generateFAQSchema(faqs),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: city.city_name, url: `/dumpster-rental/${city.city_slug}` },
+      { name: city.city_name, url: cityUrl(city.city_slug) },
       { name: material.name, url: urlPath },
     ]),
   ];
@@ -347,7 +348,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
     if (nc) {
       links.push({
         text: `Dumpster rental in ${nc.city_name}, CA`,
-        url: `/dumpster-rental/${nc.city_slug}`,
+        url: cityUrl(nc.city_slug),
         type: 'nearby_city',
       });
     }
@@ -358,7 +359,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
     for (const sz of (city.common_sizes_json || [10, 20, 30, 40])) {
       links.push({
         text: `${sz}-yard dumpster in ${city.city_name}`,
-        url: `/${city.city_slug}/${sz}-yard-dumpster`,
+        url: citySizeUrl(city.city_slug, sz),
         type: 'size',
       });
     }
@@ -366,7 +367,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
     for (const m of SEO_MATERIALS.slice(0, 4)) {
       links.push({
         text: `${m.name} dumpster in ${city.city_name}`,
-        url: `/${city.city_slug}/${m.slug}`,
+        url: cityMaterialUrl(city.city_slug, m.slug),
         type: 'material',
       });
     }
@@ -376,7 +377,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
     // Link back to city
     links.push({
       text: `All dumpsters in ${city.city_name}, CA`,
-      url: `/dumpster-rental/${city.city_slug}`,
+      url: cityUrl(city.city_slug),
       type: 'service',
     });
     // 2 nearby cities for same size (territorial cluster)
@@ -384,7 +385,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
       if (nc) {
         links.push({
           text: `Dumpster rental in ${nc.city_name}, CA`,
-          url: `/dumpster-rental/${nc.city_slug}`,
+          url: cityUrl(nc.city_slug),
           type: 'nearby_city',
         });
       }
@@ -394,7 +395,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
   if (pageType === 'CITY_MATERIAL') {
     links.push({
       text: `All dumpsters in ${city.city_name}, CA`,
-      url: `/dumpster-rental/${city.city_slug}`,
+      url: cityUrl(city.city_slug),
       type: 'service',
     });
   }
@@ -411,12 +412,12 @@ function generateCityLocalBusinessSchema(city: SeoCity, yard?: typeof OPERATIONA
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": `${BUSINESS_INFO.url}/dumpster-rental/${city.city_slug}#business`,
+    "@id": `${BUSINESS_INFO.url}${cityUrl(city.city_slug)}#business`,
     "name": `${BUSINESS_INFO.name} - ${city.city_name}`,
     "description": `Dumpster rental in ${city.city_name}, ${city.state}. Same-day delivery from our local yard.`,
     "telephone": BUSINESS_INFO.phone.sales,
     "email": BUSINESS_INFO.email,
-    "url": `${BUSINESS_INFO.url}/dumpster-rental/${city.city_slug}`,
+    "url": `${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": city.city_name,

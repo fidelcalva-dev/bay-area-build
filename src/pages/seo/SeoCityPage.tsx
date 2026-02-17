@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
+import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
@@ -91,7 +92,7 @@ export default function SeoCityPage() {
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
-        <link rel="canonical" href={`${BUSINESS_INFO.url}/dumpster-rental/${city.city_slug}`} />
+        <link rel="canonical" href={`${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`} />
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -145,7 +146,7 @@ export default function SeoCityPage() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
             {DUMPSTER_SIZES_DATA.map(size => (
-              <Link key={size.yards} to={`/${city.city_slug}/${size.yards}-yard-dumpster`}
+              <Link key={size.yards} to={citySizeUrl(city.city_slug, size.yards)}
                 className="bg-card border border-border rounded-xl p-4 text-center hover:border-primary/50 hover:shadow-md transition-all group">
                 <div className="text-3xl font-black text-foreground group-hover:text-primary transition-colors">{size.yards}</div>
                 <div className="text-xs text-muted-foreground mb-2">YARD</div>
@@ -163,7 +164,7 @@ export default function SeoCityPage() {
           <h2 className="heading-lg text-foreground mb-8 text-center">Popular Materials in {city.city_name}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {SEO_MATERIALS.map(m => (
-              <Link key={m.slug} to={`/${city.city_slug}/${m.slug}`}
+              <Link key={m.slug} to={cityMaterialUrl(city.city_slug, m.slug)}
                 className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
                 <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors mb-1">{m.name}</h3>
                 <p className="text-sm text-muted-foreground mb-2">{m.description}</p>
@@ -259,7 +260,7 @@ export default function SeoCityPage() {
             <h2 className="heading-md text-foreground mb-6 text-center">Also Serving Nearby</h2>
             <div className="flex flex-wrap justify-center gap-3">
               {nearbyCities?.map(c => (
-                <Link key={c.city_slug} to={`/dumpster-rental/${c.city_slug}`}
+                <Link key={c.city_slug} to={cityUrl(c.city_slug)}
                   className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
                   {c.city_name}, CA
                 </Link>
