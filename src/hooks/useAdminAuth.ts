@@ -91,6 +91,25 @@ useEffect(() => {
         if (!isMounted) return;
         const user = session?.user ?? null;
 
+        // Handle token expiry / sign out — soft redirect
+        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+          setState(prev => ({
+            ...prev,
+            user: null,
+            isAdmin: false,
+            isDispatcher: false,
+            isFinance: false,
+            isDriver: false,
+            isSales: false,
+            isCS: false,
+            isBilling: false,
+            isExecutive: false,
+            role: null,
+            isLoading: false,
+          }));
+          return;
+        }
+
         // Update session but don't touch isLoading
         if (user) {
           // Dispatch after callback completes to avoid deadlock
