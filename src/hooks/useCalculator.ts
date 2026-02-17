@@ -13,6 +13,7 @@ import {
   logCalculatorAction,
   getMarginClass,
 } from '@/services/calculatorService';
+import { getPriceFromList } from '@/lib/price-list-data';
 import type {
   CalculatorInputs,
   CalculatorEstimate,
@@ -95,10 +96,11 @@ export function useCalculator() {
         };
       }
 
-      // 4. Calculate service cost
-      // Mock pricing for now - would integrate with actual pricing engine
-      const basePrice = getBasePrice(inputs.dumpster_size, inputs.material_category);
-      const estimatedCost = basePrice * 0.6; // 40% margin baseline
+      // 4. Calculate service cost from official price list
+      const cityName = (inputs as any).city_name || '';
+      const priceResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
+      const basePrice = priceResult.price;
+      const estimatedCost = basePrice * 0.6; // internal cost estimate
       
       let costResult;
       try {
@@ -270,24 +272,4 @@ export function useCalculator() {
   };
 }
 
-// Helper to get base pricing — must match quote calculator (shared-data.ts v56 Plan A)
-function getBasePrice(size: number, material: string): number {
-  const basePrices: Record<number, number> = {
-    10: 390,
-    15: 460,
-    20: 580,
-    25: 620,
-    30: 770,
-    35: 895,
-    40: 1135,
-  };
-  
-  let price = basePrices[size] || 580;
-  
-  // Heavy material surcharge
-  if (material === 'HEAVY' || material === 'DEBRIS_HEAVY') {
-    price += 150;
-  }
-  
-  return price;
-}
+// getBasePrice is now replaced by getPriceFromList in price-list-data.ts
