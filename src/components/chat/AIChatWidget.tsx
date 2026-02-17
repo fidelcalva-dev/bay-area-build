@@ -1,7 +1,7 @@
 // Calsan Dumpster AI - Chat Widget
 import { useState, useEffect, useRef } from 'react';
 import { 
-  MessageCircle, X, Send, User, Bot, Loader2, Phone, 
+  MessageCircle, X, Send, User, HardHat, Loader2, Phone, 
   Minimize2, ArrowRight, MapPin, RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,7 @@ function MessageBubble({ message, onQuickReply }: {
         "w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5",
         isUser ? "bg-primary text-primary-foreground" : "bg-muted"
       )}>
-        {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+        {isUser ? <User className="w-3.5 h-3.5" /> : <HardHat className="w-3.5 h-3.5" />}
       </div>
       
       <div className={cn("flex flex-col max-w-[82%]", isUser ? "items-end" : "items-start")}>
@@ -196,7 +196,7 @@ export function AIChatWidget() {
       <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <Bot className="w-4 h-4" />
+            <HardHat className="w-4 h-4" />
           </div>
           <div>
             <h4 className="font-semibold text-sm">Calsan Dumpster AI</h4>
@@ -229,7 +229,7 @@ export function AIChatWidget() {
             {isLoading && (
               <div className="flex gap-2 mb-3">
                 <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
-                  <Bot className="w-3.5 h-3.5" />
+                  <HardHat className="w-3.5 h-3.5" />
                 </div>
                 <div className="px-3 py-2 rounded-2xl bg-muted rounded-bl-md">
                   <div className="flex gap-1">
