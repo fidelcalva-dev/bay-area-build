@@ -7,9 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO, OPERATIONAL_YARDS } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
-import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
+import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
@@ -269,6 +270,36 @@ export default function SeoCityPage() {
           </div>
         </section>
       )}
+
+      {/* Related Guides */}
+      {(() => {
+        const cityName = city.city_name.toLowerCase();
+        const relatedGuides = SEO_BLOG_TOPICS.filter(t =>
+          t.targetCity?.toLowerCase() === cityName ||
+          t.internalLinks.some(l => l.url.includes(city.city_slug))
+        ).slice(0, 4);
+        if (!relatedGuides.length) return null;
+        return (
+          <section className="section-padding bg-muted/30">
+            <div className="container-wide">
+              <h2 className="heading-md text-foreground mb-6 text-center flex items-center justify-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                Related Guides for {city.city_name}
+              </h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {relatedGuides.map(guide => (
+                  <Link key={guide.slug} to={`/blog/${guide.slug}`}
+                    className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+                    <span className="text-xs text-primary font-medium uppercase">{guide.category}</span>
+                    <h3 className="font-semibold text-foreground text-sm mt-1 group-hover:text-primary transition-colors line-clamp-2">{guide.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{guide.metaDescription}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Bottom CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
