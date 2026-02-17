@@ -1,5 +1,7 @@
 // Master Calculator Input Panel with Address Autocomplete
 
+import { supabase } from '@/integrations/supabase/client';
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -128,15 +130,33 @@ export function MasterCalculatorInputs({ onCalculate, isCalculating, userRole }:
     ? DUMPSTER_SIZES.filter(s => s <= 10)
     : DUMPSTER_SIZES;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!inputs.service_type || !inputs.material_category || !inputs.dumpster_size) return;
     // If no yard selected and no address, require one
     if (!inputs.yard_id && !inputs.destination_address && !inputs.zip_code) return;
 
+    let cityName = addressResult?.city || '';
+
+    // If using ZIP code (no full address), resolve city from zone_zip_codes table
+    if (!cityName && inputs.zip_code) {
+      try {
+        const { data } = await supabase
+          .from('zone_zip_codes')
+          .select('city_name')
+          .eq('zip_code', inputs.zip_code.trim())
+          .single();
+        if (data?.city_name) {
+          cityName = data.city_name;
+        }
+      } catch {
+        // Fall through — will use fallback pricing
+      }
+    }
+
     onCalculate({
       ...inputs,
       facility_id: undefined,
-      city_name: addressResult?.city || '',
+      city_name: cityName,
     } as any);
   };
 
