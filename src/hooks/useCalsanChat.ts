@@ -134,9 +134,9 @@ export function useCalsanChat() {
     setMessages([{
       id: 'welcome',
       role: 'assistant',
-      content: 'Welcome to Calsan Dumpsters Pro. I can help you find the right dumpster size, get an instant price estimate, or answer questions about our services.\n\nWhat can I help you with today?',
+      content: "Let's get your exact price.\n\nWhat ZIP code is the dumpster going to?",
       timestamp: new Date(),
-      quickReplies: ['I need a dumpster', 'Get an instant quote', 'What sizes do you have?', 'Talk to a human'],
+      quickReplies: ['Use my ZIP', 'Enter full address', 'What sizes do you have?', 'Talk to a human'],
     }]);
   }, []);
 
