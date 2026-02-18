@@ -10077,6 +10077,83 @@ export type Database = {
           },
         ]
       }
+      quote_contracts: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          dumpster_size: string | null
+          id: string
+          material_type: string | null
+          price: number | null
+          quote_id: string
+          rental_days: number | null
+          sent_at: string | null
+          sent_via: string[] | null
+          service_address: string | null
+          signature_data: string | null
+          signature_type: string | null
+          signed_at: string | null
+          signed_ip: string | null
+          status: string
+          terms_content: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          dumpster_size?: string | null
+          id?: string
+          material_type?: string | null
+          price?: number | null
+          quote_id: string
+          rental_days?: number | null
+          sent_at?: string | null
+          sent_via?: string[] | null
+          service_address?: string | null
+          signature_data?: string | null
+          signature_type?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          status?: string
+          terms_content: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          dumpster_size?: string | null
+          id?: string
+          material_type?: string | null
+          price?: number | null
+          quote_id?: string
+          rental_days?: number | null
+          sent_at?: string | null
+          sent_via?: string[] | null
+          service_address?: string | null
+          signature_data?: string | null
+          signature_type?: string | null
+          signed_at?: string | null
+          signed_ip?: string | null
+          status?: string
+          terms_content?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_contracts_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_drafts: {
         Row: {
           address: string | null
