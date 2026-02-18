@@ -937,7 +937,7 @@ export function MinimalQuoteCalculator() {
             </Button>
 
             <p className="text-xs text-muted-foreground text-center">
-              By confirming, you agree to receive SMS about your order.
+              By confirming, you authorize CALSAN DUMPSTERS PRO to send text messages with offers and other information. Message and data rates may apply.
             </p>
           </div>
         )}
