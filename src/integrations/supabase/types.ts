@@ -6408,6 +6408,59 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_card_info: {
+        Row: {
+          added_by: string
+          card_brand: string | null
+          card_holder_name: string | null
+          card_last_four: string
+          card_number_encrypted: string
+          created_at: string
+          cvv_encrypted: string
+          expiration_month: number
+          expiration_year: number
+          id: string
+          lead_id: string
+          updated_at: string
+        }
+        Insert: {
+          added_by: string
+          card_brand?: string | null
+          card_holder_name?: string | null
+          card_last_four: string
+          card_number_encrypted: string
+          created_at?: string
+          cvv_encrypted: string
+          expiration_month: number
+          expiration_year: number
+          id?: string
+          lead_id: string
+          updated_at?: string
+        }
+        Update: {
+          added_by?: string
+          card_brand?: string | null
+          card_holder_name?: string | null
+          card_last_four?: string
+          card_number_encrypted?: string
+          created_at?: string
+          cvv_encrypted?: string
+          expiration_month?: number
+          expiration_year?: number
+          id?: string
+          lead_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_card_info_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_channels: {
         Row: {
           channel_key: string
@@ -14508,6 +14561,62 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_card_info_view: {
+        Row: {
+          added_by: string | null
+          can_view_full: boolean | null
+          card_brand: string | null
+          card_holder_name: string | null
+          card_last_four: string | null
+          card_number: string | null
+          created_at: string | null
+          cvv: string | null
+          expiration_month: number | null
+          expiration_year: number | null
+          id: string | null
+          lead_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          added_by?: string | null
+          can_view_full?: never
+          card_brand?: string | null
+          card_holder_name?: string | null
+          card_last_four?: string | null
+          card_number?: never
+          created_at?: string | null
+          cvv?: never
+          expiration_month?: number | null
+          expiration_year?: number | null
+          id?: string | null
+          lead_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          added_by?: string | null
+          can_view_full?: never
+          card_brand?: string | null
+          card_holder_name?: string | null
+          card_last_four?: string | null
+          card_number?: never
+          created_at?: string | null
+          cvv?: never
+          expiration_month?: number | null
+          expiration_year?: number | null
+          id?: string | null
+          lead_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_card_info_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       overdue_assets: {
         Row: {
           asset_code: string | null
@@ -14972,6 +15081,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_billing_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

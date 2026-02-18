@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import FollowUpPanel from "@/components/sales/FollowUpPanel";
 import { RiskCheckPanel } from "@/components/fraud";
 import { LeadAddressManager } from "@/components/leads/LeadAddresses";
+import LeadCardInfo from "@/components/leads/LeadCardInfo";
 
 interface LeadData {
   id: string;
@@ -451,6 +452,7 @@ export default function LeadDetail() {
           </div>
           {/* Address Manager */}
           <LeadAddressManager leadId={lead.id} />
+          <LeadCardInfo leadId={lead.id} />
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2"><Tag className="w-4 h-4" /> Project Details</CardTitle>
