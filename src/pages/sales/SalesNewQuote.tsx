@@ -14,12 +14,38 @@ import type { QuoteFormData } from '@/components/quote/types';
 import { DUMPSTER_SIZES, MATERIAL_TYPES, RENTAL_PERIODS, EXTRAS, OVERAGE_COST_PER_TON } from '@/components/quote/constants';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 import { saveQuote } from '@/lib/vendorSelection';
+import { Trash2, Mountain, HardHat } from 'lucide-react';
 
 const DUMPSTER_IMAGES: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 const INCLUDED_TONS: Record<number, number> = {
   6: 10, 8: 10, 10: 1, 20: 2, 30: 3, 40: 4,
 };
+
+// Sales-specific material options (3 choices mapping to underlying 'general' | 'heavy')
+const SALES_MATERIAL_OPTIONS = [
+  {
+    key: 'general',
+    materialValue: 'general' as const,
+    label: 'General Debris',
+    description: 'Household, furniture, wood, drywall',
+    Icon: Trash2,
+  },
+  {
+    key: 'clean_heavy',
+    materialValue: 'heavy' as const,
+    label: 'Clean Dirt / Concrete',
+    description: 'Clean fill dirt, concrete only',
+    Icon: Mountain,
+  },
+  {
+    key: 'mix_heavy',
+    materialValue: 'heavy' as const,
+    label: 'Mix Heavy Materials',
+    description: 'Concrete, dirt, brick, asphalt',
+    Icon: HardHat,
+  },
+];
 
 type Step = 'zip' | 'material' | 'size' | 'options' | 'contact' | 'success';
 
@@ -39,6 +65,7 @@ export default function SalesNewQuote() {
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
+  const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner', // No discount
@@ -311,19 +338,24 @@ export default function SalesNewQuote() {
               <div>
                 <h4 className="text-lg font-bold text-foreground mb-4">What is being disposed?</h4>
                 <div className="grid gap-3">
-                  {MATERIAL_TYPES.map((type) => (
-                    <button key={type.value} type="button" onClick={() => setFormData((prev) => ({ ...prev, material: type.value }))}
-                      className={cn("p-4 rounded-xl border-2 text-left transition-all", formData.material === type.value ? "border-primary bg-primary/5" : "border-input hover:border-primary/50")}>
-                      <div className="flex items-start gap-3">
-                        <span className="text-3xl">{type.icon}</span>
-                        <div className="flex-1">
-                          <h5 className="font-semibold text-foreground">{type.label}</h5>
-                          <p className="text-sm text-muted-foreground">{type.description}</p>
+                  {SALES_MATERIAL_OPTIONS.map((opt) => {
+                    const isSelected = salesMaterialKey === opt.key;
+                    return (
+                      <button key={opt.key} type="button" onClick={() => { setSalesMaterialKey(opt.key); setFormData((prev) => ({ ...prev, material: opt.materialValue })); }}
+                        className={cn("p-4 rounded-xl border-2 text-left transition-all", isSelected ? "border-primary bg-primary/5" : "border-input hover:border-primary/50")}>
+                        <div className="flex items-start gap-3">
+                          <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0", isSelected ? "bg-primary/10" : "bg-muted/80")}>
+                            <opt.Icon className={cn("w-5 h-5", isSelected ? "text-primary" : "text-foreground/70")} strokeWidth={2} />
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-foreground">{opt.label}</h5>
+                            <p className="text-sm text-muted-foreground">{opt.description}</p>
+                          </div>
+                          {isSelected && <CheckCircle className="w-5 h-5 text-primary shrink-0" />}
                         </div>
-                        {formData.material === type.value && <CheckCircle className="w-5 h-5 text-primary" />}
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext}>
