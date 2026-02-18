@@ -31,28 +31,34 @@ const GH: ZipPriceRow = [726, 726, 937.75, 763.5, 763.5, 1054.2, 736.6, 784.5, 8
 const GI: ZipPriceRow = [801, 801, 1012.75, 838.5, 838.5, 1129.2, 811.6, 859.5, 917, 974.5, 985, 1111];
 const GJ: ZipPriceRow = [807.5, 807.5, 1017.5, 870.5, 870.5, 1101.5, 812.75, 865.25, 917.75, 970.25, 1043.75, 1169.75];
 
+// Special per-ZIP rows that don't fit standard tiers
+const G_OAK662: ZipPriceRow = [591, 591, 802.75, 628.5, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 901];
+const G_MTEDEN: ZipPriceRow = [652.5, 652.5, 882.5, 721.5, 721.5, 966, 658.25, 649.5, 773.25, 830.75, 911.25, 1049.25];
+const G_PA303: ZipPriceRow = [726, 726, 937.75, 738.5, 738.5, 1054.2, 736.6, 784.5, 817, 874.5, 910, 1036];
+const G_SC056: ZipPriceRow = [701, 701, 912.75, 738.5, 738.5, 1029.2, 711.6, 759.5, 817, 874.5, 885, 1011];
+
 // Build ZIP → price map
 function buildZipMap(): Record<string, ZipPriceRow> {
   const m: Record<string, ZipPriceRow> = {};
   const assign = (zips: string[], row: ZipPriceRow) => { for (const z of zips) m[z] = row; };
 
-  // Group A — Alameda, Oakland core, Emeryville, Piedmont, San Leandro, San Lorenzo
+  // Group A — Alameda, Oakland core, Emeryville, Piedmont, San Leandro, San Lorenzo, Berkeley (94701/03/04)
   assign([
     '94501','94502', // Alameda
     '94601','94602','94603','94604','94605','94606','94607','94608','94609',
     '94610','94611','94612','94613','94614','94615','94617','94618','94619',
     '94620','94621','94622','94623','94624','94649','94659','94660','94661',
-    '94662','94666', // Oakland + Emeryville
+    '94666', // Oakland + Emeryville
     '94577','94578','94579', // San Leandro
     '94580', // San Lorenzo
+    '94701','94703','94704', // Berkeley
   ], GA);
 
-  // Group B — Albany, Berkeley, Canyon, Castro Valley, Hayward, Orinda, UC Berkeley, Richmond, SF downtown
+  // Group B — Albany, Berkeley, Canyon, Hayward, Orinda, UC Berkeley, Richmond, SF downtown
   assign([
-    '94706','94707','94710', // Albany
-    '94702','94703','94704','94705','94709','94712','94720', // Berkeley
+    '94707','94710', // Albany
+    '94702','94705','94709','94712','94720', // Berkeley
     '94516', // Canyon
-    '94552', // Castro Valley
     '94540','94541','94542','94544','94545', // Hayward
     '94563', // Orinda
     '94850', // Richmond
@@ -61,9 +67,9 @@ function buildZipMap(): Record<string, ZipPriceRow> {
 
   // Group Bb — Same base as B but 15yd=$609.50, 20yd=$667
   assign([
-    '94543','94546','94557', // Hayward / Castro Valley
+    '94543','94546', // Hayward / Castro Valley
+    '94706', // Berkeley / Kensington
   ], GBb);
-  // Berkeley 94706 also has this variant per some rows but Albany 94706 uses GB — use GB for 94706
 
   // Group C — Milpitas, Alviso, Santa Clara core, San Jose core
   assign([
@@ -77,12 +83,13 @@ function buildZipMap(): Record<string, ZipPriceRow> {
   ], GC);
 
   // Group D — El Cerrito, Lafayette, Moraga, Fremont (partial), Pleasanton (partial),
-  // Richmond core, Union City, SF mid-range, Berkeley 94708, Kensington 94708, Hayward 94552(alt)
+  // Richmond core, Union City, Hayward 94552, SF mid-range, Berkeley 94708, Kensington 94708
   assign([
     '94530', // El Cerrito
     '94549', // Lafayette
     '94556','94570','94575', // Moraga
     '94538','94539', // Fremont
+    '94552', // Hayward
     '94566', // Pleasanton
     '94801','94802','94804','94805','94807','94808', // Richmond / Point Richmond
     '94587', // Union City
@@ -95,17 +102,18 @@ function buildZipMap(): Record<string, ZipPriceRow> {
     '94163','94164','94172','94177','94188', // SF
   ], GD);
 
-  // Group E — Cupertino, Coyote, Mountain View, Sunnyvale, Moffett Field, San Jose mid
+  // Group E — Cupertino, Coyote, Mountain View, Sunnyvale, Los Altos 94023,
+  // Los Gatos 95030/95032, Campbell 95009/95011, San Jose mid
   assign([
     '95013', // Coyote
     '95014','95015', // Cupertino / Permanente / Monte Vista
     '94035','94039','94040','94041','94042','94043', // Mountain View / Moffett Field
     '94085','94086','94087','94088','94089', // Sunnyvale / Onizuka
-    '95008', // Campbell — wait, Campbell 95008 = GG... let me check
-    '95009','95011', // Campbell → GE
+    '95009','95011', // Campbell
+    '94023', // Los Altos
+    '95030','95032', // Los Gatos / Monte Sereno
     '95055', // Santa Clara
-    '95070', // Saratoga — wait, 95070 = GG... let me recheck
-    '95071', // Saratoga → GE
+    '95071', // Saratoga
     '95111','95113','95117','95118','95121','95122','95123','95124','95125',
     '95127','95129','95130','95136','95139','95148',
     '95153','95154','95155','95157','95158',
@@ -113,10 +121,10 @@ function buildZipMap(): Record<string, ZipPriceRow> {
   ], GE);
 
   // Group F — Alamo, Belmont, Brisbane, Broadmoor, Colma, Concord, Corte Madera, Crockett,
-  // Daly City, Diablo, Dublin, El Sobrante, Foster City, Fremont (partial), Greenbrae,
-  // Hercules, Larkspur, Millbrae, Newark, Pinole, Pleasant Hill, Pleasanton (partial),
-  // Rodeo, Ross, San Anselmo, San Pablo, San Quentin, San Rafael (partial), San Ramon,
-  // South SF, Walnut Creek, SF outer, Richmond (partial), Hilltop, Danville 94526, Kentfield 94914
+  // Daly City, Danville 94526, Diablo, Dublin, El Sobrante, Foster City, Fremont (partial),
+  // Hercules, Kentfield 94914, Larkspur, Millbrae, Newark, Pinole, Pleasant Hill,
+  // Pleasanton (partial), Rodeo, Ross, San Anselmo, San Pablo, San Quentin, San Rafael 94901/94912,
+  // San Ramon, South SF, Walnut Creek, SF outer, San Mateo 94402/94403
   assign([
     '94507', // Alamo
     '94002', // Belmont
@@ -131,9 +139,8 @@ function buildZipMap(): Record<string, ZipPriceRow> {
     '94528', // Diablo
     '94568', // Dublin / Pleasanton
     '94803','94820', // El Sobrante / Richmond
-    '94404', // Foster City
+    '94404', // Foster City / San Mateo
     '94536','94537','94555', // Fremont
-    '94904', // Greenbrae
     '94547', // Hercules / Rodeo
     '94806', // Hilltop Mall / Richmond / San Pablo
     '94914', // Kentfield
@@ -145,45 +152,43 @@ function buildZipMap(): Record<string, ZipPriceRow> {
     '94588', // Pleasanton
     '94572', // Rodeo
     '94957', // Ross
-    '94080','94083', // South San Francisco / S San Fran
+    '94080','94083', // South San Francisco
     '94960','94979', // San Anselmo
     '94901', // San Anselmo / San Rafael
     '94964','94974', // San Quentin
     '94912', // San Rafael
     '94582','94583', // San Ramon
-    '94402','94403', // San Mateo (partial)
+    '94402','94403', // San Mateo
     '94595','94596','94597','94598', // Walnut Creek
     '94112','94116','94121','94127','94128','94131','94132', // SF outer
-    '94131', // North Richmond
   ], GF);
 
-  // Group G — Los Altos Hills, Menlo Park, Portola Valley, Sausalito, W Menlo Park,
-  // Campbell 95008, Novato 94947, Los Altos, Saratoga 95070, San Jose outer, Palo Alto partial
+  // Group G — Campbell 95008, Los Altos 94022/94024, Los Gatos 95033, Menlo Park,
+  // Novato 94947, Palo Alto 94302/94304/94306, Portola Valley, Redwood City 94063/94064,
+  // Saratoga 95070, Sausalito, San Jose outer
   assign([
     '95008', // Campbell
-    '94022','94023','94024', // Los Altos / Los Altos Hills
-    '95030','95032','95033', // Los Gatos
+    '94022','94024', // Los Altos / Los Altos Hills
+    '95033', // Los Gatos
     '94025', // Menlo Park / W Menlo Park
     '94026','94028', // Menlo Park / Portola Valley
     '94947', // Novato
-    '94302','94304','94305','94306','94309', // Palo Alto
+    '94302','94304','94306', // Palo Alto
     '94063','94064', // Redwood City
     '95070', // Saratoga
-    '94965','94966', // Sausalito (note: 94965 also Muir Beach → GJ, Sausalito wins last)
+    '94965','94966', // Sausalito
     '95119','95120','95135','95138','95160','95161', // San Jose
-    '95131', // Morgan Hill (at this ZIP)
-    '95056', // Santa Clara (slightly different 8Mix=912.75 but close enough)
-    '95037', // Morgan Hill — wait, 95037 = GJ. Let me check... line 154 = GJ. But line 156 says Morgan Hill 95131 = GG. OK.
   ], GG);
 
-  // Group H — San Bruno, San Carlos, Hillsborough, Redwood City partial, Palo Alto partial,
-  // E Palo Alto, Stanford, Woodside partial
+  // Group H — San Bruno, San Carlos, Hillsborough, Redwood City/Woodside 94061/94065,
+  // Palo Alto 94301, Stanford 94305
   assign([
     '94066', // San Bruno
     '94070', // San Carlos
-    '94010', // Hillsborough (also Burlingame but Burlingame = GJ, Hillsborough different)
+    '94010', // Hillsborough
     '94061','94065', // Redwood City / Woodside
-    '94301','94303', // Palo Alto
+    '94301', // Palo Alto
+    '94305', // Stanford
   ], GH);
 
   // Group I — Bethel Island
@@ -191,11 +196,12 @@ function buildZipMap(): Record<string, ZipPriceRow> {
 
   // Group J — American Canyon, Antioch, Atherton, Bay Point, Belvedere, Benicia, Blackhawk,
   // Brentwood, Burlingame, Byron, Clayton, Concord 94520, Discovery Bay, El Granada,
-  // Fairfax, Fairfield, Half Moon Bay, Knightsen, Livermore, Martinez, Mill Valley,
-  // Montara, Moss Beach, Muir Beach, Napa, Nicasio, Novato, Oakley, Pacheco, Pacifica,
-  // Petaluma, Pittsburg, Port Costa, San Geronimo, Sonoma, Stinson Beach, Suisun City,
-  // Sunol, Tiburon, Vallejo, Vineburg, Woodacre, Morgan Hill, San Jose 95108/95151,
-  // Stanford 94309, San Mateo 94401/94497, Redwood City 94062, various Marin
+  // Fairfax, Fairfield, Forest Knolls, Half Moon Bay, Knightsen, Lagunitas, Livermore,
+  // Martinez, Mill Valley, Montara, Moss Beach, Napa, Nicasio, Novato, Oakley, Pacheco,
+  // Pacifica, Petaluma, Pittsburg, Port Costa, San Geronimo, San Mateo 94401/94497,
+  // San Rafael 94903/94913/94915, Sonoma, Stinson Beach, Suisun City, Sunol, Tiburon,
+  // Vallejo, Vineburg, Woodacre, Morgan Hill, Redwood City/Woodside 94062,
+  // Kentfield 94904, Stanford 94309, San Jose 95108/95151
   assign([
     '94503','94589', // American Canyon / Vallejo
     '94509','94531', // Antioch
@@ -241,33 +247,16 @@ function buildZipMap(): Record<string, ZipPriceRow> {
     '95487', // Vineburg
     '94973', // Woodacre
     '94938', // Lagunitas
-    '94904', // Kentfield (overrides GF for this ZIP — Kentfield 94904 = GJ per line 120)
+    '94904', // Kentfield (overrides Greenbrae GF)
     '95037', // Morgan Hill
+    '94309', // Stanford
   ], GJ);
 
-  // Override 94904: Kentfield 94904 = GJ (line 120), not Greenbrae GF (line 103)
-  // Last assign wins, so GJ is correct for 94904
-
-  // Override Burlingame 94010: line 46 = GJ, but Hillsborough 94010 = GH (line 115)
-  // 94010 last assigned to GH above, but Burlingame line 46 = GJ. Since Burlingame is more common for this ZIP:
-  m['94010'] = GJ;
-
-  // Override: 94027 is in GJ (Atherton) but also Menlo Park 94027 = GJ — consistent
-
-  // Override: Sausalito 94965 is GG but Muir Beach 94965 = GJ. Since Sausalito is more common:
-  m['94965'] = GG;
-
-  // Override: Palo Alto 94305 is GG but Stanford 94305 = GH. Use GH for Stanford:
-  m['94305'] = GH;
-
-  // Override: Palo Alto 94309 is GG but Stanford 94309 = GJ. Use GJ:
-  m['94309'] = GJ;
-
-  // Override: Menlo Park 94027 = GJ (Atherton takes priority) — already set
-
-  // Campbell 95008 and 95009 corrections
-  m['95009'] = GE;
-  m['95011'] = GE;
+  // Individual ZIP overrides for special pricing
+  m['94662'] = G_OAK662; // Oakland 94662: GB-like but 40GD=$901
+  m['94557'] = G_MTEDEN; // Mount Eden: GD-like but 15GD=$649.50
+  m['94303'] = G_PA303;  // Palo Alto 94303: unique hybrid row
+  m['95056'] = G_SC056;  // Santa Clara 95056: GG-like but 8Mix=$912.75
 
   return m;
 }
