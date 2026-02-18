@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 import type { QuoteFormData } from '@/components/quote/types';
 import { DUMPSTER_SIZES, MATERIAL_TYPES, RENTAL_PERIODS, EXTRAS, OVERAGE_COST_PER_TON } from '@/components/quote/constants';
+import { getPriceByZip } from '@/lib/price-list-data';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
 import { saveQuote } from '@/lib/vendorSelection';
 import { Trash2, Mountain, HardHat } from 'lucide-react';
@@ -129,7 +130,16 @@ export default function SalesNewQuote() {
     fetchSizeId();
   }, [formData.size]);
 
-  // Quote calculation — NO discounts
+  // Map salesMaterialKey to price-list material category
+  const priceListMaterialCategory = useMemo(() => {
+    switch (salesMaterialKey) {
+      case 'clean_heavy': return 'CLEAN_SOIL';
+      case 'mix_heavy': return 'MIX';
+      default: return 'GENERAL';
+    }
+  }, [salesMaterialKey]);
+
+  // Quote calculation — NO discounts, prices from official price list
   const quote = useMemo(() => {
     if (!zoneResult) return { lineItems: [], subtotal: 0, estimatedMin: 0, estimatedMax: 0, includedTons: 0, isValid: false };
     const lineItems: { label: string; subLabel?: string; amount: number; type: string }[] = [];
@@ -139,12 +149,16 @@ export default function SalesNewQuote() {
     if (!sizeData || !material || !rental) return { lineItems: [], subtotal: 0, estimatedMin: 0, estimatedMax: 0, includedTons: 0, isValid: false };
 
     const includedTons = INCLUDED_TONS[formData.size] || 1;
-    const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
+
+    // Use official ZIP-based price list (includes material-specific pricing)
+    const zipResult = getPriceByZip(formData.zip, formData.size, priceListMaterialCategory);
+    const basePrice = zipResult.zipFound && zipResult.price > 0
+      ? Math.round(zipResult.price)
+      : Math.round(sizeData.basePrice * zoneResult.multiplier); // fallback only if ZIP not in list
+
     lineItems.push({ label: `${sizeData.label} Dumpster`, subLabel: `${rental.label} rental • ${includedTons}T included`, amount: basePrice, type: 'base' });
 
-    if (material.priceAdjustment > 0) {
-      lineItems.push({ label: 'Heavy Material Surcharge', subLabel: 'Concrete, dirt, rock, asphalt', amount: material.priceAdjustment, type: 'addition' });
-    }
+    // No separate material surcharge — already baked into ZIP-level pricing
     if (rental.extraCost > 0) {
       lineItems.push({ label: 'Extended Rental', subLabel: `+${rental.extraDays} extra days`, amount: rental.extraCost, type: 'addition' });
     }
@@ -158,7 +172,7 @@ export default function SalesNewQuote() {
     // No discount applied
     const subtotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
     return { lineItems, subtotal, estimatedMin: subtotal, estimatedMax: subtotal + Math.round(subtotal * 0.08), includedTons, isValid: true };
-  }, [formData, zoneResult]);
+  }, [formData, zoneResult, priceListMaterialCategory]);
 
   useEffect(() => {
     async function runVendorSelection() {
