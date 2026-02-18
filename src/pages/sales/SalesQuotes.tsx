@@ -98,6 +98,22 @@ export default function SalesQuotes() {
     }
   }
 
+  async function markAsConverted(quoteId: string) {
+    try {
+      const { error } = await supabase
+        .from("quotes")
+        .update({ status: "converted", converted_at: new Date().toISOString() })
+        .eq("id", quoteId);
+
+      if (error) throw error;
+      toast({ title: "Quote marked as converted" });
+      fetchQuotes();
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Error updating quote", variant: "destructive" });
+    }
+  }
+
   const filteredQuotes = quotes.filter((quote) => {
     const matchesSearch = 
       quote.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -265,11 +281,18 @@ export default function SalesQuotes() {
                         {format(new Date(quote.created_at), "MMM d, h:mm a")}
                       </TableCell>
                       <TableCell className="text-right">
-                        {canConvert && (
-                          <Button size="sm" onClick={() => convertToOrder(quote.id)}>
-                            <ArrowRight className="w-4 h-4 mr-1" /> Convert
-                          </Button>
-                        )}
+                        <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
+                          {canConvert && (
+                            <Button size="sm" onClick={() => convertToOrder(quote.id)}>
+                              <ArrowRight className="w-4 h-4 mr-1" /> Convert
+                            </Button>
+                          )}
+                          {quote.status !== "converted" && (
+                            <Button size="sm" variant="outline" onClick={() => markAsConverted(quote.id)}>
+                              <CheckCircle2 className="w-4 h-4 mr-1" /> Converted
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
