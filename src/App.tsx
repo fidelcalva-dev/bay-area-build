@@ -127,6 +127,7 @@ const QuickLinksManager = lazy(() => import("./pages/admin/QuickLinksManager"));
 const MarketsManager = lazy(() => import("./pages/admin/MarketsManager"));
 const HeavyRiskDashboard = lazy(() => import("./pages/admin/HeavyRiskDashboard"));
 const FacilitiesManager = lazy(() => import("./pages/admin/FacilitiesManager"));
+const DisposalSearchPage = lazy(() => import("./pages/admin/DisposalSearchPage"));
 const OverdueBillingPage = lazy(() => import("./pages/admin/OverdueBillingPage"));
 const ApprovalQueuePage = lazy(() => import("./pages/admin/ApprovalQueuePage"));
 const CompensationPage = lazy(() => import("./pages/admin/CompensationPage"));
@@ -659,6 +660,9 @@ const App = () => {
                 } />
                 <Route path="facilities" element={
                   <Suspense fallback={<PageLoader />}><FacilitiesManager /></Suspense>
+                } />
+                <Route path="disposal-search" element={
+                  <Suspense fallback={<PageLoader />}><DisposalSearchPage /></Suspense>
                 } />
                 <Route path="overdue" element={
                   <Suspense fallback={<PageLoader />}><OverdueBillingPage /></Suspense>

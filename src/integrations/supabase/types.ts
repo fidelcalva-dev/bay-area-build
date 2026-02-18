@@ -3570,6 +3570,59 @@ export type Database = {
         }
         Relationships: []
       }
+      disposal_rates: {
+        Row: {
+          created_at: string
+          disposal_site_id: string
+          flat_fee: number | null
+          id: string
+          is_active: boolean
+          last_verified_at: string | null
+          material_type: string
+          minimum_fee: number | null
+          notes: string | null
+          price_per_ton: number | null
+          source: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          disposal_site_id: string
+          flat_fee?: number | null
+          id?: string
+          is_active?: boolean
+          last_verified_at?: string | null
+          material_type: string
+          minimum_fee?: number | null
+          notes?: string | null
+          price_per_ton?: number | null
+          source?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          disposal_site_id?: string
+          flat_fee?: number | null
+          id?: string
+          is_active?: boolean
+          last_verified_at?: string | null
+          material_type?: string
+          minimum_fee?: number | null
+          notes?: string | null
+          price_per_ton?: number | null
+          source?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disposal_rates_disposal_site_id_fkey"
+            columns: ["disposal_site_id"]
+            isOneToOne: false
+            referencedRelation: "disposal_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disposal_requests: {
         Row: {
           created_at: string
@@ -3640,6 +3693,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      disposal_sites: {
+        Row: {
+          address: string
+          city: string
+          compliance_rating: number | null
+          created_at: string
+          hours: string | null
+          id: string
+          is_active: boolean
+          lat: number | null
+          lng: number | null
+          materials_accepted: string[] | null
+          name: string
+          notes: string | null
+          phone: string | null
+          state: string
+          ticket_required: boolean
+          type: string
+          typical_wait_time_min: number | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address: string
+          city: string
+          compliance_rating?: number | null
+          created_at?: string
+          hours?: string | null
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          materials_accepted?: string[] | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          state?: string
+          ticket_required?: boolean
+          type?: string
+          typical_wait_time_min?: number | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          compliance_rating?: number | null
+          created_at?: string
+          hours?: string | null
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          materials_accepted?: string[] | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          state?: string
+          ticket_required?: boolean
+          type?: string
+          typical_wait_time_min?: number | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: []
       }
       distance_brackets: {
         Row: {
@@ -7334,6 +7453,57 @@ export type Database = {
           price_adjustment?: number
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      material_weight_reference: {
+        Row: {
+          allowed_in_general: boolean
+          created_at: string
+          estimated_weight_per_cubic_yard: number
+          fill_line_pct: number | null
+          heavy_only: boolean
+          id: string
+          material_name: string
+          max_dumpster_size: number | null
+          notes: string | null
+          requires_separation: boolean
+          typical_density_class: string
+          updated_at: string
+          weight_range_max: number | null
+          weight_range_min: number | null
+        }
+        Insert: {
+          allowed_in_general?: boolean
+          created_at?: string
+          estimated_weight_per_cubic_yard: number
+          fill_line_pct?: number | null
+          heavy_only?: boolean
+          id?: string
+          material_name: string
+          max_dumpster_size?: number | null
+          notes?: string | null
+          requires_separation?: boolean
+          typical_density_class?: string
+          updated_at?: string
+          weight_range_max?: number | null
+          weight_range_min?: number | null
+        }
+        Update: {
+          allowed_in_general?: boolean
+          created_at?: string
+          estimated_weight_per_cubic_yard?: number
+          fill_line_pct?: number | null
+          heavy_only?: boolean
+          id?: string
+          material_name?: string
+          max_dumpster_size?: number | null
+          notes?: string | null
+          requires_separation?: boolean
+          typical_density_class?: string
+          updated_at?: string
+          weight_range_max?: number | null
+          weight_range_min?: number | null
         }
         Relationships: []
       }
@@ -13988,6 +14158,73 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      yard_disposal_config: {
+        Row: {
+          compliance_mode: boolean
+          created_at: string
+          default_disposal_site_ids: string[] | null
+          fuel_cost_per_mile: number | null
+          id: string
+          labor_hourly_rate: number | null
+          markup_pct: number | null
+          min_margin_pct: number | null
+          notes: string | null
+          overhead_factor: number | null
+          updated_at: string
+          yard_id: string
+        }
+        Insert: {
+          compliance_mode?: boolean
+          created_at?: string
+          default_disposal_site_ids?: string[] | null
+          fuel_cost_per_mile?: number | null
+          id?: string
+          labor_hourly_rate?: number | null
+          markup_pct?: number | null
+          min_margin_pct?: number | null
+          notes?: string | null
+          overhead_factor?: number | null
+          updated_at?: string
+          yard_id: string
+        }
+        Update: {
+          compliance_mode?: boolean
+          created_at?: string
+          default_disposal_site_ids?: string[] | null
+          fuel_cost_per_mile?: number | null
+          id?: string
+          labor_hourly_rate?: number | null
+          markup_pct?: number | null
+          min_margin_pct?: number | null
+          notes?: string | null
+          overhead_factor?: number | null
+          updated_at?: string
+          yard_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yard_disposal_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "yard_disposal_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "yard_disposal_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "yards_public"
             referencedColumns: ["id"]
           },
         ]
