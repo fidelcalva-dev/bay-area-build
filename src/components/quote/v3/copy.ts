@@ -208,3 +208,39 @@ export const HEAVY_SIZE_NOTE = 'heavy materials require smaller dumpsters';
 export const FLAT_FEE_LABEL = 'Flat fee — disposal included';
 export const FACILITY_AUTO_SELECTED = 'Nearest transfer station selected automatically';
 export const DELIVERY_TIME_FALLBACK = 'Delivery time calculated at checkout';
+
+// ============================================================
+// LIVE LOAD POLICY
+// ============================================================
+
+export const LIVE_LOAD_POLICY = {
+  title: 'Live Load Policy',
+  items: [
+    'First 30 minutes included',
+    'After 30 minutes: $180 per hour',
+    'Time begins once container is positioned',
+    'Subject to driver wait time conditions',
+  ],
+  disclaimer: 'Timer logic supports structured tracking. Actual billing confirmed by dispatch.',
+} as const;
+
+// ============================================================
+// HEAVY MATERIAL SERVICE STRUCTURE
+// ============================================================
+
+export const HEAVY_MATERIAL_STRUCTURE = {
+  title: 'Heavy Material Service Structure',
+  items: [
+    '6-10 yard containers only',
+    'Fill-line compliance required',
+    'Clean loads only',
+    'Flat-fee disposal included',
+    'Contaminated loads reclassified to general debris',
+  ],
+} as const;
+
+// ============================================================
+// SERVICE TIMING DISCLAIMER
+// ============================================================
+
+export const SERVICE_TIMING_DISCLAIMER = 'Service times are estimated and may vary based on traffic conditions, facility wait times, and on-site access.';

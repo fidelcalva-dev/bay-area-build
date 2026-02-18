@@ -27,11 +27,11 @@ export function HowSystemWorksSection() {
             Smart Logistics
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            How Our Smart Logistics System Works
+            How Our Logistics System Works
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            At Calsan Dumpsters Pro, we don't just drop containers.
-            We operate a logistics platform designed for speed, transparency, and precision.
+            Calsan Dumpsters Pro operates a structured, technology-supported waste logistics system
+            designed to improve transparency, scheduling efficiency, and service coordination across the Bay Area.
           </p>
         </AnimatedSection>
 
@@ -50,7 +50,7 @@ export function HowSystemWorksSection() {
 
         <AnimatedSection className="text-center mt-10">
           <p className="text-sm text-muted-foreground italic max-w-lg mx-auto">
-            This is not traditional dumpster rental. This is logistics powered by technology.
+            Technology-supported waste logistics platform serving the Bay Area.
           </p>
         </AnimatedSection>
       </div>
@@ -78,13 +78,13 @@ export function DeliveryIntelligenceSection() {
               Delivery Intelligence
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Real-Time Delivery Intelligence
+              Delivery Intelligence
             </h2>
             <p className="text-muted-foreground mb-6">
-              Our platform calculates key logistics data so you know exactly what to expect.
+              Our platform calculates key logistics data so you know what to expect before we dispatch.
             </p>
             <p className="text-sm text-muted-foreground italic">
-              You don't just book a dumpster. You understand how the system works.
+              Operational routing estimates — not guesswork.
             </p>
           </AnimatedSection>
 
@@ -128,7 +128,7 @@ export function ServiceCycleSection() {
             Full Service Cycle Transparency
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We calculate the complete service cycle. Customers see estimated total service cycle timing — not guesswork.
+            We estimate the complete service cycle. Customers see structured timing ranges — not guesswork.
           </p>
         </AnimatedSection>
 
@@ -168,10 +168,10 @@ export function AIDumpsterAssistantSection() {
             AI Assistant
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            AI-Powered Dumpster Assistant
+            Intelligent Dumpster Assistant
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            It guides you like a logistics coordinator — not a salesperson.
+            Technology-supported guidance — like a logistics coordinator, not a salesperson.
           </p>
         </AnimatedSection>
 
@@ -200,7 +200,7 @@ export function BuiltForContractorsSection() {
     'Custom service item creation',
     'Transparent overage tracking',
     'Digital dump ticket uploads',
-    'Real-time dispatch coordination',
+    'Structured dispatch coordination',
   ];
 
   return (
@@ -284,19 +284,20 @@ export function SecureDigitalSection() {
 // ─── SECTION 8: Why We're Different ──────────────────────────
 export function WhyDifferentSection() {
   const traditional = [
-    'Manual quotes',
-    'No ETA clarity',
+    'Manual quotes over the phone',
+    'No delivery window visibility',
     'Hidden weight confusion',
     'No service timeline',
-    'Limited dispatch visibility',
+    'National broker — no local yard',
   ];
 
   const calsan = [
-    'Smart pricing engine',
-    'Delivery window estimation',
-    'Transparent weight rules',
-    'Customer portal timeline',
-    'Logistics coordination system',
+    'Structured dispatch process',
+    'Routing-based delivery estimation',
+    'Transparent weight policies',
+    'Heavy material expertise',
+    'Technology-supported scheduling',
+    'Bilingual support',
   ];
 
   return (
@@ -304,7 +305,7 @@ export function WhyDifferentSection() {
       <div className="container-wide">
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Why Calsan Is Different
+            Why Calsan Operates Differently
           </h2>
         </AnimatedSection>
 
@@ -327,7 +328,7 @@ export function WhyDifferentSection() {
           {/* Calsan */}
           <AnimatedSection>
             <div className="p-6 bg-primary/5 border border-primary/20 rounded-2xl h-full">
-              <h3 className="font-bold text-foreground mb-4 text-lg">Calsan Platform</h3>
+              <h3 className="font-bold text-foreground mb-4 text-lg">Calsan Logistics Platform</h3>
               <ul className="space-y-3">
                 {calsan.map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-foreground">
@@ -342,8 +343,8 @@ export function WhyDifferentSection() {
 
         <AnimatedSection className="text-center mt-10">
           <Button asChild variant="cta" size="lg" className="group">
-            <Link to="/technology">
-              Explore Our Technology
+            <Link to="/quote">
+              Get a Structured Quote
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>

@@ -219,13 +219,14 @@ export default function CityLandingPage() {
       <section className="section-padding bg-muted/30">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="heading-md text-foreground mb-4">Technology + Local Infrastructure</h2>
+            <h2 className="heading-md text-foreground mb-4">Technology-Supported Waste Logistics</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Calsan combines real Bay Area yards with centralized logistics technology.
-              We calculate routes, disposal timing, and delivery cycles before dispatching drivers.
+              Calsan Dumpsters Pro operates a structured, technology-supported waste logistics system
+              serving {city.name}, CA. We combine real Bay Area yards with centralized dispatch coordination,
+              routing-based time estimates, and transparent weight logic.
             </p>
             <p className="text-muted-foreground">
-              This means faster scheduling, fewer delays, and clearer pricing.
+              This means structured service windows, predictable pricing, and professional scheduling.
             </p>
           </div>
         </div>
