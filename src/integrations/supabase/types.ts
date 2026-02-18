@@ -8401,6 +8401,10 @@ export type Database = {
           estimated_fill_pct: number | null
           estimated_weight_tons_max: number | null
           estimated_weight_tons_min: number | null
+          eta_confidence: string | null
+          eta_max_minutes: number | null
+          eta_min_minutes: number | null
+          eta_updated_at: string | null
           extra_tons_charged: number | null
           filled_location: string | null
           final_total: number | null
@@ -8455,6 +8459,7 @@ export type Database = {
           scheduled_pickup_date: string | null
           scheduled_pickup_window: string | null
           secondary_dumpster_id: string | null
+          sla_tier: string | null
           status: string
           text_before_arrival: boolean | null
           truck_id: string | null
@@ -8498,6 +8503,10 @@ export type Database = {
           estimated_fill_pct?: number | null
           estimated_weight_tons_max?: number | null
           estimated_weight_tons_min?: number | null
+          eta_confidence?: string | null
+          eta_max_minutes?: number | null
+          eta_min_minutes?: number | null
+          eta_updated_at?: string | null
           extra_tons_charged?: number | null
           filled_location?: string | null
           final_total?: number | null
@@ -8552,6 +8561,7 @@ export type Database = {
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           secondary_dumpster_id?: string | null
+          sla_tier?: string | null
           status?: string
           text_before_arrival?: boolean | null
           truck_id?: string | null
@@ -8595,6 +8605,10 @@ export type Database = {
           estimated_fill_pct?: number | null
           estimated_weight_tons_max?: number | null
           estimated_weight_tons_min?: number | null
+          eta_confidence?: string | null
+          eta_max_minutes?: number | null
+          eta_min_minutes?: number | null
+          eta_updated_at?: string | null
           extra_tons_charged?: number | null
           filled_location?: string | null
           final_total?: number | null
@@ -8649,6 +8663,7 @@ export type Database = {
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           secondary_dumpster_id?: string | null
+          sla_tier?: string | null
           status?: string
           text_before_arrival?: boolean | null
           truck_id?: string | null
