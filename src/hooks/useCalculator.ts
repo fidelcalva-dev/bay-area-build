@@ -13,7 +13,7 @@ import {
   logCalculatorAction,
   getMarginClass,
 } from '@/services/calculatorService';
-import { getPriceFromList } from '@/lib/price-list-data';
+import { getPriceFromList, getPriceByZip } from '@/lib/price-list-data';
 import type {
   CalculatorInputs,
   CalculatorEstimate,
@@ -96,10 +96,21 @@ export function useCalculator() {
         };
       }
 
-      // 4. Calculate service cost from official price list
+      // 4. Calculate service cost from official price list — prefer ZIP-based lookup
+      const zipCode = (inputs as any).zip_code || '';
       const cityName = (inputs as any).city_name || '';
-      const priceResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
-      const basePrice = priceResult.price;
+      let basePrice: number;
+      
+      if (zipCode) {
+        const zipResult = getPriceByZip(zipCode, inputs.dumpster_size, inputs.material_category);
+        if (zipResult.zipFound && zipResult.price > 0) {
+          basePrice = zipResult.price;
+        } else {
+          basePrice = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category).price;
+        }
+      } else {
+        basePrice = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category).price;
+      }
       const estimatedCost = basePrice * 0.6; // internal cost estimate
       
       let costResult;
