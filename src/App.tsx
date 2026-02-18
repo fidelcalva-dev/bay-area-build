@@ -75,6 +75,7 @@ const PortalTrack = lazy(() => import("./pages/portal/PortalTrack"));
 const PortalQuoteView = lazy(() => import("./pages/portal/PortalQuoteView"));
 const PortalSchedule = lazy(() => import("./pages/portal/PortalSchedule"));
 const PortalPay = lazy(() => import("./pages/portal/PortalPay"));
+const SignQuoteContract = lazy(() => import("./pages/portal/SignQuoteContract"));
 
 // Portal Auth Guard
 import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
@@ -529,6 +530,9 @@ const App = () => {
               } />
               <Route path="/portal/pay" element={
                 <Suspense fallback={<PageLoader />}><PortalPay /></Suspense>
+              } />
+              <Route path="/portal/sign-quote-contract" element={
+                <Suspense fallback={<PageLoader />}><SignQuoteContract /></Suspense>
               } />
 
               {/* Green Halo Client Portal */}

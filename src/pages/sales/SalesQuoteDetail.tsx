@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, Save, Loader2, Calendar, MapPin, Clock, 
-  FileText, Camera, Trash2, ImageIcon, Send
+  FileText, Camera, Trash2, ImageIcon, Send, ScrollText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +55,7 @@ export default function SalesQuoteDetail() {
   const [deliveryPhotos, setDeliveryPhotos] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [isSendingContract, setIsSendingContract] = useState(false);
 
   useEffect(() => {
     if (id) fetchQuote();
@@ -208,6 +209,29 @@ export default function SalesQuoteDetail() {
     }
   }
 
+  async function handleSendContract() {
+    if (!quote || !id) return;
+    setIsSendingContract(true);
+    try {
+      const { data, error: err } = await supabase.functions.invoke("send-quote-contract", {
+        body: { quoteId: id },
+      });
+
+      if (err) throw err;
+      if (data?.success) {
+        const channels = (data.channels as string[]) || [];
+        toast({ title: `Contract sent via ${channels.join(" & ").toUpperCase() || "pending"}` });
+      } else {
+        toast({ title: data?.error || "Failed to send contract", variant: "destructive" });
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: err.message || "Error sending contract", variant: "destructive" });
+    } finally {
+      setIsSendingContract(false);
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -239,6 +263,10 @@ export default function SalesQuoteDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleSendContract} disabled={isSendingContract}>
+            {isSendingContract ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ScrollText className="w-4 h-4 mr-2" />}
+            Send Contract
+          </Button>
           <Button variant="outline" onClick={handleResend} disabled={isResending}>
             {isResending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
             Reenviar
