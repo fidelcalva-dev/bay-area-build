@@ -1,6 +1,6 @@
 // ============================================================
 // V3 QUOTE FLOW — Premium Logistics Platform Experience
-// ZIP → Customer Type → Project → Size → Price → Confirm
+// ZIP → Customer Type → Project → Size → Price → Access → Confirm
 // ============================================================
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
@@ -35,6 +35,7 @@ import { PRICING_ZONES } from '../constants';
 import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
+import { AccessConstraintStep, type AccessConstraintData } from './AccessConstraintStep';
 import { ServiceCycleBar } from './components/ServiceCycleBar';
 import { AvailabilityMeter } from './components/AvailabilityMeter';
 import { useAvailabilityConfidence } from './hooks/useAvailabilityConfidence';
@@ -153,6 +154,9 @@ export function V3QuoteFlow() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  // Access constraint data
+  const [accessData, setAccessData] = useState<AccessConstraintData | null>(null);
+
   // Address mode
   const [useAddress, setUseAddress] = useState(false);
   const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
@@ -242,7 +246,7 @@ export function V3QuoteFlow() {
   const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
   // Track step timing + GA4 step viewed
-  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, confirm: 6, placement: 7 };
+  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
   useEffect(() => {
     setStepStartTime(Date.now());
     ga4.quoteStepViewed({ flow_version: 'v3', step_name: step, step_index: stepIndexMap[step] });
@@ -328,8 +332,8 @@ export function V3QuoteFlow() {
 
   // Step index for progress
   const stepIndex = useMemo(() => {
-    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, confirm: 6, placement: 7 };
-    return Math.min(map[step], 6);
+    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
+    return Math.min(map[step], 7);
   }, [step]);
 
   // Swap toggle (moved up for draft effects)
@@ -349,7 +353,8 @@ export function V3QuoteFlow() {
       'customer-type': 'project',
       project: 'size',
       size: 'price',
-      price: 'confirm',
+      price: 'access',
+      access: 'confirm',
       confirm: 'placement',
       placement: 'placement',
     };
@@ -363,7 +368,8 @@ export function V3QuoteFlow() {
       project: 'customer-type',
       size: 'project',
       price: 'size',
-      confirm: 'price',
+      access: 'price',
+      confirm: 'access',
       placement: 'confirm',
     };
     setStep(prev[step]);
@@ -415,6 +421,9 @@ export function V3QuoteFlow() {
         streetAddress: addressResult?.formattedAddress,
         city: addressResult?.city,
         state: addressResult?.state,
+        accessFlags: accessData?.flagsMap,
+        placementType: accessData?.placementType,
+        gateCode: accessData?.gateCode,
       });
 
       if (result.success) {
@@ -588,17 +597,18 @@ export function V3QuoteFlow() {
           <div className="relative h-1 bg-muted rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(stepIndex / 6) * 100}%` }}
+              style={{ width: `${(stepIndex / 7) * 100}%` }}
             />
           </div>
           <div className="flex justify-between mt-1.5">
-            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 6</span>
+            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 7</span>
             <span className="text-[10px] font-medium text-foreground">
               {step === 'zip' && 'Location'}
               {step === 'customer-type' && 'Profile'}
               {step === 'project' && 'Project'}
               {step === 'size' && 'Size'}
               {step === 'price' && 'Price'}
+              {step === 'access' && 'Access'}
               {step === 'confirm' && 'Confirm'}
               {step === 'placement' && 'Complete'}
             </span>
@@ -1204,7 +1214,40 @@ export function V3QuoteFlow() {
         )}
 
         {/* ============================== */}
-        {/* STEP 6: CONFIRM */}
+        {/* STEP 6: PLACEMENT & ACCESS */}
+        {/* ============================== */}
+        {step === 'access' && (
+          <StepTransition stepKey="access">
+            <div className="space-y-5">
+              <BackButton />
+
+              <div>
+                <h4 className="text-xl font-bold text-foreground tracking-tight mb-1">
+                  Placement & Access
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Help us plan the best delivery route and placement.
+                </p>
+              </div>
+
+              <AccessConstraintStep
+                zip={zip}
+                city={addressResult?.city || zoneResult?.cityName}
+                onComplete={(data) => {
+                  setAccessData(data);
+                  goNext();
+                }}
+                onSkip={() => {
+                  setAccessData(null);
+                  goNext();
+                }}
+              />
+            </div>
+          </StepTransition>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 7: CONFIRM */}
         {/* ============================== */}
         {step === 'confirm' && (
           <StepTransition stepKey="confirm">

@@ -1,6 +1,6 @@
 // V3 Quote Flow Types
 
-export type V3Step = 'zip' | 'customer-type' | 'project' | 'size' | 'price' | 'confirm' | 'placement';
+export type V3Step = 'zip' | 'customer-type' | 'project' | 'size' | 'price' | 'access' | 'confirm' | 'placement';
 
 export type CustomerType = 'homeowner' | 'contractor' | 'commercial';
 

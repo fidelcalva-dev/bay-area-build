@@ -8371,6 +8371,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          access_flags: Json | null
           actual_delivery_at: string | null
           actual_pickup_at: string | null
           actual_weight_tons: number | null
@@ -8410,6 +8411,7 @@ export type Database = {
           final_total: number | null
           fraud_blocked: boolean | null
           fraud_flags_count: number | null
+          gate_code: string | null
           gclid: string | null
           heavy_material_code: string | null
           id: string
@@ -8439,6 +8441,7 @@ export type Database = {
           placement_confirmed: boolean | null
           placement_locked: boolean | null
           placement_photo_url: string | null
+          placement_type: string | null
           portal_link_id: string | null
           portal_link_sent_at: string | null
           portal_show_dump_ticket: boolean | null
@@ -8473,6 +8476,7 @@ export type Database = {
           wrong_material_flagged: boolean | null
         }
         Insert: {
+          access_flags?: Json | null
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
           actual_weight_tons?: number | null
@@ -8512,6 +8516,7 @@ export type Database = {
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          gate_code?: string | null
           gclid?: string | null
           heavy_material_code?: string | null
           id?: string
@@ -8541,6 +8546,7 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          placement_type?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
           portal_show_dump_ticket?: boolean | null
@@ -8575,6 +8581,7 @@ export type Database = {
           wrong_material_flagged?: boolean | null
         }
         Update: {
+          access_flags?: Json | null
           actual_delivery_at?: string | null
           actual_pickup_at?: string | null
           actual_weight_tons?: number | null
@@ -8614,6 +8621,7 @@ export type Database = {
           final_total?: number | null
           fraud_blocked?: boolean | null
           fraud_flags_count?: number | null
+          gate_code?: string | null
           gclid?: string | null
           heavy_material_code?: string | null
           id?: string
@@ -8643,6 +8651,7 @@ export type Database = {
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
           placement_photo_url?: string | null
+          placement_type?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
           portal_show_dump_ticket?: boolean | null
@@ -9993,6 +10002,7 @@ export type Database = {
       }
       quotes: {
         Row: {
+          access_flags: Json | null
           ai_analysis_id: string | null
           ai_confidence: string | null
           ai_hazards_json: Json | null
@@ -10030,6 +10040,7 @@ export type Database = {
           extra_tons_prepurchased: number | null
           extras: string[] | null
           fraud_flags_count: number | null
+          gate_code: string | null
           gclid: string | null
           green_halo_category: string | null
           green_halo_dump_fee: number | null
@@ -10109,6 +10120,7 @@ export type Database = {
           zone_id: string | null
         }
         Insert: {
+          access_flags?: Json | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -10146,6 +10158,7 @@ export type Database = {
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
+          gate_code?: string | null
           gclid?: string | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
@@ -10225,6 +10238,7 @@ export type Database = {
           zone_id?: string | null
         }
         Update: {
+          access_flags?: Json | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -10262,6 +10276,7 @@ export type Database = {
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
           fraud_flags_count?: number | null
+          gate_code?: string | null
           gclid?: string | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
