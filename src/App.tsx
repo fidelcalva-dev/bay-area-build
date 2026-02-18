@@ -233,6 +233,7 @@ const SalesDashboard = lazy(() => import("./pages/sales/SalesDashboard"));
 const SalesLeads = lazy(() => import("./pages/sales/SalesLeads"));
 const SalesLeadDetail = lazy(() => import("./pages/sales/LeadDetail"));
 const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
+const SalesQuoteDetail = lazy(() => import("./pages/sales/SalesQuoteDetail"));
 const SalesNewQuote = lazy(() => import("./pages/sales/SalesNewQuote"));
 const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
 const SalesLeadInbox = lazy(() => import("./pages/sales/SalesLeadInbox"));
@@ -882,6 +883,9 @@ const App = () => {
                 } />
                 <Route path="quotes" element={
                   <Suspense fallback={<PageLoader />}><SalesQuotes /></Suspense>
+                } />
+                <Route path="quotes/:id" element={
+                  <Suspense fallback={<PageLoader />}><SalesQuoteDetail /></Suspense>
                 } />
                 <Route path="quotes/new" element={
                   <Suspense fallback={<PageLoader />}><SalesNewQuote /></Suspense>
