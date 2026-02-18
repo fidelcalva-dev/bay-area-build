@@ -50,7 +50,40 @@ export default function Privacy() {
               <strong className="text-foreground">We do not sell your personal data</strong> to third parties for marketing purposes.
             </p>
 
-            <h2 className="heading-md mb-4">4. Data Retention</h2>
+            <h2 className="heading-md mb-4">4. SMS Communications and Consent</h2>
+            <p className="text-muted-foreground mb-4">
+              By submitting your information through our website, you agree to receive SMS messages from CALSAN DUMPSTERS PRO related to:
+            </p>
+            <ul className="list-disc pl-6 text-muted-foreground mb-4 space-y-1">
+              <li>Appointments</li>
+              <li>Appointment confirmations</li>
+              <li>Delivery and pickup notifications</li>
+              <li>Billing updates</li>
+              <li>Promotions and offers</li>
+            </ul>
+            <p className="text-muted-foreground mb-4">
+              The frequency of messages may vary. Standard message and data rates may apply.
+            </p>
+            <p className="text-muted-foreground mb-4">
+              You may unsubscribe at any time by replying:
+            </p>
+            <ul className="list-disc pl-6 text-muted-foreground mb-4 space-y-1">
+              <li><strong className="text-foreground">STOP</strong> to unsubscribe</li>
+              <li><strong className="text-foreground">HELP</strong> for assistance</li>
+            </ul>
+            <p className="text-muted-foreground mb-6">
+              Consent to receive SMS messages is not a condition of purchase.
+            </p>
+
+            <h2 className="heading-md mb-4">5. Information Sharing</h2>
+            <p className="text-muted-foreground mb-4">
+              We do not sell, rent, or trade your personal information.
+            </p>
+            <p className="text-muted-foreground mb-6">
+              We may share information only with trusted service providers (such as payment processors or messaging platforms) strictly for business operations and compliance purposes.
+            </p>
+
+            <h2 className="heading-md mb-4">6. Data Retention</h2>
             <p className="text-muted-foreground mb-6">
               We retain your information for as long as necessary to provide services and comply with legal obligations:
             </p>
@@ -61,14 +94,14 @@ export default function Privacy() {
               <li><strong className="text-foreground">Photos & Documentation:</strong> 2 years after service completion</li>
             </ul>
 
-            <h2 className="heading-md mb-4">5. Data Security</h2>
+            <h2 className="heading-md mb-4">7. Data Security</h2>
             <p className="text-muted-foreground mb-6">
               We implement industry-standard security measures to protect your information, including encrypted data 
               transmission, secure payment processing, and access controls. However, no system is completely secure, 
               and we cannot guarantee absolute security.
             </p>
 
-            <h2 className="heading-md mb-4">6. Your Rights</h2>
+            <h2 className="heading-md mb-4">8. Your Rights</h2>
             <p className="text-muted-foreground mb-4">Under California law (CCPA), you have the right to:</p>
             <ul className="list-disc pl-6 text-muted-foreground mb-6 space-y-1">
               <li>Request access to personal information we hold about you</li>
@@ -77,26 +110,26 @@ export default function Privacy() {
               <li>Know what categories of information we collect and share</li>
             </ul>
 
-            <h2 className="heading-md mb-4">7. Cookies & Tracking</h2>
+            <h2 className="heading-md mb-4">9. Cookies & Tracking</h2>
             <p className="text-muted-foreground mb-6">
               Our website uses cookies and similar technologies to improve user experience, analyze site traffic, 
               and remember preferences. You can control cookie settings through your browser. Essential cookies 
               required for site functionality cannot be disabled.
             </p>
 
-            <h2 className="heading-md mb-4">8. Third-Party Services</h2>
+            <h2 className="heading-md mb-4">10. Third-Party Services</h2>
             <p className="text-muted-foreground mb-6">
               Our website may contain links to third-party services. We are not responsible for the privacy 
               practices of these external sites. We encourage you to review their privacy policies.
             </p>
 
-            <h2 className="heading-md mb-4">9. Children's Privacy</h2>
+            <h2 className="heading-md mb-4">11. Children's Privacy</h2>
             <p className="text-muted-foreground mb-6">
               Our services are not directed to individuals under 18 years of age. We do not knowingly 
               collect personal information from children.
             </p>
 
-            <h2 className="heading-md mb-4">10. Changes to This Policy</h2>
+            <h2 className="heading-md mb-4">12. Changes to This Policy</h2>
             <p className="text-muted-foreground mb-6">
               We may update this Privacy Policy periodically. Changes will be posted on this page with 
               an updated revision date. Continued use of our services after changes constitutes acceptance.
