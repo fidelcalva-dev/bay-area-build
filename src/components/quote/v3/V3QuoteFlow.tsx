@@ -36,6 +36,7 @@ import type { V3Step, CustomerType, ProjectCard } from './types';
 import { getProjectsForCustomerType } from './types';
 import { ServiceTimeBreakdown, buildServiceTimeEstimate } from './ServiceTimeBreakdown';
 import { AccessConstraintStep, type AccessConstraintData } from './AccessConstraintStep';
+import { HEAVY_MATERIAL_STRUCTURE, LIVE_LOAD_POLICY } from './copy';
 import { ServiceCycleBar } from './components/ServiceCycleBar';
 import { AvailabilityMeter } from './components/AvailabilityMeter';
 import { useAvailabilityConfidence } from './hooks/useAvailabilityConfidence';
@@ -1101,10 +1102,15 @@ export function V3QuoteFlow() {
                 )}
                 {isHeavy && (
                   <div className="px-5 py-3 border-t border-border/50 bg-muted/20">
-                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-1">Flat Rate Disposal Included</p>
-                    <p className="text-xs text-muted-foreground">
-                      {getPriceMomentCopy(customerType, isHeavy, quote.includedTons).heavy.ruleLine}
-                    </p>
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-2">{HEAVY_MATERIAL_STRUCTURE.title}</p>
+                    <div className="space-y-1.5">
+                      {HEAVY_MATERIAL_STRUCTURE.items.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Scale className="w-3 h-3 text-primary shrink-0" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -1119,6 +1125,9 @@ export function V3QuoteFlow() {
                         if (el) el.scrollIntoView({ behavior: 'smooth' });
                       }}
                     />
+                    <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                      Service times are estimated and may vary based on traffic conditions, facility wait times, and on-site access.
+                    </p>
                     {showInternalBreakdown && (
                       <div id="internal-breakdown" className="mt-4">
                         <ServiceTimeBreakdown estimate={serviceTime} />
@@ -1175,6 +1184,22 @@ export function V3QuoteFlow() {
                     {wantsSwap && <CheckCircle className="w-3.5 h-3.5 text-success" />}
                   </button>
                 </div>
+
+                {/* Live Load Policy — Contractor info */}
+                {customerType === 'contractor' && (
+                  <div className="px-5 py-3 border-t border-border/50 bg-muted/20">
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-2">{LIVE_LOAD_POLICY.title}</p>
+                    <div className="space-y-1.5">
+                      {LIVE_LOAD_POLICY.items.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Clock className="w-3 h-3 text-primary shrink-0" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2 italic">{LIVE_LOAD_POLICY.disclaimer}</p>
+                  </div>
+                )}
 
                 {/* Trust footer */}
                 <div className="px-5 py-3 border-t border-border/50 bg-muted/20">

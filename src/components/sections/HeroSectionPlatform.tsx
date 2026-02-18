@@ -21,8 +21,8 @@ const scaleIn: Variants = {
 };
 
 const BULLET_ITEMS = [
-  { icon: Zap, text: 'Instant ZIP-based pricing' },
-  { icon: Clock, text: 'Real-time delivery estimation' },
+  { icon: Zap, text: 'Structured ZIP-based pricing' },
+  { icon: Clock, text: 'Routing-based delivery estimation' },
   { icon: Users, text: 'Professional dispatch coordination' },
 ];
 
@@ -47,10 +47,10 @@ export function HeroSectionPlatform() {
           >
             <motion.div variants={fadeInUp}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                Bay Area's First Technology-Driven Dumpster Platform
+                Bay Area's Technology-Supported Dumpster Logistics Platform
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
-                Real local yards. Smart logistics. Transparent pricing powered by data.
+                Structured dispatch. Transparent pricing. Real local yards.
               </p>
             </motion.div>
 
