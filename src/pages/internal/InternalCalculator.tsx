@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calculator, Shield, User, RotateCcw, Lock, AlertTriangle, DollarSign, Package, Clock, CheckCircle } from 'lucide-react';
 import { logCalculatorAction } from '@/services/calculatorService';
-import { getPriceFromList, INCLUDED_TONS } from '@/lib/price-list-data';
+import { getPriceFromList, getPriceByZip, INCLUDED_TONS } from '@/lib/price-list-data';
 import type { CalculatorInputs as CalculatorInputsType } from '@/types/calculator';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -62,10 +62,22 @@ export default function InternalCalculator() {
   }) => {
     try {
       setLastInputs(inputs);
-      // Look up the price from the official price list
+      // Look up the price from the official price list — prefer ZIP-based lookup
+      const zipCode = inputs.zip_code || '';
       const cityName = inputs.city_name || '';
-      const pResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
-      setPriceInfo(pResult);
+      let pResult: { price: number; cityFound?: boolean; zipFound?: boolean; cityUsed?: string; zip?: string };
+      
+      if (zipCode) {
+        const zipResult = getPriceByZip(zipCode, inputs.dumpster_size, inputs.material_category);
+        if (zipResult.zipFound && zipResult.price > 0) {
+          pResult = { price: zipResult.price, cityFound: true, cityUsed: cityName || `ZIP ${zipCode}` };
+        } else {
+          pResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
+        }
+      } else {
+        pResult = getPriceFromList(cityName, inputs.dumpster_size, inputs.material_category);
+      }
+      setPriceInfo(pResult as any);
       await calculate(inputs);
     } catch (err) {
       console.error('Calculator error:', err);
