@@ -10194,8 +10194,12 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           delivery_address: string | null
+          delivery_date: string | null
+          delivery_instructions: string | null
           delivery_lat: number | null
           delivery_lng: number | null
+          delivery_photos: string[] | null
+          delivery_time_window: string | null
           discount_cap_applied: boolean | null
           discount_percent: number | null
           display_id: string | null
@@ -10312,8 +10316,12 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_instructions?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
+          delivery_photos?: string[] | null
+          delivery_time_window?: string | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
           display_id?: string | null
@@ -10430,8 +10438,12 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_instructions?: string | null
           delivery_lat?: number | null
           delivery_lng?: number | null
+          delivery_photos?: string[] | null
+          delivery_time_window?: string | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
           display_id?: string | null

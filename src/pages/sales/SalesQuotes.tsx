@@ -226,7 +226,7 @@ export default function SalesQuotes() {
                   const canConvert = ["saved", "scheduled", "pinned"].includes(quote.status);
 
                   return (
-                    <TableRow key={quote.id}>
+                    <TableRow key={quote.id} className="cursor-pointer" onClick={() => navigate(`/sales/quotes/${quote.id}`)}>
                       <TableCell>
                         <span className="font-mono text-xs font-semibold text-primary">
                           {quote.display_id || '—'}
