@@ -42,6 +42,7 @@ export function Footer() {
     { to: '/why-local-yards', label: 'Why Local Yards' },
     { to: '/not-a-broker', label: 'We\'re Not a Broker' },
     { to: '/how-it-works', label: 'How It Works' },
+    { to: '/technology', label: 'Our Technology' },
   ];
 
   return (
@@ -65,7 +66,7 @@ export function Footer() {
             {/* Category positioning tagline */}
             <p className="text-xs text-primary/80 font-medium mb-4 flex items-center gap-1.5">
               <MapPin className="w-3 h-3" />
-              ZIP-Based Pricing · Powered by Real Local Yards
+              Technology-Driven Dumpster Logistics
             </p>
             
             {/* NAP - Name, Address, Phone */}
@@ -317,6 +318,9 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-secondary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
+            <p className="text-sm font-medium text-primary/80 mb-1">
+              Dumpster Logistics, Engineered.
+            </p>
             <p className="text-secondary-foreground/60 text-sm">
               © {currentYear} {BUSINESS_INFO.name}. {t('footer.rights')}
             </p>

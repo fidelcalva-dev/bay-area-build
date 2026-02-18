@@ -1,9 +1,15 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { HeroSection } from '@/components/sections/HeroSection';
-import { ServiceGuaranteeSection } from '@/components/sections/ServiceGuaranteeSection';
-import { HowItWorksSection } from '@/components/sections/HowItWorksSection';
-import { FeaturesSection } from '@/components/sections/FeaturesSection';
+import { HeroSectionPlatform } from '@/components/sections/HeroSectionPlatform';
+import {
+  HowSystemWorksSection,
+  DeliveryIntelligenceSection,
+  ServiceCycleSection,
+  AIDumpsterAssistantSection,
+  BuiltForContractorsSection,
+  SecureDigitalSection,
+  WhyDifferentSection,
+} from '@/components/sections/PlatformSections';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -14,17 +20,8 @@ import { getFAQsForSchema } from '@/lib/shared-data';
 const RealWorkSection = lazy(() => 
   import('@/components/sections/RealWorkSection').then(mod => ({ default: mod.RealWorkSection }))
 );
-const SizesPreviewSection = lazy(() => 
-  import('@/components/sections/SizesPreviewSection').then(mod => ({ default: mod.SizesPreviewSection }))
-);
-const ServiceCoverageMapSection = lazy(() => 
-  import('@/components/sections/ServiceCoverageMapSection').then(mod => ({ default: mod.ServiceCoverageMapSection }))
-);
 const ReviewsSection = lazy(() => 
   import('@/components/sections/ReviewsSection').then(mod => ({ default: mod.ReviewsSection }))
-);
-const RecyclingCommitmentSection = lazy(() => 
-  import('@/components/sections/RecyclingCommitmentSection').then(mod => ({ default: mod.RecyclingCommitmentSection }))
 );
 
 // Minimal loading fallback
@@ -44,41 +41,43 @@ const Index = () => {
       canonical={PAGE_SEO.home.canonical}
       schema={generateFAQSchema(homepageFAQs)}
     >
-      {/* Critical above-the-fold */}
-      <HeroSection />
-      
-      {/* Service Guarantee - immediately after hero */}
-      <ServiceGuaranteeSection />
-      
-      <HowItWorksSection />
-      <FeaturesSection />
-      
-      {/* Social proof - verified credentials */}
+      {/* Hero - Technology-Driven Platform */}
+      <HeroSectionPlatform />
+
+      {/* Section 2 - How Our System Works */}
+      <HowSystemWorksSection />
+
+      {/* Section 3 - Real-Time Delivery Intelligence */}
+      <DeliveryIntelligenceSection />
+
+      {/* Section 4 - Full Service Cycle Transparency */}
+      <ServiceCycleSection />
+
+      {/* Section 5 - AI Dumpster Assistant */}
+      <AIDumpsterAssistantSection />
+
+      {/* Section 6 - Built for Contractors */}
+      <BuiltForContractorsSection />
+
+      {/* Section 7 - Secure Digital Operations */}
+      <SecureDigitalSection />
+
+      {/* Section 8 - Why We're Different */}
+      <WhyDifferentSection />
+
+      {/* Social proof */}
       <TrustBadgesSection />
-      
-      {/* Lazy-loaded sections */}
-      <Suspense fallback={<SectionLoader />}>
-        <SizesPreviewSection />
-      </Suspense>
-      
+
+      {/* Real work examples */}
       <Suspense fallback={<SectionLoader />}>
         <RealWorkSection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoader />}>
-        <ServiceCoverageMapSection />
-      </Suspense>
-      
-      {/* Verified customer reviews */}
+
+      {/* Reviews */}
       <Suspense fallback={<SectionLoader />}>
         <ReviewsSection />
       </Suspense>
-      
-      {/* Environmental commitment - accurate messaging */}
-      <Suspense fallback={<SectionLoader />}>
-        <RecyclingCommitmentSection />
-      </Suspense>
-      
+
       {/* FAQ + CTA */}
       <FAQSection />
       <CTASection />
