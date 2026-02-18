@@ -47,6 +47,7 @@ const WasteVision = lazy(() => import("./pages/WasteVision"));
 const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
 const NotABroker = lazy(() => import("./pages/NotABroker"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Technology = lazy(() => import("./pages/Technology"));
 const StaffLogin = lazy(() => import("./pages/StaffLogin"));
 const RoleRouter = lazy(() => import("./pages/RoleRouter"));
 const RequestAccess = lazy(() => import("./pages/RequestAccess"));
@@ -431,6 +432,9 @@ const App = () => {
               } />
               <Route path="/how-it-works" element={
                 <Suspense fallback={<PageLoader />}><HowItWorks /></Suspense>
+              } />
+              <Route path="/technology" element={
+                <Suspense fallback={<PageLoader />}><Technology /></Suspense>
               } />
               
               {/* Staff CRM Login Redirect */}

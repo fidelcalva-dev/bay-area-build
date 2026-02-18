@@ -301,6 +301,22 @@ export default function SeoCityPage() {
         );
       })()}
 
+      {/* Technology + Local Infrastructure */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="heading-md text-foreground mb-4">Technology + Local Infrastructure</h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              Calsan combines real Bay Area yards with centralized logistics technology.
+              We calculate routes, disposal timing, and delivery cycles before dispatching drivers.
+            </p>
+            <p className="text-muted-foreground">
+              This means faster scheduling, fewer delays, and clearer pricing.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Bottom CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
