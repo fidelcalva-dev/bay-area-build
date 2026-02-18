@@ -263,6 +263,49 @@ serve(async (req) => {
 
     console.log('[save-quote] Quote saved successfully:', quote.id);
 
+    // Auto-create lead from quote (best effort)
+    let linkedLeadId: string | null = null;
+    try {
+      const { data: leadData, error: leadError } = await supabase
+        .from('sales_leads')
+        .insert({
+          customer_name: payload.customer_name || null,
+          customer_phone: payload.customer_phone || null,
+          customer_email: payload.customer_email || null,
+          city: payload.city || null,
+          zip: payload.zip_code || null,
+          source_key: 'QUOTE',
+          channel_key: 'website',
+          lead_status: 'new',
+          assignment_type: 'sales',
+          project_category: payload.material_type || null,
+          customer_type_detected: payload.user_type || null,
+          message_excerpt: `Quote ${quote.id} — ${payload.material_type || ''} ${payload.user_selected_size_yards ? payload.user_selected_size_yards + 'yd' : ''}`,
+          quote_id: quote.id,
+        })
+        .select('id')
+        .single();
+
+      if (leadError) {
+        console.error('[save-quote] Lead auto-creation failed:', leadError.message);
+      } else {
+        linkedLeadId = leadData.id;
+        console.log('[save-quote] Lead auto-created:', linkedLeadId);
+
+        // Link lead back to quote
+        await supabase.from('quotes').update({ linked_lead_id: linkedLeadId }).eq('id', quote.id);
+
+        // Log lead event
+        await supabase.from('lead_events').insert({
+          lead_id: linkedLeadId,
+          event_type: 'LEAD_CREATED_FROM_QUOTE',
+          payload_json: { quote_id: quote.id, source: 'auto' },
+        });
+      }
+    } catch (leadErr) {
+      console.error('[save-quote] Lead creation error (non-critical):', leadErr);
+    }
+
     // Dispatch internal alert (best effort)
     try {
       await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
