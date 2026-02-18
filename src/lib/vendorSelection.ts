@@ -221,6 +221,10 @@ export async function saveQuote(params: {
   streetAddress?: string;
   city?: string;
   state?: string;
+  // Access constraint fields
+  accessFlags?: Record<string, boolean>;
+  placementType?: string;
+  gateCode?: string;
 }): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string }> {
   try {
     // Use edge function to bypass RLS (server-side insert with service role)
@@ -300,6 +304,10 @@ export async function saveQuote(params: {
       street_address: params.streetAddress,
       city: params.city,
       state: params.state,
+      // Access constraint fields
+      access_flags: params.accessFlags || {},
+      placement_type: params.placementType,
+      gate_code: params.gateCode,
       // Source tracking
       source: 'website',
     };

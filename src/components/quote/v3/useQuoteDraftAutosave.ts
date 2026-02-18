@@ -68,7 +68,7 @@ export function clearDraft() {
 function validateResumeStep(draft: QuoteDraft): V3Step {
   const { step, zip, customerType, selectedProjectId } = draft;
 
-  // Step hierarchy: zip < customer-type < project < size < price < confirm < placement
+  // Step hierarchy: zip < customer-type < project < size < price < access < confirm < placement
   if (!zip || zip.length !== 5) return 'zip';
   if (step === 'zip') return 'zip';
 
@@ -80,6 +80,7 @@ function validateResumeStep(draft: QuoteDraft): V3Step {
 
   if (step === 'size') return 'size';
   if (step === 'price') return 'price';
+  if (step === 'access') return 'price'; // resume at price, access is quick
 
   // Don't resume beyond price without valid quote data — zone will be re-fetched
   if (step === 'confirm') return 'price'; // will advance after zone loads
