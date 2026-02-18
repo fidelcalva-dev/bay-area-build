@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, Save, Loader2, Calendar, MapPin, Clock, 
-  FileText, Camera, Trash2, ImageIcon
+  FileText, Camera, Trash2, ImageIcon, Send
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText } from "@/services/outboundQuoteService";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   pending: { label: "Draft", color: "bg-gray-100 text-gray-800" },
@@ -53,6 +54,7 @@ export default function SalesQuoteDetail() {
   const [deliveryTimeWindow, setDeliveryTimeWindow] = useState("");
   const [deliveryPhotos, setDeliveryPhotos] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   useEffect(() => {
     if (id) fetchQuote();
@@ -141,6 +143,71 @@ export default function SalesQuoteDetail() {
     setDeliveryPhotos((prev) => prev.filter((_, i) => i !== index));
   }
 
+  async function handleResend() {
+    if (!quote) return;
+    setIsResending(true);
+    try {
+      // Check for existing outbound quote linked to this quote
+      const { data: existing } = await supabase
+        .from("outbound_quotes")
+        .select("id, status")
+        .eq("quote_id", quote.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      let outboundId: string;
+
+      if (existing && existing.length > 0) {
+        outboundId = existing[0].id;
+      } else {
+        // Create a new outbound quote from this quote's data
+        const { data: userData } = await supabase.auth.getUser();
+        const userId = userData?.user?.id;
+        if (!userId) throw new Error("Not authenticated");
+
+        const record = await createOutboundQuote({
+          customer_name: quote.customer_name || "Customer",
+          customer_phone: quote.customer_phone || undefined,
+          customer_email: quote.customer_email || undefined,
+          address_text: quote.delivery_address || undefined,
+          zip: quote.zip_code,
+          customer_type: quote.user_type || "homeowner",
+          material_category: quote.material_type,
+          size_yd: quote.user_selected_size_yards || quote.recommended_size_yards || 10,
+          tier: "CORE" as any,
+          customer_price: quote.subtotal,
+          included_days: quote.rental_days || 7,
+          included_tons: getIncludedTonsText(quote.user_selected_size_yards || 10),
+          overage_rule_text: "$65/ton over included weight",
+          same_day_flag: false,
+          quote_id: quote.id,
+        }, userId);
+        outboundId = record.id;
+      }
+
+      // Determine channels
+      const channels: ("SMS" | "EMAIL")[] = [];
+      if (quote.customer_phone) channels.push("SMS");
+      if (quote.customer_email) channels.push("EMAIL");
+      if (channels.length === 0) {
+        toast({ title: "No phone or email on this quote", variant: "destructive" });
+        return;
+      }
+
+      const result = await sendOutboundQuote(outboundId, channels);
+      if (result.success) {
+        toast({ title: `Quote resent via ${channels.join(" & ")}` });
+      } else {
+        toast({ title: result.error || "Failed to resend", variant: "destructive" });
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: err.message || "Error resending quote", variant: "destructive" });
+    } finally {
+      setIsResending(false);
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -171,10 +238,16 @@ export default function SalesQuoteDetail() {
             </p>
           </div>
         </div>
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleResend} disabled={isResending}>
+            {isResending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+            Reenviar
+          </Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save
+          </Button>
+        </div>
       </div>
 
       {/* Quote Summary (read-only) */}
