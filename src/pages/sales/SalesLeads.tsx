@@ -59,10 +59,15 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
 
 const SOURCE_LABELS: Record<string, string> = {
   WEBSITE_QUOTE: "Website Quote",
+  WEBSITE_ORDER_NOW: "Order Now",
+  WEBSITE_CONTACT: "Contact Form",
   WEBSITE_FORM: "Website Form",
   WEBSITE_CHAT: "Website Chat",
+  AI_CHAT: "AI Chat",
   PHONE_CALL: "Phone Call",
   SMS_INBOUND: "SMS",
+  EMAIL_INBOUND: "Email",
+  PORTAL: "Portal",
   GOOGLE_ADS: "Google Ads",
   FB_MESSENGER: "Facebook",
   INSTAGRAM_DM: "Instagram",
@@ -72,6 +77,9 @@ const SOURCE_LABELS: Record<string, string> = {
   REFERRAL: "Referral",
   GBP_CALL: "GBP Call",
   GBP_MESSAGE: "GBP Message",
+  LEAD_PLATFORM: "Lead Platform",
+  ANGI: "Angi",
+  THUMBTACK: "Thumbtack",
   MANUAL_ENTRY: "Manual",
 };
 
