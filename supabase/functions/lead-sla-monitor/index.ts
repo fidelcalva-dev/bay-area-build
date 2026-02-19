@@ -16,81 +16,124 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // Get SLA rules
-    const { data: rules } = await supabase
-      .from('lead_sla_rules')
-      .select('*')
-      .eq('is_active', true);
+    const now = new Date();
+    let warnings = 0;
+    let escalations = 0;
+    let dormantCount = 0;
 
-    const defaultRule = rules?.find(r => !r.customer_type && !r.source_channel) || {
-      response_minutes: 15,
-      escalation_minutes: 60,
-    };
-
-    // Find leads with no first response and not lost/converted
-    const { data: staleLeads, error } = await supabase
+    // ========================================
+    // 1) Find leads past SLA with no first contact
+    // ========================================
+    const { data: slaLeads, error } = await supabase
       .from('sales_leads')
-      .select('id, created_at, first_response_at, first_response_sent_at, customer_type_detected, source_key, channel_key, customer_name, lead_status')
+      .select('id, created_at, sla_due_at, owner_user_id, assigned_to, escalation_level, customer_name, lead_status, first_contact_at, first_response_at, first_response_sent_at')
       .in('lead_status', ['new', 'contacted'])
+      .is('first_contact_at', null)
       .is('first_response_at', null)
-      .is('first_response_sent_at', null);
+      .is('first_response_sent_at', null)
+      .not('sla_due_at', 'is', null)
+      .lt('sla_due_at', now.toISOString());
 
     if (error) throw error;
 
-    const now = new Date();
-    let breachCount = 0;
-    let escalationCount = 0;
+    for (const lead of slaLeads || []) {
+      const ownerId = lead.owner_user_id || lead.assigned_to;
 
-    for (const lead of staleLeads || []) {
-      const created = new Date(lead.created_at);
-      const elapsedMinutes = Math.floor((now.getTime() - created.getTime()) / 60000);
+      if (lead.escalation_level === 0) {
+        // === LEVEL 1: SLA WARNING — notify owner ===
+        await supabase.from('sales_leads').update({
+          escalation_level: 1,
+          last_activity_at: now.toISOString(),
+        }).eq('id', lead.id);
 
-      // Find matching SLA rule
-      const matchedRule = rules?.find(r =>
-        (r.customer_type === lead.customer_type_detected || !r.customer_type) &&
-        (r.source_channel === (lead.source_key || lead.channel_key) || !r.source_channel)
-      ) || defaultRule;
+        await supabase.from('lead_activity_log').insert({
+          lead_id: lead.id,
+          action_type: 'SLA_WARNING',
+          metadata: { escalation_level: 1, owner: ownerId },
+        });
 
-      const responseMinutes = matchedRule.response_minutes || 15;
-      const escalationMinutes = matchedRule.escalation_minutes || 60;
-
-      // Check for existing unresolved SLA_BREACH alert
-      const { data: existingAlert } = await supabase
-        .from('lead_alerts')
-        .select('id')
-        .eq('lead_id', lead.id)
-        .eq('alert_type', 'SLA_BREACH')
-        .eq('is_resolved', false)
-        .maybeSingle();
-
-      if (elapsedMinutes > responseMinutes && !existingAlert) {
-        const severity = elapsedMinutes > escalationMinutes ? 'HIGH' : 'MED';
-
+        // Create alert for owner
         await supabase.from('lead_alerts').insert({
           lead_id: lead.id,
           alert_type: 'SLA_BREACH',
-          severity,
+          severity: 'MED',
           assigned_team: 'SALES',
-          message: `No response in ${elapsedMinutes}m (SLA: ${responseMinutes}m). Lead: ${lead.customer_name || 'Unknown'}`,
+          message: `SLA Warning: No response for ${lead.customer_name || 'Unknown'}. Please contact immediately.`,
         });
 
-        breachCount++;
+        warnings++;
+      } else if (lead.escalation_level === 1) {
+        // === LEVEL 2: SLA ESCALATED — notify manager, mark breached ===
+        await supabase.from('sales_leads').update({
+          escalation_level: 2,
+          is_sla_breached: true,
+          last_activity_at: now.toISOString(),
+        }).eq('id', lead.id);
 
-        if (elapsedMinutes > escalationMinutes) {
-          escalationCount++;
-          // Escalation: also notify ADMIN
-          await supabase.from('lead_alerts').insert({
-            lead_id: lead.id,
-            alert_type: 'SLA_BREACH',
-            severity: 'HIGH',
-            assigned_team: 'ADMIN',
-            message: `ESCALATION: ${elapsedMinutes}m without response (limit: ${escalationMinutes}m)`,
+        await supabase.from('lead_activity_log').insert({
+          lead_id: lead.id,
+          action_type: 'SLA_ESCALATED',
+          metadata: { escalation_level: 2, owner: ownerId },
+        });
+
+        // Alert for manager/admin
+        await supabase.from('lead_alerts').insert({
+          lead_id: lead.id,
+          alert_type: 'SLA_BREACH',
+          severity: 'HIGH',
+          assigned_team: 'ADMIN',
+          message: `ESCALATION: Lead ${lead.customer_name || 'Unknown'} has not been contacted. SLA breached.`,
+        });
+
+        // Try to send internal notification
+        try {
+          await supabase.rpc('enqueue_notification', {
+            p_channel: 'IN_APP',
+            p_target_team: 'ADMIN',
+            p_title: 'SLA Breach Escalation',
+            p_body: `Lead ${lead.customer_name || 'Unknown'} has not been contacted within SLA.`,
+            p_entity_type: 'lead',
+            p_entity_id: lead.id,
+            p_priority: 'HIGH',
+            p_mode: 'LIVE_INTERNAL',
           });
-        }
+        } catch { /* notification optional */ }
+
+        escalations++;
       }
+      // Level 2+ = already fully escalated, don't re-escalate
     }
 
-    // Also check for leads with high risk scores and no HIGH_RISK alert
+    // ========================================
+    // 2) Auto-Dormant: leads with no activity for 24h
+    // ========================================
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: staleLeads } = await supabase
+      .from('sales_leads')
+      .select('id, customer_name')
+      .in('lead_status', ['new', 'contacted'])
+      .is('first_contact_at', null)
+      .is('first_response_at', null)
+      .lt('created_at', twentyFourHoursAgo);
+
+    for (const lead of staleLeads || []) {
+      await supabase.from('sales_leads').update({
+        lead_status: 'dormant',
+        last_activity_at: now.toISOString(),
+      }).eq('id', lead.id);
+
+      await supabase.from('lead_activity_log').insert({
+        lead_id: lead.id,
+        action_type: 'AUTO_DORMANT',
+        metadata: { reason: 'No contact within 24 hours' },
+      });
+
+      dormantCount++;
+    }
+
+    // ========================================
+    // 3) High Risk alerts (existing logic preserved)
+    // ========================================
     const { data: riskyLeads } = await supabase
       .from('sales_leads')
       .select('id, lead_risk_score, customer_name')
@@ -119,14 +162,15 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`SLA Monitor: ${breachCount} breaches, ${escalationCount} escalations, ${riskAlerts} risk alerts`);
+    console.log(`SLA Monitor: ${warnings} warnings, ${escalations} escalations, ${dormantCount} dormant, ${riskAlerts} risk alerts`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        leads_checked: staleLeads?.length || 0,
-        breaches_created: breachCount,
-        escalations: escalationCount,
+        leads_checked: (slaLeads?.length || 0),
+        warnings,
+        escalations,
+        dormant: dormantCount,
         risk_alerts: riskAlerts,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

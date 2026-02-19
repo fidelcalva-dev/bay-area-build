@@ -164,6 +164,76 @@ Deno.serve(async (req) => {
     });
     console.log('Assignment result:', assignResult);
 
+    // === SLA AUTOPILOT: Auto-assign owner + set SLA ===
+    // Check if owner was already set by routing/assignment
+    const { data: currentLead } = await supabase
+      .from('sales_leads')
+      .select('owner_user_id, assigned_to, sla_due_at')
+      .eq('id', leadId)
+      .single();
+
+    let assignedOwner = currentLead?.owner_user_id || currentLead?.assigned_to;
+
+    if (!assignedOwner) {
+      // Round-robin: find sales user with least active leads
+      const { data: salesUsers } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'sales');
+
+      if (salesUsers && salesUsers.length > 0) {
+        // Count active leads per sales user
+        const userIds = salesUsers.map(u => u.user_id);
+        const { data: leadCounts } = await supabase
+          .from('sales_leads')
+          .select('owner_user_id')
+          .in('owner_user_id', userIds)
+          .in('lead_status', ['new', 'contacted', 'qualified']);
+
+        const countMap: Record<string, number> = {};
+        userIds.forEach(id => { countMap[id] = 0; });
+        (leadCounts || []).forEach(l => {
+          if (l.owner_user_id) countMap[l.owner_user_id] = (countMap[l.owner_user_id] || 0) + 1;
+        });
+
+        // Pick user with fewest active leads
+        const sorted = userIds.sort((a, b) => (countMap[a] || 0) - (countMap[b] || 0));
+        assignedOwner = sorted[0];
+      }
+
+      // Fallback: try admin/manager
+      if (!assignedOwner) {
+        const { data: admins } = await supabase
+          .from('user_roles')
+          .select('user_id')
+          .eq('role', 'admin')
+          .limit(1);
+        if (admins && admins.length > 0) {
+          assignedOwner = admins[0].user_id;
+        }
+      }
+    }
+
+    // Update lead with owner and SLA
+    const slaUpdates: Record<string, unknown> = {};
+    if (assignedOwner) {
+      slaUpdates.owner_user_id = assignedOwner;
+      slaUpdates.assigned_to = assignedOwner;
+      slaUpdates.assigned_at = new Date().toISOString();
+    }
+
+    if (Object.keys(slaUpdates).length > 0) {
+      await supabase.from('sales_leads').update(slaUpdates).eq('id', leadId);
+    }
+
+    // Log assignment
+    await supabase.from('lead_activity_log').insert({
+      lead_id: leadId,
+      action_type: 'AUTO_ASSIGNED',
+      user_id: assignedOwner || null,
+      metadata: { method: 'round_robin', channel: payload.source_channel },
+    });
+
     // Store source metadata
     if (captureIp || captureUserAgent) {
       const ua = captureUserAgent || '';
