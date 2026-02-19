@@ -12,39 +12,44 @@ import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 // TYPES
 // ============================================================
 
-type FlowStep =
-  | 'menu'
-  | 'price_zip'
-  | 'price_ready'
-  | 'schedule_zip'
-  | 'schedule_ready'
-  | 'contractor_zip'
-  | 'contractor_ready'
-  | 'size_help'
-  | 'photo_upload'
-  | 'photo_analyzing'
-  | 'photo_result'
-  | 'dispatch_options'
-  | 'callback_name'
-  | 'callback_phone'
-  | 'callback_zip'
-  | 'callback_sent';
+type FlowMode = 'menu' | 'ai' | 'photo_upload' | 'photo_analyzing' | 'dispatch' | 'callback_collect';
 
 interface ConversationMessage {
   id: string;
   role: 'system' | 'user';
   content: string;
+  quickReplies?: string[];
+}
+
+interface AIContext {
+  zip?: string;
+  material?: string;
+  size?: number;
+  projectType?: string;
+  customerType?: string;
+  heavy?: boolean;
+  urgencyScore?: number;
+  readinessScore?: number;
+  leadCreated?: boolean;
 }
 
 interface PersistedState {
-  step: FlowStep;
+  mode: FlowMode;
   messages: ConversationMessage[];
-  collected: Record<string, string>;
+  context: AIContext;
+  callbackData: Record<string, string>;
+  aiHistory: { role: string; content: string }[];
   timestamp: number;
 }
 
-const STORAGE_KEY = 'calsan_conv_hero_state';
-const STATE_TTL_MS = 30 * 60 * 1000; // 30 min
+const STORAGE_KEY = 'calsan_conv_hero_v3';
+const STATE_TTL_MS = 30 * 60 * 1000;
+const ZIP_RE = /\b(9[0-5]\d{3})\b/;
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calsan-dumpster-ai`;
+
+// ============================================================
+// PERSISTENCE
+// ============================================================
 
 function loadState(): PersistedState | null {
   try {
@@ -56,16 +61,73 @@ function loadState(): PersistedState | null {
       return null;
     }
     return state;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
-function saveState(step: FlowStep, messages: ConversationMessage[], collected: Record<string, string>) {
+function saveState(state: Omit<PersistedState, 'timestamp'>) {
   try {
-    const state: PersistedState = { step, messages, collected, timestamp: Date.now() };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, timestamp: Date.now() }));
   } catch { /* silent */ }
+}
+
+// ============================================================
+// QUICK REPLY PARSER
+// ============================================================
+
+function parseQuickReplies(text: string): { clean: string; replies: string[] } {
+  const match = text.match(/\[QUICK_REPLIES:\s*\[([^\]]+)\]\]/);
+  if (!match) return { clean: text, replies: [] };
+  const clean = text.replace(/\[QUICK_REPLIES:\s*\[[^\]]+\]\]/, '').trim();
+  const replies = match[1].split(',').map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+  return { clean, replies };
+}
+
+// ============================================================
+// CONTEXT EXTRACTION
+// ============================================================
+
+function extractContext(text: string, existing: AIContext): AIContext {
+  const updated = { ...existing };
+  const lower = text.toLowerCase();
+
+  // ZIP
+  const zipMatch = text.match(ZIP_RE);
+  if (zipMatch) updated.zip = zipMatch[1];
+
+  // Material detection
+  if (/concrete|dirt|brick|asphalt|rock|soil|gravel/.test(lower)) {
+    updated.material = 'heavy';
+    updated.heavy = true;
+  } else if (/debris|trash|junk|furniture|wood|drywall|shingle|roofing/.test(lower)) {
+    updated.material = 'general';
+  }
+
+  // Project type detection
+  if (/kitchen|bathroom|remodel/.test(lower)) updated.projectType = 'remodel';
+  else if (/garage|cleanout|clean.?out/.test(lower)) updated.projectType = 'cleanout';
+  else if (/roof/.test(lower)) updated.projectType = 'roofing';
+  else if (/demo|demolition/.test(lower)) updated.projectType = 'demolition';
+  else if (/yard|landscap/.test(lower)) updated.projectType = 'landscaping';
+  else if (/construction/.test(lower)) updated.projectType = 'construction';
+
+  // Customer type
+  if (/contractor/.test(lower)) updated.customerType = 'contractor';
+  else if (/commercial|business|company/.test(lower)) updated.customerType = 'commercial';
+  else if (/homeowner|home.?owner|my home|my house/.test(lower)) updated.customerType = 'homeowner';
+
+  // Size
+  const sizeMatch = lower.match(/(\d{1,2})\s*(?:yard|yd)/);
+  if (sizeMatch) updated.size = parseInt(sizeMatch[1]);
+
+  // Urgency
+  if (/today|asap|urgent|immediately|right now|tomorrow/.test(lower)) {
+    updated.urgencyScore = (updated.urgencyScore || 0) + 30;
+  }
+  if (/ready|book|reserve|schedule|pay/.test(lower)) {
+    updated.readinessScore = (updated.readinessScore || 0) + 20;
+  }
+
+  return updated;
 }
 
 // ============================================================
@@ -73,15 +135,13 @@ function saveState(step: FlowStep, messages: ConversationMessage[], collected: R
 // ============================================================
 
 const MENU_OPTIONS = [
-  { id: 'instant_price', label: 'Get Instant Price' },
-  { id: 'schedule', label: 'Schedule a Dumpster' },
-  { id: 'contractor', label: "I'm a Contractor" },
-  { id: 'size_help', label: 'I Need Help Choosing Size' },
-  { id: 'photo', label: 'Upload a Photo for Recommendation' },
-  { id: 'dispatch', label: 'Talk to Dispatch' },
+  { id: 'instant_price', label: 'Get Instant Price', initialMsg: 'I want to get an instant price for a dumpster rental.' },
+  { id: 'schedule', label: 'Schedule a Dumpster', initialMsg: 'I want to schedule a dumpster delivery.' },
+  { id: 'contractor', label: "I'm a Contractor", initialMsg: "I'm a contractor and need dumpster service." },
+  { id: 'size_help', label: 'I Need Help Choosing Size', initialMsg: 'I need help choosing the right dumpster size for my project.' },
+  { id: 'photo', label: 'Upload a Photo for Recommendation', initialMsg: '' },
+  { id: 'dispatch', label: 'Talk to Dispatch', initialMsg: '' },
 ];
-
-const ZIP_RE = /\b(9[0-5]\d{3})\b/;
 
 const INITIAL_MESSAGE: ConversationMessage = {
   id: 'sys-0',
@@ -95,7 +155,6 @@ const INITIAL_MESSAGE: ConversationMessage = {
 
 function useSessionTracker() {
   const startTime = useRef(Date.now());
-
   const logEvent = useCallback(async (eventType: string, meta?: Record<string, unknown>) => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -113,8 +172,114 @@ function useSessionTracker() {
       });
     } catch { /* silent */ }
   }, []);
-
   return { logEvent };
+}
+
+// ============================================================
+// STREAMING
+// ============================================================
+
+async function streamAI({
+  messages,
+  context,
+  onDelta,
+  onDone,
+}: {
+  messages: { role: string; content: string }[];
+  context: AIContext;
+  onDelta: (text: string) => void;
+  onDone: (fullText: string) => void;
+}) {
+  const resp = await fetch(CHAT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+    },
+    body: JSON.stringify({ messages, context }),
+  });
+
+  if (!resp.ok || !resp.body) {
+    const status = resp.status;
+    if (status === 429) throw new Error('rate_limited');
+    if (status === 402) throw new Error('payment_required');
+    throw new Error('ai_error');
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let fullText = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    let newlineIdx: number;
+    while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+      let line = buffer.slice(0, newlineIdx);
+      buffer = buffer.slice(newlineIdx + 1);
+      if (line.endsWith('\r')) line = line.slice(0, -1);
+      if (line.startsWith(':') || line.trim() === '') continue;
+      if (!line.startsWith('data: ')) continue;
+      const jsonStr = line.slice(6).trim();
+      if (jsonStr === '[DONE]') break;
+      try {
+        const parsed = JSON.parse(jsonStr);
+        const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+        if (content) {
+          fullText += content;
+          onDelta(content);
+        }
+      } catch {
+        buffer = line + '\n' + buffer;
+        break;
+      }
+    }
+  }
+
+  // Flush remaining
+  if (buffer.trim()) {
+    for (let raw of buffer.split('\n')) {
+      if (!raw) continue;
+      if (raw.endsWith('\r')) raw = raw.slice(0, -1);
+      if (!raw.startsWith('data: ')) continue;
+      const jsonStr = raw.slice(6).trim();
+      if (jsonStr === '[DONE]') continue;
+      try {
+        const parsed = JSON.parse(jsonStr);
+        const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+        if (content) { fullText += content; onDelta(content); }
+      } catch { /* ignore */ }
+    }
+  }
+
+  onDone(fullText);
+}
+
+// ============================================================
+// LEAD SCORING & INGESTION
+// ============================================================
+
+async function ensureLeadIngested(ctx: AIContext, source: string) {
+  try {
+    await supabase.functions.invoke('lead-ingest', {
+      body: {
+        source_channel: 'AI_ASSISTANT',
+        source_detail: source,
+        zip_code: ctx.zip || null,
+        notes: [
+          ctx.projectType ? `Project: ${ctx.projectType}` : null,
+          ctx.material ? `Material: ${ctx.material}` : null,
+          ctx.size ? `Size: ${ctx.size}yd` : null,
+          ctx.heavy ? 'Heavy material flag' : null,
+          ctx.urgencyScore ? `Urgency: ${ctx.urgencyScore}` : null,
+          ctx.readinessScore ? `Readiness: ${ctx.readinessScore}` : null,
+        ].filter(Boolean).join('. '),
+      },
+    });
+  } catch { /* silent */ }
 }
 
 // ============================================================
@@ -128,35 +293,40 @@ interface ConversationalHeroProps {
 
 export function ConversationalHero({ cityName, countyName }: ConversationalHeroProps) {
   const persisted = useRef(loadState());
-  const [step, setStep] = useState<FlowStep>(persisted.current?.step || 'menu');
+  const [mode, setMode] = useState<FlowMode>(persisted.current?.mode || 'menu');
   const [messages, setMessages] = useState<ConversationMessage[]>(
     persisted.current?.messages || [INITIAL_MESSAGE]
   );
-  const [collected, setCollected] = useState<Record<string, string>>(
-    persisted.current?.collected || {}
+  const [aiContext, setAIContext] = useState<AIContext>(persisted.current?.context || {});
+  const [aiHistory, setAIHistory] = useState<{ role: string; content: string }[]>(
+    persisted.current?.aiHistory || []
+  );
+  const [callbackData, setCallbackData] = useState<Record<string, string>>(
+    persisted.current?.callbackData || {}
   );
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { logEvent } = useSessionTracker();
 
-  // Persist state
+  // Persist
   useEffect(() => {
-    saveState(step, messages, collected);
-  }, [step, messages, collected]);
+    saveState({ mode, messages, context: aiContext, callbackData, aiHistory });
+  }, [mode, messages, aiContext, callbackData, aiHistory]);
 
   // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, loading]);
+  }, [messages, loading, streaming]);
 
   // Helpers
-  const addSystem = useCallback((content: string) => {
-    setMessages(prev => [...prev, { id: `s-${Date.now()}-${Math.random()}`, role: 'system', content }]);
+  const addSystem = useCallback((content: string, quickReplies?: string[]) => {
+    setMessages(prev => [...prev, { id: `s-${Date.now()}-${Math.random()}`, role: 'system', content, quickReplies }]);
   }, []);
 
   const addUser = useCallback((content: string) => {
@@ -164,163 +334,205 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
   }, []);
 
   const resetConversation = useCallback(() => {
-    setStep('menu');
+    setMode('menu');
     setMessages([INITIAL_MESSAGE]);
-    setCollected({});
+    setAIContext({});
+    setAIHistory([]);
+    setCallbackData({});
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  // ========= MENU HANDLER =========
-  const handleMenuSelect = useCallback((optionId: string) => {
-    switch (optionId) {
-      case 'instant_price':
-        logEvent('option_clicked', { path: 'instant_price' });
-        addUser('Get Instant Price');
-        addSystem('Enter your job ZIP code or address.');
-        setStep('price_zip');
-        break;
+  // ========= AI SEND =========
+  const sendToAI = useCallback(async (userText: string, contextOverride?: AIContext) => {
+    const ctx = contextOverride || aiContext;
+    const newHistory = [...aiHistory, { role: 'user', content: userText }];
+    setAIHistory(newHistory);
+    setStreaming(true);
+    setLoading(true);
 
-      case 'schedule':
-        logEvent('option_clicked', { path: 'schedule' });
-        addUser('Schedule a Dumpster');
-        addSystem('Enter your delivery ZIP code.');
-        setStep('schedule_zip');
-        break;
+    // Add placeholder for streaming
+    const streamMsgId = `s-stream-${Date.now()}`;
+    setMessages(prev => [...prev, { id: streamMsgId, role: 'system', content: '' }]);
 
-      case 'contractor':
-        logEvent('option_clicked', { path: 'contractor' });
-        addUser("I'm a Contractor");
-        addSystem('Welcome. Enter your project ZIP code to get started.');
-        setStep('contractor_zip');
-        break;
+    try {
+      await streamAI({
+        messages: newHistory,
+        context: ctx,
+        onDelta: (chunk) => {
+          setMessages(prev =>
+            prev.map(m => m.id === streamMsgId ? { ...m, content: m.content + chunk } : m)
+          );
+        },
+        onDone: (fullText) => {
+          const { clean, replies } = parseQuickReplies(fullText);
+          setMessages(prev =>
+            prev.map(m => m.id === streamMsgId ? { ...m, content: clean, quickReplies: replies.length > 0 ? replies : undefined } : m)
+          );
+          setAIHistory(h => [...h, { role: 'assistant', content: fullText }]);
 
-      case 'size_help':
-        logEvent('option_clicked', { path: 'size_help' });
-        addUser('I Need Help Choosing Size');
-        addSystem('We can help you find the right size. You can upload a photo of your project area, or go directly to our size guide.');
-        setStep('size_help');
-        break;
-
-      case 'photo':
-        logEvent('option_clicked', { path: 'photo' });
-        addUser('Upload a Photo for Recommendation');
-        addSystem('Upload a photo of your debris or project area.');
-        setStep('photo_upload');
-        break;
-
-      case 'dispatch':
-        logEvent('option_clicked', { path: 'dispatch' });
-        addUser('Talk to Dispatch');
-        addSystem('Call us directly or request a call back.');
-        setStep('dispatch_options');
-        break;
+          // Lead creation on meaningful interaction
+          if (ctx.zip && !ctx.leadCreated) {
+            ensureLeadIngested(ctx, 'ai_conversation');
+            setAIContext(prev => ({ ...prev, leadCreated: true }));
+          }
+        },
+      });
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'unknown';
+      let fallback = 'Our system is temporarily unavailable. Please call us at (510) 680-2150.';
+      if (errMsg === 'rate_limited') fallback = 'We are experiencing high volume. Please try again in a moment.';
+      setMessages(prev =>
+        prev.map(m => m.id === streamMsgId ? { ...m, content: fallback } : m)
+      );
+    } finally {
+      setLoading(false);
+      setStreaming(false);
     }
-  }, [logEvent, addUser, addSystem]);
+  }, [aiContext, aiHistory]);
+
+  // ========= MENU SELECT =========
+  const handleMenuSelect = useCallback((optionId: string) => {
+    const opt = MENU_OPTIONS.find(o => o.id === optionId);
+    if (!opt) return;
+
+    logEvent('option_clicked', { path: optionId });
+
+    if (optionId === 'photo') {
+      addUser('Upload a Photo for Recommendation');
+      addSystem('Upload a photo of your debris or project area.');
+      setMode('photo_upload');
+      return;
+    }
+
+    if (optionId === 'dispatch') {
+      addUser('Talk to Dispatch');
+      addSystem('Call us directly or request a call back.');
+      setMode('dispatch');
+      return;
+    }
+
+    // AI-driven flow
+    addUser(opt.label);
+    setMode('ai');
+
+    // Extract initial context from the selection
+    let ctx = { ...aiContext };
+    if (optionId === 'contractor') ctx.customerType = 'contractor';
+    setAIContext(ctx);
+
+    sendToAI(opt.initialMsg, ctx);
+  }, [logEvent, addUser, addSystem, aiContext, sendToAI]);
 
   // ========= TEXT SUBMIT =========
   const handleSubmit = useCallback(async () => {
     const text = input.trim();
-    if (!text || loading) return;
+    if (!text || loading || streaming) return;
     setInput('');
     addUser(text);
 
-    switch (step) {
-      case 'price_zip': {
-        const zip = text.match(ZIP_RE)?.[1] || text;
-        setCollected(p => ({ ...p, zip }));
-        logEvent('zip_entered', { zip });
-        try {
-          await supabase.functions.invoke('lead-ingest', {
-            body: { source_channel: 'AI_CHAT', source_detail: 'instant_price', zip_code: zip },
-          });
-        } catch { /* silent */ }
-        addSystem(`ZIP ${zip} confirmed. Continue to see exact pricing.`);
-        setStep('price_ready');
-        break;
-      }
+    if (mode === 'ai') {
+      // Extract context from user message
+      const newCtx = extractContext(text, aiContext);
+      setAIContext(newCtx);
+      sendToAI(text, newCtx);
+      return;
+    }
 
-      case 'schedule_zip': {
-        const zip = text.match(ZIP_RE)?.[1] || text;
-        setCollected(p => ({ ...p, zip }));
-        logEvent('zip_entered', { zip, path: 'schedule' });
-        try {
-          await supabase.functions.invoke('lead-ingest', {
-            body: { source_channel: 'AI_CHAT', source_detail: 'schedule', zip_code: zip },
-          });
-        } catch { /* silent */ }
-        addSystem(`ZIP ${zip} confirmed. Continue to schedule your delivery.`);
-        setStep('schedule_ready');
-        break;
-      }
-
-      case 'contractor_zip': {
-        const zip = text.match(ZIP_RE)?.[1] || text;
-        setCollected(p => ({ ...p, zip }));
-        logEvent('zip_entered', { zip, path: 'contractor' });
-        try {
-          await supabase.functions.invoke('lead-ingest', {
-            body: { source_channel: 'AI_CHAT', source_detail: 'contractor', zip_code: zip, notes: 'Contractor inquiry' },
-          });
-        } catch { /* silent */ }
-        addSystem(`ZIP ${zip} confirmed. Continue to get contractor pricing.`);
-        setStep('contractor_ready');
-        break;
-      }
-
-      case 'callback_name':
-        setCollected(p => ({ ...p, name: text }));
+    // Callback collection
+    if (mode === 'callback_collect') {
+      if (!callbackData.name) {
+        setCallbackData(p => ({ ...p, name: text }));
         addSystem('What is your phone number?');
-        setStep('callback_phone');
-        break;
-
-      case 'callback_phone':
-        setCollected(p => ({ ...p, phone: text }));
+      } else if (!callbackData.phone) {
+        setCallbackData(p => ({ ...p, phone: text }));
         addSystem('And your ZIP code? (optional, type "skip" to skip)');
-        setStep('callback_zip');
-        break;
-
-      case 'callback_zip': {
-        if (text.toLowerCase() !== 'skip') {
-          setCollected(p => ({ ...p, zip: text }));
-        }
+      } else {
+        const zip = text.toLowerCase() !== 'skip' ? text : undefined;
+        if (zip) setCallbackData(p => ({ ...p, zip }));
         setLoading(true);
         try {
           await supabase.functions.invoke('lead-ingest', {
             body: {
-              source_channel: 'AI_CHAT',
+              source_channel: 'AI_ASSISTANT',
               source_detail: 'callback_request',
-              customer_name: collected.name,
-              phone: collected.phone,
-              zip_code: text.toLowerCase() !== 'skip' ? text : collected.zip || null,
-              notes: 'Callback requested from Conversational Hero',
+              customer_name: callbackData.name,
+              phone: callbackData.phone,
+              zip_code: zip || null,
+              notes: 'Callback requested from AI Conversational Hero',
               priority: 'HIGH',
             },
           });
-          logEvent('callback_submitted', { zip: collected.zip });
-          addSystem('Your request has been submitted. A team member will contact you shortly.');
-          setStep('callback_sent');
+          logEvent('callback_submitted', { zip });
+          addSystem('Your request has been submitted. A team member will contact you shortly.', ['View Instant Pricing', 'Start Over']);
         } catch {
           addSystem('Something went wrong. Please call us directly at (510) 680-2150.');
         } finally {
           setLoading(false);
         }
-        break;
       }
-
-      default:
-        addSystem('Please select an option from the menu to get started.');
-        setStep('menu');
-        break;
+      return;
     }
-  }, [input, loading, step, collected, logEvent, addUser, addSystem]);
+  }, [input, loading, streaming, mode, aiContext, callbackData, addUser, addSystem, sendToAI, logEvent]);
+
+  // ========= QUICK REPLY HANDLER =========
+  const handleQuickReply = useCallback((reply: string) => {
+    const lower = reply.toLowerCase();
+
+    if (lower === 'start over') {
+      resetConversation();
+      return;
+    }
+
+    if (lower.includes('reserve now') || lower.includes('continue to booking') || lower.includes('schedule delivery')) {
+      logEvent('routed_to_quote', { zip: aiContext.zip, from: 'ai_quick_reply' });
+      const params = new URLSearchParams({ v3: '1' });
+      if (aiContext.zip) params.set('zip', aiContext.zip);
+      if (aiContext.size) params.set('size', String(aiContext.size));
+      if (aiContext.material) params.set('material', aiContext.material);
+      navigate(`/quote?${params.toString()}`);
+      return;
+    }
+
+    if (lower.includes('call') && lower.includes('510')) {
+      window.location.href = `tel:${BUSINESS_INFO.phone.sales}`;
+      return;
+    }
+
+    if (lower === 'request callback') {
+      addUser(reply);
+      addSystem('What is your name?');
+      setMode('callback_collect');
+      setCallbackData({});
+      return;
+    }
+
+    if (lower === 'view instant pricing' || lower === 'open instant quote') {
+      const params = new URLSearchParams({ v3: '1' });
+      if (aiContext.zip) params.set('zip', aiContext.zip);
+      navigate(`/quote?${params.toString()}`);
+      return;
+    }
+
+    if (lower === 'compare sizes') {
+      navigate('/sizes');
+      return;
+    }
+
+    // Default: treat as AI input
+    addUser(reply);
+    if (mode !== 'ai') setMode('ai');
+    const newCtx = extractContext(reply, aiContext);
+    setAIContext(newCtx);
+    sendToAI(reply, newCtx);
+  }, [aiContext, navigate, resetConversation, addUser, addSystem, sendToAI, logEvent, mode]);
 
   // ========= PHOTO UPLOAD =========
   const handleFileUpload = useCallback(async (files: FileList) => {
     const file = files[0];
     if (!file) return;
     setLoading(true);
+    setMode('photo_analyzing');
     logEvent('photo_uploaded');
-    setStep('photo_analyzing');
     addSystem('Analyzing your photo...');
 
     try {
@@ -340,41 +552,42 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
       const material = data?.recommendation?.materialCategory || 'general';
       const confidence = data?.recommendation?.confidence || 0.8;
 
-      setCollected(p => ({ ...p, size: String(size), material }));
+      const newCtx: AIContext = {
+        ...aiContext,
+        size,
+        material: material === 'heavy' ? 'heavy' : 'general',
+        heavy: material === 'heavy',
+        readinessScore: (aiContext.readinessScore || 0) + 10,
+      };
+      setAIContext(newCtx);
 
-      // Remove analyzing message, add result
       setMessages(prev => {
         const filtered = prev.filter(m => m.content !== 'Analyzing your photo...');
         return [
           ...filtered,
           {
-            id: `s-result-${Date.now()}`,
+            id: `s-photo-${Date.now()}`,
             role: 'system' as const,
-            content: `Based on your photo, we recommend a ${size}-yard dumpster for ${material} material. Confidence: ${Math.round(confidence * 100)}%.`,
+            content: `The uploaded image appears to contain ${material} material. A ${size}-yard dumpster is recommended. Confidence level: ${Math.round(confidence * 100)}%.${material === 'heavy' ? '\n\nHeavy materials require smaller containers with fill-line compliance.' : ''}`,
+            quickReplies: ['See Exact Pricing', 'Compare Sizes', 'Upload Another Photo'],
           },
         ];
       });
 
-      try {
-        await supabase.functions.invoke('lead-ingest', {
-          body: {
-            source_channel: 'AI_CHAT',
-            source_detail: 'photo_upload',
-            notes: `Photo analysis: ${size}yd ${material} (${Math.round(confidence * 100)}% confidence)`,
-          },
-        });
-      } catch { /* silent */ }
-
-      setStep('photo_result');
+      ensureLeadIngested(newCtx, 'photo_analysis');
+      setMode('ai');
     } catch {
       setMessages(prev => prev.filter(m => m.content !== 'Analyzing your photo...'));
-      addSystem('We recommend a 20-yard dumpster for most mixed cleanouts. Continue to get exact pricing.');
-      setCollected(p => ({ ...p, size: '20', material: 'general' }));
-      setStep('photo_result');
+      addSystem(
+        'For mixed debris cleanouts, a 20-yard dumpster is most common. Enter your ZIP code to see exact pricing.',
+        ['See Exact Pricing', 'Compare Sizes']
+      );
+      setAIContext(prev => ({ ...prev, size: 20, material: 'general' }));
+      setMode('ai');
     } finally {
       setLoading(false);
     }
-  }, [logEvent, addSystem]);
+  }, [logEvent, addSystem, aiContext]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -383,35 +596,19 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
     }
   };
 
-  // Determine what to show
-  const showInput = ['price_zip', 'schedule_zip', 'contractor_zip', 'callback_name', 'callback_phone', 'callback_zip'].includes(step);
-  const showMenu = step === 'menu';
+  // Determine UI state
+  const showMenu = mode === 'menu';
+  const showInput = mode === 'ai' || mode === 'callback_collect';
+  const showPhotoUpload = mode === 'photo_upload';
+  const showDispatch = mode === 'dispatch';
 
   const getPlaceholder = () => {
-    switch (step) {
-      case 'price_zip':
-      case 'schedule_zip':
-      case 'contractor_zip':
-        return 'Enter ZIP code or address...';
-      case 'callback_name':
-        return 'Your name...';
-      case 'callback_phone':
-        return 'Your phone number...';
-      case 'callback_zip':
-        return 'ZIP code (or type "skip")...';
-      default:
-        return '';
+    if (mode === 'callback_collect') {
+      if (!callbackData.name) return 'Your name...';
+      if (!callbackData.phone) return 'Your phone number...';
+      return 'ZIP code (or type "skip")...';
     }
-  };
-
-  // Build CTA for quote routing
-  const buildQuoteUrl = (extra?: Record<string, string>) => {
-    const params = new URLSearchParams({ v3: '1' });
-    if (collected.zip) params.set('zip', collected.zip);
-    if (collected.size) params.set('size', collected.size);
-    if (collected.material) params.set('material', collected.material);
-    if (extra) Object.entries(extra).forEach(([k, v]) => params.set(k, v));
-    return `/quote?${params.toString()}`;
+    return 'Describe your project or enter a ZIP code...';
   };
 
   return (
@@ -440,9 +637,14 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
-              <span className="text-sm font-semibold text-foreground">Calsan</span>
+              <div>
+                <span className="text-sm font-semibold text-foreground">Calsan</span>
+                {mode === 'ai' && (
+                  <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
+                )}
+              </div>
             </div>
-            {step !== 'menu' && (
+            {mode !== 'menu' && (
               <button
                 onClick={resetConversation}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
@@ -456,21 +658,37 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
           <div
             ref={scrollRef}
             className="px-6 py-6 overflow-y-auto space-y-4"
-            style={{ minHeight: '240px', maxHeight: '480px' }}
+            style={{ minHeight: '280px', maxHeight: '520px' }}
           >
             {messages.map((msg) => (
-              <div key={msg.id} className={cn('text-sm leading-relaxed', msg.role === 'user' ? 'text-right' : '')}>
-                {msg.role === 'system' ? (
-                  <p className="text-foreground">{msg.content}</p>
-                ) : (
-                  <p className="inline-block bg-secondary text-secondary-foreground px-4 py-2 rounded-lg text-left">
-                    {msg.content}
-                  </p>
+              <div key={msg.id} className="space-y-2">
+                <div className={cn('text-sm leading-relaxed', msg.role === 'user' ? 'text-right' : '')}>
+                  {msg.role === 'system' ? (
+                    <p className="text-foreground whitespace-pre-line">{msg.content}</p>
+                  ) : (
+                    <p className="inline-block bg-secondary text-secondary-foreground px-4 py-2 rounded-lg text-left">
+                      {msg.content}
+                    </p>
+                  )}
+                </div>
+                {/* Quick Replies */}
+                {msg.quickReplies && msg.quickReplies.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {msg.quickReplies.map((reply) => (
+                      <button
+                        key={reply}
+                        onClick={() => handleQuickReply(reply)}
+                        className="px-3 py-1.5 border border-border rounded-lg text-xs font-medium text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+                      >
+                        {reply}
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
             ))}
 
-            {loading && (
+            {(loading && !streaming) && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Processing...</span>
@@ -480,7 +698,7 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
 
           {/* Action Area */}
           <div className="border-t border-border px-6 py-5 bg-[hsl(150_10%_98%)]">
-            {/* Menu Options */}
+            {/* Menu */}
             {showMenu && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {MENU_OPTIONS.map((opt) => (
@@ -495,7 +713,7 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
               </div>
             )}
 
-            {/* Input Field */}
+            {/* AI / Callback Input */}
             {showInput && (
               <div className="flex gap-3">
                 <Input
@@ -504,12 +722,12 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
                   onKeyDown={handleKeyDown}
                   placeholder={getPlaceholder()}
                   className="flex-1 bg-card border-border h-11 text-sm"
-                  disabled={loading}
+                  disabled={loading || streaming}
                   autoFocus
                 />
                 <Button
                   onClick={handleSubmit}
-                  disabled={!input.trim() || loading}
+                  disabled={!input.trim() || loading || streaming}
                   size="icon"
                   className="h-11 w-11 shrink-0 bg-primary hover:bg-primary/90"
                 >
@@ -519,7 +737,7 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
             )}
 
             {/* Photo Upload */}
-            {step === 'photo_upload' && (
+            {showPhotoUpload && (
               <div>
                 <div
                   onClick={() => fileRef.current?.click()}
@@ -538,7 +756,7 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
                 </div>
                 <div className="mt-3 text-center">
                   <button
-                    onClick={() => { addSystem('Opening size guide.'); navigate('/sizes'); }}
+                    onClick={() => navigate('/sizes')}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
                   >
                     Or view our size guide
@@ -547,29 +765,8 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
               </div>
             )}
 
-            {/* Size Help */}
-            {step === 'size_help' && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => { setStep('photo_upload'); addSystem('Upload a photo of your debris or project area.'); }}
-                  variant="outline"
-                  className="flex-1 border-border"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Photo
-                </Button>
-                <Button
-                  onClick={() => navigate('/sizes')}
-                  variant="outline"
-                  className="flex-1 border-border"
-                >
-                  View Size Guide
-                </Button>
-              </div>
-            )}
-
-            {/* Dispatch Options */}
-            {step === 'dispatch_options' && (
+            {/* Dispatch */}
+            {showDispatch && (
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   asChild
@@ -584,79 +781,14 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
                   onClick={() => {
                     addUser('Request Callback');
                     addSystem('What is your name?');
-                    setStep('callback_name');
+                    setMode('callback_collect');
+                    setCallbackData({});
                   }}
                   variant="outline"
                   className="flex-1 border-border"
                 >
                   Request Callback
                 </Button>
-              </div>
-            )}
-
-            {/* Price / Schedule / Contractor Ready */}
-            {(step === 'price_ready' || step === 'schedule_ready' || step === 'contractor_ready') && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => {
-                    logEvent('routed_to_quote', { zip: collected.zip, path: step });
-                    navigate(buildQuoteUrl(
-                      step === 'contractor_ready' ? { type: 'contractor' } :
-                      step === 'schedule_ready' ? { fast: '1' } : undefined
-                    ));
-                  }}
-                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-                >
-                  Continue
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-                <button
-                  onClick={resetConversation}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors self-center"
-                >
-                  Start over
-                </button>
-              </div>
-            )}
-
-            {/* Photo Result */}
-            {step === 'photo_result' && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => {
-                    logEvent('routed_to_quote', { from: 'photo', size: collected.size });
-                    navigate(buildQuoteUrl({ from: 'waste-vision' }));
-                  }}
-                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-                >
-                  See Exact Pricing
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-                <Button
-                  onClick={() => navigate('/sizes')}
-                  variant="outline"
-                  className="flex-1 border-border"
-                >
-                  Compare All Sizes
-                </Button>
-              </div>
-            )}
-
-            {/* Callback Sent */}
-            {step === 'callback_sent' && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => navigate(buildQuoteUrl())}
-                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  View Instant Pricing
-                </Button>
-                <button
-                  onClick={resetConversation}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors self-center"
-                >
-                  Start over
-                </button>
               </div>
             )}
           </div>
