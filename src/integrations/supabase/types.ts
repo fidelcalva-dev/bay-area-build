@@ -4364,6 +4364,81 @@ export type Database = {
         }
         Relationships: []
       }
+      entity_stage_history: {
+        Row: {
+          assigned_user_email: string | null
+          assigned_user_id: string | null
+          created_at: string
+          customer_id: string | null
+          department: Database["public"]["Enums"]["lifecycle_department"]
+          details_json: Json | null
+          duration_minutes: number | null
+          entered_at: string
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["lifecycle_entity_type"]
+          exited_at: string | null
+          from_stage: string | null
+          id: string
+          is_sla_breached: boolean | null
+          lead_id: string | null
+          notes: string | null
+          order_id: string | null
+          quote_id: string | null
+          sla_deadline_at: string | null
+          to_stage: string
+          trigger_type: Database["public"]["Enums"]["lifecycle_trigger"]
+          triggered_by_user_id: string | null
+        }
+        Insert: {
+          assigned_user_email?: string | null
+          assigned_user_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          department: Database["public"]["Enums"]["lifecycle_department"]
+          details_json?: Json | null
+          duration_minutes?: number | null
+          entered_at?: string
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["lifecycle_entity_type"]
+          exited_at?: string | null
+          from_stage?: string | null
+          id?: string
+          is_sla_breached?: boolean | null
+          lead_id?: string | null
+          notes?: string | null
+          order_id?: string | null
+          quote_id?: string | null
+          sla_deadline_at?: string | null
+          to_stage: string
+          trigger_type?: Database["public"]["Enums"]["lifecycle_trigger"]
+          triggered_by_user_id?: string | null
+        }
+        Update: {
+          assigned_user_email?: string | null
+          assigned_user_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          department?: Database["public"]["Enums"]["lifecycle_department"]
+          details_json?: Json | null
+          duration_minutes?: number | null
+          entered_at?: string
+          entity_id?: string
+          entity_type?: Database["public"]["Enums"]["lifecycle_entity_type"]
+          exited_at?: string | null
+          from_stage?: string | null
+          id?: string
+          is_sla_breached?: boolean | null
+          lead_id?: string | null
+          notes?: string | null
+          order_id?: string | null
+          quote_id?: string | null
+          sla_deadline_at?: string | null
+          to_stage?: string
+          trigger_type?: Database["public"]["Enums"]["lifecycle_trigger"]
+          triggered_by_user_id?: string | null
+        }
+        Relationships: []
+      }
       extra_catalog: {
         Row: {
           applies_to_material: string
@@ -6863,6 +6938,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lifecycle_sla_config: {
+        Row: {
+          created_at: string
+          department: Database["public"]["Enums"]["lifecycle_department"]
+          entity_type: Database["public"]["Enums"]["lifecycle_entity_type"]
+          id: string
+          is_active: boolean | null
+          max_duration_minutes: number
+          stage: string
+          updated_at: string
+          warning_at_minutes: number | null
+        }
+        Insert: {
+          created_at?: string
+          department: Database["public"]["Enums"]["lifecycle_department"]
+          entity_type: Database["public"]["Enums"]["lifecycle_entity_type"]
+          id?: string
+          is_active?: boolean | null
+          max_duration_minutes: number
+          stage: string
+          updated_at?: string
+          warning_at_minutes?: number | null
+        }
+        Update: {
+          created_at?: string
+          department?: Database["public"]["Enums"]["lifecycle_department"]
+          entity_type?: Database["public"]["Enums"]["lifecycle_entity_type"]
+          id?: string
+          is_active?: boolean | null
+          max_duration_minutes?: number
+          stage?: string
+          updated_at?: string
+          warning_at_minutes?: number | null
+        }
+        Relationships: []
       }
       logistics_events: {
         Row: {
@@ -15379,6 +15490,22 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      transition_entity_stage: {
+        Args: {
+          p_assigned_user_id?: string
+          p_customer_id?: string
+          p_department: Database["public"]["Enums"]["lifecycle_department"]
+          p_entity_id: string
+          p_entity_type: Database["public"]["Enums"]["lifecycle_entity_type"]
+          p_lead_id?: string
+          p_notes?: string
+          p_order_id?: string
+          p_quote_id?: string
+          p_to_stage: string
+          p_trigger?: Database["public"]["Enums"]["lifecycle_trigger"]
+        }
+        Returns: string
+      }
       update_assets_days_out: { Args: never; Returns: undefined }
       update_customer_health_score: {
         Args: {
@@ -15556,6 +15683,15 @@ export type Database = {
         | "BILLING"
         | "ADMIN"
       help_severity: "INFO" | "WARNING" | "CRITICAL"
+      lifecycle_department:
+        | "SALES"
+        | "BILLING"
+        | "LOGISTICS"
+        | "DISPATCH"
+        | "CS"
+        | "ADMIN"
+      lifecycle_entity_type: "LEAD" | "QUOTE" | "ORDER" | "JOB" | "INVOICE"
+      lifecycle_trigger: "MANUAL" | "SYSTEM" | "AUTOMATION" | "WEBHOOK" | "CRON"
       location_type: "yard" | "customer" | "facility"
       logistics_type:
         | "delivery"
@@ -15927,6 +16063,16 @@ export const Constants = {
         "ADMIN",
       ],
       help_severity: ["INFO", "WARNING", "CRITICAL"],
+      lifecycle_department: [
+        "SALES",
+        "BILLING",
+        "LOGISTICS",
+        "DISPATCH",
+        "CS",
+        "ADMIN",
+      ],
+      lifecycle_entity_type: ["LEAD", "QUOTE", "ORDER", "JOB", "INVOICE"],
+      lifecycle_trigger: ["MANUAL", "SYSTEM", "AUTOMATION", "WEBHOOK", "CRON"],
       location_type: ["yard", "customer", "facility"],
       logistics_type: [
         "delivery",

@@ -20,6 +20,7 @@ import { PaymentRecordDialog } from '@/components/admin/PaymentRecordDialog';
 import { OrderContractSection } from '@/components/contracts/OrderContractSection';
 import { DisposalPlanManager } from '@/components/dispatch/DisposalPlanManager';
 import { SitePlacementViewer } from '@/components/placement';
+import { LifecycleTimeline } from '@/components/lifecycle';
 import {
   reserveInventory,
   deployInventory,
@@ -444,10 +445,14 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
           </div>
         ) : order ? (
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsList className="grid w-full grid-cols-4 mb-4">
               <TabsTrigger value="details" className="flex items-center gap-2">
                 <Package className="w-4 h-4" />
                 Details
+              </TabsTrigger>
+              <TabsTrigger value="lifecycle" className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                Lifecycle
               </TabsTrigger>
               <TabsTrigger value="placement" className="flex items-center gap-2">
                 <Map className="w-4 h-4" />
@@ -458,6 +463,31 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                 History
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="lifecycle" className="mt-0">
+              <LifecycleTimeline
+                entityType="ORDER"
+                entityId={order.id}
+                showActions
+                onTransition={async (toStage) => {
+                  const { transitionStage, getStageDepartment } = await import('@/lib/lifecycleService');
+                  const dept = getStageDepartment('ORDER', toStage);
+                  const result = await transitionStage({
+                    entityType: 'ORDER',
+                    entityId: order.id,
+                    toStage,
+                    department: dept,
+                    customerId: order.customer_id || undefined,
+                    orderId: order.id,
+                  });
+                  if (result.success) {
+                    toast({ title: `Stage updated to ${toStage}` });
+                  } else {
+                    toast({ title: 'Failed to update stage', variant: 'destructive' });
+                  }
+                }}
+              />
+            </TabsContent>
             
             <TabsContent value="placement" className="mt-0">
               <SitePlacementViewer orderId={order.id} />
