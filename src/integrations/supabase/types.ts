@@ -6677,6 +6677,7 @@ export type Database = {
       }
       lead_events: {
         Row: {
+          channel: string | null
           channel_key: string | null
           created_at: string
           created_by: string | null
@@ -6687,9 +6688,12 @@ export type Database = {
           lead_id: string
           notes: string | null
           payload_json: Json | null
+          performed_by_user_id: string | null
+          provider: string | null
           to_assignment_type: string | null
         }
         Insert: {
+          channel?: string | null
           channel_key?: string | null
           created_at?: string
           created_by?: string | null
@@ -6700,9 +6704,12 @@ export type Database = {
           lead_id: string
           notes?: string | null
           payload_json?: Json | null
+          performed_by_user_id?: string | null
+          provider?: string | null
           to_assignment_type?: string | null
         }
         Update: {
+          channel?: string | null
           channel_key?: string | null
           created_at?: string
           created_by?: string | null
@@ -6713,6 +6720,8 @@ export type Database = {
           lead_id?: string
           notes?: string | null
           payload_json?: Json | null
+          performed_by_user_id?: string | null
+          provider?: string | null
           to_assignment_type?: string | null
         }
         Relationships: [
@@ -6773,6 +6782,57 @@ export type Database = {
           requested_by?: string | null
           requested_by_email?: string | null
           status?: string | null
+        }
+        Relationships: []
+      }
+      lead_routing_rules: {
+        Row: {
+          assign_team: string
+          assign_user_id: string | null
+          created_at: string
+          customer_type: string | null
+          id: string
+          intent: string | null
+          is_active: boolean
+          is_existing_customer: boolean | null
+          market_zip_pattern: string | null
+          priority: number
+          rule_name: string
+          sla_minutes: number
+          source_channel: string | null
+          updated_at: string
+        }
+        Insert: {
+          assign_team?: string
+          assign_user_id?: string | null
+          created_at?: string
+          customer_type?: string | null
+          id?: string
+          intent?: string | null
+          is_active?: boolean
+          is_existing_customer?: boolean | null
+          market_zip_pattern?: string | null
+          priority?: number
+          rule_name: string
+          sla_minutes?: number
+          source_channel?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assign_team?: string
+          assign_user_id?: string | null
+          created_at?: string
+          customer_type?: string | null
+          id?: string
+          intent?: string | null
+          is_active?: boolean
+          is_existing_customer?: boolean | null
+          market_zip_pattern?: string | null
+          priority?: number
+          rule_name?: string
+          sla_minutes?: number
+          source_channel?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -12138,6 +12198,7 @@ export type Database = {
           customer_type_detected: string | null
           first_response_at: string | null
           first_response_sent_at: string | null
+          followup_count: number
           gclid: string | null
           id: string
           is_existing_customer: boolean | null
@@ -12145,6 +12206,7 @@ export type Database = {
           last_activity_at: string | null
           last_contacted_at: string | null
           last_contacted_by_user_id: string | null
+          last_followup_at: string | null
           lead_quality_label: string | null
           lead_quality_score: number | null
           lead_risk_score: number | null
@@ -12161,8 +12223,10 @@ export type Database = {
           raw_payload_json: Json | null
           referrer_url: string | null
           requested_service: string | null
+          routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
+          sla_minutes: number
           source_key: string | null
           timeout_at: string | null
           updated_at: string
@@ -12199,6 +12263,7 @@ export type Database = {
           customer_type_detected?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
+          followup_count?: number
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
@@ -12206,6 +12271,7 @@ export type Database = {
           last_activity_at?: string | null
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
+          last_followup_at?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -12222,8 +12288,10 @@ export type Database = {
           raw_payload_json?: Json | null
           referrer_url?: string | null
           requested_service?: string | null
+          routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null
           updated_at?: string
@@ -12260,6 +12328,7 @@ export type Database = {
           customer_type_detected?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
+          followup_count?: number
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
@@ -12267,6 +12336,7 @@ export type Database = {
           last_activity_at?: string | null
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
+          last_followup_at?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -12283,8 +12353,10 @@ export type Database = {
           raw_payload_json?: Json | null
           referrer_url?: string | null
           requested_service?: string | null
+          routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null
           updated_at?: string
@@ -12317,6 +12389,13 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_leads_routing_rule_id_fkey"
+            columns: ["routing_rule_id"]
+            isOneToOne: false
+            referencedRelation: "lead_routing_rules"
             referencedColumns: ["id"]
           },
           {
@@ -15169,6 +15248,7 @@ export type Database = {
         }
         Returns: string
       }
+      apply_routing_rules: { Args: { p_lead_id: string }; Returns: string }
       apply_scale_ticket_weight: {
         Args: { p_actual_weight_tons: number; p_order_id: string }
         Returns: boolean
