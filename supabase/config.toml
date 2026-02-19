@@ -188,3 +188,6 @@ verify_jwt = false
 
 [functions.validate-activation]
 verify_jwt = false
+
+[functions.lifecycle-sla-monitor]
+verify_jwt = false

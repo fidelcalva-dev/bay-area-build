@@ -398,22 +398,6 @@ export default function LeadDetail() {
                 entityType="LEAD"
                 entityId={lead.id}
                 showActions
-                onTransition={async (toStage) => {
-                  const { transitionStage, getStageDepartment } = await import('@/lib/lifecycleService');
-                  const dept = getStageDepartment('LEAD', toStage);
-                  const result = await transitionStage({
-                    entityType: 'LEAD',
-                    entityId: lead.id,
-                    toStage,
-                    department: dept,
-                    customerId: undefined,
-                  });
-                  if (result.success) {
-                    toast({ title: `Stage updated to ${toStage}` });
-                  } else {
-                    toast({ title: 'Failed to update stage', variant: 'destructive' });
-                  }
-                }}
               />
             </CardContent>
           </Card>

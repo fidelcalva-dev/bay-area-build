@@ -1,236 +1,297 @@
 import { supabase } from '@/integrations/supabase/client';
 
 // ============================================================
-// LIFECYCLE SERVICE
-// Manages entity stage transitions across Lead → Quote → Order → Job → Invoice
+// UNIFIED LIFECYCLE SERVICE
+// Full pipeline: Lead → Quote → Contract → Verification → Payment →
+// Scheduled → Delivered → Pickup → Dump Ticket → Final Bill → Closed
 // ============================================================
 
-export type LifecycleEntityType = 'LEAD' | 'QUOTE' | 'ORDER' | 'JOB' | 'INVOICE';
-export type LifecycleDepartment = 'SALES' | 'BILLING' | 'LOGISTICS' | 'DISPATCH' | 'CS' | 'ADMIN';
-export type LifecycleTrigger = 'MANUAL' | 'SYSTEM' | 'AUTOMATION' | 'WEBHOOK' | 'CRON';
+export type LifecycleEntityType = 'LEAD' | 'QUOTE' | 'ORDER';
+export type LifecycleDepartment = 'SALES' | 'BILLING' | 'LOGISTICS' | 'DRIVER' | 'ADMIN' | 'VERIFICATION';
+export type LifecycleEventType = 'ENTER_STAGE' | 'EXIT_STAGE' | 'NOTE' | 'AUTO_TRIGGER' | 'MANUAL_MOVE' | 'SLA_BREACH';
 
-export interface StageHistoryRecord {
+// ---- Types ----
+
+export interface LifecycleStage {
+  id: string;
+  stage_key: string;
+  stage_name: string;
+  department: LifecycleDepartment;
+  stage_order: number;
+  auto_trigger: boolean;
+  sla_minutes: number | null;
+  is_active: boolean;
+}
+
+export interface LifecycleEntity {
   id: string;
   entity_type: LifecycleEntityType;
   entity_id: string;
-  lead_id: string | null;
-  quote_id: string | null;
-  order_id: string | null;
-  customer_id: string | null;
-  from_stage: string | null;
-  to_stage: string;
-  department: LifecycleDepartment;
-  assigned_user_id: string | null;
-  assigned_user_email: string | null;
-  trigger_type: LifecycleTrigger;
-  triggered_by_user_id: string | null;
+  current_stage_key: string;
+  current_department: string;
+  owner_user_id: string | null;
+  entered_stage_at: string;
+  updated_at: string;
+}
+
+export interface LifecycleEvent {
+  id: string;
+  entity_type: LifecycleEntityType;
+  entity_id: string;
+  stage_key: string;
+  department: string;
+  event_type: LifecycleEventType;
+  performed_by_user_id: string | null;
+  performed_by_role: string | null;
   notes: string | null;
-  details_json: Record<string, unknown>;
-  sla_deadline_at: string | null;
-  is_sla_breached: boolean;
-  entered_at: string;
-  exited_at: string | null;
-  duration_minutes: number | null;
+  meta_json: Record<string, unknown> | null;
   created_at: string;
 }
 
-// Stage definitions per entity type
-export const LIFECYCLE_STAGES: Record<LifecycleEntityType, { stage: string; label: string; department: LifecycleDepartment }[]> = {
-  LEAD: [
-    { stage: 'new', label: 'New Lead', department: 'SALES' },
-    { stage: 'contacted', label: 'Contacted', department: 'SALES' },
-    { stage: 'qualified', label: 'Qualified', department: 'SALES' },
-    { stage: 'quoted', label: 'Quoted', department: 'SALES' },
-    { stage: 'converted', label: 'Converted', department: 'SALES' },
-    { stage: 'lost', label: 'Lost', department: 'SALES' },
-  ],
-  QUOTE: [
-    { stage: 'draft', label: 'Draft', department: 'SALES' },
-    { stage: 'sent', label: 'Sent', department: 'SALES' },
-    { stage: 'viewed', label: 'Viewed', department: 'SALES' },
-    { stage: 'accepted', label: 'Accepted', department: 'SALES' },
-    { stage: 'rejected', label: 'Rejected', department: 'SALES' },
-    { stage: 'expired', label: 'Expired', department: 'SALES' },
-  ],
-  ORDER: [
-    { stage: 'pending', label: 'Pending', department: 'LOGISTICS' },
-    { stage: 'scheduled', label: 'Scheduled', department: 'DISPATCH' },
-    { stage: 'in_progress', label: 'In Progress', department: 'LOGISTICS' },
-    { stage: 'delivered', label: 'Delivered', department: 'LOGISTICS' },
-    { stage: 'pickup_scheduled', label: 'Pickup Scheduled', department: 'DISPATCH' },
-    { stage: 'completed', label: 'Completed', department: 'LOGISTICS' },
-    { stage: 'cancelled', label: 'Cancelled', department: 'CS' },
-  ],
-  JOB: [
-    { stage: 'assigned', label: 'Assigned', department: 'DISPATCH' },
-    { stage: 'en_route', label: 'En Route', department: 'DISPATCH' },
-    { stage: 'arrived', label: 'Arrived', department: 'DISPATCH' },
-    { stage: 'completed', label: 'Completed', department: 'DISPATCH' },
-    { stage: 'failed', label: 'Failed', department: 'DISPATCH' },
-  ],
-  INVOICE: [
-    { stage: 'draft', label: 'Draft', department: 'BILLING' },
-    { stage: 'sent', label: 'Sent', department: 'BILLING' },
-    { stage: 'partial', label: 'Partial Payment', department: 'BILLING' },
-    { stage: 'paid', label: 'Paid', department: 'BILLING' },
-    { stage: 'overdue', label: 'Overdue', department: 'BILLING' },
-    { stage: 'void', label: 'Void', department: 'BILLING' },
-  ],
-};
+export interface LifecycleAlert {
+  id: string;
+  entity_type: string;
+  entity_id: string;
+  stage_key: string;
+  department: string;
+  alert_type: string;
+  severity: string;
+  assigned_to_user_id: string | null;
+  is_resolved: boolean;
+  created_at: string;
+}
 
-const DEPARTMENT_COLORS: Record<LifecycleDepartment, string> = {
+// ---- Department colors ----
+
+const DEPARTMENT_COLORS: Record<string, string> = {
   SALES: 'bg-blue-100 text-blue-700 border-blue-200',
   BILLING: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   LOGISTICS: 'bg-orange-100 text-orange-700 border-orange-200',
-  DISPATCH: 'bg-cyan-100 text-cyan-700 border-cyan-200',
-  CS: 'bg-purple-100 text-purple-700 border-purple-200',
+  DRIVER: 'bg-cyan-100 text-cyan-700 border-cyan-200',
   ADMIN: 'bg-slate-100 text-slate-700 border-slate-200',
+  VERIFICATION: 'bg-purple-100 text-purple-700 border-purple-200',
 };
 
-export function getDepartmentColor(dept: LifecycleDepartment): string {
+export function getDepartmentColor(dept: string): string {
   return DEPARTMENT_COLORS[dept] || DEPARTMENT_COLORS.ADMIN;
 }
 
-export function getStageLabel(entityType: LifecycleEntityType, stage: string): string {
-  const found = LIFECYCLE_STAGES[entityType]?.find(s => s.stage === stage);
-  return found?.label || stage;
+// ---- Stage definitions cache ----
+
+let _stagesCache: LifecycleStage[] | null = null;
+
+export async function getAllStages(): Promise<LifecycleStage[]> {
+  if (_stagesCache) return _stagesCache;
+  const { data, error } = await supabase
+    .from('lifecycle_stages' as never)
+    .select('*')
+    .eq('is_active', true)
+    .order('stage_order', { ascending: true });
+  if (error) {
+    console.error('Failed to fetch lifecycle stages:', error);
+    return [];
+  }
+  _stagesCache = (data || []) as unknown as LifecycleStage[];
+  return _stagesCache;
 }
 
-export function getStageDepartment(entityType: LifecycleEntityType, stage: string): LifecycleDepartment {
-  const found = LIFECYCLE_STAGES[entityType]?.find(s => s.stage === stage);
-  return found?.department || 'ADMIN';
+export function invalidateStagesCache() {
+  _stagesCache = null;
 }
+
+export function getStagesByDepartment(stages: LifecycleStage[], dept: string): LifecycleStage[] {
+  return stages.filter(s => s.department === dept);
+}
+
+// ---- Core operations ----
 
 /**
- * Transition an entity to a new stage via the DB function
+ * Advance an entity to a new stage via DB function (atomic)
  */
-export async function transitionStage(params: {
+export async function advanceStage(params: {
   entityType: LifecycleEntityType;
   entityId: string;
-  toStage: string;
-  department: LifecycleDepartment;
-  trigger?: LifecycleTrigger;
-  assignedUserId?: string;
-  notes?: string;
-  leadId?: string;
-  quoteId?: string;
-  orderId?: string;
-  customerId?: string;
-}): Promise<{ success: boolean; stageId?: string; error?: string }> {
+  toStageKey: string;
+  performedByUserId?: string | null;
+  performedByRole?: string | null;
+  notes?: string | null;
+  eventType?: LifecycleEventType;
+  meta?: Record<string, unknown>;
+}): Promise<{ success: boolean; eventId?: string; error?: string }> {
   try {
-    const { data, error } = await supabase.rpc('transition_entity_stage', {
+    const { data, error } = await supabase.rpc('lifecycle_advance_stage', {
       p_entity_type: params.entityType,
       p_entity_id: params.entityId,
-      p_to_stage: params.toStage,
-      p_department: params.department,
-      p_trigger: params.trigger || 'MANUAL',
-      p_assigned_user_id: params.assignedUserId || null,
+      p_to_stage_key: params.toStageKey,
+      p_performed_by_user_id: params.performedByUserId || null,
+      p_performed_by_role: params.performedByRole || null,
       p_notes: params.notes || null,
-      p_lead_id: params.leadId || null,
-      p_quote_id: params.quoteId || null,
-      p_order_id: params.orderId || null,
-      p_customer_id: params.customerId || null,
+      p_event_type: params.eventType || 'MANUAL_MOVE',
+      p_meta: params.meta ? JSON.stringify(params.meta) : null,
     });
-
     if (error) {
-      console.error('Stage transition failed:', error);
+      console.error('Stage advance failed:', error);
       return { success: false, error: error.message };
     }
-
-    return { success: true, stageId: data as string };
+    return { success: true, eventId: data as string };
   } catch (err) {
-    console.error('Stage transition error:', err);
+    console.error('Stage advance error:', err);
     return { success: false, error: 'Unknown error' };
   }
 }
 
 /**
- * Get full stage history for an entity
+ * Get the current lifecycle state for an entity
  */
-export async function getEntityStageHistory(
+export async function getEntityState(
   entityType: LifecycleEntityType,
   entityId: string
-): Promise<StageHistoryRecord[]> {
+): Promise<LifecycleEntity | null> {
   const { data, error } = await supabase
-    .from('entity_stage_history' as never)
+    .from('lifecycle_entities' as never)
     .select('*')
     .eq('entity_type', entityType)
     .eq('entity_id', entityId)
-    .order('entered_at', { ascending: true });
-
-  if (error) {
-    console.error('Failed to fetch stage history:', error);
-    return [];
-  }
-
-  return (data || []) as unknown as StageHistoryRecord[];
-}
-
-/**
- * Get the current active stage for an entity
- */
-export async function getCurrentStage(
-  entityType: LifecycleEntityType,
-  entityId: string
-): Promise<StageHistoryRecord | null> {
-  const { data, error } = await supabase
-    .from('entity_stage_history' as never)
-    .select('*')
-    .eq('entity_type', entityType)
-    .eq('entity_id', entityId)
-    .is('exited_at', null)
-    .order('entered_at', { ascending: false })
-    .limit(1)
     .maybeSingle();
-
   if (error) {
-    console.error('Failed to fetch current stage:', error);
+    console.error('Failed to fetch entity state:', error);
     return null;
   }
-
-  return data as unknown as StageHistoryRecord | null;
+  return data as unknown as LifecycleEntity | null;
 }
 
 /**
- * Get full lifecycle chain for a customer (across all entity types)
+ * Get the full event history for an entity (append-only timeline)
  */
-export async function getCustomerLifecycle(customerId: string): Promise<StageHistoryRecord[]> {
+export async function getEntityEvents(
+  entityType: LifecycleEntityType,
+  entityId: string,
+  options?: { limit?: number }
+): Promise<LifecycleEvent[]> {
+  const limit = options?.limit || 100;
   const { data, error } = await supabase
-    .from('entity_stage_history' as never)
+    .from('lifecycle_events' as never)
     .select('*')
-    .eq('customer_id', customerId)
-    .order('entered_at', { ascending: true });
-
+    .eq('entity_type', entityType)
+    .eq('entity_id', entityId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
   if (error) {
-    console.error('Failed to fetch customer lifecycle:', error);
+    console.error('Failed to fetch entity events:', error);
     return [];
   }
-
-  return (data || []) as unknown as StageHistoryRecord[];
+  return (data || []) as unknown as LifecycleEvent[];
 }
 
 /**
- * Get all SLA-breached stages (stuck detection)
+ * Add a note to the lifecycle timeline
  */
-export async function getBreachedStages(): Promise<StageHistoryRecord[]> {
-  const { data, error } = await supabase
-    .from('entity_stage_history' as never)
-    .select('*')
-    .is('exited_at', null)
-    .lt('sla_deadline_at', new Date().toISOString())
-    .order('sla_deadline_at', { ascending: true });
-
+export async function addLifecycleNote(params: {
+  entityType: LifecycleEntityType;
+  entityId: string;
+  stageKey: string;
+  department: string;
+  notes: string;
+  performedByUserId?: string | null;
+  performedByRole?: string | null;
+}): Promise<{ success: boolean; error?: string }> {
+  const { error } = await supabase
+    .from('lifecycle_events' as never)
+    .insert({
+      entity_type: params.entityType,
+      entity_id: params.entityId,
+      stage_key: params.stageKey,
+      department: params.department,
+      event_type: 'NOTE',
+      notes: params.notes,
+      performed_by_user_id: params.performedByUserId || null,
+      performed_by_role: params.performedByRole || null,
+    } as never);
   if (error) {
-    console.error('Failed to fetch breached stages:', error);
+    console.error('Failed to add lifecycle note:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true };
+}
+
+/**
+ * Get unresolved alerts for a department
+ */
+export async function getDepartmentAlerts(department?: string): Promise<LifecycleAlert[]> {
+  let query = supabase
+    .from('lifecycle_alerts' as never)
+    .select('*')
+    .eq('is_resolved', false)
+    .order('created_at', { ascending: false });
+  if (department) {
+    query = query.eq('department', department);
+  }
+  const { data, error } = await query;
+  if (error) {
+    console.error('Failed to fetch lifecycle alerts:', error);
     return [];
   }
-
-  return (data || []) as unknown as StageHistoryRecord[];
+  return (data || []) as unknown as LifecycleAlert[];
 }
 
 /**
- * Format duration for display
+ * Resolve a lifecycle alert
  */
+export async function resolveAlert(alertId: string, resolvedByUserId?: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('lifecycle_alerts' as never)
+    .update({
+      is_resolved: true,
+      resolved_at: new Date().toISOString(),
+      resolved_by_user_id: resolvedByUserId || null,
+    } as never)
+    .eq('id', alertId);
+  if (error) {
+    console.error('Failed to resolve alert:', error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Get all entities stuck at a department (for dashboards)
+ */
+export async function getEntitiesByDepartment(department: string): Promise<LifecycleEntity[]> {
+  const { data, error } = await supabase
+    .from('lifecycle_entities' as never)
+    .select('*')
+    .eq('current_department', department)
+    .order('entered_stage_at', { ascending: true });
+  if (error) {
+    console.error('Failed to fetch entities by department:', error);
+    return [];
+  }
+  return (data || []) as unknown as LifecycleEntity[];
+}
+
+/**
+ * Get entities stuck (SLA breached) across all departments
+ */
+export async function getStuckEntities(): Promise<(LifecycleEntity & { sla_minutes: number | null; stage_name: string })[]> {
+  const [entities, stages] = await Promise.all([
+    supabase.from('lifecycle_entities' as never).select('*').then(r => (r.data || []) as unknown as LifecycleEntity[]),
+    getAllStages(),
+  ]);
+  const now = Date.now();
+  return entities
+    .map(e => {
+      const stage = stages.find(s => s.stage_key === e.current_stage_key);
+      return { ...e, sla_minutes: stage?.sla_minutes || null, stage_name: stage?.stage_name || e.current_stage_key };
+    })
+    .filter(e => {
+      if (!e.sla_minutes) return false;
+      const elapsed = (now - new Date(e.entered_stage_at).getTime()) / 60000;
+      return elapsed > e.sla_minutes;
+    });
+}
+
+// ---- Helpers ----
+
 export function formatDuration(minutes: number | null): string {
   if (minutes === null || minutes === undefined) return '—';
   if (minutes < 1) return '< 1m';
@@ -239,9 +300,19 @@ export function formatDuration(minutes: number | null): string {
   return `${Math.round(minutes / 1440)}d`;
 }
 
-/**
- * Calculate live duration for active stages
- */
 export function getLiveDurationMinutes(enteredAt: string): number {
   return (Date.now() - new Date(enteredAt).getTime()) / 60000;
 }
+
+/**
+ * Check if an entity is SLA breached for its current stage
+ */
+export function isSlaBreached(entity: LifecycleEntity, slaMinutes: number | null): boolean {
+  if (!slaMinutes) return false;
+  return getLiveDurationMinutes(entity.entered_stage_at) > slaMinutes;
+}
+
+// Keep backward compat exports for existing LifecycleTimeline references
+export type { LifecycleStage as StageHistoryRecord };
+export type LifecycleEntityType_Old = 'LEAD' | 'QUOTE' | 'ORDER' | 'JOB' | 'INVOICE';
+export { getDepartmentColor as getDepartmentColorLegacy };

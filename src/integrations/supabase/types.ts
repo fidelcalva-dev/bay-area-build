@@ -6939,6 +6939,134 @@ export type Database = {
           },
         ]
       }
+      lifecycle_alerts: {
+        Row: {
+          alert_type: string
+          assigned_to_user_id: string | null
+          created_at: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          id: string
+          is_resolved: boolean | null
+          resolved_at: string | null
+          resolved_by_user_id: string | null
+          severity: string
+          stage_key: string
+        }
+        Insert: {
+          alert_type: string
+          assigned_to_user_id?: string | null
+          created_at?: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          is_resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          severity?: string
+          stage_key: string
+        }
+        Update: {
+          alert_type?: string
+          assigned_to_user_id?: string | null
+          created_at?: string | null
+          department?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          is_resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          severity?: string
+          stage_key?: string
+        }
+        Relationships: []
+      }
+      lifecycle_entities: {
+        Row: {
+          current_department: string
+          current_stage_key: string
+          entered_stage_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          owner_user_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          current_department: string
+          current_stage_key: string
+          entered_stage_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          owner_user_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          current_department?: string
+          current_stage_key?: string
+          entered_stage_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          owner_user_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lifecycle_entities_current_stage_key_fkey"
+            columns: ["current_stage_key"]
+            isOneToOne: false
+            referencedRelation: "lifecycle_stages"
+            referencedColumns: ["stage_key"]
+          },
+        ]
+      }
+      lifecycle_events: {
+        Row: {
+          created_at: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id: string
+          meta_json: Json | null
+          notes: string | null
+          performed_by_role: string | null
+          performed_by_user_id: string | null
+          stage_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id?: string
+          meta_json?: Json | null
+          notes?: string | null
+          performed_by_role?: string | null
+          performed_by_user_id?: string | null
+          stage_key: string
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          entity_id?: string
+          entity_type?: string
+          event_type?: string
+          id?: string
+          meta_json?: Json | null
+          notes?: string | null
+          performed_by_role?: string | null
+          performed_by_user_id?: string | null
+          stage_key?: string
+        }
+        Relationships: []
+      }
       lifecycle_sla_config: {
         Row: {
           created_at: string
@@ -6972,6 +7100,42 @@ export type Database = {
           stage?: string
           updated_at?: string
           warning_at_minutes?: number | null
+        }
+        Relationships: []
+      }
+      lifecycle_stages: {
+        Row: {
+          auto_trigger: boolean | null
+          created_at: string | null
+          department: string
+          id: string
+          is_active: boolean | null
+          sla_minutes: number | null
+          stage_key: string
+          stage_name: string
+          stage_order: number
+        }
+        Insert: {
+          auto_trigger?: boolean | null
+          created_at?: string | null
+          department: string
+          id?: string
+          is_active?: boolean | null
+          sla_minutes?: number | null
+          stage_key: string
+          stage_name: string
+          stage_order: number
+        }
+        Update: {
+          auto_trigger?: boolean | null
+          created_at?: string | null
+          department?: string
+          id?: string
+          is_active?: boolean | null
+          sla_minutes?: number | null
+          stage_key?: string
+          stage_name?: string
+          stage_order?: number
         }
         Relationships: []
       }
@@ -15344,6 +15508,19 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      lifecycle_advance_stage: {
+        Args: {
+          p_entity_id: string
+          p_entity_type: string
+          p_event_type?: string
+          p_meta?: Json
+          p_notes?: string
+          p_performed_by_role?: string
+          p_performed_by_user_id?: string
+          p_to_stage_key: string
+        }
+        Returns: string
       }
       log_ai_decision: {
         Args: {

@@ -469,23 +469,6 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
                 entityType="ORDER"
                 entityId={order.id}
                 showActions
-                onTransition={async (toStage) => {
-                  const { transitionStage, getStageDepartment } = await import('@/lib/lifecycleService');
-                  const dept = getStageDepartment('ORDER', toStage);
-                  const result = await transitionStage({
-                    entityType: 'ORDER',
-                    entityId: order.id,
-                    toStage,
-                    department: dept,
-                    customerId: order.customer_id || undefined,
-                    orderId: order.id,
-                  });
-                  if (result.success) {
-                    toast({ title: `Stage updated to ${toStage}` });
-                  } else {
-                    toast({ title: 'Failed to update stage', variant: 'destructive' });
-                  }
-                }}
               />
             </TabsContent>
             
