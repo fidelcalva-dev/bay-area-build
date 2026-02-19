@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Users, FileText, TrendingUp, DollarSign, 
-  ArrowUpRight, ArrowDownRight, Clock, Loader2
+  ArrowUpRight, ArrowDownRight, Clock, Loader2, GitBranch
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
+import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
 
 interface DashboardStats {
   leads: { total: number; new: number; converted: number };
@@ -92,10 +94,14 @@ export default function SalesDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Welcome back!</h1>
-        <p className="text-muted-foreground">Here's your sales overview for today</p>
-      </div>
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Pipeline</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="space-y-6">
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -214,6 +220,13 @@ export default function SalesDashboard() {
           </CardContent>
         </Card>
       </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="lifecycle">
+          <SalesLifecycleDashboard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

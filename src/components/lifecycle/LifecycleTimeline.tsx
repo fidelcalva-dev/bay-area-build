@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Check, Clock, AlertTriangle, Circle, Loader2,
-  ChevronDown, ChevronUp, User, Building2, Zap, RefreshCw,
+  ChevronDown, ChevronUp, Building2, RefreshCw,
   StickyNote, ArrowRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import {
   type LifecycleEntityType,
@@ -19,10 +20,12 @@ import {
   getEntityEvents,
   advanceStage,
   addLifecycleNote,
-  getDepartmentColor,
   formatDuration,
   getLiveDurationMinutes,
 } from '@/lib/lifecycleService';
+import { DepartmentBadge, SlaBadge, StageBadge, getSlaStatus } from './LifecycleBadges';
+import { NextRequiredAction } from './NextRequiredAction';
+import { LifecycleEventRow } from './LifecycleEventRow';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -32,44 +35,36 @@ interface LifecycleTimelineProps {
   className?: string;
   compact?: boolean;
   showActions?: boolean;
+  onNextAction?: (stageKey: string) => void;
 }
 
 function StageIcon({ status }: { status: 'completed' | 'active' | 'breached' | 'upcoming' }) {
   switch (status) {
     case 'completed':
       return (
-        <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center">
-          <Check className="w-4 h-4 text-white" />
+        <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+          <Check className="w-3.5 h-3.5 text-white" />
         </div>
       );
     case 'active':
       return (
-        <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center animate-pulse">
-          <Clock className="w-4 h-4 text-primary-foreground" />
+        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+          <Clock className="w-3.5 h-3.5 text-primary-foreground" />
         </div>
       );
     case 'breached':
       return (
-        <div className="w-7 h-7 rounded-full bg-destructive flex items-center justify-center">
-          <AlertTriangle className="w-4 h-4 text-destructive-foreground" />
+        <div className="w-6 h-6 rounded-full bg-destructive flex items-center justify-center">
+          <AlertTriangle className="w-3.5 h-3.5 text-destructive-foreground" />
         </div>
       );
     case 'upcoming':
       return (
-        <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
-          <Circle className="w-3 h-3 text-muted-foreground" />
+        <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+          <Circle className="w-2.5 h-2.5 text-muted-foreground" />
         </div>
       );
   }
-}
-
-function formatTimestamp(ts: string): string {
-  const d = new Date(ts);
-  const now = new Date();
-  const diffH = (now.getTime() - d.getTime()) / 3600000;
-  if (diffH < 1) return `${Math.round(diffH * 60)}m ago`;
-  if (diffH < 24) return `${Math.round(diffH)}h ago`;
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
 export function LifecycleTimeline({
@@ -78,15 +73,17 @@ export function LifecycleTimeline({
   className,
   compact = false,
   showActions = false,
+  onNextAction,
 }: LifecycleTimelineProps) {
   const [stages, setStages] = useState<LifecycleStage[]>([]);
   const [entity, setEntity] = useState<LifecycleEntity | null>(null);
   const [events, setEvents] = useState<LifecycleEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [isAdvancing, setIsAdvancing] = useState(false);
+  const [showAllStages, setShowAllStages] = useState(false);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   const { toast } = useToast();
 
   const loadData = useCallback(async () => {
@@ -170,43 +167,39 @@ export function LifecycleTimeline({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
-  // Determine current stage index
+  // Determine current stage
   const currentStageIdx = entity
     ? stages.findIndex(s => s.stage_key === entity.current_stage_key)
     : -1;
-
-  // Build completed stage keys from events
   const completedStageKeys = new Set(
     events.filter(e => e.event_type === 'EXIT_STAGE').map(e => e.stage_key)
   );
-
-  // Get SLA info
   const currentStageDef = entity ? stages.find(s => s.stage_key === entity.current_stage_key) : null;
-  const isBreached = entity && currentStageDef?.sla_minutes
-    ? getLiveDurationMinutes(entity.entered_stage_at) > currentStageDef.sla_minutes
-    : false;
+  const slaStatus = entity && currentStageDef
+    ? getSlaStatus(entity.entered_stage_at, currentStageDef.sla_minutes)
+    : 'on_track';
 
-  // Get next available stages for advancing
+  // Next stages
   const nextStages = currentStageIdx >= 0
     ? stages.filter((_, i) => i > currentStageIdx).slice(0, 3)
     : [];
 
-  // Group events by type for recent activity
-  const recentNotes = events.filter(e => e.event_type === 'NOTE').slice(0, 5);
-  const recentTransitions = events.filter(e => e.event_type === 'ENTER_STAGE' || e.event_type === 'AUTO_TRIGGER').slice(0, 10);
+  // Events for recent activity
+  const recentEvents = events.slice(0, showAllEvents ? 50 : 8);
+  const stageNameMap = new Map(stages.map(s => [s.stage_key, s.stage_name]));
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-5', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-semibold flex items-center gap-2">
           <Building2 className="w-4 h-4 text-muted-foreground" />
-          Lifecycle — {entityType}
+          Lifecycle Timeline
         </h4>
         <div className="flex gap-1">
           {showActions && (
@@ -220,39 +213,57 @@ export function LifecycleTimeline({
         </div>
       </div>
 
-      {/* Current status badge */}
+      {/* === CURRENT STAGE === */}
       {entity && currentStageDef && (
         <div className={cn(
-          'flex items-center justify-between p-3 rounded-lg border',
-          isBreached ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/30'
+          'rounded-lg border p-4',
+          slaStatus === 'breached' ? 'border-destructive/40 bg-destructive/[0.03]' :
+          slaStatus === 'at_risk' ? 'border-amber-300/50 bg-amber-50/30' :
+          'border-border bg-muted/20'
         )}>
-          <div className="flex items-center gap-3">
-            <StageIcon status={isBreached ? 'breached' : 'active'} />
-            <div>
-              <div className="font-medium text-sm">{currentStageDef.stage_name}</div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', getDepartmentColor(currentStageDef.department))}>
-                  {currentStageDef.department}
-                </Badge>
-                <span>{formatDuration(getLiveDurationMinutes(entity.entered_stage_at))} in stage</span>
-                {isBreached && (
-                  <Badge variant="destructive" className="text-[10px] px-1.5 py-0">SLA BREACHED</Badge>
-                )}
+          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
+            Current Stage
+          </p>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <StageIcon status={slaStatus === 'breached' ? 'breached' : 'active'} />
+              <div>
+                <p className="font-semibold text-sm">{currentStageDef.stage_name}</p>
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <DepartmentBadge department={currentStageDef.department} />
+                  {entity.owner_user_id && (
+                    <span className="text-[10px] text-muted-foreground">
+                      Owner: {entity.owner_user_id.slice(0, 8)}
+                    </span>
+                  )}
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
+                    {formatDuration(getLiveDurationMinutes(entity.entered_stage_at))} in stage
+                  </span>
+                  <SlaBadge status={slaStatus} />
+                </div>
               </div>
             </div>
+            {currentStageDef.sla_minutes && (
+              <div className="text-right text-xs text-muted-foreground">
+                <p className="tabular-nums">SLA: {formatDuration(currentStageDef.sla_minutes)}</p>
+              </div>
+            )}
           </div>
-          {currentStageDef.sla_minutes && (
-            <div className="text-xs text-muted-foreground text-right">
-              SLA: {formatDuration(currentStageDef.sla_minutes)}
-            </div>
-          )}
         </div>
       )}
 
       {!entity && (
-        <div className="text-center py-4 text-muted-foreground text-sm">
-          No lifecycle tracking started yet
+        <div className="text-center py-6 text-muted-foreground text-sm border rounded-lg bg-muted/10">
+          No lifecycle tracking started
         </div>
+      )}
+
+      {/* === NEXT REQUIRED ACTION === */}
+      {entity && currentStageDef && (
+        <NextRequiredAction
+          stageKey={entity.current_stage_key}
+          onAction={onNextAction ? () => onNextAction(entity.current_stage_key) : undefined}
+        />
       )}
 
       {/* Note input */}
@@ -262,7 +273,7 @@ export function LifecycleTimeline({
             placeholder="Add a note to the timeline..."
             value={noteText}
             onChange={e => setNoteText(e.target.value)}
-            className="text-sm min-h-[60px]"
+            className="text-sm min-h-[56px]"
           />
           <div className="flex flex-col gap-1">
             <Button size="sm" onClick={handleAddNote} disabled={!noteText.trim()}>Add</Button>
@@ -271,7 +282,7 @@ export function LifecycleTimeline({
         </div>
       )}
 
-      {/* Next stage actions */}
+      {/* === ADVANCE ACTIONS === */}
       {showActions && nextStages.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-muted-foreground">Advance to:</span>
@@ -291,105 +302,99 @@ export function LifecycleTimeline({
         </div>
       )}
 
-      {/* Stage progress */}
-      <ScrollArea className={compact ? 'max-h-[300px]' : 'max-h-[500px]'}>
-        <div className="relative">
-          {stages.map((stage, idx) => {
+      <Separator />
+
+      {/* === RECENT ACTIVITY === */}
+      <div>
+        <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
+          Recent Activity
+        </p>
+        <ScrollArea className={compact ? 'max-h-[250px]' : 'max-h-[350px]'}>
+          <div className="space-y-0.5">
+            {recentEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No events recorded</p>
+            ) : (
+              recentEvents.map(ev => (
+                <LifecycleEventRow
+                  key={ev.id}
+                  event={ev}
+                  stageName={stageNameMap.get(ev.stage_key)}
+                />
+              ))
+            )}
+          </div>
+          {events.length > 8 && !showAllEvents && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full mt-2 text-xs"
+              onClick={() => setShowAllEvents(true)}
+            >
+              Show all {events.length} events
+              <ChevronDown className="w-3 h-3 ml-1" />
+            </Button>
+          )}
+        </ScrollArea>
+      </div>
+
+      <Separator />
+
+      {/* === STAGE PROGRESS === */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+            Stage Progress
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 text-[10px] px-1.5"
+            onClick={() => setShowAllStages(!showAllStages)}
+          >
+            {showAllStages ? 'Collapse' : `All ${stages.length} stages`}
+            {showAllStages ? <ChevronUp className="w-3 h-3 ml-0.5" /> : <ChevronDown className="w-3 h-3 ml-0.5" />}
+          </Button>
+        </div>
+
+        <div className="space-y-0">
+          {(showAllStages ? stages : stages.filter((s, idx) => {
+            // Show completed, current, and next 2
+            const isCompleted = completedStageKeys.has(s.stage_key);
+            const isCurrent = entity?.current_stage_key === s.stage_key;
+            return isCompleted || isCurrent || (idx <= currentStageIdx + 2 && idx >= currentStageIdx);
+          })).map((stage, idx) => {
             const isCompleted = completedStageKeys.has(stage.stage_key);
             const isCurrent = entity?.current_stage_key === stage.stage_key;
-            const isUpcoming = !isCompleted && !isCurrent;
             const status = isCurrent
-              ? (isBreached ? 'breached' : 'active')
-              : isCompleted
-                ? 'completed'
-                : 'upcoming';
-
-            const isLast = idx === stages.length - 1;
-            const isExpanded = expandedId === stage.stage_key;
-            const stageEvents = events.filter(e => e.stage_key === stage.stage_key);
+              ? (slaStatus === 'breached' ? 'breached' : 'active')
+              : isCompleted ? 'completed' : 'upcoming';
 
             return (
-              <div key={stage.stage_key} className={cn('relative flex gap-3', !isLast && (compact ? 'pb-2' : 'pb-4'))}>
-                {/* Vertical line */}
-                {!isLast && (
-                  <div className={cn(
-                    'absolute left-[13px] top-7 w-0.5 bottom-0',
-                    isCompleted ? 'bg-emerald-300' :
-                    isCurrent ? (isBreached ? 'bg-destructive/40' : 'bg-primary/40') :
-                    'bg-border'
-                  )} />
-                )}
-
-                {/* Icon */}
-                <div className="relative z-10 shrink-0">
-                  <StageIcon status={status} />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={cn(
-                        'text-sm',
-                        isUpcoming ? 'text-muted-foreground' : 'font-medium',
-                        status === 'breached' && 'text-destructive font-semibold'
-                      )}>
-                        {stage.stage_name}
-                      </span>
-                      <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', getDepartmentColor(stage.department))}>
-                        {stage.department}
-                      </Badge>
-                    </div>
-                    {stageEvents.length > 0 && (
-                      <button
-                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-0.5"
-                        onClick={() => setExpandedId(isExpanded ? null : stage.stage_key)}
-                      >
-                        {stageEvents.length} event{stageEvents.length > 1 ? 's' : ''}
-                        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Expanded event list */}
-                  {isExpanded && stageEvents.length > 0 && (
-                    <div className="mt-2 space-y-1.5">
-                      {stageEvents.map(ev => (
-                        <div key={ev.id} className="p-2 bg-muted/50 rounded text-xs space-y-0.5">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
-                              {ev.event_type === 'NOTE' ? <StickyNote className="w-3 h-3" /> :
-                               ev.event_type === 'AUTO_TRIGGER' ? <Zap className="w-3 h-3" /> :
-                               <User className="w-3 h-3" />}
-                              <span className="font-medium capitalize">{ev.event_type.toLowerCase().replace('_', ' ')}</span>
-                            </div>
-                            <span className="text-muted-foreground">{formatTimestamp(ev.created_at)}</span>
-                          </div>
-                          {ev.notes && <p className="text-muted-foreground">{ev.notes}</p>}
-                          {ev.performed_by_role && (
-                            <p className="text-muted-foreground">By: {ev.performed_by_role}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+              <div key={stage.stage_key} className="flex items-center gap-3 py-1.5">
+                <StageIcon status={status} />
+                <span className={cn(
+                  'text-xs',
+                  status === 'upcoming' ? 'text-muted-foreground' :
+                  status === 'breached' ? 'text-destructive font-semibold' :
+                  status === 'active' ? 'font-semibold' : 'text-muted-foreground'
+                )}>
+                  {stage.stage_name}
+                </span>
+                <DepartmentBadge department={stage.department} />
               </div>
             );
           })}
         </div>
-      </ScrollArea>
+      </div>
 
-      {/* Summary */}
+      {/* Summary footer */}
       {entity && (
         <div className="flex items-center gap-3 pt-2 border-t text-xs text-muted-foreground">
-          <span>{completedStageKeys.size}/{stages.length} stages complete</span>
+          <span className="tabular-nums">{completedStageKeys.size}/{stages.length} complete</span>
+          <Separator orientation="vertical" className="h-3" />
           <span>
             Current: <strong className="text-foreground">{currentStageDef?.stage_name}</strong>
           </span>
-          {isBreached && (
-            <Badge variant="destructive" className="text-[10px]">SLA Alert</Badge>
-          )}
         </div>
       )}
     </div>

@@ -452,7 +452,7 @@ export function OrderDetailDialog({ orderId, open, onOpenChange, onUpdate }: Pro
               </TabsTrigger>
               <TabsTrigger value="lifecycle" className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                Lifecycle
+                Lifecycle Timeline
               </TabsTrigger>
               <TabsTrigger value="placement" className="flex items-center gap-2">
                 <Map className="w-4 h-4" />

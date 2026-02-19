@@ -381,7 +381,7 @@ export default function LeadDetail() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle</TabsTrigger>
+          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Timeline</TabsTrigger>
           <TabsTrigger value="timeline">Timeline ({actions.length})</TabsTrigger>
           <TabsTrigger value="attribution">Source & Attribution</TabsTrigger>
           <TabsTrigger value="scoring">Risk & Quality</TabsTrigger>
@@ -398,6 +398,13 @@ export default function LeadDetail() {
                 entityType="LEAD"
                 entityId={lead.id}
                 showActions
+                onNextAction={(stageKey) => {
+                  if (stageKey === 'LEAD_NEW' || stageKey === 'FOLLOW_UP_PENDING') {
+                    if (lead.customer_phone) window.open(`tel:${lead.customer_phone}`);
+                  } else if (stageKey === 'QUALIFIED' || stageKey === 'LEAD_CONTACTED') {
+                    navigate(`/sales/quotes/new?lead_id=${lead.id}`);
+                  }
+                }}
               />
             </CardContent>
           </Card>
