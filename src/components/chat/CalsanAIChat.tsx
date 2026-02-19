@@ -5,7 +5,7 @@
 // ============================================================
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Calendar } from '@/components/ui/calendar';
@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO } from '@/lib/shared-data';
 import { getPriceByZip } from '@/lib/price-list-data';
 import { format, addDays, isWeekend, isBefore, startOfDay } from 'date-fns';
+import { getFeatureFlag } from '@/lib/featureFlags';
 
 // ============================================================
 // TYPES & CONSTANTS
@@ -24,12 +25,13 @@ export type ChatMode = 'default' | 'sales' | 'commercial' | 'contractor';
 type FlowStep =
   | 'zip' | 'customer-type' | 'project' | 'material' | 'size' | 'price' | 'contact' | 'confirm'
   | 'photo-upload' | 'photo-analyzing' | 'photo-result'
-  | 'schedule' | 'payment' | 'payment-processing' | 'booking-confirm';
+  | 'schedule' | 'payment' | 'payment-processing' | 'booking-confirm'
+  | 'contractor-fast' | 'placement-offer';
 
 // Steps for progress bar (manual path)
-const MANUAL_STEPS: FlowStep[] = ['zip', 'customer-type', 'project', 'material', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm'];
+const MANUAL_STEPS: FlowStep[] = ['zip', 'customer-type', 'project', 'material', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm', 'placement-offer'];
 // Steps for photo path
-const PHOTO_STEPS: FlowStep[] = ['zip', 'photo-upload', 'photo-analyzing', 'photo-result', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm'];
+const PHOTO_STEPS: FlowStep[] = ['zip', 'photo-upload', 'photo-analyzing', 'photo-result', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm', 'placement-offer'];
 
 type CustomerType = 'homeowner' | 'contractor' | 'commercial';
 
@@ -66,6 +68,8 @@ interface FlowState {
   hostedToken: string | null;
   hostedFormUrl: string | null;
   paymentConfirmed: boolean;
+  contractorFastOption: string | null;
+  placementSkipped: boolean;
 }
 
 const INITIAL_STATE: FlowState = {
@@ -92,6 +96,8 @@ const INITIAL_STATE: FlowState = {
   hostedToken: null,
   hostedFormUrl: null,
   paymentConfirmed: false,
+  contractorFastOption: null,
+  placementSkipped: false,
 };
 
 const STORAGE_KEY = 'calsan_structured_chat_v1';
@@ -284,6 +290,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   const [zipError, setZipError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showRestoreBanner, setShowRestoreBanner] = useState(() => {
+    return persisted.current !== null && persisted.current.step !== 'zip';
+  });
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
@@ -374,7 +383,17 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
 
   const handleCustomerType = (type: CustomerType) => {
     logEvent('step_customer_type', { type });
+    // Contractor fast mode (feature-flagged)
+    if (type === 'contractor' && getFeatureFlag('ai_home.contractor_mode.enabled')) {
+      setState(prev => ({ ...prev, customerType: type, step: 'contractor-fast' }));
+      return;
+    }
     setState(prev => ({ ...prev, customerType: type, step: 'project' }));
+  };
+
+  const handleContractorFastOption = (option: string) => {
+    logEvent('contractor_fast_option', { option });
+    setState(prev => ({ ...prev, contractorFastOption: option, step: 'project' }));
   };
 
   const handleProject = (project: string) => {
@@ -1433,6 +1452,14 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                {getFeatureFlag('ai_home.placement.enabled') && !state.placementSkipped && (
+                  <ActionButton
+                    label="Choose Placement on Map"
+                    onClick={() => goTo('placement-offer')}
+                    variant="primary"
+                    icon={<MapPin className="w-4 h-4" />}
+                  />
+                )}
                 <ActionButton label="Start Over" onClick={resetConversation} variant="outline" />
               </div>
             </div>
@@ -1470,6 +1497,62 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           </SystemMessage>
         );
 
+      // ============================================================
+      // CONTRACTOR FAST OPTIONS
+      // ============================================================
+      case 'contractor-fast':
+        return (
+          <>
+            <UserBubble text="Contractor" />
+            <SystemMessage>
+              <p className="text-sm text-foreground mb-4">What type of service do you need?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <OptionButton label="Single Job Quote" onClick={() => handleContractorFastOption('single_job')} />
+                <OptionButton label="Multiple Dumpsters" onClick={() => handleContractorFastOption('multi_dumpster')} />
+                <OptionButton label="Recurring Service" onClick={() => handleContractorFastOption('recurring')} />
+                <OptionButton label="Live Load" onClick={() => handleContractorFastOption('live_load')} />
+                <OptionButton label="Custom Quote Request" onClick={() => handleContractorFastOption('custom')} />
+              </div>
+            </SystemMessage>
+          </>
+        );
+
+      // ============================================================
+      // PLACEMENT OFFER (after booking confirmation)
+      // ============================================================
+      case 'placement-offer':
+        return (
+          <SystemMessage>
+            <div className="text-center py-4">
+              <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-foreground">Mark Placement on Map</h3>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                Show us exactly where you want the dumpster placed on your property.
+                This helps our driver deliver to the right spot.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <ActionButton
+                  label="Choose Placement"
+                  onClick={() => {
+                    logEvent('placement_chosen');
+                    navigate(`/portal/quote/${state.orderId}?placement=1`);
+                  }}
+                  variant="primary"
+                  icon={<MapPin className="w-4 h-4" />}
+                />
+                <ActionButton
+                  label="Skip for Now"
+                  onClick={() => {
+                    logEvent('placement_skipped');
+                    setState(prev => ({ ...prev, placementSkipped: true, step: 'booking-confirm' }));
+                  }}
+                  variant="outline"
+                />
+              </div>
+            </div>
+          </SystemMessage>
+        );
+
       default:
         return null;
     }
@@ -1501,6 +1584,34 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           )}
         </div>
 
+        {/* Session Restore Banner */}
+        {showRestoreBanner && state.step === 'zip' && (
+          <div className="px-5 py-3 bg-muted/50 border-b border-[hsl(220_10%_93%)] flex items-center justify-between">
+            <p className="text-sm text-foreground">Continue where you left off?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  const restored = persisted.current;
+                  if (restored) setState(restored);
+                  setShowRestoreBanner(false);
+                }}
+                className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Continue
+              </button>
+              <button
+                onClick={() => {
+                  resetConversation();
+                  setShowRestoreBanner(false);
+                }}
+                className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Start over
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Progress */}
         <div className="px-5 pt-3">
           <Progress value={progress} className="h-1 bg-[hsl(220_10%_93%)]" />
@@ -1516,6 +1627,21 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           style={{ minHeight: '320px', maxHeight: 'calc(100vh - 380px)' }}
         >
           {renderStep()}
+        </div>
+
+        {/* Trust Microcopy */}
+        <div className="px-5 py-3 border-t border-[hsl(220_10%_93%)] bg-muted/20">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <Shield className="w-3 h-3" /> Licensed & Insured
+            </span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <MapPin className="w-3 h-3" /> Local Infrastructure
+            </span>
+            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <Check className="w-3 h-3" /> Transparent Pricing
+            </span>
+          </div>
         </div>
       </div>
     </div>
