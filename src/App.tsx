@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -813,6 +813,7 @@ const App = () => {
                   <Suspense fallback={<PageLoader />}><WorkflowsExplorer /></Suspense>
                 } />
                 {/* SEO Admin Routes */}
+                <Route path="seo" element={<Navigate to="/admin/seo/dashboard" replace />} />
                 <Route path="seo/dashboard" element={
                   <Suspense fallback={<PageLoader />}><SeoAdminDashboard /></Suspense>
                 } />
