@@ -47,10 +47,13 @@ export function HeroSectionPlatform() {
           >
             <motion.div variants={fadeInUp}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                Bay Area's Technology-Supported Dumpster Logistics Platform
+                Fast & Reliable Dumpster Rentals
+                <span className="block text-primary-foreground/80 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2">
+                  in Northern California
+                </span>
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
-                Structured dispatch. Transparent pricing. Real local yards.
+                Instant estimates. Contractor-friendly. Additional fees may apply for overages.
               </p>
             </motion.div>
 
