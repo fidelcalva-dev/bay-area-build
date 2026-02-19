@@ -1,202 +1,106 @@
+// ============================================================
+// CALSAN AI — Structured Conversation Engine
+// 8-step decision tree: ZIP → Type → Project → Material → Size → Price → Contact → Confirm
+// ============================================================
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send, Upload, Loader2, Phone, ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO } from '@/lib/shared-data';
+import { getPriceByZip } from '@/lib/price-list-data';
 
 // ============================================================
-// TYPES
+// TYPES & CONSTANTS
 // ============================================================
-
-type FlowMode = 'welcome' | 'ai' | 'photo_upload' | 'photo_analyzing' | 'dispatch' | 'callback_collect';
 
 export type ChatMode = 'default' | 'sales' | 'commercial' | 'contractor';
+
+type FlowStep = 'zip' | 'customer-type' | 'project' | 'material' | 'size' | 'price' | 'contact' | 'confirm';
+
+const STEPS: FlowStep[] = ['zip', 'customer-type', 'project', 'material', 'size', 'price', 'contact', 'confirm'];
 
 interface ConversationMessage {
   id: string;
   role: 'system' | 'user';
   content: string;
-  quickReplies?: string[];
-  isTyping?: boolean;
+  component?: React.ReactNode;
 }
 
-interface AIContext {
-  zip?: string;
-  material?: string;
-  size?: number;
-  projectType?: string;
-  customerType?: string;
-  heavy?: boolean;
-  urgencyScore?: number;
-  readinessScore?: number;
-  leadCreated?: boolean;
+type CustomerType = 'homeowner' | 'contractor' | 'commercial';
+
+interface FlowState {
+  step: FlowStep;
+  zip: string;
+  customerType: CustomerType | null;
+  projectType: string | null;
+  materialType: string | null;
+  heavy: boolean;
+  size: number | null;
+  price: number | null;
+  zipFound: boolean;
+  name: string;
+  phone: string;
+  email: string;
+  leadCreated: boolean;
 }
 
-interface PersistedState {
-  mode: FlowMode;
-  messages: ConversationMessage[];
-  context: AIContext;
-  callbackData: Record<string, string>;
-  aiHistory: { role: string; content: string }[];
-  timestamp: number;
-}
+const INITIAL_STATE: FlowState = {
+  step: 'zip',
+  zip: '',
+  customerType: null,
+  projectType: null,
+  materialType: null,
+  heavy: false,
+  size: null,
+  price: null,
+  zipFound: false,
+  name: '',
+  phone: '',
+  email: '',
+  leadCreated: false,
+};
 
-const STORAGE_KEY = 'calsan_ai_chat_v4';
+const STORAGE_KEY = 'calsan_structured_chat_v1';
 const STATE_TTL_MS = 30 * 60 * 1000;
-const ZIP_RE = /\b(9[0-5]\d{3})\b/;
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/calsan-dumpster-ai`;
 
-// ============================================================
-// PERSISTENCE
-// ============================================================
+// ---- Project types by customer ----
+const PROJECT_TYPES: Record<CustomerType, string[]> = {
+  homeowner: ['Home Cleanout', 'Remodel Debris', 'Yard Cleanup', 'Roofing', 'Other'],
+  contractor: ['Demo', 'Concrete', 'Dirt', 'Framing', 'Mixed Debris'],
+  commercial: ['Warehouse Cleanout', 'Ongoing Service', 'Construction', 'Large Project'],
+};
 
-function loadState(): PersistedState | null {
+const MATERIAL_TYPES = [
+  { id: 'general', label: 'General Debris', heavy: false },
+  { id: 'concrete', label: 'Concrete', heavy: true },
+  { id: 'dirt', label: 'Dirt / Soil', heavy: true },
+  { id: 'green', label: 'Green Waste', heavy: false },
+  { id: 'mixed_heavy', label: 'Mixed Heavy', heavy: true },
+];
+
+const GENERAL_SIZES = [10, 15, 20, 25, 30, 40];
+const HEAVY_SIZES = [8, 10];
+
+// ---- Persistence ----
+function loadState(): FlowState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const state: PersistedState = JSON.parse(raw);
-    if (Date.now() - state.timestamp > STATE_TTL_MS) {
-      localStorage.removeItem(STORAGE_KEY);
-      return null;
-    }
-    return state;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - (parsed._ts || 0) > STATE_TTL_MS) { localStorage.removeItem(STORAGE_KEY); return null; }
+    delete parsed._ts;
+    return parsed as FlowState;
   } catch { return null; }
 }
 
-function saveState(state: Omit<PersistedState, 'timestamp'>) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, timestamp: Date.now() }));
-  } catch { /* silent */ }
+function saveState(state: FlowState) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, _ts: Date.now() })); } catch {}
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-
-function parseQuickReplies(text: string): { clean: string; replies: string[] } {
-  const match = text.match(/\[QUICK_REPLIES:\s*\[([^\]]+)\]\]/);
-  if (!match) return { clean: text, replies: [] };
-  const clean = text.replace(/\[QUICK_REPLIES:\s*\[[^\]]+\]\]/, '').trim();
-  const replies = match[1].split(',').map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
-  return { clean, replies };
-}
-
-function extractContext(text: string, existing: AIContext): AIContext {
-  const updated = { ...existing };
-  const lower = text.toLowerCase();
-  const zipMatch = text.match(ZIP_RE);
-  if (zipMatch) updated.zip = zipMatch[1];
-  if (/concrete|dirt|brick|asphalt|rock|soil|gravel/.test(lower)) { updated.material = 'heavy'; updated.heavy = true; }
-  else if (/debris|trash|junk|furniture|wood|drywall|shingle|roofing/.test(lower)) updated.material = 'general';
-  if (/kitchen|bathroom|remodel/.test(lower)) updated.projectType = 'remodel';
-  else if (/garage|cleanout|clean.?out/.test(lower)) updated.projectType = 'cleanout';
-  else if (/roof/.test(lower)) updated.projectType = 'roofing';
-  else if (/demo|demolition/.test(lower)) updated.projectType = 'demolition';
-  else if (/yard|landscap/.test(lower)) updated.projectType = 'landscaping';
-  else if (/construction/.test(lower)) updated.projectType = 'construction';
-  if (/contractor/.test(lower)) updated.customerType = 'contractor';
-  else if (/commercial|business|company/.test(lower)) updated.customerType = 'commercial';
-  else if (/homeowner|home.?owner|my home|my house/.test(lower)) updated.customerType = 'homeowner';
-  const sizeMatch = lower.match(/(\d{1,2})\s*(?:yard|yd)/);
-  if (sizeMatch) updated.size = parseInt(sizeMatch[1]);
-  if (/today|asap|urgent|immediately|right now|tomorrow/.test(lower)) updated.urgencyScore = (updated.urgencyScore || 0) + 30;
-  if (/ready|book|reserve|schedule|pay/.test(lower)) updated.readinessScore = (updated.readinessScore || 0) + 20;
-  return updated;
-}
-
-// ============================================================
-// STREAMING
-// ============================================================
-
-async function streamAI({
-  messages, context, onDelta, onDone,
-}: {
-  messages: { role: string; content: string }[];
-  context: AIContext;
-  onDelta: (text: string) => void;
-  onDone: (fullText: string) => void;
-}) {
-  const resp = await fetch(CHAT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-    },
-    body: JSON.stringify({ messages, context }),
-  });
-
-  if (!resp.ok || !resp.body) {
-    if (resp.status === 429) throw new Error('rate_limited');
-    if (resp.status === 402) throw new Error('payment_required');
-    throw new Error('ai_error');
-  }
-
-  const reader = resp.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let fullText = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let idx: number;
-    while ((idx = buffer.indexOf('\n')) !== -1) {
-      let line = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 1);
-      if (line.endsWith('\r')) line = line.slice(0, -1);
-      if (line.startsWith(':') || line.trim() === '') continue;
-      if (!line.startsWith('data: ')) continue;
-      const json = line.slice(6).trim();
-      if (json === '[DONE]') break;
-      try {
-        const c = JSON.parse(json).choices?.[0]?.delta?.content;
-        if (c) { fullText += c; onDelta(c); }
-      } catch {
-        buffer = line + '\n' + buffer;
-        break;
-      }
-    }
-  }
-
-  if (buffer.trim()) {
-    for (let raw of buffer.split('\n')) {
-      if (!raw || !raw.startsWith('data: ')) continue;
-      const json = raw.slice(6).trim();
-      if (json === '[DONE]') continue;
-      try {
-        const c = JSON.parse(json).choices?.[0]?.delta?.content;
-        if (c) { fullText += c; onDelta(c); }
-      } catch { /* ignore */ }
-    }
-  }
-  onDone(fullText);
-}
-
-async function ensureLeadIngested(ctx: AIContext, source: string) {
-  try {
-    await supabase.functions.invoke('lead-ingest', {
-      body: {
-        source_channel: 'AI_ASSISTANT',
-        source_detail: source,
-        zip_code: ctx.zip || null,
-        notes: [
-          ctx.projectType ? `Project: ${ctx.projectType}` : null,
-          ctx.material ? `Material: ${ctx.material}` : null,
-          ctx.size ? `Size: ${ctx.size}yd` : null,
-          ctx.heavy ? 'Heavy material flag' : null,
-        ].filter(Boolean).join('. '),
-      },
-    });
-  } catch { /* silent */ }
-}
-
-// ============================================================
-// SESSION TRACKER
-// ============================================================
-
+// ---- Session Tracker ----
 function useSessionTracker() {
   const startTime = useRef(Date.now());
   const logEvent = useCallback(async (eventType: string, meta?: Record<string, unknown>) => {
@@ -208,37 +112,47 @@ function useSessionTracker() {
         utm_source: params.get('utm_source'),
         utm_medium: params.get('utm_medium'),
         utm_campaign: params.get('utm_campaign'),
-        utm_content: params.get('utm_content'),
-        utm_term: params.get('utm_term'),
         referrer: document.referrer || null,
         user_agent: navigator.userAgent,
         metadata: meta ? JSON.parse(JSON.stringify(meta)) : null,
       });
-    } catch { /* silent */ }
+    } catch {}
   }, []);
   return { logEvent };
 }
 
-// ============================================================
-// QUICK ACTION BUTTONS
-// ============================================================
+// ---- ZIP Validation ----
+const ZIP_RE = /^9[0-5]\d{3}$/;
 
-const QUICK_ACTIONS = [
-  { id: 'quote', label: 'Instant Quote', msg: 'I want to get an instant price for a dumpster rental.' },
-  { id: 'photo', label: 'Upload Photo', msg: '' },
-  { id: 'schedule', label: 'Schedule Delivery', msg: 'I want to schedule a dumpster delivery.' },
-  { id: 'speak', label: 'Speak to Team', msg: '' },
-];
+function getMaterialCategory(materialType: string | null, heavy: boolean): string {
+  if (!materialType) return 'GENERAL';
+  if (materialType === 'concrete') return 'CLEAN_CONCRETE';
+  if (materialType === 'dirt') return 'CLEAN_SOIL';
+  if (materialType === 'mixed_heavy') return 'MIX';
+  if (heavy) return 'CLEAN_SOIL';
+  return 'GENERAL';
+}
 
-// ============================================================
-// WELCOME MESSAGE
-// ============================================================
+function getSizeRecommendation(projectType: string | null, heavy: boolean): number {
+  if (heavy) return 10;
+  if (!projectType) return 20;
+  const p = projectType.toLowerCase();
+  if (p.includes('cleanout') || p.includes('yard')) return 15;
+  if (p.includes('remodel') || p.includes('framing')) return 20;
+  if (p.includes('roofing')) return 20;
+  if (p.includes('demo') || p.includes('construction') || p.includes('warehouse') || p.includes('large')) return 30;
+  return 20;
+}
 
-const WELCOME_MESSAGE: ConversationMessage = {
-  id: 'welcome-0',
-  role: 'system',
-  content: 'Welcome to Calsan Dumpsters Pro.\n\nTell me your ZIP code and I\'ll calculate your exact pricing.',
-};
+function getIncludedTons(size: number, heavy: boolean): number {
+  if (heavy) return size === 8 ? 4 : 5;
+  if (size <= 10) return 1;
+  if (size <= 15) return 2;
+  if (size <= 20) return 3;
+  if (size <= 25) return 3;
+  if (size <= 30) return 4;
+  return 5;
+}
 
 // ============================================================
 // COMPONENT
@@ -251,450 +165,520 @@ interface CalsanAIChatProps {
 
 export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatProps) {
   const persisted = useRef(loadState());
-  const [mode, setMode] = useState<FlowMode>(persisted.current?.mode || 'welcome');
-  const [messages, setMessages] = useState<ConversationMessage[]>(
-    persisted.current?.messages || [WELCOME_MESSAGE]
-  );
-  const [aiContext, setAIContext] = useState<AIContext>(
-    persisted.current?.context || (chatMode === 'contractor' ? { customerType: 'contractor' } : {})
-  );
-  const [aiHistory, setAIHistory] = useState<{ role: string; content: string }[]>(
-    persisted.current?.aiHistory || []
-  );
-  const [callbackData, setCallbackData] = useState<Record<string, string>>(
-    persisted.current?.callbackData || {}
-  );
-  const [input, setInput] = useState('');
+  const [state, setState] = useState<FlowState>(() => {
+    const initial = persisted.current || { ...INITIAL_STATE };
+    if (chatMode === 'contractor' && !initial.customerType) initial.customerType = 'contractor';
+    if (chatMode === 'commercial' && !initial.customerType) initial.customerType = 'commercial';
+    return initial;
+  });
+  const [zipInput, setZipInput] = useState(state.zip || '');
+  const [nameInput, setNameInput] = useState(state.name || '');
+  const [phoneInput, setPhoneInput] = useState(state.phone || '');
+  const [emailInput, setEmailInput] = useState(state.email || '');
   const [loading, setLoading] = useState(false);
-  const [streaming, setStreaming] = useState(false);
+  const [zipError, setZipError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [showWelcome, setShowWelcome] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { logEvent } = useSessionTracker();
 
-  // Persist state
+  // Autosave
+  useEffect(() => { saveState(state); }, [state]);
+
+  // Welcome animation
   useEffect(() => {
-    saveState({ mode, messages, context: aiContext, callbackData, aiHistory });
-  }, [mode, messages, aiContext, callbackData, aiHistory]);
+    const t = setTimeout(() => setShowWelcome(true), 300);
+    return () => clearTimeout(t);
+  }, []);
 
   // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages, loading, streaming]);
+  }, [state.step]);
 
-  // Typing animation for welcome
-  const [showWelcome, setShowWelcome] = useState(false);
-  useEffect(() => {
-    if (!persisted.current) {
-      const t = setTimeout(() => setShowWelcome(true), 400);
-      return () => clearTimeout(t);
-    }
-    setShowWelcome(true);
-  }, []);
+  const stepIndex = STEPS.indexOf(state.step);
+  const progress = Math.round(((stepIndex + 1) / STEPS.length) * 100);
 
-  const addSystem = useCallback((content: string, quickReplies?: string[]) => {
-    setMessages(prev => [...prev, { id: `s-${Date.now()}-${Math.random()}`, role: 'system', content, quickReplies }]);
-  }, []);
+  const goTo = (step: FlowStep) => setState(prev => ({ ...prev, step }));
 
-  const addUser = useCallback((content: string) => {
-    setMessages(prev => [...prev, { id: `u-${Date.now()}-${Math.random()}`, role: 'user', content }]);
-  }, []);
+  const canGoBack = stepIndex > 0 && state.step !== 'confirm';
+
+  const goBack = () => {
+    if (stepIndex > 0) goTo(STEPS[stepIndex - 1]);
+  };
 
   const resetConversation = useCallback(() => {
-    setMode('welcome');
-    setMessages([WELCOME_MESSAGE]);
-    setAIContext({});
-    setAIHistory([]);
-    setCallbackData({});
-    setShowWelcome(true);
+    setState({ ...INITIAL_STATE });
+    setZipInput('');
+    setNameInput('');
+    setPhoneInput('');
+    setEmailInput('');
+    setZipError('');
+    setPhoneError('');
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  // AI Send
-  const sendToAI = useCallback(async (userText: string, contextOverride?: AIContext) => {
-    const ctx = contextOverride || aiContext;
-    const newHistory = [...aiHistory, { role: 'user', content: userText }];
-    setAIHistory(newHistory);
-    setStreaming(true);
-    setLoading(true);
+  // ---- Step Handlers ----
 
-    const streamMsgId = `s-stream-${Date.now()}`;
-    setMessages(prev => [...prev, { id: streamMsgId, role: 'system', content: '' }]);
+  const handleZipSubmit = async () => {
+    const zip = zipInput.trim();
+    if (!ZIP_RE.test(zip)) { setZipError('Please enter a valid 5-digit ZIP code.'); return; }
+    setZipError('');
+    setLoading(true);
+    logEvent('step_zip', { zip });
+
+    // Validate service area via price lookup
+    const result = getPriceByZip(zip, 20, 'GENERAL');
+    setLoading(false);
+
+    if (!result.zipFound || result.price === 0) {
+      setZipError('This ZIP code is outside our current service area. Call us for a custom quote.');
+      return;
+    }
+
+    setState(prev => ({ ...prev, zip, zipFound: true, step: 'customer-type' }));
+  };
+
+  const handleCustomerType = (type: CustomerType) => {
+    logEvent('step_customer_type', { type });
+    setState(prev => ({ ...prev, customerType: type, step: 'project' }));
+  };
+
+  const handleProject = (project: string) => {
+    logEvent('step_project', { project });
+    setState(prev => ({ ...prev, projectType: project, step: 'material' }));
+  };
+
+  const handleMaterial = (id: string) => {
+    const mat = MATERIAL_TYPES.find(m => m.id === id);
+    const heavy = mat?.heavy || false;
+    logEvent('step_material', { material: id, heavy });
+    setState(prev => ({ ...prev, materialType: id, heavy, step: 'size' }));
+  };
+
+  const handleSize = (size: number) => {
+    const category = getMaterialCategory(state.materialType, state.heavy);
+    const result = getPriceByZip(state.zip, size, category);
+    logEvent('step_size', { size, price: result.price });
+    setState(prev => ({ ...prev, size, price: result.price, step: 'price' }));
+  };
+
+  const handleChangeSize = () => goTo('size');
+
+  const handleReserve = () => goTo('contact');
+
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const handleContactSubmit = async () => {
+    const name = nameInput.trim();
+    const phone = phoneInput.replace(/\D/g, '');
+    if (!name) return;
+    if (phone.length < 10) { setPhoneError('Please enter a valid phone number.'); return; }
+    setPhoneError('');
+    setLoading(true);
+    logEvent('step_contact', { hasEmail: !!emailInput.trim() });
 
     try {
-      await streamAI({
-        messages: newHistory,
-        context: ctx,
-        onDelta: (chunk) => {
-          setMessages(prev => prev.map(m => m.id === streamMsgId ? { ...m, content: m.content + chunk } : m));
-        },
-        onDone: (fullText) => {
-          const { clean, replies } = parseQuickReplies(fullText);
-          setMessages(prev => prev.map(m => m.id === streamMsgId ? { ...m, content: clean, quickReplies: replies.length > 0 ? replies : undefined } : m));
-          setAIHistory(h => [...h, { role: 'assistant', content: fullText }]);
-          if (ctx.zip && !ctx.leadCreated) {
-            ensureLeadIngested(ctx, 'ai_conversation');
-            setAIContext(prev => ({ ...prev, leadCreated: true }));
-          }
+      await supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'AI_ASSISTANT',
+          source_detail: 'structured_flow',
+          customer_name: name,
+          phone: phoneInput,
+          email: emailInput.trim() || null,
+          zip_code: state.zip,
+          notes: [
+            `Type: ${state.customerType}`,
+            `Project: ${state.projectType}`,
+            `Material: ${MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || state.materialType}`,
+            `Size: ${state.size}yd`,
+            `Price: $${state.price}`,
+          ].join('. '),
+          priority: 'MEDIUM',
         },
       });
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : 'unknown';
-      let fallback = 'Our system is temporarily unavailable. Please call us at (510) 680-2150.';
-      if (errMsg === 'rate_limited') fallback = 'We are experiencing high volume. Please try again in a moment.';
-      setMessages(prev => prev.map(m => m.id === streamMsgId ? { ...m, content: fallback } : m));
-    } finally {
-      setLoading(false);
-      setStreaming(false);
-    }
-  }, [aiContext, aiHistory]);
+    } catch { /* silent */ }
 
-  // Quick Action Handler
-  const handleQuickAction = useCallback((actionId: string) => {
-    const action = QUICK_ACTIONS.find(a => a.id === actionId);
-    if (!action) return;
-    logEvent('quick_action_clicked', { action: actionId });
+    setState(prev => ({
+      ...prev,
+      name, phone: phoneInput, email: emailInput.trim(),
+      leadCreated: true, step: 'confirm',
+    }));
+    setLoading(false);
+  };
 
-    if (actionId === 'photo') {
-      addUser('Upload a Photo for Recommendation');
-      addSystem('Upload a photo of your debris or project area.');
-      setMode('photo_upload');
-      return;
-    }
+  // ============================================================
+  // RENDER HELPERS
+  // ============================================================
 
-    if (actionId === 'speak') {
-      addUser('Speak to Team');
-      addSystem('Call us directly or request a callback.');
-      setMode('dispatch');
-      return;
-    }
+  const SystemMessage = ({ children, animate = true }: { children: React.ReactNode; animate?: boolean }) => (
+    <div className={cn(
+      "space-y-3",
+      animate && "animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+    )}>
+      <div className="bg-[hsl(220_10%_97%)] rounded-xl px-4 py-3 max-w-[95%] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        {children}
+      </div>
+    </div>
+  );
 
-    addUser(action.label);
-    setMode('ai');
-    sendToAI(action.msg, aiContext);
-  }, [logEvent, addUser, addSystem, aiContext, sendToAI]);
+  const OptionButton = ({ label, onClick, active }: { label: string; onClick: () => void; active?: boolean }) => (
+    <button
+      onClick={onClick}
+      className={cn(
+        "px-4 py-2.5 border rounded-xl text-sm font-medium transition-all duration-200 text-left",
+        active
+          ? "border-primary bg-primary/5 text-primary"
+          : "border-[hsl(220_10%_90%)] text-foreground hover:border-primary/30 hover:bg-primary/[0.03]"
+      )}
+    >
+      {label}
+    </button>
+  );
 
-  // Text Submit
-  const handleSubmit = useCallback(async () => {
-    const text = input.trim();
-    if (!text || loading || streaming) return;
-    setInput('');
-    addUser(text);
+  const ActionButton = ({ label, onClick, variant = 'primary', disabled, icon }: {
+    label: string; onClick: () => void; variant?: 'primary' | 'outline' | 'ghost';
+    disabled?: boolean; icon?: React.ReactNode;
+  }) => (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      variant={variant === 'primary' ? 'default' : variant === 'outline' ? 'outline' : 'ghost'}
+      className={cn(
+        "rounded-xl h-11",
+        variant === 'primary' && "bg-primary text-primary-foreground hover:bg-primary/90",
+        variant === 'outline' && "border-[hsl(220_10%_90%)]",
+      )}
+    >
+      {icon && <span className="mr-2">{icon}</span>}
+      {label}
+    </Button>
+  );
 
-    if (mode === 'welcome') {
-      setMode('ai');
-      const newCtx = extractContext(text, aiContext);
-      setAIContext(newCtx);
-      sendToAI(text, newCtx);
-      return;
-    }
+  // ============================================================
+  // STEP RENDERS
+  // ============================================================
 
-    if (mode === 'ai') {
-      const newCtx = extractContext(text, aiContext);
-      setAIContext(newCtx);
-      sendToAI(text, newCtx);
-      return;
-    }
+  const renderStep = () => {
+    switch (state.step) {
+      case 'zip':
+        return (
+          <SystemMessage>
+            <p className="text-sm text-foreground leading-relaxed">
+              {showWelcome
+                ? 'Welcome to Calsan Dumpsters Pro.\n\nPlease enter your ZIP code so I can calculate exact pricing.'
+                : ''}
+            </p>
+            {showWelcome && (
+              <div className="mt-4 flex gap-2">
+                <input
+                  value={zipInput}
+                  onChange={(e) => { setZipInput(e.target.value.replace(/\D/g, '').slice(0, 5)); setZipError(''); }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleZipSubmit()}
+                  placeholder="Enter ZIP code"
+                  className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+                  maxLength={5}
+                  autoFocus
+                  inputMode="numeric"
+                />
+                <Button
+                  onClick={handleZipSubmit}
+                  disabled={zipInput.length !== 5 || loading}
+                  className="h-11 rounded-xl bg-primary hover:bg-primary/90 px-5"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                </Button>
+              </div>
+            )}
+            {zipError && <p className="mt-2 text-xs text-destructive">{zipError}</p>}
+            {zipError && zipError.includes('outside') && (
+              <div className="mt-3">
+                <Button asChild variant="outline" className="rounded-xl h-10 text-sm border-[hsl(220_10%_90%)]">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                    <Phone className="w-3.5 h-3.5 mr-2" /> Call for Custom Quote
+                  </a>
+                </Button>
+              </div>
+            )}
+          </SystemMessage>
+        );
 
-    if (mode === 'callback_collect') {
-      if (!callbackData.name) {
-        setCallbackData(p => ({ ...p, name: text }));
-        addSystem('What is your phone number?');
-      } else if (!callbackData.phone) {
-        setCallbackData(p => ({ ...p, phone: text }));
-        addSystem('And your ZIP code? (optional, type "skip" to skip)');
-      } else {
-        const zip = text.toLowerCase() !== 'skip' ? text : undefined;
-        setLoading(true);
-        try {
-          await supabase.functions.invoke('lead-ingest', {
-            body: {
-              source_channel: 'AI_ASSISTANT',
-              source_detail: 'callback_request',
-              customer_name: callbackData.name,
-              phone: callbackData.phone,
-              zip_code: zip || null,
-              notes: 'Callback requested via AI Chat',
-              priority: 'HIGH',
-            },
-          });
-          logEvent('callback_submitted', { zip });
-          addSystem('Your request has been submitted. A team member will contact you shortly.', ['Get Instant Quote', 'Start Over']);
-        } catch {
-          addSystem('Something went wrong. Please call us directly at (510) 680-2150.');
-        } finally {
-          setLoading(false);
-        }
+      case 'customer-type':
+        return (
+          <>
+            <UserBubble text={state.zip} />
+            <SystemMessage>
+              <p className="text-sm text-foreground mb-4">
+                Service confirmed for {state.zip}. Which best describes you?
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <OptionButton label="Homeowner" onClick={() => handleCustomerType('homeowner')} />
+                <OptionButton label="Contractor" onClick={() => handleCustomerType('contractor')} />
+                <OptionButton label="Commercial" onClick={() => handleCustomerType('commercial')} />
+              </div>
+            </SystemMessage>
+          </>
+        );
+
+      case 'project':
+        return (
+          <>
+            <UserBubble text={state.customerType === 'homeowner' ? 'Homeowner' : state.customerType === 'contractor' ? 'Contractor' : 'Commercial'} />
+            <SystemMessage>
+              <p className="text-sm text-foreground mb-4">What type of project is this?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {PROJECT_TYPES[state.customerType!].map(p => (
+                  <OptionButton key={p} label={p} onClick={() => handleProject(p)} />
+                ))}
+              </div>
+            </SystemMessage>
+          </>
+        );
+
+      case 'material':
+        return (
+          <>
+            <UserBubble text={state.projectType!} />
+            <SystemMessage>
+              <p className="text-sm text-foreground mb-4">What material are you disposing?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {MATERIAL_TYPES.map(m => (
+                  <OptionButton key={m.id} label={m.label} onClick={() => handleMaterial(m.id)} />
+                ))}
+              </div>
+            </SystemMessage>
+          </>
+        );
+
+      case 'size': {
+        const recommended = getSizeRecommendation(state.projectType, state.heavy);
+        const availableSizes = state.heavy ? HEAVY_SIZES : GENERAL_SIZES;
+        const materialLabel = MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || '';
+
+        return (
+          <>
+            <UserBubble text={materialLabel} />
+            <SystemMessage>
+              {state.heavy && (
+                <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2 mb-4">
+                  <p className="text-xs text-foreground font-medium">Heavy Material Notice</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Heavy materials are restricted to 6-10 yard containers with mandatory fill-line compliance.
+                  </p>
+                </div>
+              )}
+              <p className="text-sm text-foreground mb-4">Select your dumpster size:</p>
+              <div className="grid grid-cols-1 gap-2">
+                {availableSizes.map(s => {
+                  const isRecommended = s === recommended;
+                  const category = getMaterialCategory(state.materialType, state.heavy);
+                  const { price } = getPriceByZip(state.zip, s, category);
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => handleSize(s)}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-3 border rounded-xl text-sm transition-all duration-200 text-left",
+                        isRecommended
+                          ? "border-primary bg-primary/5"
+                          : "border-[hsl(220_10%_90%)] hover:border-primary/30 hover:bg-primary/[0.03]"
+                      )}
+                    >
+                      <div>
+                        <span className="font-medium text-foreground">{s} Yard</span>
+                        {isRecommended && (
+                          <span className="ml-2 text-xs text-primary font-medium">Recommended</span>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {getIncludedTons(s, state.heavy)} tons included &middot; 7-day rental
+                        </p>
+                      </div>
+                      <span className="font-semibold text-foreground">${price}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </SystemMessage>
+          </>
+        );
       }
-    }
-  }, [input, loading, streaming, mode, aiContext, callbackData, addUser, addSystem, sendToAI, logEvent]);
 
-  // Quick Reply Handler
-  const handleQuickReply = useCallback((reply: string) => {
-    const lower = reply.toLowerCase();
-    if (lower === 'start over') { resetConversation(); return; }
-    if (lower.includes('reserve now') || lower.includes('continue to booking') || lower.includes('schedule delivery')) {
-      logEvent('routed_to_quote', { zip: aiContext.zip });
-      const params = new URLSearchParams({ v3: '1' });
-      if (aiContext.zip) params.set('zip', aiContext.zip);
-      if (aiContext.size) params.set('size', String(aiContext.size));
-      if (aiContext.material) params.set('material', aiContext.material);
-      navigate(`/quote?${params.toString()}`);
-      return;
-    }
-    if (lower.includes('call') && lower.includes('510')) {
-      window.location.href = `tel:${BUSINESS_INFO.phone.sales}`;
-      return;
-    }
-    if (lower === 'request callback') {
-      addUser(reply);
-      addSystem('What is your name?');
-      setMode('callback_collect');
-      setCallbackData({});
-      return;
-    }
-    if (lower.includes('instant') && lower.includes('quote')) {
-      const params = new URLSearchParams({ v3: '1' });
-      if (aiContext.zip) params.set('zip', aiContext.zip);
-      navigate(`/quote?${params.toString()}`);
-      return;
-    }
-    if (lower === 'compare sizes') { navigate('/sizes'); return; }
+      case 'price': {
+        const materialLabel = MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || 'General Debris';
+        const tons = getIncludedTons(state.size!, state.heavy);
 
-    addUser(reply);
-    if (mode !== 'ai') setMode('ai');
-    const newCtx = extractContext(reply, aiContext);
-    setAIContext(newCtx);
-    sendToAI(reply, newCtx);
-  }, [aiContext, navigate, resetConversation, addUser, addSystem, sendToAI, logEvent, mode]);
+        return (
+          <>
+            <UserBubble text={`${state.size} Yard`} />
+            <SystemMessage>
+              <div className="border border-[hsl(220_10%_90%)] rounded-xl p-4 bg-white">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">{state.size} Yard Dumpster</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{materialLabel} &middot; {state.zip}</p>
+                  </div>
+                  <span className="text-2xl font-bold text-foreground">${state.price}</span>
+                </div>
+                <div className="space-y-1.5 mb-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Check className="w-3.5 h-3.5 text-primary" /> Delivery and pickup included
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Check className="w-3.5 h-3.5 text-primary" /> 7-day rental period
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Check className="w-3.5 h-3.5 text-primary" /> {tons} ton{tons > 1 ? 's' : ''} disposal included
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Check className="w-3.5 h-3.5 text-primary" /> Overage: $165/ton beyond included weight
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <ActionButton label="Reserve This Dumpster" onClick={handleReserve} variant="primary" icon={<ArrowRight className="w-4 h-4" />} />
+                <ActionButton label="Change Size" onClick={handleChangeSize} variant="outline" />
+                <Button asChild variant="ghost" className="rounded-xl h-11 text-sm">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                    <Phone className="w-3.5 h-3.5 mr-2" /> Call Instead
+                  </a>
+                </Button>
+              </div>
+            </SystemMessage>
+          </>
+        );
+      }
 
-  // Photo Upload
-  const handleFileUpload = useCallback(async (files: FileList) => {
-    const file = files[0];
-    if (!file) return;
-    setLoading(true);
-    setMode('photo_analyzing');
-    logEvent('photo_uploaded');
-    addSystem('Analyzing your photo...');
+      case 'contact':
+        return (
+          <SystemMessage>
+            <p className="text-sm text-foreground mb-1 font-medium">You are 1 step away from confirmation.</p>
+            <p className="text-xs text-muted-foreground mb-4">We will reach out shortly to finalize your delivery.</p>
+            <div className="space-y-3">
+              <input
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                placeholder="Your name *"
+                className="w-full bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+                autoFocus
+              />
+              <div>
+                <input
+                  value={phoneInput}
+                  onChange={(e) => { setPhoneInput(formatPhone(e.target.value)); setPhoneError(''); }}
+                  placeholder="Phone number *"
+                  type="tel"
+                  className="w-full bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+                />
+                {phoneError && <p className="mt-1 text-xs text-destructive">{phoneError}</p>}
+              </div>
+              <input
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="Email (optional)"
+                type="email"
+                className="w-full bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+              />
+              <Button
+                onClick={handleContactSubmit}
+                disabled={!nameInput.trim() || phoneInput.replace(/\D/g, '').length < 10 || loading}
+                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit'}
+              </Button>
+            </div>
+          </SystemMessage>
+        );
 
-    try {
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve((e.target?.result as string).split(',')[1]);
-        reader.readAsDataURL(file);
-      });
-      const { data, error } = await supabase.functions.invoke('analyze-waste', { body: { images: [base64] } });
-      if (error) throw error;
+      case 'confirm':
+        return (
+          <SystemMessage>
+            <div className="text-center py-4">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <Check className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-base font-semibold text-foreground">Request Submitted</h3>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                A team member will contact you shortly to finalize your {state.size}-yard dumpster rental for {state.zip}.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <ActionButton
+                  label="Continue to Booking"
+                  onClick={() => {
+                    const params = new URLSearchParams({ v3: '1' });
+                    if (state.zip) params.set('zip', state.zip);
+                    if (state.size) params.set('size', String(state.size));
+                    if (state.materialType) params.set('material', state.materialType);
+                    navigate(`/quote?${params.toString()}`);
+                  }}
+                  variant="primary"
+                  icon={<ArrowRight className="w-4 h-4" />}
+                />
+                <ActionButton label="Start Over" onClick={resetConversation} variant="outline" />
+              </div>
+            </div>
+          </SystemMessage>
+        );
 
-      const size = data?.recommendation?.recommendedSize || 20;
-      const material = data?.recommendation?.materialCategory || 'general';
-      const confidence = data?.recommendation?.confidence || 0.8;
-      const newCtx: AIContext = { ...aiContext, size, material: material === 'heavy' ? 'heavy' : 'general', heavy: material === 'heavy' };
-      setAIContext(newCtx);
-      setMessages(prev => {
-        const filtered = prev.filter(m => m.content !== 'Analyzing your photo...');
-        return [...filtered, {
-          id: `s-photo-${Date.now()}`, role: 'system' as const,
-          content: `Analysis complete. The material appears to be ${material}. A ${size}-yard dumpster is recommended (${Math.round(confidence * 100)}% confidence).${material === 'heavy' ? '\n\nHeavy materials require smaller containers with fill-line compliance.' : ''}`,
-          quickReplies: ['See Exact Pricing', 'Compare Sizes', 'Upload Another Photo'],
-        }];
-      });
-      ensureLeadIngested(newCtx, 'photo_analysis');
-      setMode('ai');
-    } catch {
-      setMessages(prev => prev.filter(m => m.content !== 'Analyzing your photo...'));
-      addSystem('For mixed debris cleanouts, a 20-yard dumpster is most common. Enter your ZIP code to see exact pricing.', ['See Exact Pricing', 'Compare Sizes']);
-      setAIContext(prev => ({ ...prev, size: 20, material: 'general' }));
-      setMode('ai');
-    } finally {
-      setLoading(false);
+      default:
+        return null;
     }
-  }, [logEvent, addSystem, aiContext]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
   };
 
-  const showQuickActions = mode === 'welcome' && showWelcome;
-  const showInput = mode === 'welcome' || mode === 'ai' || mode === 'callback_collect';
-  const showPhotoUpload = mode === 'photo_upload';
-  const showDispatch = mode === 'dispatch';
-
-  const getPlaceholder = () => {
-    if (mode === 'callback_collect') {
-      if (!callbackData.name) return 'Your name...';
-      if (!callbackData.phone) return 'Your phone number...';
-      return 'ZIP code (or type "skip")...';
-    }
-    return 'Tell us your ZIP code or describe your project...';
-  };
+  const UserBubble = ({ text }: { text: string }) => (
+    <div className="flex justify-end animate-in fade-in-0 slide-in-from-bottom-2 duration-200">
+      <div className="bg-[hsl(220_10%_92%)] rounded-xl px-4 py-2.5 max-w-[85%]">
+        <p className="text-sm text-foreground">{text}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className={cn("w-full max-w-[850px] mx-auto", className)}>
-      {/* Chat Container */}
       <div className="bg-white rounded-2xl shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] border border-[hsl(220_10%_93%)] overflow-hidden">
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-[hsl(220_10%_93%)] flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {canGoBack && (
+              <button onClick={goBack} className="p-1.5 -ml-1.5 rounded-lg hover:bg-muted/50 transition-colors">
+                <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <span className="text-xs font-bold text-primary-foreground">C</span>
             </div>
             <div>
               <span className="text-sm font-semibold text-foreground">Calsan</span>
-              <span className="text-xs text-muted-foreground ml-2">
-                {mode === 'ai' || mode === 'welcome' ? 'Dumpster Advisor' : ''}
-              </span>
+              <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
             </div>
           </div>
-          {mode !== 'welcome' && (
+          {state.step !== 'zip' && state.step !== 'confirm' && (
             <button onClick={resetConversation} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              New conversation
+              Start over
             </button>
           )}
         </div>
 
-        {/* Messages */}
+        {/* Progress */}
+        <div className="px-5 pt-3">
+          <Progress value={progress} className="h-1 bg-[hsl(220_10%_93%)]" />
+          <p className="text-[10px] text-muted-foreground mt-1.5 text-right">
+            Step {stepIndex + 1} of {STEPS.length}
+          </p>
+        </div>
+
+        {/* Conversation Area */}
         <div
           ref={scrollRef}
           className="px-5 py-5 overflow-y-auto space-y-4"
           style={{ minHeight: '320px', maxHeight: 'calc(100vh - 380px)' }}
         >
-          {messages.map((msg, i) => (
-            <div key={msg.id} className={cn(
-              "space-y-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300",
-              i === 0 && !showWelcome && 'opacity-0'
-            )}>
-              <div className={cn('text-sm leading-relaxed', msg.role === 'user' ? 'flex justify-end' : '')}>
-                {msg.role === 'system' ? (
-                  <div className="bg-[hsl(220_10%_97%)] rounded-xl px-4 py-3 max-w-[90%] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-                    <p className="text-foreground whitespace-pre-line">{msg.content}</p>
-                  </div>
-                ) : (
-                  <div className="bg-[hsl(220_10%_92%)] rounded-xl px-4 py-3 max-w-[85%]">
-                    <p className="text-foreground">{msg.content}</p>
-                  </div>
-                )}
-              </div>
-              {msg.quickReplies && msg.quickReplies.length > 0 && (
-                <div className="flex flex-wrap gap-2 pl-1">
-                  {msg.quickReplies.map((reply) => (
-                    <button
-                      key={reply}
-                      onClick={() => handleQuickReply(reply)}
-                      className="px-3 py-1.5 border border-[hsl(220_10%_90%)] rounded-lg text-xs font-medium text-foreground hover:border-primary/40 hover:bg-primary/5 transition-all duration-200"
-                    >
-                      {reply}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {(loading && !streaming) && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce [animation-delay:300ms]" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Quick Actions (Welcome state only) */}
-        {showQuickActions && (
-          <div className="px-5 pb-2">
-            <div className="flex flex-wrap gap-2 md:grid md:grid-cols-4 md:gap-3">
-              {QUICK_ACTIONS.map((action) => (
-                <button
-                  key={action.id}
-                  onClick={() => handleQuickAction(action.id)}
-                  className="flex-1 min-w-[140px] px-4 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-sm font-medium text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all duration-200 text-center"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Input Area */}
-        <div className="border-t border-[hsl(220_10%_93%)] px-5 py-4 bg-[hsl(210_20%_99%)]">
-          {showInput && (
-            <div className="relative flex items-center gap-2">
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={getPlaceholder()}
-                className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
-                disabled={loading || streaming}
-                autoFocus
-              />
-              <Button
-                onClick={handleSubmit}
-                disabled={!input.trim() || loading || streaming}
-                size="icon"
-                className="h-11 w-11 shrink-0 rounded-xl bg-primary hover:bg-primary/90 transition-colors"
-              >
-                {loading || streaming ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-              </Button>
-            </div>
-          )}
-
-          {showPhotoUpload && (
-            <div>
-              <div
-                onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-[hsl(220_10%_88%)] rounded-xl p-8 text-center cursor-pointer hover:border-primary/30 transition-colors"
-              >
-                <Upload className="w-7 h-7 text-muted-foreground mx-auto mb-2" strokeWidth={1.5} />
-                <p className="text-sm font-medium text-foreground">Tap to upload a photo</p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG accepted</p>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                  onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-                />
-              </div>
-              <div className="mt-3 flex justify-between items-center">
-                <button onClick={() => navigate('/sizes')} className="text-xs text-muted-foreground hover:text-foreground underline">
-                  View size guide
-                </button>
-                <button onClick={() => { setMode('welcome'); }} className="text-xs text-muted-foreground hover:text-foreground">
-                  Back
-                </button>
-              </div>
-            </div>
-          )}
-
-          {showDispatch && (
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11">
-                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call (510) 680-2150
-                </a>
-              </Button>
-              <Button
-                onClick={() => {
-                  addUser('Request Callback');
-                  addSystem('What is your name?');
-                  setMode('callback_collect');
-                  setCallbackData({});
-                }}
-                variant="outline"
-                className="flex-1 rounded-xl h-11 border-[hsl(220_10%_90%)]"
-              >
-                Request Callback
-              </Button>
-            </div>
-          )}
+          {renderStep()}
         </div>
       </div>
     </div>
