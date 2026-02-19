@@ -3403,6 +3403,7 @@ export type Database = {
           billing_email: string | null
           billing_phone: string | null
           company_name: string | null
+          contact_name: string | null
           created_at: string
           customer_type: string
           id: string
@@ -3412,13 +3413,14 @@ export type Database = {
           sms_opt_out: boolean | null
           sms_opt_out_at: string | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
           company_name?: string | null
+          contact_name?: string | null
           created_at?: string
           customer_type?: string
           id?: string
@@ -3428,13 +3430,14 @@ export type Database = {
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
           company_name?: string | null
+          contact_name?: string | null
           created_at?: string
           customer_type?: string
           id?: string
@@ -3444,7 +3447,7 @@ export type Database = {
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
