@@ -191,3 +191,6 @@ verify_jwt = false
 
 [functions.lifecycle-sla-monitor]
 verify_jwt = false
+
+[functions.lead-ingest]
+verify_jwt = false
