@@ -16,6 +16,16 @@ export interface FeatureFlags {
   'portal.placement_enabled': boolean;
   // Preview mode for internal testing
   'preview.enabled': boolean;
+  // AI Homepage chat hero
+  'ai_home.enabled': boolean;
+  // AI Homepage photo upload
+  'ai_home.photo_upload.enabled': boolean;
+  // AI Homepage booking + payment
+  'ai_home.booking.enabled': boolean;
+  // AI Homepage contractor fast mode
+  'ai_home.contractor_mode.enabled': boolean;
+  // AI Homepage placement tool
+  'ai_home.placement.enabled': boolean;
 }
 
 // Default values - all off by default for safety
@@ -26,6 +36,11 @@ const DEFAULT_FLAGS: FeatureFlags = {
   'portal.tracking_enabled': true, // Tracking already working
   'portal.placement_enabled': true, // Placement already working
   'preview.enabled': true, // Allow internal preview
+  'ai_home.enabled': false,
+  'ai_home.photo_upload.enabled': false,
+  'ai_home.booking.enabled': false,
+  'ai_home.contractor_mode.enabled': false,
+  'ai_home.placement.enabled': false,
 };
 
 let cachedFlags: FeatureFlags | null = null;
@@ -169,6 +184,14 @@ export async function updateFeatureFlag(
   } catch (err) {
     return { success: false, error: String(err) };
   }
+}
+
+/**
+ * Check if AI homepage should be active
+ */
+export function shouldUseAIHome(): boolean {
+  if (isPreviewMode()) return true;
+  return getFeatureFlag('ai_home.enabled');
 }
 
 /**
