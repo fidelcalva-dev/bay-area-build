@@ -16,6 +16,7 @@ import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
 import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
+import dumpsterDeliveryImg from '@/assets/images/calsan-dumpster-delivery.jpg';
 import { getFAQsForSchema } from '@/lib/shared-data';
 
 // Lazy load heavier sections
@@ -54,6 +55,18 @@ const Index = () => {
 
       {/* Interactive AI Chat Section */}
       <InteractiveAISection />
+
+      {/* Dumpster delivery image */}
+      <section className="py-12 md:py-16 bg-background">
+        <div className="container-wide flex justify-center">
+          <img
+            src={dumpsterDeliveryImg}
+            alt="Calsan dumpster being delivered on site"
+            className="max-w-3xl w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"
+            loading="lazy"
+          />
+        </div>
+      </section>
 
       {/* Timeline: Built on Experience */}
       <TimelineCredibilitySection />
