@@ -134,7 +134,7 @@ export function ServiceCycleSection() {
           </p>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-4 items-center max-w-4xl mx-auto">
           <StaggeredContainer>
             {steps.map((step, i) => (
               <AnimatedItem key={step} variant="fadeUp">
