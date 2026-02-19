@@ -1,12 +1,61 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { calculatePrice, getZone, SIZES } from "../_shared/zone-pricing.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+// Zone ZIP prefixes for compact lookup (first 3 digits)
+const Z1_PREFIXES = new Set(['945','946','947','940','941','942','943','944','950','951','952','953','954','955','956','957','958','959','960']);
+const Z2_PREFIXES = new Set(['949']);
+
+// Specific overrides for edge cases
+const Z1_SPECIFIC = new Set(['94002','94005','94010','94011','94014','94015','94016','94017','94018','94019','94020','94021','94022','94023','94024','94025','94026','94027','94028','94030','94035','94037','94038','94039','94040','94041','94042','94043','94044','94060','94061','94062','94063','94064','94065','94066','94070','94074','94080','94083','94085','94086','94087','94088','94089']);
+
+interface SizeInfo {
+  yards: number;
+  basePrice: number;
+  includedTons: number;
+  category: string;
+}
+
+const SIZES: SizeInfo[] = [
+  { yards: 6, basePrice: 390, includedTons: 0.5, category: 'both' },
+  { yards: 8, basePrice: 460, includedTons: 0.5, category: 'both' },
+  { yards: 10, basePrice: 580, includedTons: 1, category: 'both' },
+  { yards: 20, basePrice: 620, includedTons: 2, category: 'general' },
+  { yards: 30, basePrice: 770, includedTons: 3, category: 'general' },
+  { yards: 40, basePrice: 895, includedTons: 4, category: 'general' },
+  { yards: 50, basePrice: 1135, includedTons: 5, category: 'general' },
+];
+
+function isZone1(zip: string): boolean {
+  // Check specific ZIPs first, then prefix
+  if (Z1_SPECIFIC.has(zip)) return true;
+  const prefix = zip.slice(0, 3);
+  return Z1_PREFIXES.has(prefix);
+}
+
+function getZone(zip: string): { name: string; multiplier: number } | null {
+  if (isZone1(zip)) return { name: 'Core Bay Area', multiplier: 1.0 };
+  if (Z2_PREFIXES.has(zip.slice(0, 3))) return { name: 'Extended Bay Area', multiplier: 1.15 };
+  // Fallback: check if it's a known Bay Area ZIP at all
+  const n = parseInt(zip);
+  if (n >= 94000 && n <= 95999) return { name: 'Extended Bay Area', multiplier: 1.15 };
+  return null;
+}
+
+function calculatePrice(zip: string, sizeYards: number, material: string): { price: number; includedTons: number; zone: string } | null {
+  const zone = getZone(zip);
+  if (!zone) return null;
+  const size = SIZES.find(s => s.yards === sizeYards);
+  if (!size) return null;
+  if (material === 'heavy' && sizeYards > 10) return null;
+  const price = Math.round(size.basePrice * zone.multiplier);
+  return { price, includedTons: size.includedTons, zone: zone.name };
+}
 
 // ============================================================
 // SYSTEM PROMPT
