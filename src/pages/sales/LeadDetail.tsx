@@ -23,6 +23,7 @@ import { RiskCheckPanel } from "@/components/fraud";
 import { LeadAddressManager } from "@/components/leads/LeadAddresses";
 import LeadCardInfo from "@/components/leads/LeadCardInfo";
 import LeadQuotesSection from "@/components/leads/LeadQuotesSection";
+import { LeadActivationStatus } from "@/components/leads/LeadActivationStatus";
 
 interface LeadData {
   id: string;
@@ -460,6 +461,7 @@ export default function LeadDetail() {
             customerEmail={lead.customer_email}
             quoteId={(lead as any).quote_id || null}
           />
+          <LeadActivationStatus phone={lead.customer_phone} email={lead.customer_email} />
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2"><Tag className="w-4 h-4" /> Project Details</CardTitle>
