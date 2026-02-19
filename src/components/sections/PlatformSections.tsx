@@ -148,7 +148,7 @@ export function ServiceCycleSection() {
             ))}
           </StaggeredContainer>
 
-          <AnimatedSection>
+          <AnimatedSection className="px-8">
             <img
               src={serviceCycleImg}
               alt="Calsan truck at disposal facility with concrete debris"
