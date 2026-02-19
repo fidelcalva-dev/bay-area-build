@@ -1,22 +1,14 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { HeroSectionPlatform } from '@/components/sections/HeroSectionPlatform';
-import {
-  HowSystemWorksSection,
-  DeliveryIntelligenceSection,
-  ServiceCycleSection,
-  BuiltForContractorsSection,
-  SecureDigitalSection,
-  WhyDifferentSection,
-} from '@/components/sections/PlatformSections';
-import { TimelineCredibilitySection, WhatMakesDifferentSection } from '@/components/sections/BrandPositioningSection';
-import { AIMainChat } from '@/components/home/AIMainChat';
-import { RentalStepsSection } from '@/components/sections/RentalStepsSection';
+import { IndustrialHero } from '@/components/sections/IndustrialHero';
+import { BuiltFromFieldSection } from '@/components/sections/BuiltFromFieldSection';
+import { LocalYardAdvantageSection } from '@/components/sections/LocalYardAdvantageSection';
+import { SmartSystemsSection } from '@/components/sections/SmartSystemsSection';
+import { AIChatTeaserSection } from '@/components/sections/AIChatTeaserSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
 import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
-import dumpsterDeliveryImg from '@/assets/images/calsan-dumpster-delivery.jpg';
 import { getFAQsForSchema } from '@/lib/shared-data';
 
 // Lazy load heavier sections
@@ -45,49 +37,19 @@ const Index = () => {
       schema={generateFAQSchema(homepageFAQs)}
     >
       {/* Hero */}
-      <HeroSectionPlatform />
+      <IndustrialHero />
 
-      {/* AI Main Chat — Primary Decision Layer */}
-      <AIMainChat />
+      {/* Built From the Field */}
+      <BuiltFromFieldSection />
 
-      {/* How Our System Works (local dumpster company) */}
-      <HowSystemWorksSection />
+      {/* Local Yard Advantage */}
+      <LocalYardAdvantageSection />
 
-      {/* Rental Steps - How to Rent */}
-      <RentalStepsSection />
+      {/* Smart Systems */}
+      <SmartSystemsSection />
 
-      {/* Dumpster delivery image */}
-      <section className="pt-1 pb-12 md:pb-16 bg-background">
-        <div className="container-wide flex justify-center">
-          <img
-            src={dumpsterDeliveryImg}
-            alt="Calsan dumpster being delivered on site"
-            className="max-w-xl w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"
-            loading="lazy"
-          />
-        </div>
-      </section>
-
-      {/* Timeline: Built on Experience */}
-      <TimelineCredibilitySection />
-
-      {/* What Makes Calsan Different */}
-      <WhatMakesDifferentSection />
-
-      {/* Delivery Intelligence */}
-      <DeliveryIntelligenceSection />
-
-      {/* Full Service Cycle */}
-      <ServiceCycleSection />
-
-      {/* Built for Contractors */}
-      <BuiltForContractorsSection />
-
-      {/* Secure Digital Operations */}
-      <SecureDigitalSection />
-
-      {/* Why We're Different (comparison) */}
-      <WhyDifferentSection />
+      {/* AI Chat Teaser */}
+      <AIChatTeaserSection />
 
       {/* Social proof */}
       <TrustBadgesSection />
