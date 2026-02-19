@@ -11,11 +11,11 @@ import { Link } from 'react-router-dom';
 // ─── SECTION 2: How Our System Works ─────────────────────────
 export function HowSystemWorksSection() {
   const capabilities = [
-    { icon: MapPin, text: 'Matches your address to the nearest local yard' },
-    { icon: Clock, text: 'Calculates estimated delivery time' },
-    { icon: Route, text: 'Routes drivers to certified disposal facilities' },
-    { icon: BarChart3, text: 'Tracks service status from drop-off to dump ticket upload' },
-    { icon: Scale, text: 'Applies clear weight rules before delivery' },
+    { icon: MapPin, text: 'We operate real yards in Oakland and San Jose, so your dumpster is always nearby' },
+    { icon: Clock, text: 'Our system matches your ZIP code to the closest yard for faster scheduling' },
+    { icon: Route, text: 'Drivers are routed to certified local disposal facilities automatically' },
+    { icon: BarChart3, text: 'Track your service from delivery to pickup with transparent status updates' },
+    { icon: Scale, text: 'Clear weight limits and pricing shown upfront, no surprise fees' },
   ];
 
   return (
@@ -24,14 +24,15 @@ export function HowSystemWorksSection() {
         <AnimatedSection className="max-w-3xl mx-auto text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
             <Cpu className="w-3.5 h-3.5" />
-            Smart Logistics
+            Local Service, Smart Operations
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            How Our Logistics System Works
+            A Local Dumpster Company Built on Better Technology
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            Calsan Dumpsters Pro operates a structured, technology-supported waste logistics system
-            designed to improve transparency, scheduling efficiency, and service coordination across the Bay Area.
+            Calsan Dumpsters Pro is a local dumpster rental company serving Oakland, San Jose, San Francisco,
+            and the greater Bay Area. We use technology to streamline scheduling, routing, and pricing so you
+            get reliable service with full transparency from quote to pickup.
           </p>
         </AnimatedSection>
 
@@ -50,7 +51,7 @@ export function HowSystemWorksSection() {
 
         <AnimatedSection className="text-center mt-10">
           <p className="text-sm text-muted-foreground italic max-w-lg mx-auto">
-            Technology-supported waste logistics platform serving the Bay Area.
+            Real local yards. Technology-driven operations. Serving the SF Bay Area since day one.
           </p>
         </AnimatedSection>
       </div>
