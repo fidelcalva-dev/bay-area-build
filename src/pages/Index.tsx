@@ -12,6 +12,7 @@ import {
 import { TimelineCredibilitySection, WhatMakesDifferentSection } from '@/components/sections/BrandPositioningSection';
 import { InteractiveAISection } from '@/components/sections/InteractiveAISection';
 import { RentalStepsSection } from '@/components/sections/RentalStepsSection';
+import { AIStartHub } from '@/components/sections/AIStartHub';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -46,6 +47,9 @@ const Index = () => {
     >
       {/* Hero */}
       <HeroSectionPlatform />
+
+      {/* AI Start Hub — Primary Decision Layer */}
+      <AIStartHub />
 
       {/* How Our System Works (local dumpster company) */}
       <HowSystemWorksSection />
