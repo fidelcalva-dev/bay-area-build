@@ -814,6 +814,119 @@ export type Database = {
           },
         ]
       }
+      ai_chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message_text: string
+          meta_json: Json | null
+          role: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_text: string
+          meta_json?: Json | null
+          role: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_text?: string
+          meta_json?: Json | null
+          role?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_chat_sessions: {
+        Row: {
+          capture_ip: string | null
+          capture_user_agent: string | null
+          context_json: Json | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          landing_url: string | null
+          last_event_at: string
+          lead_id: string | null
+          referrer_url: string | null
+          session_token: string
+          started_at: string
+          status: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          context_json?: Json | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          landing_url?: string | null
+          last_event_at?: string
+          lead_id?: string | null
+          referrer_url?: string | null
+          session_token?: string
+          started_at?: string
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          context_json?: Json | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          landing_url?: string | null
+          last_event_at?: string
+          lead_id?: string | null
+          referrer_url?: string | null
+          session_token?: string
+          started_at?: string
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_chat_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_decisions: {
         Row: {
           actions_json: Json | null
@@ -6921,6 +7034,69 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      lead_handoff_packets: {
+        Row: {
+          assigned_team: string
+          assigned_user_id: string | null
+          created_at: string
+          extracted_fields_json: Json | null
+          id: string
+          is_reviewed: boolean
+          lead_id: string | null
+          recommended_next_action: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_band: string | null
+          session_id: string | null
+          summary_text: string
+        }
+        Insert: {
+          assigned_team: string
+          assigned_user_id?: string | null
+          created_at?: string
+          extracted_fields_json?: Json | null
+          id?: string
+          is_reviewed?: boolean
+          lead_id?: string | null
+          recommended_next_action?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_band?: string | null
+          session_id?: string | null
+          summary_text: string
+        }
+        Update: {
+          assigned_team?: string
+          assigned_user_id?: string | null
+          created_at?: string
+          extracted_fields_json?: Json | null
+          id?: string
+          is_reviewed?: boolean
+          lead_id?: string | null
+          recommended_next_action?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_band?: string | null
+          session_id?: string | null
+          summary_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_handoff_packets_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_handoff_packets_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lead_routing_rules: {
         Row: {

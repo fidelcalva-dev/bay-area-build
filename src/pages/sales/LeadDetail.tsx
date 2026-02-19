@@ -25,6 +25,7 @@ import LeadCardInfo from "@/components/leads/LeadCardInfo";
 import LeadQuotesSection from "@/components/leads/LeadQuotesSection";
 import { LeadActivationStatus } from "@/components/leads/LeadActivationStatus";
 import { LifecycleTimeline } from "@/components/lifecycle";
+import { AIChatTranscriptPanel } from "@/components/sales/AIChatTranscriptPanel";
 
 interface LeadData {
   id: string;
@@ -369,6 +370,7 @@ export default function LeadDetail() {
           <TabsTrigger value="scoring">Risk & Quality</TabsTrigger>
           <TabsTrigger value="riskcheck">Risk Check</TabsTrigger>
           <TabsTrigger value="followup">Follow-Up</TabsTrigger>
+          <TabsTrigger value="aichat"><MessageSquare className="w-3 h-3 mr-1" />AI Chat</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
@@ -650,6 +652,11 @@ export default function LeadDetail() {
               onActionLogged={fetchAll}
             />
           )}
+        </TabsContent>
+
+        {/* AI Chat */}
+        <TabsContent value="aichat">
+          <AIChatTranscriptPanel leadId={lead.id} />
         </TabsContent>
 
         {/* Notes */}

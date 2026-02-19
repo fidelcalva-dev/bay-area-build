@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
 import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
+import { HotAILeadsQueue } from "@/components/sales/HotAILeadsQueue";
 
 interface DashboardStats {
   leads: { total: number; new: number; converted: number };
@@ -102,6 +103,9 @@ export default function SalesDashboard() {
 
         <TabsContent value="overview">
           <div className="space-y-6">
+
+      {/* Hot AI Leads */}
+      <HotAILeadsQueue />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

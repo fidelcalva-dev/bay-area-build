@@ -1,7 +1,22 @@
-// Calsan Dumpster AI Chat Hook - with persistence and lead capture
+// Calsan Dumpster AI Chat Hook - with persistence, lead capture, and handoff
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
+import {
+  analyzeForHandoff,
+  createChatSession,
+  updateSessionContext,
+  saveChatMessage,
+  ensureLeadCreated,
+  createHandoffPacket,
+  isBusinessHours,
+  type ChatSession,
+} from '@/lib/chatHandoffService';
+import {
+  getHandoffMessage,
+  getOutsideHoursMessage,
+  getRiskGuardrailMessage,
+  type RiskBand,
+} from '@/lib/chatIntentClassifier';
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -16,6 +31,8 @@ export interface ChatContext {
   size?: number;
   projectType?: string;
   city?: string;
+  riskBand?: string;
+  [key: string]: unknown;
 }
 
 const STORAGE_KEY = 'calsan_chat_v1';
@@ -56,8 +73,12 @@ export function useCalsanChat() {
   const [context, setContext] = useState<ChatContext>({});
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isLeadCaptured, setIsLeadCaptured] = useState(false);
+  const [isHandedOff, setIsHandedOff] = useState(false);
+  const [handoffDepartment, setHandoffDepartment] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const initializedRef = useRef(false);
+  const chatSessionRef = useRef<string | null>(null);
+  const leadCreatedRef = useRef(false);
 
   // Persist state on changes
   useEffect(() => {
@@ -114,6 +135,15 @@ export function useCalsanChat() {
   const initializeChat = useCallback(async () => {
     if (initializedRef.current) return;
     initializedRef.current = true;
+
+    // Create new ai_chat_session
+    const session = await createChatSession({
+      referrer_url: document.referrer || undefined,
+      landing_url: window.location.href,
+    });
+    if (session) {
+      chatSessionRef.current = session.id;
+    }
 
     const persisted = loadPersistedState();
     if (persisted && persisted.messages.length > 0) {
@@ -233,7 +263,7 @@ export function useCalsanChat() {
         m.id === assistantId ? { ...m, content: clean, quickReplies: replies.length > 0 ? replies : undefined } : m
       ));
 
-      // Save assistant message to DB
+      // Save assistant message to DB (legacy + new system)
       if (convId) {
         await supabase.from('chat_messages').insert({
           conversation_id: convId,
@@ -241,8 +271,97 @@ export function useCalsanChat() {
           content: clean,
           quick_replies: replies.length > 0 ? replies : null,
         });
-        // Update conversation context
         await supabase.from('chat_conversations').update({ context_json: JSON.parse(JSON.stringify(newContext)) }).eq('id', convId);
+      }
+
+      // Save to new ai_chat_messages system
+      if (chatSessionRef.current) {
+        await saveChatMessage({
+          sessionId: chatSessionRef.current,
+          role: 'user',
+          messageText: userInput,
+          meta: { intent: newContext },
+        });
+        await saveChatMessage({
+          sessionId: chatSessionRef.current,
+          role: 'assistant',
+          messageText: clean,
+        });
+        await updateSessionContext(chatSessionRef.current, newContext);
+      }
+
+      // ---- HANDOFF ANALYSIS ----
+      const allMsgs = [...messages, userMsg, { id: assistantId, role: 'assistant' as const, content: clean, timestamp: new Date() }];
+      const intentResult = analyzeForHandoff(
+        allMsgs.map(m => ({ role: m.role, content: m.content })),
+        newContext
+      );
+
+      // Ensure lead is created on meaningful interaction (has ZIP or 4+ messages)
+      if (chatSessionRef.current && !leadCreatedRef.current && (newContext.zip || allMsgs.length >= 4)) {
+        const leadId = await ensureLeadCreated({
+          sessionId: chatSessionRef.current,
+          context: newContext,
+          messages: allMsgs.map(m => ({ role: m.role, content: m.content })),
+        });
+        if (leadId) leadCreatedRef.current = true;
+      }
+
+      // Check if we should hand off
+      if (intentResult.shouldHandoff && !isHandedOff && chatSessionRef.current) {
+        // Ensure lead exists for handoff
+        if (!leadCreatedRef.current) {
+          const leadId = await ensureLeadCreated({
+            sessionId: chatSessionRef.current,
+            context: newContext,
+            messages: allMsgs.map(m => ({ role: m.role, content: m.content })),
+          });
+          if (leadId) leadCreatedRef.current = true;
+        }
+
+        // Get session to find lead_id
+        const { data: sess } = await supabase
+          .from('ai_chat_sessions' as never)
+          .select('lead_id')
+          .eq('id', chatSessionRef.current)
+          .single();
+
+        const leadId = (sess as any)?.lead_id;
+        if (leadId) {
+          const riskBand: RiskBand = (newContext.riskBand as RiskBand) || 'GREEN';
+
+          await createHandoffPacket({
+            leadId,
+            sessionId: chatSessionRef.current,
+            department: intentResult.department,
+            intent: intentResult,
+            messages: allMsgs.map(m => ({ role: m.role, content: m.content })),
+            context: newContext,
+            riskBand,
+          });
+
+          setIsHandedOff(true);
+          setHandoffDepartment(intentResult.department);
+
+          // Add handoff message
+          const handoffMsg = isBusinessHours()
+            ? getHandoffMessage(intentResult.department, riskBand)
+            : getOutsideHoursMessage();
+
+          const riskMsg = getRiskGuardrailMessage(riskBand);
+
+          const fullHandoffContent = riskMsg ? `${handoffMsg}\n\n${riskMsg}` : handoffMsg;
+
+          setMessages(prev => [...prev, {
+            id: `handoff-${Date.now()}`,
+            role: 'assistant',
+            content: fullHandoffContent,
+            timestamp: new Date(),
+            quickReplies: riskBand === 'RED'
+              ? ['Call (510) 680-2150']
+              : ['Open Instant Quote', 'Request callback in 5 minutes', 'Call (510) 680-2150'],
+          }]);
+        }
       }
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
@@ -259,7 +378,7 @@ export function useCalsanChat() {
       setIsLoading(false);
       abortRef.current = null;
     }
-  }, [messages, context, conversationId, isLoading]);
+  }, [messages, context, conversationId, isLoading, isHandedOff]);
 
   // Capture lead
   const captureLead = useCallback(async (data: { name: string; phone: string; email?: string }) => {
@@ -305,7 +424,11 @@ export function useCalsanChat() {
     setContext({});
     setConversationId(null);
     setIsLeadCaptured(false);
+    setIsHandedOff(false);
+    setHandoffDepartment(null);
     initializedRef.current = false;
+    chatSessionRef.current = null;
+    leadCreatedRef.current = false;
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
@@ -315,6 +438,8 @@ export function useCalsanChat() {
     context,
     conversationId,
     isLeadCaptured,
+    isHandedOff,
+    handoffDepartment,
     sendMessage,
     captureLead,
     initializeChat,
