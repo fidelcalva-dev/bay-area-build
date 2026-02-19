@@ -47,10 +47,7 @@ export function HeroSectionPlatform() {
           >
             <motion.div variants={fadeInUp}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                Fast & Reliable Dumpster Rentals
-                <span className="block text-primary-foreground/80 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2">
-                  in Northern California
-                </span>
+                Dumpster Rental by Zip Code – Fast & Reliable Service Near You
               </h1>
               <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
                 Instant estimates. Contractor-friendly. Additional fees may apply for overages.
