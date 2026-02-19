@@ -165,7 +165,7 @@ export default function SalesDashboard() {
           </CardHeader>
           <CardContent className="space-y-2">
             <Button className="w-full justify-start" asChild>
-              <Link to="/quote">
+              <Link to="/sales/quotes/new">
                 <FileText className="w-4 h-4 mr-2" /> Create New Quote
               </Link>
             </Button>
