@@ -5,11 +5,12 @@ import {
   HowSystemWorksSection,
   DeliveryIntelligenceSection,
   ServiceCycleSection,
-  AIDumpsterAssistantSection,
   BuiltForContractorsSection,
   SecureDigitalSection,
   WhyDifferentSection,
 } from '@/components/sections/PlatformSections';
+import { TimelineCredibilitySection, WhatMakesDifferentSection } from '@/components/sections/BrandPositioningSection';
+import { InteractiveAISection } from '@/components/sections/InteractiveAISection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -41,28 +42,34 @@ const Index = () => {
       canonical={PAGE_SEO.home.canonical}
       schema={generateFAQSchema(homepageFAQs)}
     >
-      {/* Hero - Technology-Driven Platform */}
+      {/* Hero */}
       <HeroSectionPlatform />
 
-      {/* Section 2 - How Our System Works */}
+      {/* How Our System Works (local dumpster company) */}
       <HowSystemWorksSection />
 
-      {/* Section 3 - Real-Time Delivery Intelligence */}
+      {/* Interactive AI Chat Section */}
+      <InteractiveAISection />
+
+      {/* Timeline: Built on Experience */}
+      <TimelineCredibilitySection />
+
+      {/* What Makes Calsan Different */}
+      <WhatMakesDifferentSection />
+
+      {/* Delivery Intelligence */}
       <DeliveryIntelligenceSection />
 
-      {/* Section 4 - Full Service Cycle Transparency */}
+      {/* Full Service Cycle */}
       <ServiceCycleSection />
 
-      {/* Section 5 - AI Dumpster Assistant */}
-      <AIDumpsterAssistantSection />
-
-      {/* Section 6 - Built for Contractors */}
+      {/* Built for Contractors */}
       <BuiltForContractorsSection />
 
-      {/* Section 7 - Secure Digital Operations */}
+      {/* Secure Digital Operations */}
       <SecureDigitalSection />
 
-      {/* Section 8 - Why We're Different */}
+      {/* Why We're Different (comparison) */}
       <WhyDifferentSection />
 
       {/* Social proof */}

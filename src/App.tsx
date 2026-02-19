@@ -48,6 +48,7 @@ const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
 const NotABroker = lazy(() => import("./pages/NotABroker"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Technology = lazy(() => import("./pages/Technology"));
+const WhyCalsan = lazy(() => import("./pages/WhyCalsan"));
 const StaffLogin = lazy(() => import("./pages/StaffLogin"));
 const RoleRouter = lazy(() => import("./pages/RoleRouter"));
 const RequestAccess = lazy(() => import("./pages/RequestAccess"));
@@ -442,6 +443,9 @@ const App = () => {
               } />
               <Route path="/technology" element={
                 <Suspense fallback={<PageLoader />}><Technology /></Suspense>
+              } />
+              <Route path="/why-calsan" element={
+                <Suspense fallback={<PageLoader />}><WhyCalsan /></Suspense>
               } />
               
               {/* Staff CRM Login Redirect */}

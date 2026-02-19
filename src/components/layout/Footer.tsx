@@ -39,6 +39,7 @@ export function Footer() {
 
   // Category differentiation links (SEO + Trust)
   const differentiationLinks = [
+    { to: '/why-calsan', label: 'Why Calsan' },
     { to: '/why-local-yards', label: 'Why Local Yards' },
     { to: '/not-a-broker', label: 'We\'re Not a Broker' },
     { to: '/how-it-works', label: 'How It Works' },

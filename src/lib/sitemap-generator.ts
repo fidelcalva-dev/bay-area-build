@@ -32,6 +32,7 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/why-local-yards', changefreq: 'monthly', priority: 0.7 },
   { url: '/not-a-broker', changefreq: 'monthly', priority: 0.7 },
   { url: '/how-it-works', changefreq: 'monthly', priority: 0.7 },
+  { url: '/why-calsan', changefreq: 'monthly', priority: 0.7 },
   { url: '/green-halo', changefreq: 'monthly', priority: 0.6 },
   { url: '/capacity-guide', changefreq: 'monthly', priority: 0.6 },
   { url: '/blog', changefreq: 'weekly', priority: 0.7 },
