@@ -1,17 +1,19 @@
 // ============================================================
-// CALSAN AI — Structured Conversation Engine
-// Decision tree: ZIP → Type → Project → Material → Size → Price → Contact → Confirm
-// + Photo Upload path: ZIP → Photo → Result → Size → Price → Contact → Confirm
+// CALSAN AI — Structured Conversation Engine + Booking Engine
+// Decision tree: ZIP → Type → Project → Material → Size → Price → Contact → Schedule → Payment → Confirm
+// + Photo Upload path: ZIP → Photo → Result → Size → Price → Contact → Schedule → Payment → Confirm
 // ============================================================
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, ImageIcon } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO } from '@/lib/shared-data';
 import { getPriceByZip } from '@/lib/price-list-data';
+import { format, addDays, isWeekend, isBefore, startOfDay } from 'date-fns';
 
 // ============================================================
 // TYPES & CONSTANTS
@@ -21,12 +23,13 @@ export type ChatMode = 'default' | 'sales' | 'commercial' | 'contractor';
 
 type FlowStep =
   | 'zip' | 'customer-type' | 'project' | 'material' | 'size' | 'price' | 'contact' | 'confirm'
-  | 'photo-upload' | 'photo-analyzing' | 'photo-result';
+  | 'photo-upload' | 'photo-analyzing' | 'photo-result'
+  | 'schedule' | 'payment' | 'payment-processing' | 'booking-confirm';
 
 // Steps for progress bar (manual path)
-const MANUAL_STEPS: FlowStep[] = ['zip', 'customer-type', 'project', 'material', 'size', 'price', 'contact', 'confirm'];
+const MANUAL_STEPS: FlowStep[] = ['zip', 'customer-type', 'project', 'material', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm'];
 // Steps for photo path
-const PHOTO_STEPS: FlowStep[] = ['zip', 'photo-upload', 'photo-analyzing', 'photo-result', 'size', 'price', 'contact', 'confirm'];
+const PHOTO_STEPS: FlowStep[] = ['zip', 'photo-upload', 'photo-analyzing', 'photo-result', 'size', 'price', 'contact', 'schedule', 'payment', 'booking-confirm'];
 
 type CustomerType = 'homeowner' | 'contractor' | 'commercial';
 
@@ -52,8 +55,17 @@ interface FlowState {
   phone: string;
   email: string;
   leadCreated: boolean;
-  photoPath: boolean; // true if user chose photo upload
+  photoPath: boolean;
   photoAnalysis: PhotoAnalysis | null;
+  // Booking engine fields
+  bookingMode: 'reserve' | 'hold' | null;
+  deliveryDate: string | null;
+  deliveryWindow: string | null;
+  paymentOption: 'deposit' | 'full' | 'later' | null;
+  orderId: string | null;
+  hostedToken: string | null;
+  hostedFormUrl: string | null;
+  paymentConfirmed: boolean;
 }
 
 const INITIAL_STATE: FlowState = {
@@ -72,6 +84,14 @@ const INITIAL_STATE: FlowState = {
   leadCreated: false,
   photoPath: false,
   photoAnalysis: null,
+  bookingMode: null,
+  deliveryDate: null,
+  deliveryWindow: null,
+  paymentOption: null,
+  orderId: null,
+  hostedToken: null,
+  hostedFormUrl: null,
+  paymentConfirmed: false,
 };
 
 const STORAGE_KEY = 'calsan_structured_chat_v1';
@@ -95,6 +115,12 @@ const MATERIAL_TYPES = [
 
 const GENERAL_SIZES = [10, 15, 20, 25, 30, 40];
 const HEAVY_SIZES = [8, 10];
+
+const TIME_WINDOWS = [
+  { id: 'morning', label: 'Morning', time: '8:00 AM – 10:00 AM' },
+  { id: 'midday', label: 'Midday', time: '10:00 AM – 1:00 PM' },
+  { id: 'afternoon', label: 'Afternoon', time: '1:00 PM – 4:00 PM' },
+];
 
 // ---- Persistence ----
 function loadState(): FlowState | null {
@@ -175,6 +201,28 @@ function getIncludedTons(size: number, heavy: boolean): number {
   return 5;
 }
 
+// ---- Date helpers ----
+function isBusinessDay(date: Date): boolean {
+  return !isWeekend(date);
+}
+
+function getMinDeliveryDate(): Date {
+  const now = new Date();
+  let d = addDays(startOfDay(now), 1);
+  while (!isBusinessDay(d)) d = addDays(d, 1);
+  return d;
+}
+
+function getMaxDeliveryDate(): Date {
+  return addDays(new Date(), 21);
+}
+
+function isDateDisabled(date: Date): boolean {
+  const min = getMinDeliveryDate();
+  const max = getMaxDeliveryDate();
+  return isWeekend(date) || isBefore(date, min) || isBefore(max, date);
+}
+
 // ---- Image compression ----
 async function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -197,7 +245,6 @@ async function compressImage(file: File): Promise<string> {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         const base64 = dataUrl.split(',')[1];
         if (base64.length > MAX_IMAGE_SIZE) {
-          // Re-compress at lower quality
           const lq = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
           resolve(lq);
         } else {
@@ -238,8 +285,11 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   const [phoneError, setPhoneError] = useState('');
   const [showWelcome, setShowWelcome] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const paymentFormRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const { logEvent } = useSessionTracker();
 
@@ -257,6 +307,13 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [state.step, loading]);
 
+  // Auto-submit payment form when hosted data is ready
+  useEffect(() => {
+    if (state.step === 'payment-processing' && state.hostedToken && paymentFormRef.current) {
+      paymentFormRef.current.submit();
+    }
+  }, [state.step, state.hostedToken]);
+
   // Progress calculation
   const activeSteps = state.photoPath ? PHOTO_STEPS : MANUAL_STEPS;
   const stepIndex = activeSteps.indexOf(state.step);
@@ -265,7 +322,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
 
   const goTo = (step: FlowStep) => setState(prev => ({ ...prev, step }));
 
-  const canGoBack = effectiveIndex > 0 && state.step !== 'confirm' && state.step !== 'photo-analyzing';
+  const canGoBack = effectiveIndex > 0 && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing';
 
   const goBack = () => {
     if (effectiveIndex > 0) goTo(activeSteps[effectiveIndex - 1]);
@@ -280,6 +337,8 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     setZipError('');
     setPhoneError('');
     setPhotoPreview(null);
+    setSelectedDate(undefined);
+    setSelectedWindow(null);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
@@ -338,7 +397,16 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   };
 
   const handleChangeSize = () => goTo('size');
-  const handleReserve = () => goTo('contact');
+
+  const handleReserve = () => {
+    setState(prev => ({ ...prev, bookingMode: 'reserve' }));
+    goTo('contact');
+  };
+
+  const handleHoldPrice = () => {
+    setState(prev => ({ ...prev, bookingMode: 'hold' }));
+    goTo('contact');
+  };
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -354,7 +422,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     if (phone.length < 10) { setPhoneError('Please enter a valid phone number.'); return; }
     setPhoneError('');
     setLoading(true);
-    logEvent('step_contact', { hasEmail: !!emailInput.trim() });
+    logEvent('step_contact', { hasEmail: !!emailInput.trim(), bookingMode: state.bookingMode });
     try {
       await supabase.functions.invoke('lead-ingest', {
         body: {
@@ -376,12 +444,157 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         },
       });
     } catch {}
+
+    const nextStep: FlowStep = state.bookingMode === 'reserve' ? 'schedule' : 'confirm';
     setState(prev => ({
       ...prev,
       name, phone: phoneInput, email: emailInput.trim(),
-      leadCreated: true, step: 'confirm',
+      leadCreated: true, step: nextStep,
     }));
     setLoading(false);
+  };
+
+  // ---- Scheduling Handlers ----
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date) {
+      setState(prev => ({ ...prev, deliveryDate: format(date, 'yyyy-MM-dd') }));
+    }
+  };
+
+  const handleWindowSelect = (windowId: string) => {
+    setSelectedWindow(windowId);
+    setState(prev => ({ ...prev, deliveryWindow: windowId }));
+  };
+
+  const handleScheduleSubmit = () => {
+    if (!state.deliveryDate || !state.deliveryWindow) return;
+    logEvent('step_schedule', { date: state.deliveryDate, window: state.deliveryWindow });
+    goTo('payment');
+  };
+
+  // ---- Payment Handlers ----
+
+  const handlePaymentOption = async (option: 'deposit' | 'full' | 'later') => {
+    logEvent('step_payment', { option });
+    setState(prev => ({ ...prev, paymentOption: option }));
+
+    if (option === 'later') {
+      await createOrderAndConfirm(option);
+      return;
+    }
+    await createOrderAndPay(option);
+  };
+
+  const createOrderAndConfirm = async (paymentOption: 'deposit' | 'full' | 'later') => {
+    setLoading(true);
+    try {
+      const tons = getIncludedTons(state.size!, state.heavy);
+      const { data: order, error: orderError } = await supabase.from('orders').insert({
+        status: 'PENDING',
+        final_total: state.price,
+        amount_due: state.price,
+        balance_due: state.price,
+        amount_paid: 0,
+        is_heavy_material: state.heavy,
+        included_tons_for_size: tons,
+        scheduled_delivery_date: state.deliveryDate,
+        scheduled_delivery_window: state.deliveryWindow,
+        payment_status: paymentOption === 'later' ? 'unpaid' : 'pending',
+        internal_notes: `Chat booking: ${state.size}yd ${state.materialType || 'general'} for ${state.zip}. Customer: ${state.name} ${state.phone}`,
+      }).select('id').single();
+
+      if (orderError) throw orderError;
+
+      setState(prev => ({
+        ...prev,
+        orderId: order.id,
+        paymentOption,
+        paymentConfirmed: paymentOption === 'later',
+        step: 'booking-confirm',
+      }));
+    } catch (err) {
+      console.error('Order creation failed:', err);
+      setState(prev => ({
+        ...prev,
+        paymentOption,
+        paymentConfirmed: false,
+        step: 'booking-confirm',
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createOrderAndPay = async (paymentOption: 'deposit' | 'full') => {
+    setLoading(true);
+    try {
+      const tons = getIncludedTons(state.size!, state.heavy);
+      const paymentAmount = paymentOption === 'deposit'
+        ? Math.round((state.price! * 0.5) * 100) / 100
+        : state.price!;
+
+      const { data: order, error: orderError } = await supabase.from('orders').insert({
+        status: 'PENDING',
+        final_total: state.price,
+        amount_due: state.price,
+        balance_due: state.price,
+        amount_paid: 0,
+        is_heavy_material: state.heavy,
+        included_tons_for_size: tons,
+        scheduled_delivery_date: state.deliveryDate,
+        scheduled_delivery_window: state.deliveryWindow,
+        payment_status: 'pending',
+        internal_notes: `Chat booking: ${state.size}yd ${state.materialType || 'general'} for ${state.zip}. Customer: ${state.name} ${state.phone}`,
+      }).select('id').single();
+
+      if (orderError) throw orderError;
+
+      const origin = window.location.origin;
+      const { data, error: fnError } = await supabase.functions.invoke('create-hosted-session', {
+        body: {
+          orderId: order.id,
+          paymentType: paymentOption === 'deposit' ? 'deposit' : 'balance',
+          amount: paymentAmount,
+          returnUrl: `${origin}/portal/payment-complete?orderId=${order.id}`,
+          cancelUrl: origin,
+        },
+      });
+
+      if (fnError) throw fnError;
+
+      if (data?.success && data?.token) {
+        setState(prev => ({
+          ...prev,
+          orderId: order.id,
+          paymentOption,
+          hostedToken: data.token,
+          hostedFormUrl: data.formPostUrl,
+          step: 'payment-processing',
+        }));
+      } else {
+        throw new Error(data?.error || 'Payment session failed');
+      }
+    } catch (err) {
+      console.error('Payment setup failed:', err);
+      // Fallback to pay later
+      setState(prev => ({
+        ...prev,
+        paymentOption: 'later',
+        step: 'booking-confirm',
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaymentComplete = () => {
+    setState(prev => ({
+      ...prev,
+      paymentConfirmed: true,
+      step: 'booking-confirm',
+    }));
   };
 
   // ---- Photo Upload Handler ----
@@ -389,7 +602,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     const file = files[0];
     if (!file) return;
 
-    // Preview
     const previewUrl = URL.createObjectURL(file);
     setPhotoPreview(previewUrl);
 
@@ -400,7 +612,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     try {
       const base64 = await compressImage(file);
 
-      // Store in waste-uploads bucket
       const fileName = `photo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
       try {
         await supabase.storage.from('waste-uploads').upload(fileName, file, {
@@ -409,7 +620,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         });
       } catch { /* non-blocking */ }
 
-      // Call analyze-waste
       const { data, error } = await supabase.functions.invoke('analyze-waste', {
         body: { images: [base64] },
       });
@@ -449,7 +659,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       }));
     } catch (err) {
       console.error('Photo analysis failed:', err);
-      // Fallback: skip to manual selection
       setState(prev => ({
         ...prev,
         photoPath: false,
@@ -475,7 +684,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   };
 
   const handlePhotoManualSelect = () => {
-    // Switch to manual size selection, keeping material from photo
     goTo('size');
   };
 
@@ -677,7 +885,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             )}
             <SystemMessage>
               {lowConfidence ? (
-                // Low confidence — nudge to manual
                 <div>
                   <p className="text-sm text-foreground mb-2">
                     Photo analysis was inconclusive ({analysis.confidence}% confidence).
@@ -693,7 +900,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   </div>
                 </div>
               ) : (
-                // Good confidence — show recommendation card
                 <div>
                   <p className="text-sm text-foreground mb-3">Based on your photo, I recommend:</p>
                   <div className="border border-[hsl(220_10%_90%)] rounded-xl p-4 bg-white">
@@ -709,7 +915,6 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                       <span className="text-lg font-bold text-foreground">${price}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mb-3">{analysis.explanation}</p>
-                    {/* Confidence bar */}
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Confidence</span>
                       <span className="text-xs font-semibold text-foreground">{analysis.confidence}%</span>
@@ -880,14 +1085,18 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                <ActionButton label="Reserve This Dumpster" onClick={handleReserve} variant="primary" icon={<ArrowRight className="w-4 h-4" />} />
-                <ActionButton label="Change Size" onClick={handleChangeSize} variant="outline" />
-                <Button asChild variant="ghost" className="rounded-xl h-11 text-sm">
-                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                    <Phone className="w-3.5 h-3.5 mr-2" /> Call Instead
-                  </a>
-                </Button>
+              <p className="text-sm text-foreground mt-4 mb-3">Would you like to reserve this dumpster now?</p>
+              <div className="flex flex-col gap-2">
+                <ActionButton label="Reserve & Schedule" onClick={handleReserve} variant="primary" icon={<CalendarDays className="w-4 h-4" />} />
+                <ActionButton label="Hold Price" onClick={handleHoldPrice} variant="outline" icon={<Clock className="w-4 h-4" />} />
+                <div className="flex gap-2">
+                  <ActionButton label="Change Size" onClick={handleChangeSize} variant="ghost" />
+                  <Button asChild variant="ghost" className="rounded-xl h-11 text-sm">
+                    <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                      <Phone className="w-3.5 h-3.5 mr-2" /> Call Instead
+                    </a>
+                  </Button>
+                </div>
               </div>
             </SystemMessage>
           </>
@@ -897,8 +1106,16 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       case 'contact':
         return (
           <SystemMessage>
-            <p className="text-sm text-foreground mb-1 font-medium">You are 1 step away from confirmation.</p>
-            <p className="text-xs text-muted-foreground mb-4">We will reach out shortly to finalize your delivery.</p>
+            <p className="text-sm text-foreground mb-1 font-medium">
+              {state.bookingMode === 'hold'
+                ? 'We will hold this price for you. Enter your details.'
+                : 'You are 1 step away from scheduling.'}
+            </p>
+            <p className="text-xs text-muted-foreground mb-4">
+              {state.bookingMode === 'hold'
+                ? 'A team member will contact you shortly.'
+                : 'We will finalize your delivery details next.'}
+            </p>
             <div className="space-y-3">
               <input
                 value={nameInput}
@@ -929,35 +1146,323 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 disabled={!nameInput.trim() || phoneInput.replace(/\D/g, '').length < 10 || loading}
                 className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit'}
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
               </Button>
             </div>
           </SystemMessage>
         );
 
+      // ============================================================
+      // SCHEDULING STEP
+      // ============================================================
+      case 'schedule':
+        return (
+          <SystemMessage>
+            <p className="text-sm text-foreground mb-1 font-medium">Choose your delivery date</p>
+            <p className="text-xs text-muted-foreground mb-4">Select a weekday within the next 3 weeks.</p>
+
+            <div className="border border-[hsl(220_10%_90%)] rounded-xl bg-white overflow-hidden mb-4">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={isDateDisabled}
+                fromDate={getMinDeliveryDate()}
+                toDate={getMaxDeliveryDate()}
+                className="p-3 pointer-events-auto mx-auto"
+              />
+            </div>
+
+            {state.deliveryDate && (
+              <>
+                <p className="text-sm text-foreground mb-3">
+                  Delivery: <strong>{format(new Date(state.deliveryDate + 'T12:00:00'), 'EEEE, MMMM d')}</strong>
+                </p>
+                <p className="text-xs text-muted-foreground mb-2">Select a delivery window:</p>
+                <div className="grid grid-cols-1 gap-2 mb-4">
+                  {TIME_WINDOWS.map(w => (
+                    <button
+                      key={w.id}
+                      onClick={() => handleWindowSelect(w.id)}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-3 border rounded-xl text-sm transition-all duration-200",
+                        selectedWindow === w.id
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-[hsl(220_10%_90%)] hover:border-primary/30 hover:bg-primary/[0.03] text-foreground"
+                      )}
+                    >
+                      <span className="font-medium">{w.label}</span>
+                      <span className="text-xs text-muted-foreground">{w.time}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={handleScheduleSubmit}
+                  disabled={!state.deliveryWindow}
+                  className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  Continue to Payment <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </>
+            )}
+          </SystemMessage>
+        );
+
+      // ============================================================
+      // PAYMENT OPTIONS STEP
+      // ============================================================
+      case 'payment': {
+        const depositAmount = Math.round((state.price! * 0.5) * 100) / 100;
+        const windowLabel = TIME_WINDOWS.find(w => w.id === state.deliveryWindow)?.time || state.deliveryWindow;
+
+        return (
+          <SystemMessage>
+            <p className="text-sm text-foreground mb-1 font-medium">Review & Pay</p>
+
+            {/* Order summary */}
+            <div className="border border-[hsl(220_10%_90%)] rounded-xl p-4 bg-white mb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">{state.size} Yard Dumpster</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || 'General Debris'}
+                  </p>
+                </div>
+                <span className="text-lg font-bold text-foreground">${state.price}</span>
+              </div>
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  {state.deliveryDate && format(new Date(state.deliveryDate + 'T12:00:00'), 'EEEE, MMMM d')}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5" />
+                  {windowLabel}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-foreground mb-3">How would you like to pay?</p>
+
+            <div className="grid grid-cols-1 gap-2">
+              <button
+                onClick={() => handlePaymentOption('deposit')}
+                disabled={loading}
+                className="flex items-center justify-between px-4 py-3 border border-primary bg-primary/5 rounded-xl text-sm transition-all duration-200 hover:bg-primary/10"
+              >
+                <div className="flex items-center gap-3">
+                  <CreditCard className="w-4 h-4 text-primary" />
+                  <div className="text-left">
+                    <span className="font-medium text-foreground">Pay Deposit</span>
+                    <p className="text-xs text-muted-foreground mt-0.5">50% now, balance before delivery</p>
+                  </div>
+                </div>
+                <span className="font-semibold text-primary">${depositAmount}</span>
+              </button>
+
+              <button
+                onClick={() => handlePaymentOption('full')}
+                disabled={loading}
+                className="flex items-center justify-between px-4 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-sm transition-all duration-200 hover:border-primary/30 hover:bg-primary/[0.03]"
+              >
+                <div className="flex items-center gap-3">
+                  <CreditCard className="w-4 h-4 text-muted-foreground" />
+                  <div className="text-left">
+                    <span className="font-medium text-foreground">Pay Full Amount</span>
+                    <p className="text-xs text-muted-foreground mt-0.5">Complete payment now</p>
+                  </div>
+                </div>
+                <span className="font-semibold text-foreground">${state.price}</span>
+              </button>
+
+              <button
+                onClick={() => handlePaymentOption('later')}
+                disabled={loading}
+                className="flex items-center justify-between px-4 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-sm transition-all duration-200 hover:border-primary/30 hover:bg-primary/[0.03]"
+              >
+                <div className="flex items-center gap-3">
+                  <Shield className="w-4 h-4 text-muted-foreground" />
+                  <div className="text-left">
+                    <span className="font-medium text-foreground">Reserve Now, Pay Later</span>
+                    <p className="text-xs text-muted-foreground mt-0.5">Save your card on file later</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            {loading && (
+              <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Setting up secure payment...
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-4">
+              <Lock className="w-3 h-3" />
+              Secured with 256-bit encryption via Authorize.Net
+            </div>
+          </SystemMessage>
+        );
+      }
+
+      // ============================================================
+      // PAYMENT PROCESSING (iframe) STEP
+      // ============================================================
+      case 'payment-processing': {
+        const paymentAmount = state.paymentOption === 'deposit'
+          ? Math.round((state.price! * 0.5) * 100) / 100
+          : state.price!;
+
+        return (
+          <SystemMessage>
+            <div className="flex items-center gap-2 mb-3">
+              <Lock className="w-4 h-4 text-primary" />
+              <p className="text-sm text-foreground font-medium">Secure Payment — ${paymentAmount}</p>
+            </div>
+
+            {/* Payment iframe */}
+            <div className="border border-[hsl(220_10%_90%)] rounded-xl overflow-hidden bg-white" style={{ minHeight: '400px' }}>
+              <iframe
+                name="chatPaymentFrame"
+                title="Secure Payment"
+                className="w-full border-0"
+                style={{ height: '450px' }}
+              />
+            </div>
+
+            {/* Hidden form to POST token to iframe */}
+            {state.hostedFormUrl && state.hostedToken && (
+              <form
+                ref={paymentFormRef}
+                method="POST"
+                action={state.hostedFormUrl}
+                target="chatPaymentFrame"
+                style={{ display: 'none' }}
+              >
+                <input type="hidden" name="token" value={state.hostedToken} />
+              </form>
+            )}
+
+            <div className="flex flex-col gap-2 mt-4">
+              <Button
+                onClick={handlePaymentComplete}
+                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                <Check className="w-4 h-4 mr-2" />
+                I Have Completed Payment
+              </Button>
+              <button
+                onClick={() => {
+                  setState(prev => ({ ...prev, paymentOption: 'later', paymentConfirmed: false, step: 'booking-confirm' }));
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors text-center"
+              >
+                Pay later instead
+              </button>
+            </div>
+          </SystemMessage>
+        );
+      }
+
+      // ============================================================
+      // BOOKING CONFIRMATION
+      // ============================================================
+      case 'booking-confirm': {
+        const windowLabel = TIME_WINDOWS.find(w => w.id === state.deliveryWindow)?.time || state.deliveryWindow;
+        const isPaid = state.paymentConfirmed && state.paymentOption !== 'later';
+
+        return (
+          <SystemMessage>
+            <div className="text-center py-4">
+              <div className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3",
+                isPaid ? "bg-primary/10" : "bg-primary/10"
+              )}>
+                <Check className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-base font-semibold text-foreground">
+                {isPaid ? 'Payment Confirmed' : 'Reservation Confirmed'}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                {isPaid
+                  ? 'Your dumpster has been reserved and payment received.'
+                  : 'Your dumpster has been reserved. Payment will be collected before delivery.'}
+              </p>
+
+              {/* Order details card */}
+              <div className="border border-[hsl(220_10%_90%)] rounded-xl p-4 bg-white text-left mb-4">
+                {state.orderId && (
+                  <div className="flex items-center justify-between mb-3 pb-3 border-b border-[hsl(220_10%_93%)]">
+                    <span className="text-xs text-muted-foreground">Order ID</span>
+                    <span className="text-xs font-mono text-foreground">{state.orderId.slice(0, 8).toUpperCase()}</span>
+                  </div>
+                )}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Dumpster</span>
+                    <span className="font-medium text-foreground">{state.size} Yard</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="font-medium text-foreground">${state.price}</span>
+                  </div>
+                  {state.deliveryDate && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Delivery</span>
+                      <span className="font-medium text-foreground">
+                        {format(new Date(state.deliveryDate + 'T12:00:00'), 'MMM d, yyyy')}
+                      </span>
+                    </div>
+                  )}
+                  {windowLabel && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Window</span>
+                      <span className="font-medium text-foreground">{windowLabel}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment</span>
+                    <span className={cn("font-medium", isPaid ? "text-primary" : "text-foreground")}>
+                      {isPaid
+                        ? `$${state.paymentOption === 'deposit' ? Math.round((state.price! * 0.5) * 100) / 100 : state.price} paid`
+                        : 'Pay before delivery'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <ActionButton label="Start Over" onClick={resetConversation} variant="outline" />
+              </div>
+            </div>
+          </SystemMessage>
+        );
+      }
+
+      // ============================================================
+      // HOLD PRICE CONFIRMATION (legacy confirm)
+      // ============================================================
       case 'confirm':
         return (
           <SystemMessage>
             <div className="text-center py-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <Check className="w-6 h-6 text-primary" />
+                <Clock className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-base font-semibold text-foreground">Request Submitted</h3>
+              <h3 className="text-base font-semibold text-foreground">Price Held</h3>
               <p className="text-sm text-muted-foreground mt-1 mb-4">
-                A team member will contact you shortly to finalize your {state.size}-yard dumpster rental for {state.zip}.
+                Your price of <strong>${state.price}</strong> for a {state.size}-yard dumpster in {state.zip} has been held.
+                A team member will contact you shortly to finalize your reservation.
               </p>
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <ActionButton
-                  label="Continue to Booking"
+                  label="Reserve & Schedule Now"
                   onClick={() => {
-                    const params = new URLSearchParams({ v3: '1' });
-                    if (state.zip) params.set('zip', state.zip);
-                    if (state.size) params.set('size', String(state.size));
-                    if (state.materialType) params.set('material', state.materialType);
-                    navigate(`/quote?${params.toString()}`);
+                    setState(prev => ({ ...prev, bookingMode: 'reserve', step: 'schedule' }));
                   }}
                   variant="primary"
-                  icon={<ArrowRight className="w-4 h-4" />}
+                  icon={<CalendarDays className="w-4 h-4" />}
                 />
                 <ActionButton label="Start Over" onClick={resetConversation} variant="outline" />
               </div>
@@ -989,7 +1494,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
             </div>
           </div>
-          {state.step !== 'zip' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && (
+          {state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
             <button onClick={resetConversation} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               Start over
             </button>
