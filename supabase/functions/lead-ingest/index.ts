@@ -48,6 +48,8 @@ interface IngestPayload {
   project_type?: string;
   material_category?: string;
   size_preference?: string;
+  lat?: number;
+  lng?: number;
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
@@ -126,6 +128,10 @@ Deno.serve(async (req) => {
     if (payload.source_detail) extraUpdates.source_key = payload.source_detail;
     if (payload.project_type) extraUpdates.project_category = payload.project_type;
     if (payload.customer_type) extraUpdates.customer_type_detected = payload.customer_type;
+    if (payload.material_category) extraUpdates.material_category = payload.material_category;
+    if (payload.size_preference) extraUpdates.size_preference = payload.size_preference;
+    if (payload.lat != null) extraUpdates.lat = payload.lat;
+    if (payload.lng != null) extraUpdates.lng = payload.lng;
 
     // Score the lead
     const captureIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;

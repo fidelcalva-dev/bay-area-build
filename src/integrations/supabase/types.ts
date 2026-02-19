@@ -12207,6 +12207,7 @@ export type Database = {
           last_contacted_at: string | null
           last_contacted_by_user_id: string | null
           last_followup_at: string | null
+          lat: number | null
           lead_quality_label: string | null
           lead_quality_score: number | null
           lead_risk_score: number | null
@@ -12214,7 +12215,9 @@ export type Database = {
           lead_status: string
           linked_contact_id: string | null
           linked_opportunity_id: string | null
+          lng: number | null
           market_code: string | null
+          material_category: string | null
           message_excerpt: string | null
           next_followup_at: string | null
           notes: string | null
@@ -12226,6 +12229,7 @@ export type Database = {
           routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
+          size_preference: string | null
           sla_minutes: number
           source_key: string | null
           timeout_at: string | null
@@ -12272,6 +12276,7 @@ export type Database = {
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
+          lat?: number | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -12279,7 +12284,9 @@ export type Database = {
           lead_status?: string
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
+          lng?: number | null
           market_code?: string | null
+          material_category?: string | null
           message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
@@ -12291,6 +12298,7 @@ export type Database = {
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          size_preference?: string | null
           sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null
@@ -12337,6 +12345,7 @@ export type Database = {
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
+          lat?: number | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -12344,7 +12353,9 @@ export type Database = {
           lead_status?: string
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
+          lng?: number | null
           market_code?: string | null
+          material_category?: string | null
           message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
@@ -12356,6 +12367,7 @@ export type Database = {
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          size_preference?: string | null
           sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null
