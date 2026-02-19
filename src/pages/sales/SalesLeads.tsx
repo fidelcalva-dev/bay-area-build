@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useLeadHub, useLeadHubStats, type LeadHubTab, type LeadHubFilters, type LeadHubLead } from "@/hooks/useLeadHub";
-import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
+import { formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
 import { AddressesCell } from "@/components/leads/LeadAddresses";
 import { LeadAddress } from "@/hooks/useLeadAddresses";
@@ -42,21 +42,13 @@ const QUALITY_COLORS: Record<string, string> = {
   RED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
 };
 
-const SLA_BADGE: Record<string, { label: string; className: string }> = {
-  on_track: { label: "On Track", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-  at_risk: { label: "At Risk", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
-  breached: { label: "Breached", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-};
-
 const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'new', label: 'New', icon: Clock },
   { key: 'needs_followup', label: 'Needs Follow-Up', icon: MessageSquare },
   { key: 'my_leads', label: 'My Leads', icon: UserCheck },
-  { key: 'sla_risk', label: 'SLA Risk', icon: AlertTriangle },
   { key: 'high_intent', label: 'High Intent', icon: Zap },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
-  { key: 'breached', label: 'Breached', icon: XCircle },
   { key: 'all', label: 'All', icon: Users },
 ];
 
@@ -208,7 +200,6 @@ export default function SalesLeads() {
     doc.text(`Generated: ${format(new Date(), "MMM d, yyyy h:mm a")} | ${leads.length} leads`, 14, 25);
 
     const rows = leads.map(lead => {
-      const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
       const ageMin = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
       const lastActMin = lead.last_activity_at ? Math.floor((now.getTime() - new Date(lead.last_activity_at).getTime()) / 60000) : null;
       return [
@@ -216,7 +207,6 @@ export default function SalesLeads() {
         lead.zip || '--',
         SOURCE_LABELS[lead.channel_key || ''] || lead.source_key || lead.channel_key || '--',
         formatElapsed(ageMin),
-        `${SLA_BADGE[sla.status].label} ${sla.responseMinutes !== null ? formatElapsed(sla.responseMinutes) : formatElapsed(sla.elapsedMinutes)}`,
         `${lead.lead_quality_label || 'GREEN'} ${lead.lead_quality_score ?? 0}`,
         (STATUS_CONFIG[lead.lead_status] || STATUS_CONFIG.new).label,
         lastActMin !== null ? formatElapsed(lastActMin) + ' ago' : '--',
@@ -225,7 +215,7 @@ export default function SalesLeads() {
 
     autoTable(doc, {
       startY: 30,
-      head: [['Contact', 'ZIP', 'Source', 'Age', 'SLA', 'Quality', 'Status', 'Last Activity']],
+      head: [['Contact', 'ZIP', 'Source', 'Age', 'Quality', 'Status', 'Last Activity']],
       body: rows,
       styles: { fontSize: 8, cellPadding: 2 },
       headStyles: { fillColor: [41, 128, 185] },
@@ -305,12 +295,6 @@ export default function SalesLeads() {
           <CardContent className="pt-4 pb-3">
             <div className="text-2xl font-bold text-orange-600">{stats.highRisk}</div>
             <p className="text-xs text-muted-foreground">High Risk</p>
-          </CardContent>
-        </Card>
-        <Card className={stats.slaBreach > 0 ? "border-destructive/50 cursor-pointer" : "cursor-pointer"} onClick={() => setActiveTab('new')}>
-          <CardContent className="pt-4 pb-3">
-            <div className={`text-2xl font-bold ${stats.slaBreach > 0 ? 'text-red-600' : ''}`}>{stats.slaBreach}</div>
-            <p className="text-xs text-muted-foreground">SLA Breach</p>
           </CardContent>
         </Card>
       </div>
@@ -395,7 +379,6 @@ export default function SalesLeads() {
                   <TableHead>Addresses</TableHead>
                   <TableHead>Source</TableHead>
                   <TableHead>Age</TableHead>
-                  <TableHead>SLA</TableHead>
                   <TableHead>Quality</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Last Follow-Up</TableHead>
@@ -419,40 +402,11 @@ export default function SalesLeads() {
                       return true;
                     })
                     .map(lead => {
-                    const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
                     const ageMinutes = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
                     const lastContactMin = lead.last_contacted_at
                       ? Math.floor((now.getTime() - new Date(lead.last_contacted_at).getTime()) / 60000)
                       : null;
                     const statusConfig = STATUS_CONFIG[lead.lead_status] || STATUS_CONFIG.new;
-
-                    // Enhanced SLA: use sla_due_at for precise countdown
-                    let slaStatus = sla.status;
-                    let slaLabel = SLA_BADGE[sla.status].label;
-                    let slaClassName = SLA_BADGE[sla.status].className;
-                    let slaCountdown = '';
-
-                    if (lead.is_sla_breached) {
-                      slaStatus = 'breached';
-                      slaLabel = 'BREACHED';
-                      slaClassName = SLA_BADGE.breached.className;
-                    } else if (lead.sla_due_at && !lead.first_contact_at && !lead.first_response_at) {
-                      const remaining = Math.floor((new Date(lead.sla_due_at).getTime() - now.getTime()) / 60000);
-                      if (remaining <= 0) {
-                        slaLabel = 'BREACHED';
-                        slaClassName = SLA_BADGE.breached.className;
-                      } else if (remaining <= 5) {
-                        slaLabel = `${remaining}m left`;
-                        slaClassName = 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
-                      } else if (remaining <= 10) {
-                        slaLabel = `${remaining}m left`;
-                        slaClassName = SLA_BADGE.at_risk.className;
-                      } else {
-                        slaLabel = `${remaining}m left`;
-                        slaClassName = SLA_BADGE.on_track.className;
-                      }
-                    }
-
                     const qualityColor = QUALITY_COLORS[lead.lead_quality_label || 'GREEN'];
 
                     return (
@@ -480,16 +434,6 @@ export default function SalesLeads() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm font-mono">{formatElapsed(ageMinutes)}</TableCell>
-                        <TableCell>
-                          <Badge className={`${slaClassName} text-xs`}>
-                            {slaLabel}
-                          </Badge>
-                          {lead.escalation_level && lead.escalation_level > 0 ? (
-                            <Badge variant="destructive" className="text-[10px] ml-1">
-                              ESC {lead.escalation_level}
-                            </Badge>
-                          ) : null}
-                        </TableCell>
                         <TableCell>
                           <Badge className={`${qualityColor} text-xs`}>
                             {lead.lead_quality_label || 'GREEN'} {lead.lead_quality_score ?? 0}

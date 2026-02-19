@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { getSlaDuration, formatElapsed } from "@/services/leadScoringService";
+import { formatElapsed } from "@/services/leadScoringService";
 import { format } from "date-fns";
 import FollowUpPanel from "@/components/sales/FollowUpPanel";
 import { RiskCheckPanel } from "@/components/fraud";
@@ -92,11 +92,6 @@ const QUALITY_COLORS: Record<string, string> = {
   RED: "bg-red-100 text-red-800",
 };
 
-const SLA_COLORS: Record<string, string> = {
-  on_track: "bg-green-100 text-green-800",
-  at_risk: "bg-yellow-100 text-yellow-800",
-  breached: "bg-red-100 text-red-800",
-};
 
 const ACTION_ICONS: Record<string, typeof Phone> = {
   CALL_OUT: Phone,
@@ -243,7 +238,7 @@ export default function LeadDetail() {
     );
   }
 
-  const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
+  const ageMinutes = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
   const lastActivityMinutes = lead.last_activity_at
     ? Math.floor((now.getTime() - new Date(lead.last_activity_at).getTime()) / 60000)
     : null;
@@ -265,9 +260,6 @@ export default function LeadDetail() {
             <Badge className={QUALITY_COLORS[lead.lead_quality_label || 'GREEN']}>
               {lead.lead_quality_label || 'GREEN'}
             </Badge>
-            <Badge className={SLA_COLORS[sla.status]}>
-              SLA: {sla.status === 'on_track' ? '✓ On Track' : sla.status === 'at_risk' ? '⚠ At Risk' : '🔴 Breached'}
-            </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
             {lead.company_name && `${lead.company_name} · `}
@@ -277,24 +269,14 @@ export default function LeadDetail() {
         </div>
       </div>
 
-      {/* SLA Timer Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Lead Info Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-4 pb-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Clock className="w-3.5 h-3.5" /> Lead Age
             </div>
-            <p className="text-xl font-bold">{formatElapsed(sla.elapsedMinutes)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 pb-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <Phone className="w-3.5 h-3.5" /> First Response
-            </div>
-            <p className="text-xl font-bold">
-              {sla.responseMinutes !== null ? formatElapsed(sla.responseMinutes) : "—"}
-            </p>
+            <p className="text-xl font-bold">{formatElapsed(ageMinutes)}</p>
           </CardContent>
         </Card>
         <Card>

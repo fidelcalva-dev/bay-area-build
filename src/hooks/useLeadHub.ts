@@ -158,8 +158,6 @@ export type LeadHubTab =
   | 'existing_customer' 
   | 'high_risk' 
   | 'my_leads'
-  | 'sla_risk'
-  | 'breached'
   | 'all';
 
 export interface LeadHubFilters {
@@ -204,12 +202,6 @@ export function useLeadHub(filters: LeadHubFilters) {
           break;
         case 'high_risk':
           query = query.eq('lead_quality_label', 'RED');
-          break;
-        case 'sla_risk':
-          query = query.in('lead_status', ['new', 'contacted']).is('first_contact_at', null).gt('escalation_level', 0);
-          break;
-        case 'breached':
-          query = query.eq('is_sla_breached', true);
           break;
         // 'my_leads' is filtered client-side after fetch (needs auth.uid)
       }
@@ -286,7 +278,6 @@ export function useLeadHubStats() {
     highIntent: 0,
     existingCustomer: 0,
     highRisk: 0,
-    slaBreach: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -297,15 +288,6 @@ export function useLeadHubStats() {
         .select('lead_status, lead_quality_label, urgency_score, is_existing_customer, first_response_at, first_response_sent_at, created_at, sla_minutes');
 
       if (data) {
-        const now = Date.now();
-        let slaBreach = 0;
-        data.forEach(l => {
-          if (l.lead_status === 'new' && !l.first_response_at && !l.first_response_sent_at) {
-            const elapsed = (now - new Date(l.created_at).getTime()) / 60000;
-            if (elapsed > (l.sla_minutes || 15)) slaBreach++;
-          }
-        });
-
         setStats({
           total: data.length,
           new: data.filter(l => l.lead_status === 'new').length,
@@ -313,7 +295,6 @@ export function useLeadHubStats() {
           highIntent: data.filter(l => (l.urgency_score || 0) >= 70).length,
           existingCustomer: data.filter(l => l.is_existing_customer).length,
           highRisk: data.filter(l => l.lead_quality_label === 'RED').length,
-          slaBreach,
         });
       }
       setLoading(false);
