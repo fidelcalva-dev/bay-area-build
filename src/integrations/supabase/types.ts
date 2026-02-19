@@ -50,6 +50,62 @@ export type Database = {
         }
         Relationships: []
       }
+      activation_tokens: {
+        Row: {
+          attempt_number: number
+          channel: string
+          clicked_at: string | null
+          created_at: string
+          customer_id: string
+          error_message: string | null
+          expires_at: string
+          id: string
+          opened_at: string | null
+          sent_at: string | null
+          status: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          attempt_number?: number
+          channel: string
+          clicked_at?: string | null
+          created_at?: string
+          customer_id: string
+          error_message?: string | null
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+          token?: string
+          used_at?: string | null
+        }
+        Update: {
+          attempt_number?: number
+          channel?: string
+          clicked_at?: string | null
+          created_at?: string
+          customer_id?: string
+          error_message?: string | null
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activation_tokens_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_permissions: {
         Row: {
           can_approve: boolean | null
@@ -3399,6 +3455,9 @@ export type Database = {
       }
       customers: {
         Row: {
+          activated_at: string | null
+          activation_attempts: number
+          activation_status: string
           billing_address: string | null
           billing_email: string | null
           billing_phone: string | null
@@ -3416,6 +3475,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          activated_at?: string | null
+          activation_attempts?: number
+          activation_status?: string
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
@@ -3433,6 +3495,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          activated_at?: string | null
+          activation_attempts?: number
+          activation_status?: string
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null

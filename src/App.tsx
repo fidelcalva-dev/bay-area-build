@@ -76,6 +76,7 @@ const PortalQuoteView = lazy(() => import("./pages/portal/PortalQuoteView"));
 const PortalSchedule = lazy(() => import("./pages/portal/PortalSchedule"));
 const PortalPay = lazy(() => import("./pages/portal/PortalPay"));
 const SignQuoteContract = lazy(() => import("./pages/portal/SignQuoteContract"));
+const PortalActivate = lazy(() => import("./pages/portal/PortalActivate"));
 
 // Portal Auth Guard
 import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
@@ -148,6 +149,7 @@ const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthD
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
 const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
+const ActivationDashboard = lazy(() => import("./pages/admin/ActivationDashboard"));
 const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
 const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
 const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
@@ -534,6 +536,9 @@ const App = () => {
               <Route path="/portal/sign-quote-contract" element={
                 <Suspense fallback={<PageLoader />}><SignQuoteContract /></Suspense>
               } />
+              <Route path="/portal/activate" element={
+                <Suspense fallback={<PageLoader />}><PortalActivate /></Suspense>
+              } />
 
               {/* Green Halo Client Portal */}
               <Route path="/green-halo/portal" element={
@@ -849,6 +854,10 @@ const App = () => {
                 } />
                 <Route path="marketing/ga4-debug" element={
                   <Suspense fallback={<PageLoader />}><GA4DebugPanel /></Suspense>
+                } />
+                {/* Customer Activation */}
+                <Route path="activation" element={
+                  <Suspense fallback={<PageLoader />}><ActivationDashboard /></Suspense>
                 } />
               </Route>
 

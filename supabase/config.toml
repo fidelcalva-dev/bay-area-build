@@ -182,3 +182,9 @@ verify_jwt = false
 
 [functions.send-quote-contract]
 verify_jwt = false
+
+[functions.send-activation]
+verify_jwt = false
+
+[functions.validate-activation]
+verify_jwt = false
