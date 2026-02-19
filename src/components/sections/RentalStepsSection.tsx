@@ -69,7 +69,7 @@ export function RentalStepsSection() {
           ))}
         </StaggeredContainer>
 
-        <AnimatedSection delay={0.2} className="max-w-3xl mx-auto">
+        <AnimatedSection delay={0.2} className="max-w-2xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden shadow-xl border border-border bg-card">
             <video
               className="w-full aspect-video"
