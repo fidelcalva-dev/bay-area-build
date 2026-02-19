@@ -11,6 +11,7 @@ import {
 } from '@/components/sections/PlatformSections';
 import { TimelineCredibilitySection, WhatMakesDifferentSection } from '@/components/sections/BrandPositioningSection';
 import { InteractiveAISection } from '@/components/sections/InteractiveAISection';
+import { RentalStepsSection } from '@/components/sections/RentalStepsSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -47,6 +48,9 @@ const Index = () => {
 
       {/* How Our System Works (local dumpster company) */}
       <HowSystemWorksSection />
+
+      {/* Rental Steps - How to Rent */}
+      <RentalStepsSection />
 
       {/* Interactive AI Chat Section */}
       <InteractiveAISection />
