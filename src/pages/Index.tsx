@@ -1,10 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { IndustrialHero } from '@/components/sections/IndustrialHero';
+import { ConversationalHero } from '@/components/sections/ConversationalHero';
 import { BuiltFromFieldSection } from '@/components/sections/BuiltFromFieldSection';
 import { LocalYardAdvantageSection } from '@/components/sections/LocalYardAdvantageSection';
 import { SmartSystemsSection } from '@/components/sections/SmartSystemsSection';
-import { AIChatTeaserSection } from '@/components/sections/AIChatTeaserSection';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -36,8 +35,8 @@ const Index = () => {
       canonical={PAGE_SEO.home.canonical}
       schema={generateFAQSchema(homepageFAQs)}
     >
-      {/* Hero */}
-      <IndustrialHero />
+      {/* Conversational Hero */}
+      <ConversationalHero />
 
       {/* Built From the Field */}
       <BuiltFromFieldSection />
@@ -47,9 +46,6 @@ const Index = () => {
 
       {/* Smart Systems */}
       <SmartSystemsSection />
-
-      {/* AI Chat Teaser */}
-      <AIChatTeaserSection />
 
       {/* Social proof */}
       <TrustBadgesSection />
