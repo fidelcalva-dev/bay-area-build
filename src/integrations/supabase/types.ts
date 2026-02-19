@@ -6418,6 +6418,41 @@ export type Database = {
           },
         ]
       }
+      lead_activity_log: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          lead_id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activity_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_addresses: {
         Row: {
           address_line: string
@@ -12196,12 +12231,15 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           customer_type_detected: string | null
+          escalation_level: number
+          first_contact_at: string | null
           first_response_at: string | null
           first_response_sent_at: string | null
           followup_count: number
           gclid: string | null
           id: string
           is_existing_customer: boolean | null
+          is_sla_breached: boolean
           landing_url: string | null
           last_activity_at: string | null
           last_contacted_at: string | null
@@ -12221,6 +12259,7 @@ export type Database = {
           message_excerpt: string | null
           next_followup_at: string | null
           notes: string | null
+          owner_user_id: string | null
           project_category: string | null
           quote_id: string | null
           raw_payload_json: Json | null
@@ -12230,6 +12269,7 @@ export type Database = {
           routing_tags: string[] | null
           sales_notes: string | null
           size_preference: string | null
+          sla_due_at: string | null
           sla_minutes: number
           source_key: string | null
           timeout_at: string | null
@@ -12265,12 +12305,15 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          escalation_level?: number
+          first_contact_at?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
           followup_count?: number
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
+          is_sla_breached?: boolean
           landing_url?: string | null
           last_activity_at?: string | null
           last_contacted_at?: string | null
@@ -12290,6 +12333,7 @@ export type Database = {
           message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
+          owner_user_id?: string | null
           project_category?: string | null
           quote_id?: string | null
           raw_payload_json?: Json | null
@@ -12299,6 +12343,7 @@ export type Database = {
           routing_tags?: string[] | null
           sales_notes?: string | null
           size_preference?: string | null
+          sla_due_at?: string | null
           sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null
@@ -12334,12 +12379,15 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          escalation_level?: number
+          first_contact_at?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
           followup_count?: number
           gclid?: string | null
           id?: string
           is_existing_customer?: boolean | null
+          is_sla_breached?: boolean
           landing_url?: string | null
           last_activity_at?: string | null
           last_contacted_at?: string | null
@@ -12359,6 +12407,7 @@ export type Database = {
           message_excerpt?: string | null
           next_followup_at?: string | null
           notes?: string | null
+          owner_user_id?: string | null
           project_category?: string | null
           quote_id?: string | null
           raw_payload_json?: Json | null
@@ -12368,6 +12417,7 @@ export type Database = {
           routing_tags?: string[] | null
           sales_notes?: string | null
           size_preference?: string | null
+          sla_due_at?: string | null
           sla_minutes?: number
           source_key?: string | null
           timeout_at?: string | null

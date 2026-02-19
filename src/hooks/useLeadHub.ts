@@ -128,6 +128,7 @@ export interface LeadHubLead {
   lead_quality_label: string | null;
   assignment_type: string | null;
   assigned_to: string | null;
+  owner_user_id: string | null;
   city: string | null;
   zip: string | null;
   customer_type_detected: string | null;
@@ -138,11 +139,15 @@ export interface LeadHubLead {
   is_existing_customer: boolean | null;
   first_response_at: string | null;
   first_response_sent_at: string | null;
+  first_contact_at: string | null;
   last_activity_at: string | null;
   last_contacted_at: string | null;
   last_followup_at: string | null;
   followup_count: number | null;
   sla_minutes: number | null;
+  sla_due_at: string | null;
+  escalation_level: number | null;
+  is_sla_breached: boolean | null;
 }
 
 export type LeadHubTab = 
@@ -152,6 +157,9 @@ export type LeadHubTab =
   | 'high_intent' 
   | 'existing_customer' 
   | 'high_risk' 
+  | 'my_leads'
+  | 'sla_risk'
+  | 'breached'
   | 'all';
 
 export interface LeadHubFilters {
@@ -173,7 +181,7 @@ export function useLeadHub(filters: LeadHubFilters) {
     try {
       let query = supabase
         .from('sales_leads')
-        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, city, zip, customer_type_detected, project_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes', { count: 'exact' })
+        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, owner_user_id, city, zip, customer_type_detected, project_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, first_contact_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes, sla_due_at, escalation_level, is_sla_breached', { count: 'exact' })
         .order('created_at', { ascending: false })
         .limit(500);
 
@@ -197,6 +205,13 @@ export function useLeadHub(filters: LeadHubFilters) {
         case 'high_risk':
           query = query.eq('lead_quality_label', 'RED');
           break;
+        case 'sla_risk':
+          query = query.in('lead_status', ['new', 'contacted']).is('first_contact_at', null).gt('escalation_level', 0);
+          break;
+        case 'breached':
+          query = query.eq('is_sla_breached', true);
+          break;
+        // 'my_leads' is filtered client-side after fetch (needs auth.uid)
       }
 
       if (filters.source) {

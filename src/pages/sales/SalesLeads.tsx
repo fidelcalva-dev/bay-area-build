@@ -51,9 +51,12 @@ const SLA_BADGE: Record<string, { label: string; className: string }> = {
 const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'new', label: 'New', icon: Clock },
   { key: 'needs_followup', label: 'Needs Follow-Up', icon: MessageSquare },
+  { key: 'my_leads', label: 'My Leads', icon: UserCheck },
+  { key: 'sla_risk', label: 'SLA Risk', icon: AlertTriangle },
   { key: 'high_intent', label: 'High Intent', icon: Zap },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
+  { key: 'breached', label: 'Breached', icon: XCircle },
   { key: 'all', label: 'All', icon: Users },
 ];
 
@@ -407,14 +410,49 @@ export default function SalesLeads() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  leads.map(lead => {
+                  leads
+                    .filter(lead => {
+                      // Client-side filter for "My Leads" tab
+                      if (activeTab === 'my_leads' && user?.id) {
+                        return lead.owner_user_id === user.id || lead.assigned_to === user.id;
+                      }
+                      return true;
+                    })
+                    .map(lead => {
                     const sla = getSlaDuration(lead.created_at, lead.first_response_at || lead.first_response_sent_at);
                     const ageMinutes = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
                     const lastContactMin = lead.last_contacted_at
                       ? Math.floor((now.getTime() - new Date(lead.last_contacted_at).getTime()) / 60000)
                       : null;
                     const statusConfig = STATUS_CONFIG[lead.lead_status] || STATUS_CONFIG.new;
-                    const slaBadge = SLA_BADGE[sla.status];
+
+                    // Enhanced SLA: use sla_due_at for precise countdown
+                    let slaStatus = sla.status;
+                    let slaLabel = SLA_BADGE[sla.status].label;
+                    let slaClassName = SLA_BADGE[sla.status].className;
+                    let slaCountdown = '';
+
+                    if (lead.is_sla_breached) {
+                      slaStatus = 'breached';
+                      slaLabel = 'BREACHED';
+                      slaClassName = SLA_BADGE.breached.className;
+                    } else if (lead.sla_due_at && !lead.first_contact_at && !lead.first_response_at) {
+                      const remaining = Math.floor((new Date(lead.sla_due_at).getTime() - now.getTime()) / 60000);
+                      if (remaining <= 0) {
+                        slaLabel = 'BREACHED';
+                        slaClassName = SLA_BADGE.breached.className;
+                      } else if (remaining <= 5) {
+                        slaLabel = `${remaining}m left`;
+                        slaClassName = 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
+                      } else if (remaining <= 10) {
+                        slaLabel = `${remaining}m left`;
+                        slaClassName = SLA_BADGE.at_risk.className;
+                      } else {
+                        slaLabel = `${remaining}m left`;
+                        slaClassName = SLA_BADGE.on_track.className;
+                      }
+                    }
+
                     const qualityColor = QUALITY_COLORS[lead.lead_quality_label || 'GREEN'];
 
                     return (
@@ -443,9 +481,14 @@ export default function SalesLeads() {
                         </TableCell>
                         <TableCell className="text-sm font-mono">{formatElapsed(ageMinutes)}</TableCell>
                         <TableCell>
-                          <Badge className={`${slaBadge.className} text-xs`}>
-                            {slaBadge.label}
+                          <Badge className={`${slaClassName} text-xs`}>
+                            {slaLabel}
                           </Badge>
+                          {lead.escalation_level && lead.escalation_level > 0 ? (
+                            <Badge variant="destructive" className="text-[10px] ml-1">
+                              ESC {lead.escalation_level}
+                            </Badge>
+                          ) : null}
                         </TableCell>
                         <TableCell>
                           <Badge className={`${qualityColor} text-xs`}>
