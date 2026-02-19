@@ -27,16 +27,16 @@ export function LocalYardAdvantageSection() {
             variants={fadeUp}
             className="text-3xl md:text-4xl font-bold text-foreground leading-tight"
           >
-            Strategically Positioned Near Disposal Facilities
+            Local Yards, Closer to Your Project
           </motion.h2>
 
           <motion.div variants={fadeUp} className="space-y-4 text-muted-foreground text-lg leading-relaxed">
             <p>
-              We position our yards near transfer stations and disposal sites.
-              This reduces travel time, improves delivery windows, and keeps operations efficient.
+              Our yards are positioned within the communities we serve.
+              This means shorter delivery distances, tighter scheduling windows, and more reliable service.
             </p>
             <p>
-              Efficiency is how we maintain professional service.
+              Local presence is how we maintain professional service.
             </p>
           </motion.div>
         </motion.div>
