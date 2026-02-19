@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { format, isToday, isTomorrow, parseISO } from 'date-fns';
 import { 
   Truck, Clock, MapPin, AlertTriangle, CheckCircle, 
-  Loader2, Calendar
+  Loader2, Calendar, GitBranch
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { DispatchLifecycleDashboard } from '@/components/lifecycle/dashboards';
 
 interface DashboardStats {
   todayDeliveries: number;
@@ -82,6 +84,14 @@ export default function DispatchDashboard() {
 
   return (
     <div className="p-6 space-y-6">
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Pipeline</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Dispatch Dashboard</h1>
         <p className="text-muted-foreground">
@@ -180,6 +190,13 @@ export default function DispatchDashboard() {
           Open Calendar
         </Button>
       </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="lifecycle">
+          <DispatchLifecycleDashboard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
