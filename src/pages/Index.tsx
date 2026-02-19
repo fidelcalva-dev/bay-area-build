@@ -10,9 +10,8 @@ import {
   WhyDifferentSection,
 } from '@/components/sections/PlatformSections';
 import { TimelineCredibilitySection, WhatMakesDifferentSection } from '@/components/sections/BrandPositioningSection';
-import { InteractiveAISection } from '@/components/sections/InteractiveAISection';
+import { AIMainChat } from '@/components/home/AIMainChat';
 import { RentalStepsSection } from '@/components/sections/RentalStepsSection';
-import { AIStartHub } from '@/components/sections/AIStartHub';
 import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
 import { FAQSection } from '@/components/sections/FAQSection';
 import { CTASection } from '@/components/sections/CTASection';
@@ -48,8 +47,8 @@ const Index = () => {
       {/* Hero */}
       <HeroSectionPlatform />
 
-      {/* AI Start Hub — Primary Decision Layer */}
-      <AIStartHub />
+      {/* AI Main Chat — Primary Decision Layer */}
+      <AIMainChat />
 
       {/* How Our System Works (local dumpster company) */}
       <HowSystemWorksSection />
@@ -57,13 +56,10 @@ const Index = () => {
       {/* Rental Steps - How to Rent */}
       <RentalStepsSection />
 
-      {/* Interactive AI Chat Section */}
-      <InteractiveAISection />
-
       {/* Dumpster delivery image */}
       <section className="pt-1 pb-12 md:pb-16 bg-background">
         <div className="container-wide flex justify-center">
-      <img
+          <img
             src={dumpsterDeliveryImg}
             alt="Calsan dumpster being delivered on site"
             className="max-w-xl w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"

@@ -918,6 +918,60 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_entry_sessions: {
+        Row: {
+          created_at: string
+          events: Json | null
+          id: string
+          ip_hash: string | null
+          lead_id: string | null
+          path_selected: string | null
+          referrer: string | null
+          session_id: string | null
+          started_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          created_at?: string
+          events?: Json | null
+          id?: string
+          ip_hash?: string | null
+          lead_id?: string | null
+          path_selected?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          started_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          created_at?: string
+          events?: Json | null
+          id?: string
+          ip_hash?: string | null
+          lead_id?: string | null
+          path_selected?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          started_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
       ai_jobs: {
         Row: {
           attempt_count: number
