@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Clock, Phone, Mail, MessageSquare, FileText, User,
   AlertTriangle, CheckCircle2, Shield, Globe, Loader2, MapPin,
-  Building2, Tag, ExternalLink, TrendingUp, Pencil, Save, X
+  Building2, Tag, ExternalLink, TrendingUp, Pencil, Save, X, GitBranch
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +24,7 @@ import { LeadAddressManager } from "@/components/leads/LeadAddresses";
 import LeadCardInfo from "@/components/leads/LeadCardInfo";
 import LeadQuotesSection from "@/components/leads/LeadQuotesSection";
 import { LeadActivationStatus } from "@/components/leads/LeadActivationStatus";
+import { LifecycleTimeline } from "@/components/lifecycle";
 
 interface LeadData {
   id: string;
@@ -371,7 +372,7 @@ export default function LeadDetail() {
         }}>
           <Mail className="w-4 h-4 mr-1" /> Email
         </Button>
-        <Button size="sm" variant="outline" onClick={() => navigate(`/quote?lead_id=${lead.id}`)}>
+        <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}`)}>
           <FileText className="w-4 h-4 mr-1" /> Create Quote
         </Button>
       </div>
@@ -380,6 +381,7 @@ export default function LeadDetail() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle</TabsTrigger>
           <TabsTrigger value="timeline">Timeline ({actions.length})</TabsTrigger>
           <TabsTrigger value="attribution">Source & Attribution</TabsTrigger>
           <TabsTrigger value="scoring">Risk & Quality</TabsTrigger>
@@ -387,6 +389,35 @@ export default function LeadDetail() {
           <TabsTrigger value="followup">Follow-Up</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
+
+        {/* Lifecycle */}
+        <TabsContent value="lifecycle">
+          <Card>
+            <CardContent className="pt-6">
+              <LifecycleTimeline
+                entityType="LEAD"
+                entityId={lead.id}
+                showActions
+                onTransition={async (toStage) => {
+                  const { transitionStage, getStageDepartment } = await import('@/lib/lifecycleService');
+                  const dept = getStageDepartment('LEAD', toStage);
+                  const result = await transitionStage({
+                    entityType: 'LEAD',
+                    entityId: lead.id,
+                    toStage,
+                    department: dept,
+                    customerId: undefined,
+                  });
+                  if (result.success) {
+                    toast({ title: `Stage updated to ${toStage}` });
+                  } else {
+                    toast({ title: 'Failed to update stage', variant: 'destructive' });
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Overview */}
         <TabsContent value="overview" className="space-y-4">
