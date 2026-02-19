@@ -61,7 +61,7 @@ const Index = () => {
       <InteractiveAISection />
 
       {/* Dumpster delivery image */}
-      <section className="pt-3 pb-12 md:pb-16 bg-background">
+      <section className="pt-1 pb-12 md:pb-16 bg-background">
         <div className="container-wide flex justify-center">
       <img
             src={dumpsterDeliveryImg}
