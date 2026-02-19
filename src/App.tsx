@@ -150,6 +150,7 @@ const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager")
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
 const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
 const ActivationDashboard = lazy(() => import("./pages/admin/ActivationDashboard"));
+const ExecutiveDashboard = lazy(() => import("./pages/admin/ExecutiveDashboard"));
 const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
 const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
 const SeoAdminSitemap = lazy(() => import("./pages/admin/SeoAdminSitemap"));
@@ -858,6 +859,10 @@ const App = () => {
                 {/* Customer Activation */}
                 <Route path="activation" element={
                   <Suspense fallback={<PageLoader />}><ActivationDashboard /></Suspense>
+                } />
+                {/* Executive Dashboard */}
+                <Route path="executive" element={
+                  <Suspense fallback={<PageLoader />}><ExecutiveDashboard /></Suspense>
                 } />
               </Route>
 

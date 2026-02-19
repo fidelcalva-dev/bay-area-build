@@ -19,6 +19,7 @@ const navSections = [
     title: 'Overview',
     items: [
       { path: '/admin', label: 'Dashboard', icon: Home, end: true },
+      { path: '/admin/executive', label: 'Executive View', icon: BarChart3 },
     ],
   },
   {
