@@ -1,3 +1,7 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function handles Twilio SMS webhooks and delegates to lead-ingest.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -19,14 +23,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Parse form data (Twilio sends form-urlencoded)
     let payload: SmsLeadPayload;
-    
     const contentType = req.headers.get('content-type') || '';
     if (contentType.includes('application/x-www-form-urlencoded')) {
       const formData = await req.formData();
@@ -59,13 +61,11 @@ Deno.serve(async (req) => {
     const isOptOut = optOutKeywords.includes(messageUpper);
 
     if (isOptOut) {
-      // Update consent status for this lead
       await supabase
         .from('sales_leads')
         .update({ consent_status: 'OPTED_OUT' })
         .eq('customer_phone', phone);
 
-      // Log opt-out event
       await supabase.from('lead_events').insert({
         lead_id: null,
         event_type: 'OPTED_OUT',
@@ -74,53 +74,57 @@ Deno.serve(async (req) => {
       });
 
       console.log('Opt-out processed for:', phone);
-
-      // Return TwiML empty response
       return new Response(
         '<?xml version="1.0" encoding="UTF-8"?><Response></Response>',
         { headers: { ...corsHeaders, 'Content-Type': 'text/xml' } }
       );
     }
 
-    // Check if we have an existing contact
+    // Lookup existing contact for enrichment
     const { data: existingContact } = await supabase
       .from('customers')
       .select('id, customer_name, billing_email')
       .eq('billing_phone', phone)
       .maybeSingle();
 
-    // Capture lead via omnichannel function
-    const { data: leadId, error: captureError } = await supabase.rpc('capture_omnichannel_lead', {
-      p_channel_key: 'SMS_INBOUND',
-      p_contact_name: existingContact?.customer_name || null,
-      p_phone: phone,
-      p_email: existingContact?.billing_email || null,
-      p_message_excerpt: payload.Body.substring(0, 500),
-      p_consent_status: 'OPTED_IN', // Sender initiated contact
-      p_raw_payload: {
-        message_sid: payload.MessageSid,
-        to_number: payload.To,
-        full_body: payload.Body,
+    // Delegate to lead-ingest
+    const ingestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
       },
+      body: JSON.stringify({
+        source_channel: 'SMS_INBOUND',
+        source_detail: 'twilio_sms',
+        name: existingContact?.customer_name ?? null,
+        phone: phone,
+        email: existingContact?.billing_email ?? null,
+        message: payload.Body.substring(0, 500),
+        consent_status: 'OPTED_IN',
+        raw_payload: {
+          message_sid: payload.MessageSid,
+          to_number: payload.To,
+          full_body: payload.Body,
+          existing_contact_id: existingContact?.id ?? null,
+        },
+      }),
     });
 
-    if (captureError) {
-      console.error('Error capturing SMS lead:', captureError);
-      throw captureError;
+    const ingestResult = await ingestResponse.json();
+    if (!ingestResponse.ok) {
+      console.error('lead-ingest error:', ingestResult);
+    } else {
+      console.log('SMS lead ingested:', ingestResult.lead_id);
+
+      // Link contact if found
+      if (existingContact && ingestResult.lead_id) {
+        await supabase
+          .from('sales_leads')
+          .update({ linked_contact_id: existingContact.id })
+          .eq('id', ingestResult.lead_id);
+      }
     }
-
-    // Link contact if found
-    if (existingContact) {
-      await supabase
-        .from('sales_leads')
-        .update({ linked_contact_id: existingContact.id })
-        .eq('id', leadId);
-    }
-
-    // Auto-assign
-    await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
-
-    console.log('SMS lead captured:', leadId);
 
     // Return TwiML acknowledgment (no auto-reply - DRY_RUN mode)
     return new Response(

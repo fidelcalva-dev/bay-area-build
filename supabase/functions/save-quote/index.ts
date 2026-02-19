@@ -263,47 +263,66 @@ serve(async (req) => {
 
     console.log('[save-quote] Quote saved successfully:', quote.id);
 
-    // Auto-create lead from quote (best effort)
+    // =====================================================
+    // Unified pipeline: route through lead-ingest (non-blocking)
+    // =====================================================
     let linkedLeadId: string | null = null;
     try {
-      const { data: leadData, error: leadError } = await supabase
-        .from('sales_leads')
-        .insert({
-          customer_name: payload.customer_name || null,
-          customer_phone: payload.customer_phone || null,
-          customer_email: payload.customer_email || null,
-          city: payload.city || null,
-          zip: payload.zip_code || null,
-          source_key: 'QUOTE',
-          channel_key: 'website',
-          lead_status: 'new',
-          assignment_type: 'sales',
-          project_category: payload.material_type || null,
-          customer_type_detected: payload.user_type || null,
-          message_excerpt: `Quote ${quote.id} — ${payload.material_type || ''} ${payload.user_selected_size_yards ? payload.user_selected_size_yards + 'yd' : ''}`,
-          quote_id: quote.id,
-        })
-        .select('id')
-        .single();
+      const leadIngestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          source_channel: 'WEBSITE_QUOTE',
+          source_detail: 'instant_quote_v3',
+          name: payload.customer_name ?? null,
+          phone: payload.customer_phone ?? null,
+          email: payload.customer_email ?? null,
+          zip: payload.zip_code ?? null,
+          city: payload.city ?? null,
+          address: payload.delivery_address ?? null,
+          customer_type: payload.user_type ?? null,
+          project_type: payload.material_type ?? null,
+          material_category: payload.material_type ?? null,
+          size_preference: payload.user_selected_size_yards ? `${payload.user_selected_size_yards}yd` : null,
+          lat: payload.customer_lat ?? null,
+          lng: payload.customer_lng ?? null,
+          landing_url: payload.landing_url ?? null,
+          referrer_url: payload.referrer_url ?? null,
+          utm_source: payload.utm_source ?? null,
+          utm_medium: payload.utm_medium ?? null,
+          utm_campaign: payload.utm_campaign ?? null,
+          utm_term: payload.utm_term ?? null,
+          utm_content: payload.utm_content ?? null,
+          gclid: payload.gclid ?? null,
+          consent_status: 'OPTED_IN',
+          raw_payload: {
+            quote_id: quote.id,
+            subtotal: payload.subtotal,
+            size_yards: payload.user_selected_size_yards,
+            source: 'save-quote',
+          },
+        }),
+      });
 
-      if (leadError) {
-        console.error('[save-quote] Lead auto-creation failed:', leadError.message);
-      } else {
-        linkedLeadId = leadData.id;
-        console.log('[save-quote] Lead auto-created:', linkedLeadId);
+      if (leadIngestResponse.ok) {
+        const leadResult = await leadIngestResponse.json();
+        linkedLeadId = leadResult.lead_id ?? null;
+        console.log('[save-quote] Lead ingested via unified pipeline:', linkedLeadId);
 
         // Link lead back to quote
-        await supabase.from('quotes').update({ linked_lead_id: linkedLeadId }).eq('id', quote.id);
-
-        // Log lead event
-        await supabase.from('lead_events').insert({
-          lead_id: linkedLeadId,
-          event_type: 'LEAD_CREATED_FROM_QUOTE',
-          payload_json: { quote_id: quote.id, source: 'auto' },
-        });
+        if (linkedLeadId) {
+          await supabase.from('quotes').update({ linked_lead_id: linkedLeadId }).eq('id', quote.id);
+          await supabase.from('sales_leads').update({ quote_id: quote.id }).eq('id', linkedLeadId);
+        }
+      } else {
+        const errText = await leadIngestResponse.text();
+        console.error('[save-quote] lead-ingest returned error (non-critical):', errText);
       }
     } catch (leadErr) {
-      console.error('[save-quote] Lead creation error (non-critical):', leadErr);
+      console.error('[save-quote] Lead ingest call failed (non-critical):', leadErr);
     }
 
     // Dispatch internal alert (best effort)

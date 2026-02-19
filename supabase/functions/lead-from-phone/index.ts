@@ -1,3 +1,8 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function normalizes inbound phone call data and delegates
+// to lead-ingest as the single source of truth.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -21,10 +26,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const payload: PhoneLeadPayload = await req.json();
     console.log('Phone lead payload:', payload);
@@ -39,56 +43,61 @@ Deno.serve(async (req) => {
     // Normalize phone number
     const phone = payload.from_number.replace(/\D/g, '').slice(-10);
 
-    // Check if we have an existing contact
+    // Lookup existing contact for enrichment
     const { data: existingContact } = await supabase
       .from('customers')
       .select('id, customer_name, billing_email')
       .eq('billing_phone', phone)
       .maybeSingle();
 
-    // Capture lead via omnichannel function
-    const { data: leadId, error: captureError } = await supabase.rpc('capture_omnichannel_lead', {
-      p_channel_key: 'PHONE_CALL',
-      p_contact_name: existingContact?.customer_name || null,
-      p_phone: phone,
-      p_email: existingContact?.billing_email || null,
-      p_message_excerpt: `Inbound call${payload.duration_seconds ? ` (${payload.duration_seconds}s)` : ''}`,
-      p_consent_status: 'OPTED_IN', // Caller initiated contact
-      p_raw_payload: {
-        call_sid: payload.call_sid,
-        call_status: payload.call_status,
-        recording_url: payload.recording_url,
-        recording_sid: payload.recording_sid,
-        duration_seconds: payload.duration_seconds,
-        to_number: payload.to_number,
+    // Delegate to lead-ingest
+    const ingestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
       },
+      body: JSON.stringify({
+        source_channel: 'PHONE_CALL',
+        source_detail: 'inbound_call',
+        name: existingContact?.customer_name ?? null,
+        phone: phone,
+        email: existingContact?.billing_email ?? null,
+        message: `Inbound call${payload.duration_seconds ? ` (${payload.duration_seconds}s)` : ''}`,
+        consent_status: 'OPTED_IN',
+        raw_payload: {
+          call_sid: payload.call_sid,
+          call_status: payload.call_status,
+          recording_url: payload.recording_url,
+          recording_sid: payload.recording_sid,
+          duration_seconds: payload.duration_seconds,
+          to_number: payload.to_number,
+          existing_contact_id: existingContact?.id ?? null,
+        },
+      }),
     });
 
-    if (captureError) {
-      console.error('Error capturing phone lead:', captureError);
-      throw captureError;
+    const ingestResult = await ingestResponse.json();
+
+    if (!ingestResponse.ok) {
+      console.error('lead-ingest error:', ingestResult);
+      throw new Error(ingestResult.error || 'lead-ingest failed');
     }
 
-    // Link recording to lead if available
-    if (payload.recording_sid) {
-      await supabase
-        .from('sales_leads')
-        .update({ call_recording_id: payload.recording_sid })
-        .eq('id', leadId);
+    const leadId = ingestResult.lead_id;
+    console.log('Phone lead ingested:', leadId);
+
+    // Link recording + contact (supplemental, non-blocking)
+    try {
+      const updates: Record<string, unknown> = {};
+      if (payload.recording_sid) updates.call_recording_id = payload.recording_sid;
+      if (existingContact) updates.linked_contact_id = existingContact.id;
+      if (Object.keys(updates).length > 0) {
+        await supabase.from('sales_leads').update(updates).eq('id', leadId);
+      }
+    } catch (e) {
+      console.error('Supplemental update failed (non-critical):', e);
     }
-
-    // Link contact if found
-    if (existingContact) {
-      await supabase
-        .from('sales_leads')
-        .update({ linked_contact_id: existingContact.id })
-        .eq('id', leadId);
-    }
-
-    // Auto-assign
-    await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
-
-    console.log('Phone lead captured:', leadId);
 
     return new Response(
       JSON.stringify({

@@ -1,3 +1,7 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function normalizes Google Ads Lead Form data and delegates.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -6,7 +10,6 @@ const corsHeaders = {
 };
 
 interface GoogleAdsLeadPayload {
-  // Google Ads Lead Form fields
   lead_id?: string;
   form_id?: string;
   campaign_id?: string;
@@ -14,8 +17,6 @@ interface GoogleAdsLeadPayload {
   creative_id?: string;
   gcl_id?: string;
   gclid?: string;
-  
-  // User data columns
   full_name?: string;
   first_name?: string;
   last_name?: string;
@@ -23,11 +24,7 @@ interface GoogleAdsLeadPayload {
   phone_number?: string;
   city?: string;
   postal_code?: string;
-  
-  // Custom questions
   custom_questions?: Record<string, string>;
-  
-  // UTM parameters (if available)
   utm_source?: string;
   utm_campaign?: string;
   utm_term?: string;
@@ -40,69 +37,73 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     const payload: GoogleAdsLeadPayload = await req.json();
     console.log('Google Ads lead payload:', payload);
 
-    // Construct name from parts if needed
+    // Construct name
     let contactName = payload.full_name;
     if (!contactName && (payload.first_name || payload.last_name)) {
       contactName = [payload.first_name, payload.last_name].filter(Boolean).join(' ');
     }
 
-    // Use gclid or gcl_id
     const gclid = payload.gclid || payload.gcl_id;
 
-    // Capture lead via omnichannel function
-    const { data: leadId, error: captureError } = await supabase.rpc('capture_omnichannel_lead', {
-      p_channel_key: 'GOOGLE_ADS',
-      p_contact_name: contactName || null,
-      p_phone: payload.phone_number || null,
-      p_email: payload.email || null,
-      p_city: payload.city || null,
-      p_zip: payload.postal_code || null,
-      p_message_excerpt: 'Google Ads Lead Form',
-      p_consent_status: 'OPTED_IN', // Lead form submissions are explicit opt-in
-      p_utm_source: payload.utm_source || 'google',
-      p_utm_campaign: payload.utm_campaign || payload.campaign_id || null,
-      p_utm_term: payload.utm_term || null,
-      p_gclid: gclid || null,
-      p_raw_payload: {
-        lead_id: payload.lead_id,
-        form_id: payload.form_id,
-        campaign_id: payload.campaign_id,
-        adgroup_id: payload.adgroup_id,
-        creative_id: payload.creative_id,
-        custom_questions: payload.custom_questions,
+    // Delegate to lead-ingest
+    const ingestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
       },
+      body: JSON.stringify({
+        source_channel: 'GOOGLE_ADS',
+        source_detail: `campaign_${payload.campaign_id || 'unknown'}`,
+        name: contactName ?? null,
+        phone: payload.phone_number ?? null,
+        email: payload.email ?? null,
+        city: payload.city ?? null,
+        zip: payload.postal_code ?? null,
+        message: 'Google Ads Lead Form',
+        consent_status: 'OPTED_IN',
+        utm_source: payload.utm_source || 'google',
+        utm_campaign: payload.utm_campaign || payload.campaign_id || null,
+        utm_term: payload.utm_term ?? null,
+        utm_medium: payload.utm_medium || 'cpc',
+        gclid: gclid ?? null,
+        raw_payload: {
+          lead_id: payload.lead_id,
+          form_id: payload.form_id,
+          campaign_id: payload.campaign_id,
+          adgroup_id: payload.adgroup_id,
+          creative_id: payload.creative_id,
+          custom_questions: payload.custom_questions,
+        },
+      }),
     });
 
-    if (captureError) {
-      console.error('Error capturing Google Ads lead:', captureError);
-      throw captureError;
+    const ingestResult = await ingestResponse.json();
+
+    if (!ingestResponse.ok) {
+      console.error('lead-ingest error:', ingestResult);
+      throw new Error(ingestResult.error || 'lead-ingest failed');
     }
 
-    // Update urgency score (paid traffic = higher intent)
-    await supabase
-      .from('sales_leads')
-      .update({ urgency_score: 75 }) // Higher urgency for paid leads
-      .eq('id', leadId);
+    const leadId = ingestResult.lead_id;
+    console.log('Google Ads lead ingested:', leadId);
 
-    // Auto-assign
-    await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
-
-    // Enqueue AI classification
-    await supabase.rpc('enqueue_ai_job', {
-      p_job_type: 'CLASSIFY_LEAD',
-      p_payload: { lead_id: leadId, channel_key: 'GOOGLE_ADS', is_paid: true },
-      p_priority: 1, // High priority for paid leads
-    });
-
-    console.log('Google Ads lead captured:', leadId);
+    // Paid leads get higher urgency (supplemental)
+    try {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      await supabase
+        .from('sales_leads')
+        .update({ urgency_score: 75 })
+        .eq('id', leadId);
+    } catch (e) {
+      console.error('Urgency update failed (non-critical):', e);
+    }
 
     return new Response(
       JSON.stringify({
