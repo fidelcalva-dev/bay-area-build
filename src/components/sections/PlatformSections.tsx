@@ -7,6 +7,7 @@ import {
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import serviceCycleImg from '@/assets/images/calsan-service-cycle.jpg';
 
 // ─── SECTION 2: How Our System Works ─────────────────────────
 export function HowSystemWorksSection() {
@@ -133,18 +134,29 @@ export function ServiceCycleSection() {
           </p>
         </AnimatedSection>
 
-        <StaggeredContainer className="max-w-xl mx-auto">
-          {steps.map((step, i) => (
-            <AnimatedItem key={step} variant="fadeUp">
-              <div className="flex items-center gap-4 py-3 border-b border-border/50 last:border-0">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
-                  {i + 1}
+        <div className="grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
+          <StaggeredContainer>
+            {steps.map((step, i) => (
+              <AnimatedItem key={step} variant="fadeUp">
+                <div className="flex items-center gap-4 py-3 border-b border-border/50 last:border-0">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
+                    {i + 1}
+                  </div>
+                  <span className="text-sm text-foreground">{step}</span>
                 </div>
-                <span className="text-sm text-foreground">{step}</span>
-              </div>
-            </AnimatedItem>
-          ))}
-        </StaggeredContainer>
+              </AnimatedItem>
+            ))}
+          </StaggeredContainer>
+
+          <AnimatedSection>
+            <img
+              src={serviceCycleImg}
+              alt="Calsan truck at disposal facility with concrete debris"
+              className="w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"
+              loading="lazy"
+            />
+          </AnimatedSection>
+        </div>
       </div>
     </section>
   );
