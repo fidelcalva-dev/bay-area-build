@@ -1,3 +1,7 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function handles manual lead entry by authenticated staff.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -26,10 +30,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Verify user is authenticated
     const authHeader = req.headers.get('Authorization');
@@ -53,8 +56,8 @@ Deno.serve(async (req) => {
     const payload: ManualLeadPayload = await req.json();
     console.log('Manual lead add payload:', payload);
 
-    // Validate channel key (must be valid for manual entry)
-    const manualChannels = ['YELP', 'NEXTDOOR', 'CRAIGSLIST', 'REFERRAL', 'GBP_MESSAGE', 'YOUTUBE'];
+    // Validate channel key
+    const manualChannels = ['YELP', 'NEXTDOOR', 'CRAIGSLIST', 'REFERRAL', 'GBP_MESSAGE', 'YOUTUBE', 'MANUAL_ENTRY', 'LEAD_PLATFORM', 'ANGI', 'THUMBTACK'];
     if (!manualChannels.includes(payload.channel_key)) {
       return new Response(
         JSON.stringify({ error: 'Invalid channel for manual entry', allowed_channels: manualChannels }),
@@ -70,54 +73,67 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Capture lead via omnichannel function
-    const { data: leadId, error: captureError } = await supabase.rpc('capture_omnichannel_lead', {
-      p_channel_key: payload.channel_key,
-      p_contact_name: payload.contact_name || null,
-      p_phone: payload.phone || null,
-      p_email: payload.email || null,
-      p_company_name: payload.company_name || null,
-      p_address: payload.address || null,
-      p_city: payload.city || null,
-      p_zip: payload.zip || null,
-      p_message_excerpt: payload.message || payload.notes || null,
-      p_consent_status: payload.consent_status || 'UNKNOWN',
-      p_raw_payload: {
-        added_by: user.id,
-        added_by_email: user.email,
-        notes: payload.notes,
-        project_category: payload.project_category,
+    // Delegate to lead-ingest
+    const ingestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
       },
+      body: JSON.stringify({
+        source_channel: payload.channel_key,
+        source_detail: 'manual_entry',
+        name: payload.contact_name ?? null,
+        phone: payload.phone ?? null,
+        email: payload.email ?? null,
+        company_name: payload.company_name ?? null,
+        address: payload.address ?? null,
+        city: payload.city ?? null,
+        zip: payload.zip ?? null,
+        message: payload.message || payload.notes || null,
+        project_type: payload.project_category ?? null,
+        consent_status: payload.consent_status || 'UNKNOWN',
+        performed_by_user_id: user.id,
+        raw_payload: {
+          added_by: user.id,
+          added_by_email: user.email,
+          notes: payload.notes,
+          project_category: payload.project_category,
+        },
+      }),
     });
 
-    if (captureError) {
-      console.error('Error capturing manual lead:', captureError);
-      throw captureError;
+    const ingestResult = await ingestResponse.json();
+
+    if (!ingestResponse.ok) {
+      console.error('lead-ingest error:', ingestResult);
+      throw new Error(ingestResult.error || 'lead-ingest failed');
     }
 
-    // Update project category if provided
-    if (payload.project_category) {
-      await supabase
-        .from('sales_leads')
-        .update({ project_category: payload.project_category })
-        .eq('id', leadId);
+    const leadId = ingestResult.lead_id;
+    console.log('Manual lead ingested:', leadId);
+
+    // Supplemental: update project category + log manual entry event
+    try {
+      if (payload.project_category) {
+        await supabase
+          .from('sales_leads')
+          .update({ project_category: payload.project_category })
+          .eq('id', leadId);
+      }
+
+      await supabase.from('lead_events').insert({
+        lead_id: leadId,
+        event_type: 'MANUAL_ENTRY',
+        channel_key: payload.channel_key,
+        payload_json: {
+          added_by: user.id,
+          channel: payload.channel_key,
+        },
+      });
+    } catch (e) {
+      console.error('Supplemental update failed (non-critical):', e);
     }
-
-    // Log manual entry event
-    await supabase.from('lead_events').insert({
-      lead_id: leadId,
-      event_type: 'MANUAL_ENTRY',
-      channel_key: payload.channel_key,
-      payload_json: {
-        added_by: user.id,
-        channel: payload.channel_key,
-      },
-    });
-
-    // Auto-assign
-    await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
-
-    console.log('Manual lead added:', leadId);
 
     return new Response(
       JSON.stringify({

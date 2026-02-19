@@ -1,3 +1,7 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function creates/attaches a lead from an existing quote record.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -11,13 +15,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { quote_id } = await req.json();
-    
+
     if (!quote_id) {
       return new Response(
         JSON.stringify({ error: 'quote_id is required' }),
@@ -56,49 +59,60 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Create lead via the capture function
-    const { data: leadId, error: createError } = await supabase.rpc('create_or_update_lead', {
-      p_source_key: 'WEBSITE_QUOTE',
-      p_customer_name: quote.customer_name || null,
-      p_customer_phone: quote.customer_phone || null,
-      p_customer_email: quote.customer_email || null,
-      p_company_name: null,
-      p_address: quote.delivery_address || null,
-      p_city: quote.city || null,
-      p_zip: quote.zip_code || null,
-      p_notes: `Quote #${quote_id.substring(0, 8)} - ${quote.material_type || 'Standard'} - ${quote.size_label || 'TBD'}`,
-      p_utm_source: null,
-      p_utm_campaign: null,
-      p_utm_term: null,
-      p_gclid: null,
-      p_raw_payload: { quote_id, subtotal: quote.subtotal, material_type: quote.material_type },
-      p_dedup_hours: 24,
+    // Delegate to lead-ingest
+    const ingestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
+      },
+      body: JSON.stringify({
+        source_channel: 'WEBSITE_QUOTE',
+        source_detail: 'lead_from_quote',
+        name: quote.customer_name ?? null,
+        phone: quote.customer_phone ?? null,
+        email: quote.customer_email ?? null,
+        address: quote.delivery_address ?? null,
+        city: quote.city ?? null,
+        zip: quote.zip_code ?? null,
+        project_type: quote.material_type ?? null,
+        material_category: quote.material_type ?? null,
+        message: `Quote #${quote_id.substring(0, 8)} - ${quote.material_type || 'Standard'} - ${quote.size_label || 'TBD'}`,
+        consent_status: 'OPTED_IN',
+        raw_payload: {
+          quote_id,
+          subtotal: quote.subtotal,
+          material_type: quote.material_type,
+        },
+      }),
     });
 
-    if (createError) {
-      console.error('Error creating lead:', createError);
-      throw createError;
+    const ingestResult = await ingestResponse.json();
+
+    if (!ingestResponse.ok) {
+      console.error('lead-ingest error:', ingestResult);
+      throw new Error(ingestResult.error || 'lead-ingest failed');
     }
 
-    // Link lead to quote
-    await supabase
-      .from('sales_leads')
-      .update({
-        quote_id: quote_id,
-        project_category: quote.material_type || 'general',
-        requested_service: 'dumpster',
-      })
-      .eq('id', leadId);
+    const leadId = ingestResult.lead_id;
+    console.log('Lead created from quote via pipeline:', leadId);
 
-    // Classify the lead
-    await supabase.rpc('classify_and_route_lead', { p_lead_id: leadId });
-
-    console.log('Lead created from quote:', leadId);
+    // Link lead to quote (supplemental)
+    try {
+      await supabase
+        .from('sales_leads')
+        .update({
+          quote_id: quote_id,
+          project_category: quote.material_type || 'general',
+          requested_service: 'dumpster',
+        })
+        .eq('id', leadId);
+    } catch (e) {
+      console.error('Quote link failed (non-critical):', e);
+    }
 
     // Dispatch internal alert (best effort)
     try {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
         method: 'POST',
         headers: {

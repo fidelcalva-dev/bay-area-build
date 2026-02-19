@@ -916,12 +916,8 @@ const App = () => {
                 <Route path="calls" element={
                   <Suspense fallback={<PageLoader />}><SalesCalls /></Suspense>
                 } />
-                <Route path="inbox" element={
-                  <Suspense fallback={<PageLoader />}><LeadInbox /></Suspense>
-                } />
-                <Route path="lead-hub" element={
-                  <Suspense fallback={<PageLoader />}><SalesLeadInbox /></Suspense>
-                } />
+                <Route path="inbox" element={<Navigate to="/sales/leads" replace />} />
+                <Route path="lead-hub" element={<Navigate to="/sales/leads" replace />} />
                 <Route path="order-builder" element={
                   <Suspense fallback={<PageLoader />}><OrderBuilder /></Suspense>
                 } />

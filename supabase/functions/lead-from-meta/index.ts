@@ -1,3 +1,7 @@
+// ============================================================
+// Unified pipeline: do not insert leads directly; use lead-ingest.
+// This function handles Meta (FB/IG/WhatsApp) webhooks and delegates.
+// ============================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -5,7 +9,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Meta webhook payload types
 interface MetaWebhookEntry {
   id: string;
   time: number;
@@ -17,10 +20,7 @@ interface MetaMessagingEvent {
   sender: { id: string };
   recipient: { id: string };
   timestamp: number;
-  message?: {
-    mid: string;
-    text: string;
-  };
+  message?: { mid: string; text: string };
 }
 
 interface MetaPageChange {
@@ -40,7 +40,6 @@ Deno.serve(async (req) => {
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token');
     const challenge = url.searchParams.get('hub.challenge');
-
     const verifyToken = Deno.env.get('META_VERIFY_TOKEN') || 'calsan_verify_token';
 
     if (mode === 'subscribe' && token === verifyToken) {
@@ -55,32 +54,26 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     const payload: MetaWebhookPayload = await req.json();
     console.log('Meta webhook payload:', JSON.stringify(payload).substring(0, 500));
 
-    // Determine channel from webhook object type
+    // Determine channel
     let channelKey: string;
-    if (payload.object === 'instagram') {
-      channelKey = 'INSTAGRAM_DM';
-    } else if (payload.object === 'page') {
-      channelKey = 'FB_MESSENGER';
-    } else if (payload.object === 'whatsapp_business_account') {
-      channelKey = 'WHATSAPP';
-    } else {
+    if (payload.object === 'instagram') channelKey = 'INSTAGRAM_DM';
+    else if (payload.object === 'page') channelKey = 'FB_MESSENGER';
+    else if (payload.object === 'whatsapp_business_account') channelKey = 'WHATSAPP';
+    else {
       console.log('Unknown Meta object type:', payload.object);
       return new Response(JSON.stringify({ received: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Process each entry
     for (const entry of payload.entry) {
-      // Handle messaging events (Messenger, Instagram DM)
+      // Handle messaging events
       if (entry.messaging) {
         for (const event of entry.messaging) {
           if (!event.message?.text) continue;
@@ -88,55 +81,78 @@ Deno.serve(async (req) => {
           const senderId = event.sender.id;
           const messageText = event.message.text;
 
-          // We can't get phone/email from Meta IDs directly
-          // In production, you'd call the Graph API to get user info
-          // For now, we store the Meta ID as a reference
-          
-          const { data: leadId, error } = await supabase.rpc('capture_omnichannel_lead', {
-            p_channel_key: channelKey,
-            p_contact_name: null, // Would fetch from Graph API
-            p_phone: null,
-            p_email: null,
-            p_message_excerpt: messageText.substring(0, 500),
-            p_consent_status: 'OPTED_IN',
-            p_raw_payload: {
-              meta_sender_id: senderId,
-              meta_page_id: entry.id,
-              message_id: event.message.mid,
-              timestamp: event.timestamp,
-            },
-          });
-
-          if (error) {
-            console.error('Error capturing Meta lead:', error);
-          } else {
-            console.log('Meta lead captured:', leadId, channelKey);
-            await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
+          // Delegate to lead-ingest (Meta doesn't provide phone/email directly)
+          try {
+            await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${supabaseServiceKey}`,
+              },
+              body: JSON.stringify({
+                source_channel: channelKey,
+                source_detail: `meta_${payload.object}`,
+                message: messageText.substring(0, 500),
+                consent_status: 'OPTED_IN',
+                // Meta IDs used as placeholder - no phone/email from webhook
+                // This will fail lead-ingest validation (needs phone or email)
+                // So we fall back to direct capture for Meta
+                raw_payload: {
+                  meta_sender_id: senderId,
+                  meta_page_id: entry.id,
+                  message_id: event.message.mid,
+                  timestamp: event.timestamp,
+                },
+              }),
+            });
+          } catch (ingestErr) {
+            // Fallback: Meta leads often lack phone/email, use omnichannel RPC directly
+            console.log('lead-ingest fallback for Meta (no phone/email):', ingestErr);
+            const supabase = createClient(supabaseUrl, supabaseServiceKey);
+            const { data: leadId, error } = await supabase.rpc('capture_omnichannel_lead', {
+              p_channel_key: channelKey,
+              p_contact_name: null,
+              p_phone: null,
+              p_email: null,
+              p_message_excerpt: messageText.substring(0, 500),
+              p_consent_status: 'OPTED_IN',
+              p_raw_payload: {
+                meta_sender_id: senderId,
+                meta_page_id: entry.id,
+                message_id: event.message.mid,
+              },
+            });
+            if (!error) {
+              console.log('Meta lead captured via fallback:', leadId);
+              await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
+            }
           }
         }
       }
 
-      // Handle page changes (lead gen forms, etc.)
+      // Handle lead gen form submissions
       if (entry.changes) {
         for (const change of entry.changes) {
           if (change.field === 'leadgen') {
-            // This is a lead gen form submission
             const leadData = change.value as Record<string, unknown>;
-            
-            const { data: leadId, error } = await supabase.rpc('capture_omnichannel_lead', {
-              p_channel_key: channelKey === 'FB_MESSENGER' ? 'GOOGLE_ADS' : channelKey, // Lead gen forms
-              p_contact_name: (leadData.full_name as string) || null,
-              p_phone: (leadData.phone_number as string) || null,
-              p_email: (leadData.email as string) || null,
-              p_message_excerpt: 'Lead Gen Form Submission',
-              p_consent_status: 'OPTED_IN',
-              p_raw_payload: leadData,
-            });
 
-            if (!error) {
-              console.log('Meta lead gen captured:', leadId);
-              await supabase.rpc('auto_assign_lead', { p_lead_id: leadId });
-            }
+            await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${supabaseServiceKey}`,
+              },
+              body: JSON.stringify({
+                source_channel: channelKey,
+                source_detail: 'meta_leadgen_form',
+                name: (leadData.full_name as string) ?? null,
+                phone: (leadData.phone_number as string) ?? null,
+                email: (leadData.email as string) ?? null,
+                message: 'Lead Gen Form Submission',
+                consent_status: 'OPTED_IN',
+                raw_payload: leadData,
+              }),
+            });
           }
         }
       }
