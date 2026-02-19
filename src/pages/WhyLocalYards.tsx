@@ -183,12 +183,12 @@ export default function WhyLocalYards() {
         <div className="container-wide">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
-              <h2 className="heading-lg text-foreground mb-4">
-                Our Operational Yards
+               <h2 className="heading-lg text-foreground mb-4">
+                Our Local Yards
               </h2>
               <p className="text-lg text-muted-foreground mb-6">
-                We operate multiple yards across the Bay Area, strategically located to 
-                minimize delivery distance and maximize service reliability.
+                We operate multiple yards across the Bay Area, positioned within the communities 
+                we serve for faster delivery and more reliable service.
               </p>
               <div className="grid gap-4">
                 {OPERATIONAL_YARDS.map((yard) => (
