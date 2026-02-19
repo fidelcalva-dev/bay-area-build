@@ -1,29 +1,31 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { ConversationalHero } from '@/components/sections/ConversationalHero';
-import { BuiltFromFieldSection } from '@/components/sections/BuiltFromFieldSection';
-import { LocalYardAdvantageSection } from '@/components/sections/LocalYardAdvantageSection';
-import { SmartSystemsSection } from '@/components/sections/SmartSystemsSection';
-import { TrustBadgesSection } from '@/components/sections/TrustBadgesSection';
-import { FAQSection } from '@/components/sections/FAQSection';
-import { CTASection } from '@/components/sections/CTASection';
+import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
 import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
+import { Shield, MapPin, DollarSign, Headphones } from 'lucide-react';
+import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 
-// Lazy load heavier sections
-const RealWorkSection = lazy(() => 
-  import('@/components/sections/RealWorkSection').then(mod => ({ default: mod.RealWorkSection }))
-);
-const ReviewsSection = lazy(() => 
+// Lazy load below-fold sections
+const ReviewsSection = lazy(() =>
   import('@/components/sections/ReviewsSection').then(mod => ({ default: mod.ReviewsSection }))
 );
+const FAQSection = lazy(() =>
+  import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
+);
 
-// Minimal loading fallback
 const SectionLoader = () => (
-  <div className="min-h-[200px] flex items-center justify-center">
-    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  <div className="min-h-[100px] flex items-center justify-center">
+    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
   </div>
 );
+
+const TRUST_ITEMS = [
+  { icon: Shield, label: 'Licensed & Insured' },
+  { icon: MapPin, label: 'Local Infrastructure' },
+  { icon: DollarSign, label: 'Transparent Pricing' },
+  { icon: Headphones, label: 'Professional Dispatch' },
+];
 
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
@@ -34,35 +36,51 @@ const Index = () => {
       description={PAGE_SEO.home.description}
       canonical={PAGE_SEO.home.canonical}
       schema={generateFAQSchema(homepageFAQs)}
+      hideChat
     >
-      {/* Conversational Hero */}
-      <ConversationalHero />
+      <LocalSEOSchema includeFAQ includeService />
 
-      {/* Built From the Field */}
-      <BuiltFromFieldSection />
+      {/* Full-screen AI Interface */}
+      <section className="bg-[#F7F9FA] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
+        <div className="container-wide">
+          {/* Header Copy */}
+          <div className="text-center mb-8 md:mb-10 space-y-3 max-w-[700px] mx-auto">
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
+              Professional Dumpster Rental.
+              <br className="hidden sm:block" />
+              <span className="text-primary"> Powered by Smart Logistics.</span>
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              Instant pricing. Local infrastructure. Real-time coordination.
+            </p>
+          </div>
 
-      {/* Local Yard Advantage */}
-      <LocalYardAdvantageSection />
+          {/* AI Chat — Primary Focus */}
+          <CalsanAIChat />
 
-      {/* Smart Systems */}
-      <SmartSystemsSection />
-
-      {/* Social proof */}
-      <TrustBadgesSection />
-
-      {/* Real work examples */}
-      <Suspense fallback={<SectionLoader />}>
-        <RealWorkSection />
-      </Suspense>
+          {/* Trust Strip */}
+          <div className="mt-10 md:mt-14 max-w-[700px] mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {TRUST_ITEMS.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-2.5 justify-center">
+                  <Icon className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.5} />
+                  <span className="text-xs sm:text-sm text-muted-foreground font-medium">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Reviews */}
       <Suspense fallback={<SectionLoader />}>
         <ReviewsSection />
       </Suspense>
 
-      {/* FAQ + CTA */}
-      <FAQSection />
-      <CTASection />
+      {/* FAQ */}
+      <Suspense fallback={<SectionLoader />}>
+        <FAQSection />
+      </Suspense>
     </Layout>
   );
 };
