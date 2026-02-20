@@ -2269,6 +2269,190 @@ export type Database = {
           },
         ]
       }
+      camera_alert_rules: {
+        Row: {
+          auto_create_issue: boolean
+          created_at: string
+          event_type: string
+          id: string
+          is_active: boolean
+          notify_dispatch: boolean
+          notify_safety: boolean
+          severity: string
+        }
+        Insert: {
+          auto_create_issue?: boolean
+          created_at?: string
+          event_type: string
+          id?: string
+          is_active?: boolean
+          notify_dispatch?: boolean
+          notify_safety?: boolean
+          severity?: string
+        }
+        Update: {
+          auto_create_issue?: boolean
+          created_at?: string
+          event_type?: string
+          id?: string
+          is_active?: boolean
+          notify_dispatch?: boolean
+          notify_safety?: boolean
+          severity?: string
+        }
+        Relationships: []
+      }
+      camera_clips: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          event_id: string
+          file_size_bytes: number | null
+          file_url: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          event_id: string
+          file_size_bytes?: number | null
+          file_url: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          event_id?: string
+          file_size_bytes?: number | null
+          file_url?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camera_clips_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "camera_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      camera_events: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          event_timestamp: string
+          event_type: string
+          gps_lat: number | null
+          gps_lng: number | null
+          heading: number | null
+          id: string
+          metadata: Json | null
+          provider_id: string | null
+          run_id: string | null
+          severity: string | null
+          speed_mph: number | null
+          thumbnail_url: string | null
+          truck_id: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          event_timestamp?: string
+          event_type?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          heading?: number | null
+          id?: string
+          metadata?: Json | null
+          provider_id?: string | null
+          run_id?: string | null
+          severity?: string | null
+          speed_mph?: number | null
+          thumbnail_url?: string | null
+          truck_id: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          event_timestamp?: string
+          event_type?: string
+          gps_lat?: number | null
+          gps_lng?: number | null
+          heading?: number | null
+          id?: string
+          metadata?: Json | null
+          provider_id?: string | null
+          run_id?: string | null
+          severity?: string | null
+          speed_mph?: number | null
+          thumbnail_url?: string | null
+          truck_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camera_events_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "camera_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "camera_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "camera_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "camera_events_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      camera_providers: {
+        Row: {
+          api_base_url: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          webhook_secret: string | null
+        }
+        Insert: {
+          api_base_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          webhook_secret?: string | null
+        }
+        Update: {
+          api_base_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          webhook_secret?: string | null
+        }
+        Relationships: []
+      }
       cart_audit_log: {
         Row: {
           action: string

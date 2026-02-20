@@ -32,6 +32,7 @@ import {
 } from '@/lib/runsService';
 import { DriverProofCamera } from '@/components/driver/DriverProofCamera';
 import { DriverLiveLoadTimer } from '@/components/driver/DriverLiveLoadTimer';
+import { RunCameraEvents } from '@/components/driver/RunCameraEvents';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -437,6 +438,7 @@ export default function DriverRunDetail() {
         <TabsList className="w-full">
           <TabsTrigger value="steps" className="flex-1 font-bold">Steps</TabsTrigger>
           <TabsTrigger value="details" className="flex-1 font-bold">Details</TabsTrigger>
+          <TabsTrigger value="camera" className="flex-1 font-bold">Camera</TabsTrigger>
         </TabsList>
 
         <TabsContent value="steps" className="mt-4 space-y-3">
@@ -550,6 +552,12 @@ export default function DriverRunDetail() {
               </div>
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="camera" className="mt-4">
+          <div className="p-4 bg-card rounded-2xl border">
+            <RunCameraEvents runId={run.id} />
+          </div>
         </TabsContent>
       </Tabs>
 

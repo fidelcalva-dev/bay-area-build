@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Truck, Calendar, LogOut, Home, Loader2, 
-  AlertTriangle, Settings, Search, ClipboardList, Phone, Calculator, MapPin, History, Building2, Warehouse
+  AlertTriangle, Settings, Search, ClipboardList, Phone, Calculator, MapPin, History, Building2, Warehouse, Camera
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
