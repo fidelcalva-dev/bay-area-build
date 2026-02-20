@@ -263,6 +263,7 @@ const DispatchRunsList = lazy(() => import("./pages/dispatch/DispatchRunsList"))
 const DispatchRunDetail = lazy(() => import("./pages/dispatch/DispatchRunDetail"));
 const ControlTower = lazy(() => import("./pages/dispatch/ControlTower"));
 const RouteHistory = lazy(() => import("./pages/dispatch/RouteHistory"));
+const FacilitiesFinder = lazy(() => import("./pages/dispatch/FacilitiesFinder"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
@@ -682,6 +683,9 @@ const App = () => {
                 <Route path="disposal-search" element={
                   <Suspense fallback={<PageLoader />}><DisposalSearchPage /></Suspense>
                 } />
+                <Route path="facilities/finder" element={
+                  <Suspense fallback={<PageLoader />}><FacilitiesFinder /></Suspense>
+                } />
                 <Route path="overdue" element={
                   <Suspense fallback={<PageLoader />}><OverdueBillingPage /></Suspense>
                 } />
@@ -957,6 +961,9 @@ const App = () => {
                 } />
                 <Route path="history" element={
                   <Suspense fallback={<PageLoader />}><RouteHistory /></Suspense>
+                } />
+                <Route path="facilities" element={
+                  <Suspense fallback={<PageLoader />}><FacilitiesFinder /></Suspense>
                 } />
               </Route>
 

@@ -4924,6 +4924,44 @@ export type Database = {
           },
         ]
       }
+      facility_assignments: {
+        Row: {
+          assigned_by_user_id: string | null
+          assigned_reason: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          facility_id: string
+          id: string
+        }
+        Insert: {
+          assigned_by_user_id?: string | null
+          assigned_reason?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          facility_id: string
+          id?: string
+        }
+        Update: {
+          assigned_by_user_id?: string | null
+          assigned_reason?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          facility_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_assignments_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       facility_recommendations: {
         Row: {
           city_or_market: string | null
