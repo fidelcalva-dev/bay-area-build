@@ -191,6 +191,37 @@ Deno.serve(async (req) => {
       console.error('Error creating call event:', callError);
     }
 
+    // =====================================================
+    // Unified pipeline: route through lead-ingest (non-blocking)
+    // =====================================================
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          source_channel: 'PHONE_INBOUND',
+          source_detail: callSource === 'GHL_FORWARD' ? 'ghl_forward' : 'twilio_inbound',
+          phone: from,
+          name: callerName || null,
+          consent_status: 'OPTED_IN',
+          raw_payload: {
+            callSid,
+            callSource,
+            phoneNumberId: phoneNumber.id,
+            purpose: phoneNumber.purpose,
+            callEventId: callEvent?.id,
+          },
+        }),
+      });
+    } catch (ingestErr) {
+      console.error('[calls-inbound] lead-ingest failed (non-critical):', ingestErr);
+    }
+
     // Create call assignment if agent found
     if (agentId && callEvent) {
       await supabase.from('call_assignments').insert({

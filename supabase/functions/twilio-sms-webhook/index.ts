@@ -82,6 +82,29 @@ const handler = async (req: Request): Promise<Response> => {
       template_key: keyword,
     });
 
+    // =====================================================
+    // Unified pipeline: route through lead-ingest (non-blocking)
+    // =====================================================
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          source_channel: 'SMS_INBOUND',
+          source_detail: 'twilio_sms_webhook',
+          phone: normalizedPhone,
+          message: messageBody,
+          consent_status: 'OPTED_IN',
+          raw_payload: { messageSid, keyword },
+        }),
+      });
+    } catch (ingestErr) {
+      console.error('[twilio-sms-webhook] lead-ingest failed (non-critical):', ingestErr);
+    }
+
     // Check if this is a scheduling keyword
     if (!SCHEDULE_KEYWORDS.includes(keyword)) {
       console.log(`[twilio-sms-webhook] Keyword "${keyword}" not a schedule trigger, ignoring`);

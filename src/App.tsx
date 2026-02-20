@@ -250,6 +250,7 @@ const CSLeadInbox = lazy(() => import("./pages/cs/CSLeadInbox"));
 
 // Admin Lead Hub
 const AdminLeadsHub = lazy(() => import("./pages/admin/AdminLeadsHub"));
+const EmailConfigPanel = lazy(() => import("./pages/admin/EmailConfigPanel"));
 
 // Dispatch Portal
 const DispatchLayout = lazy(() => import("./pages/dispatch/DispatchLayout"));
@@ -875,6 +876,10 @@ const App = () => {
                 {/* Admin Lead Hub */}
                 <Route path="leads" element={
                   <Suspense fallback={<PageLoader />}><AdminLeadsHub /></Suspense>
+                } />
+                {/* Email Config */}
+                <Route path="email-config" element={
+                  <Suspense fallback={<PageLoader />}><EmailConfigPanel /></Suspense>
                 } />
                 {/* Executive Dashboard */}
                 <Route path="executive" element={
