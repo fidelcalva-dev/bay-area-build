@@ -194,3 +194,6 @@ verify_jwt = false
 
 [functions.lead-ingest]
 verify_jwt = false
+
+[functions.camera-webhook]
+verify_jwt = false

@@ -186,16 +186,16 @@ export async function getActiveAssignment(driverId: string): Promise<TruckAssign
 export async function assignTruck(driverId: string, truckId: string): Promise<{ success: boolean; error?: string }> {
   try {
     // Deactivate any existing assignment
-    await supabase
-      .from('driver_truck_assignments' as 'orders')
-      .update({ is_active: false, unassigned_at: new Date().toISOString() } as never)
+    const deactivateQuery: AnyQuery = supabase.from('driver_truck_assignments');
+    await deactivateQuery
+      .update({ is_active: false, unassigned_at: new Date().toISOString() })
       .eq('driver_id', driverId)
       .eq('is_active', true);
 
     // Create new assignment
-    const { error } = await supabase
-      .from('driver_truck_assignments' as 'orders')
-      .insert({ driver_id: driverId, truck_id: truckId } as never);
+    const insertQuery: AnyQuery = supabase.from('driver_truck_assignments');
+    const { error } = await insertQuery
+      .insert({ driver_id: driverId, truck_id: truckId });
     if (error) throw error;
 
     // Update truck status
