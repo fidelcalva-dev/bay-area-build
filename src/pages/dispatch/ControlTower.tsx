@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet-async';
-import { Calendar as CalIcon, Layers, MapPin, Truck, Factory, Box, RefreshCw, Route, X, Phone, Clock, ChevronRight, Loader2 } from 'lucide-react';
+import { Calendar as CalIcon, Layers, MapPin, Truck, Factory, Box, RefreshCw, Route, X, Phone, Clock, ChevronRight, Loader2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,7 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useYards, useFacilities, useRunsForDate, useRunRoutes, useAssets, useRunCheckpoints, type RunLine } from '@/hooks/useControlTowerData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useControlTowerCameraLayer } from '@/components/dispatch/ControlTowerCameraLayer';
 
 const RUN_COLORS: Record<string, string> = {
   DELIVERY: '#3b82f6',
@@ -50,7 +51,7 @@ function decodePolyline(encoded: string): Array<{ lat: number; lng: number }> {
 
 export default function ControlTower() {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [layers, setLayers] = useState({ yards: true, facilities: true, runs: true, assets: false, drivers: false });
+  const [layers, setLayers] = useState({ yards: true, facilities: true, runs: true, assets: false, drivers: false, cameras: false });
   const [selectedRun, setSelectedRun] = useState<RunLine | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   
@@ -68,6 +69,12 @@ export default function ControlTower() {
   const runIds = useMemo(() => (runs || []).map(r => r.id), [runs]);
   const { data: routes } = useRunRoutes(runIds);
   const { data: checkpoints } = useRunCheckpoints(selectedRun?.id || null);
+
+  // Camera events layer
+  useControlTowerCameraLayer({
+    map: mapInstanceRef.current,
+    visible: layers.cameras,
+  });
 
   // Load Google Maps
   useEffect(() => { load(); }, [load]);
@@ -268,6 +275,10 @@ export default function ControlTower() {
             <div className="flex items-center gap-1.5">
               <Switch id="ly-assets" checked={layers.assets} onCheckedChange={v => setLayers(p => ({ ...p, assets: v }))} />
               <Label htmlFor="ly-assets" className="text-xs cursor-pointer">Assets</Label>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Switch id="ly-cameras" checked={layers.cameras} onCheckedChange={v => setLayers(p => ({ ...p, cameras: v }))} />
+              <Label htmlFor="ly-cameras" className="text-xs cursor-pointer flex items-center gap-1"><Camera className="w-3 h-3" />Cameras</Label>
             </div>
           </div>
         </div>

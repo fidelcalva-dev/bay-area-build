@@ -2337,9 +2337,70 @@ export type Database = {
           },
         ]
       }
+      camera_devices: {
+        Row: {
+          created_at: string | null
+          device_model: string | null
+          device_serial: string
+          firmware_version: string | null
+          id: string
+          installed_at: string | null
+          is_active: boolean | null
+          last_heartbeat_at: string | null
+          mount_position: string | null
+          provider_id: string | null
+          truck_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_model?: string | null
+          device_serial: string
+          firmware_version?: string | null
+          id?: string
+          installed_at?: string | null
+          is_active?: boolean | null
+          last_heartbeat_at?: string | null
+          mount_position?: string | null
+          provider_id?: string | null
+          truck_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_model?: string | null
+          device_serial?: string
+          firmware_version?: string | null
+          id?: string
+          installed_at?: string | null
+          is_active?: boolean | null
+          last_heartbeat_at?: string | null
+          mount_position?: string | null
+          provider_id?: string | null
+          truck_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camera_devices_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "camera_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "camera_devices_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       camera_events: {
         Row: {
           created_at: string
+          device_id: string | null
           driver_id: string | null
           event_timestamp: string
           event_type: string
@@ -2358,6 +2419,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          device_id?: string | null
           driver_id?: string | null
           event_timestamp?: string
           event_type?: string
@@ -2376,6 +2438,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          device_id?: string | null
           driver_id?: string | null
           event_timestamp?: string
           event_type?: string
@@ -2393,6 +2456,13 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "camera_events_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "camera_devices"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "camera_events_driver_id_fkey"
             columns: ["driver_id"]
