@@ -11058,6 +11058,39 @@ export type Database = {
         }
         Relationships: []
       }
+      push_devices: {
+        Row: {
+          app_version: string | null
+          created_at: string | null
+          device_token: string
+          enabled: boolean | null
+          id: string
+          platform: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string | null
+          device_token: string
+          enabled?: boolean | null
+          id?: string
+          platform: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string | null
+          device_token?: string
+          enabled?: boolean | null
+          id?: string
+          platform?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       qa_checks: {
         Row: {
           category: Database["public"]["Enums"]["qa_category"]
