@@ -56,6 +56,21 @@ export interface CameraProvider {
   created_at: string;
 }
 
+export interface CameraDevice {
+  id: string;
+  provider_id: string | null;
+  truck_id: string;
+  device_serial: string;
+  device_model: string | null;
+  mount_position: string;
+  firmware_version: string | null;
+  is_active: boolean;
+  last_heartbeat_at: string | null;
+  installed_at: string;
+  trucks?: { truck_number: string };
+  camera_providers?: { name: string };
+}
+
 export interface CameraAlertRule {
   id: string;
   event_type: string;

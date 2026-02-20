@@ -120,6 +120,7 @@ const DispatchCalendar = lazy(() => import("./pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("./pages/admin/TicketsManager"));
 const InventoryManager = lazy(() => import("./pages/admin/InventoryManager"));
 const AssetsControlTower = lazy(() => import("./pages/admin/AssetsControlTower"));
+const FleetCamerasManager = lazy(() => import("./pages/admin/FleetCamerasManager"));
 const MovementsLog = lazy(() => import("./pages/admin/MovementsLog"));
 const UsersManager = lazy(() => import("./pages/admin/UsersManager"));
 const AccessRequestsPage = lazy(() => import("./pages/admin/AccessRequestsPage"));
@@ -663,6 +664,9 @@ const App = () => {
                 } />
                 <Route path="assets" element={
                   <Suspense fallback={<PageLoader />}><AssetsControlTower /></Suspense>
+                } />
+                <Route path="fleet/cameras" element={
+                  <Suspense fallback={<PageLoader />}><FleetCamerasManager /></Suspense>
                 } />
                 <Route path="movements" element={
                   <Suspense fallback={<PageLoader />}><MovementsLog /></Suspense>

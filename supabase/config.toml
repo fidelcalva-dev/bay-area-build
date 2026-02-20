@@ -197,3 +197,9 @@ verify_jwt = false
 
 [functions.camera-webhook]
 verify_jwt = false
+
+[functions.camera-clip-url]
+verify_jwt = false
+
+[functions.link-camera-event]
+verify_jwt = false
