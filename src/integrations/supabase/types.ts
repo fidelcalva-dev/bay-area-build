@@ -4249,6 +4249,53 @@ export type Database = {
           },
         ]
       }
+      driver_locations: {
+        Row: {
+          accuracy_m: number | null
+          driver_id: string
+          heading: number | null
+          id: string
+          lat: number
+          lng: number
+          recorded_at: string
+          source: string
+          speed_mph: number | null
+          truck_id: string | null
+        }
+        Insert: {
+          accuracy_m?: number | null
+          driver_id: string
+          heading?: number | null
+          id?: string
+          lat: number
+          lng: number
+          recorded_at?: string
+          source?: string
+          speed_mph?: number | null
+          truck_id?: string | null
+        }
+        Update: {
+          accuracy_m?: number | null
+          driver_id?: string
+          heading?: number | null
+          id?: string
+          lat?: number
+          lng?: number
+          recorded_at?: string
+          source?: string
+          speed_mph?: number | null
+          truck_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_locations_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       driver_payouts: {
         Row: {
           base_payout: number
@@ -11960,6 +12007,94 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "run_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      run_route_points: {
+        Row: {
+          id: string
+          lat: number
+          lng: number
+          recorded_at: string
+          run_id: string
+        }
+        Insert: {
+          id?: string
+          lat: number
+          lng: number
+          recorded_at?: string
+          run_id: string
+        }
+        Update: {
+          id?: string
+          lat?: number
+          lng?: number
+          recorded_at?: string
+          run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_route_points_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      run_routes: {
+        Row: {
+          created_at: string
+          dest_lat: number | null
+          dest_lng: number | null
+          distance_miles: number | null
+          duration_minutes: number | null
+          duration_traffic_minutes: number | null
+          geojson: Json | null
+          id: string
+          origin_lat: number | null
+          origin_lng: number | null
+          polyline: string | null
+          route_type: string
+          run_id: string
+        }
+        Insert: {
+          created_at?: string
+          dest_lat?: number | null
+          dest_lng?: number | null
+          distance_miles?: number | null
+          duration_minutes?: number | null
+          duration_traffic_minutes?: number | null
+          geojson?: Json | null
+          id?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          polyline?: string | null
+          route_type: string
+          run_id: string
+        }
+        Update: {
+          created_at?: string
+          dest_lat?: number | null
+          dest_lng?: number | null
+          distance_miles?: number | null
+          duration_minutes?: number | null
+          duration_traffic_minutes?: number | null
+          geojson?: Json | null
+          id?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          polyline?: string | null
+          route_type?: string
+          run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_routes_run_id_fkey"
             columns: ["run_id"]
             isOneToOne: false
             referencedRelation: "runs"
