@@ -63,7 +63,7 @@ const Index = () => {
               <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
                 Professional Dumpster Rental.
                 <br className="hidden sm:block" />
-                <span className="text-primary"> Powered by Smart Logistics.</span>
+                <span className="text-primary"> The Calsan Dumpster System.</span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 Instant pricing. Local infrastructure. Real-time coordination.
@@ -92,7 +92,7 @@ const Index = () => {
               <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
                 Professional Dumpster Rental.
                 <br className="hidden sm:block" />
-                <span className="text-primary"> Powered by Smart Logistics.</span>
+                <span className="text-primary"> The Calsan Dumpster System.</span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 Instant pricing. Local infrastructure. Real-time coordination.

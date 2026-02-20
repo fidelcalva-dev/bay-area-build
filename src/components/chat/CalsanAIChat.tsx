@@ -5,7 +5,7 @@
 // ============================================================
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield, MapPin } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield, MapPin, MessageSquare, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Calendar } from '@/components/ui/calendar';
@@ -21,6 +21,7 @@ import { getFeatureFlag } from '@/lib/featureFlags';
 // ============================================================
 
 export type ChatMode = 'default' | 'sales' | 'commercial' | 'contractor';
+type ChatTab = 'guided' | 'ask';
 
 type FlowStep =
   | 'zip' | 'customer-type' | 'project' | 'material' | 'size' | 'price' | 'contact' | 'confirm'
@@ -265,6 +266,33 @@ async function compressImage(file: File): Promise<string> {
   });
 }
 
+// ---- Safe Answer Generator (no secrets exposed) ----
+function generateSafeAnswer(question: string): string {
+  const q = question.toLowerCase();
+  if (q.includes('heavy') || q.includes('concrete') || q.includes('dirt') || q.includes('soil') || q.includes('rock') || q.includes('brick')) {
+    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 6-10 yard containers. These have a mandatory fill-line — you cannot exceed it. Included tonnage is typically 4-5 tons depending on size. Overage charges apply beyond included weight.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('ton') || q.includes('weight') || q.includes('included') || q.includes('overage')) {
+    return 'Each dumpster includes a set amount of disposal tonnage (typically 1-5 tons depending on size and material). If your debris exceeds the included weight, an overage charge of $165 per additional ton applies. The included tons are clearly shown during the quote process.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('day') || q.includes('rental') || q.includes('how long') || q.includes('keep')) {
+    return 'Standard rental period is 7 days. Extensions are available and priced per day. Contact dispatch for extended rental arrangements.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('price') || q.includes('cost') || q.includes('how much') || q.includes('rate')) {
+    return 'Pricing varies by ZIP code, dumpster size, and material type. We offer transparent, all-inclusive pricing with no hidden fees. Use the Guided Quote to see your exact price in seconds.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('size') || q.includes('yard') || q.includes('which dumpster') || q.includes('recommend')) {
+    return 'For most residential cleanouts, a 15-20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 6-10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('deliver') || q.includes('schedule') || q.includes('when') || q.includes('pickup') || q.includes('next day')) {
+    return 'We deliver Monday through Friday. Next-business-day delivery is available in most service areas. You can choose your preferred delivery window during booking: Morning, Midday, or Afternoon.\n\nWould you like exact pricing for your ZIP?';
+  }
+  if (q.includes('pay') || q.includes('payment') || q.includes('deposit') || q.includes('credit card')) {
+    return 'We accept all major credit cards. You can pay a 50% deposit to reserve, pay in full, or reserve now and pay before delivery. All payments are processed securely through Authorize.Net with 256-bit encryption.\n\nWould you like exact pricing for your ZIP?';
+  }
+  return 'I can help with dumpster sizes, material rules, pricing guidance, rental periods, and scheduling. For exact pricing, use the Guided Quote — it takes about 30 seconds and shows your all-inclusive price.\n\nWould you like exact pricing for your ZIP?';
+}
+
 // ============================================================
 // COMPONENT
 // ============================================================
@@ -296,6 +324,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
+  const [chatTab, setChatTab] = useState<ChatTab>('guided');
+  const [askInput, setAskInput] = useState('');
+  const [askMessages, setAskMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  const [askLoading, setAskLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const paymentFormRef = useRef<HTMLFormElement>(null);
@@ -350,6 +382,48 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     setSelectedWindow(null);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
+
+  // ---- Ask a Question handler ----
+  const handleAskSubmit = async () => {
+    const q = askInput.trim();
+    if (!q || askLoading) return;
+    logEvent('ai_question_submitted', { question: q });
+    setAskMessages(prev => [...prev, { role: 'user', text: q }]);
+    setAskInput('');
+    setAskLoading(true);
+
+    // Generate a professional answer about dumpster rental (no secrets)
+    const safeAnswer = generateSafeAnswer(q);
+    await new Promise(r => setTimeout(r, 600)); // simulate brief thinking
+    setAskMessages(prev => [...prev, { role: 'assistant', text: safeAnswer }]);
+    setAskLoading(false);
+  };
+
+  const handleTabSwitch = (tab: ChatTab) => {
+    logEvent('ai_mode_switched', { mode: tab });
+    setChatTab(tab);
+  };
+
+  const handleQuickTool = (tool: string) => {
+    logEvent('ai_tool_clicked', { tool });
+    if (tool === 'instant_price') {
+      setChatTab('guided');
+      // Already on ZIP step by default
+    } else if (tool === 'upload_photo') {
+      if (getFeatureFlag('ai_home.photo_upload.enabled')) {
+        setChatTab('guided');
+        if (state.zip && state.zipFound) {
+          setState(prev => ({ ...prev, photoPath: true, step: 'photo-upload' }));
+        }
+        // If no ZIP yet, stay on ZIP step — user enters ZIP first
+      }
+    } else if (tool === 'book_now') {
+      const params = new URLSearchParams({ v3: '1', fast: '1' });
+      if (state.zip) params.set('zip', state.zip);
+      navigate(`/quote?${params.toString()}`);
+    }
+    // talk_to_dispatch is handled inline (shows call button)
+  };
 
   // ---- Step Handlers ----
 
@@ -773,11 +847,53 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <SystemMessage>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {showWelcome
-                ? 'Welcome to Calsan Dumpsters Pro.\n\nPlease enter your ZIP code so I can calculate exact pricing.'
+                ? 'Welcome to Calsan Dumpsters Pro.\n\nChoose a tool or enter your ZIP code to get started.'
                 : ''}
             </p>
             {showWelcome && (
               <>
+                {/* Quick Tools — 2x2 grid */}
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <button
+                    onClick={() => handleQuickTool('instant_price')}
+                    className="flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all text-left"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                    Instant Price
+                  </button>
+                  <button
+                    onClick={() => handleQuickTool('upload_photo')}
+                    disabled={!getFeatureFlag('ai_home.photo_upload.enabled')}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium transition-all text-left",
+                      getFeatureFlag('ai_home.photo_upload.enabled')
+                        ? "text-foreground hover:border-primary/30 hover:bg-primary/[0.03]"
+                        : "text-muted-foreground/50 cursor-not-allowed"
+                    )}
+                  >
+                    <Camera className="w-3.5 h-3.5 flex-shrink-0" />
+                    Upload Photo
+                  </button>
+                  <a
+                    href={`tel:${BUSINESS_INFO.phone.sales}`}
+                    onClick={() => logEvent('ai_tool_clicked', { tool: 'talk_to_dispatch' })}
+                    className="flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all text-left"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    Talk to Dispatch
+                  </a>
+                  <button
+                    onClick={() => handleQuickTool('book_now')}
+                    className="flex items-center gap-2 px-3 py-2.5 border border-primary bg-primary/5 rounded-xl text-xs font-medium text-primary hover:bg-primary/10 transition-all text-left"
+                  >
+                    <CalendarDays className="w-3.5 h-3.5 flex-shrink-0" />
+                    Book Now
+                  </button>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-[hsl(220_10%_93%)]">
+                  <p className="text-xs text-muted-foreground mb-2">Enter your ZIP for instant pricing:</p>
+                </div>
                 <div className="mt-4 flex gap-2">
                   <input
                     value={zipInput}
@@ -1562,30 +1678,59 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     <div className={cn("w-full max-w-[850px] mx-auto", className)}>
       <div className="bg-white rounded-2xl shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] border border-[hsl(220_10%_93%)] overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-3.5 border-b border-[hsl(220_10%_93%)] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {canGoBack && (
-              <button onClick={goBack} className="p-1.5 -ml-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+        <div className="px-5 py-3.5 border-b border-[hsl(220_10%_93%)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {canGoBack && chatTab === 'guided' && (
+                <button onClick={goBack} className="p-1.5 -ml-1.5 rounded-lg hover:bg-muted/50 transition-colors">
+                  <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+                </button>
+              )}
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-xs font-bold text-primary-foreground">C</span>
+              </div>
+              <div>
+                <span className="text-sm font-semibold text-foreground">Calsan</span>
+                <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
+              </div>
+            </div>
+            {chatTab === 'guided' && state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
+              <button onClick={resetConversation} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Start over
               </button>
             )}
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-xs font-bold text-primary-foreground">C</span>
-            </div>
-            <div>
-              <span className="text-sm font-semibold text-foreground">Calsan</span>
-              <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
-            </div>
           </div>
-          {state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
-            <button onClick={resetConversation} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Start over
+          {/* Tab toggle */}
+          <div className="flex mt-3 bg-muted/50 rounded-lg p-0.5">
+            <button
+              onClick={() => handleTabSwitch('guided')}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                chatTab === 'guided'
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Zap className="w-3 h-3" />
+              Guided Quote
             </button>
-          )}
+            <button
+              onClick={() => handleTabSwitch('ask')}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                chatTab === 'ask'
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <MessageSquare className="w-3 h-3" />
+              Ask a Question
+            </button>
+          </div>
         </div>
 
         {/* Session Restore Banner */}
-        {showRestoreBanner && state.step === 'zip' && (
+        {showRestoreBanner && chatTab === 'guided' && state.step === 'zip' && (
           <div className="px-5 py-3 bg-muted/50 border-b border-[hsl(220_10%_93%)] flex items-center justify-between">
             <p className="text-sm text-foreground">Continue where you left off?</p>
             <div className="flex gap-2">
@@ -1612,22 +1757,83 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           </div>
         )}
 
-        {/* Progress */}
-        <div className="px-5 pt-3">
-          <Progress value={progress} className="h-1 bg-[hsl(220_10%_93%)]" />
-          <p className="text-[10px] text-muted-foreground mt-1.5 text-right">
-            Step {effectiveIndex + 1} of {activeSteps.length}
-          </p>
-        </div>
+        {chatTab === 'guided' ? (
+          <>
+            {/* Progress — subtle */}
+            <div className="px-5 pt-3">
+              <Progress value={progress} className="h-1 bg-[hsl(220_10%_93%)]" />
+              <p className="text-[9px] text-muted-foreground/60 mt-1 text-right">
+                {effectiveIndex + 1}/{activeSteps.length}
+              </p>
+            </div>
 
-        {/* Conversation Area */}
-        <div
-          ref={scrollRef}
-          className="px-5 py-5 overflow-y-auto space-y-4"
-          style={{ minHeight: '320px', maxHeight: 'calc(100vh - 380px)' }}
-        >
-          {renderStep()}
-        </div>
+            {/* Conversation Area */}
+            <div
+              ref={scrollRef}
+              className="px-5 py-5 overflow-y-auto space-y-4"
+              style={{ minHeight: '320px', maxHeight: 'calc(100vh - 420px)' }}
+            >
+              {renderStep()}
+            </div>
+          </>
+        ) : (
+          /* Ask a Question Mode */
+          <div className="px-5 py-5 space-y-3 overflow-y-auto" style={{ minHeight: '320px', maxHeight: 'calc(100vh - 420px)' }}>
+            {askMessages.length === 0 && (
+              <SystemMessage animate={false}>
+                <p className="text-sm text-foreground leading-relaxed">
+                  Ask me anything about dumpster sizes, materials, pricing rules, rental periods, or scheduling. I will answer concisely and professionally.
+                </p>
+              </SystemMessage>
+            )}
+            {askMessages.map((msg, i) => (
+              msg.role === 'user'
+                ? <UserBubble key={i} text={msg.text} />
+                : <SystemMessage key={i}>
+                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{msg.text}</p>
+                    <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
+                      <ActionButton
+                        label="Get Instant Price"
+                        onClick={() => { setChatTab('guided'); logEvent('ai_tool_clicked', { tool: 'instant_price_from_ask' }); }}
+                        variant="primary"
+                        icon={<Zap className="w-3.5 h-3.5" />}
+                      />
+                      <Button asChild variant="outline" className="rounded-xl h-11 text-sm border-[hsl(220_10%_90%)]">
+                        <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                          <Phone className="w-3.5 h-3.5 mr-2" /> Talk to Dispatch
+                        </a>
+                      </Button>
+                    </div>
+                  </SystemMessage>
+            ))}
+            {askLoading && (
+              <SystemMessage>
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Thinking...</span>
+                </div>
+              </SystemMessage>
+            )}
+            {/* Ask input */}
+            <div className="flex gap-2 mt-2 pt-3 border-t border-[hsl(220_10%_93%)]">
+              <input
+                value={askInput}
+                onChange={(e) => setAskInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
+                placeholder="Ask anything about dumpsters, materials, pricing rules, or scheduling..."
+                className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
+                autoFocus
+              />
+              <Button
+                onClick={handleAskSubmit}
+                disabled={!askInput.trim() || askLoading}
+                className="h-11 rounded-xl bg-primary hover:bg-primary/90 px-5"
+              >
+                {askLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Trust Microcopy */}
         <div className="px-5 py-3 border-t border-[hsl(220_10%_93%)] bg-muted/20">
