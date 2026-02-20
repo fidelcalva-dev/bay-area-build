@@ -132,7 +132,7 @@ export default function EmailConfigPanel() {
 
       {isLive && isDomainVerified && (
         <Alert>
-          <CheckCircle className="h-4 w-4 text-green-600" />
+          <CheckCircle className="h-4 w-4" />
           <AlertDescription>
             Email pipeline is <strong>LIVE</strong> and domain is verified. Emails are being delivered via Resend.
           </AlertDescription>
