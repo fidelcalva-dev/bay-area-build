@@ -203,3 +203,9 @@ verify_jwt = false
 
 [functions.link-camera-event]
 verify_jwt = false
+
+[functions.push-register-device]
+verify_jwt = false
+
+[functions.push-send]
+verify_jwt = false
