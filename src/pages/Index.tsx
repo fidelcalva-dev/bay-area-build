@@ -57,29 +57,15 @@ const Index = () => {
 
       {/* AI Homepage Chat (feature-flagged) */}
       {flagsLoaded && aiHomeEnabled ? (
-        <section className="relative min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20 overflow-hidden">
-          {/* Video Background */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="/hero-bg-fallback.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src="/hero-bg.mp4" type="video/mp4" />
-          </video>
-          {/* Dark cinematic overlay */}
-          <div className="absolute inset-0 bg-black/40" />
-
-          <div className="container-wide relative z-10">
+        <section className="bg-[#F7F9FA] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
+          <div className="container-wide">
             <div className="text-center mb-8 md:mb-10 space-y-3 max-w-[700px] mx-auto">
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-white leading-[1.15] tracking-tight drop-shadow-lg">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
                 Professional Dumpster Rental.
                 <br className="hidden sm:block" />
-                <span className="text-white/90"> The Calsan Dumpster System.</span>
+                <span className="text-primary"> The Calsan Dumpster System.</span>
               </h1>
-              <p className="text-base sm:text-lg text-white/75 leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 Instant pricing. Local infrastructure. Real-time coordination.
               </p>
             </div>
@@ -90,8 +76,8 @@ const Index = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {TRUST_ITEMS.map(({ icon: Icon, label }) => (
                   <div key={label} className="flex items-center gap-2.5 justify-center">
-                    <Icon className="w-4 h-4 text-white/80 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-xs sm:text-sm text-white/70 font-medium">{label}</span>
+                    <Icon className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-xs sm:text-sm text-muted-foreground font-medium">{label}</span>
                   </div>
                 ))}
               </div>
@@ -100,28 +86,15 @@ const Index = () => {
         </section>
       ) : (
         /* Default homepage with CalsanAIChat */
-        <section className="relative min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20 overflow-hidden">
-          {/* Video Background */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="/hero-bg-fallback.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src="/hero-bg.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-black/40" />
-
-          <div className="container-wide relative z-10">
+        <section className="bg-[#F7F9FA] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
+          <div className="container-wide">
             <div className="text-center mb-8 md:mb-10 space-y-3 max-w-[700px] mx-auto">
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-white leading-[1.15] tracking-tight drop-shadow-lg">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
                 Professional Dumpster Rental.
                 <br className="hidden sm:block" />
-                <span className="text-white/90"> The Calsan Dumpster System.</span>
+                <span className="text-primary"> The Calsan Dumpster System.</span>
               </h1>
-              <p className="text-base sm:text-lg text-white/75 leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 Instant pricing. Local infrastructure. Real-time coordination.
               </p>
             </div>
@@ -130,8 +103,8 @@ const Index = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {TRUST_ITEMS.map(({ icon: Icon, label }) => (
                   <div key={label} className="flex items-center gap-2.5 justify-center">
-                    <Icon className="w-4 h-4 text-white/80 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-xs sm:text-sm text-white/70 font-medium">{label}</span>
+                    <Icon className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-xs sm:text-sm text-muted-foreground font-medium">{label}</span>
                   </div>
                 ))}
               </div>
