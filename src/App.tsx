@@ -229,6 +229,7 @@ const CSCalls = lazy(() => import("./pages/cs/CSCalls"));
 // Driver App
 const DriverLayout = lazy(() => import("./pages/driver/DriverLayout"));
 const DriverHome = lazy(() => import("./pages/driver/DriverHome"));
+const DriverRunDetail = lazy(() => import("./pages/driver/DriverRunDetail"));
 const DriverRuns = lazy(() => import("./pages/driver/DriverRuns"));
 const DriverProfile = lazy(() => import("./pages/driver/DriverProfile"));
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
@@ -896,6 +897,9 @@ const App = () => {
               }>
                 <Route index element={
                   <Suspense fallback={<PageLoader />}><DriverHome /></Suspense>
+                } />
+                <Route path="runs/:id" element={
+                  <Suspense fallback={<PageLoader />}><DriverRunDetail /></Suspense>
                 } />
                 <Route path="runs" element={
                   <Suspense fallback={<PageLoader />}><DriverRuns /></Suspense>
