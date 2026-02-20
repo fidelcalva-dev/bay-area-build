@@ -266,6 +266,7 @@ const DispatchRunDetail = lazy(() => import("./pages/dispatch/DispatchRunDetail"
 const ControlTower = lazy(() => import("./pages/dispatch/ControlTower"));
 const RouteHistory = lazy(() => import("./pages/dispatch/RouteHistory"));
 const FacilitiesFinder = lazy(() => import("./pages/dispatch/FacilitiesFinder"));
+const YardHoldBoard = lazy(() => import("./pages/dispatch/YardHoldBoard"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
@@ -973,6 +974,9 @@ const App = () => {
                 } />
                 <Route path="facilities" element={
                   <Suspense fallback={<PageLoader />}><FacilitiesFinder /></Suspense>
+                } />
+                <Route path="yard-hold" element={
+                  <Suspense fallback={<PageLoader />}><YardHoldBoard /></Suspense>
                 } />
               </Route>
 

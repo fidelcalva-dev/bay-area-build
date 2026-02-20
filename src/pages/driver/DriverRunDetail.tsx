@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import {
   ArrowLeft, Phone, Navigation, Clock, MapPin, Truck, Package,
   RefreshCw, Loader2, Camera, FileText, CheckCircle2, AlertTriangle,
-  Timer, ChevronDown, ChevronUp, User, StickyNote
+  Timer, ChevronDown, ChevronUp, User, StickyNote, Pause, Play
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +22,8 @@ import {
   getRunCheckpoints,
   updateRunStatus,
   completeCheckpoint,
+  pauseRun,
+  resumeRun,
   type Run,
   type RunCheckpoint,
   type RunType,
@@ -30,6 +32,11 @@ import {
 } from '@/lib/runsService';
 import { DriverProofCamera } from '@/components/driver/DriverProofCamera';
 import { DriverLiveLoadTimer } from '@/components/driver/DriverLiveLoadTimer';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 const TYPE_ICONS: Record<RunType, React.ReactNode> = {
   DELIVERY: <Truck className="w-5 h-5" />,
@@ -130,6 +137,17 @@ export default function DriverRunDetail() {
   const [cameraCheckpointType, setCameraCheckpointType] = useState('');
   const [showTimer, setShowTimer] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
+  const [pauseReason, setPauseReason] = useState('');
+
+  const PAUSE_REASONS = [
+    'Customer not home',
+    'Gate locked / no access',
+    'Waiting for customer',
+    'Truck issue',
+    'Weather delay',
+    'Other',
+  ];
 
   const fetchRun = useCallback(async () => {
     if (!id) return;
@@ -173,8 +191,10 @@ export default function DriverRunDetail() {
   const steps = getStepsForRunType(run.run_type, run.is_heavy_material);
 
   // Check if a status step is done
-  const statusOrder = ['DRAFT', 'SCHEDULED', 'ASSIGNED', 'ACCEPTED', 'EN_ROUTE', 'ARRIVED', 'COMPLETED'];
+  const statusOrder = ['DRAFT', 'SCHEDULED', 'ASSIGNED', 'ACCEPTED', 'EN_ROUTE', 'ARRIVED', 'PAUSED', 'COMPLETED'];
   const currentStatusIndex = statusOrder.indexOf(run.status);
+  const isPaused = run.status === 'PAUSED';
+  const canPause = ['EN_ROUTE', 'ARRIVED'].includes(run.status);
 
   function isStepDone(step: StepDef): boolean {
     if (step.action === 'status' && step.statusTarget) {
@@ -295,6 +315,34 @@ export default function DriverRunDetail() {
     }
   }
 
+  async function handlePause() {
+    if (!run || !pauseReason) return;
+    setIsSaving(true);
+    const result = await pauseRun(run.id, pauseReason);
+    setIsSaving(false);
+    if (result.success) {
+      toast({ title: 'Service paused ✓' });
+      setPauseDialogOpen(false);
+      setPauseReason('');
+      fetchRun();
+    } else {
+      toast({ title: 'Error', description: result.error, variant: 'destructive' });
+    }
+  }
+
+  async function handleResume() {
+    if (!run) return;
+    setIsSaving(true);
+    const result = await resumeRun(run.id);
+    setIsSaving(false);
+    if (result.success) {
+      toast({ title: 'Service resumed ✓' });
+      fetchRun();
+    } else {
+      toast({ title: 'Error', description: result.error, variant: 'destructive' });
+    }
+  }
+
   const customerAddr = run.destination_address || run.origin_address || '';
 
   return (
@@ -353,6 +401,36 @@ export default function DriverRunDetail() {
           </div>
         </div>
       </div>
+
+      {/* Pause / Resume Banner */}
+      {isPaused && (
+        <div className="mx-4 mt-3 p-4 rounded-xl bg-amber-100 border-2 border-amber-300">
+          <div className="flex items-center gap-2 mb-2">
+            <Pause className="w-5 h-5 text-amber-700" />
+            <span className="font-bold text-amber-800">Service Paused</span>
+          </div>
+          <p className="text-sm text-amber-700 mb-3">Reason: {run.pause_reason || 'Unknown'}</p>
+          <Button
+            onClick={handleResume}
+            disabled={isSaving}
+            className="w-full h-12 gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold"
+          >
+            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
+            Resume Service
+          </Button>
+        </div>
+      )}
+      {canPause && !isPaused && (
+        <div className="mx-4 mt-3">
+          <Button
+            variant="outline"
+            className="w-full h-10 gap-2 border-amber-300 text-amber-700 hover:bg-amber-50"
+            onClick={() => setPauseDialogOpen(true)}
+          >
+            <Pause className="w-4 h-4" /> Pause Service
+          </Button>
+        </div>
+      )}
 
       {/* Tabs */}
       <Tabs defaultValue="steps" className="px-4 mt-4">
@@ -493,6 +571,37 @@ export default function DriverRunDetail() {
           onClose={() => setShowTimer(false)}
         />
       )}
+
+      {/* Pause Reason Dialog */}
+      <Dialog open={pauseDialogOpen} onOpenChange={setPauseDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pause Service</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            <p className="text-sm text-muted-foreground mb-3">Select a reason:</p>
+            <RadioGroup value={pauseReason} onValueChange={setPauseReason} className="space-y-2">
+              {PAUSE_REASONS.map(reason => (
+                <div key={reason} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50">
+                  <RadioGroupItem value={reason} id={reason} />
+                  <Label htmlFor={reason} className="flex-1 cursor-pointer font-medium">{reason}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPauseDialogOpen(false)}>Cancel</Button>
+            <Button
+              onClick={handlePause}
+              disabled={!pauseReason || isSaving}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Pause className="w-4 h-4 mr-2" />}
+              Pause Run
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

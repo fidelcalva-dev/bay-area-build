@@ -1318,6 +1318,7 @@ export type Database = {
           created_at: string
           current_location_type: string
           current_order_id: string | null
+          current_run_id: string | null
           current_yard_id: string | null
           days_out: number
           deployed_at: string | null
@@ -1343,6 +1344,7 @@ export type Database = {
           created_at?: string
           current_location_type?: string
           current_order_id?: string | null
+          current_run_id?: string | null
           current_yard_id?: string | null
           days_out?: number
           deployed_at?: string | null
@@ -1368,6 +1370,7 @@ export type Database = {
           created_at?: string
           current_location_type?: string
           current_order_id?: string | null
+          current_run_id?: string | null
           current_yard_id?: string | null
           days_out?: number
           deployed_at?: string | null
@@ -1405,6 +1408,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "assets_dumpsters_current_run_id_fkey"
+            columns: ["current_run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "assets_dumpsters_current_yard_id_fkey"
@@ -6355,6 +6365,7 @@ export type Database = {
           notes: string | null
           order_id: string | null
           quantity: number
+          run_id: string | null
           to_location_type: string | null
           to_yard_id: string | null
           truck_id: string | null
@@ -6372,6 +6383,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           quantity?: number
+          run_id?: string | null
           to_location_type?: string | null
           to_yard_id?: string | null
           truck_id?: string | null
@@ -6389,6 +6401,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           quantity?: number
+          run_id?: string | null
           to_location_type?: string | null
           to_yard_id?: string | null
           truck_id?: string | null
@@ -6435,6 +6448,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"
             referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -12185,10 +12205,13 @@ export type Database = {
           origin_type: Database["public"]["Enums"]["location_type"]
           origin_yard_id: string | null
           overfill_flagged: boolean | null
+          pause_reason: string | null
+          paused_at: string | null
           payout_status: string | null
           pickup_asset_id: string | null
           priority: number
           requires_fill_line_check: boolean | null
+          resumed_at: string | null
           run_number: string | null
           run_type: Database["public"]["Enums"]["run_type"]
           scheduled_date: string
@@ -12243,10 +12266,13 @@ export type Database = {
           origin_type?: Database["public"]["Enums"]["location_type"]
           origin_yard_id?: string | null
           overfill_flagged?: boolean | null
+          pause_reason?: string | null
+          paused_at?: string | null
           payout_status?: string | null
           pickup_asset_id?: string | null
           priority?: number
           requires_fill_line_check?: boolean | null
+          resumed_at?: string | null
           run_number?: string | null
           run_type: Database["public"]["Enums"]["run_type"]
           scheduled_date: string
@@ -12301,10 +12327,13 @@ export type Database = {
           origin_type?: Database["public"]["Enums"]["location_type"]
           origin_yard_id?: string | null
           overfill_flagged?: boolean | null
+          pause_reason?: string | null
+          paused_at?: string | null
           payout_status?: string | null
           pickup_asset_id?: string | null
           priority?: number
           requires_fill_line_check?: boolean | null
+          resumed_at?: string | null
           run_number?: string | null
           run_type?: Database["public"]["Enums"]["run_type"]
           scheduled_date?: string
@@ -16532,6 +16561,7 @@ export type Database = {
         | "ACCEPTED"
         | "EN_ROUTE"
         | "ARRIVED"
+        | "PAUSED"
         | "COMPLETED"
         | "CANCELLED"
       run_type:
@@ -16918,6 +16948,7 @@ export const Constants = {
         "ACCEPTED",
         "EN_ROUTE",
         "ARRIVED",
+        "PAUSED",
         "COMPLETED",
         "CANCELLED",
       ],

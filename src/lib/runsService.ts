@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 type AnyQuery = any;
 
 export type RunType = 'DELIVERY' | 'PICKUP' | 'HAUL' | 'SWAP' | 'DUMP_AND_RETURN' | 'YARD_TRANSFER';
-export type RunStatus = 'DRAFT' | 'SCHEDULED' | 'ASSIGNED' | 'ACCEPTED' | 'EN_ROUTE' | 'ARRIVED' | 'COMPLETED' | 'CANCELLED';
+export type RunStatus = 'DRAFT' | 'SCHEDULED' | 'ASSIGNED' | 'ACCEPTED' | 'EN_ROUTE' | 'ARRIVED' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
 export type LocationType = 'yard' | 'customer' | 'facility';
 export type AssignmentType = 'IN_HOUSE' | 'CARRIER';
 export type CheckpointType = 
@@ -83,6 +83,9 @@ export interface Run {
   dispatcher_notes: string | null;
   driver_notes: string | null;
   cancellation_reason: string | null;
+  pause_reason: string | null;
+  paused_at: string | null;
+  resumed_at: string | null;
   
   // Payout
   estimated_miles: number | null;
@@ -141,6 +144,7 @@ export const RUN_STATUS_FLOW: Record<RunStatus, { next: RunStatus | null; action
   ACCEPTED: { next: 'EN_ROUTE', action: 'Start', color: 'bg-orange-100 text-orange-800' },
   EN_ROUTE: { next: 'ARRIVED', action: 'Arrived', color: 'bg-purple-100 text-purple-800' },
   ARRIVED: { next: 'COMPLETED', action: 'Complete', color: 'bg-indigo-100 text-indigo-800' },
+  PAUSED: { next: 'ARRIVED', action: 'Resume', color: 'bg-amber-100 text-amber-800' },
   COMPLETED: { next: null, action: '', color: 'bg-green-100 text-green-800' },
   CANCELLED: { next: null, action: '', color: 'bg-red-100 text-red-800' },
 };
@@ -499,6 +503,53 @@ async function syncRunCompletionToOrder(run: Run): Promise<void> {
       .from('orders')
       .update(updateData)
       .eq('id', run.order_id);
+  }
+
+  // On DUMP_AND_RETURN completion: update asset location back to yard
+  if (run.run_type === 'DUMP_AND_RETURN' && run.asset_id) {
+    await supabase
+      .from('assets_dumpsters')
+      .update({
+        asset_status: 'available',
+        current_location_type: 'YARD',
+        current_run_id: null,
+        last_movement_at: new Date().toISOString(),
+      })
+      .eq('id', run.asset_id);
+
+    // Log inventory movement
+    await supabase.from('inventory_movements').insert({
+      asset_id: run.asset_id,
+      from_location_type: 'FACILITY',
+      to_location_type: 'YARD',
+      to_yard_id: run.origin_yard_id,
+      movement_type: 'dump_return_complete',
+      quantity: 1,
+      run_id: run.id,
+      notes: 'Asset returned to yard after dump',
+    } as never);
+
+    // Lifecycle event
+    await supabase.from('lifecycle_events' as never).insert({
+      entity_type: 'ORDER',
+      entity_id: run.order_id || run.id,
+      stage_key: 'DUMP_RETURN_COMPLETED',
+      department: 'LOGISTICS',
+      event_type: 'AUTO_TRIGGER',
+      notes: `Dump & Return completed. Asset returned to yard.`,
+    } as never);
+  }
+
+  // On any completion with dump fee data, log BILLING_READY
+  if (run.dump_fee && run.dump_fee > 0) {
+    await supabase.from('lifecycle_events' as never).insert({
+      entity_type: 'ORDER',
+      entity_id: run.order_id || run.id,
+      stage_key: 'BILLING_READY',
+      department: 'BILLING',
+      event_type: 'AUTO_TRIGGER',
+      notes: `Dump fee: $${run.dump_fee}, Weight: ${run.actual_weight_tons || 'N/A'} tons`,
+    } as never);
   }
 }
 
@@ -944,6 +995,183 @@ export async function rescheduleRun(
     );
 
     return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+// =====================================================
+// PAUSE / RESUME
+// =====================================================
+
+export async function pauseRun(
+  runId: string,
+  reason: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+    if (!['EN_ROUTE', 'ARRIVED'].includes(run.status)) {
+      throw new Error('Can only pause runs that are EN_ROUTE or ARRIVED');
+    }
+
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from('runs' as 'orders')
+      .update({
+        status: 'PAUSED',
+        pause_reason: reason,
+        paused_at: now,
+      } as never)
+      .eq('id', runId);
+    if (error) throw error;
+
+    await logRunEvent(runId, 'RUN_PAUSED', run.status, 'PAUSED', reason);
+
+    // Log to lifecycle_events
+    await supabase.from('lifecycle_events' as never).insert({
+      entity_type: 'ORDER',
+      entity_id: run.order_id || runId,
+      stage_key: 'RUN_PAUSED',
+      department: 'DRIVER',
+      event_type: 'AUTO_TRIGGER',
+      notes: `Run paused: ${reason}`,
+    } as never);
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+export async function resumeRun(
+  runId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+    if (run.status !== 'PAUSED') throw new Error('Run is not paused');
+
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from('runs' as 'orders')
+      .update({
+        status: 'ARRIVED',
+        resumed_at: now,
+      } as never)
+      .eq('id', runId);
+    if (error) throw error;
+
+    await logRunEvent(runId, 'RUN_RESUMED', 'PAUSED', 'ARRIVED');
+
+    await supabase.from('lifecycle_events' as never).insert({
+      entity_type: 'ORDER',
+      entity_id: run.order_id || runId,
+      stage_key: 'RUN_RESUMED',
+      department: 'DRIVER',
+      event_type: 'AUTO_TRIGGER',
+      notes: `Run resumed after pause: ${run.pause_reason || 'N/A'}`,
+    } as never);
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+// =====================================================
+// YARD HOLD & DUMP RETURN HELPERS
+// =====================================================
+
+export async function getYardHoldAssets(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from('assets_dumpsters')
+    .select(`
+      *,
+      dumpster_sizes!inner (label, size_value),
+      yards:current_yard_id (id, name),
+      home_yard:home_yard_id (id, name)
+    `)
+    .eq('current_location_type', 'YARD')
+    .eq('asset_status', 'full');
+
+  if (error) {
+    console.error('Error fetching yard hold assets:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createDumpReturnRun(params: {
+  assetId: string;
+  yardId: string;
+  facilityId?: string;
+  scheduledDate: string;
+  notes?: string;
+}): Promise<{ success: boolean; runId?: string; error?: string }> {
+  try {
+    const { data, error } = await supabase
+      .from('runs' as 'orders')
+      .insert({
+        run_type: 'DUMP_AND_RETURN',
+        asset_id: params.assetId,
+        scheduled_date: params.scheduledDate,
+        origin_type: 'yard',
+        origin_yard_id: params.yardId,
+        destination_type: 'facility',
+        destination_facility_id: params.facilityId || null,
+        destination_address: null,
+        notes: params.notes || 'Dump & Return from yard hold',
+        status: 'DRAFT',
+      } as never)
+      .select('id')
+      .single();
+
+    if (error) throw error;
+
+    // Create required checkpoints
+    for (const type of ['PICKUP_POD', 'DUMP_TICKET', 'DELIVERY_POD'] as CheckpointType[]) {
+      await supabase.from('run_checkpoints' as 'orders').insert({
+        run_id: data.id,
+        checkpoint_type: type,
+        is_required: true,
+      } as never);
+    }
+
+    // Update asset status
+    await supabase
+      .from('assets_dumpsters')
+      .update({
+        current_run_id: data.id,
+        asset_status: 'in_transit',
+        last_movement_at: new Date().toISOString(),
+      })
+      .eq('id', params.assetId);
+
+    // Log inventory movement
+    await supabase.from('inventory_movements').insert({
+      asset_id: params.assetId,
+      from_location_type: 'YARD',
+      from_yard_id: params.yardId,
+      to_location_type: 'FACILITY',
+      to_yard_id: null,
+      movement_type: 'dump_return',
+      quantity: 1,
+      run_id: data.id,
+      notes: 'Dump & Return initiated from yard hold',
+    } as never);
+
+    // Lifecycle event
+    await supabase.from('lifecycle_events' as never).insert({
+      entity_type: 'ORDER',
+      entity_id: data.id,
+      stage_key: 'DUMP_RETURN_STARTED',
+      department: 'LOGISTICS',
+      event_type: 'AUTO_TRIGGER',
+      notes: 'Dump & Return run created from yard hold board',
+    } as never);
+
+    return { success: true, runId: data.id };
   } catch (err) {
     return { success: false, error: (err as Error).message };
   }

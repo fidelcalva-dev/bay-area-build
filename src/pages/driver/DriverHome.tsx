@@ -236,7 +236,7 @@ export default function DriverHome() {
           {activeRuns.map((run) => {
             const addr = run.destination_address || run.origin_address;
             const statusFlow = RUN_STATUS_FLOW[run.status];
-            const isActive = ['ACCEPTED', 'EN_ROUTE', 'ARRIVED'].includes(run.status);
+            const isActive = ['ACCEPTED', 'EN_ROUTE', 'ARRIVED', 'PAUSED'].includes(run.status);
 
             return (
               <button
