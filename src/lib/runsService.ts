@@ -267,6 +267,27 @@ export async function assignRun(
   assignmentType: AssignmentType = 'IN_HOUSE'
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Get run for conflict check
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+
+    // Check for conflicts
+    const conflictResult = await checkConflicts({
+      date: run.scheduled_date,
+      window: run.scheduled_window,
+      driverId,
+      truckId: truckId || null,
+      assetId: run.asset_id,
+      excludeRunId: runId,
+    });
+
+    if (conflictResult.hasConflict) {
+      const msgs = conflictResult.conflicts.map(
+        c => `${c.type} already assigned to run ${c.conflictingRunNumber || c.conflictingRunId.slice(0, 8)} in ${c.window || 'same day'}`
+      );
+      throw new Error(`Conflicts detected: ${msgs.join('; ')}`);
+    }
+
     const { error } = await supabase
       .from('runs' as 'orders')
       .update({
@@ -340,6 +361,9 @@ export async function updateRunStatus(
     if (newStatus === 'COMPLETED' && run.order_id) {
       await syncRunCompletionToOrder(run);
     }
+    
+    // Send customer SMS notification (non-blocking)
+    notifyCustomerOnStatusChange(run, newStatus).catch(() => {});
     
     return { success: true };
   } catch (err) {
@@ -745,13 +769,11 @@ export async function reserveAssetForSwap(
   assetId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Update run with delivery asset
     await supabase
       .from('runs' as 'orders')
       .update({ asset_id: assetId } as never)
       .eq('id', runId);
     
-    // Reserve the asset
     await supabase
       .from('assets_dumpsters')
       .update({
@@ -765,5 +787,202 @@ export async function reserveAssetForSwap(
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };
+  }
+}
+
+// =====================================================
+// CONFLICT DETECTION
+// =====================================================
+
+export interface ConflictResult {
+  hasConflict: boolean;
+  conflicts: Array<{
+    type: 'DRIVER' | 'TRUCK' | 'ASSET';
+    entityId: string;
+    entityName: string;
+    conflictingRunId: string;
+    conflictingRunNumber: string | null;
+    window: string | null;
+  }>;
+}
+
+/**
+ * Check for scheduling conflicts (driver/truck/asset double-booked)
+ */
+export async function checkConflicts(params: {
+  date: string;
+  window?: string | null;
+  driverId?: string | null;
+  truckId?: string | null;
+  assetId?: string | null;
+  excludeRunId?: string;
+}): Promise<ConflictResult> {
+  const conflicts: ConflictResult['conflicts'] = [];
+
+  // Build base query for runs on same date/window that aren't cancelled or completed
+  async function findConflicting(field: string, value: string): Promise<Array<{ id: string; run_number: string | null; scheduled_window: string | null }>> {
+    const query: AnyQuery = supabase.from('runs');
+    let q = query
+      .select('id, run_number, scheduled_window')
+      .eq('scheduled_date', params.date)
+      .eq(field, value)
+      .not('status', 'in', '("COMPLETED","CANCELLED")');
+
+    if (params.window) {
+      q = q.eq('scheduled_window', params.window);
+    }
+    if (params.excludeRunId) {
+      q = q.neq('id', params.excludeRunId);
+    }
+
+    const { data } = await q;
+    return (data || []) as Array<{ id: string; run_number: string | null; scheduled_window: string | null }>;
+  }
+
+  if (params.driverId) {
+    const driverConflicts = await findConflicting('assigned_driver_id', params.driverId);
+    for (const r of driverConflicts) {
+      conflicts.push({
+        type: 'DRIVER',
+        entityId: params.driverId,
+        entityName: 'Driver',
+        conflictingRunId: r.id,
+        conflictingRunNumber: r.run_number,
+        window: r.scheduled_window,
+      });
+    }
+  }
+
+  if (params.truckId) {
+    const truckConflicts = await findConflicting('assigned_truck_id', params.truckId);
+    for (const r of truckConflicts) {
+      conflicts.push({
+        type: 'TRUCK',
+        entityId: params.truckId,
+        entityName: 'Truck',
+        conflictingRunId: r.id,
+        conflictingRunNumber: r.run_number,
+        window: r.scheduled_window,
+      });
+    }
+  }
+
+  if (params.assetId) {
+    const assetConflicts = await findConflicting('asset_id', params.assetId);
+    for (const r of assetConflicts) {
+      conflicts.push({
+        type: 'ASSET',
+        entityId: params.assetId,
+        entityName: 'Asset',
+        conflictingRunId: r.id,
+        conflictingRunNumber: r.run_number,
+        window: r.scheduled_window,
+      });
+    }
+  }
+
+  return { hasConflict: conflicts.length > 0, conflicts };
+}
+
+// =====================================================
+// RESCHEDULE
+// =====================================================
+
+/**
+ * Reschedule a run to a new date/window
+ */
+export async function rescheduleRun(
+  runId: string,
+  newDate: string,
+  newWindow?: string | null,
+  reason?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const run = await getRunById(runId);
+    if (!run) throw new Error('Run not found');
+
+    if (['COMPLETED', 'CANCELLED'].includes(run.status)) {
+      throw new Error('Cannot reschedule a completed or cancelled run');
+    }
+
+    // Check conflicts at new date/window
+    const conflictCheck = await checkConflicts({
+      date: newDate,
+      window: newWindow,
+      driverId: run.assigned_driver_id,
+      truckId: run.assigned_truck_id,
+      assetId: run.asset_id,
+      excludeRunId: runId,
+    });
+
+    if (conflictCheck.hasConflict) {
+      const msgs = conflictCheck.conflicts.map(
+        c => `${c.type} conflict with run ${c.conflictingRunNumber || c.conflictingRunId.slice(0, 8)}`
+      );
+      throw new Error(`Scheduling conflicts: ${msgs.join('; ')}`);
+    }
+
+    const oldDate = run.scheduled_date;
+    const oldWindow = run.scheduled_window;
+
+    const { error } = await supabase
+      .from('runs' as 'orders')
+      .update({
+        scheduled_date: newDate,
+        scheduled_window: newWindow ?? run.scheduled_window,
+      } as never)
+      .eq('id', runId);
+
+    if (error) throw error;
+
+    await logRunEvent(
+      runId,
+      'RESCHEDULED',
+      null,
+      null,
+      `Rescheduled from ${oldDate} ${oldWindow || ''} to ${newDate} ${newWindow || ''}${reason ? `. Reason: ${reason}` : ''}`
+    );
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+// =====================================================
+// SMS NOTIFICATION HELPER
+// =====================================================
+
+/**
+ * Send customer notification on run status change
+ */
+export async function notifyCustomerOnStatusChange(
+  run: Run,
+  newStatus: RunStatus
+): Promise<void> {
+  // Only notify on key statuses
+  if (!['EN_ROUTE', 'ARRIVED', 'COMPLETED'].includes(newStatus)) return;
+  if (!run.customer_phone) return;
+
+  const messages: Record<string, string> = {
+    EN_ROUTE: `Calsan Dumpsters: Your driver is on the way! Track your ${run.run_type === 'DELIVERY' ? 'delivery' : run.run_type === 'PICKUP' ? 'pickup' : 'service'}.`,
+    ARRIVED: `Calsan Dumpsters: Your driver has arrived at the jobsite.`,
+    COMPLETED: `Calsan Dumpsters: Your ${run.run_type === 'DELIVERY' ? 'delivery' : run.run_type === 'PICKUP' ? 'pickup' : 'service'} is complete. Thank you!`,
+  };
+
+  const body = messages[newStatus];
+  if (!body) return;
+
+  try {
+    await supabase.functions.invoke('ghl-send-message', {
+      body: {
+        phone: run.customer_phone,
+        message: body,
+        channel: 'sms',
+        context: { run_id: run.id, event: `run_${newStatus.toLowerCase()}` },
+      },
+    });
+  } catch (err) {
+    console.error('SMS notification failed (non-blocking):', err);
   }
 }
