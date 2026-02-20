@@ -12,6 +12,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /app
 Disallow: /admin/
 Disallow: /admin/*
 Disallow: /set-password
@@ -25,7 +26,6 @@ Disallow: /cs/
 Disallow: /driver/
 Disallow: /finance/
 Disallow: /billing/
-Disallow: /app
 Disallow: /staff
 Disallow: /request-access
 Disallow: /login

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -9,10 +9,12 @@ import { getRoleDashboard } from '@/lib/crmLinks';
  * /app — Post-login role router.
  * Fetches the user's primary role and redirects to the correct department dashboard.
  * If no role is assigned, sends user to /request-access.
+ * Supports ?redirect= param for deep linking.
  */
 export default function RoleRouter() {
   const { user, isLoading, getPrimaryRole, roles } = useAdminAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (isLoading) return;
@@ -27,10 +29,17 @@ export default function RoleRouter() {
       return;
     }
 
+    // Handle ?redirect= deep link param
+    const redirectPath = searchParams.get('redirect');
+    if (redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')) {
+      navigate(redirectPath, { replace: true });
+      return;
+    }
+
     const primaryRole = getPrimaryRole();
     const dashboard = getRoleDashboard(primaryRole);
     navigate(dashboard, { replace: true });
-  }, [isLoading, user, roles, getPrimaryRole, navigate]);
+  }, [isLoading, user, roles, getPrimaryRole, navigate, searchParams]);
 
   return (
     <>

@@ -1,8 +1,9 @@
 {
-  "name": "Calsan CRM",
+  "name": "Calsan App",
   "short_name": "Calsan",
   "description": "Calsan Dumpsters Pro — Internal CRM",
   "start_url": "/app",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#F7F9F8",
   "theme_color": "#2E6B46",
