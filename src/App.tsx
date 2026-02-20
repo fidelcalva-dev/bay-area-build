@@ -233,6 +233,16 @@ const DriverRunDetail = lazy(() => import("./pages/driver/DriverRunDetail"));
 const DriverRuns = lazy(() => import("./pages/driver/DriverRuns"));
 const DriverProfile = lazy(() => import("./pages/driver/DriverProfile"));
 const DriverApp = lazy(() => import("./pages/driver/DriverApp"));
+const DriverTruckSelect = lazy(() => import("./pages/driver/DriverTruckSelect"));
+const DriverPreTrip = lazy(() => import("./pages/driver/DriverPreTrip"));
+const DriverReportIssue = lazy(() => import("./pages/driver/DriverReportIssue"));
+
+// Maintenance
+const MaintenanceDashboard = lazy(() => import("./pages/admin/maintenance/MaintenanceDashboard"));
+const MaintenanceTrucks = lazy(() => import("./pages/admin/maintenance/MaintenanceTrucks"));
+const MaintenanceIssues = lazy(() => import("./pages/admin/maintenance/MaintenanceIssues"));
+const MaintenanceWorkOrders = lazy(() => import("./pages/admin/maintenance/MaintenanceWorkOrders"));
+const VehicleProfile = lazy(() => import("./pages/admin/VehicleProfile"));
 
 // Sales Portal
 const SalesLayout = lazy(() => import("./pages/sales/SalesLayout"));
@@ -907,6 +917,15 @@ const App = () => {
                 } />
                 <Route path="profile" element={
                   <Suspense fallback={<PageLoader />}><DriverProfile /></Suspense>
+                } />
+                <Route path="truck-select" element={
+                  <Suspense fallback={<PageLoader />}><DriverTruckSelect /></Suspense>
+                } />
+                <Route path="inspect" element={
+                  <Suspense fallback={<PageLoader />}><DriverPreTrip /></Suspense>
+                } />
+                <Route path="report-issue" element={
+                  <Suspense fallback={<PageLoader />}><DriverReportIssue /></Suspense>
                 } />
               </Route>
               

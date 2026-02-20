@@ -4380,6 +4380,51 @@ export type Database = {
           },
         ]
       }
+      driver_truck_assignments: {
+        Row: {
+          assigned_at: string
+          created_at: string
+          driver_id: string
+          id: string
+          is_active: boolean
+          truck_id: string
+          unassigned_at: string | null
+        }
+        Insert: {
+          assigned_at?: string
+          created_at?: string
+          driver_id: string
+          id?: string
+          is_active?: boolean
+          truck_id: string
+          unassigned_at?: string | null
+        }
+        Update: {
+          assigned_at?: string
+          created_at?: string
+          driver_id?: string
+          id?: string
+          is_active?: boolean
+          truck_id?: string
+          unassigned_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_truck_assignments_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_truck_assignments_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drivers: {
         Row: {
           assigned_yard_id: string | null
@@ -7731,6 +7776,69 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      maintenance_work_orders: {
+        Row: {
+          assigned_to_user_id: string | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          issue_id: string | null
+          labor_cost: number | null
+          notes: string | null
+          parts_cost: number | null
+          started_at: string | null
+          status: string
+          total_cost: number | null
+          truck_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          issue_id?: string | null
+          labor_cost?: number | null
+          notes?: string | null
+          parts_cost?: number | null
+          started_at?: string | null
+          status?: string
+          total_cost?: number | null
+          truck_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          issue_id?: string | null
+          labor_cost?: number | null
+          notes?: string | null
+          parts_cost?: number | null
+          started_at?: string | null
+          status?: string
+          total_cost?: number | null
+          truck_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_work_orders_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_work_orders_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       manual_setup_items: {
         Row: {
@@ -14233,9 +14341,13 @@ export type Database = {
           capacity_yards: number | null
           created_at: string
           current_yard_id: string | null
+          dot_compliance_status: string | null
           home_yard_id: string | null
           id: string
+          insurance_active: boolean | null
+          insurance_exp_date: string | null
           is_active: boolean | null
+          last_inspection_at: string | null
           last_maintenance_at: string | null
           license_plate: string | null
           make: string | null
@@ -14243,6 +14355,8 @@ export type Database = {
           next_maintenance_due: string | null
           notes: string | null
           odometer_miles: number | null
+          plate_number: string | null
+          registration_exp_date: string | null
           truck_code: string | null
           truck_number: string
           truck_status: string | null
@@ -14258,9 +14372,13 @@ export type Database = {
           capacity_yards?: number | null
           created_at?: string
           current_yard_id?: string | null
+          dot_compliance_status?: string | null
           home_yard_id?: string | null
           id?: string
+          insurance_active?: boolean | null
+          insurance_exp_date?: string | null
           is_active?: boolean | null
+          last_inspection_at?: string | null
           last_maintenance_at?: string | null
           license_plate?: string | null
           make?: string | null
@@ -14268,6 +14386,8 @@ export type Database = {
           next_maintenance_due?: string | null
           notes?: string | null
           odometer_miles?: number | null
+          plate_number?: string | null
+          registration_exp_date?: string | null
           truck_code?: string | null
           truck_number: string
           truck_status?: string | null
@@ -14283,9 +14403,13 @@ export type Database = {
           capacity_yards?: number | null
           created_at?: string
           current_yard_id?: string | null
+          dot_compliance_status?: string | null
           home_yard_id?: string | null
           id?: string
+          insurance_active?: boolean | null
+          insurance_exp_date?: string | null
           is_active?: boolean | null
+          last_inspection_at?: string | null
           last_maintenance_at?: string | null
           license_plate?: string | null
           make?: string | null
@@ -14293,6 +14417,8 @@ export type Database = {
           next_maintenance_due?: string | null
           notes?: string | null
           odometer_miles?: number | null
+          plate_number?: string | null
+          registration_exp_date?: string | null
           truck_code?: string | null
           truck_number?: string
           truck_status?: string | null
@@ -14608,6 +14734,175 @@ export type Database = {
           vehicle_type?: string
         }
         Relationships: []
+      }
+      vehicle_documents: {
+        Row: {
+          doc_type: string
+          expires_at: string | null
+          file_url: string
+          id: string
+          truck_id: string
+          uploaded_at: string
+        }
+        Insert: {
+          doc_type?: string
+          expires_at?: string | null
+          file_url: string
+          id?: string
+          truck_id: string
+          uploaded_at?: string
+        }
+        Update: {
+          doc_type?: string
+          expires_at?: string | null
+          file_url?: string
+          id?: string
+          truck_id?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_documents_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_inspections: {
+        Row: {
+          checklist_json: Json
+          created_at: string
+          driver_id: string
+          id: string
+          inspection_type: string
+          notes: string | null
+          signature_name: string | null
+          status: string
+          truck_id: string
+        }
+        Insert: {
+          checklist_json?: Json
+          created_at?: string
+          driver_id: string
+          id?: string
+          inspection_type?: string
+          notes?: string | null
+          signature_name?: string | null
+          status?: string
+          truck_id: string
+        }
+        Update: {
+          checklist_json?: Json
+          created_at?: string
+          driver_id?: string
+          id?: string
+          inspection_type?: string
+          notes?: string | null
+          signature_name?: string | null
+          status?: string
+          truck_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_inspections_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_inspections_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_issue_photos: {
+        Row: {
+          created_at: string
+          id: string
+          issue_id: string
+          photo_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue_id: string
+          photo_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue_id?: string
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_issue_photos_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_issues: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          issue_category: string
+          reported_by_driver_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string
+          truck_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          issue_category?: string
+          reported_by_driver_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          truck_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          issue_category?: string
+          reported_by_driver_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          truck_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_issues_reported_by_driver_id_fkey"
+            columns: ["reported_by_driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_issues_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vendor_pricing: {
         Row: {
