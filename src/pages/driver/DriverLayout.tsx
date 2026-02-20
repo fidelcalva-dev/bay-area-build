@@ -16,8 +16,8 @@ import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
-  { path: '/driver', label: 'Home', icon: Home, end: true },
-  { path: '/driver/runs', label: 'My Runs', icon: Truck },
+  { path: '/driver', label: 'Today', icon: Home, end: true },
+  { path: '/driver/runs', label: 'Runs', icon: Truck },
   { path: '/driver/profile', label: 'Profile', icon: User },
 ];
 
