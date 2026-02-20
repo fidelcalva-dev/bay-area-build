@@ -337,9 +337,13 @@ export function Footer() {
                 Privacy Policy
               </Link>
               <span className="text-secondary-foreground/30">|</span>
-              <Link to="/app" className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors">
+              <a
+                href="https://app.calsandumpsterspro.com/app"
+                rel="nofollow"
+                className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors"
+              >
                 Staff Login
-              </Link>
+              </a>
             </div>
           </div>
           
