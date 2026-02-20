@@ -130,7 +130,6 @@ async function handleInboundMessage(supabase: any, event: GHLWebhookEvent) {
     return { processed: false, action: "skipped_outbound" };
   }
 
-  // Determine channel
   let channel = "SMS";
   if (messageType?.toLowerCase().includes("email") || email) {
     channel = "EMAIL";
@@ -153,6 +152,30 @@ async function handleInboundMessage(supabase: any, event: GHLWebhookEvent) {
   if (error) {
     console.error("[GHL Webhook] Failed to process message:", error);
     return { processed: false, error: error.message };
+  }
+
+  // Unified pipeline: route through lead-ingest (non-blocking)
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseServiceKey}`,
+      },
+      body: JSON.stringify({
+        source_channel: channel === 'SMS' ? 'GHL_SMS' : 'GHL_EMAIL',
+        source_detail: 'ghl_webhook_inbound',
+        phone: phone ?? null,
+        email: email ?? null,
+        message: body?.substring(0, 500) ?? null,
+        consent_status: 'OPTED_IN',
+        raw_payload: { messageId, conversationId, channel },
+      }),
+    });
+  } catch (ingestErr) {
+    console.error("[GHL Webhook] lead-ingest failed (non-critical):", ingestErr);
   }
 
   // Create staff notification for inbound message
