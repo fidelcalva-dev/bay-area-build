@@ -6,8 +6,9 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { 
   Loader2, Search, Filter, Truck, Package, Construction, RefreshCw,
-  User, Calendar, Clock, ExternalLink, MoreHorizontal
+  User, Calendar, Clock, ExternalLink, MoreHorizontal, Plus
 } from "lucide-react";
+import { CreateRunDialog } from "@/components/dispatch/CreateRunDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +48,7 @@ export default function DispatchRunsList() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [runs, setRuns] = useState<Run[]>([]);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   
   // Filters
   const [search, setSearch] = useState("");
@@ -165,6 +167,10 @@ export default function DispatchRunsList() {
           <Button onClick={() => navigate("/dispatch/calendar")}>
             <Calendar className="w-4 h-4 mr-2" />
             Calendar View
+          </Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Run
           </Button>
         </div>
       </div>
@@ -355,6 +361,12 @@ export default function DispatchRunsList() {
           </TableBody>
         </Table>
       </Card>
+
+      <CreateRunDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={fetchRuns}
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   ChevronLeft, ChevronRight, Calendar, Plus, Loader2, 
   Truck as TruckIcon, Package, Construction, RefreshCw, Filter, User, MapPin
 } from "lucide-react";
+import { CreateRunDialog } from "@/components/dispatch/CreateRunDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +83,7 @@ export default function DispatchRunsCalendar() {
   });
   const [suggestions, setSuggestions] = useState<DriverSuggestion[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   
   const weekDays = useMemo(() => {
     return Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
@@ -282,6 +284,10 @@ export default function DispatchRunsCalendar() {
         <Button onClick={fetchData} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
+        </Button>
+        <Button onClick={() => setCreateDialogOpen(true)} size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          New Run
         </Button>
       </div>
       
@@ -548,6 +554,12 @@ export default function DispatchRunsCalendar() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <CreateRunDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={fetchData}
+      />
     </div>
   );
 }
