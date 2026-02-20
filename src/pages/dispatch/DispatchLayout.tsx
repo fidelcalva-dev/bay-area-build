@@ -1,7 +1,7 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { 
   Truck, Calendar, LogOut, Home, Loader2, 
-  AlertTriangle, Settings, Search, ClipboardList, Phone, Calculator
+  AlertTriangle, Settings, Search, ClipboardList, Phone, Calculator, MapPin, History
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -15,6 +15,8 @@ const navItems = [
   { path: '/dispatch', label: 'Dashboard', icon: Home, end: true },
   { path: '/dispatch/today', label: 'Today', icon: Truck },
   { path: '/dispatch/calendar', label: 'Calendar', icon: Calendar },
+  { path: '/dispatch/control-tower', label: 'Control Tower', icon: MapPin },
+  { path: '/dispatch/history', label: 'Route History', icon: History },
   { path: '/dispatch/requests', label: 'Requests', icon: ClipboardList },
   { path: '/dispatch/flags', label: 'Flags', icon: AlertTriangle },
   { path: '/internal/calculator', label: 'Calculator', icon: Calculator },

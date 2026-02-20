@@ -261,6 +261,8 @@ const DispatchRequests = lazy(() => import("./pages/dispatch/DispatchRequests"))
 const DispatchRunsCalendar = lazy(() => import("./pages/dispatch/DispatchRunsCalendar"));
 const DispatchRunsList = lazy(() => import("./pages/dispatch/DispatchRunsList"));
 const DispatchRunDetail = lazy(() => import("./pages/dispatch/DispatchRunDetail"));
+const ControlTower = lazy(() => import("./pages/dispatch/ControlTower"));
+const RouteHistory = lazy(() => import("./pages/dispatch/RouteHistory"));
 
 // Finance Portal
 const FinanceLayout = lazy(() => import("./pages/finance/FinanceLayout"));
@@ -949,6 +951,12 @@ const App = () => {
                 } />
                 <Route path="requests" element={
                   <Suspense fallback={<PageLoader />}><DispatchRequests /></Suspense>
+                } />
+                <Route path="control-tower" element={
+                  <Suspense fallback={<PageLoader />}><ControlTower /></Suspense>
+                } />
+                <Route path="history" element={
+                  <Suspense fallback={<PageLoader />}><RouteHistory /></Suspense>
                 } />
               </Route>
 
