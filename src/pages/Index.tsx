@@ -30,9 +30,9 @@ const SectionLoader = () => (
 
 const TRUST_STRIP_ITEMS = [
   { icon: Shield, label: 'Licensed & Insured' },
+  { icon: Star, label: 'Real Local Infrastructure' },
   { icon: DollarSign, label: 'Transparent Pricing' },
   { icon: Headphones, label: 'Professional Dispatch' },
-  { icon: FileText, label: 'Documentation-Ready Receipts' },
 ];
 
 const Index = () => {
@@ -60,22 +60,23 @@ const Index = () => {
       {/* Hero Section */}
       {(() => {
         const HeroContent = ({ chatComponent }: { chatComponent: React.ReactNode }) => (
-          <section className="bg-gradient-to-b from-[#F7F9FA] to-[#F0F2F5] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
+          <section className="bg-[#F7F9F8] min-h-[calc(100vh-64px)] flex flex-col justify-center py-14 md:py-24">
             <div className="container-wide">
               {/* Headline */}
-              <div className="text-center mb-8 md:mb-10 space-y-3 max-w-[700px] mx-auto">
-                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
-                  Professional Dumpster Rental.
-                  <br className="hidden sm:block" />
-                  <span className="text-primary font-extrabold"> Powered by the Calsan Dumpster System.</span>
+              <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
+                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
+                  Dumpster Rental.
+                  <br />
+                  <span className="text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-semibold text-muted-foreground">That's All We Do.</span>
                 </h1>
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  Exact pricing by ZIP. Clear rules. Professional dispatch coordination.
-                  <br className="hidden sm:block" />
-                  Local infrastructure in your market.
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
+                  We operate a structured dumpster rental system.
+                  Exact pricing by ZIP. Clear rules. Professional dispatch.
+                  No surprises.
                 </p>
-                <p className="text-xs text-muted-foreground/70 pt-1">
-                  Serving the Bay Area since 2009. Specialized in dumpster rental since 2015.
+                <p className="text-xs text-muted-foreground/60 pt-0.5">
+                  Serving the Bay Area since 2009.
+                  Focused exclusively on dumpster rental since 2015.
                 </p>
               </div>
 
@@ -94,19 +95,10 @@ const Index = () => {
               {/* Chat */}
               {chatComponent}
 
-              {/* Social Proof — below chat */}
-              <div className="mt-8 max-w-[700px] mx-auto text-center space-y-3">
-                <div className="flex items-center justify-center gap-2">
-                  <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  <span className="text-xs font-semibold text-foreground">4.9</span>
-                  <span className="text-xs text-muted-foreground">from 200+ verified reviews</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Trusted by homeowners and contractors across the Bay Area.
+              {/* Transparency anchor */}
+              <div className="mt-8 max-w-[700px] mx-auto text-center">
+                <p className="text-xs text-muted-foreground/70">
+                  You'll see your total before you confirm.
                 </p>
               </div>
 
