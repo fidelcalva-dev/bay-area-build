@@ -847,12 +847,12 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <SystemMessage>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {showWelcome
-                ? 'Welcome to Calsan Dumpsters Pro.\n\nChoose a tool below or enter your ZIP code to get exact pricing.'
+                ? 'How can we help you today?'
                 : ''}
             </p>
             {showWelcome && (
-              <p className="text-xs text-muted-foreground mt-2">
-                You'll see the total before you confirm. No surprises.
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Select how you'd like to start.
               </p>
             )}
             {showWelcome && (
@@ -908,7 +908,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-primary">
                       <CalendarDays className="w-3.5 h-3.5 flex-shrink-0" />
-                      Book Now (skip steps)
+                      Book & Schedule Now
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
                       Go straight to size selection and checkout.
@@ -916,7 +916,8 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   </button>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[hsl(220_10%_93%)]">
+                <p className="text-[10px] text-muted-foreground mt-3 mb-1">You'll see your total before confirming. No surprises.</p>
+                <div className="mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
                   <p className="text-xs text-muted-foreground mb-2">Enter your ZIP for exact pricing:</p>
                 </div>
                 <div className="mt-4 flex gap-2">
