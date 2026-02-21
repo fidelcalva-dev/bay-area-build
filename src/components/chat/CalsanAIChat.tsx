@@ -847,12 +847,12 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <SystemMessage>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {showWelcome
-                ? 'How can we help you today?'
+                ? 'Choose how you\'d like to get started:'
                 : ''}
             </p>
             {showWelcome && (
               <p className="text-xs text-muted-foreground mt-1.5">
-                Select how you'd like to start.
+                Or enter your ZIP to begin.
               </p>
             )}
             {showWelcome && (
@@ -1730,8 +1730,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
               <div>
-                <span className="text-sm font-semibold text-foreground">Calsan</span>
-                <span className="text-xs text-muted-foreground ml-2">Dumpster Advisor</span>
+                <span className="text-sm font-semibold text-foreground">Calsan Dumpster Advisor</span>
               </div>
             </div>
             {chatTab === 'guided' && state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
