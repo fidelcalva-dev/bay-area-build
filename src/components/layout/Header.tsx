@@ -115,7 +115,7 @@ export function Header() {
           <div className="flex h-[72px] items-center justify-between">
             {/* ── Logo ── */}
             <Link to="/" className="flex items-center shrink-0">
-              <img src={logoCalsan} alt="Calsan Dumpsters Pro" className="h-11 w-auto rounded-lg" />
+              <img src={logoCalsan} alt="Calsan Dumpsters Pro" className="h-16 w-auto rounded-lg" />
             </Link>
 
             {/* ── Desktop Nav (center) ── */}
