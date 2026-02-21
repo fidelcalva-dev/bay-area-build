@@ -847,52 +847,77 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <SystemMessage>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {showWelcome
-                ? 'Welcome to Calsan Dumpsters Pro.\n\nChoose a tool or enter your ZIP code to get started.'
+                ? 'Welcome to Calsan Dumpsters Pro.\n\nChoose a tool below or enter your ZIP code to get exact pricing.'
                 : ''}
             </p>
             {showWelcome && (
+              <p className="text-xs text-muted-foreground mt-2">
+                You'll see the total before you confirm. No surprises.
+              </p>
+            )}
+            {showWelcome && (
               <>
-                {/* Quick Tools — 2x2 grid */}
+                {/* Quick Tools -- 2x2 grid with micro-descriptions */}
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   <button
                     onClick={() => handleQuickTool('instant_price')}
-                    className="flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all text-left"
+                    className="flex flex-col items-start gap-1 px-3 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-left hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
                   >
-                    <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                    Instant Price
+                    <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+                      <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      Instant Price (60 seconds)
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
+                      Exact price by ZIP, including delivery and included disposal.
+                    </span>
                   </button>
                   <button
                     onClick={() => handleQuickTool('upload_photo')}
                     disabled={!getFeatureFlag('ai_home.photo_upload.enabled')}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium transition-all text-left",
+                      "flex flex-col items-start gap-1 px-3 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-left transition-all",
                       getFeatureFlag('ai_home.photo_upload.enabled')
-                        ? "text-foreground hover:border-primary/30 hover:bg-primary/[0.03]"
-                        : "text-muted-foreground/50 cursor-not-allowed"
+                        ? "hover:border-primary/30 hover:bg-primary/[0.03]"
+                        : "opacity-50 cursor-not-allowed"
                     )}
                   >
-                    <Camera className="w-3.5 h-3.5 flex-shrink-0" />
-                    Upload Photo
+                    <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+                      <Camera className="w-3.5 h-3.5 flex-shrink-0" />
+                      Upload Photo
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
+                      AI size recommendation based on your debris.
+                    </span>
                   </button>
                   <a
                     href={`tel:${BUSINESS_INFO.phone.sales}`}
                     onClick={() => logEvent('ai_tool_clicked', { tool: 'talk_to_dispatch' })}
-                    className="flex items-center gap-2 px-3 py-2.5 border border-[hsl(220_10%_90%)] rounded-xl text-xs font-medium text-foreground hover:border-primary/30 hover:bg-primary/[0.03] transition-all text-left"
+                    className="flex flex-col items-start gap-1 px-3 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-left hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
                   >
-                    <Phone className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    Talk to Dispatch
+                    <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+                      <Phone className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                      Talk to Dispatch
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
+                      Fast answers from a live team member.
+                    </span>
                   </a>
                   <button
                     onClick={() => handleQuickTool('book_now')}
-                    className="flex items-center gap-2 px-3 py-2.5 border border-primary bg-primary/5 rounded-xl text-xs font-medium text-primary hover:bg-primary/10 transition-all text-left"
+                    className="flex flex-col items-start gap-1 px-3 py-3 border border-primary bg-primary/5 rounded-xl text-left hover:bg-primary/10 transition-all"
                   >
-                    <CalendarDays className="w-3.5 h-3.5 flex-shrink-0" />
-                    Book Now
+                    <span className="flex items-center gap-2 text-xs font-medium text-primary">
+                      <CalendarDays className="w-3.5 h-3.5 flex-shrink-0" />
+                      Book Now (skip steps)
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
+                      Go straight to size selection and checkout.
+                    </span>
                   </button>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-[hsl(220_10%_93%)]">
-                  <p className="text-xs text-muted-foreground mb-2">Enter your ZIP for instant pricing:</p>
+                  <p className="text-xs text-muted-foreground mb-2">Enter your ZIP for exact pricing:</p>
                 </div>
                 <div className="mt-4 flex gap-2">
                   <input
@@ -1094,13 +1119,27 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <>
             <UserBubble text={state.zip} />
             <SystemMessage>
-              <p className="text-sm text-foreground mb-4">
-                Service confirmed for {state.zip}. Which best describes you?
-              </p>
+              {/* Micro-commitment confirmation card */}
+              <div className="flex items-center gap-2.5 px-3 py-2.5 bg-primary/5 border border-primary/15 rounded-lg mb-4">
+                <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-foreground">Service area confirmed</p>
+                  <p className="text-[10px] text-muted-foreground">Nearest local yard selected automatically</p>
+                </div>
+              </div>
+              <p className="text-sm text-foreground mb-4">Which best describes you?</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <OptionButton label="Homeowner" onClick={() => handleCustomerType('homeowner')} />
                 <OptionButton label="Contractor" onClick={() => handleCustomerType('contractor')} />
                 <OptionButton label="Commercial" onClick={() => handleCustomerType('commercial')} />
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => { setChatTab('ask'); logEvent('ask_from_zip_confirm'); }}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Ask a question instead
+                </button>
               </div>
             </SystemMessage>
           </>
@@ -1675,10 +1714,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   };
 
   return (
-    <div className={cn("w-full max-w-[850px] mx-auto", className)}>
+      <div className={cn("w-full max-w-[850px] mx-auto", className)}>
       <div className="bg-white rounded-2xl shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] border border-[hsl(220_10%_93%)] overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-3.5 border-b border-[hsl(220_10%_93%)]">
+        <div className="px-5 py-4 border-b border-[hsl(220_10%_93%)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {canGoBack && chatTab === 'guided' && (
@@ -1700,14 +1739,14 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               </button>
             )}
           </div>
-          {/* Tab toggle */}
-          <div className="flex mt-3 bg-muted/50 rounded-lg p-0.5">
+          {/* Tab toggle — more distinct active state */}
+          <div className="flex mt-3 bg-muted/60 rounded-lg p-0.5">
             <button
               onClick={() => handleTabSwitch('guided')}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all",
                 chatTab === 'guided'
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-white text-foreground shadow-sm border border-[hsl(220_10%_90%)]"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -1717,9 +1756,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             <button
               onClick={() => handleTabSwitch('ask')}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all",
                 chatTab === 'ask'
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-white text-foreground shadow-sm border border-[hsl(220_10%_90%)]"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -1759,12 +1798,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
 
         {chatTab === 'guided' ? (
           <>
-            {/* Progress — subtle */}
+            {/* Progress — minimal */}
             <div className="px-5 pt-3">
-              <Progress value={progress} className="h-1 bg-[hsl(220_10%_93%)]" />
-              <p className="text-[9px] text-muted-foreground/60 mt-1 text-right">
-                {effectiveIndex + 1}/{activeSteps.length}
-              </p>
+              <Progress value={progress} className="h-0.5 bg-[hsl(220_10%_95%)]" />
             </div>
 
             {/* Conversation Area */}
@@ -1808,9 +1844,13 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             ))}
             {askLoading && (
               <SystemMessage>
-                <div className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  <span className="text-sm text-muted-foreground">Thinking...</span>
+                <div className="flex items-center gap-3 py-1">
+                  <div className="flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Preparing response</span>
                 </div>
               </SystemMessage>
             )}
@@ -1842,10 +1882,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               <Shield className="w-3 h-3" /> Licensed & Insured
             </span>
             <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <MapPin className="w-3 h-3" /> Local Infrastructure
+              <Check className="w-3 h-3" /> Transparent Pricing
             </span>
             <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <Check className="w-3 h-3" /> Transparent Pricing
+              <Lock className="w-3 h-3" /> Secure Checkout
             </span>
           </div>
         </div>
