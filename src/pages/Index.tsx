@@ -60,14 +60,14 @@ const Index = () => {
       {/* Hero Section */}
       {(() => {
         const HeroContent = ({ chatComponent }: { chatComponent: React.ReactNode }) => (
-          <section className="bg-[#F7F9FA] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
+          <section className="bg-gradient-to-b from-[#F7F9FA] to-[#F0F2F5] min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 md:py-20">
             <div className="container-wide">
               {/* Headline */}
               <div className="text-center mb-8 md:mb-10 space-y-3 max-w-[700px] mx-auto">
                 <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
                   Professional Dumpster Rental.
                   <br className="hidden sm:block" />
-                  <span className="text-primary"> The Calsan Dumpster System.</span>
+                  <span className="text-primary font-extrabold"> Powered by the Calsan Dumpster System.</span>
                 </h1>
                 <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                   Exact pricing by ZIP. Clear rules. Professional dispatch coordination.
@@ -84,7 +84,7 @@ const Index = () => {
                 <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                   {TRUST_STRIP_ITEMS.map(({ icon: Icon, label }) => (
                     <div key={label} className="flex items-center gap-1.5">
-                      <Icon className="w-3.5 h-3.5 text-primary/70 flex-shrink-0" strokeWidth={1.5} />
+                      <Icon className="w-3.5 h-3.5 text-muted-foreground/60 flex-shrink-0" strokeWidth={1.5} />
                       <span className="text-xs text-muted-foreground font-medium">{label}</span>
                     </div>
                   ))}
