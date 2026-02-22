@@ -17,14 +17,14 @@
  * const dims = getCanonicalDumpsterImage(20, 'dims'); // Returns dimension diagram URL
  */
 
-// Canonical photo imports - photorealistic dumpsters
-import dumpster6yardPhoto from '@/assets/dumpsters/6_yd.png';
-import dumpster8yardPhoto from '@/assets/dumpsters/8_yd.png';
-import dumpster10yardPhoto from '@/assets/dumpsters/dumpster-10yard-photo.png';
-import dumpster20yardPhoto from '@/assets/dumpsters/dumpster-20yard-photo.png';
-import dumpster30yardPhoto from '@/assets/dumpsters/dumpster-30yard-photo.png';
-import dumpster40yardPhoto from '@/assets/dumpsters/dumpster-40yard-photo.png';
-import dumpster50yardPhoto from '@/assets/dumpsters/50_yd.png';
+// Canonical photo paths - served from public/ to avoid bundling
+const dumpster6yardPhoto = '/images/dumpsters/6_yd.png';
+const dumpster8yardPhoto = '/images/dumpsters/8_yd.png';
+const dumpster10yardPhoto = '/images/dumpsters/dumpster-10yard-photo.png';
+const dumpster20yardPhoto = '/images/dumpsters/dumpster-20yard-photo.png';
+const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-photo.png';
+const dumpster40yardPhoto = '/images/dumpsters/dumpster-40yard-photo.png';
+const dumpster50yardPhoto = '/images/dumpsters/50_yd.png';
 
 // Canonical dimension diagram imports
 import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
