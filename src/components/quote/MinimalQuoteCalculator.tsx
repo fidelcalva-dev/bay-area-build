@@ -10,6 +10,8 @@ import {
   CheckCircle, MapPin, Shield, Clock, Truck,
   Home, HardHat, Trash2, Recycle, Leaf, Sparkles, type LucideIcon
 } from 'lucide-react';
+import { useAssessmentGate } from '@/hooks/useAssessmentGate';
+import { AssessmentGateModal } from './AssessmentGateModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -242,6 +244,16 @@ export function MinimalQuoteCalculator() {
   const showNoticeStep = isHeavy || isYardWaste || isRecycling;
   const materialTypeForPricing = isHeavy || sizeRecommendation.isHeavy ? 'heavy' : 'general';
 
+  // Assessment gate
+  const [showAssessmentGate, setShowAssessmentGate] = useState(false);
+  const [gateChecked, setGateChecked] = useState(false);
+  const assessmentGate = useAssessmentGate({
+    materialCategory: materialCategory || sizeRecommendation.category,
+    selectedSize: size,
+    heavyFlag: isHeavy,
+    hasAssessment: false,
+  });
+
   // AI Recommendation hook - after derived state
   const aiRecommendation = useQuoteAIRecommendation({
     zip,
@@ -356,7 +368,19 @@ export function MinimalQuoteCalculator() {
       confirm: 'success',
       success: 'success',
     };
-    setStep(nextSteps[step]);
+
+    const next = nextSteps[step];
+
+    // Assessment gate check: trigger before entering confirm step
+    if (next === 'confirm' && !gateChecked) {
+      const result = assessmentGate.evaluate();
+      if (result.triggered && result.mode !== 'OFF') {
+        setShowAssessmentGate(true);
+        return; // Don't advance yet
+      }
+    }
+
+    setStep(next);
   };
 
   const goBack = () => {
@@ -983,6 +1007,25 @@ export function MinimalQuoteCalculator() {
           </div>
         )}
       </div>
+
+      {/* Assessment Gate Modal */}
+      <AssessmentGateModal
+        open={showAssessmentGate}
+        onClose={() => setShowAssessmentGate(false)}
+        mode={assessmentGate.evaluate().mode === 'REQUIRE' ? 'REQUIRE' : 'RECOMMEND'}
+        reasons={assessmentGate.evaluate().reasons}
+        onUploadMedia={() => {
+          // Navigate to waste-vision upload page
+          window.open('/waste-vision', '_blank');
+        }}
+        onContinueWithout={() => {
+          setGateChecked(true);
+          setStep('confirm');
+        }}
+        onContactDispatch={() => {
+          window.location.href = 'tel:+15106802150';
+        }}
+      />
     </div>
   );
 }

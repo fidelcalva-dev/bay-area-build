@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useAssessmentGate } from '@/hooks/useAssessmentGate';
+import { AssessmentGateModal } from './AssessmentGateModal';
 import { 
   Zap, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2, MessageCircle,
   CheckCircle, MapPin, Package, Weight, Calendar, Sparkles, Shield, Clock, Bookmark, Info, Truck,
@@ -164,6 +166,10 @@ export function InstantQuoteCalculatorV3() {
   const [heavyClassification, setHeavyClassification] = useState<HeavyClassificationResult | null>(null);
   const [generalClassification, setGeneralClassification] = useState<GeneralClassificationResult | null>(null);
 
+  // Assessment gate state
+  const [showAssessmentGate, setShowAssessmentGate] = useState(false);
+  const [gateChecked, setGateChecked] = useState(false);
+
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
     zip: '',
@@ -196,6 +202,15 @@ export function InstantQuoteCalculatorV3() {
 
   // Distance-based pricing calculation
   const distanceCalc = useDistanceCalculation(formData.zip);
+
+  // Assessment gate hook
+  const isHeavyMaterial = formData.material === 'heavy';
+  const assessmentGate = useAssessmentGate({
+    materialCategory: formData.material,
+    selectedSize: formData.size,
+    heavyFlag: isHeavyMaterial,
+    hasAssessment: false,
+  });
 
   // Project type for smart recommendations
   const [projectType, setProjectType] = useState<string | null>(null);
@@ -499,7 +514,18 @@ export function InstantQuoteCalculatorV3() {
       order: 'success',
       success: 'success',
     };
-    setStep(nextSteps[step]);
+    const next = nextSteps[step];
+
+    // Assessment gate: trigger before entering save step
+    if (next === 'save' && !gateChecked) {
+      const result = assessmentGate.evaluate();
+      if (result.triggered && result.mode !== 'OFF') {
+        setShowAssessmentGate(true);
+        return;
+      }
+    }
+
+    setStep(next);
   };
 
   const goBack = () => {
@@ -2061,6 +2087,24 @@ export function InstantQuoteCalculatorV3() {
           </div>
         )}
       </div>
+
+      {/* Assessment Gate Modal */}
+      <AssessmentGateModal
+        open={showAssessmentGate}
+        onClose={() => setShowAssessmentGate(false)}
+        mode={assessmentGate.evaluate().mode === 'REQUIRE' ? 'REQUIRE' : 'RECOMMEND'}
+        reasons={assessmentGate.evaluate().reasons}
+        onUploadMedia={() => {
+          window.open('/waste-vision', '_blank');
+        }}
+        onContinueWithout={() => {
+          setGateChecked(true);
+          setStep('save');
+        }}
+        onContactDispatch={() => {
+          window.location.href = 'tel:+15106802150';
+        }}
+      />
     </div>
   );
 }
