@@ -9,6 +9,7 @@ import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
+import AiControlWidget from '@/components/ai/AiControlWidget';
 
 const navItems = [
   { path: '/finance', label: 'Dashboard', icon: Home, end: true },
@@ -138,6 +139,8 @@ export default function FinanceLayout() {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
+
+      <AiControlWidget />
     </div>
   );
 }

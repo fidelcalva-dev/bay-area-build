@@ -927,6 +927,158 @@ export type Database = {
           },
         ]
       }
+      ai_control_actions: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          message_id: string | null
+          payload_json: Json
+          requires_confirmation: boolean
+          session_id: string
+          status: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          payload_json?: Json
+          requires_confirmation?: boolean
+          session_id: string
+          status?: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          payload_json?: Json
+          requires_confirmation?: boolean
+          session_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_control_actions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "ai_control_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_control_actions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_control_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_control_knowledge: {
+        Row: {
+          category: string
+          content_markdown: string
+          id: string
+          is_active: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          content_markdown: string
+          id?: string
+          is_active?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content_markdown?: string
+          id?: string
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_control_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message_text: string
+          response_json: Json
+          role: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_text: string
+          response_json?: Json
+          role: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_text?: string
+          response_json?: Json
+          role?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_control_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_control_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_control_sessions: {
+        Row: {
+          context_snapshot_json: Json
+          created_at: string
+          current_entity_id: string | null
+          current_entity_type: string | null
+          current_route: string | null
+          id: string
+          last_active_at: string
+          mode: string
+          started_at: string
+          user_id: string
+          user_role: string
+        }
+        Insert: {
+          context_snapshot_json?: Json
+          created_at?: string
+          current_entity_id?: string | null
+          current_entity_type?: string | null
+          current_route?: string | null
+          id?: string
+          last_active_at?: string
+          mode?: string
+          started_at?: string
+          user_id: string
+          user_role: string
+        }
+        Update: {
+          context_snapshot_json?: Json
+          created_at?: string
+          current_entity_id?: string | null
+          current_entity_type?: string | null
+          current_route?: string | null
+          id?: string
+          last_active_at?: string
+          mode?: string
+          started_at?: string
+          user_id?: string
+          user_role?: string
+        }
+        Relationships: []
+      }
       ai_decisions: {
         Row: {
           actions_json: Json | null

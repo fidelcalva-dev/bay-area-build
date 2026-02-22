@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 import { AgentStatusWidget } from '@/components/telephony';
+import AiControlWidget from '@/components/ai/AiControlWidget';
 
 const navItems = [
   { path: '/dispatch', label: 'Dashboard', icon: Home, end: true },
@@ -150,6 +151,8 @@ export default function DispatchLayout() {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
+
+      <AiControlWidget />
     </div>
   );
 }

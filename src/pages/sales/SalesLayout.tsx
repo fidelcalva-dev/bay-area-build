@@ -10,7 +10,8 @@ import { useMobileMode } from "@/hooks/useMobileMode";
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { cn } from "@/lib/utils";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from "@/components/mobile";
-import { AgentStatusWidget } from "@/components/telephony";
+import { AgentStatusWidget } from '@/components/telephony';
+import AiControlWidget from '@/components/ai/AiControlWidget';
 
 const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
@@ -186,6 +187,8 @@ export default function SalesLayout() {
           <Outlet />
         </div>
       </main>
+
+      <AiControlWidget />
     </div>
   );
 }

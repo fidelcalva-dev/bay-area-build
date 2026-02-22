@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import logoCalsan from "@/assets/logo-calsan.jpeg";
 import { supabase } from '@/integrations/supabase/client';
+import AiControlWidget from '@/components/ai/AiControlWidget';
 
 const navItems = [
   { path: '/driver', label: 'Today', icon: Home, end: true },
@@ -173,6 +174,8 @@ export default function DriverLayout() {
           </button>
         </div>
       </nav>
+
+      <AiControlWidget />
     </div>
   );
 }
