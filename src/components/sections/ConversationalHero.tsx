@@ -619,7 +619,7 @@ export function ConversationalHero({ cityName, countyName }: ConversationalHeroP
         {/* Header */}
         <div className="text-center mb-10 space-y-3">
           <p className="text-sm font-medium tracking-widest uppercase text-primary">
-            Calsan Dumpster Systems
+            Calsan Dumpsters Pro
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
             What do you need today?
