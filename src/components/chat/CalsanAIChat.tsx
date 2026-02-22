@@ -410,13 +410,11 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       setChatTab('guided');
       // Already on ZIP step by default
     } else if (tool === 'upload_photo') {
-      if (getFeatureFlag('ai_home.photo_upload.enabled')) {
-        setChatTab('guided');
-        if (state.zip && state.zipFound) {
-          setState(prev => ({ ...prev, photoPath: true, step: 'photo-upload' }));
-        }
-        // If no ZIP yet, stay on ZIP step — user enters ZIP first
+      setChatTab('guided');
+      if (state.zip && state.zipFound) {
+        setState(prev => ({ ...prev, photoPath: true, step: 'photo-upload' }));
       }
+      // If no ZIP yet, stay on ZIP step — user enters ZIP first
     } else if (tool === 'book_now') {
       const params = new URLSearchParams({ v3: '1', fast: '1' });
       if (state.zip) params.set('zip', state.zip);
@@ -705,16 +703,24 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     try {
       const base64 = await compressImage(file);
 
+      // Upload to storage (non-blocking)
+      let storagePath: string | null = null;
       const fileName = `photo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
       try {
         await supabase.storage.from('waste-uploads').upload(fileName, file, {
           contentType: file.type,
           upsert: false,
         });
+        storagePath = fileName;
       } catch { /* non-blocking */ }
 
+      // Call analyze-waste
       const { data, error } = await supabase.functions.invoke('analyze-waste', {
-        body: { images: [base64] },
+        body: {
+          images: [base64],
+          image_storage_path: storagePath,
+          zip: state.zip || null,
+        },
       });
 
       if (error) throw error;
@@ -722,46 +728,76 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       const rec = data?.recommendation;
       const materials = data?.analysis?.materials || data?.materials || [];
       const primaryMaterial = materials[0]?.name || rec?.materialCategory || 'general debris';
-      const confidence = Math.round((rec?.confidence || 0.7) * 100);
-      const recommendedSize = rec?.recommendedSize || 20;
-      const explanation = rec?.explanation || `Pile estimated at approximately ${recommendedSize} cubic yards.`;
+      const confidence = Math.round((rec?.confidence || data?.confidence || 0.7) * 100);
+      const recommendedSize = data?.recommended_size || rec?.recommendedSize || 20;
+      const heavyFlag = data?.heavy_flag ?? rec?.heavy ?? false;
+      const explanation = rec?.explanation || `For debris of this type and estimated volume.`;
 
       const detected = mapDetectedMaterial(primaryMaterial);
+      const isHeavy = heavyFlag || detected.heavy;
 
       const analysis: PhotoAnalysis = {
         recommendedSize,
         confidence,
         materialType: primaryMaterial,
         explanation,
-        heavy: detected.heavy,
+        heavy: isHeavy,
       };
 
       logEvent('photo_analyzed', {
         confidence,
         recommendedSize,
         material: primaryMaterial,
-        heavy: detected.heavy,
+        heavy: isHeavy,
       });
+
+      // Persist draft for refresh recovery
+      try {
+        localStorage.setItem('calsan_photo_ai_draft', JSON.stringify({
+          ...analysis,
+          zip: state.zip,
+          savedAt: Date.now(),
+        }));
+      } catch { /* quota exceeded */ }
 
       setState(prev => ({
         ...prev,
         photoAnalysis: analysis,
         materialType: detected.id,
-        heavy: detected.heavy,
+        heavy: isHeavy,
         step: 'photo-result',
       }));
+
+      // Lead ingest (non-blocking, revenue critical)
+      try {
+        await supabase.functions.invoke('lead-ingest', {
+          body: {
+            source_channel: 'WEBSITE_PHOTO',
+            channel_key: 'photo_assessment',
+            zip: state.zip || null,
+            metadata: {
+              recommended_size: recommendedSize,
+              confidence,
+              material: primaryMaterial,
+              heavy: isHeavy,
+              image_path: storagePath,
+            },
+          },
+        });
+      } catch { /* non-blocking */ }
+
     } catch (err) {
       console.error('Photo analysis failed:', err);
+      // Show fallback instead of silently reverting
       setState(prev => ({
         ...prev,
-        photoPath: false,
-        photoAnalysis: null,
-        step: 'customer-type',
+        photoAnalysis: { recommendedSize: 20, confidence: 0, materialType: '', explanation: '', heavy: false },
+        step: 'photo-result',
       }));
     } finally {
       setLoading(false);
     }
-  }, [logEvent]);
+  }, [logEvent, state.zip]);
 
   const handleAcceptPhotoRecommendation = () => {
     if (!state.photoAnalysis) return;
@@ -873,20 +909,14 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   </button>
                   <button
                     onClick={() => handleQuickTool('upload_photo')}
-                    disabled={!getFeatureFlag('ai_home.photo_upload.enabled')}
-                    className={cn(
-                      "flex flex-col items-start gap-1 px-3 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-left transition-all",
-                      getFeatureFlag('ai_home.photo_upload.enabled')
-                        ? "hover:border-primary/30 hover:bg-primary/[0.03]"
-                        : "opacity-50 cursor-not-allowed"
-                    )}
+                    className="flex flex-col items-start gap-1 px-3 py-3 border border-[hsl(220_10%_90%)] rounded-xl text-left transition-all hover:border-primary/30 hover:bg-primary/[0.03]"
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Camera className="w-3.5 h-3.5 flex-shrink-0" />
-                      Upload Project Photo
+                      Upload a Photo
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      We will recommend the correct dumpster size.
+                      Get a size recommendation based on your debris.
                     </span>
                   </button>
                   <a
@@ -959,7 +989,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                       <Camera className="w-4 h-4 text-muted-foreground" />
                       <div className="text-left">
                         <span className="font-medium">Upload a Photo</span>
-                        <p className="text-xs text-muted-foreground mt-0.5">Get an AI size recommendation</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Get a size recommendation</p>
                       </div>
                     </button>
                   </div>
@@ -975,7 +1005,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             <UserBubble text={state.zip} />
             <SystemMessage>
               <p className="text-sm text-foreground mb-4">
-                Take a photo of your debris pile. I will estimate the correct dumpster size.
+                Upload a photo of your debris pile for a size recommendation.
               </p>
               <div
                 onClick={() => fileRef.current?.click()}
@@ -1020,7 +1050,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               <div className="flex items-center gap-3 py-2">
                 <Loader2 className="w-5 h-5 text-primary animate-spin" />
                 <div>
-                  <p className="text-sm text-foreground font-medium">Analyzing your photo</p>
+                  <p className="text-sm text-foreground font-medium">Reviewing your photo</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Estimating material type and volume</p>
                 </div>
               </div>
@@ -1032,6 +1062,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         const analysis = state.photoAnalysis;
         if (!analysis) return null;
         const lowConfidence = analysis.confidence < 60;
+        const confidenceWord = analysis.confidence >= 75 ? 'High' : analysis.confidence >= 50 ? 'Medium' : 'Low';
         const category = getMaterialCategory(state.materialType, state.heavy);
         const { price } = getPriceByZip(state.zip, analysis.recommendedSize, category);
 
@@ -1046,67 +1077,124 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             )}
             <SystemMessage>
               {lowConfidence ? (
-                <div>
-                  <p className="text-sm text-foreground mb-2">
-                    Photo analysis was inconclusive ({analysis.confidence}% confidence).
-                    Please select your dumpster size manually for the most accurate recommendation.
+                <div className="space-y-3">
+                  <p className="text-sm font-semibold text-foreground">Photo unclear</p>
+                  <p className="text-sm text-muted-foreground">
+                    We couldn't confidently recommend a size from this photo.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-3">
-                    <ActionButton label="Select Size Manually" onClick={handlePhotoManualSelect} variant="primary" />
-                    <Button asChild variant="ghost" className="rounded-xl h-11 text-sm">
+                  <div className="flex flex-col gap-2 mt-3">
+                    <ActionButton label="Choose size manually" onClick={handlePhotoManualSelect} variant="primary" />
+                    <Button asChild variant="outline" className="rounded-xl h-11 text-sm">
                       <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                        <Phone className="w-3.5 h-3.5 mr-2" /> Talk to Specialist
+                        <Phone className="w-3.5 h-3.5 mr-2" /> Talk to dispatch
                       </a>
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div>
-                  <p className="text-sm text-foreground mb-3">Based on your photo, I recommend:</p>
-                  <div className="border border-[hsl(220_10%_90%)] rounded-xl p-4 bg-white">
-                    <div className="flex items-start justify-between mb-2">
+                <div className="space-y-3">
+                  {/* Premium Assessment Card */}
+                  <div className="border border-[hsl(220_10%_90%)] rounded-xl overflow-hidden bg-white">
+                    {/* Card header */}
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-[hsl(220_10%_93%)] bg-[hsl(220_10%_98%)]">
+                      <span className="text-xs font-semibold text-foreground">Project Size Assessment</span>
+                      <span className={cn(
+                        "text-[10px] font-medium px-2 py-0.5 rounded-full",
+                        confidenceWord === 'High' && "bg-primary/10 text-primary",
+                        confidenceWord === 'Medium' && "bg-[hsl(40_90%_90%)] text-[hsl(40_60%_30%)]",
+                      )}>
+                        Confidence: {confidenceWord}
+                      </span>
+                    </div>
+
+                    <div className="p-4 space-y-3">
+                      {/* Main recommendation */}
+                      <div className="text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Recommended Size</p>
+                        <p className="text-xl font-bold text-foreground">
+                          {analysis.recommendedSize}-Yard Dumpster
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Based on your photo, here's the recommended dumpster size.
+                        </p>
+                        {price > 0 && (
+                          <p className="text-lg font-bold text-foreground mt-1.5">${price}</p>
+                        )}
+                      </div>
+
+                      {/* Materials observed */}
                       <div>
-                        <h3 className="text-base font-semibold text-foreground">
-                          {analysis.recommendedSize} Yard Dumpster
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5 capitalize">
-                          {analysis.materialType}
-                        </p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Materials observed</p>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="px-2 py-0.5 bg-[hsl(220_10%_95%)] border border-[hsl(220_10%_90%)] rounded-full text-[11px] text-foreground capitalize">
+                            {analysis.materialType}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-lg font-bold text-foreground">${price}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-3">{analysis.explanation}</p>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Confidence</span>
-                      <span className="text-xs font-semibold text-foreground">{analysis.confidence}%</span>
-                    </div>
-                    <Progress value={analysis.confidence} className="h-1.5 bg-[hsl(220_10%_93%)]" />
-                    {state.heavy && (
-                      <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2 mt-3">
-                        <p className="text-xs text-foreground font-medium">Heavy Material Detected</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Sizes restricted to 6-10 yard containers. Fill-line compliance required.
-                        </p>
+
+                      {/* What's included */}
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">What's included</p>
+                        {['Delivery and pickup included', 'Standard rental period included', 'Disposal based on size and material'].map(line => (
+                          <div key={line} className="flex items-center gap-1.5">
+                            <Check className="w-3 h-3 text-primary flex-shrink-0" />
+                            <span className="text-[11px] text-foreground">{line}</span>
+                          </div>
+                        ))}
                       </div>
-                    )}
+
+                      {/* Service cycle bar */}
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Typical service cycle</p>
+                        <div className="flex items-center gap-0">
+                          {[
+                            { label: 'Delivery', icon: '🚛' },
+                            { label: 'On-site', icon: '⏱' },
+                            { label: 'Pickup', icon: '📍' },
+                            { label: 'Disposal', icon: '♻' },
+                          ].map((step, i, arr) => (
+                            <div key={step.label} className="flex items-center flex-1">
+                              <div className="flex flex-col items-center flex-1">
+                                <div className="w-6 h-6 rounded-full bg-[hsl(220_10%_95%)] flex items-center justify-center text-[10px]">
+                                  {step.icon}
+                                </div>
+                                <span className="text-[9px] text-muted-foreground mt-0.5">{step.label}</span>
+                              </div>
+                              {i < arr.length - 1 && <div className="h-px bg-[hsl(220_10%_90%)] w-3 -mt-2.5" />}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Heavy material warning */}
+                      {state.heavy && (
+                        <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2">
+                          <p className="text-xs text-foreground font-medium">Heavy material detected</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 6, 8, or 10 yard.
+                          </p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            Fill-line rules may apply for safe transport.
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-2">
                     <ActionButton
-                      label="Accept Recommendation"
+                      label="Use Recommended Size"
                       onClick={handleAcceptPhotoRecommendation}
                       variant="primary"
-                      icon={<Check className="w-4 h-4" />}
+                      icon={<ArrowRight className="w-4 h-4" />}
                     />
-                    <ActionButton
-                      label="See Larger Option"
-                      onClick={handleSeeLargerOption}
-                      variant="outline"
-                    />
-                    <Button asChild variant="ghost" className="rounded-xl h-11 text-sm">
-                      <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                        <Phone className="w-3.5 h-3.5 mr-2" /> Talk to Specialist
-                      </a>
-                    </Button>
+                    <button
+                      onClick={handlePhotoManualSelect}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors text-center py-1"
+                    >
+                      Choose a different size
+                    </button>
                   </div>
                 </div>
               )}
