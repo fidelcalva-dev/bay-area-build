@@ -187,6 +187,8 @@ interface AnalysisRequest {
   customer_type?: string;
   lead_id?: string;
   image_storage_path?: string;
+  video_storage_path?: string;
+  media_type?: "PHOTO" | "VIDEO";
   mode?: "LIVE" | "DRY_RUN";
 }
 
@@ -213,7 +215,7 @@ serve(async (req) => {
       );
     }
 
-    const { images, referenceObject, sessionId, quoteId, zip, address, customer_type, lead_id, image_storage_path } = body;
+    const { images, referenceObject, sessionId, quoteId, zip, address, customer_type, lead_id, image_storage_path, video_storage_path, media_type } = body;
 
     if (!images || images.length === 0) {
       return new Response(
@@ -260,12 +262,12 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            source_channel: "WEBSITE_PHOTO",
+            source_channel: media_type === "VIDEO" ? "WEBSITE_VIDEO" : "WEBSITE_PHOTO",
             source_detail: "photo_ai",
             zip: zip || undefined,
             address: address || undefined,
             customer_type: customer_type || undefined,
-            message: "Photo uploaded for analysis",
+            message: `${media_type === "VIDEO" ? "Video" : "Photo"} uploaded for analysis`,
             raw_payload: { image_count: images.length, session_id: sessionId },
           }),
         });
@@ -289,8 +291,8 @@ serve(async (req) => {
       try {
         await supabase.from("lead_events").insert({
           lead_id: resolvedLeadId,
-          event_type: "PHOTO_UPLOADED",
-          event_data: { image_count: images.length, session_id: sessionId, mode },
+          event_type: media_type === "VIDEO" ? "VIDEO_UPLOADED" : "PHOTO_UPLOADED",
+          event_data: { image_count: images.length, session_id: sessionId, mode, media_type: media_type || "PHOTO" },
         });
       } catch { /* non-blocking */ }
     }
@@ -310,7 +312,7 @@ serve(async (req) => {
             quote_id: quoteId || null,
             lead_id: resolvedLeadId,
             image_count: images.length,
-            input_type: "photo",
+            input_type: media_type === "VIDEO" ? "video_frames" : "photo",
             mode: "DRY_RUN",
             zip, address, customer_type,
             image_storage_path: image_storage_path || null,
@@ -331,10 +333,10 @@ serve(async (req) => {
       // Log PHOTO_ANALYZED event
       if (supabase && resolvedLeadId) {
         try {
-          await supabase.from("lead_events").insert({
+        await supabase.from("lead_events").insert({
             lead_id: resolvedLeadId,
-            event_type: "PHOTO_ANALYZED",
-            event_data: { mode: "DRY_RUN", recommended_size: 20, heavy_flag: false },
+            event_type: media_type === "VIDEO" ? "VIDEO_ANALYZED" : "PHOTO_ANALYZED",
+            event_data: { mode: "DRY_RUN", recommended_size: 20, heavy_flag: false, media_type: media_type || "PHOTO" },
           });
         } catch { /* non-blocking */ }
       }
@@ -483,11 +485,11 @@ serve(async (req) => {
           quote_id: quoteId || null,
           lead_id: resolvedLeadId,
           image_count: images.length,
-          input_type: "photo",
+          input_type: media_type === "VIDEO" ? "video_frames" : "photo",
           reference_object: referenceObject || "none",
           mode: "LIVE",
           zip, address, customer_type,
-          image_storage_path: image_storage_path || null,
+          image_storage_path: image_storage_path || video_storage_path || null,
           materials_detected: analysis.materials,
           hazards_detected: analysis.hazards,
           volume_cy_low: analysis.volume_cy?.low,
@@ -534,7 +536,7 @@ serve(async (req) => {
       try {
         await supabase.from("lead_events").insert({
           lead_id: resolvedLeadId,
-          event_type: "PHOTO_ANALYZED",
+          event_type: media_type === "VIDEO" ? "VIDEO_ANALYZED" : "PHOTO_ANALYZED",
           event_data: {
             analysis_id: analysisId,
             recommended_size: recommendedSize,
