@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, MapPin, DollarSign, HardHat, ArrowRight, Phone, CheckCircle, Clock, FileText, Camera, CalendarDays, Map } from 'lucide-react';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
-import { motion } from 'framer-motion';
+
 
 import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
 import brandedFleet from '@/assets/real-work/branded-fleet.jpg';
