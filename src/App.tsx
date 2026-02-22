@@ -454,6 +454,9 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><WasteVision /></Suspense>
               } />
               
+              {/* AI Dumpster Assistant — redirects to homepage assistant */}
+              <Route path="/ai-dumpster-assistant" element={<Navigate to="/" replace />} />
+              
               {/* Category Positioning Pages */}
               <Route path="/why-local-yards" element={
                 <Suspense fallback={<PageLoader />}><WhyLocalYards /></Suspense>
