@@ -1,4 +1,5 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Headphones, Package, MessageSquare, FileText, LogOut, 
   Home, Loader2, ClipboardList, Search, Phone, Calculator
@@ -69,6 +70,8 @@ export default function CSLayout() {
     const isSearchPage = location.pathname === '/cs/search';
     
     return (
+      <>
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <MobileLayout
         title="CS Panel"
         subtitle="Customer Service"
@@ -83,11 +86,14 @@ export default function CSLayout() {
           <Outlet />
         )}
       </MobileLayout>
+      </>
     );
   }
 
   // Desktop Layout
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">
         <div className="p-4 border-b border-border">
@@ -162,5 +168,6 @@ export default function CSLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }

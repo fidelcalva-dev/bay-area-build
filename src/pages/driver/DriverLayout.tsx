@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Truck, Home, User, LogOut, Loader2, Clock, RefreshCw
 } from 'lucide-react';
@@ -104,6 +105,8 @@ export default function DriverLayout() {
   };
 
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30 flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg">
@@ -177,5 +180,6 @@ export default function DriverLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }

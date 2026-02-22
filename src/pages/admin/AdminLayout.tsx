@@ -1,4 +1,5 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Shield, MapPin, DollarSign, Users, Plus, LogOut, 
   Home, Loader2, Percent, Warehouse, Settings, 
@@ -162,6 +163,8 @@ export default function AdminLayout() {
     const isSearchPage = location.pathname === '/admin/search';
     
     return (
+      <>
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <MobileLayout
         title="Admin"
         subtitle="Operations & Config"
@@ -176,11 +179,14 @@ export default function AdminLayout() {
           <Outlet />
         )}
       </MobileLayout>
+      </>
     );
   }
 
   // Desktop Layout
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r border-border flex flex-col overflow-y-auto">
@@ -260,5 +266,6 @@ export default function AdminLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }
