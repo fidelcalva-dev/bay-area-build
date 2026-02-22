@@ -8895,6 +8895,38 @@ export type Database = {
         }
         Relationships: []
       }
+      media_assessment_assets: {
+        Row: {
+          analysis_id: string
+          asset_type: string
+          created_at: string
+          id: string
+          storage_path: string
+        }
+        Insert: {
+          analysis_id: string
+          asset_type?: string
+          created_at?: string
+          id?: string
+          storage_path: string
+        }
+        Update: {
+          analysis_id?: string
+          asset_type?: string
+          created_at?: string
+          id?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_assessment_assets_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "waste_vision_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_history: {
         Row: {
           channel: string
@@ -13273,6 +13305,9 @@ export type Database = {
           last_contacted_by_user_id: string | null
           last_followup_at: string | null
           lat: number | null
+          latest_assessment_id: string | null
+          latest_heavy_flag: boolean | null
+          latest_recommended_size: number | null
           lead_quality_label: string | null
           lead_quality_score: number | null
           lead_risk_score: number | null
@@ -13347,6 +13382,9 @@ export type Database = {
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
           lat?: number | null
+          latest_assessment_id?: string | null
+          latest_heavy_flag?: boolean | null
+          latest_recommended_size?: number | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -13421,6 +13459,9 @@ export type Database = {
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
           lat?: number | null
+          latest_assessment_id?: string | null
+          latest_heavy_flag?: boolean | null
+          latest_recommended_size?: number | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -13459,6 +13500,13 @@ export type Database = {
           zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_leads_latest_assessment_id_fkey"
+            columns: ["latest_assessment_id"]
+            isOneToOne: false
+            referencedRelation: "waste_vision_analyses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_leads_linked_contact_id_fkey"
             columns: ["linked_contact_id"]

@@ -26,6 +26,7 @@ import LeadQuotesSection from "@/components/leads/LeadQuotesSection";
 import { LeadActivationStatus } from "@/components/leads/LeadActivationStatus";
 import { LifecycleTimeline } from "@/components/lifecycle";
 import { AIChatTranscriptPanel } from "@/components/sales/AIChatTranscriptPanel";
+import ProjectSizeAssessmentCard from "@/components/crm/ProjectSizeAssessmentCard";
 
 interface LeadData {
   id: string;
@@ -460,6 +461,9 @@ export default function LeadDetail() {
           </div>
           {/* Address Manager */}
           <LeadAddressManager leadId={lead.id} />
+          {/* Project Size Assessment */}
+          <ProjectSizeAssessmentCard leadId={lead.id} />
+          <LeadCardInfo leadId={lead.id} />
           <LeadCardInfo leadId={lead.id} />
           <LeadQuotesSection
             leadId={lead.id}
