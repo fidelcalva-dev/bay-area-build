@@ -1,13 +1,14 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
-import { getFAQsForSchema, BUSINESS_INFO as SHARED_BUSINESS_INFO } from '@/lib/shared-data';
+import { getFAQsForSchema } from '@/lib/shared-data';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, DollarSign, HardHat, ArrowRight, Phone, CheckCircle, Clock, Truck, ClipboardCheck } from 'lucide-react';
+import { Shield, MapPin, DollarSign, HardHat, ArrowRight, Phone, CheckCircle, Clock, FileText, Camera, CalendarDays, Map } from 'lucide-react';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
 import { motion } from 'framer-motion';
 
 import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
@@ -31,39 +32,50 @@ const SectionLoader = () => (
 
 const TRUST_ITEMS = [
   { icon: Shield, label: 'Licensed & Insured' },
-  { icon: MapPin, label: 'Real Local Yards' },
-  { icon: DollarSign, label: 'Transparent Pricing' },
-  { icon: HardHat, label: 'Contractor-Friendly' },
+  { icon: MapPin, label: 'Local Yard Coverage' },
+  { icon: HardHat, label: 'Contractor-Ready' },
+  { icon: FileText, label: 'Clear Rental Terms' },
 ];
 
-const WHY_CARDS = [
-  {
-    icon: Clock,
-    title: 'Structured Logistics',
-    description: 'We schedule, confirm, and deliver on time.',
-  },
-  {
-    icon: MapPin,
-    title: 'Local Yard Coverage',
-    description: 'We operate from multiple yard locations across the region to stay close to your project.',
-  },
+const WHY_EXPERTISE = [
+  'Site access',
+  'Fill limits',
+  'Weight rules',
+  'Concrete vs debris',
+  'Contractor scheduling',
+  'Disposal logistics',
+];
+
+const TOOLS_CARDS = [
   {
     icon: DollarSign,
-    title: 'Clear Pricing',
-    description: 'No hidden fees. No surprises. You know what you are paying for.',
+    title: 'Exact Price Calculator',
+    description: 'Get your exact rental price based on your ZIP and project.',
   },
   {
-    icon: HardHat,
-    title: 'Contractor-Ready',
-    description: 'Reliable service for remodels, demolition, concrete, excavation, and cleanouts.',
+    icon: Camera,
+    title: 'Project Photo Review',
+    description: 'Upload a photo and we will recommend the correct dumpster size.',
+  },
+  {
+    icon: CalendarDays,
+    title: 'Schedule & Confirm',
+    description: 'Lock in delivery and get confirmation before we arrive.',
+  },
+  {
+    icon: Map,
+    title: 'Placement Planning',
+    description: 'Choose the exact drop location to avoid delays.',
   },
 ];
 
-const HOW_IT_WORKS_STEPS = [
-  { step: '01', title: 'Get Your Price', description: 'Enter your ZIP and project details for an exact price.' },
-  { step: '02', title: 'Schedule Delivery', description: 'Choose your delivery date and time window.' },
-  { step: '03', title: 'Fill It', description: 'Load your dumpster at your own pace during the rental period.' },
-  { step: '04', title: 'We Pick It Up', description: 'We haul it away and handle responsible disposal.' },
+const JOB_SITE_ITEMS = [
+  'Confirmed delivery window',
+  'Protected driveway placement',
+  'Clear fill-line rules',
+  'Disposal handled properly',
+  'Pickup reminders',
+  'Final documentation',
 ];
 
 const SERVICE_AREAS_LIST = [
@@ -88,76 +100,41 @@ const Index = () => {
       <LocalSEOSchema includeFAQ includeService />
 
       {/* ========== 1) HERO SECTION ========== */}
-      <section className="bg-card min-h-[calc(100vh-80px)] flex items-center py-16 md:py-24 lg:py-32">
+      <section className="bg-[#F7F9F8] min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
         <div className="container-wide">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: Copy */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="space-y-6"
-            >
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-foreground leading-[1.08] tracking-tight">
-                Professional Dumpster Rental.
-                <br />
-                <span className="text-primary">Done Right.</span>
-              </h1>
+          {/* Headline */}
+          <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
+              Professional Dumpster Rental.
+              <br />
+              <span className="text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-semibold text-muted-foreground">Structured. Reliable.</span>
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
+              Local dumpsters. Clear pricing. On-time delivery.
+              Built for real job sites.
+            </p>
+          </div>
 
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-[520px]">
-                Local dumpsters. Clear pricing. Reliable delivery.
-                <br />
-                Serving homeowners and contractors across the Bay Area.
-              </p>
+          {/* Trust Strip */}
+          <div className="max-w-[850px] mx-auto mb-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              {TRUST_ITEMS.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-1.5">
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground/60 flex-shrink-0" strokeWidth={1.5} />
+                  <span className="text-xs text-muted-foreground font-medium">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm font-semibold px-8 hover:scale-[1.02] transition-all text-base">
-                  <Link to="/quote?v3=1">
-                    Get Exact Price
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 text-base">
-                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                    <Phone className="w-4 h-4 mr-2" />
-                    Speak With Our Team
-                  </a>
-                </Button>
-              </div>
+          {/* Chat Interface */}
+          <CalsanAIChat />
 
-              {/* Trust Strip */}
-              <div className="flex flex-wrap gap-x-5 gap-y-2 pt-4">
-                {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-1.5">
-                    <Icon className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
-                    <span className="text-sm text-muted-foreground font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Right: Hero Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="relative hidden lg:block"
-            >
-              <div className="rounded-2xl overflow-hidden shadow-xl">
-                <img
-                  src={truckDelivery}
-                  alt="Calsan Dumpsters Pro branded truck delivering a clean dumpster to a job site"
-                  className="w-full h-[480px] object-cover"
-                  loading="eager"
-                />
-              </div>
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl px-4 py-3 shadow-lg">
-                <p className="text-xs text-muted-foreground">Serving the Bay Area</p>
-                <p className="text-sm font-bold text-foreground">Since 2009</p>
-              </div>
-            </motion.div>
+          {/* Transparency anchor */}
+          <div className="mt-8 max-w-[700px] mx-auto text-center">
+            <p className="text-xs text-muted-foreground/70">
+              You will see your total before you confirm.
+            </p>
           </div>
         </div>
       </section>
@@ -165,23 +142,54 @@ const Index = () => {
       {/* ========== 2) WHY CALSAN ========== */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-wide">
-          <div className="max-w-2xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Dumpster Rental Is All We Do.
+          <div className="max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-start">
+              {/* Left: Copy */}
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
+                  Dumpster Rental Is All We Do.
+                </h2>
+                <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
+                  <p>
+                    We have worked in hauling and construction debris since 2009.
+                    Since 2015, we have specialized in dumpster rental and material delivery.
+                  </p>
+                  <p>We understand:</p>
+                </div>
+              </div>
+
+              {/* Right: Expertise List */}
+              <div className="space-y-3 pt-2 md:pt-12">
+                {WHY_EXPERTISE.map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-sm text-foreground">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
+                    <span>{item}</span>
+                  </div>
+                ))}
+                <p className="text-sm text-muted-foreground pt-4 border-t border-border mt-4">
+                  This is not a side service. This is our focus.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 3) TOOLS SECTION (Reframed) ========== */}
+      <section className="py-16 md:py-24 bg-card border-y border-border">
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+              Built to Make Your Job Easier
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Since 2009, we have worked in hauling, construction debris, and job site services.
-              Since 2015, we have specialized exclusively in dumpster rental and material delivery.
-              We understand job sites. We understand timelines.
-              And we understand what happens when dumpsters are late.
-            </p>
+            <p className="text-sm text-muted-foreground">Professional workflow. Clear steps. No guesswork.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {WHY_CARDS.map((card) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {TOOLS_CARDS.map((card) => (
               <div
                 key={card.title}
-                className="bg-card border border-border rounded-2xl p-6 hover:border-primary/20 hover:shadow-md transition-all duration-300"
+                className="bg-background border border-border rounded-2xl p-6 hover:border-primary/20 hover:shadow-md transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <card.icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
@@ -194,7 +202,29 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 3) DUMPSTER SIZES ========== */}
+      {/* ========== 4) JOB-SITE STRUCTURE ========== */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                What You Can Expect
+              </h2>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {JOB_SITE_ITEMS.map((item) => (
+                <div key={item} className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl">
+                  <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
+                  <span className="text-sm font-medium text-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 5) DUMPSTER SIZES ========== */}
       <section className="py-16 md:py-24 bg-card border-y border-border">
         <div className="container-wide">
           <div className="text-center mb-10">
@@ -226,50 +256,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 4) HOW IT WORKS ========== */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container-wide">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Simple. Professional. Predictable.
-            </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-10">
-            {HOW_IT_WORKS_STEPS.map((step) => (
-              <div key={step.step} className="text-center">
-                <div className="text-3xl font-bold text-primary/20 mb-2">{step.step}</div>
-                <h3 className="font-semibold text-foreground mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                We confirm before delivery.
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                We protect driveways.
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                We handle disposal responsibly.
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 5) TRUST & PROOF (Reviews) ========== */}
+      {/* ========== 6) TRUST & PROOF (Reviews) ========== */}
       <Suspense fallback={<SectionLoader />}>
         <ReviewsSection />
       </Suspense>
 
-      {/* ========== 5b) Real Work Gallery ========== */}
+      {/* ========== 6b) Real Work Gallery ========== */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-wide">
           <div className="text-center mb-10">
@@ -294,7 +286,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 6) SERVICE AREAS ========== */}
+      {/* ========== 7) SERVICE AREAS ========== */}
       <section className="py-16 md:py-24 bg-card border-y border-border">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
@@ -326,7 +318,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 7) STRONG CTA ========== */}
+      {/* ========== 8) STRONG CTA ========== */}
       <section className="py-20 md:py-28 gradient-hero">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
@@ -353,7 +345,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 8) FAQ ========== */}
+      {/* ========== 9) FAQ ========== */}
       <Suspense fallback={<SectionLoader />}>
         <FAQSection />
       </Suspense>

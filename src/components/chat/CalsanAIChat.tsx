@@ -847,7 +847,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <SystemMessage>
             <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
               {showWelcome
-                ? 'Choose how you\'d like to get started:'
+                ? 'Tell us your project, and we\'ll guide you to the right dumpster.'
                 : ''}
             </p>
             {showWelcome && (
@@ -865,10 +865,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                      Instant Price (60 seconds)
+                      Get Exact Price
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      Exact price by ZIP, including delivery and included disposal.
+                      Exact rental price by ZIP and project type.
                     </span>
                   </button>
                   <button
@@ -883,10 +883,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Camera className="w-3.5 h-3.5 flex-shrink-0" />
-                      Upload Photo
+                      Upload Project Photo
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      AI size recommendation based on your debris.
+                      We will recommend the correct dumpster size.
                     </span>
                   </button>
                   <a
@@ -896,10 +896,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Phone className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                      Talk to Dispatch
+                      Speak to Our Team
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      Fast answers from a live team member.
+                      Direct line to a specialist.
                     </span>
                   </a>
                   <button
@@ -908,10 +908,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-primary">
                       <CalendarDays className="w-3.5 h-3.5 flex-shrink-0" />
-                      Book & Schedule Now
+                      Schedule Delivery
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      Go straight to size selection and checkout.
+                      Lock in your delivery date and confirmation.
                     </span>
                   </button>
                 </div>
@@ -1730,7 +1730,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
               <div>
-                <span className="text-sm font-semibold text-foreground">Calsan Dumpster Advisor</span>
+                <span className="text-sm font-semibold text-foreground">Dumpster Rental Assistant</span>
               </div>
             </div>
             {chatTab === 'guided' && state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
@@ -1818,7 +1818,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             {askMessages.length === 0 && (
               <SystemMessage animate={false}>
                 <p className="text-sm text-foreground leading-relaxed">
-                  Ask me anything about dumpster sizes, materials, pricing rules, rental periods, or scheduling. I will answer concisely and professionally.
+                  Ask about dumpster sizes, materials, pricing, rental periods, or scheduling. We will answer concisely and professionally.
                 </p>
               </SystemMessage>
             )}
@@ -1829,14 +1829,14 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                     <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{msg.text}</p>
                     <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
                       <ActionButton
-                        label="Get Instant Price"
+                        label="Get Exact Price"
                         onClick={() => { setChatTab('guided'); logEvent('ai_tool_clicked', { tool: 'instant_price_from_ask' }); }}
                         variant="primary"
                         icon={<Zap className="w-3.5 h-3.5" />}
                       />
                       <Button asChild variant="outline" className="rounded-xl h-11 text-sm border-[hsl(220_10%_90%)]">
                         <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                          <Phone className="w-3.5 h-3.5 mr-2" /> Talk to Dispatch
+                          <Phone className="w-3.5 h-3.5 mr-2" /> Speak to Our Team
                         </a>
                       </Button>
                     </div>
@@ -1860,7 +1860,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 value={askInput}
                 onChange={(e) => setAskInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
-                placeholder="Ask anything about dumpsters, materials, pricing rules, or scheduling..."
+                placeholder="Ask about sizes, materials, pricing, or scheduling..."
                 className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
                 autoFocus
               />
