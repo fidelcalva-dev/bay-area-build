@@ -6,15 +6,15 @@ import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLef
 import { Link } from 'react-router-dom';
 import { PAGE_SEO } from '@/lib/seo';
 
-// Import real work photos
-import fleetYard from '@/assets/real-work/fleet-yard.jpg';
-import brandedFleet from '@/assets/real-work/branded-fleet.jpg';
-import stockedReady from '@/assets/real-work/stocked-ready.jpg';
-import jobSite from '@/assets/real-work/job-site.jpg';
-import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
-import heavyMaterials from '@/assets/real-work/heavy-materials.jpg';
-import liveDelivery from '@/assets/real-work/live-delivery.jpg';
-import pickupComplete from '@/assets/real-work/pickup-complete.jpg';
+// Served from public/ to avoid bundling large files
+const fleetYard = '/images/real-work/fleet-yard.jpg';
+const brandedFleet = '/images/real-work/branded-fleet.jpg';
+const stockedReady = '/images/real-work/stocked-ready.jpg';
+const jobSite = '/images/real-work/job-site.jpg';
+const truckDelivery = '/images/real-work/truck-delivery.jpg';
+const heavyMaterials = '/images/real-work/heavy-materials.jpg';
+const liveDelivery = '/images/real-work/live-delivery.jpg';
+const pickupComplete = '/images/real-work/pickup-complete.jpg';
 
 const values = [
   {

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { IconCircle } from '@/components/shared/IconCircle';
-import calsanVideo from '@/assets/videos/calsan-how-it-works.mp4';
+const calsanVideo = '/videos/calsan-how-it-works.mp4';
 
 interface Step {
   icon: LucideIcon;

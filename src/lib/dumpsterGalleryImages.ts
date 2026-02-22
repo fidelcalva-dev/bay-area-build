@@ -4,32 +4,33 @@
  * Additional slides are real job-site photos.
  */
 
-import photo6yd1 from '@/assets/dumpsters/6yd-photo-1.jpg';
-import photo6yd2 from '@/assets/dumpsters/6yd-photo-2.jpg';
-import photo6yd3 from '@/assets/dumpsters/6yd-photo-3.jpg';
-import photo8yd1 from '@/assets/dumpsters/8yd-photo-1.jpg';
-import photo8yd2 from '@/assets/dumpsters/8yd-photo-2.jpg';
-import photo8yd3 from '@/assets/dumpsters/8yd-photo-3.jpg';
-import photo8yd4 from '@/assets/dumpsters/8yd-photo-4.jpg';
-import photo10yd1 from '@/assets/dumpsters/10yd-photo-1.jpg';
-import photo10yd2 from '@/assets/dumpsters/10yd-photo-2.jpg';
-import photo10yd3 from '@/assets/dumpsters/10yd-photo-3.jpg';
-import photo10yd4 from '@/assets/dumpsters/10yd-photo-4.jpg';
-import photo20yd1 from '@/assets/dumpsters/20yd-photo-1.jpg';
-import photo20yd2 from '@/assets/dumpsters/20yd-photo-2.jpg';
-import photo20yd3 from '@/assets/dumpsters/20yd-photo-3.jpg';
-import photo20yd4 from '@/assets/dumpsters/20yd-photo-4.jpg';
-import photo30yd1 from '@/assets/dumpsters/30yd-photo-1.jpg';
-import photo30yd2 from '@/assets/dumpsters/30yd-photo-2.jpg';
-import photo30yd3 from '@/assets/dumpsters/30yd-photo-3.jpg';
-import photo30yd4 from '@/assets/dumpsters/30yd-photo-4.jpg';
-import photo40yd1 from '@/assets/dumpsters/40yd-photo-1.jpg';
-import photo40yd2 from '@/assets/dumpsters/40yd-photo-2.jpg';
-import photo40yd3 from '@/assets/dumpsters/40yd-photo-3.jpg';
-import photo40yd4 from '@/assets/dumpsters/40yd-photo-4.jpg';
-import photo50yd1 from '@/assets/dumpsters/50yd-photo-1.jpg';
-import photo50yd2 from '@/assets/dumpsters/50yd-photo-2.jpg';
-import photo50yd3 from '@/assets/dumpsters/50yd-photo-3.jpg';
+// Photos served from public/ to avoid bundling large images
+const photo6yd1 = '/images/dumpsters/6yd-photo-1.jpg';
+const photo6yd2 = '/images/dumpsters/6yd-photo-2.jpg';
+const photo6yd3 = '/images/dumpsters/6yd-photo-3.jpg';
+const photo8yd1 = '/images/dumpsters/8yd-photo-1.jpg';
+const photo8yd2 = '/images/dumpsters/8yd-photo-2.jpg';
+const photo8yd3 = '/images/dumpsters/8yd-photo-3.jpg';
+const photo8yd4 = '/images/dumpsters/8yd-photo-4.jpg';
+const photo10yd1 = '/images/dumpsters/10yd-photo-1.jpg';
+const photo10yd2 = '/images/dumpsters/10yd-photo-2.jpg';
+const photo10yd3 = '/images/dumpsters/10yd-photo-3.jpg';
+const photo10yd4 = '/images/dumpsters/10yd-photo-4.jpg';
+const photo20yd1 = '/images/dumpsters/20yd-photo-1.jpg';
+const photo20yd2 = '/images/dumpsters/20yd-photo-2.jpg';
+const photo20yd3 = '/images/dumpsters/20yd-photo-3.jpg';
+const photo20yd4 = '/images/dumpsters/20yd-photo-4.jpg';
+const photo30yd1 = '/images/dumpsters/30yd-photo-1.jpg';
+const photo30yd2 = '/images/dumpsters/30yd-photo-2.jpg';
+const photo30yd3 = '/images/dumpsters/30yd-photo-3.jpg';
+const photo30yd4 = '/images/dumpsters/30yd-photo-4.jpg';
+const photo40yd1 = '/images/dumpsters/40yd-photo-1.jpg';
+const photo40yd2 = '/images/dumpsters/40yd-photo-2.jpg';
+const photo40yd3 = '/images/dumpsters/40yd-photo-3.jpg';
+const photo40yd4 = '/images/dumpsters/40yd-photo-4.jpg';
+const photo50yd1 = '/images/dumpsters/50yd-photo-1.jpg';
+const photo50yd2 = '/images/dumpsters/50yd-photo-2.jpg';
+const photo50yd3 = '/images/dumpsters/50yd-photo-3.jpg';
 
 export type DumpsterGalleryPhoto = {
   src: string;

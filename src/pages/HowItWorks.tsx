@@ -9,7 +9,7 @@ import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/
 import { IconCircle } from '@/components/shared/IconCircle';
 import { HOW_IT_WORKS_STEPS, CATEGORY_PHRASE } from '@/lib/categoryPositioning';
 import { BUSINESS_INFO } from '@/lib/seo';
-import calsanVideo from '@/assets/videos/calsan-how-it-works.mp4';
+const calsanVideo = '/videos/calsan-how-it-works.mp4';
 
 const STEP_ICONS = [MapPin, Truck, Eye, Calendar, MessageSquare];
 

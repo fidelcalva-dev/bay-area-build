@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Truck, Clock, Shield, MapPin, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-// Import real work images (user-provided)
-import realWork1 from '@/assets/real-work/real-work-1.jpeg';
-import realWork2 from '@/assets/real-work/real-work-2.jpeg';
-import realWork3 from '@/assets/real-work/real-work-3.jpeg';
-import realWork4 from '@/assets/real-work/real-work-4.jpeg';
-import realWork5 from '@/assets/real-work/real-work-5.jpeg';
-import realWork6 from '@/assets/real-work/real-work-6.jpeg';
-import operationsVideo from '@/assets/real-work/operations-video.mp4';
+// Served from public/ to avoid bundling large files
+const realWork1 = '/images/real-work/real-work-1.jpeg';
+const realWork2 = '/images/real-work/real-work-2.jpeg';
+const realWork3 = '/images/real-work/real-work-3.jpeg';
+const realWork4 = '/images/real-work/real-work-4.jpeg';
+const realWork5 = '/images/real-work/real-work-5.jpeg';
+const realWork6 = '/images/real-work/real-work-6.jpeg';
+const operationsVideo = '/videos/operations-video.mp4';
 
 const galleryImages = [
   { id: 1, src: realWork1, alt: 'Dumpster with materials on job site', label: 'Heavy Materials' },

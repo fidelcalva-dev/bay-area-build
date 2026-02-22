@@ -1,6 +1,6 @@
 import { Phone, Globe, Calendar, Truck, PackageCheck } from 'lucide-react';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
-import rentalVideo from '@/assets/videos/calsan-rental-steps.mp4';
+const rentalVideo = '/videos/calsan-rental-steps.mp4';
 
 const steps = [
   {

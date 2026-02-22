@@ -11,10 +11,10 @@ import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
 
 
-import truckDelivery from '@/assets/real-work/truck-delivery.jpg';
-import brandedFleet from '@/assets/real-work/branded-fleet.jpg';
-import jobSite from '@/assets/real-work/job-site.jpg';
-import liveDelivery from '@/assets/real-work/live-delivery.jpg';
+const truckDelivery = '/images/real-work/truck-delivery.jpg';
+const brandedFleet = '/images/real-work/branded-fleet.jpg';
+const jobSite = '/images/real-work/job-site.jpg';
+const liveDelivery = '/images/real-work/live-delivery.jpg';
 
 // Lazy load below-fold sections
 const ReviewsSection = lazy(() =>

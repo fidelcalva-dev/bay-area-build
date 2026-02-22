@@ -8,12 +8,12 @@ import { ArrowRight, Phone, Calendar, Clock, User } from 'lucide-react';
 import NotFound from './NotFound';
 import { SEO_BLOG_TOPICS, getBlogTopicBySlug } from '@/lib/seo-blog-topics';
 import { generateArticleFromTopic } from '@/lib/blog-content-generator';
-import benefitsSameProviderImg from '@/assets/blog/benefits-same-provider.jpg';
-import positiveImpactOaklandImg from '@/assets/blog/positive-impact-oakland.jpg';
-import checklistBeforeDumpsterImg from '@/assets/blog/checklist-before-dumpster.jpg';
-import separateRecyclableImg from '@/assets/blog/separate-recyclable-materials.jpg';
-import dumpstersBigMovesImg from '@/assets/blog/dumpsters-big-moves.jpg';
-import postStormCleanupImg from '@/assets/blog/post-storm-cleanup.jpg';
+const benefitsSameProviderImg = '/images/blog/benefits-same-provider.jpg';
+const positiveImpactOaklandImg = '/images/blog/positive-impact-oakland.jpg';
+const checklistBeforeDumpsterImg = '/images/blog/checklist-before-dumpster.jpg';
+const separateRecyclableImg = '/images/blog/separate-recyclable-materials.jpg';
+const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
+const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
 
 interface BlogArticleData {
   slug: string;
