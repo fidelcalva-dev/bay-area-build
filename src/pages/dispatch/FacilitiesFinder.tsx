@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 // MATERIAL OPTIONS (exact copy from prompt)
 // =====================================================
 const MATERIAL_OPTIONS = [
-  { value: '', label: 'All materials' },
+  { value: '__all__', label: 'All materials' },
   { value: 'MIXED_GENERAL', label: 'General debris (C&D)' },
   { value: 'CD_WASTE', label: 'Mixed debris' },
   { value: 'HEAVY_CLEAN_BASE', label: 'Concrete (clean)' },
@@ -46,7 +46,7 @@ const MATERIAL_OPTIONS = [
 ];
 
 const FACILITY_TYPE_OPTIONS = [
-  { value: '', label: 'All types' },
+  { value: '__all__', label: 'All types' },
   { value: 'recycler', label: 'Recycling' },
   { value: 'transfer_station', label: 'Transfer station' },
   { value: 'landfill', label: 'Landfill' },
@@ -298,8 +298,8 @@ export default function FacilitiesFinder() {
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-foreground">Material type</Label>
               <Select
-                value={filters.materialType}
-                onValueChange={(v) => setFilters((p) => ({ ...p, materialType: v }))}
+                value={filters.materialType || '__all__'}
+                onValueChange={(v) => setFilters((p) => ({ ...p, materialType: v === '__all__' ? '' : v }))}
               >
                 <SelectTrigger className="text-sm">
                   <SelectValue placeholder="All materials" />
@@ -319,8 +319,8 @@ export default function FacilitiesFinder() {
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-foreground">Facility type</Label>
               <Select
-                value={filters.facilityType}
-                onValueChange={(v) => setFilters((p) => ({ ...p, facilityType: v }))}
+                value={filters.facilityType || '__all__'}
+                onValueChange={(v) => setFilters((p) => ({ ...p, facilityType: v === '__all__' ? '' : v }))}
               >
                 <SelectTrigger className="text-sm">
                   <SelectValue placeholder="All types" />
