@@ -54,7 +54,7 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
           <motion.div variants={fadeUp} className="space-y-1 text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             <p>Since 2009 in debris removal and hauling.</p>
             <p>Since 2015 specialized in professional dumpster rental.</p>
-            <p>Now operating with local yards, structured dispatch, and smart systems.</p>
+            <p>Now operating with local yards, professional dispatch, and reliable coverage.</p>
           </motion.div>
 
           {/* Trust Row */}

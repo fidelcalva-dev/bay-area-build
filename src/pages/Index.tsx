@@ -107,11 +107,12 @@ const Index = () => {
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
               Professional Dumpster Rental.
               <br />
-              <span className="text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-semibold text-muted-foreground">Structured. Reliable.</span>
+              <span className="text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-semibold text-muted-foreground">Done Right.</span>
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Local dumpsters. Clear pricing. On-time delivery.
-              Built for real job sites.
+              Local dumpsters. Clear pricing. Reliable delivery.
+              <br />
+              Built for homeowners and contractors across the Bay Area.
             </p>
           </div>
 
