@@ -5,7 +5,7 @@
 // ============================================================
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield, MapPin, MessageSquare, Zap } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Phone, Upload, Check, Camera, Lock, CreditCard, CalendarDays, Clock, Shield, MapPin, MessageSquare, Zap, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Calendar } from '@/components/ui/calendar';
@@ -104,6 +104,8 @@ const INITIAL_STATE: FlowState = {
 const STORAGE_KEY = 'calsan_structured_chat_v1';
 const STATE_TTL_MS = 30 * 60 * 1000;
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB after compression
+const MAX_VIDEO_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_VIDEO_DURATION = 5; // seconds
 
 // ---- Project types by customer ----
 const PROJECT_TYPES: Record<CustomerType, string[]> = {
@@ -266,6 +268,62 @@ async function compressImage(file: File): Promise<string> {
   });
 }
 
+// ---- Video duration check ----
+function getVideoDuration(file: File): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(video.duration);
+    };
+    video.onerror = () => reject(new Error('Cannot read video'));
+    video.src = URL.createObjectURL(file);
+  });
+}
+
+// ---- Extract key frames from video ----
+function extractFrames(file: File, times: number[]): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'auto';
+    video.muted = true;
+    video.playsInline = true;
+    const frames: string[] = [];
+    let idx = 0;
+
+    video.onloadeddata = () => {
+      const seekNext = () => {
+        if (idx >= times.length) {
+          URL.revokeObjectURL(video.src);
+          resolve(frames);
+          return;
+        }
+        video.currentTime = Math.min(times[idx], video.duration - 0.1);
+      };
+
+      video.onseeked = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.min(video.videoWidth, 1200);
+        canvas.height = Math.round(canvas.width * (video.videoHeight / video.videoWidth));
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+          frames.push(base64);
+        }
+        idx++;
+        seekNext();
+      };
+
+      seekNext();
+    };
+
+    video.onerror = () => reject(new Error('Failed to process video'));
+    video.src = URL.createObjectURL(file);
+  });
+}
+
 // ---- Safe Answer Generator (no secrets exposed) ----
 function generateSafeAnswer(question: string): string {
   const q = question.toLowerCase();
@@ -322,6 +380,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     return persisted.current !== null && persisted.current.step !== 'zip';
   });
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [mediaError, setMediaError] = useState('');
+  const [mediaType, setMediaType] = useState<'PHOTO' | 'VIDEO'>('PHOTO');
+  const videoRef = useRef<HTMLInputElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
   const [chatTab, setChatTab] = useState<ChatTab>('guided');
@@ -695,17 +756,57 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
 
     const previewUrl = URL.createObjectURL(file);
     setPhotoPreview(previewUrl);
+    setMediaError('');
 
     setLoading(true);
     setState(prev => ({ ...prev, step: 'photo-analyzing' }));
-    logEvent('photo_uploaded', { fileSize: file.size, fileType: file.type });
+
+    const isVideo = file.type.startsWith('video/');
+    const currentMediaType = isVideo ? 'VIDEO' : 'PHOTO';
+    setMediaType(currentMediaType);
+    logEvent(isVideo ? 'video_uploaded' : 'photo_uploaded', { fileSize: file.size, fileType: file.type });
 
     try {
-      const base64 = await compressImage(file);
+      let images: string[];
+
+      if (isVideo) {
+        // Validate video size
+        if (file.size > MAX_VIDEO_SIZE) {
+          setMediaError('Video is too large. Please upload a file under 10MB.');
+          setState(prev => ({ ...prev, step: 'photo-upload' }));
+          setLoading(false);
+          return;
+        }
+        // Validate video duration
+        let duration: number;
+        try {
+          duration = await getVideoDuration(file);
+        } catch {
+          setMediaError('Could not read video. Please try a different file.');
+          setState(prev => ({ ...prev, step: 'photo-upload' }));
+          setLoading(false);
+          return;
+        }
+        if (duration > MAX_VIDEO_DURATION + 1) { // +1s tolerance
+          setMediaError(`Please upload a shorter video (${MAX_VIDEO_DURATION} seconds or less).`);
+          setState(prev => ({ ...prev, step: 'photo-upload' }));
+          setLoading(false);
+          return;
+        }
+        // Extract 3 key frames
+        const frameTimes = [0.5, Math.min(duration / 2, 2.5), Math.max(duration - 0.5, 1)];
+        images = await extractFrames(file, frameTimes);
+        if (images.length === 0) throw new Error('No frames extracted');
+      } else {
+        const base64 = await compressImage(file);
+        images = [base64];
+      }
 
       // Upload to storage (non-blocking)
       let storagePath: string | null = null;
-      const fileName = `photo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+      const ext = isVideo ? 'mp4' : 'jpg';
+      const folder = isVideo ? 'video-assessments' : 'photo-assessments';
+      const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
       try {
         await supabase.storage.from('waste-uploads').upload(fileName, file, {
           contentType: file.type,
@@ -717,8 +818,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       // Call analyze-waste
       const { data, error } = await supabase.functions.invoke('analyze-waste', {
         body: {
-          images: [base64],
-          image_storage_path: storagePath,
+          images,
+          media_type: currentMediaType,
+          image_storage_path: isVideo ? undefined : storagePath,
+          video_storage_path: isVideo ? storagePath : undefined,
           zip: state.zip || null,
         },
       });
@@ -744,11 +847,12 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         heavy: isHeavy,
       };
 
-      logEvent('photo_analyzed', {
+      logEvent(isVideo ? 'video_analyzed' : 'photo_analyzed', {
         confidence,
         recommendedSize,
         material: primaryMaterial,
         heavy: isHeavy,
+        mediaType: currentMediaType,
       });
 
       // Persist draft for refresh recovery
@@ -756,6 +860,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         localStorage.setItem('calsan_photo_ai_draft', JSON.stringify({
           ...analysis,
           zip: state.zip,
+          mediaType: currentMediaType,
           savedAt: Date.now(),
         }));
       } catch { /* quota exceeded */ }
@@ -772,22 +877,23 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       try {
         await supabase.functions.invoke('lead-ingest', {
           body: {
-            source_channel: 'WEBSITE_PHOTO',
-            channel_key: 'photo_assessment',
+            source_channel: 'WEBSITE_MEDIA',
+            channel_key: 'photo_video_assess',
             zip: state.zip || null,
             metadata: {
+              media_type: currentMediaType,
               recommended_size: recommendedSize,
               confidence,
               material: primaryMaterial,
               heavy: isHeavy,
-              image_path: storagePath,
+              storage_path: storagePath,
             },
           },
         });
       } catch { /* non-blocking */ }
 
     } catch (err) {
-      console.error('Photo analysis failed:', err);
+      console.error('Media analysis failed:', err);
       // Show fallback instead of silently reverting
       setState(prev => ({
         ...prev,
@@ -1004,26 +1110,79 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           <>
             <UserBubble text={state.zip} />
             <SystemMessage>
-              <p className="text-sm text-foreground mb-4">
-                Upload a photo of your debris pile for a size recommendation.
+              <p className="text-sm text-foreground mb-1 font-medium">Upload project media</p>
+              <p className="text-xs text-muted-foreground mb-4">
+                Short videos can improve size recommendations.
               </p>
-              <div
-                onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-[hsl(220_10%_88%)] rounded-xl p-8 text-center cursor-pointer hover:border-primary/30 transition-colors"
-              >
-                <Upload className="w-7 h-7 text-muted-foreground mx-auto mb-2" strokeWidth={1.5} />
-                <p className="text-sm font-medium text-foreground">Tap to upload a photo</p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG accepted</p>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  capture="environment"
-                  className="hidden"
-                  onChange={(e) => e.target.files && handlePhotoUpload(e.target.files)}
-                />
+              {mediaError && (
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 mb-3">
+                  <p className="text-xs text-destructive">{mediaError}</p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {/* Take Photo */}
+                <button
+                  onClick={() => {
+                    const input = fileRef.current;
+                    if (input) { input.accept = 'image/*'; input.capture = 'environment'; input.click(); }
+                  }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-4 border border-[hsl(220_10%_90%)] rounded-xl text-center hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+                >
+                  <Camera className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs font-medium text-foreground">Take photo</span>
+                </button>
+                {/* Upload Photo */}
+                <button
+                  onClick={() => {
+                    const input = fileRef.current;
+                    if (input) { input.accept = 'image/jpeg,image/png,image/webp'; input.removeAttribute('capture'); input.click(); }
+                  }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-4 border border-[hsl(220_10%_90%)] rounded-xl text-center hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+                >
+                  <Upload className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs font-medium text-foreground">Upload photo</span>
+                </button>
+                {/* Record Video */}
+                <button
+                  onClick={() => {
+                    const input = videoRef.current;
+                    if (input) { input.accept = 'video/*'; input.capture = 'environment'; input.click(); }
+                  }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-4 border border-[hsl(220_10%_90%)] rounded-xl text-center hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+                >
+                  <Video className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs font-medium text-foreground">Record video</span>
+                  <span className="text-[10px] text-muted-foreground">3–5 seconds</span>
+                </button>
+                {/* Upload Video */}
+                <button
+                  onClick={() => {
+                    const input = videoRef.current;
+                    if (input) { input.accept = 'video/mp4,video/quicktime,video/webm'; input.removeAttribute('capture'); input.click(); }
+                  }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-4 border border-[hsl(220_10%_90%)] rounded-xl text-center hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+                >
+                  <Upload className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs font-medium text-foreground">Upload video</span>
+                  <span className="text-[10px] text-muted-foreground">Max 5s, 10MB</span>
+                </button>
               </div>
-              <div className="mt-3">
+              {/* Hidden inputs */}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => { if (e.target.files) handlePhotoUpload(e.target.files); e.target.value = ''; }}
+              />
+              <input
+                ref={videoRef}
+                type="file"
+                accept="video/mp4,video/quicktime,video/webm"
+                className="hidden"
+                onChange={(e) => { if (e.target.files) handlePhotoUpload(e.target.files); e.target.value = ''; }}
+              />
+              <div className="mt-1">
                 <button
                   onClick={() => setState(prev => ({ ...prev, photoPath: false, step: 'customer-type' }))}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
@@ -1038,11 +1197,15 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
       case 'photo-analyzing':
         return (
           <>
-            <UserBubble text="Photo uploaded" />
+            <UserBubble text={mediaType === 'VIDEO' ? 'Video uploaded' : 'Photo uploaded'} />
             {photoPreview && (
               <div className="flex justify-end animate-in fade-in-0 duration-200">
                 <div className="rounded-xl overflow-hidden max-w-[200px] border border-[hsl(220_10%_90%)]">
-                  <img src={photoPreview} alt="Uploaded debris" className="w-full h-auto" />
+                  {mediaType === 'VIDEO' ? (
+                    <video src={photoPreview} className="w-full h-auto" muted playsInline autoPlay loop />
+                  ) : (
+                    <img src={photoPreview} alt="Uploaded debris" className="w-full h-auto" />
+                  )}
                 </div>
               </div>
             )}
@@ -1050,7 +1213,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               <div className="flex items-center gap-3 py-2">
                 <Loader2 className="w-5 h-5 text-primary animate-spin" />
                 <div>
-                  <p className="text-sm text-foreground font-medium">Reviewing your photo</p>
+                  <p className="text-sm text-foreground font-medium">
+                    {mediaType === 'VIDEO' ? 'Reviewing your video' : 'Reviewing your photo'}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-0.5">Estimating material type and volume</p>
                 </div>
               </div>
