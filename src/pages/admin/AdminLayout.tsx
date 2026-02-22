@@ -12,6 +12,7 @@ import { useMobileMode } from '@/hooks/useMobileMode';
 import { cn } from '@/lib/utils';
 import { AlertBadge } from '@/components/alerts';
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
+import AiControlWidget from '@/components/ai/AiControlWidget';
 
 // Navigation items grouped by section - Full CRM Navigation
 const navSections = [
@@ -256,6 +257,8 @@ export default function AdminLayout() {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
+
+      <AiControlWidget />
     </div>
   );
 }

@@ -209,3 +209,9 @@ verify_jwt = false
 
 [functions.push-send]
 verify_jwt = false
+
+[functions.ai-control-brain]
+verify_jwt = false
+
+[functions.ai-action-runner]
+verify_jwt = false
