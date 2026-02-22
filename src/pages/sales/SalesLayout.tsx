@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet-async';
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { 
   Users, FileText, Settings, LogOut, 
@@ -65,6 +66,8 @@ export default function SalesLayout() {
     const isSearchPage = location.pathname === "/sales/search";
     
     return (
+      <>
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <MobileLayout
         title="Sales"
         subtitle="Leads & Quotes"
@@ -79,11 +82,14 @@ export default function SalesLayout() {
           <Outlet />
         )}
       </MobileLayout>
+      </>
     );
   }
 
   // Desktop Layout
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30">
       {/* Mobile Header */}
       <header className="lg:hidden sticky top-0 z-50 bg-background border-b px-4 py-3 flex items-center justify-between">
@@ -190,5 +196,6 @@ export default function SalesLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }

@@ -38,13 +38,28 @@ export function SEOHead({
     "image": `${BUSINESS_INFO.url}/logo.png`,
     "sameAs": Object.values(BUSINESS_INFO.social),
   };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": BUSINESS_INFO.name,
+    "url": BUSINESS_INFO.url,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${BUSINESS_INFO.url}/quote?zip={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
   
   // Combine schemas
   const allSchemas = schema 
     ? Array.isArray(schema) 
-      ? [localBusinessSchema, organizationSchema, ...schema] 
-      : [localBusinessSchema, organizationSchema, schema]
-    : [localBusinessSchema, organizationSchema];
+      ? [localBusinessSchema, organizationSchema, websiteSchema, ...schema] 
+      : [localBusinessSchema, organizationSchema, websiteSchema, schema]
+    : [localBusinessSchema, organizationSchema, websiteSchema];
 
   return (
     <Helmet>

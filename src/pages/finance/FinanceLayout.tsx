@@ -1,4 +1,5 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   DollarSign, FileText, LogOut, Home, Loader2, 
   CreditCard, Settings, RotateCcw, Search, Clock
@@ -52,6 +53,8 @@ export default function FinanceLayout() {
     const isSearchPage = location.pathname === '/finance/search';
     
     return (
+      <>
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <MobileLayout
         title="Finance"
         subtitle="Billing & Payments"
@@ -66,11 +69,14 @@ export default function FinanceLayout() {
           <Outlet />
         )}
       </MobileLayout>
+      </>
     );
   }
 
   // Desktop Layout
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">
         <div className="p-4 border-b border-border">
@@ -142,5 +148,6 @@ export default function FinanceLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }

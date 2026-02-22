@@ -1,4 +1,5 @@
 import { Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Truck, Calendar, LogOut, Home, Loader2, 
   AlertTriangle, Settings, Search, ClipboardList, Phone, Calculator, MapPin, History, Building2, Warehouse, Camera
@@ -59,6 +60,8 @@ export default function DispatchLayout() {
     const isSearchPage = location.pathname === '/dispatch/search';
     
     return (
+      <>
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <MobileLayout
         title="Dispatch"
         subtitle="Driver Assignments"
@@ -73,11 +76,14 @@ export default function DispatchLayout() {
           <Outlet />
         )}
       </MobileLayout>
+      </>
     );
   }
 
   // Desktop Layout
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">
         <div className="p-4 border-b border-border">
@@ -154,5 +160,6 @@ export default function DispatchLayout() {
 
       <AiControlWidget />
     </div>
+    </>
   );
 }
