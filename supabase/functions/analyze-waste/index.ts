@@ -326,7 +326,19 @@ serve(async (req) => {
             hazard_review_required: false,
             hazard_review_status: "none",
           }).select("id").single();
-          if (data) dryResult.analysisId = data.id;
+          if (data) {
+            dryResult.analysisId = data.id;
+            // Update sales_leads with assessment ref
+            if (resolvedLeadId) {
+              try {
+                await supabase.from("sales_leads").update({
+                  latest_assessment_id: data.id,
+                  latest_recommended_size: 20,
+                  latest_heavy_flag: false,
+                }).eq("id", resolvedLeadId);
+              } catch { /* non-blocking */ }
+            }
+          }
         } catch { /* non-blocking */ }
       }
 
@@ -525,6 +537,32 @@ serve(async (req) => {
         } else {
           analysisId = data.id;
           console.log("[analyze-waste] Saved analysis:", analysisId);
+
+          // Update sales_leads with latest assessment reference
+          if (resolvedLeadId) {
+            try {
+              await supabase.from("sales_leads").update({
+                latest_assessment_id: analysisId,
+                latest_recommended_size: recommendedSize,
+                latest_heavy_flag: heavyFlag,
+              }).eq("id", resolvedLeadId);
+              console.log("[analyze-waste] Updated sales_leads assessment ref");
+            } catch { /* non-blocking */ }
+          }
+
+          // Store media asset references
+          try {
+            const assets: Array<{ analysis_id: string; asset_type: string; storage_path: string }> = [];
+            if (image_storage_path) {
+              assets.push({ analysis_id: analysisId, asset_type: "ORIGINAL", storage_path: image_storage_path });
+            }
+            if (video_storage_path) {
+              assets.push({ analysis_id: analysisId, asset_type: "ORIGINAL", storage_path: video_storage_path });
+            }
+            if (assets.length > 0) {
+              await supabase.from("media_assessment_assets").insert(assets);
+            }
+          } catch { /* non-blocking */ }
         }
       } catch (dbError) {
         console.error("[analyze-waste] Database error:", dbError);
