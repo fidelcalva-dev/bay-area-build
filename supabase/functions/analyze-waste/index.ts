@@ -5,11 +5,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 // WASTE VISION AI - Image Analysis Edge Function
 // Analyzes debris/waste photos for material detection, hazard
 // flagging, volume/weight estimation, and dumpster recommendations
+// Supports DRY_RUN mode for testing
 // ============================================================
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 // ============================================================
@@ -45,7 +46,6 @@ const HAZARD_TAXONOMY = [
   { id: "appliance_freon", label: "Appliance with Freon", severity: "medium" },
 ];
 
-// Density ranges (tons per cubic yard) for weight estimation
 const DENSITY_RANGES: Record<string, { low: number; high: number }> = {
   mixed_cd: { low: 0.15, high: 0.35 },
   lumber_wood: { low: 0.10, high: 0.25 },
@@ -63,11 +63,54 @@ const DENSITY_RANGES: Record<string, { low: number; high: number }> = {
   unknown: { low: 0.15, high: 0.40 },
 };
 
-// Dumpster sizes
 const HEAVY_SIZES = [6, 8, 10];
 const GENERAL_SIZES = [6, 8, 10, 20, 30, 40, 50];
-const SIZE_CAPACITIES: Record<number, number> = {
-  6: 6, 8: 8, 10: 10, 20: 20, 30: 30, 40: 40, 50: 50,
+
+// ============================================================
+// DRY_RUN SAMPLE RESULT
+// ============================================================
+const DRY_RUN_RESULT = {
+  ok: true,
+  success: true,
+  detected_materials: ["lumber_wood", "drywall", "mixed_cd"],
+  heavy_flag: false,
+  recommended_size: 20,
+  confidence: 0.82,
+  notes: "DRY_RUN: Sample result. Mixed C&D debris with lumber and drywall. 20-yard recommended.",
+  materials: [
+    { id: "lumber_wood", label: "Lumber/Wood", confidence: 0.88, estimated_volume_pct: 40 },
+    { id: "drywall", label: "Drywall/Plaster", confidence: 0.75, estimated_volume_pct: 30 },
+    { id: "mixed_cd", label: "Mixed C&D", confidence: 0.70, estimated_volume_pct: 30 },
+  ],
+  hazards: [],
+  volume_cy: { low: 8, high: 14 },
+  weight_tons: { low: 1.5, high: 3.0 },
+  pickup_loads: { low: 4, high: 7 },
+  recommended_flow: {
+    waste_type: "mixed" as const,
+    recommended_size: 20,
+    alternate_sizes: [30],
+    fit_confidence: "safe" as const,
+    notes: ["DRY_RUN mode - deterministic sample result"],
+  },
+  green_halo: { eligible: false, note: "Mixed materials" },
+  hazard_review_required: false,
+  overall_confidence: "high" as const,
+  disclaimers: ["DRY_RUN mode - not a real analysis"],
+  // Legacy compat fields
+  recommendation: {
+    recommendedSize: 20,
+    materialCategory: "general",
+    confidence: 0.82,
+    explanation: "DRY_RUN: Estimated 8-14 cubic yards of mixed C&D debris.",
+  },
+  analysis: {
+    materials: [
+      { name: "Lumber/Wood", percentage: 40 },
+      { name: "Drywall", percentage: 30 },
+      { name: "Mixed C&D", percentage: 30 },
+    ],
+  },
 };
 
 // ============================================================
@@ -135,46 +178,16 @@ OUTPUT FORMAT (strict JSON):
 }`;
 
 interface AnalysisRequest {
-  images: string[]; // Base64 encoded images
+  images: string[];
   referenceObject?: "pickup" | "door" | "person" | "bucket" | "none";
   sessionId?: string;
   quoteId?: string;
-}
-
-interface MaterialDetection {
-  id: string;
-  label: string;
-  confidence: number;
-  estimated_volume_pct?: number;
-}
-
-interface HazardDetection {
-  id: string;
-  label: string;
-  confidence: number;
-  note?: string;
-}
-
-interface AnalysisResult {
-  materials: MaterialDetection[];
-  hazards: HazardDetection[];
-  volume_cy: { low: number; high: number };
-  weight_tons: { low: number; high: number };
-  pickup_loads: { low: number; high: number };
-  recommended_flow: {
-    waste_type: "heavy" | "mixed";
-    recommended_size: number;
-    alternate_sizes: number[];
-    fit_confidence: "safe" | "tight" | "risk" | "overflow";
-    notes: string[];
-  };
-  green_halo: {
-    eligible: boolean;
-    note?: string;
-  };
-  hazard_review_required: boolean;
-  overall_confidence: "high" | "medium" | "low";
-  disclaimers: string[];
+  zip?: string;
+  address?: string;
+  customer_type?: string;
+  lead_id?: string;
+  image_storage_path?: string;
+  mode?: "LIVE" | "DRY_RUN";
 }
 
 serve(async (req) => {
@@ -182,35 +195,170 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  let supabase: ReturnType<typeof createClient> | null = null;
+  if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  }
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+  try {
+    let body: AnalysisRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Invalid JSON body", fallback: { message: "Invalid request", next_action: "manual_size_select" } }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    const body: AnalysisRequest = await req.json();
-    const { images, referenceObject, sessionId, quoteId } = body;
+    const { images, referenceObject, sessionId, quoteId, zip, address, customer_type, lead_id, image_storage_path } = body;
 
     if (!images || images.length === 0) {
       return new Response(
-        JSON.stringify({ error: "No images provided" }),
+        JSON.stringify({ ok: false, error: "No images provided", fallback: { message: "No photo received", next_action: "manual_size_select" } }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     if (images.length > 8) {
       return new Response(
-        JSON.stringify({ error: "Maximum 8 images allowed" }),
+        JSON.stringify({ ok: false, error: "Maximum 8 images allowed", fallback: { message: "Too many photos", next_action: "manual_size_select" } }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ============================================================
+    // CHECK MODE: DRY_RUN vs LIVE
+    // ============================================================
+    let mode = body.mode || "LIVE";
+    if (mode !== "DRY_RUN" && supabase) {
+      try {
+        const { data: configRow } = await supabase
+          .from("config_settings")
+          .select("value")
+          .eq("key", "photo_ai.mode")
+          .maybeSingle();
+        if (configRow?.value) {
+          const configMode = JSON.parse(configRow.value);
+          if (configMode === "DRY_RUN") mode = "DRY_RUN";
+        }
+      } catch { /* use default */ }
+    }
+
+    // ============================================================
+    // LEAD CREATION / ATTACHMENT (via lead-ingest, non-blocking)
+    // ============================================================
+    let resolvedLeadId = lead_id || null;
+    if (supabase && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const ingestResponse = await fetch(`${SUPABASE_URL}/functions/v1/lead-ingest`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source_channel: "WEBSITE_PHOTO",
+            source_detail: "photo_ai",
+            zip: zip || undefined,
+            address: address || undefined,
+            customer_type: customer_type || undefined,
+            message: "Photo uploaded for analysis",
+            raw_payload: { image_count: images.length, session_id: sessionId },
+          }),
+        });
+        if (ingestResponse.ok) {
+          const ingestResult = await ingestResponse.json();
+          resolvedLeadId = ingestResult.lead_id || resolvedLeadId;
+          console.log("[analyze-waste] Lead ingested:", resolvedLeadId);
+        } else {
+          const errText = await ingestResponse.text();
+          console.error("[analyze-waste] lead-ingest error (non-critical):", errText);
+        }
+      } catch (ingestErr) {
+        console.error("[analyze-waste] lead-ingest failed (non-critical):", ingestErr);
+      }
+    }
+
+    // ============================================================
+    // LOG: PHOTO_UPLOADED event
+    // ============================================================
+    if (supabase && resolvedLeadId) {
+      try {
+        await supabase.from("lead_events").insert({
+          lead_id: resolvedLeadId,
+          event_type: "PHOTO_UPLOADED",
+          event_data: { image_count: images.length, session_id: sessionId, mode },
+        });
+      } catch { /* non-blocking */ }
+    }
+
+    // ============================================================
+    // DRY_RUN: Return sample result
+    // ============================================================
+    if (mode === "DRY_RUN") {
+      console.log("[analyze-waste] DRY_RUN mode - returning sample result");
+      const dryResult = { ...DRY_RUN_RESULT, analysisId: `dry_${Date.now()}`, lead_id: resolvedLeadId };
+
+      // Save to DB
+      if (supabase) {
+        try {
+          const { data } = await supabase.from("waste_vision_analyses").insert({
+            session_id: sessionId,
+            quote_id: quoteId || null,
+            lead_id: resolvedLeadId,
+            image_count: images.length,
+            input_type: "photo",
+            mode: "DRY_RUN",
+            zip, address, customer_type,
+            image_storage_path: image_storage_path || null,
+            recommended_waste_type: "mixed",
+            recommended_size: 20,
+            heavy_flag: false,
+            confidence: 0.82,
+            detected_materials: DRY_RUN_RESULT.materials,
+            materials_detected: DRY_RUN_RESULT.materials,
+            overall_confidence: "high",
+            hazard_review_required: false,
+            hazard_review_status: "none",
+          }).select("id").single();
+          if (data) dryResult.analysisId = data.id;
+        } catch { /* non-blocking */ }
+      }
+
+      // Log PHOTO_ANALYZED event
+      if (supabase && resolvedLeadId) {
+        try {
+          await supabase.from("lead_events").insert({
+            lead_id: resolvedLeadId,
+            event_type: "PHOTO_ANALYZED",
+            event_data: { mode: "DRY_RUN", recommended_size: 20, heavy_flag: false },
+          });
+        } catch { /* non-blocking */ }
+      }
+
+      return new Response(JSON.stringify(dryResult), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ============================================================
+    // LIVE MODE: Call AI
+    // ============================================================
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      console.error("[analyze-waste] LOVABLE_API_KEY not configured");
+      return new Response(
+        JSON.stringify({ ok: false, error: "AI service not configured", fallback: { message: "Service temporarily unavailable", next_action: "manual_size_select" } }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     console.log(`[analyze-waste] Processing ${images.length} images, reference: ${referenceObject || 'none'}`);
 
-    // Build user message with reference context
     let userPrompt = "Analyze the debris/waste in these images and provide structured JSON output.";
     if (referenceObject && referenceObject !== "none") {
       const referenceDescriptions: Record<string, string> = {
@@ -222,26 +370,19 @@ serve(async (req) => {
       userPrompt += ` ${referenceDescriptions[referenceObject]}`;
     }
 
-    // Build content array with images
     const content: Array<{ type: string; text?: string; image_url?: { url: string } }> = [
       { type: "text", text: userPrompt },
     ];
 
     for (const image of images) {
-      // Handle both base64 and URL formats
-      const imageUrl = image.startsWith("data:") 
-        ? image 
-        : image.startsWith("http") 
-          ? image 
+      const imageUrl = image.startsWith("data:")
+        ? image
+        : image.startsWith("http")
+          ? image
           : `data:image/jpeg;base64,${image}`;
-      
-      content.push({
-        type: "image_url",
-        image_url: { url: imageUrl },
-      });
+      content.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // Call Lovable AI with vision model
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -249,7 +390,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-pro", // Vision-capable model
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: VISION_SYSTEM_PROMPT },
           { role: "user", content },
@@ -261,37 +402,56 @@ serve(async (req) => {
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error("[analyze-waste] AI gateway error:", aiResponse.status, errorText);
-      
+
       if (aiResponse.status === 429) {
         return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          JSON.stringify({ ok: false, error: "Rate limit exceeded", fallback: { message: "Service busy. Please try again in a moment.", next_action: "manual_size_select" } }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       if (aiResponse.status === 402) {
         return new Response(
-          JSON.stringify({ error: "AI service temporarily unavailable." }),
+          JSON.stringify({ ok: false, error: "AI service temporarily unavailable", fallback: { message: "Service unavailable", next_action: "manual_size_select" } }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
-      throw new Error(`AI gateway error: ${aiResponse.status}`);
+
+      // Log system error
+      if (supabase) {
+        try {
+          await supabase.from("lead_events").insert({
+            lead_id: resolvedLeadId || "00000000-0000-0000-0000-000000000000",
+            event_type: "system_error",
+            event_data: { source: "analyze-waste", status: aiResponse.status, error: errorText.slice(0, 500) },
+          });
+        } catch { /* non-blocking */ }
+      }
+
+      return new Response(
+        JSON.stringify({ ok: false, error: "Analysis failed", fallback: { message: "Could not analyze photo. Please select size manually.", next_action: "manual_size_select" } }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const aiResult = await aiResponse.json();
     const responseContent = aiResult.choices?.[0]?.message?.content;
 
     if (!responseContent) {
-      throw new Error("No response from AI model");
+      return new Response(
+        JSON.stringify({ ok: false, error: "Empty AI response", fallback: { message: "Photo unclear. Please select size manually.", next_action: "manual_size_select" } }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    // Parse the JSON response
-    let analysis: AnalysisResult;
+    let analysis: any;
     try {
       analysis = JSON.parse(responseContent);
-    } catch (parseError) {
-      console.error("[analyze-waste] Failed to parse AI response:", responseContent);
-      throw new Error("Failed to parse AI analysis result");
+    } catch {
+      console.error("[analyze-waste] Failed to parse AI response:", responseContent.slice(0, 500));
+      return new Response(
+        JSON.stringify({ ok: false, error: "Failed to parse analysis", fallback: { message: "Could not interpret photo. Please select size manually.", next_action: "manual_size_select" } }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     console.log("[analyze-waste] Analysis complete:", {
@@ -301,18 +461,33 @@ serve(async (req) => {
       hazardReview: analysis.hazard_review_required,
     });
 
-    // Save to database if Supabase is configured
-    let analysisId: string | null = null;
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-      try {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    // Derive normalized fields
+    const heavyMaterials = (analysis.materials || []).filter((m: any) =>
+      ["concrete", "dirt_soil", "brick_tile", "asphalt", "roofing"].includes(m.id)
+    );
+    const totalHeavyPct = heavyMaterials.reduce((sum: number, m: any) => sum + (m.estimated_volume_pct || 0), 0);
+    const heavyFlag = totalHeavyPct > 60 || analysis.recommended_flow?.waste_type === "heavy";
+    const recommendedSize = analysis.recommended_flow?.recommended_size || 20;
+    const confidenceScore = (() => {
+      if (analysis.overall_confidence === "high") return 0.85;
+      if (analysis.overall_confidence === "medium") return 0.65;
+      return 0.4;
+    })();
 
+    // Save to database
+    let analysisId: string | null = null;
+    if (supabase) {
+      try {
         const insertData = {
           session_id: sessionId,
           quote_id: quoteId || null,
+          lead_id: resolvedLeadId,
           image_count: images.length,
           input_type: "photo",
           reference_object: referenceObject || "none",
+          mode: "LIVE",
+          zip, address, customer_type,
+          image_storage_path: image_storage_path || null,
           materials_detected: analysis.materials,
           hazards_detected: analysis.hazards,
           volume_cy_low: analysis.volume_cy?.low,
@@ -322,7 +497,7 @@ serve(async (req) => {
           pickup_loads_low: analysis.pickup_loads?.low,
           pickup_loads_high: analysis.pickup_loads?.high,
           recommended_waste_type: analysis.recommended_flow?.waste_type,
-          recommended_size: analysis.recommended_flow?.recommended_size,
+          recommended_size: recommendedSize,
           alternate_sizes: analysis.recommended_flow?.alternate_sizes,
           fit_confidence: analysis.recommended_flow?.fit_confidence,
           recommendation_notes: analysis.recommended_flow?.notes,
@@ -332,6 +507,9 @@ serve(async (req) => {
           hazard_review_status: analysis.hazard_review_required ? "pending" : "none",
           overall_confidence: analysis.overall_confidence,
           raw_ai_response: aiResult,
+          detected_materials: analysis.materials,
+          heavy_flag: heavyFlag,
+          confidence: confidenceScore,
         };
 
         const { data, error } = await supabase
@@ -348,28 +526,99 @@ serve(async (req) => {
         }
       } catch (dbError) {
         console.error("[analyze-waste] Database error:", dbError);
-        // Continue without saving - analysis still valid
       }
     }
 
-    // Return the analysis with ID
+    // Log PHOTO_ANALYZED event
+    if (supabase && resolvedLeadId) {
+      try {
+        await supabase.from("lead_events").insert({
+          lead_id: resolvedLeadId,
+          event_type: "PHOTO_ANALYZED",
+          event_data: {
+            analysis_id: analysisId,
+            recommended_size: recommendedSize,
+            heavy_flag: heavyFlag,
+            confidence: analysis.overall_confidence,
+            materials_count: analysis.materials?.length || 0,
+          },
+        });
+      } catch { /* non-blocking */ }
+    }
+
+    // Log lifecycle event
+    if (supabase && resolvedLeadId) {
+      try {
+        await supabase.from("lifecycle_events").insert({
+          entity_type: "LEAD",
+          entity_id: resolvedLeadId,
+          from_stage: "LEAD_NEW",
+          to_stage: "LEAD_QUALIFIED",
+          trigger_type: "auto",
+          trigger_detail: "photo_ai_analysis",
+          metadata: { analysis_id: analysisId, recommended_size: recommendedSize, heavy_flag: heavyFlag },
+        });
+      } catch { /* non-blocking */ }
+    }
+
+    // Build response with BOTH new standardized AND legacy-compat fields
+    const materialNames = (analysis.materials || []).map((m: any) => m.id);
+    const response = {
+      ok: true,
+      success: true,
+      analysisId,
+      lead_id: resolvedLeadId,
+      // Standardized fields
+      detected_materials: materialNames,
+      heavy_flag: heavyFlag,
+      recommended_size: recommendedSize,
+      confidence: confidenceScore,
+      notes: (analysis.recommended_flow?.notes || []).join(". "),
+      // Full analysis data
+      ...analysis,
+      // Legacy compatibility (for CalsanAIChat, ConversationalHero, PhotoUploadModal)
+      recommendation: {
+        recommendedSize,
+        materialCategory: heavyFlag ? "heavy" : "general",
+        confidence: confidenceScore,
+        explanation: (analysis.recommended_flow?.notes || []).join(". ") || `Estimated ${analysis.volume_cy?.low || '?'}-${analysis.volume_cy?.high || '?'} cubic yards.`,
+      },
+      analysis: {
+        materials: (analysis.materials || []).map((m: any) => ({
+          name: m.label,
+          label: m.label,
+          percentage: m.estimated_volume_pct || 0,
+        })),
+      },
+    };
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("[analyze-waste] Unhandled error:", error);
+
+    // Log system error
+    if (supabase) {
+      try {
+        await supabase.from("lead_events").insert({
+          lead_id: "00000000-0000-0000-0000-000000000000",
+          event_type: "system_error",
+          event_data: { source: "analyze-waste", error: error instanceof Error ? error.message : String(error) },
+        });
+      } catch { /* non-blocking */ }
+    }
+
     return new Response(
       JSON.stringify({
-        success: true,
-        analysisId,
-        ...analysis,
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    console.error("[analyze-waste] Error:", error);
-    return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : "Analysis failed",
+        ok: false,
         success: false,
+        error: error instanceof Error ? error.message : "Analysis failed",
+        fallback: {
+          message: "Could not analyze photo. Please select size manually.",
+          next_action: "manual_size_select",
+        },
       }),
       {
         status: 500,

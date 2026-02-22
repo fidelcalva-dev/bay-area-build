@@ -15873,10 +15873,14 @@ export type Database = {
       }
       waste_vision_analyses: {
         Row: {
+          address: string | null
           alternate_sizes: number[] | null
           applied_at: string | null
           applied_to_quote: boolean | null
+          confidence: number | null
           created_at: string
+          customer_type: string | null
+          detected_materials: Json | null
           fit_confidence: string | null
           green_halo_eligible: boolean | null
           green_halo_note: string | null
@@ -15885,10 +15889,14 @@ export type Database = {
           hazard_review_status: string | null
           hazard_reviewer_id: string | null
           hazards_detected: Json
+          heavy_flag: boolean | null
           id: string
           image_count: number
+          image_storage_path: string | null
           input_type: string
+          lead_id: string | null
           materials_detected: Json
+          mode: string | null
           order_id: string | null
           overall_confidence: string | null
           pickup_loads_high: number | null
@@ -15904,12 +15912,17 @@ export type Database = {
           volume_cy_low: number | null
           weight_tons_high: number | null
           weight_tons_low: number | null
+          zip: string | null
         }
         Insert: {
+          address?: string | null
           alternate_sizes?: number[] | null
           applied_at?: string | null
           applied_to_quote?: boolean | null
+          confidence?: number | null
           created_at?: string
+          customer_type?: string | null
+          detected_materials?: Json | null
           fit_confidence?: string | null
           green_halo_eligible?: boolean | null
           green_halo_note?: string | null
@@ -15918,10 +15931,14 @@ export type Database = {
           hazard_review_status?: string | null
           hazard_reviewer_id?: string | null
           hazards_detected?: Json
+          heavy_flag?: boolean | null
           id?: string
           image_count?: number
+          image_storage_path?: string | null
           input_type?: string
+          lead_id?: string | null
           materials_detected?: Json
+          mode?: string | null
           order_id?: string | null
           overall_confidence?: string | null
           pickup_loads_high?: number | null
@@ -15937,12 +15954,17 @@ export type Database = {
           volume_cy_low?: number | null
           weight_tons_high?: number | null
           weight_tons_low?: number | null
+          zip?: string | null
         }
         Update: {
+          address?: string | null
           alternate_sizes?: number[] | null
           applied_at?: string | null
           applied_to_quote?: boolean | null
+          confidence?: number | null
           created_at?: string
+          customer_type?: string | null
+          detected_materials?: Json | null
           fit_confidence?: string | null
           green_halo_eligible?: boolean | null
           green_halo_note?: string | null
@@ -15951,10 +15973,14 @@ export type Database = {
           hazard_review_status?: string | null
           hazard_reviewer_id?: string | null
           hazards_detected?: Json
+          heavy_flag?: boolean | null
           id?: string
           image_count?: number
+          image_storage_path?: string | null
           input_type?: string
+          lead_id?: string | null
           materials_detected?: Json
+          mode?: string | null
           order_id?: string | null
           overall_confidence?: string | null
           pickup_loads_high?: number | null
@@ -15970,8 +15996,16 @@ export type Database = {
           volume_cy_low?: number | null
           weight_tons_high?: number | null
           weight_tons_low?: number | null
+          zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "waste_vision_analyses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "waste_vision_analyses_order_id_fkey"
             columns: ["order_id"]

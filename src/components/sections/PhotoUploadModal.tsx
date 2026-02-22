@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Camera, Loader2, Package, ArrowRight } from 'lucide-react';
+import { Upload, X, Camera, Loader2, Package, ArrowRight, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,13 +14,30 @@ interface AnalysisResult {
   recommendedSize: number;
   heavyOrGeneral: string;
   confidenceScore: number;
+  confidenceLabel: string;
   materials: { label: string; percentage: number }[];
+  analysisId?: string;
+  leadId?: string;
+}
+
+const PHOTO_AI_DRAFT_KEY = 'calsan_photo_ai_draft';
+
+function savePhotoDraft(result: AnalysisResult) {
+  try {
+    localStorage.setItem(PHOTO_AI_DRAFT_KEY, JSON.stringify({ ...result, savedAt: Date.now() }));
+  } catch { /* quota exceeded */ }
+}
+
+function getConfidenceLabel(score: number): string {
+  if (score >= 0.75) return 'High';
+  if (score >= 0.5) return 'Medium';
+  return 'Low';
 }
 
 export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
-  const [analyzing, setAnalyzing] = useState(false);
+  const [phase, setPhase] = useState<'idle' | 'uploading' | 'analyzing' | 'done' | 'error'>('idle');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +60,7 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
     });
     setError(null);
     setResult(null);
+    setPhase('idle');
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -54,15 +72,29 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
     setFiles(prev => prev.filter((_, i) => i !== index));
     setPreviews(prev => prev.filter((_, i) => i !== index));
     setResult(null);
+    setPhase('idle');
   };
 
   const analyzePhotos = async () => {
     if (files.length === 0) return;
-    setAnalyzing(true);
+    setPhase('uploading');
     setError(null);
 
     try {
-      // Convert files to base64
+      // Step 1: Upload to storage (non-blocking)
+      let storagePath: string | null = null;
+      try {
+        const fileName = `photo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+        await supabase.storage.from('waste-uploads').upload(fileName, files[0], {
+          contentType: files[0].type,
+          upsert: false,
+        });
+        storagePath = fileName;
+      } catch { /* non-blocking */ }
+
+      setPhase('analyzing');
+
+      // Step 2: Convert files to base64
       const images = await Promise.all(
         files.map(file => new Promise<string>((resolve) => {
           const reader = new FileReader();
@@ -74,27 +106,51 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
         }))
       );
 
+      // Step 3: Call analyze-waste
       const { data, error: fnError } = await supabase.functions.invoke('analyze-waste', {
-        body: { images },
+        body: {
+          images,
+          image_storage_path: storagePath,
+        },
       });
 
       if (fnError) throw fnError;
 
-      const analysis = data;
-      setResult({
-        recommendedSize: analysis.recommendation?.recommendedSize || 20,
-        heavyOrGeneral: analysis.recommendation?.materialCategory || 'general',
-        confidenceScore: analysis.recommendation?.confidence || 0.8,
-        materials: analysis.materials?.map((m: any) => ({
-          label: m.label,
-          percentage: m.percentage,
-        })) || [],
-      });
+      // Handle ok=false with fallback
+      if (data?.ok === false) {
+        setError(data.fallback?.message || data.error || 'Analysis failed');
+        setPhase('error');
+        return;
+      }
+
+      // Extract from standardized or legacy response
+      const recommendedSize = data?.recommended_size || data?.recommendation?.recommendedSize || 20;
+      const heavyFlag = data?.heavy_flag ?? (data?.recommendation?.materialCategory === 'heavy');
+      const confidence = data?.confidence || data?.recommendation?.confidence || 0.7;
+      const materials = data?.analysis?.materials?.map((m: any) => ({
+        label: m.label || m.name,
+        percentage: m.percentage,
+      })) || [];
+
+      const analysisResult: AnalysisResult = {
+        recommendedSize,
+        heavyOrGeneral: heavyFlag ? 'heavy' : 'general',
+        confidenceScore: confidence,
+        confidenceLabel: getConfidenceLabel(confidence),
+        materials,
+        analysisId: data?.analysisId,
+        leadId: data?.lead_id,
+      };
+
+      setResult(analysisResult);
+      setPhase('done');
+
+      // Persist to localStorage
+      savePhotoDraft(analysisResult);
     } catch (err: any) {
       console.error('Analysis error:', err);
-      setError('Could not analyze the photo. Please try again or contact us.');
-    } finally {
-      setAnalyzing(false);
+      setError('Could not analyze the photo. Please select size manually or contact us.');
+      setPhase('error');
     }
   };
 
@@ -105,9 +161,15 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
       size: String(result.recommendedSize),
       material: result.heavyOrGeneral,
       from: 'waste-vision',
+      ...(result.analysisId ? { ai_analysis_id: result.analysisId } : {}),
     });
     onOpenChange(false);
     navigate(`/quote?${params.toString()}`);
+  };
+
+  const handleManualSelect = () => {
+    onOpenChange(false);
+    navigate('/quote?v3=1');
   };
 
   const resetModal = () => {
@@ -115,21 +177,24 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
     setPreviews([]);
     setResult(null);
     setError(null);
+    setPhase('idle');
   };
+
+  const phaseLabel = phase === 'uploading' ? 'Uploading...' : phase === 'analyzing' ? 'Analyzing...' : 'Analyze Photo';
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetModal(); }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-foreground">
-            Upload Your Waste Photo
+            Upload Your Project Photo
           </DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            Our AI will analyze your debris and recommend the right dumpster size.
+            We'll review your debris and recommend the right dumpster size.
           </p>
         </DialogHeader>
 
-        {!result ? (
+        {phase !== 'done' ? (
           <div className="space-y-4">
             {/* Drop zone */}
             <div
@@ -172,30 +237,41 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
               </div>
             )}
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
+            {/* Error with fallback */}
+            {phase === 'error' && error && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 space-y-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-destructive mt-0.5" />
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+                <Button onClick={handleManualSelect} variant="outline" size="sm" className="w-full">
+                  Select Size Manually
+                </Button>
+              </div>
             )}
 
-            <Button
-              onClick={analyzePhotos}
-              disabled={files.length === 0 || analyzing}
-              className="w-full"
-              size="lg"
-            >
-              {analyzing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <Camera className="w-4 h-4 mr-2" />
-                  Analyze Photo
-                </>
-              )}
-            </Button>
+            {phase !== 'error' && (
+              <Button
+                onClick={analyzePhotos}
+                disabled={files.length === 0 || phase === 'uploading' || phase === 'analyzing'}
+                className="w-full"
+                size="lg"
+              >
+                {(phase === 'uploading' || phase === 'analyzing') ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {phaseLabel}
+                  </>
+                ) : (
+                  <>
+                    <Camera className="w-4 h-4 mr-2" />
+                    Analyze Photo
+                  </>
+                )}
+              </Button>
+            )}
           </div>
-        ) : (
+        ) : result ? (
           <div className="space-y-5">
             {/* Result card */}
             <div className="bg-muted/50 rounded-xl p-6 text-center border border-border">
@@ -209,7 +285,7 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
                   {result.heavyOrGeneral}
                 </span>
                 <span className="px-2.5 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-full">
-                  {Math.round(result.confidenceScore * 100)}% confidence
+                  {result.confidenceLabel} confidence
                 </span>
               </div>
             </div>
@@ -230,6 +306,15 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
               </div>
             )}
 
+            {/* Heavy material notice */}
+            {result.heavyOrGeneral === 'heavy' && (
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                <p className="text-xs text-amber-800 dark:text-amber-200">
+                  <strong>Heavy Materials:</strong> Restricted to 6, 8, or 10 yard containers with fill-line compliance required.
+                </p>
+              </div>
+            )}
+
             <Button onClick={handleSeePrice} className="w-full" size="lg">
               See Exact Price
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -242,7 +327,7 @@ export function PhotoUploadModal({ open, onOpenChange }: PhotoUploadModalProps) 
               Upload a different photo
             </button>
           </div>
-        )}
+        ) : null}
       </DialogContent>
     </Dialog>
   );
