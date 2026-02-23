@@ -64,7 +64,7 @@ export function TrustBadgesSection() {
             Verified credentials
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Why Customers Trust Calsan
+            Why Contractors and Homeowners Choose Calsan
           </h2>
           <p className="text-sm text-muted-foreground mt-2 max-w-lg mx-auto">
             All credentials are publicly verifiable. Click any badge to confirm.

@@ -104,15 +104,15 @@ export function HeroSectionV2({ cityName, countyName }: HeroSectionV2Props = {})
             </span>
           </motion.div>
 
-          {/* Main Headline - Uber-like */}
+          {/* Main Headline */}
           <motion.h1 
             variants={fadeInUp}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight mb-6"
           >
             {cityName ? (
-              <>Dumpster rental in {cityName}</>
+              <>Dumpster Rental in {cityName}</>
             ) : (
-              <>Dumpster rental,<br className="hidden sm:block" /> booked in seconds</>
+              <>Dumpster Rental<br className="hidden sm:block" /> in the Bay Area</>
             )}
           </motion.h1>
           
@@ -121,7 +121,7 @@ export function HeroSectionV2({ cityName, countyName }: HeroSectionV2Props = {})
             variants={fadeInUp}
             className="text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-xl mx-auto"
           >
-            Instant ZIP-based pricing. Local yards. Fast delivery.
+            Exact pricing by ZIP code. Clear rental terms. Reliable delivery and pickup.
           </motion.p>
 
           {/* ZIP Input Bar - Primary CTA */}

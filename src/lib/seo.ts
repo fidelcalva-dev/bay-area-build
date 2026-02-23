@@ -157,8 +157,8 @@ export const DUMPSTER_SIZES = [
 // Page-specific SEO configurations
 export const PAGE_SEO = {
   home: {
-    title: 'Same-Day Dumpster Rental Oakland, San Jose & SF | Local Yards',
-    description: 'Technology-supported waste logistics platform serving Oakland, San Jose & San Francisco. Structured dispatch, transparent pricing, 6-50 yard roll-off dumpsters from real local yards. Hablamos Español.',
+    title: 'Dumpster Rental Bay Area | Calsan Dumpsters Pro',
+    description: 'Professional dumpster rental in Oakland, San Jose and San Francisco. Transparent pricing, reliable delivery and clear rental terms.',
     canonical: '/',
     ogImage: '/og-image.jpg',
   },
@@ -217,8 +217,8 @@ export const PAGE_SEO = {
     ogImage: '/og-image.jpg',
   },
   quote: {
-    title: 'Get Structured Dumpster Quote',
-    description: 'Get a structured dumpster rental quote in 60 seconds. Enter your ZIP code for routing-based pricing. Same-day delivery available.',
+    title: 'Get Dumpster Rental Quote | Calsan Dumpsters Pro',
+    description: 'Get a dumpster rental quote in 60 seconds. Enter your ZIP code for exact pricing. Same-day delivery available.',
     canonical: '/quote',
     ogImage: '/og-image.jpg',
   },
