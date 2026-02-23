@@ -36,7 +36,7 @@ export function FAQSection({ limit = 6, category, compact = false }: FAQSectionP
               Common questions
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Quick answers
+              Dumpster Rental Questions
             </h2>
           </div>
         )}

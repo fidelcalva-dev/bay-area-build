@@ -10,8 +10,8 @@ interface CTASectionProps {
 }
 
 export function CTASection({ 
-  title = 'Ready to get started?', 
-  subtitle = 'Get an instant estimate in 60 seconds. Same-day delivery available.',
+  title = 'Ready to Schedule Your Dumpster?', 
+  subtitle = 'Clear pricing. Professional delivery. Reliable pickup.',
   variant = 'secondary'
 }: CTASectionProps) {
   const bgClass = {

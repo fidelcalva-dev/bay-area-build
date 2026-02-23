@@ -32,18 +32,18 @@ const SectionLoader = () => (
 
 const TRUST_ITEMS = [
   { icon: Shield, label: 'Licensed & Insured' },
-  { icon: MapPin, label: 'Local Yard Coverage' },
-  { icon: HardHat, label: 'Contractor-Ready' },
-  { icon: FileText, label: 'Clear Rental Terms' },
+  { icon: MapPin, label: 'Local Bay Area Operations' },
+  { icon: HardHat, label: 'No Hidden Fees' },
+  { icon: FileText, label: 'Structured Scheduling' },
 ];
 
 const WHY_EXPERTISE = [
-  'Site access',
-  'Fill limits',
-  'Weight rules',
-  'Concrete vs debris',
-  'Contractor scheduling',
-  'Disposal logistics',
+  'Accurate scheduling',
+  'Transparent pricing',
+  'Clean, well-maintained equipment',
+  'Clear weight policies',
+  'Professional communication',
+  'Reliable pickup and swap coordination',
 ];
 
 const TOOLS_CARDS = [
@@ -79,8 +79,9 @@ const JOB_SITE_ITEMS = [
 ];
 
 const SERVICE_AREAS_LIST = [
-  'Oakland', 'San Jose', 'San Francisco', 'San Rafael',
-  'Vallejo', 'Livermore', 'Tracy', 'Fremont',
+  'Oakland', 'San Jose', 'San Francisco', 'Berkeley',
+  'Hayward', 'Fremont', 'Concord', 'Richmond',
+  'Vallejo', 'Livermore',
 ];
 
 const HOMEPAGE_SIZES = [10, 20, 30, 40];
@@ -105,14 +106,11 @@ const Index = () => {
           {/* Headline */}
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Professional Dumpster Rental.
-              <br />
-              <span className="text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-semibold text-muted-foreground">Done Right.</span>
+              Dumpster Rental in the Bay Area
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Local dumpsters. Clear pricing. Reliable delivery.
-              <br />
-              Built for homeowners and contractors across the Bay Area.
+              Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
+              Exact pricing by ZIP code. Clear rental terms. Reliable delivery and pickup.
             </p>
           </div>
 
@@ -148,14 +146,14 @@ const Index = () => {
               {/* Left: Copy */}
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-                  Dumpster Rental Is All We Do.
+                  Dumpster Rental Specialists
                 </h2>
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
                   <p>
-                    We have worked in hauling and construction debris since 2009.
-                    Since 2015, we have specialized in dumpster rental and material delivery.
+                    Since 2009, we have worked in hauling, debris removal and construction cleanup.
+                    Since 2015, we have focused exclusively on dumpster rental.
                   </p>
-                  <p>We understand:</p>
+                  <p>That focus allows us to deliver:</p>
                 </div>
               </div>
 
@@ -168,7 +166,7 @@ const Index = () => {
                   </div>
                 ))}
                 <p className="text-sm text-muted-foreground pt-4 border-t border-border mt-4">
-                  This is not a side service. This is our focus.
+                  Dumpster Rental. Done Right.
                 </p>
               </div>
             </div>
@@ -181,9 +179,9 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Built to Make Your Job Easier
+              How It Works
             </h2>
-            <p className="text-sm text-muted-foreground">Professional workflow. Clear steps. No guesswork.</p>
+            <p className="text-sm text-muted-foreground">Clear steps. No guesswork.</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
@@ -230,10 +228,10 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Right Size. Right Job.
+              Dumpster Sizes Available
             </h2>
             <p className="text-muted-foreground">
-              Need help choosing? We will guide you.
+              Not sure which size? We will help you choose.
             </p>
           </div>
 
@@ -267,9 +265,9 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Trusted By Homeowners and Contractors
+              Why Contractors and Homeowners Choose Calsan
             </h2>
-            <p className="text-muted-foreground">Professional service. Every time.</p>
+            <p className="text-muted-foreground">Professional service. Every project.</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -292,10 +290,10 @@ const Index = () => {
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Serving the Bay Area
+              Dumpster Rental Near You
             </h2>
             <p className="text-muted-foreground mb-8">
-              We operate from multiple local yard locations to stay close to your project.
+              Enter your ZIP code above to see exact pricing for your location.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -325,6 +323,9 @@ const Index = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
             Ready to Schedule Your Dumpster?
           </h2>
+          <p className="text-primary-foreground/70 mb-6 text-base">
+            Clear pricing. Professional delivery. Reliable pickup.
+          </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
@@ -341,7 +342,7 @@ const Index = () => {
           </div>
 
           <p className="text-sm text-primary-foreground/60">
-            Same-day delivery available based on availability.
+            Serving the Bay Area since 2009. Focused on dumpster rental since 2015.
           </p>
         </div>
       </section>

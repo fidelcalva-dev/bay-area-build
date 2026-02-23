@@ -44,9 +44,9 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
             variants={fadeUp}
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight"
           >
-            Dumpster Rental Done Right.
+            Dumpster Rental in the Bay Area.
             <span className="block text-primary mt-2 text-3xl sm:text-4xl lg:text-5xl font-bold">
-              Built on Experience. Powered by Precision.
+              Professional. Reliable. Local.
             </span>
           </motion.h1>
 

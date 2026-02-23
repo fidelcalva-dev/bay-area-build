@@ -1,7 +1,7 @@
 // ============================================================
-// AIMainChat — Homepage AI Chat Hero
-// Thin wrapper around CalsanAIChat (the complete structured engine)
-// with ChatGPT-style header and Call Dispatch action.
+// AIMainChat — Homepage Dumpster Rental Assistant
+// Thin wrapper around CalsanAIChat
+// with professional header and Call Dispatch action.
 // ============================================================
 import { Phone } from 'lucide-react';
 import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
