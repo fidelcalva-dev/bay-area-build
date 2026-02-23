@@ -6,7 +6,7 @@ import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, DollarSign, HardHat, ArrowRight, Phone, CheckCircle, Clock, FileText, Camera, CalendarDays, Map } from 'lucide-react';
+import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Truck, Package } from 'lucide-react';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
 
@@ -33,8 +33,8 @@ const SectionLoader = () => (
 const TRUST_ITEMS = [
   { icon: Shield, label: 'Licensed & Insured' },
   { icon: MapPin, label: 'Local Bay Area Operations' },
-  { icon: HardHat, label: 'No Hidden Fees' },
-  { icon: FileText, label: 'Structured Scheduling' },
+  { icon: CheckCircle, label: 'No Hidden Fees' },
+  { icon: CalendarDays, label: 'Structured Scheduling' },
 ];
 
 const WHY_EXPERTISE = [
@@ -46,42 +46,18 @@ const WHY_EXPERTISE = [
   'Reliable pickup and swap coordination',
 ];
 
-const TOOLS_CARDS = [
-  {
-    icon: DollarSign,
-    title: 'Exact Price Calculator',
-    description: 'Get your exact rental price based on your ZIP and project.',
-  },
-  {
-    icon: Camera,
-    title: 'Project Photo Review',
-    description: 'Upload a photo and we will recommend the correct dumpster size.',
-  },
-  {
-    icon: CalendarDays,
-    title: 'Schedule & Confirm',
-    description: 'Lock in delivery and get confirmation before we arrive.',
-  },
-  {
-    icon: Map,
-    title: 'Placement Planning',
-    description: 'Choose the exact drop location to avoid delays.',
-  },
-];
 
-const JOB_SITE_ITEMS = [
-  'Confirmed delivery window',
-  'Protected driveway placement',
-  'Clear fill-line rules',
-  'Disposal handled properly',
-  'Pickup reminders',
-  'Final documentation',
+const WHATS_INCLUDED = [
+  { icon: Truck, label: 'Delivery & Pickup' },
+  { icon: CalendarDays, label: '7-Day Rental' },
+  { icon: Package, label: 'Included Disposal Weight' },
+  { icon: Phone, label: 'Local Support Team' },
+  { icon: Shield, label: 'Licensed & Insured' },
 ];
 
 const SERVICE_AREAS_LIST = [
   'Oakland', 'San Jose', 'San Francisco', 'Berkeley',
-  'Hayward', 'Fremont', 'Concord', 'Richmond',
-  'Vallejo', 'Livermore',
+  'Fremont', 'Concord', 'Vallejo', 'Livermore',
 ];
 
 const HOMEPAGE_SIZES = [10, 20, 30, 40];
@@ -100,21 +76,21 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== 1) HERO SECTION ========== */}
+      {/* ========== 1) CLARITY — Hero ========== */}
       <section className="bg-[#F7F9F8] min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
         <div className="container-wide">
-          {/* Headline */}
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
               Dumpster Rental in the Bay Area
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
+            <p className="text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
+              Roll-off dumpster rental for homeowners, contractors and commercial projects.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
               Exact pricing by ZIP code. Clear rental terms. Reliable delivery and pickup.
             </p>
           </div>
 
-          {/* Trust Strip */}
           <div className="max-w-[850px] mx-auto mb-5">
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
@@ -126,10 +102,8 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Chat Interface */}
           <CalsanAIChat />
 
-          {/* Transparency anchor */}
           <div className="mt-8 max-w-[700px] mx-auto text-center">
             <p className="text-xs text-muted-foreground/70">
               You will see your total before you confirm.
@@ -138,100 +112,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 2) WHY CALSAN ========== */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-start">
-              {/* Left: Copy */}
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-                  Dumpster Rental Specialists
-                </h2>
-                <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
-                  <p>
-                    Since 2009, we have worked in hauling, debris removal and construction cleanup.
-                    Since 2015, we have focused exclusively on dumpster rental.
-                  </p>
-                  <p>That focus allows us to deliver:</p>
-                </div>
-              </div>
-
-              {/* Right: Expertise List */}
-              <div className="space-y-3 pt-2 md:pt-12">
-                {WHY_EXPERTISE.map((item) => (
-                  <div key={item} className="flex items-center gap-3 text-sm text-foreground">
-                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
-                    <span>{item}</span>
-                  </div>
-                ))}
-                <p className="text-sm text-muted-foreground pt-4 border-t border-border mt-4">
-                  Dumpster Rental. Done Right.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 3) TOOLS SECTION (Reframed) ========== */}
+      {/* ========== 2) CONTROL — Price Visibility ========== */}
       <section className="py-16 md:py-24 bg-card border-y border-border">
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              How It Works
+              See Your Exact Price in Seconds
             </h2>
-            <p className="text-sm text-muted-foreground">Clear steps. No guesswork.</p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {TOOLS_CARDS.map((card) => (
-              <div
-                key={card.title}
-                className="bg-background border border-border rounded-2xl p-6 hover:border-primary/20 hover:shadow-md transition-all duration-300"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <card.icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{card.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{card.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 4) JOB-SITE STRUCTURE ========== */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-                What You Can Expect
-              </h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              {JOB_SITE_ITEMS.map((item) => (
-                <div key={item} className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl">
-                  <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
-                  <span className="text-sm font-medium text-foreground">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 5) DUMPSTER SIZES ========== */}
-      <section className="py-16 md:py-24 bg-card border-y border-border">
-        <div className="container-wide">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Dumpster Sizes Available
-            </h2>
-            <p className="text-muted-foreground">
-              Not sure which size? We will help you choose.
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Enter your ZIP code and project type to receive your exact dumpster rental price.
+              No hidden fees. No vague estimates.
             </p>
           </div>
 
@@ -255,19 +145,108 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 6) TRUST & PROOF (Reviews) ========== */}
-      <Suspense fallback={<SectionLoader />}>
-        <ReviewsSection />
-      </Suspense>
-
-      {/* ========== 6b) Real Work Gallery ========== */}
+      {/* ========== 3) AUTHORITY — Specialist Positioning ========== */}
       <section className="py-16 md:py-24 bg-background">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-start">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
+                  Dumpster Rental Specialists Since 2015
+                </h2>
+                <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
+                  <p>
+                    Calsan has worked in hauling and debris removal since 2009.
+                    Since 2015, we have focused exclusively on dumpster rental.
+                  </p>
+                  <p>That focus allows us to deliver:</p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2 md:pt-12">
+                {WHY_EXPERTISE.map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-sm text-foreground">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" strokeWidth={1.8} />
+                    <span>{item}</span>
+                  </div>
+                ))}
+                <p className="text-sm text-muted-foreground pt-4 border-t border-border mt-4">
+                  Dumpster Rental. Done Right.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 4) REDUCE RISK — What's Included ========== */}
+      <section className="py-16 md:py-24 bg-card border-y border-border">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                What's Included
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto mb-8">
+              {WHATS_INCLUDED.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-3 p-5 bg-background border border-border rounded-xl text-center">
+                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
+                  <span className="text-sm font-medium text-foreground">{label}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-center text-sm text-muted-foreground">
+              Clear overage policies. No surprise charges.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 5) LOCAL TRUST — Service Areas ========== */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+              Serving the Bay Area
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              We operate locally and schedule based on your project location.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {SERVICE_AREAS_LIST.map((area) => (
+                <span
+                  key={area}
+                  className="px-4 py-2 bg-card border border-border rounded-full text-sm font-medium text-foreground"
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
+
+            <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
+              <Link to="/areas">
+                Check Availability
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 6) VISUAL PROOF — Real Work ========== */}
+      <section className="py-16 md:py-24 bg-card border-y border-border">
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Why Contractors and Homeowners Choose Calsan
+              Real Equipment. Real Jobs.
             </h2>
-            <p className="text-muted-foreground">Professional service. Every project.</p>
+            <p className="text-muted-foreground">
+              We deliver clean, professional dumpsters to residential and commercial projects across the Bay Area.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -285,39 +264,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 7) SERVICE AREAS ========== */}
-      <section className="py-16 md:py-24 bg-card border-y border-border">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Dumpster Rental Near You
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Enter your ZIP code above to see exact pricing for your location.
-            </p>
+      {/* ========== 7) REVIEWS ========== */}
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewsSection />
+      </Suspense>
 
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              {SERVICE_AREAS_LIST.map((area) => (
-                <span
-                  key={area}
-                  className="px-4 py-2 bg-background border border-border rounded-full text-sm font-medium text-foreground"
-                >
-                  {area}
-                </span>
-              ))}
-            </div>
+      {/* ========== 8) FAQ — Objection Removal ========== */}
+      <Suspense fallback={<SectionLoader />}>
+        <FAQSection />
+      </Suspense>
 
-            <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
-              <Link to="/areas">
-                Check Availability
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 8) STRONG CTA ========== */}
+      {/* ========== 9) FINAL CTA ========== */}
       <section className="py-20 md:py-28 gradient-hero">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
@@ -346,11 +303,6 @@ const Index = () => {
           </p>
         </div>
       </section>
-
-      {/* ========== 9) FAQ ========== */}
-      <Suspense fallback={<SectionLoader />}>
-        <FAQSection />
-      </Suspense>
     </Layout>
   );
 };
