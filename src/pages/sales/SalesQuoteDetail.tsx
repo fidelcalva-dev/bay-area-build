@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, Save, Loader2, Calendar, MapPin, Clock, 
-  FileText, Camera, Trash2, ImageIcon, Send, ScrollText
+  FileText, Camera, Trash2, ImageIcon, Send, ScrollText, CreditCard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,7 @@ export default function SalesQuoteDetail() {
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
+  const [billingInstructions, setBillingInstructions] = useState("");
   const [deliveryTimeWindow, setDeliveryTimeWindow] = useState("");
   const [deliveryPhotos, setDeliveryPhotos] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -78,6 +79,7 @@ export default function SalesQuoteDetail() {
       setDeliveryAddress(data.delivery_address || "");
       setDeliveryInstructions(data.delivery_instructions || "");
       setDeliveryTimeWindow(data.delivery_time_window || "");
+      setBillingInstructions(data.billing_instructions || "");
       setDeliveryPhotos(data.delivery_photos || []);
     } catch (err) {
       console.error(err);
@@ -99,6 +101,7 @@ export default function SalesQuoteDetail() {
           delivery_address: deliveryAddress || null,
           delivery_instructions: deliveryInstructions || null,
           delivery_time_window: deliveryTimeWindow || null,
+          billing_instructions: billingInstructions || null,
           delivery_photos: deliveryPhotos,
         })
         .eq("id", id);
@@ -381,6 +384,23 @@ export default function SalesQuoteDetail() {
               onChange={(e) => setDeliveryInstructions(e.target.value)}
               rows={3}
             />
+          </div>
+
+          {/* Billing Instructions */}
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-muted-foreground" />
+              Billing Instructions
+            </Label>
+            <Textarea
+              placeholder="Card on file info, billing contact, PO number, payment method notes..."
+              value={billingInstructions}
+              onChange={(e) => setBillingInstructions(e.target.value)}
+              rows={3}
+            />
+            <p className="text-xs text-muted-foreground">
+              Payment method, card details, or billing contact for this order.
+            </p>
           </div>
         </CardContent>
       </Card>
