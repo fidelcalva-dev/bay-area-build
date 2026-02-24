@@ -44,6 +44,7 @@ const Locations = lazy(() => import("./pages/Locations"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const WasteVision = lazy(() => import("./pages/WasteVision"));
+const DownloadPriceList = lazy(() => import("./pages/DownloadPriceList"));
 
 // Category Positioning Pages
 const WhyLocalYards = lazy(() => import("./pages/WhyLocalYards"));
@@ -416,6 +417,9 @@ const App = () => {
               } />
               <Route path="/careers" element={
                 <Suspense fallback={<PageLoader />}><Careers /></Suspense>
+              } />
+              <Route path="/download-price-list" element={
+                <Suspense fallback={<PageLoader />}><DownloadPriceList /></Suspense>
               } />
               <Route path="/thank-you" element={
                 <Suspense fallback={<PageLoader />}><ThankYou /></Suspense>
