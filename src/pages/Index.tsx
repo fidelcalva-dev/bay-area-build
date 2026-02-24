@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { PAGE_SEO, generateFAQSchema } from '@/lib/seo';
+import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
@@ -71,13 +71,16 @@ const Index = () => {
       title={PAGE_SEO.home.title}
       description={PAGE_SEO.home.description}
       canonical={PAGE_SEO.home.canonical}
-      schema={generateFAQSchema(homepageFAQs)}
+      schema={[
+        generateFAQSchema(homepageFAQs),
+        generateBreadcrumbSchema([{ name: 'Home', url: '/' }]),
+      ]}
       hideChat
     >
       <LocalSEOSchema includeFAQ includeService />
 
       {/* ========== 1) CLARITY — Hero ========== */}
-      <section className="bg-[#F7F9F8] min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
+      <section className="bg-muted/30 min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
         <div className="container-wide">
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
@@ -257,7 +260,7 @@ const Index = () => {
               { src: truckDelivery, alt: 'Calsan truck completing a dumpster pickup' },
             ].map((img) => (
               <div key={img.alt} className="rounded-xl overflow-hidden">
-                <img src={img.src} alt={img.alt} className="w-full h-48 md:h-56 object-cover" loading="lazy" />
+                <img src={img.src} alt={img.alt} width={400} height={224} className="w-full h-48 md:h-56 object-cover" loading="lazy" />
               </div>
             ))}
           </div>
