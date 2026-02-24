@@ -18,7 +18,7 @@ const DUMPSTER_SIZES: Record<number, { label: string; description: string }> = {
   20: { label: '20 Yard', description: 'Popular — kitchen remodel, roofing' },
   30: { label: '30 Yard', description: 'Large — whole house cleanout' },
   40: { label: '40 Yard', description: 'XL — construction, major demo' },
-  50: { label: '50 Yard', description: 'Max — commercial projects' },
+  
 };
 
 const MATERIAL_LABELS: Record<string, { label: string; icon: string }> = {

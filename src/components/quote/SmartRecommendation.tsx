@@ -100,8 +100,8 @@ export const PROJECT_TYPES: ProjectType[] = [
     id: 'commercial', 
     label: 'Commercial / Very Large', 
     icon: 'building-2', 
-    generalSizeSmall: 40, 
-    generalSizeLarge: 50,
+    generalSizeSmall: 30, 
+    generalSizeLarge: 40,
     allowsGeneral: true,
     allowsHeavy: false,
     description: 'Large-scale cleanout or construction' 
@@ -256,7 +256,7 @@ function getConfidenceAssessment(
         return { confidence: 'tight', confidenceLabel: 'Might be tight', confidenceNote: 'Commercial jobs may need 40+ yards' };
       }
       return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Great for large projects with mixed debris' };
-    } else if (selectedSize === 40 || selectedSize === 50) {
+    } else if (selectedSize === 40) {
       if (isSmallProject || isMediumProject) {
         return { confidence: 'overkill', confidenceLabel: 'Overkill', confidenceNote: 'Far larger than typical home projects need' };
       } else if (isLargeProject) {
