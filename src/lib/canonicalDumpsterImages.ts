@@ -24,7 +24,7 @@ const dumpster10yardPhoto = '/images/dumpsters/dumpster-10yard-photo.png';
 const dumpster20yardPhoto = '/images/dumpsters/dumpster-20yard-photo.png';
 const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-photo.png';
 const dumpster40yardPhoto = '/images/dumpsters/dumpster-40yard-photo.png';
-const dumpster50yardPhoto = '/images/dumpsters/50_yd.png';
+
 
 // Canonical dimension diagram imports
 import dumpster6yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
@@ -33,7 +33,7 @@ import dumpster10yardDims from '@/assets/dumpsters/dumpster-10yard-dims.png';
 import dumpster20yardDims from '@/assets/dumpsters/dumpster-20yard-dims.png';
 import dumpster30yardDims from '@/assets/dumpsters/dumpster-30yard-dims.png';
 import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
-import dumpster50yardDims from '@/assets/dumpsters/dumpster-50yard-dims.png';
+
 
 // Legacy PNG imports (for backwards compatibility - prefer photos)
 import dumpster6yardPng from '@/assets/dumpsters/dumpster-6yard.png';
@@ -42,12 +42,12 @@ import dumpster10yardPng from '@/assets/dumpsters/dumpster-10yard.png';
 import dumpster20yardPng from '@/assets/dumpsters/dumpster-20yard.png';
 import dumpster30yardPng from '@/assets/dumpsters/dumpster-30yard.png';
 import dumpster40yardPng from '@/assets/dumpsters/dumpster-40yard.png';
-import dumpster50yardPng from '@/assets/dumpsters/dumpster-50yard.png';
+
 
 /**
  * Valid dumpster sizes in yards
  */
-export type CanonicalDumpsterSize = 6 | 8 | 10 | 20 | 30 | 40 | 50;
+export type CanonicalDumpsterSize = 6 | 8 | 10 | 20 | 30 | 40;
 
 /**
  * Image types available for each dumpster size
@@ -107,11 +107,6 @@ export const CANONICAL_DUMPSTER_IMAGES: Record<CanonicalDumpsterSize, DumpsterIm
     dims: dumpster40yardDims,
     png: dumpster40yardPng,
   },
-  50: {
-    photo: dumpster50yardPhoto,
-    dims: dumpster50yardDims,
-    png: dumpster50yardPng,
-  },
 };
 
 /**
@@ -133,7 +128,7 @@ export function getCanonicalDumpsterImage(
   type: DumpsterImageType = 'photo'
 ): string {
   // Validate and normalize size
-  const validSizes: CanonicalDumpsterSize[] = [6, 8, 10, 20, 30, 40, 50];
+  const validSizes: CanonicalDumpsterSize[] = [6, 8, 10, 20, 30, 40];
   const normalizedSize = validSizes.includes(size as CanonicalDumpsterSize)
     ? (size as CanonicalDumpsterSize)
     : 20; // Default to 20yd if invalid size
@@ -149,7 +144,7 @@ export function getCanonicalDumpsterImage(
  * @returns Object with photo, dims, and png URLs
  */
 export function getCanonicalDumpsterImageSet(size: number): DumpsterImageSet {
-  const validSizes: CanonicalDumpsterSize[] = [6, 8, 10, 20, 30, 40, 50];
+  const validSizes: CanonicalDumpsterSize[] = [6, 8, 10, 20, 30, 40];
   const normalizedSize = validSizes.includes(size as CanonicalDumpsterSize)
     ? (size as CanonicalDumpsterSize)
     : 20;
@@ -168,7 +163,7 @@ export const DUMPSTER_PHOTO_MAP: Record<number, string> = {
   20: dumpster20yardPhoto,
   30: dumpster30yardPhoto,
   40: dumpster40yardPhoto,
-  50: dumpster50yardPhoto,
+  
 };
 
 /**
@@ -181,7 +176,7 @@ export const DUMPSTER_DIMS_MAP: Record<number, string> = {
   20: dumpster20yardDims,
   30: dumpster30yardDims,
   40: dumpster40yardDims,
-  50: dumpster50yardDims,
+  
 };
 
 /**
@@ -194,7 +189,7 @@ export const DUMPSTER_PNG_MAP: Record<number, string> = {
   20: dumpster20yardPng,
   30: dumpster30yardPng,
   40: dumpster40yardPng,
-  50: dumpster50yardPng,
+  
 };
 
 /**
@@ -208,5 +203,5 @@ export function hasCanonicalImage(size: number): boolean {
  * Get all available canonical sizes
  */
 export function getAvailableCanonicalSizes(): CanonicalDumpsterSize[] {
-  return [6, 8, 10, 20, 30, 40, 50];
+  return [6, 8, 10, 20, 30, 40];
 }

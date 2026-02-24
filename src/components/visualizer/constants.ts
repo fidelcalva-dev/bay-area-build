@@ -3,7 +3,7 @@
  * All dimensions in feet (W × L × H)
  */
 
-export type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40 | 50;
+export type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40;
 
 export interface DumpsterSpec {
   yards: DumpsterSize;
@@ -27,10 +27,9 @@ export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
   20: { yards: 20, widthFt: 7.5, lengthFt: 18, heightFt: 4,    pickupLoads: '6–8',   volumeCuYd: 20, tonsIncluded: 2 },
   30: { yards: 30, widthFt: 7.5, lengthFt: 18, heightFt: 6,    pickupLoads: '9–12',  volumeCuYd: 30, tonsIncluded: 3 },
   40: { yards: 40, widthFt: 7.5, lengthFt: 24, heightFt: 6,    pickupLoads: '12–16', volumeCuYd: 40, tonsIncluded: 4 },
-  50: { yards: 50, widthFt: 7.5, lengthFt: 24, heightFt: 7.5,  pickupLoads: '16–20', volumeCuYd: 50, tonsIncluded: 5 },
 };
 
-export const GENERAL_SIZES: DumpsterSize[] = [6, 8, 10, 20, 30, 40, 50];
+export const GENERAL_SIZES: DumpsterSize[] = [6, 8, 10, 20, 30, 40];
 export const HEAVY_SIZES: DumpsterSize[] = [6, 8, 10];
 
 // Debris presets for "Will it fit?" calculator
@@ -58,7 +57,7 @@ export const DEBRIS_PRESETS: DebrisPreset[] = [
   { id: 'one-room-demo', label: 'One-room demo', category: 'contractor', volumeMin: 6, volumeMax: 12 },
   { id: 'full-remodel', label: 'Full remodel debris', category: 'contractor', volumeMin: 15, volumeMax: 35 },
   { id: 'light-demolition', label: 'Light demolition', category: 'contractor', volumeMin: 10, volumeMax: 20 },
-  { id: 'commercial-cleanout', label: 'Commercial cleanout', category: 'contractor', volumeMin: 20, volumeMax: 50 },
+  { id: 'commercial-cleanout', label: 'Commercial cleanout', category: 'contractor', volumeMin: 20, volumeMax: 40 },
   
   // Heavy presets
   { id: 'concrete-4in', label: 'Concrete slab (4" thick)', category: 'heavy', volumeMin: 4, volumeMax: 8, isHeavy: true, description: '~100-200 sq ft' },
