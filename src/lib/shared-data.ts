@@ -113,20 +113,6 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '12-16 pickup loads',
     description: 'Commercial-grade capacity for large-scale projects.',
   },
-  // General Debris Only (50 yard) - 7.5 × 24 × 7.5 = 1350 cu ft / 27 = 50 cu yd
-  {
-    yards: 50,
-    dimensions: "24' L × 7.5' W × 7.5' H",
-    length: "24'",
-    width: "7.5'",
-    height: "7.5'",
-    includedTons: 5,
-    category: 'general',
-    priceFrom: 1135,  // v56 Plan A base
-    useCases: ['Largest projects', 'Industrial sites', 'Warehouse cleanouts'],
-    loads: '16-20 pickup loads',
-    description: 'Maximum volume for the largest jobs.',
-  },
 ];
 
 // Helper functions
