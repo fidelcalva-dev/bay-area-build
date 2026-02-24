@@ -11710,6 +11710,7 @@ export type Database = {
           ai_recommended_size: number | null
           ai_volume_range: Json | null
           ai_weight_range: Json | null
+          billing_instructions: string | null
           city_rate_id: string | null
           company_name: string | null
           completed_at: string | null
@@ -11832,6 +11833,7 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          billing_instructions?: string | null
           city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
@@ -11954,6 +11956,7 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          billing_instructions?: string | null
           city_rate_id?: string | null
           company_name?: string | null
           completed_at?: string | null
