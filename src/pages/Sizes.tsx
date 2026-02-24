@@ -68,7 +68,7 @@ export default function Sizes() {
               >
                 <Home className="w-4 h-4" />
                 <span>General Debris</span>
-                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">6-40 yd</span>
+                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">10-40 yd</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="heavy" 
@@ -90,7 +90,7 @@ export default function Sizes() {
                 <h2 className="heading-lg text-foreground mb-3">For Renovations, Roofing & Cleanouts</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Full range of sizes for household junk, construction debris, roofing shingles, and more. 
-                  Tonnage included by size—<span className="font-semibold text-foreground">0.5T to 4T included</span>.
+                  Tonnage included by size—<span className="font-semibold text-foreground">1T to 4T included</span>.
                 </p>
               </div>
 
