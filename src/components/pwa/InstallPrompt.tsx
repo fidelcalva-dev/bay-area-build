@@ -1,15 +1,21 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Download, X, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
+const STAFF_PREFIXES = ['/app', '/admin', '/sales', '/cs', '/billing', '/finance', '/dispatch', '/driver'];
+
 export function InstallPrompt() {
   const { canInstall, showIOSGuide, isInstalled, install } = usePWAInstall();
+  const location = useLocation();
   const [dismissed, setDismissed] = useState(() => {
     return sessionStorage.getItem('pwa-install-dismissed') === 'true';
   });
 
-  if (isInstalled || dismissed || (!canInstall && !showIOSGuide)) return null;
+  // Only show on staff/CRM routes, never on public pages
+  const isStaffRoute = STAFF_PREFIXES.some(p => location.pathname.startsWith(p));
+  if (!isStaffRoute || isInstalled || dismissed || (!canInstall && !showIOSGuide)) return null;
 
   const handleDismiss = () => {
     setDismissed(true);
