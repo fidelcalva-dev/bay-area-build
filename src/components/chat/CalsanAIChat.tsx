@@ -1572,6 +1572,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               <p className="text-[10px] leading-snug text-muted-foreground/70 px-1">
                 By adding this information, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
               </p>
+              <p className="text-[10px] leading-snug text-muted-foreground/70 px-1">
+                By clicking continue, I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+              </p>
               <Button
                 onClick={handleContactSubmit}
                 disabled={!nameInput.trim() || phoneInput.replace(/\D/g, '').length < 10 || loading}
