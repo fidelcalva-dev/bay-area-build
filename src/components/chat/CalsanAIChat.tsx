@@ -2137,6 +2137,12 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
         {/* Trust Microcopy */}
         <div className="px-5 py-3 border-t border-[hsl(220_10%_93%)] bg-muted/20">
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors">
+              <Shield className="w-3 h-3" /> Privacy Policy
+            </a>
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors">
+              <Check className="w-3 h-3" /> Terms of Service
+            </a>
             <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <Shield className="w-3 h-3" /> Licensed & Insured
             </span>
