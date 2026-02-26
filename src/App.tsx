@@ -63,6 +63,8 @@ const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const DumpsterRentalOakland = lazy(() => import("./pages/DumpsterRentalOakland"));
 const DumpsterRentalSanJose = lazy(() => import("./pages/DumpsterRentalSanJose"));
 const DumpsterRentalSanFrancisco = lazy(() => import("./pages/DumpsterRentalSanFrancisco"));
+const SizeLandingPage = lazy(() => import("./pages/SizeLandingPage"));
+const MaterialLandingPage = lazy(() => import("./pages/MaterialLandingPage"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -414,6 +416,37 @@ const App = () => {
               } />
               <Route path="/warehouse-cleanout-dumpsters" element={
                 <Suspense fallback={<PageLoader />}><CommercialLandingPage /></Suspense>
+              } />
+              
+              {/* Standalone Size Intent Pages */}
+              <Route path="/10-yard-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SizeLandingPage /></Suspense>
+              } />
+              <Route path="/20-yard-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SizeLandingPage /></Suspense>
+              } />
+              <Route path="/30-yard-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SizeLandingPage /></Suspense>
+              } />
+              <Route path="/40-yard-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SizeLandingPage /></Suspense>
+              } />
+              
+              {/* Standalone Material Intent Pages */}
+              <Route path="/concrete-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><MaterialLandingPage /></Suspense>
+              } />
+              <Route path="/dirt-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><MaterialLandingPage /></Suspense>
+              } />
+              <Route path="/roofing-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><MaterialLandingPage /></Suspense>
+              } />
+              <Route path="/construction-debris-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><MaterialLandingPage /></Suspense>
+              } />
+              <Route path="/residential-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><MaterialLandingPage /></Suspense>
               } />
               <Route path="/careers" element={
                 <Suspense fallback={<PageLoader />}><Careers /></Suspense>
