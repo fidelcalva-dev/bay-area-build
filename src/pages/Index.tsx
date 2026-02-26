@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react';
+import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
@@ -253,6 +254,15 @@ const Index = () => {
           </p>
         </div>
       </section>
+
+      {/* Dev-only build fingerprint — proves which file is mounted */}
+      {import.meta.env.DEV && (
+        <div className="fixed bottom-2 right-2 z-[9999] bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded pointer-events-none">
+          <div>HOME_SOURCE: src/pages/Index.tsx</div>
+          <div>BUILD: {BUILD_INFO.timestamp}</div>
+          <div>ENV: {BUILD_INFO.env}</div>
+        </div>
+      )}
     </Layout>
   );
 };
