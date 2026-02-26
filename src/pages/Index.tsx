@@ -7,10 +7,8 @@ import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Truck, Package, Scale, MessageSquare } from 'lucide-react';
+import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Scale, MessageSquare, Truck } from 'lucide-react';
 
-
-// Lazy load below-fold sections
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
 );
@@ -23,19 +21,32 @@ const SectionLoader = () => (
 
 const WHY_EXPERTISE = [
   'Accurate scheduling',
-  'Transparent pricing',
-  'Clean, well-maintained equipment',
-  'Professional dispatch coordination',
-  'Clear material guidelines',
+  'Clear rental terms',
+  'Clean equipment',
+  'Professional communication',
   'Reliable pickup',
 ];
 
 const DUMPSTER_SIZES = [
-  { name: '10 Yard Dumpster', description: 'Best for small remodels and cleanouts.' },
-  { name: '20 Yard Dumpster', description: 'Most common residential size.' },
-  { name: '30 Yard Dumpster', description: 'Ideal for larger renovation projects.' },
-  { name: '40 Yard Dumpster', description: 'For major construction and commercial use.' },
-  { name: 'Concrete & Heavy Material Containers', description: 'Specialized options for heavy debris.' },
+  { name: '10 Yard Dumpster', description: 'Small cleanouts and minor remodeling.' },
+  { name: '20 Yard Dumpster', description: 'Most common for remodels and roofing.' },
+  { name: '30 Yard Dumpster', description: 'Construction and larger renovation projects.' },
+  { name: '40 Yard Dumpster', description: 'Large construction and commercial projects.' },
+  { name: 'Heavy Material Containers', description: 'Concrete, dirt, and other heavy loads require specific container sizes.' },
+];
+
+const HOW_IT_WORKS = [
+  { step: '1', title: 'Enter your ZIP code', description: 'See pricing for your exact location.' },
+  { step: '2', title: 'Select your dumpster size', description: 'Choose the right container for your project.' },
+  { step: '3', title: 'Confirm delivery details', description: 'Pick your date and placement preferences.' },
+  { step: '4', title: 'We deliver and pick up', description: 'Professional service from start to finish.' },
+];
+
+const TRUST_STRIP = [
+  { icon: Shield, label: 'Licensed & Insured' },
+  { icon: CheckCircle, label: 'Transparent Pricing' },
+  { icon: Truck, label: 'Contractor-Ready' },
+  { icon: MessageSquare, label: 'Professional Dispatch' },
 ];
 
 const TRUST_GRID = [
@@ -69,7 +80,7 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== 1) HERO SECTION ========== */}
+      {/* ========== 1) HERO ========== */}
       <section className="bg-background min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
         <div className="container-wide">
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
@@ -80,9 +91,6 @@ const Index = () => {
                 <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
               </span>
             </h1>
-            <p className="text-sm font-medium text-primary tracking-wide">
-              Serving Oakland &bull; San Jose &bull; San Francisco
-            </p>
             <p className="text-base text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
               Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
             </p>
@@ -99,20 +107,30 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 text-base">
-              <Link to="/quote/schedule">
-                Schedule Delivery
-                <CalendarDays className="w-4 h-4 ml-2" />
-              </Link>
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                <Phone className="w-4 h-4 mr-2" />
+                Speak With Our Team
+              </a>
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground/70">
-            You will see your total before you confirm.
+          {/* Trust strip */}
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-[600px] mx-auto">
+            {TRUST_STRIP.map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground/60">
+            Serving the Bay Area since 2009. Focused on dumpster rental since 2015.
           </p>
         </div>
       </section>
 
-      {/* ========== 2) EXPERTISE BLOCK ========== */}
+      {/* ========== 2) EXPERTISE ========== */}
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto">
@@ -124,7 +142,7 @@ const Index = () => {
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
                   <p>
                     Since 2009, we have operated in hauling and debris removal.
-                    Since 2015, we have focused exclusively on dumpster rental.
+                    Since 2015, we have focused exclusively on professional dumpster rental.
                   </p>
                   <p>That focus allows us to deliver:</p>
                 </div>
@@ -146,7 +164,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 3) SERVICES GRID ========== */}
+      {/* ========== 3) SIZES ========== */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-wide">
           <div className="text-center mb-10">
@@ -169,33 +187,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 4) TRUST BLOCK ========== */}
+      {/* ========== 4) HOW IT WORKS ========== */}
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-                Why Choose Calsan
+                Simple, Professional Process
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
-              {TRUST_GRID.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-3 p-5 bg-card border border-border rounded-xl text-center">
-                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
-                  <span className="text-sm font-medium text-foreground">{label}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {HOW_IT_WORKS.map(({ step, title, description }) => (
+                <div key={step} className="text-center">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold mx-auto mb-3">
+                    {step}
+                  </div>
+                  <div className="text-sm font-semibold text-foreground mb-1">{title}</div>
+                  <div className="text-xs text-muted-foreground">{description}</div>
                 </div>
               ))}
             </div>
 
-            <p className="text-center text-sm text-muted-foreground">
-              We focus on service, clarity, and execution.
+            <p className="text-center text-sm text-muted-foreground mt-8">
+              You see your total before confirming. No surprises.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ========== 5) SERVICE AREA BLOCK ========== */}
+      {/* ========== 5) SERVICE AREAS ========== */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
@@ -203,7 +224,7 @@ const Index = () => {
               Dumpster Rental Near You
             </h2>
             <p className="text-muted-foreground mb-8">
-              We serve the following Bay Area cities and surrounding areas.
+              We serve projects across the San Francisco Bay Area, including:
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -218,7 +239,7 @@ const Index = () => {
             </div>
 
             <p className="text-sm text-muted-foreground mb-6">
-              Enter your ZIP code to see exact pricing instantly.
+              Enter your ZIP code to check availability and get exact pricing.
             </p>
 
             <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
@@ -231,7 +252,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 6) FAQ SECTION ========== */}
+      {/* ========== 6) FAQ ========== */}
       <Suspense fallback={<SectionLoader />}>
         <FAQSection limit={4} />
       </Suspense>
@@ -266,7 +287,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Dev-only build fingerprint — proves which file is mounted */}
+      {/* Dev-only build fingerprint */}
       {import.meta.env.DEV && (
         <div className="fixed bottom-2 right-2 z-[9999] bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded pointer-events-none">
           <div>HOME_SOURCE: src/pages/Index.tsx</div>
