@@ -79,6 +79,9 @@ const Index = () => {
                 <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
               </span>
             </h1>
+            <p className="text-sm font-medium text-primary tracking-wide">
+              Serving Oakland &bull; San Jose &bull; San Francisco
+            </p>
             <p className="text-base text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
               Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
             </p>

@@ -76,7 +76,10 @@ const SIZE_CONTENT: Record<number, {
 
 export default function SizeLandingPage() {
   const { sizeSlug } = useParams<{ sizeSlug: string }>();
-  const yards = sizeSlug ? parseInt(sizeSlug) : NaN;
+  const location = window.location.pathname;
+  // Support both /sizes/:sizeSlug and /:sizeSlug-yard-dumpster-rental routes
+  const pathMatch = location.match(/\/(\d+)-yard-dumpster-rental/);
+  const yards = pathMatch ? parseInt(pathMatch[1]) : (sizeSlug ? parseInt(sizeSlug) : NaN);
   const sizeData = DUMPSTER_SIZES_DATA.find(s => s.yards === yards);
   const content = SIZE_CONTENT[yards];
 

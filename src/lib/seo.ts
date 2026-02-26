@@ -270,10 +270,12 @@ export const PAGE_SEO = {
 export function generateLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "ProfessionalService"],
+    "additionalType": "https://schema.org/ProfessionalService",
     "@id": `${BUSINESS_INFO.url}/#organization`,
     "name": BUSINESS_INFO.name,
     "legalName": BUSINESS_INFO.legalName,
+    "serviceType": "Roll-off Dumpster Rental",
     "description": BUSINESS_INFO.description,
     "image": `${BUSINESS_INFO.url}/og-image.jpg`,
     "logo": `${BUSINESS_INFO.url}/logo.png`,

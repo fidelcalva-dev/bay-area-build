@@ -164,11 +164,68 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
       { label: 'All Materials', to: '/materials' },
     ],
   },
+  'construction-debris-dumpster-rental': {
+    slug: 'construction-debris-dumpster-rental',
+    title: 'Construction Debris Dumpster | All Sizes Available',
+    h1: 'Construction Debris Dumpster Rental',
+    description: 'Dumpsters for mixed construction and demolition waste.',
+    metaDescription: 'Construction debris dumpster rental in the Bay Area. 10-40 yard sizes for remodels, demolition, and build projects. Transparent pricing, same-day delivery. Call (510) 680-2150.',
+    intro: 'Renovation, demolition, and construction projects generate mixed debris—drywall, lumber, tile, metal, and more. Our general debris dumpsters handle it all with clear weight policies and transparent pricing.',
+    icon: Hammer,
+    sizes: [10, 20, 30, 40],
+    pricing: 'Construction debris dumpsters include base tonnage with your rental. Overages are billed at scale-ticket weight. No hidden fees—your quote includes delivery, pickup, and disposal.',
+    rules: [
+      'Wood, drywall, tile, metal, and general construction waste accepted',
+      'No hazardous materials (paint, solvents, asbestos)',
+      'Do not mix heavy materials (concrete, dirt) with general debris',
+      'Keep loads level with dumpster walls—no overfill',
+    ],
+    faqs: [
+      { question: 'What size dumpster for construction debris?', answer: 'Most home renovations use a 20-yard. Larger demo projects or new construction may need a 30 or 40-yard. Call for a recommendation based on your project scope.' },
+      { question: 'Can I put drywall in a dumpster?', answer: 'Yes. Drywall, lumber, tile, carpet, and most construction materials are accepted in general debris dumpsters.' },
+    ],
+    relatedLinks: [
+      { label: 'Concrete Dumpster', to: '/concrete-dumpster-rental' },
+      { label: 'Roofing Dumpster', to: '/roofing-dumpster-rental' },
+      { label: 'All Materials', to: '/materials' },
+    ],
+  },
+  'residential-dumpster-rental': {
+    slug: 'residential-dumpster-rental',
+    title: 'Residential Dumpster Rental | Home Projects',
+    h1: 'Residential Dumpster Rental',
+    description: 'Dumpster rental for homeowners and residential projects.',
+    metaDescription: 'Residential dumpster rental in the Bay Area. Perfect for cleanouts, remodels, and yard projects. 10-30 yard sizes, transparent pricing. Same-day delivery. Call (510) 680-2150.',
+    intro: 'Whether you are cleaning out a garage, renovating a bathroom, or tackling a major home project, our residential dumpsters make debris removal simple. Transparent pricing with delivery, pickup, and disposal included.',
+    icon: HomeIcon,
+    sizes: [10, 20, 30],
+    pricing: 'Residential dumpsters include base tonnage. The 10-yard includes 1 ton, 20-yard includes 2 tons, and 30-yard includes 3 tons. Overages are billed per ton at scale-ticket weight.',
+    rules: [
+      'General household debris, furniture, and appliances accepted',
+      'No hazardous materials (paint, chemicals, batteries)',
+      'Electronics must be separated for proper recycling',
+      'Mattresses and box springs accepted (1-2 per load)',
+      'Keep loads level—do not overfill above dumpster walls',
+    ],
+    faqs: [
+      { question: 'What size dumpster do I need for a home cleanout?', answer: 'A 10-yard handles most garage or single-room cleanouts. For whole-house cleanouts or estate cleanups, a 20-yard is recommended.' },
+      { question: 'Can I put furniture in a dumpster?', answer: 'Yes. Couches, tables, chairs, desks, and most household furniture are accepted. Mattresses are also accepted.' },
+      { question: 'How long can I keep a residential dumpster?', answer: 'Standard rental is 7 days. Extensions are available at a daily rate if you need more time.' },
+    ],
+    relatedLinks: [
+      { label: 'Construction Debris', to: '/construction-debris-dumpster-rental' },
+      { label: 'All Sizes', to: '/sizes' },
+      { label: 'All Materials', to: '/materials' },
+    ],
+  },
 };
 
 export default function MaterialLandingPage() {
   const { materialSlug } = useParams<{ materialSlug: string }>();
-  const content = materialSlug ? MATERIAL_PAGES[materialSlug] : undefined;
+  // Support both /:materialSlug param and static routes like /concrete-dumpster-rental
+  const pathSlug = window.location.pathname.replace(/^\//, '');
+  const slug = materialSlug || pathSlug;
+  const content = slug ? MATERIAL_PAGES[slug] : undefined;
 
   if (!content) return <NotFound />;
 
