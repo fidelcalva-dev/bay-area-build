@@ -1,13 +1,13 @@
 import { Suspense, lazy } from 'react';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
-import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema } from '@/lib/seo';
+import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
-import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Scale, MessageSquare, Truck } from 'lucide-react';
+import { AIMainChat } from '@/components/home/AIMainChat';
 
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
@@ -127,6 +127,21 @@ const Index = () => {
           <p className="mt-6 text-center text-xs text-muted-foreground/60">
             Serving the Bay Area since 2009. Focused on dumpster rental since 2015.
           </p>
+        </div>
+      </section>
+
+      {/* ========== AI CHAT ASSISTANT ========== */}
+      <section className="py-12 md:py-16 bg-muted/30">
+        <div className="container-wide">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+              Have a Question About Your Project?
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Get guidance on the right dumpster size, materials, and scheduling.
+            </p>
+          </div>
+          <AIMainChat />
         </div>
       </section>
 
