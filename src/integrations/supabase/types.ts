@@ -1626,6 +1626,66 @@ export type Database = {
           },
         ]
       }
+      assistant_learning: {
+        Row: {
+          ai_mode: string | null
+          confidence: number | null
+          converted_to_order: boolean | null
+          converted_to_quote: boolean | null
+          created_at: string | null
+          drop_off_step: string | null
+          id: string
+          lead_id: string | null
+          margin_band: string | null
+          material_type: string | null
+          project_type: string | null
+          recommended_size: number | null
+          revenue_cents: number | null
+          selected_size: number | null
+          session_id: string | null
+          updated_at: string | null
+          user_type: string | null
+        }
+        Insert: {
+          ai_mode?: string | null
+          confidence?: number | null
+          converted_to_order?: boolean | null
+          converted_to_quote?: boolean | null
+          created_at?: string | null
+          drop_off_step?: string | null
+          id?: string
+          lead_id?: string | null
+          margin_band?: string | null
+          material_type?: string | null
+          project_type?: string | null
+          recommended_size?: number | null
+          revenue_cents?: number | null
+          selected_size?: number | null
+          session_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          ai_mode?: string | null
+          confidence?: number | null
+          converted_to_order?: boolean | null
+          converted_to_quote?: boolean | null
+          created_at?: string | null
+          drop_off_step?: string | null
+          id?: string
+          lead_id?: string | null
+          margin_band?: string | null
+          material_type?: string | null
+          project_type?: string | null
+          recommended_size?: number | null
+          revenue_cents?: number | null
+          selected_size?: number | null
+          session_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
