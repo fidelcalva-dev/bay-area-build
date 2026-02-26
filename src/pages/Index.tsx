@@ -12,6 +12,9 @@ import { AIMainChat } from '@/components/home/AIMainChat';
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
 );
+const RealWorkSection = lazy(() =>
+  import('@/components/sections/RealWorkSection').then(mod => ({ default: mod.RealWorkSection }))
+);
 
 const SectionLoader = () => (
   <div className="min-h-[100px] flex items-center justify-center">
@@ -266,6 +269,11 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* ========== REAL WORK PHOTOS ========== */}
+      <Suspense fallback={<SectionLoader />}>
+        <RealWorkSection />
+      </Suspense>
 
       {/* ========== 6) FAQ ========== */}
       <Suspense fallback={<SectionLoader />}>
