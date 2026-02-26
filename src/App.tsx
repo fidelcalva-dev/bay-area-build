@@ -99,6 +99,7 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AIPerformanceDashboard = lazy(() => import("./pages/admin/AIPerformanceDashboard"));
 const ZonesManager = lazy(() => import("./pages/admin/ZonesManager"));
 const PricingManager = lazy(() => import("./pages/admin/PricingManager"));
 const VendorsManager = lazy(() => import("./pages/admin/VendorsManager"));
@@ -919,6 +920,9 @@ const App = () => {
                 } />
                 <Route path="ai/chat" element={
                   <Suspense fallback={<PageLoader />}><AdminAIChat /></Suspense>
+                } />
+                <Route path="ai/performance" element={
+                  <Suspense fallback={<PageLoader />}><AIPerformanceDashboard /></Suspense>
                 } />
                 {/* Marketing / Visitor Intelligence */}
                 <Route path="marketing/visitors" element={
