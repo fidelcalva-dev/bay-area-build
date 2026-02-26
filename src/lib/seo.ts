@@ -157,8 +157,8 @@ export const DUMPSTER_SIZES = [
 // Page-specific SEO configurations
 export const PAGE_SEO = {
   home: {
-    title: 'Dumpster Rental Bay Area | Oakland, San Jose & SF',
-    description: 'Professional roll-off dumpster rental for homeowners and contractors. Exact pricing by ZIP code, clear rental terms, and reliable delivery across the Bay Area.',
+    title: 'Dumpster Rental Bay Area | Calsan Dumpsters Pro',
+    description: 'Professional dumpster rental in Oakland, San Jose and San Francisco. Transparent pricing, fast delivery, and reliable service.',
     canonical: '/',
     ogImage: '/og-image.jpg',
   },

@@ -6,20 +6,10 @@ import { BUSINESS_INFO } from '@/lib/seo';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Truck, Package } from 'lucide-react';
-import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Truck, Package, Scale, MessageSquare } from 'lucide-react';
 import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
 
-
-const truckDelivery = '/images/real-work/truck-delivery.jpg';
-const brandedFleet = '/images/real-work/branded-fleet.jpg';
-const jobSite = '/images/real-work/job-site.jpg';
-const liveDelivery = '/images/real-work/live-delivery.jpg';
-
 // Lazy load below-fold sections
-const ReviewsSection = lazy(() =>
-  import('@/components/sections/ReviewsSection').then(mod => ({ default: mod.ReviewsSection }))
-);
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
 );
@@ -30,41 +20,40 @@ const SectionLoader = () => (
   </div>
 );
 
-const TRUST_ITEMS = [
-  { icon: Shield, label: 'Licensed & Insured' },
-  { icon: MapPin, label: 'Local Bay Area Operations' },
-  { icon: CheckCircle, label: 'No Hidden Fees' },
-  { icon: CalendarDays, label: 'Structured Scheduling' },
-];
-
 const WHY_EXPERTISE = [
   'Accurate scheduling',
   'Transparent pricing',
   'Clean, well-maintained equipment',
-  'Clear weight policies',
-  'Professional communication',
-  'Reliable pickup and swap coordination',
+  'Professional dispatch coordination',
+  'Clear material guidelines',
+  'Reliable pickup',
 ];
 
+const DUMPSTER_SIZES = [
+  { name: '10 Yard Dumpster', description: 'Best for small remodels and cleanouts.' },
+  { name: '20 Yard Dumpster', description: 'Most common residential size.' },
+  { name: '30 Yard Dumpster', description: 'Ideal for larger renovation projects.' },
+  { name: '40 Yard Dumpster', description: 'For major construction and commercial use.' },
+  { name: 'Concrete & Heavy Material Containers', description: 'Specialized options for heavy debris.' },
+];
 
-const WHATS_INCLUDED = [
-  { icon: Truck, label: 'Delivery & Pickup' },
-  { icon: CalendarDays, label: '7-Day Rental' },
-  { icon: Package, label: 'Included Disposal Weight' },
-  { icon: Phone, label: 'Local Support Team' },
+const TRUST_GRID = [
   { icon: Shield, label: 'Licensed & Insured' },
+  { icon: MapPin, label: 'Local Bay Area Operations' },
+  { icon: Scale, label: 'Clear Weight Policies' },
+  { icon: CheckCircle, label: 'No Hidden Charges' },
+  { icon: CalendarDays, label: 'Reliable Scheduling' },
+  { icon: MessageSquare, label: 'Professional Communication' },
 ];
 
 const SERVICE_AREAS_LIST = [
   'Oakland', 'San Jose', 'San Francisco', 'Berkeley',
-  'Fremont', 'Concord', 'Vallejo', 'Livermore',
+  'Hayward', 'Fremont', 'Vallejo', 'Livermore',
+  'Concord', 'Richmond',
 ];
-
-const HOMEPAGE_SIZES = [10, 20, 30, 40];
 
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
-  const sizesData = DUMPSTER_SIZES_DATA.filter(s => HOMEPAGE_SIZES.includes(s.yards));
 
   return (
     <Layout
@@ -79,30 +68,23 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== 1) CLARITY — Hero ========== */}
-      <section className="bg-muted/30 min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
+      {/* ========== 1) HERO SECTION ========== */}
+      <section className="bg-background min-h-[calc(100vh-80px)] flex flex-col justify-center py-14 md:py-24">
         <div className="container-wide">
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Dumpster Rental in the Bay Area
+              Dumpster Rental in the{' '}
+              <span className="relative inline-block">
+                Bay Area
+                <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
+              </span>
             </h1>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Roll-off dumpster rental for homeowners, contractors and commercial projects.
+            <p className="text-base text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
+              Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Exact pricing by ZIP code. Clear rental terms. Reliable delivery and pickup.
+              Exact pricing by ZIP. Clear rental terms. Reliable delivery.
             </p>
-          </div>
-
-          <div className="max-w-[850px] mx-auto mb-5">
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-              {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5">
-                  <Icon className="w-3.5 h-3.5 text-muted-foreground/60 flex-shrink-0" strokeWidth={1.5} />
-                  <span className="text-xs text-muted-foreground font-medium">{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           <CalsanAIChat />
@@ -115,51 +97,18 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 2) CONTROL — Price Visibility ========== */}
-      <section className="py-16 md:py-24 bg-card border-y border-border">
-        <div className="container-wide">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              See Your Exact Price in Seconds
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Enter your ZIP code and project type to receive your exact dumpster rental price.
-              No hidden fees. No vague estimates.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
-            {sizesData.map((sizeData) => (
-              <Link
-                key={sizeData.yards}
-                to={`/quote?size=${sizeData.yards}`}
-                className="block p-6 bg-background rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all duration-300 text-center group"
-              >
-                <div className="text-4xl font-bold text-primary mb-1">{sizeData.yards}</div>
-                <div className="text-sm font-medium text-foreground mb-2">Yard Dumpster</div>
-                <div className="text-xs text-muted-foreground mb-4">{sizeData.useCases[0]}</div>
-                <div className="text-sm font-semibold text-primary mb-3">From ${sizeData.priceFrom}</div>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
-                  Get Price <ArrowRight className="w-3 h-3" />
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 3) AUTHORITY — Specialist Positioning ========== */}
-      <section className="py-16 md:py-24 bg-background">
+      {/* ========== 2) EXPERTISE BLOCK ========== */}
+      <section className="py-16 md:py-24 bg-muted/30">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-                  Dumpster Rental Specialists Since 2015
+                  We Specialize in Dumpster Rental
                 </h2>
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
                   <p>
-                    Calsan has worked in hauling and debris removal since 2009.
+                    Since 2009, we have operated in hauling and debris removal.
                     Since 2015, we have focused exclusively on dumpster rental.
                   </p>
                   <p>That focus allows us to deliver:</p>
@@ -173,7 +122,7 @@ const Index = () => {
                     <span>{item}</span>
                   </div>
                 ))}
-                <p className="text-sm text-muted-foreground pt-4 border-t border-border mt-4">
+                <p className="text-sm font-bold text-foreground pt-4 border-t border-border mt-4">
                   Dumpster Rental. Done Right.
                 </p>
               </div>
@@ -182,19 +131,42 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 4) REDUCE RISK — What's Included ========== */}
-      <section className="py-16 md:py-24 bg-card border-y border-border">
+      {/* ========== 3) SERVICES GRID ========== */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+              Dumpster Sizes Available
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+            {DUMPSTER_SIZES.map((size) => (
+              <div
+                key={size.name}
+                className="p-6 bg-card rounded-2xl border border-border text-center"
+              >
+                <div className="text-lg font-bold text-foreground mb-2">{size.name}</div>
+                <div className="text-sm text-muted-foreground">{size.description}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== 4) TRUST BLOCK ========== */}
+      <section className="py-16 md:py-24 bg-muted/30">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-                What's Included
+                Why Choose Calsan
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto mb-8">
-              {WHATS_INCLUDED.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-3 p-5 bg-background border border-border rounded-xl text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
+              {TRUST_GRID.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-3 p-5 bg-card border border-border rounded-xl text-center">
                   <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
                   <span className="text-sm font-medium text-foreground">{label}</span>
                 </div>
@@ -202,21 +174,21 @@ const Index = () => {
             </div>
 
             <p className="text-center text-sm text-muted-foreground">
-              Clear overage policies. No surprise charges.
+              We focus on service, clarity, and execution.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ========== 5) LOCAL TRUST — Service Areas ========== */}
+      {/* ========== 5) SERVICE AREA BLOCK ========== */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Serving the Bay Area
+              Dumpster Rental Near You
             </h2>
             <p className="text-muted-foreground mb-8">
-              We operate locally and schedule based on your project location.
+              We serve the following Bay Area cities and surrounding areas.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -230,6 +202,10 @@ const Index = () => {
               ))}
             </div>
 
+            <p className="text-sm text-muted-foreground mb-6">
+              Enter your ZIP code to see exact pricing instantly.
+            </p>
+
             <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
               <Link to="/areas">
                 Check Availability
@@ -240,44 +216,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== 6) VISUAL PROOF — Real Work ========== */}
-      <section className="py-16 md:py-24 bg-card border-y border-border">
-        <div className="container-wide">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Real Equipment. Real Jobs.
-            </h2>
-            <p className="text-muted-foreground">
-              We deliver clean, professional dumpsters to residential and commercial projects across the Bay Area.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { src: brandedFleet, alt: 'Calsan branded dumpster fleet at local yard' },
-              { src: jobSite, alt: 'Clean dumpster placement on residential job site' },
-              { src: liveDelivery, alt: 'Professional dumpster delivery in progress' },
-              { src: truckDelivery, alt: 'Calsan truck completing a dumpster pickup' },
-            ].map((img) => (
-              <div key={img.alt} className="rounded-xl overflow-hidden">
-                <img src={img.src} alt={img.alt} width={400} height={224} className="w-full h-48 md:h-56 object-cover" loading="lazy" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 7) REVIEWS ========== */}
+      {/* ========== 6) FAQ SECTION ========== */}
       <Suspense fallback={<SectionLoader />}>
-        <ReviewsSection />
+        <FAQSection limit={4} />
       </Suspense>
 
-      {/* ========== 8) FAQ — Objection Removal ========== */}
-      <Suspense fallback={<SectionLoader />}>
-        <FAQSection />
-      </Suspense>
-
-      {/* ========== 9) FINAL CTA ========== */}
+      {/* ========== 7) FINAL CTA ========== */}
       <section className="py-20 md:py-28 gradient-hero">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
