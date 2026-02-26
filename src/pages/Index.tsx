@@ -8,7 +8,7 @@ import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Truck, Package, Scale, MessageSquare } from 'lucide-react';
-import { CalsanAIChat } from '@/components/chat/CalsanAIChat';
+
 
 // Lazy load below-fold sections
 const FAQSection = lazy(() =>
@@ -91,13 +91,24 @@ const Index = () => {
             </p>
           </div>
 
-          <CalsanAIChat />
-
-          <div className="mt-8 max-w-[700px] mx-auto text-center">
-            <p className="text-xs text-muted-foreground/70">
-              You will see your total before you confirm.
-            </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[500px] mx-auto">
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-semibold px-8 shadow-cta text-base">
+              <Link to="/quote?v3=1">
+                Get Exact Price
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 text-base">
+              <Link to="/quote/schedule">
+                Schedule Delivery
+                <CalendarDays className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
           </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground/70">
+            You will see your total before you confirm.
+          </p>
         </div>
       </section>
 
