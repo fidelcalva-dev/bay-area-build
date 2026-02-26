@@ -7,7 +7,7 @@ import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Shield, MapPin, ArrowRight, Phone, CheckCircle, CalendarDays, Scale, MessageSquare, Truck } from 'lucide-react';
-import { AIMainChat } from '@/components/home/AIMainChat';
+import { GuidedAssistant } from '@/components/home/GuidedAssistant';
 
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
@@ -133,18 +133,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== AI CHAT ASSISTANT ========== */}
+      {/* ========== GUIDED ASSISTANT ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              Have a Question About Your Project?
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Get guidance on the right dumpster size, materials, and scheduling.
-            </p>
-          </div>
-          <AIMainChat />
+          <GuidedAssistant />
         </div>
       </section>
 
