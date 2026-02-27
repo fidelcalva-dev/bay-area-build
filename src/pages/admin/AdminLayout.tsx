@@ -5,7 +5,7 @@ import {
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
   Boxes, UserCog, MapPinned, Banknote, Bell,
-  BarChart3, TrendingUp, PieChart, Search, Link2, Phone, MessageSquare, Send
+  BarChart3, TrendingUp, PieChart, Search, Link2, Phone, MessageSquare, Send, Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -110,6 +110,12 @@ const navSections = [
     title: 'Resources',
     items: [
       { path: '/admin/docs', label: 'Internal Docs', icon: FileText },
+    ],
+  },
+  {
+    title: 'AI',
+    items: [
+      { path: '/admin/ai/performance', label: 'AI Performance', icon: Brain },
     ],
   },
   {
