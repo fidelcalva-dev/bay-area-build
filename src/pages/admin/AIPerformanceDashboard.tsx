@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Brain, TrendingUp, Target, AlertTriangle } from 'lucide-react';
+import { Brain, TrendingUp, Target, AlertTriangle, ShieldAlert, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 type LearningMode = 'OFF' | 'DRY_RUN' | 'LIVE';
@@ -14,12 +14,13 @@ function useAssistantLearningMode() {
   return useQuery({
     queryKey: ['assistant-learning-mode'],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('config_settings')
         .select('value')
         .eq('category', 'assistant_learning')
         .eq('key', 'mode')
         .maybeSingle();
+      if (error) throw error;
       if (!data?.value) return 'OFF' as LearningMode;
       try { return JSON.parse(data.value as string) as LearningMode; }
       catch { return 'OFF' as LearningMode; }
@@ -36,7 +37,14 @@ function useAssistantLearningStats() {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(500);
-      if (error) throw error;
+
+      if (error) {
+        if (error.code === '42501' || error.message?.includes('permission denied')) {
+          return { accessDenied: true } as const;
+        }
+        throw error;
+      }
+
       const rows = data || [];
       const total = rows.length;
       const converted = rows.filter(r => r.converted_to_order).length;
@@ -54,6 +62,7 @@ function useAssistantLearningStats() {
         if (r.margin_band) marginBands[r.margin_band] = (marginBands[r.margin_band] || 0) + 1;
       });
       return {
+        accessDenied: false as const,
         total, converted, quoted, avgSizeDelta,
         conversionRate: total > 0 ? (converted / total * 100) : 0,
         quoteRate: total > 0 ? (quoted / total * 100) : 0,
@@ -66,7 +75,7 @@ function useAssistantLearningStats() {
 export default function AIPerformanceDashboard() {
   const queryClient = useQueryClient();
   const { data: mode, isLoading: modeLoading } = useAssistantLearningMode();
-  const { data: stats, isLoading: statsLoading } = useAssistantLearningStats();
+  const { data: stats, isLoading: statsLoading, error: statsError } = useAssistantLearningStats();
 
   const updateMode = useMutation({
     mutationFn: async (newMode: LearningMode) => {
@@ -86,8 +95,48 @@ export default function AIPerformanceDashboard() {
 
   const modeColor = mode === 'LIVE' ? 'default' : mode === 'DRY_RUN' ? 'secondary' : 'outline';
 
+  // Access denied state
+  if (stats && 'accessDenied' in stats && stats.accessDenied) {
+    return (
+      <div className="p-8 space-y-4">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <Brain className="h-6 w-6" /> AI Performance Dashboard
+        </h1>
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="pt-6 flex items-center gap-3">
+            <ShieldAlert className="h-5 w-5 text-destructive" />
+            <div>
+              <p className="font-medium">Access Restricted</p>
+              <p className="text-sm text-muted-foreground">You don't have permission to view learning data. Contact an admin.</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // RLS or other query error
+  if (statsError) {
+    return (
+      <div className="p-8 space-y-4">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <Brain className="h-6 w-6" /> AI Performance Dashboard
+        </h1>
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="pt-6 flex items-center gap-3">
+            <ShieldAlert className="h-5 w-5 text-destructive" />
+            <div>
+              <p className="font-medium">Access Restricted</p>
+              <p className="text-sm text-muted-foreground">Unable to load learning data. Check your permissions.</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -126,7 +175,17 @@ export default function AIPerformanceDashboard() {
 
       {statsLoading ? (
         <p className="text-muted-foreground">Cargando métricas...</p>
-      ) : stats ? (
+      ) : stats && !stats.accessDenied && stats.total === 0 ? (
+        <Card>
+          <CardContent className="pt-6 flex flex-col items-center gap-3 text-center">
+            <Database className="h-10 w-10 text-muted-foreground/50" />
+            <p className="font-medium">No learning data yet</p>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Switch to <Badge variant="secondary" className="mx-1">DRY_RUN</Badge> mode and run a test interaction to start collecting metrics.
+            </p>
+          </CardContent>
+        </Card>
+      ) : stats && !stats.accessDenied ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>

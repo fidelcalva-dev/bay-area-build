@@ -56,16 +56,40 @@ serve(async (req) => {
     };
 
     if (mode === "DRY_RUN") {
-      // Log only, don't persist full row — write minimal entry
-      console.log("[assistant-learning] DRY_RUN:", JSON.stringify({
+      // DRY_RUN: insert minimal row (no revenue/margin) so dashboard has data
+      const minimalRow = {
         session_id: row.session_id,
+        lead_id: row.lead_id,
+        user_type: row.user_type,
+        project_type: row.project_type,
+        material_type: row.material_type,
         recommended_size: row.recommended_size,
         selected_size: row.selected_size,
+        confidence: row.confidence,
+        converted_to_quote: false,
+        converted_to_order: false,
+        revenue_cents: null,
+        margin_band: null,
         ai_mode: "DRY_RUN",
-      }));
+        drop_off_step: row.drop_off_step,
+      };
+
+      const { data: dryData, error: dryErr } = await supabase
+        .from("assistant_learning")
+        .insert(minimalRow)
+        .select("id")
+        .single();
+
+      if (dryErr) {
+        console.error("[assistant-learning] DRY_RUN insert error:", dryErr);
+        return new Response(
+          JSON.stringify({ status: "dry_run_error", message: dryErr.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
       return new Response(
-        JSON.stringify({ status: "dry_run", logged: true }),
+        JSON.stringify({ status: "dry_run", recorded: true, id: dryData.id }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
