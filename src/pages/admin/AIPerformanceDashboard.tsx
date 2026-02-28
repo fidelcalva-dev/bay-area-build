@@ -18,12 +18,13 @@ function useAssistantLearningMode() {
         .from('config_settings')
         .select('value')
         .eq('category', 'assistant_learning')
-        .eq('key', 'mode')
+        .eq('key', 'assistant_learning_mode')
         .maybeSingle();
       if (error) throw error;
       if (!data?.value) return 'OFF' as LearningMode;
-      try { return JSON.parse(data.value as string) as LearningMode; }
-      catch { return 'OFF' as LearningMode; }
+      const raw = data.value as string;
+      try { return JSON.parse(raw) as LearningMode; }
+      catch { return raw as LearningMode; }
     },
   });
 }
@@ -83,7 +84,7 @@ export default function AIPerformanceDashboard() {
         .from('config_settings')
         .update({ value: JSON.stringify(newMode), updated_at: new Date().toISOString() })
         .eq('category', 'assistant_learning')
-        .eq('key', 'mode');
+        .eq('key', 'assistant_learning_mode');
       if (error) throw error;
     },
     onSuccess: () => {

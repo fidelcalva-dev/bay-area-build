@@ -21,12 +21,14 @@ serve(async (req) => {
       .from("config_settings")
       .select("value")
       .eq("category", "assistant_learning")
-      .eq("key", "mode")
+      .eq("key", "assistant_learning_mode")
       .maybeSingle();
 
-    const mode = configRow?.value
-      ? JSON.parse(configRow.value as string)
-      : "OFF";
+    const rawVal = configRow?.value as string | null;
+    let mode = "OFF";
+    if (rawVal) {
+      try { mode = JSON.parse(rawVal); } catch { mode = rawVal; }
+    }
 
     if (mode === "OFF") {
       return new Response(
