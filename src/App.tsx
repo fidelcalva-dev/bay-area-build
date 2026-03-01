@@ -153,6 +153,7 @@ const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 const PhotoAITest = lazy(() => import("./pages/admin/qa/PhotoAITest"));
 const BuildInfo = lazy(() => import("./pages/admin/qa/BuildInfo"));
+const EnvHealth = lazy(() => import("./pages/admin/qa/EnvHealth"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
@@ -895,6 +896,9 @@ const App = () => {
                 } />
                 <Route path="qa/build-info" element={
                   <Suspense fallback={<PageLoader />}><BuildInfo /></Suspense>
+                } />
+                <Route path="qa/env-health" element={
+                  <Suspense fallback={<PageLoader />}><EnvHealth /></Suspense>
                 } />
                 {/* SEO Admin Routes */}
                 <Route path="seo" element={<Navigate to="/admin/seo/dashboard" replace />} />

@@ -19,7 +19,23 @@ export const PUBLIC_DOMAIN = 'https://calsandumpsterspro.com';
 export function enforceCrmDomainRedirect(): void {
   if (typeof window === 'undefined') return;
   
-  const { hostname, pathname, search, hash } = window.location;
+  const { hostname, pathname, search, hash, protocol } = window.location;
+  
+  // Enforce HTTPS
+  if (protocol === 'http:' && hostname !== 'localhost') {
+    window.location.replace(
+      `https://${hostname}${pathname}${search}${hash}`
+    );
+    return;
+  }
+  
+  // Redirect www → non-www for public domain
+  if (hostname === 'www.calsandumpsterspro.com') {
+    window.location.replace(
+      `${PUBLIC_DOMAIN}${pathname}${search}${hash}`
+    );
+    return;
+  }
   
   // If on legacy crm subdomain, redirect to app subdomain
   if (hostname === 'crm.calsandumpsterspro.com') {
