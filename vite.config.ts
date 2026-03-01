@@ -29,11 +29,24 @@ export default defineConfig(({ mode }) => ({
       manifest: false, // use public/manifest.webmanifest
       workbox: {
         globPatterns: ["**/*.{js,css,ico,png,svg,woff2}"],
-        navigateFallback: "/index.html",
+        // Do NOT precache index.html — serve it NetworkFirst so
+        // published changes are never blocked by a stale SW cache.
+        globIgnores: ["**/index.html"],
+        navigateFallback: null,
         navigateFallbackDenylist: [/^\/~oauth/, /^\/api\//],
         skipWaiting: true,
         clientsClaim: true,
         runtimeCaching: [
+          {
+            // index.html / navigation requests — always hit network first
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-navigation",
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 },
+              networkTimeoutSeconds: 5,
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
             handler: "CacheFirst",
