@@ -86,8 +86,25 @@ export default defineConfig(({ mode }) => ({
     exclude: [],
   },
   build: {
+    sourcemap: false,
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 2000,
     commonjsOptions: {
       include: [/leaflet/, /react-leaflet/, /node_modules/],
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          supabase: ["@supabase/supabase-js"],
+          ui: ["lucide-react"],
+          "date-fns": ["date-fns"],
+          router: ["react-router-dom"],
+          charts: ["recharts"],
+          leaflet: ["leaflet", "react-leaflet"],
+          motion: ["framer-motion"],
+        },
+      },
     },
   },
 }));
