@@ -3,6 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileBottomBar } from './MobileBottomBar';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { SWUpdatePrompt } from '@/components/pwa/SWUpdatePrompt';
 
 // Lazy load AI chat widget to avoid impacting initial load
 const AIChatWidget = lazy(() => import('@/components/chat/AIChatWidget'));
@@ -40,6 +41,7 @@ export function Layout({
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <Footer />
         <MobileBottomBar />
+        <SWUpdatePrompt />
         
         {/* AI Chat Widget */}
         {!hideChat && (
