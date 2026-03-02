@@ -1570,10 +1570,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 className="w-full bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
               />
               <p className="text-[10px] leading-snug text-muted-foreground/70 px-1">
-                By adding this information, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
-              </p>
-              <p className="text-[10px] leading-snug text-muted-foreground/70 px-1">
-                By clicking continue, I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+                By clicking continue, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
               </p>
               <Button
                 onClick={handleContactSubmit}
