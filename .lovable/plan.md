@@ -1,175 +1,120 @@
 
 
-# Google Ads Full Integration Plan
+## Pasos Detallados para Conectar Google Email (Gmail) al Sistema Calsan
 
-## Overview
-
-This plan connects your website to Google Ads end-to-end: capturing click attribution, firing conversion events, syncing metrics from the Google Ads API, and displaying it all in the existing admin dashboard. Everything respects DRY_RUN mode and keeps secrets server-side.
+El sistema ya tiene toda la infraestructura de código lista. Lo que falta son **3 secrets** en la configuración del backend y la **configuración en Google Cloud Console**. Aquí van los pasos exactos:
 
 ---
 
-## What Already Exists
+### PASO 1 — Crear un Proyecto en Google Cloud Console
 
-- **Database**: `ads_accounts`, `ads_campaigns`, `ads_adgroups`, `ads_keywords`, `ads_metrics`, `ads_sync_log`, `ads_alerts`, `ads_markets` tables are all in place.
-- **Leads**: `sales_leads` already stores `gclid`, `utm_source`, `utm_campaign`, `utm_term`.
-- **Admin UI**: `/admin/ads/overview`, `/admin/ads/campaigns`, `/admin/ads/markets`, `/admin/ads/rules`, `/admin/ads/logs` pages exist.
-- **Edge Functions**: `lead-from-google-ads`, `ads-capacity-guard`, `ads-generate-campaigns` deployed.
-- **No tracking code exists on the website** (no GTM, no GA4, no gclid capture).
+1. Ve a [https://console.cloud.google.com](https://console.cloud.google.com)
+2. Si ya tienes un proyecto para Calsan, selecciónalo. Si no, haz clic en **"New Project"** → nómbralo "Calsan Dumpsters" → **Create**
 
 ---
 
-## Phase 1 -- Attribution Capture (gclid + UTMs)
+### PASO 2 — Habilitar las APIs Necesarias
 
-### 1a. Add attribution columns to `quotes`, `orders`, `payments`
+1. En el menú lateral, ve a **APIs & Services → Library**
+2. Busca y habilita cada una de estas APIs (clic en cada una → **Enable**):
+   - **Gmail API** — para enviar/leer correos
+   - **Google Calendar API** — para crear reuniones Meet
+   - **Google Drive API** — para carpetas de órdenes
+   - **Google Analytics Data API** — para métricas GA4
+   - **Search Console API** — para datos GSC
+   - **My Business Business Information API** — para Google Business Profile
 
-Database migration to add:
+---
 
-```text
-quotes:   gclid, utm_source, utm_campaign, utm_medium, utm_term, utm_content
-orders:   gclid, utm_source, utm_campaign, utm_medium, utm_term, utm_content
-payments: gclid, utm_source, utm_campaign, utm_medium, utm_term, utm_content
+### PASO 3 — Configurar la Pantalla de Consentimiento (OAuth Consent Screen)
+
+1. Ve a **APIs & Services → OAuth consent screen**
+2. Selecciona **Internal** (solo usuarios de `@calsandumpsterspro.com`) o **External** si necesitas usuarios externos
+3. Llena los campos:
+   - **App name**: `Calsan Dumpsters Pro`
+   - **User support email**: tu email de admin
+   - **Authorized domains**: `calsandumpsterspro.com`
+   - **Developer contact**: tu email
+4. En **Scopes**, agrega:
+   - `email`, `profile`, `openid`
+   - `https://www.googleapis.com/auth/gmail.send`
+   - `https://www.googleapis.com/auth/gmail.readonly`
+   - `https://www.googleapis.com/auth/calendar.events`
+   - `https://www.googleapis.com/auth/drive.file`
+5. Guarda
+
+---
+
+### PASO 4 — Crear Credenciales OAuth 2.0
+
+1. Ve a **APIs & Services → Credentials**
+2. Clic en **Create Credentials → OAuth client ID**
+3. Tipo de aplicación: **Web application**
+4. Nombre: `Calsan CRM`
+5. En **Authorized redirect URIs**, agrega exactamente:
+   ```
+   https://tvcwzohfycwfaqjyruow.supabase.co/functions/v1/google-oauth-callback
+   ```
+6. Clic en **Create**
+7. Aparecerá una ventana con:
+   - **Client ID** — cópialo (ejemplo: `123456789-abc.apps.googleusercontent.com`)
+   - **Client Secret** — cópialo (ejemplo: `GOCSPX-xxxxxx`)
+
+---
+
+### PASO 5 — Generar la Clave de Encriptación
+
+El sistema encripta los tokens de Google antes de guardarlos. Necesitas una clave aleatoria de 32+ caracteres.
+
+Puedes generarla con este comando en terminal:
+```bash
+openssl rand -base64 32
+```
+O simplemente inventa una cadena larga y aleatoria, por ejemplo:
+```
+k9Xm2pL7qR4wT8vN1bJ6cF3hA5dG0eYs
 ```
 
-All nullable text columns with no constraints.
+---
 
-### 1b. Create `src/lib/attributionTracker.ts`
+### PASO 6 — Agregar los 3 Secrets al Proyecto
 
-A small utility that:
-- On page load, reads `gclid`, `utm_source`, `utm_campaign`, `utm_medium`, `utm_term`, `utm_content` from URL search params.
-- Stores them in `sessionStorage` (session-scoped, privacy-friendly).
-- Also stores first-touch values in `localStorage` if not already set.
-- Exports a `getAttribution()` function returning `{ gclid, utm_source, utm_campaign, utm_medium, utm_term, utm_content }`.
+Una vez que tengas los 3 valores, yo los agregaré al backend del proyecto. Los secrets necesarios son:
 
-### 1c. Hook into the app entry point
-
-- Call the capture function once in `App.tsx` (or a layout wrapper) on mount so every landing page captures params.
-
-### 1d. Pass attribution through the quote/order/payment flow
-
-- Update `save-quote` edge function to accept and insert `gclid`, `utm_source`, `utm_campaign`, `utm_medium`, `utm_term`, `utm_content`.
-- Update the Quote page component to include attribution data from `getAttribution()` when calling `save-quote`.
-- Similarly, when `create-order-from-quote` runs, copy attribution from the quote to the order.
-- When `process-payment` runs, copy attribution from the order to the payment.
+| Secret | Valor |
+|--------|-------|
+| `GOOGLE_CLIENT_ID` | El Client ID del paso 4 |
+| `GOOGLE_CLIENT_SECRET` | El Client Secret del paso 4 |
+| `GOOGLE_ENCRYPTION_KEY` | La clave del paso 5 |
 
 ---
 
-## Phase 2 -- GTM / GA4 Conversion Events
+### PASO 7 — Probar la Conexión
 
-### 2a. Add tracking config to `config_settings`
-
-Insert these rows (via insert tool):
-
-```text
-ads | tracking_mode  | "GTM"    (options: GTM, SERVER, OFF)
-ads | gtm_container_id | ""      (e.g., "GTM-XXXXXXX")
-ads | ga4_measurement_id | ""   (e.g., "G-XXXXXXXXXX")
-ads | conversion_actions | {}   (JSON map of event -> conversion action ID)
-ads | mode | "DRY_RUN"          (already exists, reuse)
-```
-
-### 2b. Create `src/lib/trackingService.ts`
-
-- Fetches `ads.tracking_mode` and `ads.gtm_container_id` from `config_settings`.
-- If mode is `GTM` and container ID is set, injects the GTM script into `<head>`.
-- Exposes `trackEvent(eventName, params)` that pushes to `window.dataLayer`.
-- Supported events: `lead_submitted`, `quote_saved`, `order_confirmed`, `payment_captured`.
-- If mode is `OFF`, all calls are no-ops.
-
-### 2c. Fire events at key conversion points
-
-- **Quote page**: After successful `save-quote`, call `trackEvent('quote_saved', { value, size, zip })`.
-- **Lead capture**: After lead creation, call `trackEvent('lead_submitted', { channel })`.
-- **Order confirmation**: After order creation, call `trackEvent('order_confirmed', { order_id, value })`.
-- **Payment success**: After payment captured, call `trackEvent('payment_captured', { value, gclid })`.
-
-### 2d. Consent-aware loading
-
-- GTM script only loads if `ads.tracking_mode !== 'OFF'`.
-- A simple cookie consent banner component can be added as a follow-up (not blocking).
+1. Inicia sesión en el CRM como admin
+2. Ve a **Admin → Google Setup** (`/admin/google/setup`)
+3. Haz clic en **"Connect Google"**
+4. Se abrirá una ventana de Google pidiendo permisos
+5. Autoriza con tu cuenta `@calsandumpsterspro.com`
+6. La ventana se cierra y aparece tu email conectado con un badge verde
 
 ---
 
-## Phase 3 -- Server-Side Conversion Upload
+### PASO 8 — Verificar que Gmail Funciona
 
-### 3a. Create Edge Function: `google-ads-upload-conversion`
-
-- Triggered after `payment_captured` (called from `process-payment` function).
-- If `ads.mode !== 'LIVE'` or Google Ads secrets missing, log to `ads_sync_log` as DRY_RUN and return.
-- If LIVE: Use the Google Ads API offline conversion upload endpoint.
-  - Requires: `GOOGLE_ADS_DEVELOPER_TOKEN`, `GOOGLE_ADS_CLIENT_ID`, `GOOGLE_ADS_CLIENT_SECRET`, `GOOGLE_ADS_REFRESH_TOKEN`, `GOOGLE_ADS_CUSTOMER_ID`.
-  - Sends: `gclid`, `conversion_action`, `conversion_date_time`, `conversion_value`, `currency_code`.
-- Logs result to `ads_sync_log`.
+1. Ve a la sección de envío de emails en el CRM
+2. Envía un correo de prueba
+3. Verifica que llega al destinatario
+4. El sistema usa la función `google-send-email` que ya está desplegada
 
 ---
 
-## Phase 4 -- Google Ads Metrics Sync
+### Resumen de lo que Falta
 
-### 4a. Create Edge Function: `google-ads-sync-metrics`
+Lo único que necesitas hacer es:
+1. Configurar Google Cloud Console (pasos 1-5) — esto es en la consola de Google, no en Lovable
+2. Darme los 3 valores para que los guarde como secrets (paso 6)
+3. Probar (pasos 7-8)
 
-- If `ads.mode !== 'LIVE'`, return immediately with DRY_RUN status.
-- If LIVE:
-  - Obtain OAuth access token using refresh token.
-  - Execute GAQL query: `SELECT campaign.id, campaign.name, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions, metrics.conversions_value, segments.date FROM campaign WHERE segments.date DURING LAST_7_DAYS`.
-  - Upsert results into `ads_metrics` table (keyed on campaign_id + date).
-  - Log sync to `ads_sync_log`.
-- Designed to be called on a daily cron or manually from the admin UI.
-
-### 4b. Add "Sync Metrics" button to `/admin/ads/overview`
-
-- New button alongside existing "Check Capacity" and "Generate Campaigns".
-- Calls `supabase.functions.invoke('google-ads-sync-metrics')`.
-- Shows sync result toast.
-
-### 4c. Enhance Overview with ROAS card
-
-- Add a ROAS metric card to the existing 4-card grid (making it 5 or rearranging).
-
----
-
-## Phase 5 -- Admin UI Enhancements
-
-### 5a. Add credential status banner to `/admin/ads/overview`
-
-- If `ads.mode === 'DRY_RUN'` or required secrets are missing, show a yellow banner:
-  "Google Ads API is not connected. Configure credentials to enable live sync."
-- Link to `/admin/setup/what-missing` for setup instructions.
-
-### 5b. Add attribution column to campaign table
-
-- In `/admin/ads/campaigns`, add a ROAS column from synced metrics.
-
----
-
-## Phase 6 -- Capacity Guard Tie-In
-
-No new work needed. The existing `ads-capacity-guard` function already pauses campaigns and adjusts messaging tiers based on inventory thresholds. The "Check Capacity" button on the overview page already triggers it.
-
----
-
-## Technical Details
-
-### Files to Create
-1. `src/lib/attributionTracker.ts` -- URL param capture + storage
-2. `src/lib/trackingService.ts` -- GTM/dataLayer manager
-3. `supabase/functions/google-ads-sync-metrics/index.ts` -- Metrics pull from Google Ads API
-4. `supabase/functions/google-ads-upload-conversion/index.ts` -- Server-side conversion upload
-
-### Files to Modify
-1. `index.html` -- (no change; GTM injected dynamically)
-2. `src/App.tsx` -- Add attribution capture on mount
-3. `src/pages/Quote.tsx` or the quote calculator component -- Pass attribution to save-quote
-4. `supabase/functions/save-quote/index.ts` -- Accept and persist attribution fields
-5. `supabase/functions/process-payment/index.ts` -- Trigger conversion upload after payment
-6. `src/pages/admin/ads/AdsOverview.tsx` -- Add sync button, credential banner, ROAS card
-7. `supabase/config.toml` -- Register new edge functions
-
-### Database Changes
-1. Migration: Add `gclid`, `utm_source`, `utm_campaign`, `utm_medium`, `utm_term`, `utm_content` to `quotes`, `orders`, `payments`.
-2. Insert: Add `config_settings` rows for `ads.tracking_mode`, `ads.gtm_container_id`, `ads.ga4_measurement_id`, `ads.conversion_actions`.
-
-### Security
-- No API keys in frontend code.
-- GTM container ID is safe to store in `config_settings` (it's a public identifier).
-- All Google Ads API calls happen in edge functions using Cloud secrets.
-- DRY_RUN mode is the default; LIVE requires all 5 Google Ads secrets to be present.
+¿Tienes acceso a Google Cloud Console con la cuenta de `@calsandumpsterspro.com`? Si me confirmas, procedo a crear los campos para que ingreses los secrets.
 
