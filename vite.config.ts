@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => ({
       ],
       manifest: false, // use public/manifest.webmanifest
       workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB
         globPatterns: ["**/*.{js,css,ico,png,svg,woff2}"],
         // Do NOT precache index.html — serve it NetworkFirst so
         // published changes are never blocked by a stale SW cache.
