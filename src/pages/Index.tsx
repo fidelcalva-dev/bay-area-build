@@ -88,17 +88,10 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-8 md:mb-10 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Dumpster Rental in the{' '}
-              <span className="relative inline-block">
-                Bay Area
-                <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
-              </span>
+              Professional Dumpster Rental. Done Right.
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
-              Professional roll-off dumpster rental in Oakland, San Jose, San Francisco and surrounding cities.
-            </p>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Exact pricing by ZIP. Clear rental terms. Reliable delivery.
+              Exact pricing by ZIP. Clear rental terms. Reliable delivery across the Bay Area.
             </p>
           </div>
 
@@ -137,6 +130,9 @@ const Index = () => {
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
           <GuidedAssistant />
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            You'll see your total before you confirm. No surprises.
+          </p>
         </div>
       </section>
 
@@ -147,14 +143,15 @@ const Index = () => {
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-                  We Specialize in Dumpster Rental
+                  Dumpster Rental Is All We Do.
                 </h2>
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
                   <p>
-                    Since 2009, we have operated in hauling and debris removal.
-                    Since 2015, we have focused exclusively on professional dumpster rental.
+                    We've served Bay Area projects since 2009. Since 2015, we've specialized in roll-off dumpster rental.
                   </p>
-                  <p>That focus allows us to deliver:</p>
+                  <p>
+                    Clear rules, reliable scheduling, and professional execution for homeowners and contractors.
+                  </p>
                 </div>
               </div>
 
@@ -179,7 +176,7 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Dumpster Sizes Available
+              Dumpster Sizes
             </h2>
           </div>
 
@@ -231,10 +228,10 @@ const Index = () => {
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Dumpster Rental Near You
+              Serving the Bay Area
             </h2>
             <p className="text-muted-foreground mb-8">
-              We serve projects across the San Francisco Bay Area, including:
+              Oakland, San Jose, San Francisco and surrounding cities.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -297,7 +294,7 @@ const Index = () => {
           </div>
 
           <p className="text-sm text-primary-foreground/60">
-            Serving the Bay Area since 2009. Focused on dumpster rental since 2015.
+            Calsan Dumpsters Pro — Dumpster Rental. Done Right.
           </p>
         </div>
       </section>
