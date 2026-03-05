@@ -66,6 +66,7 @@ const DumpsterRentalSanJose = lazy(() => import("./pages/DumpsterRentalSanJose")
 const DumpsterRentalSanFrancisco = lazy(() => import("./pages/DumpsterRentalSanFrancisco"));
 const SizeLandingPage = lazy(() => import("./pages/SizeLandingPage"));
 const MaterialLandingPage = lazy(() => import("./pages/MaterialLandingPage"));
+const YardHubPage = lazy(() => import("./pages/seo/YardHubPage"));
 
 // Preview Pages (v2 Uber-like experience)
 const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
@@ -510,6 +511,11 @@ const App = () => {
               <Route path="/ai-dumpster-assistant" element={<Navigate to="/" replace />} />
               
               {/* Category Positioning Pages */}
+              {/* Yard Hub Authority Pages */}
+              <Route path="/yards/:yardSlug" element={
+                <Suspense fallback={<PageLoader />}><YardHubPage /></Suspense>
+              } />
+
               <Route path="/why-local-yards" element={
                 <Suspense fallback={<PageLoader />}><WhyLocalYards /></Suspense>
               } />
