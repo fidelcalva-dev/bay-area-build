@@ -126,6 +126,20 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ========== HERO IMAGE ========== */}
+      <section className="pb-12 md:pb-20 bg-background -mt-4">
+        <div className="container-wide max-w-4xl mx-auto">
+          <div className="rounded-2xl overflow-hidden shadow-lg">
+            <img
+              src="/images/dumpsters/20yd-photo-1.jpg"
+              alt="Professional dumpster delivery on a Bay Area job site"
+              className="w-full h-[280px] md:h-[400px] object-cover"
+              loading="eager"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ========== GUIDED ASSISTANT ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
