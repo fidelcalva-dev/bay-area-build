@@ -4,6 +4,8 @@
 import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { BUSINESS_INFO } from './seo';
 import { SERVICE_CITIES } from './cityData';
+import { SEO_COUNTIES } from './seo-counties';
+import { SEO_USE_CASES } from './seo-use-cases';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
@@ -43,6 +45,11 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/waste-vision', changefreq: 'monthly', priority: 0.5 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
+  // Hub pages
+  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
+  { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
+  { url: '/southern-california-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
+  { url: '/central-valley-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.9 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.9 },
@@ -88,6 +95,20 @@ const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
     priority: canonical === 'oakland' || canonical === 'san-jose' ? 0.9 : 0.8,
   };
 });
+
+// County pages
+const COUNTY_PAGES: SitemapEntry[] = SEO_COUNTIES.map(county => ({
+  url: `/county/${county.slug}/dumpster-rental`,
+  changefreq: 'monthly' as const,
+  priority: 0.8,
+}));
+
+// Use case pages
+const USE_CASE_PAGES: SitemapEntry[] = SEO_USE_CASES.map(uc => ({
+  url: `/use-cases/${uc.slug}`,
+  changefreq: 'monthly' as const,
+  priority: 0.8,
+}));
 
 // Fetch SEO engine pages from database
 async function fetchSeoPages(): Promise<SitemapEntry[]> {
@@ -147,7 +168,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();

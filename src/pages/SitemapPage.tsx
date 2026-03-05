@@ -3,6 +3,8 @@ import { generateFullSitemapXml } from '@/lib/sitemap';
 import { SEO_ZIP_DATA } from '@/lib/seo-zips';
 import { SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { SEO_MATERIALS } from '@/lib/seo-engine';
+import { SEO_COUNTIES } from '@/lib/seo-counties';
+import { SEO_USE_CASES } from '@/lib/seo-use-cases';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -68,9 +70,21 @@ export default function SitemapPage() {
           }
         } catch { /* silent */ }
 
-        // Generate entries for job type pages (for active cities from DB)
-        // These are generated from the SEO_JOB_TYPES data
-        // The actual city+job URLs come from the DB-driven seo_cities
+        // County pages
+        for (const county of SEO_COUNTIES) {
+          const url = `${BUSINESS_INFO.url}/county/${county.slug}/dumpster-rental`;
+          if (!existingUrls.has(url)) {
+            additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`);
+          }
+        }
+
+        // Use case pages
+        for (const uc of SEO_USE_CASES) {
+          const url = `${BUSINESS_INFO.url}/use-cases/${uc.slug}`;
+          if (!existingUrls.has(url)) {
+            additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`);
+          }
+        }
         
         // Inject additional entries before closing </urlset>
         if (additionalEntries.length > 0) {

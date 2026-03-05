@@ -7,6 +7,8 @@ import { SEO_JOB_TYPES } from './seo-jobs';
 import { SEO_ZIP_DATA } from './seo-zips';
 import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
+import { SEO_COUNTIES } from './seo-counties';
+import { SEO_USE_CASES } from './seo-use-cases';
 
 export interface SitemapEntry {
   url: string;
@@ -38,6 +40,17 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/blog', changefreq: 'weekly', priority: 0.7 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
+  // Hub pages
+  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
+  { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
+  { url: '/southern-california-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
+  { url: '/central-valley-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
+  // Regional pages
+  { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.85 },
+  { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.85 },
+  // Commercial pages
+  { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
 ];
 
 // Blog articles — generated from seo-blog-topics.ts + editorial articles
@@ -47,7 +60,6 @@ const BLOG_ARTICLES: SitemapEntry[] = [
     changefreq: 'monthly' as const,
     priority: 0.7,
   })),
-  // Editorial articles with images (not in SEO_BLOG_TOPICS)
   ...[
     'benefits-same-dumpster-provider',
     'positive-impact-dumpster-rentals-oakland',
@@ -63,6 +75,20 @@ const BLOG_ARTICLES: SitemapEntry[] = [
   })),
 ];
 
+// County pages
+const COUNTY_PAGES: SitemapEntry[] = SEO_COUNTIES.map(county => ({
+  url: `/county/${county.slug}/dumpster-rental`,
+  changefreq: 'monthly' as const,
+  priority: 0.8,
+}));
+
+// Use case pages
+const USE_CASE_PAGES: SitemapEntry[] = SEO_USE_CASES.map(uc => ({
+  url: `/use-cases/${uc.slug}`,
+  changefreq: 'monthly' as const,
+  priority: 0.8,
+}));
+
 export interface CityForSitemap {
   city_slug: string;
   is_primary_market: boolean;
@@ -73,7 +99,7 @@ export interface CityForSitemap {
  * Generate all sitemap entries for active cities
  */
 export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[] {
-  const entries: SitemapEntry[] = [...STATIC_PAGES, ...BLOG_ARTICLES];
+  const entries: SitemapEntry[] = [...STATIC_PAGES, ...BLOG_ARTICLES, ...COUNTY_PAGES, ...USE_CASE_PAGES];
   const today = new Date().toISOString().split('T')[0];
 
   for (const city of cities) {

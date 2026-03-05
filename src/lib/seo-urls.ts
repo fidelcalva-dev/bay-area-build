@@ -20,3 +20,11 @@ export function cityJobUrl(citySlug: string, jobSlug: string): string {
 export function zipUrl(zip: string): string {
   return `/service-area/${zip}/dumpster-rental`;
 }
+
+export function countyUrl(countySlug: string): string {
+  return `/county/${countySlug}/dumpster-rental`;
+}
+
+export function useCaseUrl(useCaseSlug: string): string {
+  return `/use-cases/${useCaseSlug}`;
+}
