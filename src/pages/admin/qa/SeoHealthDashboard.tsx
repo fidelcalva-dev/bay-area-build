@@ -5,6 +5,8 @@ import { SEO_ZIP_DATA } from '@/lib/seo-zips';
 import { SEO_MATERIALS, type SeoCity } from '@/lib/seo-engine';
 import { SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
+import { SEO_COUNTIES } from '@/lib/seo-counties';
+import { SEO_USE_CASES } from '@/lib/seo-use-cases';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { CheckCircle, XCircle, AlertTriangle, ExternalLink, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,12 +24,16 @@ const STATIC_PAGES = [
   '/about', '/contact', '/blog', '/careers', '/quote', '/quote/contractor',
   '/green-halo', '/green-impact', '/locations', '/why-local-yards',
   '/not-a-broker', '/how-it-works', '/why-calsan', '/terms', '/privacy',
+  '/technology', '/waste-vision', '/download-price-list',
   '/dumpster-rental-east-bay', '/dumpster-rental-south-bay',
   '/dumpster-rental-oakland-ca', '/dumpster-rental-san-jose-ca', '/dumpster-rental-san-francisco-ca',
   '/commercial-dumpster-rental', '/construction-dumpsters', '/warehouse-cleanout-dumpsters',
   '/10-yard-dumpster-rental', '/20-yard-dumpster-rental', '/30-yard-dumpster-rental', '/40-yard-dumpster-rental',
   '/concrete-dumpster-rental', '/dirt-dumpster-rental', '/roofing-dumpster-rental',
   '/construction-debris-dumpster-rental', '/residential-dumpster-rental',
+  // Hub pages
+  '/california-dumpster-rental', '/bay-area-dumpster-rental',
+  '/southern-california-dumpster-rental', '/central-valley-dumpster-rental',
 ];
 
 const BLOCKED_PREFIXES = ['/admin', '/app', '/portal', '/preview', '/staff', '/sales', '/cs', '/dispatch', '/driver', '/finance', '/billing', '/internal', '/set-password', '/request-access', '/login'];
@@ -70,6 +76,12 @@ export default function SeoHealthDashboard() {
 
     // ZIP pages (sample first 50 for dashboard speed; full count noted)
     SEO_ZIP_DATA.slice(0, 50).forEach(z => urls.push({ url: `/service-area/${z.zip}/dumpster-rental`, category: 'zip' }));
+
+    // County pages
+    SEO_COUNTIES.forEach(c => urls.push({ url: `/county/${c.slug}/dumpster-rental`, category: 'county' }));
+
+    // Use case pages
+    SEO_USE_CASES.forEach(uc => urls.push({ url: `/use-cases/${uc.slug}`, category: 'use_case' }));
 
     return urls;
   }, [cities]);
@@ -161,6 +173,8 @@ export default function SeoHealthDashboard() {
         <StatCard label="City+Size" value={categoryCounts['city_size'] || 0} />
         <StatCard label="City+Material" value={categoryCounts['city_material'] || 0} />
         <StatCard label="City+Job" value={categoryCounts['city_job'] || 0} />
+        <StatCard label="County Pages" value={categoryCounts['county'] || 0} />
+        <StatCard label="Use Cases" value={categoryCounts['use_case'] || 0} />
         <StatCard label="ZIP (sampled)" value={categoryCounts['zip'] || 0} />
         <StatCard label="Blog" value={categoryCounts['blog'] || 0} />
         <StatCard label="Total ZIP Pages" value={SEO_ZIP_DATA.length} />

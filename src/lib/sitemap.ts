@@ -6,6 +6,7 @@ import { BUSINESS_INFO } from './seo';
 import { SERVICE_CITIES } from './cityData';
 import { SEO_COUNTIES } from './seo-counties';
 import { SEO_USE_CASES } from './seo-use-cases';
+import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
@@ -61,14 +62,14 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
   { url: '/warehouse-cleanout-dumpsters', changefreq: 'monthly', priority: 0.7 },
-  // Blog articles
-  { url: '/blog/dumpster-cost-oakland', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/concrete-disposal-bay-area', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/dumpster-permit-san-jose', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/heavy-material-dumpsters-explained', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/dumpster-sizes-guide', changefreq: 'monthly', priority: 0.7 },
-  { url: '/blog/same-day-dumpster-delivery-bay-area', changefreq: 'monthly', priority: 0.7 },
 ];
+
+// Blog articles — dynamically generated from SEO_BLOG_TOPICS
+const BLOG_PAGES: SitemapEntry[] = SEO_BLOG_TOPICS.map(topic => ({
+  url: `/blog/${topic.slug}`,
+  changefreq: 'monthly' as const,
+  priority: 0.7,
+}));
 
 // Size-specific pages
 const SIZE_PAGES: SitemapEntry[] = DUMPSTER_SIZES_DATA.map(size => ({
@@ -168,7 +169,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();
@@ -198,11 +199,11 @@ export async function generateFullSitemapXml(): Promise<string> {
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES];
 }
 
 // Get all entries including async SEO pages
 export async function getAllSitemapEntriesWithSeo(): Promise<SitemapEntry[]> {
   const seoPages = await fetchSeoPages();
-  return [...STATIC_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
 }
