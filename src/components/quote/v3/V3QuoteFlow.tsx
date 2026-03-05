@@ -1392,6 +1392,11 @@ export function V3QuoteFlow() {
               <p className="text-[11px] text-muted-foreground text-center">
                 {getButtons().CONFIRM_FINEPRINT}
               </p>
+              <p className="text-[11px] text-muted-foreground text-center">
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Privacy Policy</a>
+                {' · '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Terms of Service</a>
+              </p>
             </div>
           </StepTransition>
         )}
