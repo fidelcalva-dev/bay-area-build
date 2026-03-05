@@ -42,8 +42,8 @@ export function getBaseUrl(): string {
   if (typeof window !== 'undefined') {
     return window.location.origin;
   }
-  // Fallback for SSR or edge functions — should not be used in frontend
-  return 'https://bay-area-build.lovable.app';
+  // Fallback for SSR or edge functions
+  return 'https://calsandumpsterspro.com';
 }
 
 /**
