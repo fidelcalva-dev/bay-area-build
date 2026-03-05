@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { BUSINESS_INFO, OPERATIONAL_YARDS } from '@/lib/seo';
+import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
-import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
+import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
 import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
+import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
@@ -82,18 +83,33 @@ export default function SeoCityPage() {
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const neighborhoods = city.neighborhoods_json || [];
   const sections = (page?.sections_json as unknown as ContentSection[] | null) || [];
-  const faqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
+  const dbFaqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY', allCities || []);
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city.city_name, slug: city.city_slug });
 
-  const pageTitle = page?.title || `Dumpster Rental ${city.city_name} CA | Same-Day Delivery`;
-  const pageDescription = page?.meta_description || `Local dumpster rental in ${city.city_name}, CA. Same-day delivery, 6-50 yard sizes. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
+  // Use DB FAQs if available (8+), otherwise generate defaults
+  const faqs = dbFaqs.length >= 8 ? dbFaqs : generateCityFAQs(city.city_name, city.county || 'Bay Area');
+
+  const pageTitle = page?.title || `Dumpster Rental ${city.city_name} CA | Roll-Off Dumpsters | Calsan Dumpsters Pro`;
+  const pageDescription = page?.meta_description || `Professional dumpster rental in ${city.city_name}, CA. Exact price by ZIP. Fast delivery based on availability. Contractor-ready service. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
+
+  // Breadcrumb schema
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Service Areas', url: '/areas' },
+    { name: `${city.city_name}, CA`, url: cityUrl(city.city_slug) },
+  ]);
+
+  // FAQ schema
+  const faqSchema = generateFAQSchema(faqs);
 
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
         <link rel="canonical" href={`${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`} />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -103,20 +119,21 @@ export default function SeoCityPage() {
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
+            <nav className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3" aria-label="Breadcrumb">
               <Link to="/" className="hover:text-primary-foreground">Home</Link>
               <span>/</span>
               <Link to="/areas" className="hover:text-primary-foreground">Service Areas</Link>
               <span>/</span>
               <span className="text-primary-foreground">{city.city_name}</span>
-            </div>
+            </nav>
             <h1 className="heading-xl mb-4">Dumpster Rental in {city.city_name}, CA</h1>
-            <p className="text-xl text-primary-foreground/85 mb-6">{city.local_intro}</p>
+            <p className="text-xl text-primary-foreground/85 mb-2">Professional roll-off dumpster rental services in {city.city_name} and surrounding areas.</p>
+            <p className="text-primary-foreground/70 mb-6">{city.local_intro}</p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild variant="cta" size="lg">
+              <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
                 <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
               </Button>
-              <Button asChild variant="heroOutline" size="lg">
+              <Button asChild variant="heroOutline" size="lg" onClick={trackCallClick}>
                 <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}
                 </a>
@@ -133,17 +150,32 @@ export default function SeoCityPage() {
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Local Yard in {yard?.city || 'Bay Area'}</span></div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery Available</span></div>
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Licensed & Insured</span></div>
-            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>6-50 Yard Sizes</span></div>
+            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>10–40 Yard Sizes</span></div>
           </div>
         </div>
       </section>
 
-      {/* Sizes */}
+      {/* About Service */}
       <section className="section-padding bg-background">
+        <div className="container-wide max-w-4xl mx-auto">
+          <h2 className="heading-lg text-foreground mb-4">Dumpster Rental Service in {city.city_name}</h2>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            Calsan Dumpsters Pro provides professional dumpster rental services in {city.city_name} for homeowners, contractors, and businesses. 
+            Whether you're tackling a home remodel, roof replacement, construction project, or property cleanout, we deliver the right size dumpster to your {city.city_name} address.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            We serve {city.city_name} and surrounding communities throughout {city.county || 'the Bay Area'} with same-day delivery based on availability. 
+            Our transparent pricing means you see your exact cost before confirming—no hidden fees or surprise charges.
+          </p>
+        </div>
+      </section>
+
+      {/* Sizes */}
+      <section className="section-padding bg-muted/30">
         <div className="container-wide">
           <h2 className="heading-lg text-foreground mb-3 text-center">Dumpster Sizes Available in {city.city_name}</h2>
           <p className="text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
-            From small cleanouts to major construction projects--find the right size for your {city.city_name} project.
+            From small cleanouts to major construction projects—find the right size for your {city.city_name} project.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
             {DUMPSTER_SIZES_DATA.map(size => (
@@ -159,8 +191,60 @@ export default function SeoCityPage() {
         </div>
       </section>
 
-      {/* Materials */}
+      {/* Size by Project Table */}
+      <section className="section-padding bg-background">
+        <div className="container-wide max-w-4xl mx-auto">
+          <h2 className="heading-lg text-foreground mb-3 text-center">
+            <Hammer className="w-6 h-6 inline-block mr-2 text-primary" />
+            What Size Dumpster Do I Need in {city.city_name}?
+          </h2>
+          <p className="text-muted-foreground text-center mb-8">Recommended dumpster sizes by project type. Final size depends on your specific project—our team can help you choose.</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Project Type</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Recommended Size</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground hidden sm:table-cell">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SIZE_BY_PROJECT_TABLE.map((row, i) => (
+                  <tr key={i} className="border-b border-border/50 hover:bg-muted/30">
+                    <td className="py-3 px-4 text-foreground">{row.project}</td>
+                    <td className="py-3 px-4 text-primary font-medium">{row.sizes}</td>
+                    <td className="py-3 px-4 text-muted-foreground hidden sm:table-cell">{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground mt-4 text-center">
+            These are general guidelines. <Link to="/quote" className="text-primary hover:underline">Get an exact quote</Link> for your specific {city.city_name} project.
+          </p>
+        </div>
+      </section>
+
+      {/* Common Projects */}
       <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <h2 className="heading-lg text-foreground mb-8 text-center">
+            <HardHat className="w-6 h-6 inline-block mr-2 text-primary" />
+            Common Projects in {city.city_name}
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {DEFAULT_COMMON_PROJECTS.map((project, i) => (
+              <div key={i} className="flex items-center gap-3 bg-card border border-border rounded-xl p-4">
+                <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                <span className="text-sm text-foreground">{project}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Materials */}
+      <section className="section-padding bg-background">
         <div className="container-wide">
           <h2 className="heading-lg text-foreground mb-8 text-center">Popular Materials in {city.city_name}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -177,17 +261,17 @@ export default function SeoCityPage() {
       </section>
 
       {/* Disposal & Permits */}
-      <section className="section-padding bg-background">
+      <section className="section-padding bg-muted/30">
         <div className="container-wide">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><Building className="w-5 h-5 text-primary" /></div>
-                <h2 className="heading-md text-foreground">Local Disposal Rules</h2>
+                <h2 className="heading-md text-foreground">Local Disposal Rules in {city.city_name}</h2>
               </div>
               <p className="text-muted-foreground mb-4">{city.dump_rules}</p>
               <div className="space-y-3">
-                <div className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" /><span className="text-sm text-muted-foreground">Heavy materials (concrete, dirt): <strong className="text-foreground">Flat fee--no weight overage</strong></span></div>
+                <div className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" /><span className="text-sm text-muted-foreground">Heavy materials (concrete, dirt): <strong className="text-foreground">Flat fee—no weight overage</strong></span></div>
                 <div className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" /><span className="text-sm text-muted-foreground">General debris: ${PRICING_POLICIES.overagePerTonGeneral}/ton overage based on scale ticket</span></div>
                 <div className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" /><span className="text-sm text-muted-foreground">Standard {PRICING_POLICIES.standardRentalDays}-day rental, ${PRICING_POLICIES.extraDayCost}/day extra</span></div>
               </div>
@@ -195,7 +279,7 @@ export default function SeoCityPage() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-accent-foreground" /></div>
-                <h2 className="heading-md text-foreground">Permit Information</h2>
+                <h2 className="heading-md text-foreground">Permit Information for {city.city_name}</h2>
               </div>
               <p className="text-muted-foreground mb-4">{city.permit_info}</p>
               <div className="bg-card border border-border rounded-xl p-4">
@@ -209,61 +293,74 @@ export default function SeoCityPage() {
 
       {/* Neighborhoods */}
       {neighborhoods.length > 0 && (
-        <section className="section-padding bg-muted/30">
+        <section className="section-padding bg-background">
           <div className="container-wide">
             <h2 className="heading-md text-foreground mb-6 text-center">Neighborhoods We Serve in {city.city_name}</h2>
             <div className="flex flex-wrap justify-center gap-2">
               {neighborhoods.map((n: string) => (
-                <span key={n} className="px-3 py-1.5 bg-card border border-border rounded-full text-sm text-muted-foreground">{n}</span>
+                <span key={n} className="px-3 py-1.5 bg-muted border border-border rounded-full text-sm text-muted-foreground">{n}</span>
               ))}
             </div>
           </div>
         </section>
       )}
+
+      {/* Why Choose Calsan */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <h2 className="heading-lg text-foreground mb-8 text-center">Why {city.city_name} Customers Choose Calsan</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {WHY_CHOOSE_POINTS.map((point, i) => (
+              <div key={i} className="bg-card border border-border rounded-xl p-5">
+                <h3 className="font-semibold text-foreground mb-2">{point.title}</h3>
+                <p className="text-sm text-muted-foreground">{point.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Pricing CTA */}
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 text-center">
-            <h2 className="heading-md text-foreground mb-3">{city.city_name} Pricing</h2>
+            <h2 className="heading-md text-foreground mb-3">Get Your {city.city_name} Dumpster Price</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{city.pricing_note}</p>
-            <Button asChild variant="cta" size="lg">
-              <Link to="/quote">Get Your {city.city_name} Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
+            <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
+              <Link to="/quote">Get Exact Price for {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* FAQs */}
-      {faqs.length > 0 && (
-        <section className="section-padding bg-muted/30">
-          <div className="container-narrow">
-            <h2 className="heading-lg text-foreground mb-8 text-center">Frequently Asked Questions -- {city.city_name}</h2>
-            <div className="space-y-4">
-              {faqs.map((faq, i) => (
-                <details key={i} className="bg-card border border-border rounded-xl overflow-hidden group">
-                  <summary className="p-5 cursor-pointer font-semibold text-foreground hover:bg-muted/30 transition-colors list-none flex items-center justify-between">
-                    {faq.question}
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform shrink-0 ml-4" />
-                  </summary>
-                  <div className="px-5 pb-5 text-muted-foreground">{faq.answer}</div>
-                </details>
-              ))}
-            </div>
+      {/* FAQs — Always rendered with 12 questions */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-narrow">
+          <h2 className="heading-lg text-foreground mb-8 text-center">Frequently Asked Questions — {city.city_name} Dumpster Rental</h2>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <details key={i} className="bg-card border border-border rounded-xl overflow-hidden group">
+                <summary className="p-5 cursor-pointer font-semibold text-foreground hover:bg-muted/30 transition-colors list-none flex items-center justify-between">
+                  {faq.question}
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform shrink-0 ml-4" />
+                </summary>
+                <div className="px-5 pb-5 text-muted-foreground">{faq.answer}</div>
+              </details>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Nearby Cities */}
       {(nearbyCities?.length || 0) > 0 && (
         <section className="section-padding bg-background">
           <div className="container-wide">
-            <h2 className="heading-md text-foreground mb-6 text-center">Also Serving Nearby</h2>
+            <h2 className="heading-md text-foreground mb-6 text-center">Dumpster Rental Near {city.city_name}</h2>
             <div className="flex flex-wrap justify-center gap-3">
               {nearbyCities?.map(c => (
                 <Link key={c.city_slug} to={cityUrl(c.city_slug)}
                   className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
-                  {c.city_name}, CA
+                  Dumpster Rental {c.city_name}, CA
                 </Link>
               ))}
             </div>
@@ -301,39 +398,23 @@ export default function SeoCityPage() {
         );
       })()}
 
-      {/* Technology + Local Infrastructure */}
-      <section className="section-padding bg-muted/30">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="heading-md text-foreground mb-4">Technology + Local Infrastructure</h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Calsan combines real Bay Area yards with centralized logistics technology.
-              We calculate routes, disposal timing, and delivery cycles before dispatching drivers.
-            </p>
-            <p className="text-muted-foreground">
-              This means faster scheduling, fewer delays, and clearer pricing.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Bottom CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
           <h2 className="heading-lg mb-4">Ready to Rent a Dumpster in {city.city_name}?</h2>
-          <p className="text-lg text-primary-foreground/80 mb-8">Get an instant quote or call us now. Same-day delivery available.</p>
+          <p className="text-lg text-primary-foreground/80 mb-8">Get an instant quote or call us now. Same-day delivery available for {city.city_name} addresses.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild variant="cta" size="xl">
+            <Button asChild variant="cta" size="xl" onClick={trackQuoteClick}>
               <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
-            <Button asChild variant="heroOutline" size="xl">
+            <Button asChild variant="heroOutline" size="xl" onClick={trackCallClick}>
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}</a>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Internal Links */}
+      {/* Internal Links Footer */}
       <section className="py-8 bg-muted/30 border-t border-border">
         <div className="container-wide">
           <div className="flex flex-wrap justify-center gap-4 text-sm">
@@ -341,11 +422,13 @@ export default function SeoCityPage() {
               <Link key={link.url} to={link.url} className="text-primary hover:underline">{link.text}</Link>
             ))}
             <span className="text-muted-foreground hidden sm:inline">|</span>
-            <Link to="/sizes" className="text-primary hover:underline">All Sizes</Link>
-            <Link to="/materials" className="text-primary hover:underline">Materials</Link>
+            <Link to="/sizes" className="text-primary hover:underline">All Dumpster Sizes</Link>
+            <Link to="/materials" className="text-primary hover:underline">Materials Guide</Link>
             <Link to="/pricing" className="text-primary hover:underline">Pricing</Link>
-            <Link to="/contractors" className="text-primary hover:underline">Contractors</Link>
-            <Link to="/areas" className="text-primary hover:underline">All Areas</Link>
+            <Link to="/contractors" className="text-primary hover:underline">Contractor Service</Link>
+            <Link to="/areas" className="text-primary hover:underline">All Service Areas</Link>
+            <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
+            <Link to="/contact" className="text-primary hover:underline">Contact Us</Link>
           </div>
         </div>
       </section>
