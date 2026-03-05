@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
@@ -10,10 +10,16 @@ import { type SeoCity, type FaqItem, generateInternalLinks } from '@/lib/seo-eng
 import { ArrowRight, Phone, Ruler, Weight, Clock, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { citySizeUrl, cityUrl } from '@/lib/seo-urls';
+import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import NotFound from '../NotFound';
 
 export default function SeoCitySizePage() {
-  const { citySlug, sizeSlug } = useParams<{ citySlug: string; sizeSlug: string }>();
+  const { citySlug: rawSlug, sizeSlug } = useParams<{ citySlug: string; sizeSlug: string }>();
+  const normalized = normalizeCitySlug(rawSlug || '');
+  if (rawSlug && normalized !== rawSlug) {
+    return <Navigate to={`/dumpster-rental/${normalized}/${sizeSlug}-yard`} replace />;
+  }
+  const citySlug = normalized;
   const yards = sizeSlug ? parseInt(sizeSlug) : NaN;
 
   const { data: city, isLoading } = useQuery({

@@ -80,11 +80,14 @@ const MATERIAL_PAGES: SitemapEntry[] = [
 ];
 
 // City pages from hardcoded data
-const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => ({
-  url: `/dumpster-rental/${city.slug}`,
-  changefreq: 'weekly' as const,
-  priority: city.slug === 'oakland-ca' || city.slug === 'san-jose-ca' ? 0.9 : 0.8,
-}));
+const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
+  const canonical = city.slug.endsWith('-ca') ? city.slug.slice(0, -3) : city.slug;
+  return {
+    url: `/dumpster-rental/${canonical}`,
+    changefreq: 'weekly' as const,
+    priority: canonical === 'oakland' || canonical === 'san-jose' ? 0.9 : 0.8,
+  };
+});
 
 // Fetch SEO engine pages from database
 async function fetchSeoPages(): Promise<SitemapEntry[]> {

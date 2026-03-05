@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
@@ -10,10 +10,16 @@ import { SEO_MATERIALS, type SeoCity, type FaqItem, generateInternalLinks } from
 import { ArrowRight, Phone, CheckCircle } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, cityMaterialUrl, citySizeUrl } from '@/lib/seo-urls';
+import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import NotFound from '../NotFound';
 
 export default function SeoCityMaterialPage() {
-  const { citySlug, materialSlug } = useParams<{ citySlug: string; materialSlug: string }>();
+  const { citySlug: rawSlug, materialSlug } = useParams<{ citySlug: string; materialSlug: string }>();
+  const normalized = normalizeCitySlug(rawSlug || '');
+  if (rawSlug && normalized !== rawSlug) {
+    return <Navigate to={`/dumpster-rental/${normalized}/${materialSlug}`} replace />;
+  }
+  const citySlug = normalized;
 
   const material = SEO_MATERIALS.find(m => m.slug === materialSlug);
 

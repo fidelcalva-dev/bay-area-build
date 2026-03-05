@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
@@ -12,10 +12,19 @@ import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
 import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
+import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
-  const { citySlug } = useParams<{ citySlug: string }>();
+  const { citySlug: rawSlug } = useParams<{ citySlug: string }>();
+  const normalized = normalizeCitySlug(rawSlug || '');
+
+  // Redirect to canonical slug if incoming slug differs (e.g. oakland-ca → oakland)
+  if (rawSlug && normalized !== rawSlug) {
+    return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
+  }
+
+  const citySlug = normalized;
 
   const { data: city, isLoading: cityLoading } = useQuery({
     queryKey: ['seo-city', citySlug],

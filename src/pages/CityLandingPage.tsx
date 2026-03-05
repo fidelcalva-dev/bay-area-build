@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { getCityBySlug, generateCitySchema, SERVICE_CITIES } from '@/lib/cityData';
+import { getCityBySlug, generateCitySchema, SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from '@/lib/shared-data';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema } from '@/lib/seo';
 import { ArrowRight, MapPin, Phone, Truck, CheckCircle, AlertTriangle, Building, Clock, Shield } from 'lucide-react';
@@ -33,7 +33,7 @@ export default function CityLandingPage() {
   return (
     <Layout title={city.metaTitle} description={city.metaDescription}>
       <Helmet>
-        <link rel="canonical" href={`${BUSINESS_INFO.url}/dumpster-rental/${city.slug}`} />
+        <link rel="canonical" href={`${BUSINESS_INFO.url}/dumpster-rental/${getCanonicalCitySlug(city.slug)}`} />
         <script type="application/ld+json">{JSON.stringify(citySchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
@@ -204,7 +204,7 @@ export default function CityLandingPage() {
               {nearbyCities.map(c => c && (
                 <Link
                   key={c.slug}
-                  to={`/dumpster-rental/${c.slug}`}
+                  to={`/dumpster-rental/${getCanonicalCitySlug(c.slug)}`}
                   className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                 >
                   {c.name}, CA

@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { SERVICE_CITIES } from '@/lib/cityData';
+import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, CheckCircle } from 'lucide-react';
 import NotFound from './NotFound';
 
@@ -150,7 +150,7 @@ export default function RegionalLandingPage() {
           <h2 className="heading-lg text-foreground mb-8 text-center">{region.name} Cities We Serve</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {cities.map(city => city && (
-              <Link key={city.slug} to={`/dumpster-rental/${city.slug}`}
+              <Link key={city.slug} to={`/dumpster-rental/${getCanonicalCitySlug(city.slug)}`}
                 className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3 mb-2">
                   <MapPin className="w-4 h-4 text-primary shrink-0" />
