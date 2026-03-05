@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 import { analytics } from '@/lib/analytics';
+import { BUSINESS_INFO } from '@/lib/seo';
 
 import type { QuoteFormData } from './types';
 import { usePricingData, calculateIncludedTons } from './hooks/usePricingData';
@@ -998,9 +999,9 @@ export function MinimalQuoteCalculator() {
               </Button>
               
               <Button variant="outline" className="w-full" asChild>
-                <a href="tel:+15106802150">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="w-4 h-4" />
-                  Call (510) 680-2150
+                  Call {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
             </div>

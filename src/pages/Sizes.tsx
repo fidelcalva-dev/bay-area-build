@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
+import { BUSINESS_INFO } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
 
@@ -230,9 +231,9 @@ export default function Sizes() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <a href="tel:+15106802150" className="gap-2">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="gap-2">
                   <Phone className="w-4 h-4" />
-                  Call (510) 680-2150
+                  Call {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
             </div>

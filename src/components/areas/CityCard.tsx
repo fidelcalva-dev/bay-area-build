@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, CheckCircle, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BUSINESS_INFO } from '@/lib/seo';
 import {
   Accordion,
   AccordionContent,
@@ -83,7 +84,7 @@ export function CityCard({ city, countySlug }: CityCardProps) {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <a href="tel:+15106802150">Call Now</a>
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>Call Now</a>
               </Button>
             </div>
           </div>

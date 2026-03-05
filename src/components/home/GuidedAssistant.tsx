@@ -8,6 +8,7 @@ import { ArrowRight, MapPin, Upload, Phone, MessageSquare, ArrowLeft, Loader2 } 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BUSINESS_INFO } from '@/lib/seo';
+import { supabase } from '@/integrations/supabase/client';
 
 type AssistantState =
   | 'home'
@@ -61,10 +62,22 @@ export function GuidedAssistant() {
     }
   }, [navigate]);
 
-  const handleContactSubmit = useCallback(() => {
+  const handleContactSubmit = useCallback(async () => {
     if (name.trim() && phone.trim()) {
       setSubmitted(true);
-      // In production this would trigger lead-ingest
+      try {
+        await supabase.functions.invoke('lead-ingest', {
+          body: {
+            source_channel: 'WEBSITE_CONTACT',
+            source_detail: 'guided_assistant_contact_form',
+            name: name.trim(),
+            phone: phone.trim(),
+            consent_status: 'FORM_SUBMIT',
+          },
+        });
+      } catch (err) {
+        console.error('Lead ingest error (non-blocking):', err);
+      }
     }
   }, [name, phone]);
 
