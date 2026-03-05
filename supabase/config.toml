@@ -221,3 +221,6 @@ verify_jwt = false
 
 [functions.assistant-learning]
 verify_jwt = false
+
+[functions.website-assistant]
+verify_jwt = false

@@ -5,6 +5,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, MapPin, Upload, Phone, MessageSquare, ArrowLeft, Loader2 } from 'lucide-react';
+import { AskSpecialist } from '@/components/home/AskSpecialist';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BUSINESS_INFO } from '@/lib/seo';
@@ -120,6 +121,8 @@ export function GuidedAssistant() {
           className="hidden"
           onChange={handleFileChange}
         />
+        {/* Ask a Specialist — AI Q&A card */}
+        <AskSpecialist />
         <div className="text-center mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-1">
             How can we help you today?
