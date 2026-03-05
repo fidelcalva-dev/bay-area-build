@@ -928,6 +928,16 @@ export function MinimalQuoteCalculator() {
               </div>
             </div>
 
+            {/* SMS Consent Disclosures */}
+            <div className="space-y-2.5">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                By clicking, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+              </p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+              </p>
+            </div>
+
             {/* Terms checkbox */}
             <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border">
               <Checkbox
