@@ -1,8 +1,8 @@
 // Category Positioning - Single Source of Truth
 // This file centralizes all category messaging for brand differentiation
 
-export const CATEGORY_PHRASE = 'Technology-Driven Dumpster Logistics Platform';
-export const CATEGORY_TAGLINE = 'Smart Waste Coordination Powered by Real Local Yards';
+export const CATEGORY_PHRASE = 'ZIP-Based Dumpster Rentals with Local Yards';
+export const CATEGORY_TAGLINE = 'Powered by Real Local Yards, Not Brokers';
 
 // Why Local Yards Matter - Benefits
 export const LOCAL_YARD_BENEFITS = [
