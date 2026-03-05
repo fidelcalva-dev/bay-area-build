@@ -56,7 +56,9 @@ const SERVICE_AREAS_LIST = [
   { name: 'San Francisco', slug: 'san-francisco' },
   { name: 'Berkeley', slug: 'berkeley' },
   { name: 'Hayward', slug: 'hayward' },
+  { name: 'Fremont', slug: 'fremont' },
   { name: 'Walnut Creek', slug: 'walnut-creek' },
+  { name: 'Concord', slug: 'concord' },
 ];
 
 const Index = () => {
@@ -246,7 +248,7 @@ const Index = () => {
               {SERVICE_AREAS_LIST.map((area) => (
                 <Link
                   key={area.slug}
-                  to={`/areas/${area.slug}`}
+                  to={`/dumpster-rental/${area.slug}`}
                   className="px-4 py-2 bg-card border border-border rounded-full text-sm font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors"
                 >
                   {area.name}
