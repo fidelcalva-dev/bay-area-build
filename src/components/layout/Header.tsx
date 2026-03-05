@@ -34,9 +34,9 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: 'Service Areas',
     children: [
-      { to: '/dumpster-rental/oakland-ca', label: 'Oakland' },
-      { to: '/dumpster-rental/san-jose-ca', label: 'San Jose' },
-      { to: '/dumpster-rental/san-francisco-ca', label: 'San Francisco' },
+      { to: '/dumpster-rental/oakland', label: 'Oakland' },
+      { to: '/dumpster-rental/san-jose', label: 'San Jose' },
+      { to: '/dumpster-rental/san-francisco', label: 'San Francisco' },
       { to: '/areas', label: 'Bay Area Coverage Map' },
     ],
   },
