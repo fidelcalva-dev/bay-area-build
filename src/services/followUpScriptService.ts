@@ -97,8 +97,8 @@ export async function generateFollowUpScripts(
     size: "10",
     included_days: "7",
     included_tons: "1",
-    schedule_link: `https://bay-area-build.lovable.app/portal/schedule`,
-    payment_link: `https://bay-area-build.lovable.app/portal/pay`,
+    schedule_link: `${window.location.origin}/portal/schedule`,
+    payment_link: `${window.location.origin}/portal/pay`,
   };
 
   const isRed = band === "RED";

@@ -47,7 +47,26 @@ export function enforceCrmDomainRedirect(): void {
 
 /**
  * Get the staff login URL for the public website footer.
+ * In preview/localhost environments, returns a relative path so the link works.
+ * In production, points to the canonical CRM domain.
  */
 export function getStaffLoginUrl(): string {
+  if (typeof window === 'undefined') return `${CANONICAL_CRM_DOMAIN}/app`;
+  const { hostname } = window.location;
+  // In preview or local dev, use relative path so it doesn't break
+  if (hostname === 'localhost' || hostname.includes('lovable.app') || hostname.includes('lovableproject.com')) {
+    return '/app';
+  }
   return `${CANONICAL_CRM_DOMAIN}/app`;
+}
+
+/**
+ * Get the portal base URL for links sent in emails/SMS.
+ * Uses window.location.origin when available, falls back to public domain.
+ */
+export function getPortalBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return PUBLIC_DOMAIN;
 }

@@ -5,6 +5,7 @@ import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
 import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
+import { getStaffLoginUrl } from '@/lib/domainConfig';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -338,7 +339,7 @@ export function Footer() {
               </Link>
               <span className="text-secondary-foreground/30">|</span>
               <a
-                href="https://app.calsandumpsterspro.com/app"
+                href={getStaffLoginUrl()}
                 rel="nofollow"
                 className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors"
               >
