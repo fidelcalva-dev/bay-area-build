@@ -9,16 +9,17 @@ const corsHeaders = {
 const SYSTEM_PROMPT = `You are a dumpster rental specialist for Calsan Dumpsters Pro, serving the San Francisco Bay Area.
 
 RULES:
-- Answer in 2-3 sentences max. Be helpful but concise.
-- NEVER quote exact pricing. Always say "Pricing depends on your ZIP code and project details" and recommend getting an exact quote.
+- Answer in 2-4 sentences max. Be helpful but concise.
+- NEVER quote exact pricing or dollar amounts. Always say "Pricing depends on your ZIP code and project details" and recommend getting an exact quote.
 - If the user asks about prohibited items (hazardous waste, tires, batteries, paint, appliances with refrigerant), list what IS allowed and suggest they call for specifics.
 - If the question is about scheduling or delivery urgency, confirm same-day delivery is available based on availability and recommend scheduling.
 - If the question is about sizing, give a general recommendation based on common projects but always recommend getting an exact quote for accuracy.
 - Do NOT use emojis.
 - Do NOT reveal internal operations, margins, or yard locations.
-- Keep a professional, helpful tone.
+- Keep a professional, confident, local-service tone. You know the Bay Area well.
+- Address both homeowners and contractors naturally.
 
-SIZING GUIDELINES (general only):
+SIZING GUIDELINES (general only — never tie to a price):
 - Bathroom remodel: 10 yard
 - Kitchen remodel: 20 yard
 - Single room cleanout: 10 yard
@@ -26,16 +27,31 @@ SIZING GUIDELINES (general only):
 - Roofing (single layer): 10-20 yard
 - Roofing (multiple layers): 20-30 yard
 - New construction: 30-40 yard
-- Concrete/dirt: 10-20 yard (flat-fee, no weight overage)
+- Concrete/dirt: 6-10 yard (flat-fee, no weight overage)
 - Yard waste/landscaping: 10-20 yard
 
+INTENT CLASSIFICATION:
+Classify the user's question into one of these categories and include the tag in your response:
+[INTENT:PRICE] - asking about cost, pricing, rates, fees
+[INTENT:SIZE] - asking about sizing or capacity
+[INTENT:MATERIALS_ALLOWED] - asking what can go in the dumpster
+[INTENT:DELIVERY_SPEED] - asking about delivery timing or urgency
+[INTENT:HEAVY_MATERIAL] - asking about concrete, dirt, soil, brick
+[INTENT:PERMIT] - asking about permits or regulations
+[INTENT:READY_TO_BOOK] - expressing readiness to order or book
+[INTENT:OTHER] - anything else
+
 RESPONSE FORMAT:
-After your answer, on a new line write exactly one of these tags:
+After your answer, on a new line write the intent tag (exactly one).
+Then on a new line write exactly one of these action tags:
 [ACTION:QUOTE] - if user should get a quote/pricing
 [ACTION:PHOTO] - if user should upload a photo for sizing help
 [ACTION:SCHEDULE] - if user is asking about delivery timing
 [ACTION:CALL] - if user needs to speak to someone
-[SIZE:XX] - optionally recommend a size (e.g., [SIZE:20])`;
+Optionally add a size range tag:
+[SIZE_RANGE:XX-YY] - recommend a size range (e.g., [SIZE_RANGE:10-20])
+Or single size:
+[SIZE_RANGE:XX] - recommend a single size (e.g., [SIZE_RANGE:20])`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -43,7 +59,11 @@ serve(async (req) => {
   }
 
   try {
-    const { question } = await req.json();
+    const body = await req.json();
+    const question = body?.question;
+    const zip = body?.zip || null;
+    const city = body?.city || null;
+
     if (!question || typeof question !== "string" || question.trim().length === 0) {
       return new Response(
         JSON.stringify({ error: "Question is required" }),
@@ -59,6 +79,11 @@ serve(async (req) => {
       );
     }
 
+    // Build user message with optional context
+    let userMessage = question.trim().slice(0, 500);
+    if (zip) userMessage += ` (ZIP: ${zip})`;
+    if (city) userMessage += ` (City: ${city})`;
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -69,9 +94,9 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: question.trim().slice(0, 500) },
+          { role: "user", content: userMessage },
         ],
-        max_tokens: 300,
+        max_tokens: 400,
       }),
     });
 
@@ -98,20 +123,33 @@ serve(async (req) => {
     const data = await response.json();
     const rawContent = data.choices?.[0]?.message?.content || "";
 
-    // Parse action and size tags from the response
+    // Parse tags
+    const intentMatch = rawContent.match(/\[INTENT:(\w+)\]/);
     const actionMatch = rawContent.match(/\[ACTION:(\w+)\]/);
-    const sizeMatch = rawContent.match(/\[SIZE:(\d+)\]/);
+    const sizeRangeMatch = rawContent.match(/\[SIZE_RANGE:([\d\-]+)\]/);
 
-    // Clean answer text (remove tags)
+    // Clean answer text
     const answerText = rawContent
+      .replace(/\[INTENT:\w+\]/g, "")
       .replace(/\[ACTION:\w+\]/g, "")
+      .replace(/\[SIZE_RANGE:[\d\-]+\]/g, "")
       .replace(/\[SIZE:\d+\]/g, "")
       .trim();
 
+    const intent = intentMatch ? intentMatch[1] : "OTHER";
+    const action = actionMatch ? actionMatch[1] : "QUOTE";
+    const sizeRange = sizeRangeMatch ? sizeRangeMatch[1] : null;
+
+    // Determine lead capture
+    const shouldCaptureLead = ["READY_TO_BOOK", "PRICE"].includes(intent);
+
     const result = {
       answer_text: answerText,
-      recommended_action: actionMatch ? actionMatch[1] : "QUOTE",
-      recommended_size: sizeMatch ? parseInt(sizeMatch[1]) : null,
+      recommended_action: action,
+      suggested_size_range: sizeRange,
+      should_capture_lead: shouldCaptureLead,
+      // Keep backward compat
+      recommended_size: sizeRange ? parseInt(sizeRange) : null,
     };
 
     return new Response(JSON.stringify(result), {

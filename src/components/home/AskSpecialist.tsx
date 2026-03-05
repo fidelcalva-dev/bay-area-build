@@ -15,6 +15,8 @@ interface AssistantResponse {
   answer_text: string;
   recommended_action: 'QUOTE' | 'PHOTO' | 'SCHEDULE' | 'CALL';
   recommended_size: number | null;
+  suggested_size_range: string | null;
+  should_capture_lead: boolean;
 }
 
 const QUICK_CHIPS = [
@@ -53,7 +55,12 @@ export function AskSpecialist() {
 
       setResponse(data as AssistantResponse);
 
-      // Check if user included contact info in question
+      // Auto-trigger lead capture for high-intent questions
+      if (data?.should_capture_lead) {
+        setShowLeadCapture(true);
+      }
+
+      // Also check if user included contact info in question
       const hasPhone = /\d{3}[\s.-]?\d{3}[\s.-]?\d{4}/.test(q);
       const hasEmail = /@/.test(q);
       if (hasPhone || hasEmail) {
@@ -176,7 +183,12 @@ export function AskSpecialist() {
             <p className="text-sm text-foreground leading-relaxed">
               {response.answer_text}
             </p>
-            {response.recommended_size && (
+            {response.suggested_size_range && (
+              <p className="text-xs text-primary font-medium mt-2">
+                Recommended size: {response.suggested_size_range} yard
+              </p>
+            )}
+            {!response.suggested_size_range && response.recommended_size && (
               <p className="text-xs text-primary font-medium mt-2">
                 Recommended size: {response.recommended_size} yard
               </p>
