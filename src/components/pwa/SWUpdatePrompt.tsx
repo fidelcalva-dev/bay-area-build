@@ -10,21 +10,22 @@ export function SWUpdatePrompt() {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return;
 
-    const handleControllerChange = () => {
-      // New SW took over — reload to get fresh content
-      window.location.reload();
-    };
+    // If no SW is registered yet (dev/preview with PWA disabled), bail out
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (!reg) return; // No SW registered — nothing to do
 
-    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+      const handleControllerChange = () => {
+        window.location.reload();
+      };
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+      cleanupRef = () => navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
 
-    // Check for waiting SW on load
-    navigator.serviceWorker.ready.then((registration) => {
-      if (registration.waiting) {
+      if (reg.waiting) {
         setShowUpdate(true);
       }
 
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
         if (!newWorker) return;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -32,11 +33,12 @@ export function SWUpdatePrompt() {
           }
         });
       });
+    }).catch(() => {
+      // SW not available — silently ignore
     });
 
-    return () => {
-      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
-    };
+    let cleanupRef: (() => void) | undefined;
+    return () => cleanupRef?.();
   }, []);
 
   const handleUpdate = () => {
