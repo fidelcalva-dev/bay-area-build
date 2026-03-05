@@ -224,3 +224,12 @@ verify_jwt = false
 
 [functions.website-assistant]
 verify_jwt = false
+
+[functions.seo-generate-page]
+verify_jwt = false
+
+[functions.seo-refresh-pages]
+verify_jwt = false
+
+[functions.seo-generate-grid-page]
+verify_jwt = false

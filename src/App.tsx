@@ -179,6 +179,7 @@ const SeoQueuePage = lazy(() => import("./pages/admin/SeoQueuePage"));
 const SeoRulesPage = lazy(() => import("./pages/admin/SeoRulesPage"));
 const SeoMetricsPage = lazy(() => import("./pages/admin/SeoMetricsPage"));
 const SeoGeneratePage = lazy(() => import("./pages/admin/SeoGeneratePage"));
+const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Marketing / Visitor Intelligence
@@ -571,6 +572,12 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
               } />
               <Route path="/debris-removal/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
+              } />
+              <Route path="/construction-debris/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
+              } />
+              <Route path="/yard-waste-disposal/:citySlug" element={
                 <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
               } />
 
@@ -991,6 +998,9 @@ const App = () => {
                 } />
                 <Route path="seo/generate" element={
                   <Suspense fallback={<PageLoader />}><SeoGeneratePage /></Suspense>
+                } />
+                <Route path="seo/grid" element={
+                  <Suspense fallback={<PageLoader />}><SeoGridPage /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

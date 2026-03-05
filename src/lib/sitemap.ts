@@ -7,6 +7,8 @@ import { SERVICE_CITIES } from './cityData';
 import { SEO_COUNTIES } from './seo-counties';
 import { SEO_USE_CASES } from './seo-use-cases';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
+import { YARD_HUBS } from './yard-hub-data';
+import { GRID_SERVICE_TYPES, GRID_SIZES, getAllGridCities } from './seo-grid';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
@@ -86,6 +88,38 @@ const MATERIAL_PAGES: SitemapEntry[] = [
   { url: '/green-waste-dumpster', changefreq: 'monthly', priority: 0.7 },
   { url: '/roofing-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
 ];
+
+// Yard hub pages
+const YARD_PAGES: SitemapEntry[] = YARD_HUBS.map(yard => ({
+  url: `/yards/${yard.slug}`,
+  changefreq: 'weekly' as const,
+  priority: 0.9,
+}));
+
+// Grid service-type city pages (concrete-disposal/oakland, etc.)
+const GRID_SERVICE_PAGES: SitemapEntry[] = (() => {
+  const pages: SitemapEntry[] = [];
+  const gridCities = getAllGridCities();
+  for (const city of gridCities) {
+    for (const svc of GRID_SERVICE_TYPES) {
+      if (svc.slug === 'dumpster-rental') continue; // already in CITY_PAGES
+      pages.push({
+        url: `${svc.routePrefix}/${city.slug}`,
+        changefreq: 'weekly',
+        priority: 0.75,
+      });
+    }
+    // Size pages for grid cities
+    for (const size of GRID_SIZES) {
+      pages.push({
+        url: `/dumpster-rental/${city.slug}/${size}-yard`,
+        changefreq: 'weekly',
+        priority: 0.8,
+      });
+    }
+  }
+  return pages;
+})();
 
 // City pages from hardcoded data
 const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
@@ -169,7 +203,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();
@@ -199,7 +233,7 @@ export async function generateFullSitemapXml(): Promise<string> {
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES];
 }
 
 // Get all entries including async SEO pages
