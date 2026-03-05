@@ -13,6 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { BUSINESS_INFO } from "@/lib/seo";
 import { PayNowDialog } from "@/components/payment/PayNowDialog";
 import { PaymentHistory } from "@/components/payment/PaymentHistory";
 import { InvoiceLineItems } from "@/components/payment/InvoiceLineItems";
@@ -541,7 +542,7 @@ const CustomerOrderDetail = () => {
               <p className="text-sm text-amber-700">Call or text us anytime</p>
             </div>
             <Button variant="outline" className="border-amber-300" asChild>
-              <a href="tel:+15101234567">
+              <a href={`tel:${BUSINESS_INFO.phone.support}`}>
                 <Phone className="w-4 h-4 mr-2" />
                 Call Now
               </a>

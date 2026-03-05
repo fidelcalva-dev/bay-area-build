@@ -3,6 +3,7 @@ import { InstantQuoteCalculatorV3 } from '@/components/quote/InstantQuoteCalcula
 import { CheckCircle, Percent, Truck, Calendar, Users, Briefcase, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TrustStrip, PhoneCTA, TRUST_BADGES } from '@/components/shared';
+import { BUSINESS_INFO } from '@/lib/seo';
 
 // Custom contractor badges
 const contractorTrustBadges = [
@@ -106,10 +107,10 @@ export default function ContractorQuote() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">Contractor hotline</p>
-                  <p className="font-bold text-foreground text-lg">(510) 680-2150</p>
+                  <p className="font-bold text-foreground text-lg">{BUSINESS_INFO.phone.salesFormatted}</p>
                 </div>
                 <Button asChild variant="default" size="sm">
-                  <a href="tel:+15106802150">Call Now</a>
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>Call Now</a>
                 </Button>
               </div>
             </div>
@@ -604,7 +605,7 @@ function ContractorQuoteCalculator() {
               <div className="grid grid-cols-3 gap-2">
                 <Button type="button" variant="outline" className="gap-1.5 h-11" onClick={() => handleSaveQuote(false)} disabled={!canGoNext || isSubmitting}><Bookmark className="w-4 h-4" /><span className="hidden sm:inline">Save</span></Button>
                 <Button type="button" variant="outline" className="gap-1.5 h-11" onClick={handleTextQuote} disabled={!formData.name}><MessageCircle className="w-4 h-4" /><span className="hidden sm:inline">Text</span></Button>
-                <Button type="button" variant="outline" className="gap-1.5 h-11" asChild><a href="tel:+15106802150"><Phone className="w-4 h-4" /><span className="hidden sm:inline">Call</span></a></Button>
+                <Button type="button" variant="outline" className="gap-1.5 h-11" asChild><a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4" /><span className="hidden sm:inline">Call</span></a></Button>
               </div>
             </div>
           </div>

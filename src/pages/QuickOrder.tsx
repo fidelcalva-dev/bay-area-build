@@ -8,6 +8,7 @@ import { Loader2, CheckCircle, AlertTriangle, Package, MapPin, Calendar, Truck, 
 import { validateQuickLink, recordQuickLinkUse, QuickLink } from '@/lib/quickLinkService';
 import { useQuoteCalculation, getZoneByZip } from '@/components/quote/hooks/useQuoteCalculation';
 import { QuoteBreakdown } from '@/components/quote/QuoteBreakdown';
+import { BUSINESS_INFO } from '@/lib/seo';
 import { QuoteOrderFlow } from '@/components/quote/QuoteOrderFlow';
 import type { QuoteFormData } from '@/components/quote/types';
 
@@ -314,7 +315,7 @@ export default function QuickOrder() {
                 className="flex-1"
                 asChild
               >
-                <a href="tel:+15105551234">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="w-4 h-4 mr-2" />
                   Call to Order
                 </a>
@@ -325,7 +326,7 @@ export default function QuickOrder() {
           {/* Trust Footer */}
           <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>🔒 Secure checkout • All-inclusive pricing • No hidden fees</p>
-            <p className="mt-1">Questions? Call us at <a href="tel:+15105551234" className="text-primary hover:underline">(510) 555-1234</a></p>
+            <p className="mt-1">Questions? Call us at <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary hover:underline">{BUSINESS_INFO.phone.salesFormatted}</a></p>
           </div>
         </div>
       </section>

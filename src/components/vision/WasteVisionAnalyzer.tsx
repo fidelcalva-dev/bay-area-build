@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { BUSINESS_INFO } from '@/lib/seo';
 import type { AnalysisResult } from './types';
 
 // ============================================================
@@ -105,8 +106,8 @@ function ResultDisplay({
               <p className="text-xs text-muted-foreground mt-1">
                 Potential concerns detected. Please contact our team before booking.
               </p>
-              <a href="tel:+15106802150" className="text-xs font-medium text-primary mt-2 inline-flex items-center gap-1">
-                <Phone className="w-3 h-3" /> Call (510) 680-2150
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-xs font-medium text-primary mt-2 inline-flex items-center gap-1">
+                <Phone className="w-3 h-3" /> Call {BUSINESS_INFO.phone.salesFormatted}
               </a>
             </div>
           </div>
@@ -405,17 +406,17 @@ export function WasteVisionAnalyzer({
       if (onSendToCS) {
         onSendToCS(result);
       } else {
-        window.location.href = 'tel:+15106802150';
+        window.location.href = `tel:${BUSINESS_INFO.phone.sales}`;
       }
     } catch {
-      window.location.href = 'tel:+15106802150';
+      window.location.href = `tel:${BUSINESS_INFO.phone.sales}`;
     } finally {
       setIsCreatingTicket(false);
     }
   };
 
   const handleCallDispatch = () => {
-    window.location.href = 'tel:+15106802150';
+    window.location.href = `tel:${BUSINESS_INFO.phone.sales}`;
   };
 
   const handleManualSelect = () => {

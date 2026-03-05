@@ -1,6 +1,7 @@
 import { MapPin, Rocket, Target, TrendingUp, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { BUSINESS_INFO } from '@/lib/seo';
 
 interface MilestoneData {
   year: string;
@@ -210,7 +211,7 @@ export const ExpansionRoadmapSection = () => {
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="border-border" asChild>
-              <a href="tel:+15106802150">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                 Discuss Partnership
               </a>
             </Button>

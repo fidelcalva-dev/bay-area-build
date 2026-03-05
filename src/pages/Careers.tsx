@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { BUSINESS_INFO } from '@/lib/seo';
 import { z } from 'zod';
 
 const applicationSchema = z.object({
@@ -304,7 +305,7 @@ const Careers = () => {
               </Dialog>
 
               <Button size="lg" variant="outline" className="text-lg px-8 border-white text-white hover:bg-white/10" asChild>
-                <a href="tel:+15106802150">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="mr-2 h-5 w-5" />
                   Call to Discuss
                 </a>
@@ -419,7 +420,7 @@ const Careers = () => {
                         Apply Now
                       </Button>
                       <Button variant="outline" className="w-full" asChild>
-                        <a href="tel:+15106802150">
+                        <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                           <Phone className="mr-2 h-4 w-4" />
                           Call Us
                         </a>
@@ -583,9 +584,9 @@ const Careers = () => {
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 border-white text-white hover:bg-white/10" asChild>
-              <a href="tel:+15106802150">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                 <Phone className="mr-2 h-5 w-5" />
-                (510) 680-2150
+                {BUSINESS_INFO.phone.salesFormatted}
               </a>
             </Button>
           </div>

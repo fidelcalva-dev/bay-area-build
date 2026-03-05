@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler } from 'lucide-react';
+import { BUSINESS_INFO } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 
 const allowed = [
@@ -204,8 +205,8 @@ export default function Materials() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <a href="tel:+15106802150">
-                Call (510) 680-2150
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                Call {BUSINESS_INFO.phone.salesFormatted}
               </a>
             </Button>
             <Button asChild variant="heroOutline" size="xl">
