@@ -297,6 +297,10 @@ export default function SeoAdminDashboard() {
           <h3 className="font-semibold text-foreground group-hover:text-primary">✨ Generate Page</h3>
           <p className="text-xs text-muted-foreground">AI-generate new SEO pages.</p>
         </Link>
+        <Link to="/admin/seo/grid" className="bg-card border border-primary/30 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">🗺️ SEO Grid</h3>
+          <p className="text-xs text-muted-foreground">Yard-to-city grid generation.</p>
+        </Link>
         <Link to="/admin/seo/queue" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
           <h3 className="font-semibold text-foreground group-hover:text-primary">Job Queue</h3>
           <p className="text-xs text-muted-foreground">Generation & refresh job status.</p>
