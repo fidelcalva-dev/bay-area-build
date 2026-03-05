@@ -28,3 +28,7 @@ export function countyUrl(countySlug: string): string {
 export function useCaseUrl(useCaseSlug: string): string {
   return `/use-cases/${useCaseSlug}`;
 }
+
+export function yardHubUrl(yardSlug: string): string {
+  return `/yards/${yardSlug}`;
+}

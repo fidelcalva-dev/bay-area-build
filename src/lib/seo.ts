@@ -109,6 +109,19 @@ export const OPERATIONAL_YARDS: OperationalYard[] = [
     note: 'Serves South Bay',
     isActive: true,
   },
+  {
+    id: 'sanfrancisco',
+    name: 'San Francisco Yard',
+    address: '1200 17th St, San Francisco, CA 94107',
+    city: 'San Francisco',
+    state: 'CA',
+    zip: '94107',
+    lat: 37.7650,
+    lng: -122.3964,
+    directionsUrl: 'https://maps.app.goo.gl/?q=1200+17th+St,+San+Francisco,+CA',
+    note: 'Serves SF / Peninsula',
+    isActive: true,
+  },
 ];
 
 // Helper to get yard by ID
