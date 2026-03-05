@@ -293,6 +293,22 @@ export default function SeoAdminDashboard() {
           <h3 className="font-semibold text-foreground group-hover:text-primary">Indexation</h3>
           <p className="text-xs text-muted-foreground">Track pages & ping Google.</p>
         </Link>
+        <Link to="/admin/seo/generate" className="bg-card border border-primary/30 rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">✨ Generate Page</h3>
+          <p className="text-xs text-muted-foreground">AI-generate new SEO pages.</p>
+        </Link>
+        <Link to="/admin/seo/queue" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">Job Queue</h3>
+          <p className="text-xs text-muted-foreground">Generation & refresh job status.</p>
+        </Link>
+        <Link to="/admin/seo/rules" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">Content Rules</h3>
+          <p className="text-xs text-muted-foreground">Guardrails & publish limits.</p>
+        </Link>
+        <Link to="/admin/seo/metrics" className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">Metrics</h3>
+          <p className="text-xs text-muted-foreground">Rankings, clicks & impressions.</p>
+        </Link>
       </div>
 
       {/* ── Backlink Strategy Checklist ────────────────────── */}
