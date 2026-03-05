@@ -5,7 +5,7 @@ import { BUSINESS_INFO, OPERATIONAL_YARDS } from './seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from './shared-data';
 
 export interface CityPageData {
-  slug: string; // URL-friendly: oakland-ca
+  slug: string; // URL-friendly: oakland (no -ca suffix, matches DB canonical)
   name: string;
   state: string;
   county: string;
@@ -1648,11 +1648,22 @@ export const SERVICE_CITIES: CityPageData[] = [
   },
 ];
 
-// ... keep existing code
-export const getCityBySlug = (slug: string) => SERVICE_CITIES.find(c => c.slug === slug);
+// Normalize slug helper — strips -ca suffix to match DB canonical format
+function normalizeSlug(slug: string): string {
+  return slug.endsWith('-ca') ? slug.slice(0, -3) : slug;
+}
 
-// Get all city slugs for routing
-export const getAllCitySlugs = () => SERVICE_CITIES.map(c => c.slug);
+// ... keep existing code
+export const getCityBySlug = (slug: string) => {
+  const norm = normalizeSlug(slug);
+  return SERVICE_CITIES.find(c => normalizeSlug(c.slug) === norm);
+};
+
+// Get all city slugs for routing (canonical format without -ca)
+export const getAllCitySlugs = () => SERVICE_CITIES.map(c => normalizeSlug(c.slug));
+
+// Get canonical slug for a city (strips -ca)
+export const getCanonicalCitySlug = (slug: string) => normalizeSlug(slug);
 
 // Generate city-specific JSON-LD with WasteManagementService
 export function generateCitySchema(city: CityPageData) {
@@ -1660,12 +1671,12 @@ export function generateCitySchema(city: CityPageData) {
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "WasteManagementService"],
-    "@id": `${BUSINESS_INFO.url}/dumpster-rental/${city.slug}#business`,
+    "@id": `${BUSINESS_INFO.url}/dumpster-rental/${normalizeSlug(city.slug)}#business`,
     "name": `${BUSINESS_INFO.name} - ${city.name}`,
     "description": city.metaDescription,
     "telephone": BUSINESS_INFO.phone.sales,
     "email": BUSINESS_INFO.email,
-    "url": `${BUSINESS_INFO.url}/dumpster-rental/${city.slug}`,
+    "url": `${BUSINESS_INFO.url}/dumpster-rental/${normalizeSlug(city.slug)}`,
     "serviceType": [
       "Dumpster Rental Service",
       "Roll Off Dumpster Service",
@@ -1723,10 +1734,10 @@ export function generateCitySchema(city: CityPageData) {
   };
 }
 
-// Generate sitemap entries for all cities
+// Generate sitemap entries for all cities (canonical slugs without -ca)
 export function getCitySitemapEntries() {
   return SERVICE_CITIES.map(city => ({
-    url: `/dumpster-rental/${city.slug}`,
+    url: `/dumpster-rental/${normalizeSlug(city.slug)}`,
     lastmod: new Date().toISOString().split('T')[0],
     priority: 0.8,
     changefreq: 'monthly' as const,

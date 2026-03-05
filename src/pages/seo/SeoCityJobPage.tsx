@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
@@ -11,12 +11,18 @@ import { getJobTypeBySlug, SEO_JOB_TYPES } from '@/lib/seo-jobs';
 import { ArrowRight, Phone, CheckCircle, Wrench, HardHat, Building2 } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, cityJobUrl, citySizeUrl } from '@/lib/seo-urls';
+import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import NotFound from '../NotFound';
 
 const CATEGORY_ICONS = { residential: HardHat, commercial: Building2, contractor: Wrench };
 
 export default function SeoCityJobPage() {
-  const { citySlug, jobSlug } = useParams<{ citySlug: string; jobSlug: string }>();
+  const { citySlug: rawSlug, jobSlug } = useParams<{ citySlug: string; jobSlug: string }>();
+  const normalized = normalizeCitySlug(rawSlug || '');
+  if (rawSlug && normalized !== rawSlug) {
+    return <Navigate to={`/dumpster-rental/${normalized}/${jobSlug}`} replace />;
+  }
+  const citySlug = normalized;
   const job = jobSlug ? getJobTypeBySlug(jobSlug) : undefined;
 
   const { data: city, isLoading } = useQuery({

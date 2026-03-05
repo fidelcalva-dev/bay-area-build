@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { SERVICE_CITIES } from '@/lib/cityData';
+import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, Building, Truck, CheckCircle, Warehouse, HardHat } from 'lucide-react';
 
 interface CommercialPageContent {
@@ -197,7 +197,7 @@ export default function CommercialLandingPage() {
           <h2 className="heading-md text-foreground mb-6 text-center">Serving These Bay Area Cities</h2>
           <div className="flex flex-wrap justify-center gap-2">
             {SERVICE_CITIES.slice(0, 15).map(city => (
-              <Link key={city.slug} to={`/dumpster-rental/${city.slug}`}
+              <Link key={city.slug} to={`/dumpster-rental/${getCanonicalCitySlug(city.slug)}`}
                 className="px-3 py-1.5 bg-card border border-border rounded-full text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
                 {city.name}
               </Link>

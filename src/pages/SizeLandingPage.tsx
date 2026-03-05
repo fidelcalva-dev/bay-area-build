@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
-import { SERVICE_CITIES } from '@/lib/cityData';
+import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
 import NotFound from './NotFound';
 
@@ -262,7 +262,7 @@ export default function SizeLandingPage() {
             {SERVICE_CITIES.slice(0, 12).map(city => (
               <Link
                 key={city.slug}
-                to={`/dumpster-rental/${city.slug}`}
+                to={`/dumpster-rental/${getCanonicalCitySlug(city.slug)}`}
                 className="px-3 py-1.5 bg-muted rounded-full text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
               >
                 {city.name}

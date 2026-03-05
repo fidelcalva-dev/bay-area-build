@@ -119,7 +119,7 @@ export default function ContractorResources() {
                   ))}
                 </ul>
                 <Link
-                  to={`/dumpster-rental/${guide.slug}-ca`}
+                  to={`/dumpster-rental/${guide.slug}`}
                   className="text-primary hover:underline text-sm font-medium"
                 >
                   View all dumpster services in {guide.city}
