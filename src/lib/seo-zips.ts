@@ -324,6 +324,112 @@ export const SEO_ZIP_DATA: SeoZipData[] = [
   { zip: '94930', city: 'Fairfax', citySlug: 'san-rafael', neighborhoods: ['Fairfax', 'Manor'], tier: 'C', yardId: 'oakland' },
   { zip: '94503', city: 'American Canyon', citySlug: 'napa', neighborhoods: ['American Canyon', 'Watson Ranch'], tier: 'C', yardId: 'oakland' },
   { zip: '94574', city: 'St. Helena', citySlug: 'napa', neighborhoods: ['St. Helena', 'Meadowood'], tier: 'C', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — Peninsula (San Mateo County)
+  // ══════════════════════════════════════════════════
+  { zip: '94010', city: 'Burlingame', citySlug: 'burlingame', neighborhoods: ['Burlingame Hills', 'Easton Addition'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94030', city: 'Millbrae', citySlug: 'millbrae', neighborhoods: ['Millbrae Meadows', 'Mills Estates'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94014', city: 'Daly City', citySlug: 'daly-city', neighborhoods: ['Westlake', 'Serramonte'], tier: 'B', yardId: 'oakland' },
+  { zip: '94015', city: 'Daly City', citySlug: 'daly-city', neighborhoods: ['Broadmoor', 'Colma'], tier: 'B', yardId: 'oakland' },
+  { zip: '94404', city: 'Foster City', citySlug: 'foster-city', neighborhoods: ['Foster City', 'Marlin Cove'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94002', city: 'Belmont', citySlug: 'belmont', neighborhoods: ['Belmont', 'Sterling Downs'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94070', city: 'San Carlos', citySlug: 'san-carlos', neighborhoods: ['San Carlos', 'White Oaks'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94025', city: 'Menlo Park', citySlug: 'menlo-park', neighborhoods: ['Menlo Park', 'Sharon Heights'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94027', city: 'Atherton', citySlug: 'atherton', neighborhoods: ['Atherton', 'Lindenwood'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94062', city: 'Woodside', citySlug: 'woodside', neighborhoods: ['Woodside', 'Kings Mountain'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94028', city: 'Portola Valley', citySlug: 'portola-valley', neighborhoods: ['Portola Valley', 'Ladera'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94303', city: 'East Palo Alto', citySlug: 'east-palo-alto', neighborhoods: ['East Palo Alto', 'Belle Haven'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94005', city: 'Brisbane', citySlug: 'brisbane', neighborhoods: ['Brisbane', 'Sierra Point'], tier: 'B', yardId: 'oakland' },
+  { zip: '94017', city: 'Daly City', citySlug: 'daly-city', neighborhoods: ['Daly City', 'Broadmoor Village'], tier: 'B', yardId: 'oakland' },
+  { zip: '94066', city: 'San Bruno', citySlug: 'san-bruno', neighborhoods: ['San Bruno', 'Crestmoor'], tier: 'B', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — South Bay (Santa Clara County)
+  // ══════════════════════════════════════════════════
+  { zip: '95070', city: 'Saratoga', citySlug: 'saratoga', neighborhoods: ['Saratoga Village', 'Quito'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95030', city: 'Los Gatos', citySlug: 'los-gatos', neighborhoods: ['Los Gatos', 'Shannon'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95032', city: 'Los Gatos', citySlug: 'los-gatos', neighborhoods: ['Los Gatos', 'Blossom Hill'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95008', city: 'Campbell', citySlug: 'campbell', neighborhoods: ['Downtown Campbell', 'Pruneyard'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95037', city: 'Morgan Hill', citySlug: 'morgan-hill', neighborhoods: ['Morgan Hill', 'El Toro'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95020', city: 'Gilroy', citySlug: 'gilroy', neighborhoods: ['Downtown Gilroy', 'Gilroy Gardens'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95046', city: 'Monte Sereno', citySlug: 'monte-sereno', neighborhoods: ['Monte Sereno'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94301', city: 'Palo Alto', citySlug: 'palo-alto', neighborhoods: ['Downtown Palo Alto', 'University South'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94306', city: 'Palo Alto', citySlug: 'palo-alto', neighborhoods: ['South Palo Alto', 'Barron Park'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94304', city: 'Palo Alto', citySlug: 'palo-alto', neighborhoods: ['Stanford', 'Stanford Research Park'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95014', city: 'Cupertino', citySlug: 'cupertino', neighborhoods: ['Cupertino', 'Rancho Rinconada'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94043', city: 'Mountain View', citySlug: 'mountain-view', neighborhoods: ['Mountain View', 'North Bayshore'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94085', city: 'Sunnyvale', citySlug: 'sunnyvale', neighborhoods: ['Sunnyvale', 'Lakewood Village'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94086', city: 'Sunnyvale', citySlug: 'sunnyvale', neighborhoods: ['Sunnyvale', 'Downtown Sunnyvale'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94087', city: 'Sunnyvale', citySlug: 'sunnyvale', neighborhoods: ['Sunnyvale', 'Ortega Park'], tier: 'B', yardId: 'sanjose' },
+  { zip: '94089', city: 'Sunnyvale', citySlug: 'sunnyvale', neighborhoods: ['Sunnyvale', 'Moffett Park'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95050', city: 'Santa Clara', citySlug: 'santa-clara', neighborhoods: ['Downtown Santa Clara', 'Old Quad'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95051', city: 'Santa Clara', citySlug: 'santa-clara', neighborhoods: ['Santa Clara', 'Scott Blvd'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95054', city: 'Santa Clara', citySlug: 'santa-clara', neighborhoods: ['Santa Clara', 'Great America'], tier: 'B', yardId: 'sanjose' },
+  { zip: '95035', city: 'Milpitas', citySlug: 'milpitas', neighborhoods: ['Milpitas', 'Great Mall'], tier: 'B', yardId: 'sanjose' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — Contra Costa County
+  // ══════════════════════════════════════════════════
+  { zip: '94523', city: 'Pleasant Hill', citySlug: 'pleasant-hill', neighborhoods: ['Pleasant Hill', 'Poet\'s Corner'], tier: 'B', yardId: 'oakland' },
+  { zip: '94561', city: 'Oakley', citySlug: 'oakley', neighborhoods: ['Oakley', 'Cypress Grove'], tier: 'B', yardId: 'oakland' },
+  { zip: '94505', city: 'Discovery Bay', citySlug: 'discovery-bay', neighborhoods: ['Discovery Bay'], tier: 'C', yardId: 'oakland' },
+  { zip: '94565', city: 'Bay Point', citySlug: 'bay-point', neighborhoods: ['Bay Point', 'Porto Vista'], tier: 'B', yardId: 'oakland' },
+  { zip: '94707', city: 'Kensington', citySlug: 'kensington', neighborhoods: ['Kensington', 'Sunset View'], tier: 'A', yardId: 'oakland' },
+  { zip: '94611', city: 'Piedmont', citySlug: 'piedmont', neighborhoods: ['Piedmont', 'Piedmont Pines'], tier: 'A', yardId: 'oakland' },
+  { zip: '94547', city: 'Hercules', citySlug: 'hercules', neighborhoods: ['Hercules', 'New Pacific'], tier: 'B', yardId: 'oakland' },
+  { zip: '94803', city: 'El Sobrante', citySlug: 'el-sobrante', neighborhoods: ['El Sobrante', 'Tara Hills'], tier: 'B', yardId: 'oakland' },
+  { zip: '94517', city: 'Clayton', citySlug: 'clayton', neighborhoods: ['Clayton', 'Oakhurst'], tier: 'B', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — Marin County
+  // ══════════════════════════════════════════════════
+  { zip: '94901', city: 'San Rafael', citySlug: 'san-rafael', neighborhoods: ['Downtown San Rafael', 'Canal District'], tier: 'B', yardId: 'oakland' },
+  { zip: '94903', city: 'San Rafael', citySlug: 'san-rafael', neighborhoods: ['Terra Linda', 'Marinwood'], tier: 'B', yardId: 'oakland' },
+  { zip: '94904', city: 'San Rafael', citySlug: 'san-rafael', neighborhoods: ['Kentfield', 'Greenbrae'], tier: 'B', yardId: 'oakland' },
+  { zip: '94924', city: 'Corte Madera', citySlug: 'corte-madera', neighborhoods: ['Corte Madera', 'Christmas Tree Hill'], tier: 'B', yardId: 'oakland' },
+  { zip: '94937', city: 'Larkspur', citySlug: 'larkspur', neighborhoods: ['Larkspur', 'Baltimore Park'], tier: 'B', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — Solano County
+  // ══════════════════════════════════════════════════
+  { zip: '94510', city: 'Benicia', citySlug: 'benicia', neighborhoods: ['Downtown Benicia', 'East Side'], tier: 'B', yardId: 'oakland' },
+  { zip: '94503', city: 'American Canyon', citySlug: 'american-canyon', neighborhoods: ['American Canyon', 'Napa Junction'], tier: 'B', yardId: 'oakland' },
+  { zip: '94585', city: 'Suisun City', citySlug: 'suisun-city', neighborhoods: ['Suisun City', 'Lawler Ranch'], tier: 'C', yardId: 'oakland' },
+  { zip: '95687', city: 'Vacaville', citySlug: 'vacaville', neighborhoods: ['Downtown Vacaville', 'Alamo Creek'], tier: 'C', yardId: 'oakland' },
+  { zip: '95688', city: 'Vacaville', citySlug: 'vacaville', neighborhoods: ['Brown Valley', 'Leisure Town'], tier: 'C', yardId: 'oakland' },
+  { zip: '94533', city: 'Fairfield', citySlug: 'fairfield', neighborhoods: ['Downtown Fairfield', 'Cordelia'], tier: 'C', yardId: 'oakland' },
+  { zip: '94534', city: 'Fairfield', citySlug: 'fairfield', neighborhoods: ['Fairfield', 'Green Valley'], tier: 'C', yardId: 'oakland' },
+  { zip: '95620', city: 'Dixon', citySlug: 'dixon', neighborhoods: ['Downtown Dixon', 'Northeast Dixon'], tier: 'C', yardId: 'oakland' },
+  { zip: '94571', city: 'Rio Vista', citySlug: 'rio-vista', neighborhoods: ['Rio Vista', 'Trilogy'], tier: 'C', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — Additional East Bay
+  // ══════════════════════════════════════════════════
+  { zip: '94706', city: 'Albany', citySlug: 'albany', neighborhoods: ['Albany Village', 'Solano Avenue'], tier: 'A', yardId: 'oakland' },
+  { zip: '94580', city: 'San Lorenzo', citySlug: 'san-lorenzo', neighborhoods: ['San Lorenzo Village', 'Ashland'], tier: 'A', yardId: 'oakland' },
+  { zip: '94806', city: 'San Pablo', citySlug: 'san-pablo', neighborhoods: ['San Pablo', 'Rumrill'], tier: 'A', yardId: 'oakland' },
+
+  // ══════════════════════════════════════════════════
+  // Expanded — San Joaquin / Central Valley
+  // ══════════════════════════════════════════════════
+  { zip: '95376', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['Tracy', 'Mountain House'], tier: 'C', yardId: 'oakland' },
+  { zip: '95377', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['South Tracy', 'Ellis'], tier: 'C', yardId: 'oakland' },
+  { zip: '95391', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['Mountain House', 'Delta'], tier: 'C', yardId: 'oakland' },
+  { zip: '95201', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Downtown Stockton', 'Magnolia'], tier: 'C', yardId: 'oakland' },
+  { zip: '95202', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Victory Park', 'Midtown'], tier: 'C', yardId: 'oakland' },
+  { zip: '95205', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['East Stockton', 'Boggs Tract'], tier: 'C', yardId: 'oakland' },
+  { zip: '95206', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['South Stockton', 'Weston Ranch'], tier: 'C', yardId: 'oakland' },
+  { zip: '95212', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Lodi', 'Bear Creek'], tier: 'C', yardId: 'oakland' },
+  { zip: '95219', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Brookside', 'Park West'], tier: 'C', yardId: 'oakland' },
+  { zip: '95820', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Colonial Heights', 'Oak Park'], tier: 'C', yardId: 'oakland' },
+  { zip: '95823', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['South Sacramento', 'Valley Hi'], tier: 'C', yardId: 'oakland' },
+  { zip: '95824', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Fruitridge Pocket', 'Colonial Manor'], tier: 'C', yardId: 'oakland' },
+  { zip: '95828', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Vineyard', 'Florin'], tier: 'C', yardId: 'oakland' },
+  { zip: '95831', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Pocket', 'Greenhaven'], tier: 'C', yardId: 'oakland' },
+  { zip: '95833', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Natomas', 'Gateway West'], tier: 'C', yardId: 'oakland' },
+  { zip: '95834', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['North Natomas', 'Natomas Park'], tier: 'C', yardId: 'oakland' },
+  { zip: '95835', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Natomas', 'South Natomas'], tier: 'C', yardId: 'oakland' },
 ];
 
 export function getZipData(zip: string): SeoZipData | undefined {
