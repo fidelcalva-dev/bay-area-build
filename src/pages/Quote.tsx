@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { V3QuoteFlow } from '@/components/quote/v3';
-import { CheckCircle, MessageCircle, Shield } from 'lucide-react';
+import { CheckCircle, MessageCircle, Shield, ArrowRight } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 import { CalculatorSeoFaq } from '@/components/seo/CalculatorSeoFaq';
@@ -84,6 +85,18 @@ export default function Quote() {
                 <p className="text-xs text-muted-foreground mt-0.5">
                   After-hours messages answered next business window
                 </p>
+                {/* Internal links for SEO */}
+                <div className="flex flex-wrap justify-center gap-3 mt-4 pt-3 border-t border-border">
+                  <Link to="/how-it-works" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    How it works <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <Link to="/why-local-yards" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    Why local yards <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <Link to="/not-a-broker" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    We're not a broker <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

@@ -85,7 +85,7 @@ const Index = () => {
               Same-Day Dumpster Rental in the Bay Area
             </h1>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
-              Fast delivery. Transparent pricing. Professional service.
+              Powered by Real Local Yards, Not Brokers. Transparent pricing by ZIP code.
             </p>
           </div>
 
@@ -115,7 +115,7 @@ const Index = () => {
           </div>
 
           <p className="mt-5 text-center text-xs text-muted-foreground/60">
-            Serving the Bay Area since 2009.
+            Serving the Bay Area since 2009. <Link to="/why-local-yards" className="underline hover:text-primary transition-colors">Why local yards matter</Link>
           </p>
         </div>
       </section>
@@ -148,7 +148,7 @@ const Index = () => {
           </div>
           <GuidedAssistant />
           <p className="text-center text-sm text-muted-foreground mt-4">
-            You'll see your total before you confirm. No surprises.
+            You'll see your total before you confirm. No surprises. <Link to="/how-it-works" className="underline hover:text-primary transition-colors">See how it works</Link>
           </p>
         </div>
       </section>
