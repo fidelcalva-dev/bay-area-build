@@ -905,18 +905,23 @@ export const getCityBySlug = (slug: string) => SERVICE_CITIES.find(c => c.slug =
 // Get all city slugs for routing
 export const getAllCitySlugs = () => SERVICE_CITIES.map(c => c.slug);
 
-// Generate city-specific JSON-LD
+// Generate city-specific JSON-LD with WasteManagementService
 export function generateCitySchema(city: CityPageData) {
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.nearestYardId);
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "WasteManagementService"],
     "@id": `${BUSINESS_INFO.url}/dumpster-rental/${city.slug}#business`,
     "name": `${BUSINESS_INFO.name} - ${city.name}`,
     "description": city.metaDescription,
     "telephone": BUSINESS_INFO.phone.sales,
     "email": BUSINESS_INFO.email,
     "url": `${BUSINESS_INFO.url}/dumpster-rental/${city.slug}`,
+    "serviceType": [
+      "Dumpster Rental Service",
+      "Roll Off Dumpster Service",
+      "Construction Waste Removal"
+    ],
     "address": {
       "@type": "PostalAddress",
       "addressLocality": city.name,
@@ -942,6 +947,13 @@ export function generateCitySchema(city: CityPageData) {
       "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
       "opens": "06:00",
       "closes": "21:00",
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "200",
+      "bestRating": "5",
+      "worstRating": "1"
     },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",

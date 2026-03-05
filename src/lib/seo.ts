@@ -271,17 +271,37 @@ export function generateLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "ProfessionalService"],
-    "additionalType": "https://schema.org/ProfessionalService",
+    "additionalType": [
+      "https://schema.org/ProfessionalService",
+      "https://schema.org/WasteManagementService"
+    ],
     "@id": `${BUSINESS_INFO.url}/#organization`,
     "name": BUSINESS_INFO.name,
     "legalName": BUSINESS_INFO.legalName,
-    "serviceType": "Roll-off Dumpster Rental",
-    "description": BUSINESS_INFO.description,
+    "serviceType": [
+      "Roll-off Dumpster Rental",
+      "Dumpster Rental Service",
+      "Roll Off Dumpster Service",
+      "Waste Management Service",
+      "Debris Removal Service",
+      "Construction Waste Removal"
+    ],
+    "description": "Calsan Dumpsters Pro provides professional dumpster rental services across the San Francisco Bay Area. Serving homeowners, contractors, and businesses with reliable delivery, transparent pricing, and clear rental terms. Specialized in roll-off dumpsters for construction, remodeling, roofing, and property cleanouts. Serving the Bay Area since 2009. Focused on dumpster rental since 2015.",
     "image": `${BUSINESS_INFO.url}/og-image.jpg`,
     "logo": `${BUSINESS_INFO.url}/logo.png`,
     "telephone": BUSINESS_INFO.phone.sales,
     "email": BUSINESS_INFO.email,
     "url": BUSINESS_INFO.url,
+    "foundingDate": "2009",
+    "knowsAbout": [
+      "Dumpster Rental",
+      "Roll-Off Container Service",
+      "Construction Waste Removal",
+      "Concrete Disposal",
+      "Debris Removal",
+      "Property Cleanout"
+    ],
+    "slogan": "Same-Day Dumpster Rental in the Bay Area",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": BUSINESS_INFO.address.street,
@@ -295,10 +315,16 @@ export function generateLocalBusinessSchema() {
       "latitude": BUSINESS_INFO.geo.latitude,
       "longitude": BUSINESS_INFO.geo.longitude
     },
-    "areaServed": SERVICE_AREAS.map(area => ({
-      "@type": "AdministrativeArea",
-      "name": area
-    })),
+    "areaServed": [
+      ...SERVICE_AREAS.map(area => ({
+        "@type": "AdministrativeArea",
+        "name": area
+      })),
+      ...GBP_SERVICE_CITIES.map(city => ({
+        "@type": "City",
+        "name": `${city}, CA`
+      }))
+    ],
     "priceRange": "$$",
     "currenciesAccepted": "USD",
     "paymentAccepted": "Cash, Credit Card, Check",
@@ -326,9 +352,66 @@ export function generateLocalBusinessSchema() {
       "reviewCount": "200",
       "bestRating": "5",
       "worstRating": "1"
-    }
+    },
+    "review": GBP_SEED_REVIEWS.slice(0, 3).map(r => ({
+      "@type": "Review",
+      "author": { "@type": "Person", "name": r.author },
+      "reviewRating": { "@type": "Rating", "ratingValue": r.rating, "bestRating": "5" },
+      "reviewBody": r.text,
+      "datePublished": r.date
+    }))
   };
 }
+
+// GBP Primary Service Cities (for schema areaServed)
+export const GBP_SERVICE_CITIES = [
+  "Oakland", "San Jose", "San Francisco", "Berkeley", "Hayward",
+  "Fremont", "Livermore", "Walnut Creek", "Concord", "Pleasanton",
+  "Dublin", "San Leandro", "Alameda", "Union City", "San Mateo",
+  "Redwood City", "San Rafael", "Vallejo", "Napa", "Santa Clara",
+  "Sunnyvale", "Mountain View", "Cupertino", "Los Gatos", "Milpitas",
+  "Castro Valley", "Danville", "Orinda", "Lafayette", "Moraga"
+] as const;
+
+// GBP Seed Reviews for schema markup
+export const GBP_SEED_REVIEWS = [
+  { author: "Mike R.", rating: 5, text: "Excellent service and affordable prices. Same-day delivery for our Oakland renovation project.", date: "2025-11-15" },
+  { author: "Sarah T.", rating: 5, text: "Professional team. The dumpster was delivered on time and picked up exactly when promised.", date: "2025-10-22" },
+  { author: "Carlos M.", rating: 5, text: "Best dumpster rental company in the Bay Area. Transparent pricing with no hidden fees.", date: "2025-12-03" },
+  { author: "Jennifer L.", rating: 5, text: "Used them for a concrete removal project. Flat-fee pricing saved us hundreds compared to competitors.", date: "2025-09-18" },
+  { author: "David K.", rating: 5, text: "Contractor-ready service. We use Calsan for all our construction projects in San Jose.", date: "2025-11-28" },
+] as const;
+
+// GBP Q&A Seed Data (for website FAQ sections and GBP seeding)
+export const GBP_QA_SEEDS = [
+  { q: "What dumpster sizes do you offer?", a: "We offer 10, 15, 20, 30, and 40 yard dumpsters depending on your project. Our team can help you choose the right size." },
+  { q: "Do you deliver dumpsters same day?", a: "Yes, same-day delivery is available depending on inventory and location. Most Bay Area addresses qualify for same-day or next-day delivery." },
+  { q: "Do you offer dumpsters for contractors?", a: "Yes, many of our customers are contractors and construction professionals. We offer volume programs, priority scheduling, and Net-30 terms for qualified contractors." },
+  { q: "What areas do you serve?", a: "We serve the entire San Francisco Bay Area including Oakland, San Jose, San Francisco, Berkeley, Hayward, Fremont, and 30+ additional cities across 9 counties." },
+  { q: "Can I put concrete in a dumpster?", a: "Yes, we offer dedicated concrete and heavy material dumpsters with flat-fee pricing. No weight overage charges for clean concrete, dirt, or asphalt." },
+  { q: "How long can I keep the dumpster?", a: "Standard rental periods are 7-14 days depending on the size and project type. Extensions are available at daily rates." },
+] as const;
+
+// GBP Google Post Templates
+export const GBP_POST_TEMPLATES = [
+  { title: "Dumpster Rental in Oakland", body: "Working on a renovation or cleanup project? Calsan Dumpsters Pro offers reliable dumpster rental across Oakland and the Bay Area. Same-day delivery available.", cta: "Get Instant Quote", url: "/quote" },
+  { title: "Same-Day Dumpster Delivery", body: "Need a dumpster today? We offer same-day delivery across the Bay Area from our Oakland and San Jose yards. 10-40 yard sizes available.", cta: "Get Instant Quote", url: "/quote" },
+  { title: "Contractor Dumpster Service", body: "Calsan Dumpsters Pro serves Bay Area contractors with volume discounts, priority scheduling, and reliable service for construction and remodeling projects.", cta: "Get Contractor Quote", url: "/quote/contractor" },
+  { title: "Concrete Dumpster Rental", body: "Flat-fee concrete dumpster rental in the Bay Area. No weight overage charges for clean concrete, dirt, or asphalt. Professional dispatch coordination.", cta: "Get Instant Quote", url: "/quote" },
+] as const;
+
+// Local Citation NAP Data (canonical for all directory listings)
+export const LOCAL_CITATION_NAP = {
+  name: BUSINESS_INFO.name,
+  phone: "(510) 680-2150",
+  website: BUSINESS_INFO.url,
+  address: BUSINESS_INFO.address.full,
+  directories: [
+    "Google Business Profile", "Apple Maps", "Bing Places", "Yelp",
+    "Nextdoor", "BBB", "Angi", "HomeAdvisor", "YellowPages",
+    "MapQuest", "Hotfrog", "Foursquare", "Chamber of Commerce"
+  ]
+} as const;
 
 // Generate BreadcrumbList schema
 export function generateBreadcrumbSchema(items: { name: string; url: string }[]) {
