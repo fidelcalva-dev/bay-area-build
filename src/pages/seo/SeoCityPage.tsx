@@ -18,12 +18,7 @@ import NotFound from '../NotFound';
 export default function SeoCityPage() {
   const { citySlug: rawSlug } = useParams<{ citySlug: string }>();
   const normalized = normalizeCitySlug(rawSlug || '');
-
-  // Redirect to canonical slug if incoming slug differs (e.g. oakland-ca → oakland)
-  if (rawSlug && normalized !== rawSlug) {
-    return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
-  }
-
+  const needsRedirect = !!(rawSlug && normalized !== rawSlug);
   const citySlug = normalized;
 
   const { data: city, isLoading: cityLoading } = useQuery({
@@ -37,7 +32,7 @@ export default function SeoCityPage() {
         .single();
       return data as SeoCity | null;
     },
-    enabled: !!citySlug,
+    enabled: !!citySlug && !needsRedirect,
   });
 
   const { data: page } = useQuery({
@@ -52,7 +47,7 @@ export default function SeoCityPage() {
         .single();
       return data;
     },
-    enabled: !!citySlug,
+    enabled: !!citySlug && !needsRedirect,
   });
 
   const { data: allCities } = useQuery({
@@ -61,6 +56,7 @@ export default function SeoCityPage() {
       const { data } = await supabase.from('seo_cities').select('*').eq('is_active', true);
       return (data || []) as SeoCity[];
     },
+    enabled: !needsRedirect,
   });
 
   const { data: nearbyCities } = useQuery({
@@ -74,8 +70,15 @@ export default function SeoCityPage() {
         .eq('is_active', true);
       return (data || []) as SeoCity[];
     },
-    enabled: !!city,
+    enabled: !!city && !needsRedirect,
   });
+
+  // Redirect AFTER all hooks have been called (Rules of Hooks)
+  if (needsRedirect) {
+    return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
+  }
+
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city?.city_name || '', slug: city?.city_slug || '' });
 
   if (cityLoading) {
     return (
@@ -95,7 +98,6 @@ export default function SeoCityPage() {
   const dbFaqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY', allCities || []);
-  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city.city_name, slug: city.city_slug });
 
   // Use DB FAQs if available (8+), otherwise generate defaults
   const faqs = dbFaqs.length >= 8 ? dbFaqs : generateCityFAQs(city.city_name, city.county || 'Bay Area');

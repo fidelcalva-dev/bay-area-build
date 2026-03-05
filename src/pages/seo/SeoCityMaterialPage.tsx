@@ -16,9 +16,7 @@ import NotFound from '../NotFound';
 export default function SeoCityMaterialPage() {
   const { citySlug: rawSlug, materialSlug } = useParams<{ citySlug: string; materialSlug: string }>();
   const normalized = normalizeCitySlug(rawSlug || '');
-  if (rawSlug && normalized !== rawSlug) {
-    return <Navigate to={`/dumpster-rental/${normalized}/${materialSlug}`} replace />;
-  }
+  const needsRedirect = !!(rawSlug && normalized !== rawSlug);
   const citySlug = normalized;
 
   const material = SEO_MATERIALS.find(m => m.slug === materialSlug);
@@ -29,7 +27,7 @@ export default function SeoCityMaterialPage() {
       const { data } = await supabase.from('seo_cities').select('*').eq('city_slug', citySlug || '').eq('is_active', true).single();
       return data as SeoCity | null;
     },
-    enabled: !!citySlug,
+    enabled: !!citySlug && !needsRedirect,
   });
 
   const { data: page } = useQuery({
@@ -39,7 +37,7 @@ export default function SeoCityMaterialPage() {
       const { data } = await supabase.from('seo_pages').select('*').eq('url_path', urlPath).eq('is_published', true).single();
       return data;
     },
-    enabled: !!citySlug && !!materialSlug,
+    enabled: !!citySlug && !!materialSlug && !needsRedirect,
   });
 
   const { data: allCities } = useQuery({
@@ -48,7 +46,14 @@ export default function SeoCityMaterialPage() {
       const { data } = await supabase.from('seo_cities').select('*').eq('is_active', true);
       return (data || []) as SeoCity[];
     },
+    enabled: !needsRedirect,
   });
+
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_material', city: city?.city_name || '', material: material?.slug || '', slug: city?.city_slug || '' });
+
+  if (needsRedirect) {
+    return <Navigate to={`/dumpster-rental/${normalized}/${materialSlug}`} replace />;
+  }
 
   if (isLoading) {
     return <Layout><div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" /></div></Layout>;
@@ -61,7 +66,6 @@ export default function SeoCityMaterialPage() {
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY_MATERIAL', allCities || []);
   const isHeavy = material.category === 'heavy';
-  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_material', city: city.city_name, material: material.slug, slug: city.city_slug });
 
   const pageTitle = page?.title || `${material.name} Dumpster Rental ${city.city_name} CA`;
   const pageDescription = page?.meta_description || `${material.name} dumpster rental in ${city.city_name}, CA. ${material.description} Available in ${material.sizes.join(', ')} yard sizes.`;

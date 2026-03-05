@@ -19,9 +19,7 @@ const CATEGORY_ICONS = { residential: HardHat, commercial: Building2, contractor
 export default function SeoCityJobPage() {
   const { citySlug: rawSlug, jobSlug } = useParams<{ citySlug: string; jobSlug: string }>();
   const normalized = normalizeCitySlug(rawSlug || '');
-  if (rawSlug && normalized !== rawSlug) {
-    return <Navigate to={`/dumpster-rental/${normalized}/${jobSlug}`} replace />;
-  }
+  const needsRedirect = !!(rawSlug && normalized !== rawSlug);
   const citySlug = normalized;
   const job = jobSlug ? getJobTypeBySlug(jobSlug) : undefined;
 
@@ -31,8 +29,14 @@ export default function SeoCityJobPage() {
       const { data } = await supabase.from('seo_cities').select('*').eq('city_slug', citySlug || '').eq('is_active', true).single();
       return data as SeoCity | null;
     },
-    enabled: !!citySlug,
+    enabled: !!citySlug && !needsRedirect,
   });
+
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_job', city: city?.city_name || '', jobType: job?.slug || '', slug: city?.city_slug || '' });
+
+  if (needsRedirect) {
+    return <Navigate to={`/dumpster-rental/${normalized}/${jobSlug}`} replace />;
+  }
 
   if (isLoading) {
     return <Layout><div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" /></div></Layout>;
@@ -42,7 +46,6 @@ export default function SeoCityJobPage() {
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const Icon = CATEGORY_ICONS[job.category];
-  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city_job', city: city.city_name, jobType: job.slug, slug: city.city_slug });
 
   const pageTitle = `${job.name} Dumpster Rental ${city.city_name} CA | Calsan`;
   const pageDescription = `${job.name} dumpster rental in ${city.city_name}, CA. ${job.recommendedSizes.join(', ')} yard sizes. Same-day delivery from our ${yard?.city || 'local'} yard. Transparent pricing.`;
