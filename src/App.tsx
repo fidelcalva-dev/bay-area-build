@@ -189,6 +189,9 @@ const SeoCitySizePage = lazy(() => import("./pages/seo/SeoCitySizePage"));
 const SeoCityMaterialPage = lazy(() => import("./pages/seo/SeoCityMaterialPage"));
 const SeoZipPage = lazy(() => import("./pages/seo/SeoZipPage"));
 const SeoCityJobPage = lazy(() => import("./pages/seo/SeoCityJobPage"));
+const SeoCountyPage = lazy(() => import("./pages/seo/SeoCountyPage"));
+const SeoUseCasePage = lazy(() => import("./pages/seo/SeoUseCasePage"));
+const SeoHubPage = lazy(() => import("./pages/seo/SeoHubPage"));
 
 // Legacy SEO URL redirects
 import { LegacySizeRedirect, LegacySubpageRedirect } from './components/seo/SeoLegacyRedirects';
@@ -547,6 +550,30 @@ const App = () => {
               {/* SEO ZIP Pages */}
               <Route path="/service-area/:zip/dumpster-rental" element={
                 <Suspense fallback={<PageLoader />}><SeoZipPage /></Suspense>
+              } />
+
+              {/* SEO County Pages */}
+              <Route path="/county/:countySlug/dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoCountyPage /></Suspense>
+              } />
+
+              {/* SEO Use Case Pages */}
+              <Route path="/use-cases/:useCaseSlug" element={
+                <Suspense fallback={<PageLoader />}><SeoUseCasePage /></Suspense>
+              } />
+
+              {/* SEO Hub Pages — Statewide & Regional */}
+              <Route path="/california-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
+              } />
+              <Route path="/bay-area-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
+              } />
+              <Route path="/southern-california-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
+              } />
+              <Route path="/central-valley-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
               } />
 
               {/* Legacy URL redirects — 301 to canonical */}
