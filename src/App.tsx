@@ -174,6 +174,10 @@ const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 const AdminAIChat = lazy(() => import("./pages/admin/AdminAIChat"));
 const SeoHealthPage = lazy(() => import("./pages/admin/SeoHealthPage"));
 const SeoIndexingPage = lazy(() => import("./pages/admin/SeoIndexingPage"));
+const SeoQueuePage = lazy(() => import("./pages/admin/SeoQueuePage"));
+const SeoRulesPage = lazy(() => import("./pages/admin/SeoRulesPage"));
+const SeoMetricsPage = lazy(() => import("./pages/admin/SeoMetricsPage"));
+const SeoGeneratePage = lazy(() => import("./pages/admin/SeoGeneratePage"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Marketing / Visitor Intelligence
@@ -188,6 +192,7 @@ const SeoCityPage = lazy(() => import("./pages/seo/SeoCityPage"));
 const SeoCitySizePage = lazy(() => import("./pages/seo/SeoCitySizePage"));
 const SeoCityMaterialPage = lazy(() => import("./pages/seo/SeoCityMaterialPage"));
 const SeoZipPage = lazy(() => import("./pages/seo/SeoZipPage"));
+const SeoServiceCityPage = lazy(() => import("./pages/seo/SeoServiceCityPage"));
 const SeoCityJobPage = lazy(() => import("./pages/seo/SeoCityJobPage"));
 const SeoCountyPage = lazy(() => import("./pages/seo/SeoCountyPage"));
 const SeoUseCasePage = lazy(() => import("./pages/seo/SeoUseCasePage"));
@@ -550,6 +555,17 @@ const App = () => {
               {/* SEO ZIP Pages */}
               <Route path="/service-area/:zip/dumpster-rental" element={
                 <Suspense fallback={<PageLoader />}><SeoZipPage /></Suspense>
+              } />
+
+              {/* Service-specific SEO routes */}
+              <Route path="/concrete-disposal/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
+              } />
+              <Route path="/yard-waste-removal/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
+              } />
+              <Route path="/debris-removal/:citySlug" element={
+                <Suspense fallback={<PageLoader />}><SeoServiceCityPage /></Suspense>
               } />
 
               {/* SEO County Pages */}
@@ -957,6 +973,18 @@ const App = () => {
                 } />
                 <Route path="seo/indexing" element={
                   <Suspense fallback={<PageLoader />}><SeoIndexingPage /></Suspense>
+                } />
+                <Route path="seo/queue" element={
+                  <Suspense fallback={<PageLoader />}><SeoQueuePage /></Suspense>
+                } />
+                <Route path="seo/rules" element={
+                  <Suspense fallback={<PageLoader />}><SeoRulesPage /></Suspense>
+                } />
+                <Route path="seo/metrics" element={
+                  <Suspense fallback={<PageLoader />}><SeoMetricsPage /></Suspense>
+                } />
+                <Route path="seo/generate" element={
+                  <Suspense fallback={<PageLoader />}><SeoGeneratePage /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

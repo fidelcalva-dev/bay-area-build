@@ -13881,57 +13881,110 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_metrics: {
+        Row: {
+          avg_position: number | null
+          captured_at: string
+          clicks: number
+          ctr: number
+          id: string
+          impressions: number
+          page_id: string
+        }
+        Insert: {
+          avg_position?: number | null
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          id?: string
+          impressions?: number
+          page_id: string
+        }
+        Update: {
+          avg_position?: number | null
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          id?: string
+          impressions?: number
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_metrics_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "seo_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seo_pages: {
         Row: {
+          body_content: string | null
           canonical_url: string | null
           city_id: string | null
           created_at: string
           faq_json: Json | null
           h1: string
           id: string
+          internal_links: Json | null
           is_published: boolean
           last_generated_at: string | null
           meta_description: string
           page_type: string
           schema_json: Json | null
           sections_json: Json | null
+          service_id: string | null
+          status: string
           title: string
           updated_at: string
           url_path: string
+          word_count: number | null
         }
         Insert: {
+          body_content?: string | null
           canonical_url?: string | null
           city_id?: string | null
           created_at?: string
           faq_json?: Json | null
           h1: string
           id?: string
+          internal_links?: Json | null
           is_published?: boolean
           last_generated_at?: string | null
           meta_description: string
           page_type: string
           schema_json?: Json | null
           sections_json?: Json | null
+          service_id?: string | null
+          status?: string
           title: string
           updated_at?: string
           url_path: string
+          word_count?: number | null
         }
         Update: {
+          body_content?: string | null
           canonical_url?: string | null
           city_id?: string | null
           created_at?: string
           faq_json?: Json | null
           h1?: string
           id?: string
+          internal_links?: Json | null
           is_published?: boolean
           last_generated_at?: string | null
           meta_description?: string
           page_type?: string
           schema_json?: Json | null
           sections_json?: Json | null
+          service_id?: string | null
+          status?: string
           title?: string
           updated_at?: string
           url_path?: string
+          word_count?: number | null
         }
         Relationships: [
           {
@@ -13941,7 +13994,132 @@ export type Database = {
             referencedRelation: "seo_cities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "seo_pages_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "seo_services"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      seo_queue: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_log: string | null
+          id: string
+          job_type: string
+          location_id: string | null
+          page_id: string | null
+          scheduled_at: string
+          service_id: string | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_log?: string | null
+          id?: string
+          job_type?: string
+          location_id?: string | null
+          page_id?: string | null
+          scheduled_at?: string
+          service_id?: string | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_log?: string | null
+          id?: string
+          job_type?: string
+          location_id?: string | null
+          page_id?: string | null
+          scheduled_at?: string
+          service_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_queue_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "seo_cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seo_queue_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "seo_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seo_queue_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "seo_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_rules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          value_json: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          value_json?: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          value_json?: Json
+        }
+        Relationships: []
+      }
+      seo_services: {
+        Row: {
+          active: boolean
+          created_at: string
+          display_name: string
+          id: string
+          service_type: string
+          size_yards: number | null
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          display_name: string
+          id?: string
+          service_type: string
+          size_yards?: number | null
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          display_name?: string
+          id?: string
+          service_type?: string
+          size_yards?: number | null
+          slug?: string
+        }
+        Relationships: []
       }
       service_cost_estimates: {
         Row: {
