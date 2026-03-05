@@ -73,12 +73,12 @@ export default function SeoCityPage() {
     enabled: !!city && !needsRedirect,
   });
 
+  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city?.city_name || '', slug: city?.city_slug || '' });
+
   // Redirect AFTER all hooks have been called (Rules of Hooks)
   if (needsRedirect) {
     return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
   }
-
-  const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city?.city_name || '', slug: city?.city_slug || '' });
 
   if (cityLoading) {
     return (
