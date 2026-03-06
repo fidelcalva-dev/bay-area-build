@@ -180,6 +180,7 @@ const SeoRulesPage = lazy(() => import("./pages/admin/SeoRulesPage"));
 const SeoMetricsPage = lazy(() => import("./pages/admin/SeoMetricsPage"));
 const SeoGeneratePage = lazy(() => import("./pages/admin/SeoGeneratePage"));
 const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
+const SeoAuditDashboard = lazy(() => import("./pages/admin/SeoAuditDashboard"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Marketing / Visitor Intelligence
@@ -1001,6 +1002,9 @@ const App = () => {
                 } />
                 <Route path="seo/grid" element={
                   <Suspense fallback={<PageLoader />}><SeoGridPage /></Suspense>
+                } />
+                <Route path="seo/audit" element={
+                  <Suspense fallback={<PageLoader />}><SeoAuditDashboard /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

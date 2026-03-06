@@ -233,3 +233,6 @@ verify_jwt = false
 
 [functions.seo-generate-grid-page]
 verify_jwt = false
+
+[functions.seo-audit-pages]
+verify_jwt = false
