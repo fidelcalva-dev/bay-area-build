@@ -13740,6 +13740,83 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_audit_results: {
+        Row: {
+          audited_at: string
+          city_mentions: number | null
+          created_at: string
+          duplicate_risk: boolean | null
+          has_h1: boolean | null
+          has_h2_structure: boolean | null
+          has_meta_description: boolean | null
+          has_meta_title: boolean | null
+          has_quote_cta: boolean | null
+          has_schema: boolean | null
+          id: string
+          internal_link_count: number | null
+          internal_link_score: number | null
+          missing_meta: string[] | null
+          missing_schema: string[] | null
+          page_id: string
+          recommended_actions: Json | null
+          seo_score: number
+          thin_content: boolean | null
+          word_count: number | null
+        }
+        Insert: {
+          audited_at?: string
+          city_mentions?: number | null
+          created_at?: string
+          duplicate_risk?: boolean | null
+          has_h1?: boolean | null
+          has_h2_structure?: boolean | null
+          has_meta_description?: boolean | null
+          has_meta_title?: boolean | null
+          has_quote_cta?: boolean | null
+          has_schema?: boolean | null
+          id?: string
+          internal_link_count?: number | null
+          internal_link_score?: number | null
+          missing_meta?: string[] | null
+          missing_schema?: string[] | null
+          page_id: string
+          recommended_actions?: Json | null
+          seo_score?: number
+          thin_content?: boolean | null
+          word_count?: number | null
+        }
+        Update: {
+          audited_at?: string
+          city_mentions?: number | null
+          created_at?: string
+          duplicate_risk?: boolean | null
+          has_h1?: boolean | null
+          has_h2_structure?: boolean | null
+          has_meta_description?: boolean | null
+          has_meta_title?: boolean | null
+          has_quote_cta?: boolean | null
+          has_schema?: boolean | null
+          id?: string
+          internal_link_count?: number | null
+          internal_link_score?: number | null
+          missing_meta?: string[] | null
+          missing_schema?: string[] | null
+          page_id?: string
+          recommended_actions?: Json | null
+          seo_score?: number
+          thin_content?: boolean | null
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_audit_results_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "seo_page_index"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seo_cities: {
         Row: {
           city_name: string
@@ -13918,6 +13995,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      seo_page_index: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          last_scanned_at: string | null
+          last_updated: string | null
+          page_type: string
+          seo_score: number | null
+          service: string | null
+          status: string
+          url: string
+          word_count: number | null
+          yard: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          last_scanned_at?: string | null
+          last_updated?: string | null
+          page_type?: string
+          seo_score?: number | null
+          service?: string | null
+          status?: string
+          url: string
+          word_count?: number | null
+          yard?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          last_scanned_at?: string | null
+          last_updated?: string | null
+          page_type?: string
+          seo_score?: number | null
+          service?: string | null
+          status?: string
+          url?: string
+          word_count?: number | null
+          yard?: string | null
+        }
+        Relationships: []
       }
       seo_pages: {
         Row: {
