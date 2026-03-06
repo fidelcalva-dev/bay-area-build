@@ -134,13 +134,24 @@ Return ONLY valid JSON, no markdown code fences.`;
     const requireApproval = rulesMap.approval_required === true || rulesMap.approval_required === "true";
     const status = requireApproval ? "DRAFT" : "PUBLISHED";
 
+    // Map service_type to valid page_type enum
+    const pageTypeMap: Record<string, string> = {
+      'dumpster-rental': 'CITY',
+      'concrete-disposal': 'CITY_MATERIAL',
+      'yard-waste-removal': 'CITY_MATERIAL',
+      'construction-debris': 'CITY_MATERIAL',
+      'debris-removal': 'CITY_MATERIAL',
+      'commercial-dumpster': 'CITY_COMMERCIAL',
+    };
+    const resolvedPageType = size_yards ? 'CITY_SIZE' : (pageTypeMap[service_type] || 'CITY');
+
     // Insert page
     const wordCount = (parsed.body_content || "").split(/\s+/).length;
     const { data: page, error: pageErr } = await supabase
       .from("seo_pages")
       .insert({
         url_path: pageSlug,
-        page_type: service_type,
+        page_type: resolvedPageType,
         city_id: location_id,
         service_id,
         title: parsed.title,
