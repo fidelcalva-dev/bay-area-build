@@ -150,11 +150,23 @@ Return ONLY valid JSON, no markdown code fences.`;
     const status = requireApproval ? "DRAFT" : "PUBLISHED";
     const wordCount = (parsed.body_content || "").split(/\s+/).length;
 
+    // Map service_type to valid page_type enum
+    const pageTypeMap: Record<string, string> = {
+      'dumpster-rental': 'CITY',
+      'concrete-disposal': 'CITY_MATERIAL',
+      'yard-waste-removal': 'CITY_MATERIAL',
+      'construction-debris': 'CITY_MATERIAL',
+      'debris-removal': 'CITY_MATERIAL',
+      'commercial-dumpster': 'CITY_COMMERCIAL',
+    };
+    const svcType = service_type || 'dumpster-rental';
+    const resolvedPageType = size_yards ? 'CITY_SIZE' : (pageTypeMap[svcType] || 'CITY');
+
     const { data: page, error: pageErr } = await supabase
       .from("seo_pages")
       .insert({
         url_path: pageSlug,
-        page_type: service_type || 'dumpster-rental',
+        page_type: resolvedPageType,
         title: parsed.title,
         meta_description: parsed.meta_description,
         h1: parsed.h1,
