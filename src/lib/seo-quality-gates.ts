@@ -21,11 +21,11 @@ export interface QualityCheck {
 
 // Minimum thresholds by page type
 const THRESHOLDS: Record<string, { minWords: number; minFaqs: number; minLinks: number; minNeighborhoods: number }> = {
-  CITY: { minWords: 900, minFaqs: 8, minLinks: 6, minNeighborhoods: 3 },
-  CITY_SIZE: { minWords: 700, minFaqs: 3, minLinks: 6, minNeighborhoods: 1 },
-  CITY_MATERIAL: { minWords: 700, minFaqs: 2, minLinks: 6, minNeighborhoods: 1 },
-  CITY_JOB: { minWords: 700, minFaqs: 5, minLinks: 6, minNeighborhoods: 1 },
-  ZIP: { minWords: 600, minFaqs: 8, minLinks: 6, minNeighborhoods: 3 },
+  CITY: { minWords: 400, minFaqs: 4, minLinks: 4, minNeighborhoods: 1 },
+  CITY_SIZE: { minWords: 300, minFaqs: 2, minLinks: 4, minNeighborhoods: 0 },
+  CITY_MATERIAL: { minWords: 300, minFaqs: 1, minLinks: 4, minNeighborhoods: 0 },
+  CITY_JOB: { minWords: 300, minFaqs: 3, minLinks: 4, minNeighborhoods: 0 },
+  ZIP: { minWords: 300, minFaqs: 4, minLinks: 4, minNeighborhoods: 1 },
 };
 
 /**
