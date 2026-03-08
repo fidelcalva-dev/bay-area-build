@@ -996,6 +996,9 @@ const App = () => {
                 <Route path="seo/health" element={
                   <Suspense fallback={<PageLoader />}><SeoHealthPage /></Suspense>
                 } />
+                <Route path="seo/repair" element={
+                  <Suspense fallback={<PageLoader />}><SeoRepairPage /></Suspense>
+                } />
                 <Route path="seo/indexing" element={
                   <Suspense fallback={<PageLoader />}><SeoIndexingPage /></Suspense>
                 } />
