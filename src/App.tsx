@@ -100,6 +100,7 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const ControlCenter = lazy(() => import("./pages/admin/ControlCenter"));
 const AIPerformanceDashboard = lazy(() => import("./pages/admin/AIPerformanceDashboard"));
 const ZonesManager = lazy(() => import("./pages/admin/ZonesManager"));
 const PricingManager = lazy(() => import("./pages/admin/PricingManager"));
@@ -700,6 +701,9 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>
               }>
                 <Route index element={
+                  <Suspense fallback={<PageLoader />}><ControlCenter /></Suspense>
+                } />
+                <Route path="legacy-dashboard" element={
                   <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>
                 } />
                 <Route path="orders" element={
