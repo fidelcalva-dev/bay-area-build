@@ -4207,6 +4207,72 @@ export type Database = {
         }
         Relationships: []
       }
+      customers_archive: {
+        Row: {
+          activated_at: string | null
+          activation_attempts: number
+          activation_status: string
+          archived_at: string | null
+          billing_address: string | null
+          billing_email: string | null
+          billing_phone: string | null
+          company_name: string | null
+          contact_name: string | null
+          created_at: string
+          customer_type: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          phone: string | null
+          sms_opt_out: boolean | null
+          sms_opt_out_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          activation_attempts?: number
+          activation_status?: string
+          archived_at?: string | null
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
+          company_name?: string | null
+          contact_name?: string | null
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          phone?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          activation_attempts?: number
+          activation_status?: string
+          archived_at?: string | null
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_phone?: string | null
+          company_name?: string | null
+          contact_name?: string | null
+          created_at?: string
+          customer_type?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          phone?: string | null
+          sms_opt_out?: boolean | null
+          sms_opt_out_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       dispatch_alerts: {
         Row: {
           alert_type: string
@@ -7600,6 +7666,60 @@ export type Database = {
           },
         ]
       }
+      lead_events_archive: {
+        Row: {
+          archived_at: string | null
+          channel: string | null
+          channel_key: string | null
+          created_at: string
+          created_by: string | null
+          event_source: string | null
+          event_type: string
+          from_assignment_type: string | null
+          id: string
+          lead_id: string
+          notes: string | null
+          payload_json: Json | null
+          performed_by_user_id: string | null
+          provider: string | null
+          to_assignment_type: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          channel?: string | null
+          channel_key?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_source?: string | null
+          event_type: string
+          from_assignment_type?: string | null
+          id?: string
+          lead_id: string
+          notes?: string | null
+          payload_json?: Json | null
+          performed_by_user_id?: string | null
+          provider?: string | null
+          to_assignment_type?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          channel?: string | null
+          channel_key?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_source?: string | null
+          event_type?: string
+          from_assignment_type?: string | null
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          payload_json?: Json | null
+          performed_by_user_id?: string | null
+          provider?: string | null
+          to_assignment_type?: string | null
+        }
+        Relationships: []
+      }
       lead_export_jobs: {
         Row: {
           completed_at: string | null
@@ -8081,6 +8201,51 @@ export type Database = {
           stage_key: string
         }
         Update: {
+          created_at?: string | null
+          department?: string
+          entity_id?: string
+          entity_type?: string
+          event_type?: string
+          id?: string
+          meta_json?: Json | null
+          notes?: string | null
+          performed_by_role?: string | null
+          performed_by_user_id?: string | null
+          stage_key?: string
+        }
+        Relationships: []
+      }
+      lifecycle_events_archive: {
+        Row: {
+          archived_at: string | null
+          created_at: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id: string
+          meta_json: Json | null
+          notes: string | null
+          performed_by_role: string | null
+          performed_by_user_id: string | null
+          stage_key: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string | null
+          department: string
+          entity_id: string
+          entity_type: string
+          event_type: string
+          id?: string
+          meta_json?: Json | null
+          notes?: string | null
+          performed_by_role?: string | null
+          performed_by_user_id?: string | null
+          stage_key: string
+        }
+        Update: {
+          archived_at?: string | null
           created_at?: string | null
           department?: string
           entity_id?: string
@@ -10531,6 +10696,327 @@ export type Database = {
           },
         ]
       }
+      orders_archive: {
+        Row: {
+          access_flags: Json | null
+          actual_delivery_at: string | null
+          actual_pickup_at: string | null
+          actual_weight_tons: number | null
+          addendum_contract_id: string | null
+          amount_due: number | null
+          amount_paid: number | null
+          archived_at: string | null
+          asset_id: string | null
+          assigned_driver_id: string | null
+          assigned_yard_id: string | null
+          balance_due: number | null
+          contamination_detected: boolean | null
+          contamination_detected_at: string | null
+          contamination_notes: string | null
+          contracts_valid: boolean | null
+          created_at: string
+          custom_logistics_notes: string | null
+          customer_id: string | null
+          delivery_completed_at: string | null
+          delivery_started_at: string | null
+          deposit_required_reason: string | null
+          destination_type: string | null
+          destination_yard_id: string | null
+          driver_notes: string | null
+          driver_notes_internal: string | null
+          dry_run_reason: string | null
+          dump_details: Json | null
+          dump_ticket_url: string | null
+          estimated_fill_pct: number | null
+          estimated_weight_tons_max: number | null
+          estimated_weight_tons_min: number | null
+          eta_confidence: string | null
+          eta_max_minutes: number | null
+          eta_min_minutes: number | null
+          eta_updated_at: string | null
+          extra_tons_charged: number | null
+          filled_location: string | null
+          final_total: number | null
+          fraud_blocked: boolean | null
+          fraud_flags_count: number | null
+          gate_code: string | null
+          gclid: string | null
+          heavy_material_code: string | null
+          id: string
+          included_days: number | null
+          included_tons_for_size: number | null
+          internal_notes: string | null
+          inventory_id: string | null
+          invoice_url: string | null
+          is_dry_run: boolean | null
+          is_heavy_material: boolean | null
+          live_load_minutes: number | null
+          logistics_type: string | null
+          market_id: string | null
+          msa_contract_id: string | null
+          multi_stop_sequence: number | null
+          origin_yard_id: string | null
+          overfill_flagged: boolean | null
+          parent_order_id: string | null
+          payment_link_amount: number | null
+          payment_link_sent_at: string | null
+          payment_link_type: string | null
+          payment_link_url: string | null
+          payment_status: string | null
+          pickup_completed_at: string | null
+          pickup_photo_url: string | null
+          pickup_started_at: string | null
+          placement_confirmed: boolean | null
+          placement_locked: boolean | null
+          placement_photo_url: string | null
+          placement_type: string | null
+          portal_link_id: string | null
+          portal_link_sent_at: string | null
+          portal_show_dump_ticket: boolean | null
+          primary_dumpster_id: string | null
+          quick_link_id: string | null
+          quote_id: string | null
+          reclassified_at: string | null
+          reclassified_to_debris: boolean | null
+          reclassify_on_contamination: boolean | null
+          requested_green_halo: boolean | null
+          requires_deposit: boolean | null
+          requires_fill_line: boolean | null
+          requires_manual_review: boolean | null
+          requires_pre_pickup_photos: boolean | null
+          route_notes: string | null
+          scheduled_delivery_date: string | null
+          scheduled_delivery_window: string | null
+          scheduled_pickup_date: string | null
+          scheduled_pickup_window: string | null
+          secondary_dumpster_id: string | null
+          sla_tier: string | null
+          status: string
+          text_before_arrival: boolean | null
+          truck_id: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          weight_risk_level: string | null
+          wrong_material_flagged: boolean | null
+        }
+        Insert: {
+          access_flags?: Json | null
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          actual_weight_tons?: number | null
+          addendum_contract_id?: string | null
+          amount_due?: number | null
+          amount_paid?: number | null
+          archived_at?: string | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          balance_due?: number | null
+          contamination_detected?: boolean | null
+          contamination_detected_at?: string | null
+          contamination_notes?: string | null
+          contracts_valid?: boolean | null
+          created_at?: string
+          custom_logistics_notes?: string | null
+          customer_id?: string | null
+          delivery_completed_at?: string | null
+          delivery_started_at?: string | null
+          deposit_required_reason?: string | null
+          destination_type?: string | null
+          destination_yard_id?: string | null
+          driver_notes?: string | null
+          driver_notes_internal?: string | null
+          dry_run_reason?: string | null
+          dump_details?: Json | null
+          dump_ticket_url?: string | null
+          estimated_fill_pct?: number | null
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          eta_confidence?: string | null
+          eta_max_minutes?: number | null
+          eta_min_minutes?: number | null
+          eta_updated_at?: string | null
+          extra_tons_charged?: number | null
+          filled_location?: string | null
+          final_total?: number | null
+          fraud_blocked?: boolean | null
+          fraud_flags_count?: number | null
+          gate_code?: string | null
+          gclid?: string | null
+          heavy_material_code?: string | null
+          id?: string
+          included_days?: number | null
+          included_tons_for_size?: number | null
+          internal_notes?: string | null
+          inventory_id?: string | null
+          invoice_url?: string | null
+          is_dry_run?: boolean | null
+          is_heavy_material?: boolean | null
+          live_load_minutes?: number | null
+          logistics_type?: string | null
+          market_id?: string | null
+          msa_contract_id?: string | null
+          multi_stop_sequence?: number | null
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          parent_order_id?: string | null
+          payment_link_amount?: number | null
+          payment_link_sent_at?: string | null
+          payment_link_type?: string | null
+          payment_link_url?: string | null
+          payment_status?: string | null
+          pickup_completed_at?: string | null
+          pickup_photo_url?: string | null
+          pickup_started_at?: string | null
+          placement_confirmed?: boolean | null
+          placement_locked?: boolean | null
+          placement_photo_url?: string | null
+          placement_type?: string | null
+          portal_link_id?: string | null
+          portal_link_sent_at?: string | null
+          portal_show_dump_ticket?: boolean | null
+          primary_dumpster_id?: string | null
+          quick_link_id?: string | null
+          quote_id?: string | null
+          reclassified_at?: string | null
+          reclassified_to_debris?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          requested_green_halo?: boolean | null
+          requires_deposit?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_manual_review?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
+          route_notes?: string | null
+          scheduled_delivery_date?: string | null
+          scheduled_delivery_window?: string | null
+          scheduled_pickup_date?: string | null
+          scheduled_pickup_window?: string | null
+          secondary_dumpster_id?: string | null
+          sla_tier?: string | null
+          status?: string
+          text_before_arrival?: boolean | null
+          truck_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          weight_risk_level?: string | null
+          wrong_material_flagged?: boolean | null
+        }
+        Update: {
+          access_flags?: Json | null
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          actual_weight_tons?: number | null
+          addendum_contract_id?: string | null
+          amount_due?: number | null
+          amount_paid?: number | null
+          archived_at?: string | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_yard_id?: string | null
+          balance_due?: number | null
+          contamination_detected?: boolean | null
+          contamination_detected_at?: string | null
+          contamination_notes?: string | null
+          contracts_valid?: boolean | null
+          created_at?: string
+          custom_logistics_notes?: string | null
+          customer_id?: string | null
+          delivery_completed_at?: string | null
+          delivery_started_at?: string | null
+          deposit_required_reason?: string | null
+          destination_type?: string | null
+          destination_yard_id?: string | null
+          driver_notes?: string | null
+          driver_notes_internal?: string | null
+          dry_run_reason?: string | null
+          dump_details?: Json | null
+          dump_ticket_url?: string | null
+          estimated_fill_pct?: number | null
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          eta_confidence?: string | null
+          eta_max_minutes?: number | null
+          eta_min_minutes?: number | null
+          eta_updated_at?: string | null
+          extra_tons_charged?: number | null
+          filled_location?: string | null
+          final_total?: number | null
+          fraud_blocked?: boolean | null
+          fraud_flags_count?: number | null
+          gate_code?: string | null
+          gclid?: string | null
+          heavy_material_code?: string | null
+          id?: string
+          included_days?: number | null
+          included_tons_for_size?: number | null
+          internal_notes?: string | null
+          inventory_id?: string | null
+          invoice_url?: string | null
+          is_dry_run?: boolean | null
+          is_heavy_material?: boolean | null
+          live_load_minutes?: number | null
+          logistics_type?: string | null
+          market_id?: string | null
+          msa_contract_id?: string | null
+          multi_stop_sequence?: number | null
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          parent_order_id?: string | null
+          payment_link_amount?: number | null
+          payment_link_sent_at?: string | null
+          payment_link_type?: string | null
+          payment_link_url?: string | null
+          payment_status?: string | null
+          pickup_completed_at?: string | null
+          pickup_photo_url?: string | null
+          pickup_started_at?: string | null
+          placement_confirmed?: boolean | null
+          placement_locked?: boolean | null
+          placement_photo_url?: string | null
+          placement_type?: string | null
+          portal_link_id?: string | null
+          portal_link_sent_at?: string | null
+          portal_show_dump_ticket?: boolean | null
+          primary_dumpster_id?: string | null
+          quick_link_id?: string | null
+          quote_id?: string | null
+          reclassified_at?: string | null
+          reclassified_to_debris?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          requested_green_halo?: boolean | null
+          requires_deposit?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_manual_review?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
+          route_notes?: string | null
+          scheduled_delivery_date?: string | null
+          scheduled_delivery_window?: string | null
+          scheduled_pickup_date?: string | null
+          scheduled_pickup_window?: string | null
+          secondary_dumpster_id?: string | null
+          sla_tier?: string | null
+          status?: string
+          text_before_arrival?: boolean | null
+          truck_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          weight_risk_level?: string | null
+          wrong_material_flagged?: boolean | null
+        }
+        Relationships: []
+      }
       outbound_quote_messages: {
         Row: {
           channel: string
@@ -12249,6 +12735,381 @@ export type Database = {
           },
         ]
       }
+      quotes_archive: {
+        Row: {
+          access_flags: Json | null
+          ai_analysis_id: string | null
+          ai_confidence: string | null
+          ai_hazards_json: Json | null
+          ai_materials_json: Json | null
+          ai_recommended_size: number | null
+          ai_volume_range: Json | null
+          ai_weight_range: Json | null
+          archived_at: string | null
+          billing_instructions: string | null
+          city_rate_id: string | null
+          company_name: string | null
+          completed_at: string | null
+          confidence_level: string | null
+          confidence_note: string | null
+          converted_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_id: string | null
+          customer_lat: number | null
+          customer_lng: number | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address: string | null
+          delivery_date: string | null
+          delivery_instructions: string | null
+          delivery_lat: number | null
+          delivery_lng: number | null
+          delivery_photos: string[] | null
+          delivery_time_window: string | null
+          discount_cap_applied: boolean | null
+          discount_percent: number | null
+          display_id: string | null
+          distance_bracket: string | null
+          distance_miles: number | null
+          driver_id: string | null
+          estimated_fill_pct: number | null
+          estimated_max: number
+          estimated_min: number
+          estimated_weight_tons_max: number | null
+          estimated_weight_tons_min: number | null
+          extra_tons_prepurchased: number | null
+          extras: string[] | null
+          fraud_flags_count: number | null
+          gate_code: string | null
+          gclid: string | null
+          green_halo_category: string | null
+          green_halo_dump_fee: number | null
+          green_halo_dump_fee_per_ton: number | null
+          green_halo_handling_fee: number | null
+          heavy_material_class: string | null
+          heavy_material_code: string | null
+          heavy_material_increment: number | null
+          highlevel_contact_id: string | null
+          highlevel_tags: string[] | null
+          id: string
+          is_calsan_fulfillment: boolean
+          is_green_halo: boolean | null
+          is_heavy_material: boolean | null
+          is_trash_contaminated: boolean | null
+          is_weekend_delivery: boolean | null
+          last_synced_at: string | null
+          margin: number | null
+          market_id: string | null
+          material_type: string
+          order_id: string | null
+          original_material_type: string | null
+          placement_lat: number | null
+          placement_lng: number | null
+          placement_notes: string | null
+          placement_type: string | null
+          pre_purchase_suggested: boolean | null
+          preferred_delivery_date: string | null
+          preferred_delivery_window: string | null
+          prepurchase_city_rate: number | null
+          prepurchase_discount_pct: number | null
+          prepurchase_rate: number | null
+          project_type: string | null
+          quick_link_id: string | null
+          receipt_sent_at: string | null
+          reclassified_to_mixed: boolean | null
+          reclassify_on_contamination: boolean | null
+          recommendation_reason: string | null
+          recommended_size_yards: number | null
+          rental_days: number
+          requested_green_halo: boolean | null
+          requires_discount_approval: boolean | null
+          requires_fill_line: boolean | null
+          requires_pre_pickup_photos: boolean | null
+          route_calculated_at: string | null
+          route_polyline: string | null
+          routing_provider: string | null
+          scheduling_notes: string | null
+          selected_vendor_id: string | null
+          size_id: string | null
+          status: string
+          subtotal: number
+          suggested_extra_tons: number | null
+          suggested_pickup_date: string | null
+          toll_surcharge: number | null
+          truck_distance_miles: number | null
+          truck_duration_max: number | null
+          truck_duration_min: number | null
+          updated_at: string
+          user_selected_size_yards: number | null
+          user_type: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          vendor_cost: number | null
+          volume_agreement_id: string | null
+          volume_commitment_count: number | null
+          volume_discount_pct: number | null
+          volume_validity_end: string | null
+          volume_validity_start: string | null
+          weight_risk_level: string | null
+          yard_id: string | null
+          yard_name: string | null
+          zip_code: string
+          zone_id: string | null
+        }
+        Insert: {
+          access_flags?: Json | null
+          ai_analysis_id?: string | null
+          ai_confidence?: string | null
+          ai_hazards_json?: Json | null
+          ai_materials_json?: Json | null
+          ai_recommended_size?: number | null
+          ai_volume_range?: Json | null
+          ai_weight_range?: Json | null
+          archived_at?: string | null
+          billing_instructions?: string | null
+          city_rate_id?: string | null
+          company_name?: string | null
+          completed_at?: string | null
+          confidence_level?: string | null
+          confidence_note?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_instructions?: string | null
+          delivery_lat?: number | null
+          delivery_lng?: number | null
+          delivery_photos?: string[] | null
+          delivery_time_window?: string | null
+          discount_cap_applied?: boolean | null
+          discount_percent?: number | null
+          display_id?: string | null
+          distance_bracket?: string | null
+          distance_miles?: number | null
+          driver_id?: string | null
+          estimated_fill_pct?: number | null
+          estimated_max: number
+          estimated_min: number
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          extra_tons_prepurchased?: number | null
+          extras?: string[] | null
+          fraud_flags_count?: number | null
+          gate_code?: string | null
+          gclid?: string | null
+          green_halo_category?: string | null
+          green_halo_dump_fee?: number | null
+          green_halo_dump_fee_per_ton?: number | null
+          green_halo_handling_fee?: number | null
+          heavy_material_class?: string | null
+          heavy_material_code?: string | null
+          heavy_material_increment?: number | null
+          highlevel_contact_id?: string | null
+          highlevel_tags?: string[] | null
+          id?: string
+          is_calsan_fulfillment?: boolean
+          is_green_halo?: boolean | null
+          is_heavy_material?: boolean | null
+          is_trash_contaminated?: boolean | null
+          is_weekend_delivery?: boolean | null
+          last_synced_at?: string | null
+          margin?: number | null
+          market_id?: string | null
+          material_type: string
+          order_id?: string | null
+          original_material_type?: string | null
+          placement_lat?: number | null
+          placement_lng?: number | null
+          placement_notes?: string | null
+          placement_type?: string | null
+          pre_purchase_suggested?: boolean | null
+          preferred_delivery_date?: string | null
+          preferred_delivery_window?: string | null
+          prepurchase_city_rate?: number | null
+          prepurchase_discount_pct?: number | null
+          prepurchase_rate?: number | null
+          project_type?: string | null
+          quick_link_id?: string | null
+          receipt_sent_at?: string | null
+          reclassified_to_mixed?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          recommendation_reason?: string | null
+          recommended_size_yards?: number | null
+          rental_days?: number
+          requested_green_halo?: boolean | null
+          requires_discount_approval?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
+          route_calculated_at?: string | null
+          route_polyline?: string | null
+          routing_provider?: string | null
+          scheduling_notes?: string | null
+          selected_vendor_id?: string | null
+          size_id?: string | null
+          status?: string
+          subtotal: number
+          suggested_extra_tons?: number | null
+          suggested_pickup_date?: string | null
+          toll_surcharge?: number | null
+          truck_distance_miles?: number | null
+          truck_duration_max?: number | null
+          truck_duration_min?: number | null
+          updated_at?: string
+          user_selected_size_yards?: number | null
+          user_type?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          vendor_cost?: number | null
+          volume_agreement_id?: string | null
+          volume_commitment_count?: number | null
+          volume_discount_pct?: number | null
+          volume_validity_end?: string | null
+          volume_validity_start?: string | null
+          weight_risk_level?: string | null
+          yard_id?: string | null
+          yard_name?: string | null
+          zip_code: string
+          zone_id?: string | null
+        }
+        Update: {
+          access_flags?: Json | null
+          ai_analysis_id?: string | null
+          ai_confidence?: string | null
+          ai_hazards_json?: Json | null
+          ai_materials_json?: Json | null
+          ai_recommended_size?: number | null
+          ai_volume_range?: Json | null
+          ai_weight_range?: Json | null
+          archived_at?: string | null
+          billing_instructions?: string | null
+          city_rate_id?: string | null
+          company_name?: string | null
+          completed_at?: string | null
+          confidence_level?: string | null
+          confidence_note?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_instructions?: string | null
+          delivery_lat?: number | null
+          delivery_lng?: number | null
+          delivery_photos?: string[] | null
+          delivery_time_window?: string | null
+          discount_cap_applied?: boolean | null
+          discount_percent?: number | null
+          display_id?: string | null
+          distance_bracket?: string | null
+          distance_miles?: number | null
+          driver_id?: string | null
+          estimated_fill_pct?: number | null
+          estimated_max?: number
+          estimated_min?: number
+          estimated_weight_tons_max?: number | null
+          estimated_weight_tons_min?: number | null
+          extra_tons_prepurchased?: number | null
+          extras?: string[] | null
+          fraud_flags_count?: number | null
+          gate_code?: string | null
+          gclid?: string | null
+          green_halo_category?: string | null
+          green_halo_dump_fee?: number | null
+          green_halo_dump_fee_per_ton?: number | null
+          green_halo_handling_fee?: number | null
+          heavy_material_class?: string | null
+          heavy_material_code?: string | null
+          heavy_material_increment?: number | null
+          highlevel_contact_id?: string | null
+          highlevel_tags?: string[] | null
+          id?: string
+          is_calsan_fulfillment?: boolean
+          is_green_halo?: boolean | null
+          is_heavy_material?: boolean | null
+          is_trash_contaminated?: boolean | null
+          is_weekend_delivery?: boolean | null
+          last_synced_at?: string | null
+          margin?: number | null
+          market_id?: string | null
+          material_type?: string
+          order_id?: string | null
+          original_material_type?: string | null
+          placement_lat?: number | null
+          placement_lng?: number | null
+          placement_notes?: string | null
+          placement_type?: string | null
+          pre_purchase_suggested?: boolean | null
+          preferred_delivery_date?: string | null
+          preferred_delivery_window?: string | null
+          prepurchase_city_rate?: number | null
+          prepurchase_discount_pct?: number | null
+          prepurchase_rate?: number | null
+          project_type?: string | null
+          quick_link_id?: string | null
+          receipt_sent_at?: string | null
+          reclassified_to_mixed?: boolean | null
+          reclassify_on_contamination?: boolean | null
+          recommendation_reason?: string | null
+          recommended_size_yards?: number | null
+          rental_days?: number
+          requested_green_halo?: boolean | null
+          requires_discount_approval?: boolean | null
+          requires_fill_line?: boolean | null
+          requires_pre_pickup_photos?: boolean | null
+          route_calculated_at?: string | null
+          route_polyline?: string | null
+          routing_provider?: string | null
+          scheduling_notes?: string | null
+          selected_vendor_id?: string | null
+          size_id?: string | null
+          status?: string
+          subtotal?: number
+          suggested_extra_tons?: number | null
+          suggested_pickup_date?: string | null
+          toll_surcharge?: number | null
+          truck_distance_miles?: number | null
+          truck_duration_max?: number | null
+          truck_duration_min?: number | null
+          updated_at?: string
+          user_selected_size_yards?: number | null
+          user_type?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          vendor_cost?: number | null
+          volume_agreement_id?: string | null
+          volume_commitment_count?: number | null
+          volume_discount_pct?: number | null
+          volume_validity_end?: string | null
+          volume_validity_start?: string | null
+          weight_risk_level?: string | null
+          yard_id?: string | null
+          yard_name?: string | null
+          zip_code?: string
+          zone_id?: string | null
+        }
+        Relationships: []
+      }
       recommendations: {
         Row: {
           accepted: boolean | null
@@ -13645,6 +14506,243 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sales_leads_archive: {
+        Row: {
+          address: string | null
+          ai_classification_json: Json | null
+          ai_mode: string | null
+          ai_recommended_action: string | null
+          archived_at: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          assignment_type: string | null
+          call_recording_id: string | null
+          capture_ip: string | null
+          capture_user_agent: string | null
+          channel_key: string | null
+          city: string | null
+          company_domain: string | null
+          company_name: string | null
+          consent_status: string | null
+          converted_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          customer_type_detected: string | null
+          escalation_level: number
+          first_contact_at: string | null
+          first_response_at: string | null
+          first_response_sent_at: string | null
+          followup_count: number
+          gclid: string | null
+          id: string
+          is_existing_customer: boolean | null
+          is_sla_breached: boolean
+          landing_url: string | null
+          last_activity_at: string | null
+          last_contacted_at: string | null
+          last_contacted_by_user_id: string | null
+          last_followup_at: string | null
+          lat: number | null
+          latest_assessment_id: string | null
+          latest_heavy_flag: boolean | null
+          latest_recommended_size: number | null
+          lead_quality_label: string | null
+          lead_quality_score: number | null
+          lead_risk_score: number | null
+          lead_source: string | null
+          lead_status: string
+          linked_contact_id: string | null
+          linked_opportunity_id: string | null
+          lng: number | null
+          market_code: string | null
+          material_category: string | null
+          message_excerpt: string | null
+          next_followup_at: string | null
+          notes: string | null
+          owner_user_id: string | null
+          project_category: string | null
+          quote_id: string | null
+          raw_payload_json: Json | null
+          referrer_url: string | null
+          requested_service: string | null
+          routing_rule_id: string | null
+          routing_tags: string[] | null
+          sales_notes: string | null
+          size_preference: string | null
+          sla_due_at: string | null
+          sla_minutes: number
+          source_key: string | null
+          timeout_at: string | null
+          updated_at: string
+          urgency_score: number | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          ai_classification_json?: Json | null
+          ai_mode?: string | null
+          ai_recommended_action?: string | null
+          archived_at?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          assignment_type?: string | null
+          call_recording_id?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          channel_key?: string | null
+          city?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          consent_status?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_type_detected?: string | null
+          escalation_level?: number
+          first_contact_at?: string | null
+          first_response_at?: string | null
+          first_response_sent_at?: string | null
+          followup_count?: number
+          gclid?: string | null
+          id?: string
+          is_existing_customer?: boolean | null
+          is_sla_breached?: boolean
+          landing_url?: string | null
+          last_activity_at?: string | null
+          last_contacted_at?: string | null
+          last_contacted_by_user_id?: string | null
+          last_followup_at?: string | null
+          lat?: number | null
+          latest_assessment_id?: string | null
+          latest_heavy_flag?: boolean | null
+          latest_recommended_size?: number | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_risk_score?: number | null
+          lead_source?: string | null
+          lead_status?: string
+          linked_contact_id?: string | null
+          linked_opportunity_id?: string | null
+          lng?: number | null
+          market_code?: string | null
+          material_category?: string | null
+          message_excerpt?: string | null
+          next_followup_at?: string | null
+          notes?: string | null
+          owner_user_id?: string | null
+          project_category?: string | null
+          quote_id?: string | null
+          raw_payload_json?: Json | null
+          referrer_url?: string | null
+          requested_service?: string | null
+          routing_rule_id?: string | null
+          routing_tags?: string[] | null
+          sales_notes?: string | null
+          size_preference?: string | null
+          sla_due_at?: string | null
+          sla_minutes?: number
+          source_key?: string | null
+          timeout_at?: string | null
+          updated_at?: string
+          urgency_score?: number | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          ai_classification_json?: Json | null
+          ai_mode?: string | null
+          ai_recommended_action?: string | null
+          archived_at?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          assignment_type?: string | null
+          call_recording_id?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          channel_key?: string | null
+          city?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          consent_status?: string | null
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_type_detected?: string | null
+          escalation_level?: number
+          first_contact_at?: string | null
+          first_response_at?: string | null
+          first_response_sent_at?: string | null
+          followup_count?: number
+          gclid?: string | null
+          id?: string
+          is_existing_customer?: boolean | null
+          is_sla_breached?: boolean
+          landing_url?: string | null
+          last_activity_at?: string | null
+          last_contacted_at?: string | null
+          last_contacted_by_user_id?: string | null
+          last_followup_at?: string | null
+          lat?: number | null
+          latest_assessment_id?: string | null
+          latest_heavy_flag?: boolean | null
+          latest_recommended_size?: number | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_risk_score?: number | null
+          lead_source?: string | null
+          lead_status?: string
+          linked_contact_id?: string | null
+          linked_opportunity_id?: string | null
+          lng?: number | null
+          market_code?: string | null
+          material_category?: string | null
+          message_excerpt?: string | null
+          next_followup_at?: string | null
+          notes?: string | null
+          owner_user_id?: string | null
+          project_category?: string | null
+          quote_id?: string | null
+          raw_payload_json?: Json | null
+          referrer_url?: string | null
+          requested_service?: string | null
+          routing_rule_id?: string | null
+          routing_tags?: string[] | null
+          sales_notes?: string | null
+          size_preference?: string | null
+          sla_due_at?: string | null
+          sla_minutes?: number
+          source_key?: string | null
+          timeout_at?: string | null
+          updated_at?: string
+          urgency_score?: number | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+          zip?: string | null
+        }
+        Relationships: []
       }
       schedule_logs: {
         Row: {
