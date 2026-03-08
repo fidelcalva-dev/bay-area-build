@@ -351,10 +351,9 @@ Deno.serve(async (req) => {
         Deno.env.get('SUPABASE_URL')!,
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
       );
-      const payload: IngestPayload = await req.clone().json().catch(() => ({} as IngestPayload));
       await fallbackSb.from('lead_fallback_queue').insert({
-        source_channel: payload.source_channel || 'UNKNOWN',
-        payload: payload as unknown as Record<string, unknown>,
+        source_channel: rawPayload?.source_channel || 'UNKNOWN',
+        payload: (rawPayload || {}) as unknown as Record<string, unknown>,
         error_message: error instanceof Error ? error.message : 'Unknown error',
       });
       console.log('Lead saved to fallback queue');
