@@ -176,6 +176,7 @@ const SeoAdminDashboard = lazy(() => import("./pages/admin/SeoAdminDashboard"));
 const GbpDominationPlan = lazy(() => import("./pages/admin/GbpDominationPlan"));
 const AdminAIChat = lazy(() => import("./pages/admin/AdminAIChat"));
 const SeoHealthPage = lazy(() => import("./pages/admin/SeoHealthPage"));
+const SeoRepairPage = lazy(() => import("./pages/admin/SeoRepairPage"));
 const SeoIndexingPage = lazy(() => import("./pages/admin/SeoIndexingPage"));
 const SeoQueuePage = lazy(() => import("./pages/admin/SeoQueuePage"));
 const SeoRulesPage = lazy(() => import("./pages/admin/SeoRulesPage"));
