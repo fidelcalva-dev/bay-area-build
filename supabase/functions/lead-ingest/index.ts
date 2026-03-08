@@ -339,6 +339,26 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Lead ingest error:', error);
+
+    // =====================================================
+    // FAILSAFE: Write to lead_fallback_queue so no lead is lost
+    // =====================================================
+    try {
+      const fallbackSb = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      );
+      const payload: IngestPayload = await req.clone().json().catch(() => ({} as IngestPayload));
+      await fallbackSb.from('lead_fallback_queue').insert({
+        source_channel: payload.source_channel || 'UNKNOWN',
+        payload: payload as unknown as Record<string, unknown>,
+        error_message: error instanceof Error ? error.message : 'Unknown error',
+      });
+      console.log('Lead saved to fallback queue');
+    } catch (fallbackErr) {
+      console.error('Fallback queue write also failed:', fallbackErr);
+    }
+
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
