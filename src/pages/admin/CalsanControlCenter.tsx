@@ -110,9 +110,9 @@ function useSalesPipeline() {
   useEffect(() => {
     async function load() {
       try {
-        const { data } = await supabase.from('sales_leads').select('status');
+        const { data } = await supabase.from('sales_leads').select('lead_status');
         const counts: Record<string, number> = {};
-        (data || []).forEach(l => { counts[l.status] = (counts[l.status] || 0) + 1; });
+        (data || []).forEach(l => { counts[l.lead_status] = (counts[l.lead_status] || 0) + 1; });
         setPipeline(counts);
       } catch { setPipeline({}); }
     }
