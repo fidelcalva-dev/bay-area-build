@@ -46,8 +46,8 @@ function useLiveKPIs() {
         const d = today();
         const [leads, hotLeads, quotes, runs, invoices, overdueInv] = await Promise.all([
           supabase.from('sales_leads').select('id', { count: 'exact', head: true }).gte('created_at', `${d}T00:00:00`),
-          supabase.from('sales_leads').select('id', { count: 'exact', head: true }).in('status', ['new', 'contacted']).gte('lead_score', 70),
-          supabase.from('quotes').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+          supabase.from('sales_leads').select('id', { count: 'exact', head: true }).in('lead_status', ['new', 'contacted']).gte('lead_quality_score', 70),
+          supabase.from('quotes').select('id', { count: 'exact', head: true }).eq('quote_status', 'draft'),
           supabase.from('runs').select('id', { count: 'exact', head: true }).eq('run_date', d),
           supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
           supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'overdue'),
