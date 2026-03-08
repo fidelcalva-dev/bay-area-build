@@ -22,6 +22,7 @@ const navSections = [
     items: [
       { path: '/admin', label: 'Control Center', icon: Home, end: true },
       { path: '/admin/executive', label: 'Executive View', icon: BarChart3 },
+      { path: '/admin/modules', label: 'Module Registry', icon: Settings },
     ],
   },
   {
