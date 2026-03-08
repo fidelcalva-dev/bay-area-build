@@ -96,7 +96,7 @@ export default function SeoHealthPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">SEO Health Check</h1>
-        <p className="text-muted-foreground">Quality gates for all SEO pages. Failing checks show as warnings â€” pages still render” pages still render” pages still render” pages still render.</p>
+        <p className="text-muted-foreground">Quality gates for all SEO pages. Failing checks show as warnings â€” pages still render.</p>
       </div>
 
       {/* Summary */}
@@ -110,8 +110,8 @@ export default function SeoHealthPage() {
           <div className="text-2xl font-bold text-emerald-600">{passedCount}</div>
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2"><AlertTriangle className="w-4 h-4 text-red-600" /><span className="text-xs text-muted-foreground">Failing</span></div>
-          <div className="text-2xl font-bold text-red-600">{failedResults.length}</div>
+          <div className="flex items-center gap-2 mb-2"><AlertTriangle className="w-4 h-4 text-amber-600" /><span className="text-xs text-muted-foreground">Warnings</span></div>
+          <div className="text-2xl font-bold text-amber-600">{failedResults.length}</div>
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2"><FileWarning className="w-4 h-4 text-amber-600" /><span className="text-xs text-muted-foreground">Pass Rate</span></div>
@@ -119,11 +119,11 @@ export default function SeoHealthPage() {
         </div>
       </div>
 
-      {/* Failing Pages */}
+      {/* Warning Pages */}
       {failedResults.length > 0 && (
-        <div className="bg-card border border-red-200 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-red-200 bg-red-50/50">
-            <h2 className="font-semibold text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Failing Quality Gates ({failedResults.length})</h2>
+        <div className="bg-card border border-amber-200 rounded-xl overflow-hidden">
+          <div className="p-4 border-b border-amber-200 bg-amber-50/50">
+            <h2 className="font-semibold text-amber-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Quality Warnings ({failedResults.length})</h2>
           </div>
           <div className="max-h-[500px] overflow-auto">
             <table className="w-full text-sm">
@@ -144,21 +144,21 @@ export default function SeoHealthPage() {
                     <td className="p-3"><code className="text-xs bg-muted px-1.5 py-0.5 rounded">{r.url}</code></td>
                     <td className="p-3"><Badge variant="outline">{r.pageType}</Badge></td>
                     <td className="p-3 text-center">
-                      <span className={r.checks[0]?.passed ? 'text-emerald-600' : 'text-red-600 font-semibold'}>{r.wordCount}</span>
+                      <span className={r.checks[0]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.wordCount}</span>
                     </td>
                     <td className="p-3 text-center">
-                      <span className={r.checks[1]?.passed ? 'text-emerald-600' : 'text-red-600 font-semibold'}>{r.faqCount}</span>
+                      <span className={r.checks[1]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.faqCount}</span>
                     </td>
                     <td className="p-3 text-center">
-                      <span className={r.checks[2]?.passed ? 'text-emerald-600' : 'text-red-600 font-semibold'}>{r.internalLinkCount}</span>
+                      <span className={r.checks[2]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.internalLinkCount}</span>
                     </td>
                     <td className="p-3 text-center">
-                      <span className={r.checks[3]?.passed ? 'text-emerald-600' : 'text-red-600 font-semibold'}>{r.neighborhoodMentions}</span>
+                      <span className={r.checks[3]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.neighborhoodMentions}</span>
                     </td>
                     <td className="p-3">
                       <div className="flex flex-wrap gap-1">
                         {r.checks.filter(c => !c.passed).map((c, j) => (
-                          <Badge key={j} variant="destructive" className="text-xs">{c.name}: {String(c.actual)}/{String(c.required)}</Badge>
+                          <Badge key={j} className="text-xs bg-amber-100 text-amber-800 border-amber-300">{c.name}: {String(c.actual)}/{String(c.required)}</Badge>
                         ))}
                       </div>
                     </td>
@@ -198,7 +198,7 @@ export default function SeoHealthPage() {
                   <td className="p-3 text-center">
                     {r.passed
                       ? <CheckCircle className="w-4 h-4 text-emerald-600 mx-auto" />
-                      : <AlertTriangle className="w-4 h-4 text-red-600 mx-auto" />
+                      : <AlertTriangle className="w-4 h-4 text-amber-600 mx-auto" />
                     }
                   </td>
                 </tr>
