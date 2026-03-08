@@ -3,11 +3,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, CheckCircle, FileWarning, BarChart3 } from 'lucide-react';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
-import { SEO_JOB_TYPES } from '@/lib/seo-jobs';
-import { SEO_ZIP_DATA, getZipsByCity } from '@/lib/seo-zips';
+import { SEO_MATERIALS, type SeoCity, generateInternalLinks } from '@/lib/seo-engine';
+import { SEO_ZIP_DATA } from '@/lib/seo-zips';
 import { selectCityFaqs } from '@/lib/seo-faqs';
 import { runQualityGates, type QualityGateResult } from '@/lib/seo-quality-gates';
+
+function ScoreBadge({ score }: { score: number }) {
+  const color = score >= 80 ? 'text-emerald-600 bg-emerald-100 border-emerald-300'
+    : score >= 50 ? 'text-amber-700 bg-amber-100 border-amber-300'
+    : 'text-red-600 bg-red-100 border-red-300';
+  return <Badge className={`text-xs font-mono ${color}`}>{score}</Badge>;
+}
 
 export default function SeoHealthPage() {
   const { data: cities } = useQuery({
@@ -18,14 +24,11 @@ export default function SeoHealthPage() {
     },
   });
 
-  // Run quality gates on all page types
   const healthResults: QualityGateResult[] = [];
 
   if (cities) {
     for (const city of cities) {
       const neighborhoods = city.neighborhoods_json || [];
-
-      // City page check
       const cityFaqs = selectCityFaqs(city.city_name, 'Oakland Yard', 8, city.city_slug);
       const cityLinks = generateInternalLinks(city, 'CITY', cities);
       const citySections: Array<{ heading?: string; body?: string; items?: Array<{ label: string; value: string }> }> = [
@@ -39,7 +42,6 @@ export default function SeoHealthPage() {
       ];
       healthResults.push(runQualityGates('CITY', `/dumpster-rental/${city.city_slug}`, citySections, cityFaqs, cityLinks.length, neighborhoods));
 
-      // Size pages
       for (const size of (city.common_sizes_json || [10, 20, 30, 40])) {
         const sizeData = DUMPSTER_SIZES_DATA.find(s => s.yards === size);
         if (!sizeData) continue;
@@ -57,7 +59,6 @@ export default function SeoHealthPage() {
         healthResults.push(runQualityGates('CITY_SIZE', `/${city.city_slug}/${size}-yard-dumpster`, sizeSections, sizeFaqs, sizeLinks.length, neighborhoods));
       }
 
-      // Material pages
       for (const mat of SEO_MATERIALS) {
         const matSections = [
           { heading: `${mat.name} Dumpster Rental in ${city.city_name}, CA`, body: `${mat.description} Serving ${city.city_name}.` },
@@ -73,7 +74,6 @@ export default function SeoHealthPage() {
       }
     }
 
-    // ZIP pages
     for (const z of SEO_ZIP_DATA.filter(z => z.tier === 'A').slice(0, 20)) {
       const zipSections = [
         { heading: `Dumpster Rental in ${z.zip}`, body: `ZIP code ${z.zip} covers ${z.neighborhoods.join(', ')} in ${z.city}, CA.` },
@@ -91,16 +91,19 @@ export default function SeoHealthPage() {
 
   const passedCount = healthResults.filter(r => r.passed).length;
   const failedResults = healthResults.filter(r => !r.passed);
+  const avgOverall = healthResults.length > 0
+    ? Math.round(healthResults.reduce((s, r) => s + r.scores.overall, 0) / healthResults.length)
+    : 0;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">SEO Health Check</h1>
-        <p className="text-muted-foreground">Quality gates for all SEO pages. Failing checks show as warnings — pages still render.</p>
+        <p className="text-muted-foreground">Quality gates for all SEO pages. Warnings are diagnostic only — pages always render.</p>
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Total Pages</span></div>
           <div className="text-2xl font-bold text-foreground">{healthResults.length}</div>
@@ -114,8 +117,12 @@ export default function SeoHealthPage() {
           <div className="text-2xl font-bold text-amber-600">{failedResults.length}</div>
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2"><FileWarning className="w-4 h-4 text-amber-600" /><span className="text-xs text-muted-foreground">Pass Rate</span></div>
+          <div className="flex items-center gap-2 mb-2"><FileWarning className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Pass Rate</span></div>
           <div className="text-2xl font-bold text-foreground">{healthResults.length > 0 ? Math.round((passedCount / healthResults.length) * 100) : 0}%</div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Avg Score</span></div>
+          <div className="text-2xl font-bold text-foreground">{avgOverall}</div>
         </div>
       </div>
 
@@ -131,10 +138,11 @@ export default function SeoHealthPage() {
                 <tr className="border-b border-border">
                   <th className="text-left p-3 font-medium text-muted-foreground">URL</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Type</th>
-                  <th className="text-center p-3 font-medium text-muted-foreground">Words</th>
-                  <th className="text-center p-3 font-medium text-muted-foreground">FAQs</th>
+                  <th className="text-center p-3 font-medium text-muted-foreground">Content</th>
+                  <th className="text-center p-3 font-medium text-muted-foreground">Authority</th>
                   <th className="text-center p-3 font-medium text-muted-foreground">Links</th>
                   <th className="text-center p-3 font-medium text-muted-foreground">Local</th>
+                  <th className="text-center p-3 font-medium text-muted-foreground">Overall</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Issues</th>
                 </tr>
               </thead>
@@ -143,18 +151,11 @@ export default function SeoHealthPage() {
                   <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/30">
                     <td className="p-3"><code className="text-xs bg-muted px-1.5 py-0.5 rounded">{r.url}</code></td>
                     <td className="p-3"><Badge variant="outline">{r.pageType}</Badge></td>
-                    <td className="p-3 text-center">
-                      <span className={r.checks[0]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.wordCount}</span>
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className={r.checks[1]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.faqCount}</span>
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className={r.checks[2]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.internalLinkCount}</span>
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className={r.checks[3]?.passed ? 'text-emerald-600' : 'text-amber-600 font-semibold'}>{r.neighborhoodMentions}</span>
-                    </td>
+                    <td className="p-3 text-center"><ScoreBadge score={r.scores.content} /></td>
+                    <td className="p-3 text-center"><ScoreBadge score={r.scores.authority} /></td>
+                    <td className="p-3 text-center"><ScoreBadge score={r.scores.links} /></td>
+                    <td className="p-3 text-center"><ScoreBadge score={r.scores.local} /></td>
+                    <td className="p-3 text-center"><ScoreBadge score={r.scores.overall} /></td>
                     <td className="p-3">
                       <div className="flex flex-wrap gap-1">
                         {r.checks.filter(c => !c.passed).map((c, j) => (
@@ -170,7 +171,7 @@ export default function SeoHealthPage() {
         </div>
       )}
 
-      {/* All Pages Summary */}
+      {/* All Pages */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="p-4 border-b border-border">
           <h2 className="font-semibold text-foreground">All Pages Quality Summary</h2>
@@ -182,8 +183,10 @@ export default function SeoHealthPage() {
                 <th className="text-left p-3 font-medium text-muted-foreground">URL</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Type</th>
                 <th className="text-center p-3 font-medium text-muted-foreground">Words</th>
-                <th className="text-center p-3 font-medium text-muted-foreground">FAQs</th>
+                <th className="text-center p-3 font-medium text-muted-foreground">Content</th>
+                <th className="text-center p-3 font-medium text-muted-foreground">Authority</th>
                 <th className="text-center p-3 font-medium text-muted-foreground">Links</th>
+                <th className="text-center p-3 font-medium text-muted-foreground">Overall</th>
                 <th className="text-center p-3 font-medium text-muted-foreground">Status</th>
               </tr>
             </thead>
@@ -193,13 +196,14 @@ export default function SeoHealthPage() {
                   <td className="p-3"><code className="text-xs bg-muted px-1.5 py-0.5 rounded">{r.url}</code></td>
                   <td className="p-3"><Badge variant="outline" className="text-xs">{r.pageType}</Badge></td>
                   <td className="p-3 text-center">{r.wordCount}</td>
-                  <td className="p-3 text-center">{r.faqCount}</td>
-                  <td className="p-3 text-center">{r.internalLinkCount}</td>
+                  <td className="p-3 text-center"><ScoreBadge score={r.scores.content} /></td>
+                  <td className="p-3 text-center"><ScoreBadge score={r.scores.authority} /></td>
+                  <td className="p-3 text-center"><ScoreBadge score={r.scores.links} /></td>
+                  <td className="p-3 text-center"><ScoreBadge score={r.scores.overall} /></td>
                   <td className="p-3 text-center">
                     {r.passed
                       ? <CheckCircle className="w-4 h-4 text-emerald-600 mx-auto" />
-                      : <AlertTriangle className="w-4 h-4 text-amber-600 mx-auto" />
-                    }
+                      : <AlertTriangle className="w-4 h-4 text-amber-600 mx-auto" />}
                   </td>
                 </tr>
               ))}
