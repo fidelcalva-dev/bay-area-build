@@ -192,7 +192,7 @@ export async function fetchServiceRequests(
           scheduled_delivery_window,
           scheduled_pickup_date,
           scheduled_pickup_window,
-          quotes (
+          quotes!orders_quote_id_fkey (
             customer_name,
             customer_phone,
             delivery_address,
