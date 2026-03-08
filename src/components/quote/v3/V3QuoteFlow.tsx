@@ -1328,9 +1328,19 @@ export function V3QuoteFlow() {
                   </label>
                   <Input
                     type="tel"
+                    inputMode="tel"
                     placeholder="(510) 555-1234"
                     value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      if (raw.length >= 7) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}`);
+                      } else if (raw.length >= 4) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3)}`);
+                      } else {
+                        setCustomerPhone(raw);
+                      }
+                    }}
                     className="h-12 rounded-xl border-border/60"
                   />
                 </div>
