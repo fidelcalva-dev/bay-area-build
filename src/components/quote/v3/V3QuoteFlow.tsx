@@ -1571,6 +1571,14 @@ export function V3QuoteFlow() {
                   <p className="text-sm text-muted-foreground mt-1.5">
                     {ORDER_CONFIRMED_SUBTITLE}
                   </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-4 rounded-xl"
+                    onClick={() => navigate('/')}
+                  >
+                    Back to Home
+                  </Button>
                 </div>
               )}
 
