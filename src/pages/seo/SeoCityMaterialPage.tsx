@@ -59,7 +59,11 @@ export default function SeoCityMaterialPage() {
     return <Layout><div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" /></div></Layout>;
   }
 
-  if (!city || !material) return <NotFound />;
+  if (!material) return <NotFound />;
+  if (!city) {
+    console.warn('SEO quality gate warning: city data missing for', citySlug);
+    return <NotFound />;
+  }
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const faqs = (page?.faq_json as unknown as FaqItem[] | null) || [];

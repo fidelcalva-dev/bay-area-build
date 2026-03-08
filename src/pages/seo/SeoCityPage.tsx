@@ -90,7 +90,45 @@ export default function SeoCityPage() {
     );
   }
 
-  if (!city) return <NotFound />;
+  if (!city) {
+    console.warn('SEO quality gate warning: city data missing for', citySlug);
+    const fallbackName = (citySlug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return (
+      <Layout title={`Dumpster Rental in ${fallbackName}, CA`}>
+        <section className="gradient-hero text-primary-foreground section-padding">
+          <div className="container-wide"><div className="max-w-3xl">
+            <h1 className="heading-xl mb-4">Dumpster Rental in {fallbackName}, CA</h1>
+            <p className="text-xl text-primary-foreground/85 mb-6">Calsan Dumpsters Pro provides professional dumpster rental services in {fallbackName} and surrounding areas.</p>
+            <div className="flex flex-wrap gap-4">
+              <Button asChild variant="cta" size="lg"><Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link></Button>
+              <Button asChild variant="heroOutline" size="lg"><a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}</a></Button>
+            </div>
+          </div></div>
+        </section>
+        <section className="section-padding bg-muted/30">
+          <div className="container-wide">
+            <h2 className="heading-lg text-foreground mb-8 text-center">Available Dumpster Sizes</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+              {DUMPSTER_SIZES_DATA.map(size => (
+                <div key={size.yards} className="bg-card border border-border rounded-xl p-4 text-center">
+                  <div className="text-3xl font-black text-foreground">{size.yards}</div>
+                  <div className="text-xs text-muted-foreground mb-2">YARD</div>
+                  <div className="text-sm font-semibold text-primary">From ${size.priceFrom}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        <section className="section-padding bg-primary text-primary-foreground">
+          <div className="container-narrow text-center">
+            <h2 className="heading-lg mb-4">Get Your {fallbackName} Dumpster Price</h2>
+            <p className="text-lg text-primary-foreground/80 mb-8">Same-day delivery available. Call now: {BUSINESS_INFO.phone.salesFormatted}</p>
+            <Button asChild variant="cta" size="xl"><Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link></Button>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const neighborhoods = city.neighborhoods_json || [];
