@@ -849,6 +849,45 @@ export type Database = {
           },
         ]
       }
+      ai_chat_messages_archive: {
+        Row: {
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          created_at: string
+          id: string
+          message_text: string
+          meta_json: Json | null
+          reset_mode: string | null
+          role: string
+          session_id: string
+        }
+        Insert: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          message_text: string
+          meta_json?: Json | null
+          reset_mode?: string | null
+          role: string
+          session_id: string
+        }
+        Update: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          message_text?: string
+          meta_json?: Json | null
+          reset_mode?: string | null
+          role?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       ai_chat_sessions: {
         Row: {
           capture_ip: string | null
@@ -926,6 +965,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ai_chat_sessions_archive: {
+        Row: {
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          capture_ip: string | null
+          capture_user_agent: string | null
+          context_json: Json | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          landing_url: string | null
+          last_event_at: string
+          lead_id: string | null
+          referrer_url: string | null
+          reset_mode: string | null
+          session_token: string
+          started_at: string
+          status: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          context_json?: Json | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          landing_url?: string | null
+          last_event_at?: string
+          lead_id?: string | null
+          referrer_url?: string | null
+          reset_mode?: string | null
+          session_token?: string
+          started_at?: string
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          capture_ip?: string | null
+          capture_user_agent?: string | null
+          context_json?: Json | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          landing_url?: string | null
+          last_event_at?: string
+          lead_id?: string | null
+          referrer_url?: string | null
+          reset_mode?: string | null
+          session_token?: string
+          started_at?: string
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
       }
       ai_control_actions: {
         Row: {
@@ -1678,6 +1792,78 @@ export type Database = {
           material_type?: string | null
           project_type?: string | null
           recommended_size?: number | null
+          revenue_cents?: number | null
+          selected_size?: number | null
+          session_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
+      assistant_learning_archive: {
+        Row: {
+          ai_mode: string | null
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          confidence: number | null
+          converted_to_order: boolean | null
+          converted_to_quote: boolean | null
+          created_at: string | null
+          drop_off_step: string | null
+          id: string
+          lead_id: string | null
+          margin_band: string | null
+          material_type: string | null
+          project_type: string | null
+          recommended_size: number | null
+          reset_mode: string | null
+          revenue_cents: number | null
+          selected_size: number | null
+          session_id: string | null
+          updated_at: string | null
+          user_type: string | null
+        }
+        Insert: {
+          ai_mode?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          confidence?: number | null
+          converted_to_order?: boolean | null
+          converted_to_quote?: boolean | null
+          created_at?: string | null
+          drop_off_step?: string | null
+          id?: string
+          lead_id?: string | null
+          margin_band?: string | null
+          material_type?: string | null
+          project_type?: string | null
+          recommended_size?: number | null
+          reset_mode?: string | null
+          revenue_cents?: number | null
+          selected_size?: number | null
+          session_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          ai_mode?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          confidence?: number | null
+          converted_to_order?: boolean | null
+          converted_to_quote?: boolean | null
+          created_at?: string | null
+          drop_off_step?: string | null
+          id?: string
+          lead_id?: string | null
+          margin_band?: string | null
+          material_type?: string | null
+          project_type?: string | null
+          recommended_size?: number | null
+          reset_mode?: string | null
           revenue_cents?: number | null
           selected_size?: number | null
           session_id?: string | null
@@ -4212,6 +4398,8 @@ export type Database = {
           activated_at: string | null
           activation_attempts: number
           activation_status: string
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           billing_address: string | null
           billing_email: string | null
@@ -4224,6 +4412,7 @@ export type Database = {
           is_active: boolean
           notes: string | null
           phone: string | null
+          reset_mode: string | null
           sms_opt_out: boolean | null
           sms_opt_out_at: string | null
           updated_at: string
@@ -4233,6 +4422,8 @@ export type Database = {
           activated_at?: string | null
           activation_attempts?: number
           activation_status?: string
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           billing_address?: string | null
           billing_email?: string | null
@@ -4245,6 +4436,7 @@ export type Database = {
           is_active?: boolean
           notes?: string | null
           phone?: string | null
+          reset_mode?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -4254,6 +4446,8 @@ export type Database = {
           activated_at?: string | null
           activation_attempts?: number
           activation_status?: string
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           billing_address?: string | null
           billing_email?: string | null
@@ -4266,6 +4460,7 @@ export type Database = {
           is_active?: boolean
           notes?: string | null
           phone?: string | null
+          reset_mode?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -7193,6 +7388,72 @@ export type Database = {
           },
         ]
       }
+      invoices_archive: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          balance_due: number
+          collections_flagged: boolean | null
+          created_at: string
+          customer_id: string | null
+          dispute_reason: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issue_date: string | null
+          notes: string | null
+          order_id: string
+          payment_status: string
+          reset_mode: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_due?: number
+          amount_paid?: number
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          balance_due?: number
+          collections_flagged?: boolean | null
+          created_at?: string
+          customer_id?: string | null
+          dispute_reason?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string | null
+          notes?: string | null
+          order_id: string
+          payment_status?: string
+          reset_mode?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          balance_due?: number
+          collections_flagged?: boolean | null
+          created_at?: string
+          customer_id?: string | null
+          dispute_reason?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string | null
+          notes?: string | null
+          order_id?: string
+          payment_status?: string
+          reset_mode?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kpi_snapshots: {
         Row: {
           actual_value: number
@@ -7668,6 +7929,8 @@ export type Database = {
       }
       lead_events_archive: {
         Row: {
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           channel: string | null
           channel_key: string | null
@@ -7682,9 +7945,12 @@ export type Database = {
           payload_json: Json | null
           performed_by_user_id: string | null
           provider: string | null
+          reset_mode: string | null
           to_assignment_type: string | null
         }
         Insert: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           channel?: string | null
           channel_key?: string | null
@@ -7699,9 +7965,12 @@ export type Database = {
           payload_json?: Json | null
           performed_by_user_id?: string | null
           provider?: string | null
+          reset_mode?: string | null
           to_assignment_type?: string | null
         }
         Update: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           channel?: string | null
           channel_key?: string | null
@@ -7716,6 +7985,7 @@ export type Database = {
           payload_json?: Json | null
           performed_by_user_id?: string | null
           provider?: string | null
+          reset_mode?: string | null
           to_assignment_type?: string | null
         }
         Relationships: []
@@ -8217,6 +8487,8 @@ export type Database = {
       }
       lifecycle_events_archive: {
         Row: {
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           created_at: string | null
           department: string
@@ -8228,9 +8500,12 @@ export type Database = {
           notes: string | null
           performed_by_role: string | null
           performed_by_user_id: string | null
+          reset_mode: string | null
           stage_key: string
         }
         Insert: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           created_at?: string | null
           department: string
@@ -8242,9 +8517,12 @@ export type Database = {
           notes?: string | null
           performed_by_role?: string | null
           performed_by_user_id?: string | null
+          reset_mode?: string | null
           stage_key: string
         }
         Update: {
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           created_at?: string | null
           department?: string
@@ -8256,6 +8534,7 @@ export type Database = {
           notes?: string | null
           performed_by_role?: string | null
           performed_by_user_id?: string | null
+          reset_mode?: string | null
           stage_key?: string
         }
         Relationships: []
@@ -10705,6 +10984,8 @@ export type Database = {
           addendum_contract_id: string | null
           amount_due: number | null
           amount_paid: number | null
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           asset_id: string | null
           assigned_driver_id: string | null
@@ -10784,6 +11065,7 @@ export type Database = {
           requires_fill_line: boolean | null
           requires_manual_review: boolean | null
           requires_pre_pickup_photos: boolean | null
+          reset_mode: string | null
           route_notes: string | null
           scheduled_delivery_date: string | null
           scheduled_delivery_window: string | null
@@ -10811,6 +11093,8 @@ export type Database = {
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           asset_id?: string | null
           assigned_driver_id?: string | null
@@ -10890,6 +11174,7 @@ export type Database = {
           requires_fill_line?: boolean | null
           requires_manual_review?: boolean | null
           requires_pre_pickup_photos?: boolean | null
+          reset_mode?: string | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
@@ -10917,6 +11202,8 @@ export type Database = {
           addendum_contract_id?: string | null
           amount_due?: number | null
           amount_paid?: number | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           asset_id?: string | null
           assigned_driver_id?: string | null
@@ -10996,6 +11283,7 @@ export type Database = {
           requires_fill_line?: boolean | null
           requires_manual_review?: boolean | null
           requires_pre_pickup_photos?: boolean | null
+          reset_mode?: string | null
           route_notes?: string | null
           scheduled_delivery_date?: string | null
           scheduled_delivery_window?: string | null
@@ -11447,6 +11735,99 @@ export type Database = {
             referencedColumns: ["order_id"]
           },
         ]
+      }
+      payments_archive: {
+        Row: {
+          amount: number
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          auth_code: string | null
+          card_last_four: string | null
+          card_type: string | null
+          created_at: string
+          customer_email: string | null
+          customer_id: string | null
+          customer_phone: string | null
+          gclid: string | null
+          id: string
+          order_id: string
+          payment_type: string
+          provider: string
+          refunded_amount: number
+          reset_mode: string | null
+          response_code: string | null
+          response_message: string | null
+          status: string
+          transaction_id: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          amount: number
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          auth_code?: string | null
+          card_last_four?: string | null
+          card_type?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_phone?: string | null
+          gclid?: string | null
+          id?: string
+          order_id: string
+          payment_type: string
+          provider?: string
+          refunded_amount?: number
+          reset_mode?: string | null
+          response_code?: string | null
+          response_message?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          amount?: number
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          auth_code?: string | null
+          card_last_four?: string | null
+          card_type?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_phone?: string | null
+          gclid?: string | null
+          id?: string
+          order_id?: string
+          payment_type?: string
+          provider?: string
+          refunded_amount?: number
+          reset_mode?: string | null
+          response_code?: string | null
+          response_message?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
       }
       phone_numbers: {
         Row: {
@@ -12745,6 +13126,8 @@ export type Database = {
           ai_recommended_size: number | null
           ai_volume_range: Json | null
           ai_weight_range: Json | null
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           billing_instructions: string | null
           city_rate_id: string | null
@@ -12826,6 +13209,7 @@ export type Database = {
           requires_discount_approval: boolean | null
           requires_fill_line: boolean | null
           requires_pre_pickup_photos: boolean | null
+          reset_mode: string | null
           route_calculated_at: string | null
           route_polyline: string | null
           routing_provider: string | null
@@ -12869,6 +13253,8 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
@@ -12950,6 +13336,7 @@ export type Database = {
           requires_discount_approval?: boolean | null
           requires_fill_line?: boolean | null
           requires_pre_pickup_photos?: boolean | null
+          reset_mode?: string | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -12993,6 +13380,8 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
@@ -13074,6 +13463,7 @@ export type Database = {
           requires_discount_approval?: boolean | null
           requires_fill_line?: boolean | null
           requires_pre_pickup_photos?: boolean | null
+          reset_mode?: string | null
           route_calculated_at?: string | null
           route_polyline?: string | null
           routing_provider?: string | null
@@ -13614,6 +14004,57 @@ export type Database = {
           },
         ]
       }
+      run_events_archive: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          created_at: string
+          event_type: string
+          from_status: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          reset_mode: string | null
+          run_id: string
+          to_status: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          created_at?: string
+          event_type: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          reset_mode?: string | null
+          run_id: string
+          to_status?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          created_at?: string
+          event_type?: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          reset_mode?: string | null
+          run_id?: string
+          to_status?: string | null
+        }
+        Relationships: []
+      }
       run_route_points: {
         Row: {
           id: string
@@ -14021,6 +14462,204 @@ export type Database = {
             referencedColumns: ["asset_id"]
           },
         ]
+      }
+      runs_archive: {
+        Row: {
+          accepted_at: string | null
+          actual_miles: number | null
+          actual_weight_tons: number | null
+          archive_batch_id: string | null
+          archive_reason: string | null
+          archived_at: string | null
+          arrived_at: string | null
+          asset_id: string | null
+          assigned_driver_id: string | null
+          assigned_truck_id: string | null
+          assignment_type: Database["public"]["Enums"]["assignment_type"]
+          base_payout: number | null
+          bonus_payout: number | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          contamination_flagged: boolean | null
+          created_at: string
+          created_by: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          destination_address: string | null
+          destination_facility_id: string | null
+          destination_lat: number | null
+          destination_lng: number | null
+          destination_type: Database["public"]["Enums"]["location_type"]
+          destination_yard_id: string | null
+          dispatcher_notes: string | null
+          driver_notes: string | null
+          dump_fee: number | null
+          estimated_duration_mins: number | null
+          estimated_miles: number | null
+          fill_line_compliant: boolean | null
+          id: string
+          is_heavy_material: boolean | null
+          material_code: string | null
+          mileage_payout: number | null
+          notes: string | null
+          order_id: string | null
+          origin_address: string | null
+          origin_facility_id: string | null
+          origin_lat: number | null
+          origin_lng: number | null
+          origin_type: Database["public"]["Enums"]["location_type"]
+          origin_yard_id: string | null
+          overfill_flagged: boolean | null
+          pause_reason: string | null
+          paused_at: string | null
+          payout_status: string | null
+          pickup_asset_id: string | null
+          priority: number
+          requires_fill_line_check: boolean | null
+          reset_mode: string | null
+          resumed_at: string | null
+          run_number: string | null
+          run_type: Database["public"]["Enums"]["run_type"]
+          scheduled_date: string
+          scheduled_end: string | null
+          scheduled_start: string | null
+          scheduled_window: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["run_status"]
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          actual_miles?: number | null
+          actual_weight_tons?: number | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          arrived_at?: string | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_truck_id?: string | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          base_payout?: number | null
+          bonus_payout?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          contamination_flagged?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          destination_address?: string | null
+          destination_facility_id?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          destination_type?: Database["public"]["Enums"]["location_type"]
+          destination_yard_id?: string | null
+          dispatcher_notes?: string | null
+          driver_notes?: string | null
+          dump_fee?: number | null
+          estimated_duration_mins?: number | null
+          estimated_miles?: number | null
+          fill_line_compliant?: boolean | null
+          id?: string
+          is_heavy_material?: boolean | null
+          material_code?: string | null
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id?: string | null
+          origin_address?: string | null
+          origin_facility_id?: string | null
+          origin_lat?: number | null
+          origin_lng?: number | null
+          origin_type?: Database["public"]["Enums"]["location_type"]
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          pause_reason?: string | null
+          paused_at?: string | null
+          payout_status?: string | null
+          pickup_asset_id?: string | null
+          priority?: number
+          requires_fill_line_check?: boolean | null
+          reset_mode?: string | null
+          resumed_at?: string | null
+          run_number?: string | null
+          run_type: Database["public"]["Enums"]["run_type"]
+          scheduled_date: string
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          scheduled_window?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["run_status"]
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          actual_miles?: number | null
+          actual_weight_tons?: number | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
+          archived_at?: string | null
+          arrived_at?: string | null
+          asset_id?: string | null
+          assigned_driver_id?: string | null
+          assigned_truck_id?: string | null
+          assignment_type?: Database["public"]["Enums"]["assignment_type"]
+          base_payout?: number | null
+          bonus_payout?: number | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          contamination_flagged?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          destination_address?: string | null
+          destination_facility_id?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          destination_type?: Database["public"]["Enums"]["location_type"]
+          destination_yard_id?: string | null
+          dispatcher_notes?: string | null
+          driver_notes?: string | null
+          dump_fee?: number | null
+          estimated_duration_mins?: number | null
+          estimated_miles?: number | null
+          fill_line_compliant?: boolean | null
+          id?: string
+          is_heavy_material?: boolean | null
+          material_code?: string | null
+          mileage_payout?: number | null
+          notes?: string | null
+          order_id?: string | null
+          origin_address?: string | null
+          origin_facility_id?: string | null
+          origin_lat?: number | null
+          origin_lng?: number | null
+          origin_type?: Database["public"]["Enums"]["location_type"]
+          origin_yard_id?: string | null
+          overfill_flagged?: boolean | null
+          pause_reason?: string | null
+          paused_at?: string | null
+          payout_status?: string | null
+          pickup_asset_id?: string | null
+          priority?: number
+          requires_fill_line_check?: boolean | null
+          reset_mode?: string | null
+          resumed_at?: string | null
+          run_number?: string | null
+          run_type?: Database["public"]["Enums"]["run_type"]
+          scheduled_date?: string
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          scheduled_window?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["run_status"]
+          updated_at?: string
+        }
+        Relationships: []
       }
       sales_ai_audit: {
         Row: {
@@ -14513,6 +15152,8 @@ export type Database = {
           ai_classification_json: Json | null
           ai_mode: string | null
           ai_recommended_action: string | null
+          archive_batch_id: string | null
+          archive_reason: string | null
           archived_at: string | null
           assigned_at: string | null
           assigned_to: string | null
@@ -14568,6 +15209,7 @@ export type Database = {
           raw_payload_json: Json | null
           referrer_url: string | null
           requested_service: string | null
+          reset_mode: string | null
           routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
@@ -14591,6 +15233,8 @@ export type Database = {
           ai_classification_json?: Json | null
           ai_mode?: string | null
           ai_recommended_action?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           assigned_at?: string | null
           assigned_to?: string | null
@@ -14646,6 +15290,7 @@ export type Database = {
           raw_payload_json?: Json | null
           referrer_url?: string | null
           requested_service?: string | null
+          reset_mode?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
@@ -14669,6 +15314,8 @@ export type Database = {
           ai_classification_json?: Json | null
           ai_mode?: string | null
           ai_recommended_action?: string | null
+          archive_batch_id?: string | null
+          archive_reason?: string | null
           archived_at?: string | null
           assigned_at?: string | null
           assigned_to?: string | null
@@ -14724,6 +15371,7 @@ export type Database = {
           raw_payload_json?: Json | null
           referrer_url?: string | null
           requested_service?: string | null
+          reset_mode?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
@@ -15995,6 +16643,48 @@ export type Database = {
           issues_json?: Json
           node_health_json?: Json
           summary_json?: Json
+        }
+        Relationships: []
+      }
+      system_reset_audit: {
+        Row: {
+          archive_batch_id: string
+          completed_at: string | null
+          executed_by_user_id: string
+          id: string
+          notes: string | null
+          records_archived_count: Json | null
+          reset_mode: string
+          started_at: string
+          success: boolean | null
+          tables_archived: Json | null
+          tables_cleared: Json | null
+        }
+        Insert: {
+          archive_batch_id: string
+          completed_at?: string | null
+          executed_by_user_id: string
+          id?: string
+          notes?: string | null
+          records_archived_count?: Json | null
+          reset_mode: string
+          started_at?: string
+          success?: boolean | null
+          tables_archived?: Json | null
+          tables_cleared?: Json | null
+        }
+        Update: {
+          archive_batch_id?: string
+          completed_at?: string | null
+          executed_by_user_id?: string
+          id?: string
+          notes?: string | null
+          records_archived_count?: Json | null
+          reset_mode?: string
+          started_at?: string
+          success?: boolean | null
+          tables_archived?: Json | null
+          tables_cleared?: Json | null
         }
         Relationships: []
       }
