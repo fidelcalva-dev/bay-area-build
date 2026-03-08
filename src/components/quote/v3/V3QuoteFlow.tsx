@@ -1382,6 +1382,18 @@ export function V3QuoteFlow() {
                 </label>
               </div>
 
+              {/* Urgency + trust before CTA */}
+              <div className="flex items-center justify-center gap-4 py-2">
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Shield className="w-3 h-3 text-primary" />
+                  Licensed & Insured
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Clock className="w-3 h-3 text-primary" />
+                  15-min response
+                </span>
+              </div>
+
               <Button
                 variant="cta"
                 size="lg"
