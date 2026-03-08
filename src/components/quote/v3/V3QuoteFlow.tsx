@@ -1047,6 +1047,23 @@ export function V3QuoteFlow() {
         {/* ============================== */}
         {/* STEP 5: PRICE MOMENT */}
         {/* ============================== */}
+        {step === 'price' && !quote.isValid && (
+          <StepTransition stepKey="price-fallback">
+            <div className="space-y-5">
+              <BackButton />
+              <div className="p-6 rounded-xl bg-muted/30 border border-border/60 text-center">
+                <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-3" />
+                <p className="font-semibold text-foreground">Calculating your price...</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  We'll confirm the exact price after reviewing your location.
+                </p>
+              </div>
+              <Button variant="outline" className="w-full rounded-xl" onClick={goBack}>
+                <ChevronLeft className="w-4 h-4" /> Go Back
+              </Button>
+            </div>
+          </StepTransition>
+        )}
         {step === 'price' && quote.isValid && (
           <StepTransition stepKey="price">
             <div className="space-y-5">
