@@ -7651,6 +7651,45 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_fallback_queue: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          max_retries: number
+          payload: Json
+          resolved_at: string | null
+          resolved_lead_id: string | null
+          retry_count: number
+          source_channel: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          max_retries?: number
+          payload?: Json
+          resolved_at?: string | null
+          resolved_lead_id?: string | null
+          retry_count?: number
+          source_channel: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          max_retries?: number
+          payload?: Json
+          resolved_at?: string | null
+          resolved_lead_id?: string | null
+          retry_count?: number
+          source_channel?: string
+          status?: string
+        }
+        Relationships: []
+      }
       lead_handoff_packets: {
         Row: {
           assigned_team: string
