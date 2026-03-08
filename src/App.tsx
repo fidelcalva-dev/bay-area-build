@@ -701,6 +701,9 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><AdminLayout /></Suspense>
               }>
                 <Route index element={
+                  <Suspense fallback={<PageLoader />}><ControlCenter /></Suspense>
+                } />
+                <Route path="legacy-dashboard" element={
                   <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>
                 } />
                 <Route path="orders" element={
