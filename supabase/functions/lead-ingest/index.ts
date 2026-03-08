@@ -109,6 +109,8 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let rawPayload: IngestPayload | null = null;
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -116,6 +118,7 @@ Deno.serve(async (req) => {
     );
 
     const payload: IngestPayload = await req.json();
+    rawPayload = payload;
     console.log('Lead ingest payload:', JSON.stringify(payload).slice(0, 500));
 
     if (!payload.source_channel) {
