@@ -1,39 +1,43 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity, AlertTriangle, ArrowRight, BarChart3, Bell, Brain,
-  Calendar, CheckCircle2, Clock, DollarSign, ExternalLink, Filter,
-  Globe, Headphones, Link2, Loader2, MapPin, Package, Search,
-  Settings, Shield, ShoppingCart, Truck, TrendingUp, Users, XCircle,
-  Zap, FileText, Wrench, Eye, ArrowUpRight
+  Calendar, CheckCircle2, Clock, DollarSign, ExternalLink,
+  Globe, Headphones, Link2, MapPin, Package,
+  Settings, Shield, Truck, TrendingUp, Users, XCircle,
+  Zap, FileText, Wrench, ArrowUpRight, Eye, Cpu, Wifi,
+  Camera, Car, Gauge, Fuel, Phone, Mail, Map, CreditCard,
+  Webhook, Radio, MonitorSmartphone, Server, Database, Code
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { BUILD_INFO } from '@/lib/buildInfo';
 
 // ─── Types ───────────────────────────────────
 interface KPIData {
   newLeadsToday: number;
   hotLeads: number;
   quotesPending: number;
-  jobsScheduledToday: number;
-  activeRuns: number;
-  paymentsPending: number;
+  jobsToday: number;
+  driversActive: number;
+  paymentsToday: number;
   overdueInvoices: number;
-  seoScore: number;
+  seoScore: string;
 }
 
 interface AlertItem {
   id: string;
   title: string;
   severity: 'critical' | 'warning' | 'info';
-  route: string | null;
+  route: string;
   source: string;
 }
 
-// ─── Helpers ─────────────────────────────────
+// ─── Data Hooks ──────────────────────────────
 const today = () => new Date().toISOString().split('T')[0];
 
 function useLiveKPIs() {
@@ -45,37 +49,36 @@ function useLiveKPIs() {
       try {
         const d = today();
         const countOpts = { count: 'exact' as const, head: true };
-        
-        const leads = await (supabase.from('sales_leads').select('id', countOpts) as any).gte('created_at', `${d}T00:00:00`);
-        const hotLeads = await (supabase.from('sales_leads').select('id', countOpts) as any).in('lead_status', ['new', 'contacted']).gte('lead_quality_score', 70);
-        const quotes = await (supabase.from('quotes').select('id', countOpts) as any).eq('quote_status', 'draft');
-        const runs = await (supabase.from('runs').select('id', countOpts) as any).eq('run_date', d);
-        const invoices = await (supabase.from('invoices').select('id', countOpts) as any).eq('status', 'pending');
-        const overdueInv = await (supabase.from('invoices').select('id', countOpts) as any).eq('status', 'overdue');
+
+        // Use correct column names per schema
+        const [leads, hotLeads, quotes, runs, pendingInv, overdueInv] = await Promise.all([
+          (supabase.from('sales_leads').select('id', countOpts) as any).gte('created_at', `${d}T00:00:00`),
+          (supabase.from('sales_leads').select('id', countOpts) as any).in('lead_status', ['new', 'contacted']).gte('lead_quality_score', 70),
+          (supabase.from('quotes').select('id', countOpts) as any).in('status', ['pending', 'draft']),
+          (supabase.from('runs').select('id', countOpts) as any).eq('scheduled_date', d),
+          (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'pending'),
+          (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'overdue'),
+        ]);
 
         setData({
           newLeadsToday: leads.count ?? 0,
           hotLeads: hotLeads.count ?? 0,
           quotesPending: quotes.count ?? 0,
-          jobsScheduledToday: runs.count ?? 0,
-          activeRuns: runs.count ?? 0,
-          paymentsPending: invoices.count ?? 0,
+          jobsToday: runs.count ?? 0,
+          driversActive: 0,
+          paymentsToday: pendingInv.count ?? 0,
           overdueInvoices: overdueInv.count ?? 0,
-          seoScore: 0,
+          seoScore: 'N/A',
         });
       } catch (err) {
         console.error('KPI load error:', err);
-        setData({
-          newLeadsToday: 0, hotLeads: 0, quotesPending: 0, jobsScheduledToday: 0,
-          activeRuns: 0, paymentsPending: 0, overdueInvoices: 0, seoScore: 0,
-        });
+        setData({ newLeadsToday: 0, hotLeads: 0, quotesPending: 0, jobsToday: 0, driversActive: 0, paymentsToday: 0, overdueInvoices: 0, seoScore: 'N/A' });
       } finally {
         setLoading(false);
       }
     }
     load();
   }, []);
-
   return { data, loading };
 }
 
@@ -89,12 +92,11 @@ function useLiveAlerts() {
           .select('id, title, severity, alert_type, entity_type')
           .eq('is_resolved', false)
           .order('created_at', { ascending: false })
-          .limit(10);
-
+          .limit(8);
         setAlerts((data || []).map(a => ({
           id: a.id,
           title: a.title,
-          severity: a.severity === 'critical' ? 'critical' : a.severity === 'warning' ? 'warning' : 'info',
+          severity: a.severity === 'critical' ? 'critical' as const : a.severity === 'warning' ? 'warning' as const : 'info' as const,
           route: '/admin/alerts',
           source: a.entity_type || a.alert_type,
         })));
@@ -122,40 +124,36 @@ function useSalesPipeline() {
 }
 
 // ─── Sub-components ──────────────────────────
-function KPICard({ label, value, icon, route, accent, loading }: {
-  label: string; value: number | string; icon: React.ReactNode; route: string; accent?: string; loading?: boolean;
+
+function KPICard({ label, value, icon: Icon, route, danger, loading }: {
+  label: string; value: number | string; icon: React.ComponentType<{ className?: string }>; route: string; danger?: boolean; loading?: boolean;
 }) {
   return (
     <Link to={route} className="block group">
-      <Card className="hover:shadow-lg transition-all hover:border-primary/30 h-full">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">{icon}</div>
-            <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="rounded-xl border border-border bg-card p-4 hover:shadow-md hover:border-primary/20 transition-all h-full">
+        <div className="flex items-center justify-between mb-3">
+          <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+            <Icon className="w-4 h-4 text-muted-foreground" />
           </div>
-          {loading ? (
-            <div className="h-8 w-16 bg-muted animate-pulse rounded mt-1" />
-          ) : (
-            <div className={cn('text-2xl font-bold', accent || 'text-foreground')}>{value}</div>
-          )}
-          <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
-        </CardContent>
-      </Card>
+          <ArrowUpRight className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        {loading ? (
+          <div className="h-7 w-12 bg-muted animate-pulse rounded" />
+        ) : (
+          <div className={cn('text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>{value}</div>
+        )}
+        <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{label}</p>
+      </div>
     </Link>
   );
 }
 
-function SectionHeader({ icon: Icon, title, action }: {
-  icon: React.ComponentType<{ className?: string }>; title: string; action?: { label: string; route: string };
-}) {
+function SectionTitle({ title, action }: { title: string; action?: { label: string; route: string } }) {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Icon className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-      </div>
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{title}</h2>
       {action && (
-        <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
+        <Button asChild variant="ghost" size="sm" className="text-xs gap-1 h-7 text-muted-foreground hover:text-foreground">
           <Link to={action.route}>{action.label} <ArrowRight className="w-3 h-3" /></Link>
         </Button>
       )}
@@ -163,90 +161,123 @@ function SectionHeader({ icon: Icon, title, action }: {
   );
 }
 
-function MiniCard({ label, value, route, icon }: {
-  label: string; value: string | number; route: string | null; icon: React.ReactNode;
-}) {
+function PipelineBar({ stages }: { stages: { label: string; count: number; color: string }[] }) {
+  const total = stages.reduce((s, st) => s + st.count, 0) || 1;
+  return (
+    <div className="space-y-3">
+      <div className="flex rounded-lg overflow-hidden h-8 bg-muted">
+        {stages.map(st => st.count > 0 && (
+          <div
+            key={st.label}
+            className={cn('flex items-center justify-center text-[10px] font-semibold text-white transition-all', st.color)}
+            style={{ width: `${Math.max((st.count / total) * 100, 8)}%` }}
+          >
+            {st.count}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {stages.map(st => (
+          <div key={st.label} className="text-center">
+            <div className="text-lg font-bold text-foreground">{st.count}</div>
+            <p className="text-[10px] text-muted-foreground leading-tight">{st.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type ModuleStatus = 'LIVE' | 'DRY_RUN' | 'OFF' | 'ERROR' | 'NEEDS_SETUP' | 'NOT_BUILT';
+
+function StatusDot({ status }: { status: ModuleStatus }) {
+  const colors: Record<ModuleStatus, string> = {
+    LIVE: 'bg-emerald-500',
+    DRY_RUN: 'bg-amber-500',
+    OFF: 'bg-muted-foreground/40',
+    ERROR: 'bg-destructive',
+    NEEDS_SETUP: 'bg-amber-400',
+    NOT_BUILT: 'bg-muted-foreground/20',
+  };
+  return <div className={cn('w-2 h-2 rounded-full shrink-0', colors[status])} />;
+}
+
+function StatusLabel({ status }: { status: ModuleStatus }) {
+  const styles: Record<ModuleStatus, string> = {
+    LIVE: 'text-emerald-700 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-950/30',
+    DRY_RUN: 'text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-950/30',
+    OFF: 'text-muted-foreground bg-muted',
+    ERROR: 'text-destructive bg-destructive/10',
+    NEEDS_SETUP: 'text-orange-700 bg-orange-50 dark:text-orange-300 dark:bg-orange-950/30',
+    NOT_BUILT: 'text-muted-foreground bg-muted/50',
+  };
+  return (
+    <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded', styles[status])}>
+      {status.replace('_', ' ')}
+    </span>
+  );
+}
+
+function ModuleRow({ name, status, route }: { name: string; status: ModuleStatus; route: string | null }) {
   const inner = (
-    <Card className={cn('h-full', route && 'hover:shadow-md hover:border-primary/30 transition-all cursor-pointer')}>
-      <CardContent className="p-3 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">{icon}</div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-foreground">{value}</p>
-          <p className="text-[11px] text-muted-foreground truncate">{label}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-muted/50 transition-colors group">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <StatusDot status={status} />
+        <span className="text-sm text-foreground truncate">{name}</span>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <StatusLabel status={status} />
+        {route && <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
+      </div>
+    </div>
   );
   if (!route) return inner;
   return <Link to={route} className="block">{inner}</Link>;
 }
 
-type SystemStatus = 'LIVE' | 'DRY_RUN' | 'OFF' | 'ERROR' | 'NEEDS_SETUP' | 'NOT_BUILT';
-
-function StatusBadge({ status }: { status: SystemStatus }) {
-  const styles: Record<SystemStatus, string> = {
-    LIVE: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-    DRY_RUN: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
-    OFF: 'bg-muted text-muted-foreground',
-    ERROR: 'bg-destructive/10 text-destructive',
-    NEEDS_SETUP: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
-    NOT_BUILT: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300',
-  };
-  return <Badge variant="outline" className={cn('text-[10px] font-semibold px-1.5 py-0', styles[status])}>{status.replace('_', ' ')}</Badge>;
-}
-
-function SystemCard({ name, status, route }: { name: string; status: SystemStatus; route: string | null }) {
-  return (
-    <div className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50 transition-colors">
-      <div className="flex items-center gap-2 min-w-0">
-        <div className={cn('w-2 h-2 rounded-full shrink-0', status === 'LIVE' ? 'bg-emerald-500' : status === 'ERROR' ? 'bg-destructive' : status === 'DRY_RUN' ? 'bg-amber-500' : 'bg-muted-foreground')} />
-        <span className="text-sm text-foreground truncate">{name}</span>
+function SnapshotCard({ label, value, icon: Icon, route }: {
+  label: string; value: string | number; icon: React.ComponentType<{ className?: string }>; route: string | null;
+}) {
+  const inner = (
+    <div className="rounded-lg border border-border bg-card p-3 flex items-center gap-3 hover:shadow-sm hover:border-primary/20 transition-all h-full">
+      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4 text-muted-foreground" />
       </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <StatusBadge status={status} />
-        {route && (
-          <Button asChild variant="ghost" size="sm" className="h-6 w-6 p-0">
-            <Link to={route}><ExternalLink className="w-3 h-3" /></Link>
-          </Button>
-        )}
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground">{value}</p>
+        <p className="text-[11px] text-muted-foreground truncate">{label}</p>
       </div>
     </div>
   );
-}
-
-function PipelineStage({ label, count, color }: { label: string; count: number; color: string }) {
-  return (
-    <div className="flex-1 text-center">
-      <div className={cn('text-xl font-bold', color)}>{count}</div>
-      <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{label}</p>
-    </div>
-  );
+  if (!route) return inner;
+  return <Link to={route} className="block">{inner}</Link>;
 }
 
 function AlertRow({ alert }: { alert: AlertItem }) {
   const colors = {
     critical: 'border-l-destructive bg-destructive/5',
-    warning: 'border-l-amber-500 bg-amber-50 dark:bg-amber-950/20',
-    info: 'border-l-muted-foreground bg-muted/30',
+    warning: 'border-l-amber-500 bg-amber-50/50 dark:bg-amber-950/20',
+    info: 'border-l-muted-foreground/40 bg-muted/30',
   };
   return (
-    <Link to={alert.route || '/admin/alerts'} className="block">
-      <div className={cn('border-l-4 rounded-r-lg px-3 py-2 hover:shadow-sm transition-shadow', colors[alert.severity])}>
+    <Link to={alert.route} className="block">
+      <div className={cn('border-l-[3px] rounded-r-lg px-3 py-2 hover:shadow-sm transition-shadow', colors[alert.severity])}>
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-foreground truncate">{alert.title}</p>
-          <Badge variant="outline" className="text-[10px] shrink-0">{alert.source}</Badge>
+          <span className="text-[10px] text-muted-foreground shrink-0">{alert.source}</span>
         </div>
       </div>
     </Link>
   );
 }
 
-// Quick access data
+// ─── Quick Access Data ───────────────────────
 const QUICK_ACCESS = [
   { group: 'Website', items: [
     { label: 'Homepage', route: '/' },
     { label: 'Quote System', route: '/quote' },
     { label: 'AI Assistant', route: '/admin/ai/performance' },
+    { label: 'Photo Analyzer', route: '/waste-vision' },
     { label: 'SEO Pages', route: '/admin/seo/dashboard' },
   ]},
   { group: 'Sales', items: [
@@ -269,14 +300,14 @@ const QUICK_ACCESS = [
   ]},
   { group: 'SEO', items: [
     { label: 'SEO Health', route: '/admin/seo/health' },
-    { label: 'City Health', route: '/admin/seo/cities' },
+    { label: 'City Pages', route: '/admin/seo/cities' },
     { label: 'Sitemap', route: '/admin/seo/sitemap' },
     { label: 'Metrics', route: '/admin/seo/metrics' },
   ]},
   { group: 'System', items: [
     { label: 'Build Info', route: '/admin/qa/build-info' },
     { label: 'Security', route: '/admin/security' },
-    { label: 'Admin Config', route: '/admin/modules' },
+    { label: 'Modules', route: '/admin/modules' },
     { label: 'Audit Logs', route: '/admin/audit-logs' },
   ]},
 ];
@@ -288,13 +319,14 @@ export default function CalsanControlCenter() {
   const pipeline = useSalesPipeline();
 
   return (
-    <div className="p-4 lg:p-6 xl:p-8 space-y-8 max-w-[1440px] mx-auto">
-      {/* ── Header ── */}
+    <div className="p-4 lg:p-8 space-y-10 max-w-[1440px] mx-auto">
+
+      {/* ════════ SECTION 1 — EXECUTIVE HEADER ════════ */}
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Executive overview of operations, leads, dispatch, finance, SEO, integrations, and system health.
+          <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+            Operational overview of sales, dispatch, finance, website systems, and infrastructure.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -303,7 +335,6 @@ export default function CalsanControlCenter() {
             { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
             { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
             { label: 'SEO Health', route: '/admin/seo/health', icon: Globe },
-            { label: 'Admin Config', route: '/admin/modules', icon: Settings },
           ].map(a => (
             <Button key={a.label} asChild variant="outline" size="sm" className="h-8 text-xs gap-1.5">
               <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
@@ -312,156 +343,177 @@ export default function CalsanControlCenter() {
         </div>
       </div>
 
-      {/* ── Section 2: KPI Strip ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
-        <KPICard label="New Leads Today" value={kpi?.newLeadsToday ?? '—'} icon={<Users className="w-4 h-4" />} route="/sales/leads" loading={kpiLoading} />
-        <KPICard label="Hot Leads" value={kpi?.hotLeads ?? '—'} icon={<Zap className="w-4 h-4" />} route="/sales/leads" accent="text-amber-600" loading={kpiLoading} />
-        <KPICard label="Quotes Pending" value={kpi?.quotesPending ?? '—'} icon={<FileText className="w-4 h-4" />} route="/sales/quotes" loading={kpiLoading} />
-        <KPICard label="Jobs Today" value={kpi?.jobsScheduledToday ?? '—'} icon={<Calendar className="w-4 h-4" />} route="/dispatch/today" loading={kpiLoading} />
-        <KPICard label="Active Runs" value={kpi?.activeRuns ?? '—'} icon={<Truck className="w-4 h-4" />} route="/dispatch/today" loading={kpiLoading} />
-        <KPICard label="Payments Pending" value={kpi?.paymentsPending ?? '—'} icon={<DollarSign className="w-4 h-4" />} route="/finance/payments" loading={kpiLoading} />
-        <KPICard label="Overdue Invoices" value={kpi?.overdueInvoices ?? '—'} icon={<AlertTriangle className="w-4 h-4" />} route="/admin/overdue" accent={kpi && kpi.overdueInvoices > 0 ? 'text-destructive' : undefined} loading={kpiLoading} />
-        <KPICard label="SEO Score" value={kpi?.seoScore || 'N/A'} icon={<BarChart3 className="w-4 h-4" />} route="/admin/seo/health" loading={kpiLoading} />
-      </div>
+      {/* ════════ SECTION 2 — BUSINESS SNAPSHOT KPIs ════════ */}
+      <section>
+        <SectionTitle title="Business Snapshot" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
+          <KPICard label="New Leads Today" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
+          <KPICard label="Hot Leads" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
+          <KPICard label="Quotes Pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
+          <KPICard label="Jobs Today" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
+          <KPICard label="Drivers Active" value={kpi?.driversActive || '—'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
+          <KPICard label="Payments Pending" value={kpi?.paymentsToday ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
+          <KPICard label="Overdue Invoices" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
+          <KPICard label="SEO Score" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
+        </div>
+      </section>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* ── Section 3: Operations Snapshot ── */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-3">
-            <SectionHeader icon={Truck} title="Operations" action={{ label: 'Dispatch', route: '/dispatch/calendar' }} />
-          </CardHeader>
-          <CardContent className="space-y-1.5">
-            <MiniCard label="Deliveries Today" value={kpi?.jobsScheduledToday ?? '—'} route="/dispatch/today" icon={<Package className="w-4 h-4 text-primary" />} />
-            <MiniCard label="Pickups Today" value="—" route="/dispatch/today" icon={<Truck className="w-4 h-4 text-primary" />} />
-            <MiniCard label="Active Runs" value={kpi?.activeRuns ?? '—'} route="/dispatch/today" icon={<Activity className="w-4 h-4 text-emerald-600" />} />
-            <MiniCard label="Yard Holds" value="—" route="/dispatch/yard-hold" icon={<Clock className="w-4 h-4 text-amber-600" />} />
-          </CardContent>
-        </Card>
-
-        {/* ── Section 4: Sales Pipeline ── */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-3">
-            <SectionHeader icon={ShoppingCart} title="Sales Pipeline" action={{ label: 'Lead Hub', route: '/sales/leads' }} />
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-1 mb-4">
-              <PipelineStage label="New" count={pipeline['new'] || 0} color="text-blue-600" />
-              <PipelineStage label="Contacted" count={pipeline['contacted'] || 0} color="text-amber-600" />
-              <PipelineStage label="Quoted" count={pipeline['quoted'] || 0} color="text-violet-600" />
-            </div>
-            <div className="grid grid-cols-3 gap-1 mb-4">
-              <PipelineStage label="Contract Sent" count={pipeline['contract_sent'] || 0} color="text-orange-600" />
-              <PipelineStage label="Paid" count={pipeline['payment_received'] || 0} color="text-emerald-600" />
-              <PipelineStage label="Confirmed" count={pipeline['job_confirmed'] || 0} color="text-primary" />
-            </div>
-            <div className="flex gap-2 pt-2 border-t border-border">
-              <Button asChild variant="default" size="sm" className="flex-1 h-8 text-xs">
+      {/* ════════ SECTION 3 — SALES PIPELINE ════════ */}
+      <section>
+        <SectionTitle title="Sales Pipeline" action={{ label: 'Lead Hub', route: '/sales/leads' }} />
+        <Card>
+          <CardContent className="p-5">
+            <PipelineBar stages={[
+              { label: 'New', count: pipeline['new'] || 0, color: 'bg-blue-500' },
+              { label: 'Contacted', count: pipeline['contacted'] || 0, color: 'bg-amber-500' },
+              { label: 'Quoted', count: pipeline['quoted'] || 0, color: 'bg-violet-500' },
+              { label: 'Contract Sent', count: pipeline['contract_sent'] || 0, color: 'bg-orange-500' },
+              { label: 'Paid', count: pipeline['payment_received'] || 0, color: 'bg-emerald-500' },
+              { label: 'Confirmed', count: pipeline['converted'] || 0, color: 'bg-primary' },
+            ]} />
+            <Separator className="my-4" />
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm" className="h-8 text-xs">
                 <Link to="/sales/quotes/new">Create Quote</Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="flex-1 h-8 text-xs">
-                <Link to="/sales/leads">View All</Link>
+              <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                <Link to="/sales/leads">Open Lead Hub</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                <Link to="/admin/alerts">Follow-ups Due</Link>
               </Button>
             </div>
           </CardContent>
         </Card>
+      </section>
 
-        {/* ── Section 5: Finance ── */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-3">
-            <SectionHeader icon={DollarSign} title="Finance" action={{ label: 'Invoices', route: '/finance/invoices' }} />
-          </CardHeader>
-          <CardContent className="space-y-1.5">
-            <MiniCard label="Payments Pending" value={kpi?.paymentsPending ?? '—'} route="/finance/payments" icon={<Clock className="w-4 h-4 text-amber-600" />} />
-            <MiniCard label="Overdue Invoices" value={kpi?.overdueInvoices ?? '—'} route="/admin/overdue" icon={<AlertTriangle className="w-4 h-4 text-destructive" />} />
-            <MiniCard label="Approval Queue" value="—" route="/admin/approval-queue" icon={<CheckCircle2 className="w-4 h-4 text-primary" />} />
-            <MiniCard label="Dump Fee Recon" value="—" route="/admin/tickets" icon={<FileText className="w-4 h-4 text-muted-foreground" />} />
-          </CardContent>
-        </Card>
+      {/* ════════ SECTION 4 — OPERATIONS SNAPSHOT ════════ */}
+      <section>
+        <SectionTitle title="Operations Snapshot" action={{ label: 'Dispatch', route: '/dispatch/calendar' }} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <SnapshotCard label="Deliveries Today" value={kpi?.jobsToday ?? '—'} icon={Package} route="/dispatch/today" />
+          <SnapshotCard label="Pickups Today" value="—" icon={Truck} route="/dispatch/today" />
+          <SnapshotCard label="Swap Jobs" value="—" icon={Activity} route="/dispatch/today" />
+          <SnapshotCard label="Dump Returns" value="—" icon={MapPin} route="/dispatch/today" />
+          <SnapshotCard label="Drivers On Route" value="—" icon={Truck} route="/admin/drivers" />
+          <SnapshotCard label="Services Paused" value="—" icon={Clock} route="/dispatch/yard-hold" />
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/dispatch/calendar">Dispatch</Link></Button>
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/dispatch/today">Driver Runs</Link></Button>
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
+        </div>
+      </section>
+
+      {/* ════════ SECTION 5 — DRIVER + FLEET ════════ */}
+      <section>
+        <SectionTitle title="Driver & Fleet" action={{ label: 'Fleet Dashboard', route: '/admin/drivers' }} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <SnapshotCard label="Active Trucks" value="—" icon={Car} route="/admin/drivers" />
+          <SnapshotCard label="Drivers Logged In" value="—" icon={Users} route="/admin/drivers" />
+          <SnapshotCard label="Inspections Pending" value="—" icon={Eye} route={null} />
+          <SnapshotCard label="Maintenance Alerts" value="—" icon={Wrench} route={null} />
+          <SnapshotCard label="GPS Cameras" value="—" icon={Camera} route={null} />
+        </div>
+      </section>
+
+      {/* ════════ SECTION 6 — FINANCE ════════ */}
+      <section>
+        <SectionTitle title="Finance" action={{ label: 'Invoices', route: '/finance/invoices' }} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <SnapshotCard label="Invoices Created" value="—" icon={FileText} route="/finance/invoices" />
+          <SnapshotCard label="Payments Collected" value="—" icon={DollarSign} route="/finance/payments" />
+          <SnapshotCard label="Pending Approvals" value="—" icon={CheckCircle2} route="/admin/approval-queue" />
+          <SnapshotCard label="Dump Fees Pending" value="—" icon={FileText} route="/admin/tickets" />
+          <SnapshotCard label="Overdue Accounts" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" />
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/finance/payments">Payments</Link></Button>
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/finance/invoices">Invoices</Link></Button>
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs"><Link to="/admin/approval-queue">Approval Queue</Link></Button>
+        </div>
+      </section>
+
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* ════════ SECTION 7 — WEBSITE HEALTH ════════ */}
+        <section>
+          <SectionTitle title="Website Health" action={{ label: 'Diagnostics', route: '/admin/qa/control-center' }} />
+          <Card>
+            <CardContent className="p-4 space-y-0.5">
+              <ModuleRow name="Homepage" status="LIVE" route="/" />
+              <ModuleRow name="Quote Flow" status="LIVE" route="/quote" />
+              <ModuleRow name="AI Assistant" status="LIVE" route="/admin/ai/performance" />
+              <ModuleRow name="Photo Analysis" status="LIVE" route="/waste-vision" />
+              <ModuleRow name="Lead Capture" status="LIVE" route="/contact" />
+              <ModuleRow name="Customer Portal" status="LIVE" route="/portal" />
+            </CardContent>
+          </Card>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Button asChild variant="outline" size="sm" className="h-7 text-xs"><Link to="/admin/qa/build-info">Build Info</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-7 text-xs"><Link to="/admin/qa/env-health">Env Health</Link></Button>
+          </div>
+        </section>
+
+        {/* ════════ SECTION 8 — SEO DOMINANCE ════════ */}
+        <section>
+          <SectionTitle title="SEO & Local Visibility" action={{ label: 'SEO Dashboard', route: '/admin/seo/dashboard' }} />
+          <Card>
+            <CardContent className="p-4 space-y-0.5">
+              <ModuleRow name="SEO Health Score" status="LIVE" route="/admin/seo/health" />
+              <ModuleRow name="City Pages" status="LIVE" route="/admin/seo/cities" />
+              <ModuleRow name="Sitemap Health" status="LIVE" route="/admin/seo/sitemap" />
+              <ModuleRow name="Google Business Profile" status="LIVE" route="/admin/seo/gbp-plan" />
+              <ModuleRow name="Indexing Status" status="LIVE" route="/admin/seo/indexing" />
+              <ModuleRow name="Google Ads" status="LIVE" route="/admin/ads" />
+            </CardContent>
+          </Card>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Button asChild variant="outline" size="sm" className="h-7 text-xs"><Link to="/admin/seo/health">SEO Health</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-7 text-xs"><Link to="/admin/seo/cities">City Pages</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-7 text-xs"><Link to="/admin/seo/sitemap">Sitemap</Link></Button>
+          </div>
+        </section>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* ── Section 6: Platform Health ── */}
-        <Card>
-          <CardHeader className="pb-3">
-            <SectionHeader icon={Activity} title="Platform Health" action={{ label: 'Diagnostics', route: '/admin/qa/control-center' }} />
-          </CardHeader>
-          <CardContent className="space-y-0.5">
-            {[
-              { name: 'Website', status: 'LIVE' as SystemStatus, route: '/' },
-              { name: 'Quote Flow', status: 'LIVE' as SystemStatus, route: '/quote' },
-              { name: 'AI Assistant', status: 'LIVE' as SystemStatus, route: '/admin/ai/performance' },
-              { name: 'CRM / Lead Hub', status: 'LIVE' as SystemStatus, route: '/sales/leads' },
-              { name: 'Customer Portal', status: 'LIVE' as SystemStatus, route: '/portal' },
-              { name: 'Email Pipeline', status: 'DRY_RUN' as SystemStatus, route: '/admin/email-config' },
-              { name: 'GoHighLevel', status: 'DRY_RUN' as SystemStatus, route: '/admin/ghl' },
-              { name: 'Build Health', status: 'LIVE' as SystemStatus, route: '/admin/qa/build-health' },
-            ].map(s => <SystemCard key={s.name} {...s} />)}
-          </CardContent>
-        </Card>
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* ════════ SECTION 9 — INTEGRATIONS ════════ */}
+        <section>
+          <SectionTitle title="Integrations" action={{ label: 'View All', route: '/admin/modules' }} />
+          <Card>
+            <CardContent className="p-4 space-y-0.5">
+              <ModuleRow name="Google Workspace" status="LIVE" route="/admin/google" />
+              <ModuleRow name="SMS / Twilio" status="LIVE" route="/admin/telephony/calls" />
+              <ModuleRow name="Telephony" status="LIVE" route="/admin/telephony/calls" />
+              <ModuleRow name="Maps & Routing" status="LIVE" route="/dispatch/control-tower" />
+              <ModuleRow name="Payment Gateway" status="LIVE" route="/finance/payments" />
+              <ModuleRow name="Email (Resend)" status="DRY_RUN" route="/admin/notifications/internal" />
+              <ModuleRow name="GoHighLevel" status="DRY_RUN" route={null} />
+            </CardContent>
+          </Card>
+        </section>
 
-        {/* ── Section 7: SEO & Local Visibility ── */}
-        <Card>
-          <CardHeader className="pb-3">
-            <SectionHeader icon={Globe} title="SEO & Local Visibility" action={{ label: 'SEO Dashboard', route: '/admin/seo/dashboard' }} />
-          </CardHeader>
-          <CardContent className="space-y-0.5">
-            {[
-              { name: 'SEO Health Score', status: 'LIVE' as SystemStatus, route: '/admin/seo/health' },
-              { name: 'City Pages', status: 'LIVE' as SystemStatus, route: '/admin/seo/cities' },
-              { name: 'Sitemap Health', status: 'LIVE' as SystemStatus, route: '/admin/seo/sitemap' },
-              { name: 'Google Business Profile', status: 'LIVE' as SystemStatus, route: '/admin/seo/gbp-plan' },
-              { name: 'Indexing Status', status: 'LIVE' as SystemStatus, route: '/admin/seo/indexing' },
-              { name: 'SEO Audit Engine', status: 'LIVE' as SystemStatus, route: '/admin/seo/audit' },
-              { name: 'Visitor Intelligence', status: 'LIVE' as SystemStatus, route: '/admin/marketing/visitors' },
-              { name: 'Google Ads', status: 'LIVE' as SystemStatus, route: '/admin/ads' },
-            ].map(s => <SystemCard key={s.name} {...s} />)}
-          </CardContent>
-        </Card>
+        {/* ════════ SECTION 10 — ALERT CENTER ════════ */}
+        <section>
+          <SectionTitle title="Alerts & Attention Needed" action={{ label: 'All Alerts', route: '/admin/alerts' }} />
+          <Card>
+            <CardContent className="p-4">
+              {alerts.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
+                  <p className="text-sm font-medium">All clear — no urgent items</p>
+                </div>
+              ) : (
+                <div className="space-y-2">{alerts.map(a => <AlertRow key={a.id} alert={a} />)}</div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* ── Section 8: Integrations ── */}
-        <Card>
-          <CardHeader className="pb-3">
-            <SectionHeader icon={Link2} title="Integrations" action={{ label: 'View All', route: '/admin/modules' }} />
-          </CardHeader>
-          <CardContent className="space-y-0.5">
-            {[
-              { name: 'Google Workspace', status: 'LIVE' as SystemStatus, route: '/admin/google' },
-              { name: 'SMS / Twilio', status: 'LIVE' as SystemStatus, route: '/admin/telephony/calls' },
-              { name: 'Telephony', status: 'LIVE' as SystemStatus, route: '/admin/telephony/calls' },
-              { name: 'Maps & Routing', status: 'LIVE' as SystemStatus, route: '/dispatch/control-tower' },
-              { name: 'Payment Gateway', status: 'LIVE' as SystemStatus, route: '/finance/payments' },
-              { name: 'GoHighLevel', status: 'DRY_RUN' as SystemStatus, route: '/admin/ghl' },
-              { name: 'Email (Resend)', status: 'DRY_RUN' as SystemStatus, route: '/admin/email-config' },
-            ].map(s => <SystemCard key={s.name} {...s} />)}
-          </CardContent>
-        </Card>
-
-        {/* ── Section 9: Alert Center ── */}
-        <Card>
-          <CardHeader className="pb-3">
-            <SectionHeader icon={Bell} title="Alerts & Attention Needed" action={{ label: 'All Alerts', route: '/admin/alerts' }} />
-          </CardHeader>
-          <CardContent>
-            {alerts.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
-                <p className="text-sm font-medium">All clear — no urgent items</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {alerts.map(a => <AlertRow key={a.id} alert={a} />)}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ── Section 10: Quick Access ── */}
-      <div>
-        <SectionHeader icon={Zap} title="Quick Access" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-3">
+      {/* ════════ SECTION 11 — QUICK ACCESS GRID ════════ */}
+      <section>
+        <SectionTitle title="Quick Access" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
           {QUICK_ACCESS.map(g => (
             <div key={g.group}>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{g.group}</p>
@@ -475,7 +527,19 @@ export default function CalsanControlCenter() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
+
+      {/* ════════ SECTION 12 — FOOTER DIAGNOSTICS ════════ */}
+      <Separator />
+      <footer className="flex flex-wrap items-center gap-4 text-[11px] text-muted-foreground pb-4">
+        <span>Build: {BUILD_INFO.timestamp || 'dev'}</span>
+        <span>•</span>
+        <span>Env: {BUILD_INFO.env}</span>
+        <span>•</span>
+        <span>API: Connected</span>
+        <span>•</span>
+        <span>Database: Active</span>
+      </footer>
     </div>
   );
 }
