@@ -96,7 +96,7 @@ export default function SeoHealthPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">SEO Health Check</h1>
-        <p className="text-muted-foreground">Quality gates for all SEO pages. Pages failing checks will show 404.</p>
+        <p className="text-muted-foreground">Quality gates for all SEO pages. Failing checks show as warnings — pages still render.</p>
       </div>
 
       {/* Summary */}
