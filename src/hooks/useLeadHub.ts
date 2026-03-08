@@ -278,28 +278,50 @@ export function useLeadHubStats() {
     highIntent: 0,
     existingCustomer: 0,
     highRisk: 0,
+    quotesPending: 0,
+    jobsScheduled: 0,
+    converted: 0,
+    conversionRate: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetch() {
-      const { data } = await supabase
-        .from('sales_leads')
-        .select('lead_status, lead_quality_label, urgency_score, is_existing_customer, first_response_at, first_response_sent_at, created_at, sla_minutes');
+    async function fetchStats() {
+      // Fetch leads + quotes in parallel
+      const [leadsRes, quotesRes, ordersRes] = await Promise.all([
+        supabase
+          .from('sales_leads')
+          .select('lead_status, lead_quality_label, lead_quality_score, urgency_score, is_existing_customer'),
+        supabase
+          .from('quotes')
+          .select('id, status')
+          .in('status', ['draft', 'sent', 'viewed']),
+        supabase
+          .from('orders')
+          .select('id, status')
+          .in('status', ['confirmed', 'scheduled']),
+      ]);
 
-      if (data) {
-        setStats({
-          total: data.length,
-          new: data.filter(l => l.lead_status === 'new').length,
-          needsFollowup: data.filter(l => ['contacted', 'qualified', 'quoted'].includes(l.lead_status)).length,
-          highIntent: data.filter(l => (l.urgency_score || 0) >= 70).length,
-          existingCustomer: data.filter(l => l.is_existing_customer).length,
-          highRisk: data.filter(l => l.lead_quality_label === 'RED').length,
-        });
-      }
+      const data = leadsRes.data || [];
+      const total = data.length;
+      const converted = data.filter(l => l.lead_status === 'converted').length;
+
+      setStats({
+        total,
+        new: data.filter(l => l.lead_status === 'new').length,
+        needsFollowup: data.filter(l => ['contacted', 'qualified', 'quoted'].includes(l.lead_status)).length,
+        highIntent: data.filter(l => (l.urgency_score || 0) >= 70 || (l.lead_quality_score || 0) >= 75).length,
+        existingCustomer: data.filter(l => l.is_existing_customer).length,
+        highRisk: data.filter(l => l.lead_quality_label === 'RED').length,
+        quotesPending: quotesRes.data?.length || 0,
+        jobsScheduled: ordersRes.data?.length || 0,
+        converted,
+        conversionRate: total > 0 ? Math.round((converted / total) * 100) : 0,
+      });
+
       setLoading(false);
     }
-    fetch();
+    fetchStats();
   }, []);
 
   return { stats, loading };

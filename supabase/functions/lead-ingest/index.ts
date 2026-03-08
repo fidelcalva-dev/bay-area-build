@@ -6,6 +6,25 @@ const corsHeaders = {
 };
 
 // Inline lead scoring
+// SF Bay Area high-value ZIP codes
+const HIGH_VALUE_ZIPS = [
+  '94102','94103','94104','94105','94107','94108','94109','94110','94111','94112', // SF
+  '94601','94602','94603','94606','94607','94608','94609','94610','94611','94612', // Oakland
+  '95110','95111','95112','95113','95116','95117','95118','95119','95120','95121', // San Jose
+  '94710','94702','94703','94704','94705','94709', // Berkeley
+];
+
+const PROJECT_SCORE: Record<string, number> = {
+  'construction': 15, 'demolition': 15, 'renovation': 12, 'roofing': 12,
+  'commercial': 15, 'concrete': 10, 'landscaping': 8, 'cleanout': 8,
+  'junk_removal': 6, 'yard_waste': 5, 'residential': 5,
+};
+
+const MATERIAL_SCORE: Record<string, number> = {
+  'concrete': 12, 'heavy_debris': 12, 'construction_debris': 10,
+  'roofing': 10, 'mixed': 8, 'dirt': 8, 'yard_waste': 5, 'household': 5,
+};
+
 function scoreLead(input: Record<string, unknown>) {
   const FREE = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','mail.com','protonmail.com','live.com'];
   const DISPOSABLE = ['mailinator.com','guerrillamail.com','tempmail.com','throwaway.email','yopmail.com'];
@@ -14,20 +33,41 @@ function scoreLead(input: Record<string, unknown>) {
   const domain = email.split('@')[1]?.toLowerCase();
   let companyDomain: string | null = null;
   let custType = 'unknown';
-  if (domain && !FREE.includes(domain) && !DISPOSABLE.includes(domain)) { qs += 15; companyDomain = domain; custType = 'contractor'; }
-  else if (domain && FREE.includes(domain)) { qs += 5; custType = 'homeowner'; }
+  if (domain && !FREE.includes(domain) && !DISPOSABLE.includes(domain)) { qs += 12; companyDomain = domain; custType = 'contractor'; }
+  else if (domain && FREE.includes(domain)) { qs += 3; custType = 'homeowner'; }
   if (domain && DISPOSABLE.includes(domain)) rs += 30;
+
   const name = (input.name || input.contact_name || input.customer_name || '') as string;
-  if (name.trim().length > 2) qs += 10; else rs += 10;
+  if (name.trim().length > 2) qs += 8; else rs += 10;
   const phone = (input.phone || input.customer_phone || '') as string;
-  if (phone.replace(/\D/g, '').length >= 10) qs += 10; else if (phone) rs += 20;
-  if (input.address || input.city) qs += 10;
-  if (input.zip) qs += 15;
-  if (input.company_name) { qs += 10; if (custType === 'unknown') custType = 'contractor'; }
+  if (phone.replace(/\D/g, '').length >= 10) qs += 8; else if (phone) rs += 20;
+  if (input.address || input.city) qs += 8;
+
+  // Location scoring — high-value ZIP
+  const zip = (input.zip || '') as string;
+  if (zip) {
+    qs += 10;
+    if (HIGH_VALUE_ZIPS.includes(zip.slice(0, 5))) qs += 5;
+  }
+
+  if (input.company_name) { qs += 8; if (custType === 'unknown') custType = 'contractor'; }
+
+  // Project type scoring
+  const projectType = ((input.project_type || input.project_category || '') as string).toLowerCase().replace(/[\s-]/g, '_');
+  const projectBonus = PROJECT_SCORE[projectType] || 0;
+  qs += projectBonus;
+
+  // Material scoring
+  const material = ((input.material_category || input.material_type || '') as string).toLowerCase().replace(/[\s-]/g, '_');
+  const materialBonus = MATERIAL_SCORE[material] || 0;
+  qs += materialBonus;
+
+  // Urgency / high-intent keywords
   const text = [input.message, input.message_excerpt].filter(Boolean).join(' ').toLowerCase();
-  if (/need today|ready to book|asap|urgent|same day|tomorrow/.test(text)) qs += 15;
+  if (/need today|ready to book|asap|urgent|same day|tomorrow|this week|need now|schedule/.test(text)) qs += 12;
   if (/free|test|testing|asdf|xxx|fake/.test(text)) rs += 20;
   if (name.trim().length === 1) rs += 15;
+
   qs = Math.min(100, qs); rs = Math.min(100, rs);
   const label = rs >= 50 || qs < 20 ? 'RED' : rs >= 25 || qs < 40 ? 'AMBER' : 'GREEN';
   return { quality_score: qs, risk_score: rs, quality_label: label, company_domain: companyDomain, customer_type_inferred: custType };
