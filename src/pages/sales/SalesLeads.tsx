@@ -260,7 +260,7 @@ export default function SalesLeads() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-3">
         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setActiveTab('all')}>
           <CardContent className="pt-4 pb-3">
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -273,16 +273,40 @@ export default function SalesLeads() {
             <p className="text-xs text-muted-foreground">New</p>
           </CardContent>
         </Card>
+        <Card className={`cursor-pointer hover:border-primary/50 transition-colors ${activeTab === 'high_intent' ? 'border-primary' : ''}`} onClick={() => setActiveTab('high_intent')}>
+          <CardContent className="pt-4 pb-3">
+            <div className="text-2xl font-bold text-emerald-600">{stats.highIntent}</div>
+            <p className="text-xs text-muted-foreground">Hot Leads</p>
+          </CardContent>
+        </Card>
         <Card className={`cursor-pointer hover:border-primary/50 transition-colors ${activeTab === 'needs_followup' ? 'border-primary' : ''}`} onClick={() => setActiveTab('needs_followup')}>
           <CardContent className="pt-4 pb-3">
             <div className="text-2xl font-bold text-yellow-600">{stats.needsFollowup}</div>
             <p className="text-xs text-muted-foreground">Follow-Up</p>
           </CardContent>
         </Card>
-        <Card className={`cursor-pointer hover:border-primary/50 transition-colors ${activeTab === 'high_intent' ? 'border-primary' : ''}`} onClick={() => setActiveTab('high_intent')}>
+        <Card>
           <CardContent className="pt-4 pb-3">
-            <div className="text-2xl font-bold text-emerald-600">{stats.highIntent}</div>
-            <p className="text-xs text-muted-foreground">High Intent</p>
+            <div className="text-2xl font-bold text-violet-600">{stats.quotesPending}</div>
+            <p className="text-xs text-muted-foreground">Quotes Pending</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3">
+            <div className="text-2xl font-bold text-cyan-600">{stats.jobsScheduled}</div>
+            <p className="text-xs text-muted-foreground">Jobs Scheduled</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3">
+            <div className="text-2xl font-bold text-green-600">{stats.converted}</div>
+            <p className="text-xs text-muted-foreground">Converted</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3">
+            <div className="text-2xl font-bold text-primary">{stats.conversionRate}%</div>
+            <p className="text-xs text-muted-foreground">Conv. Rate</p>
           </CardContent>
         </Card>
         <Card className={`cursor-pointer hover:border-primary/50 transition-colors ${activeTab === 'existing_customer' ? 'border-primary' : ''}`} onClick={() => setActiveTab('existing_customer')}>
