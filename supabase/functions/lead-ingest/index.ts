@@ -109,6 +109,8 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let rawPayload: IngestPayload | null = null;
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -116,6 +118,7 @@ Deno.serve(async (req) => {
     );
 
     const payload: IngestPayload = await req.json();
+    rawPayload = payload;
     console.log('Lead ingest payload:', JSON.stringify(payload).slice(0, 500));
 
     if (!payload.source_channel) {
@@ -339,6 +342,25 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Lead ingest error:', error);
+
+    // =====================================================
+    // FAILSAFE: Write to lead_fallback_queue so no lead is lost
+    // =====================================================
+    try {
+      const fallbackSb = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      );
+      await fallbackSb.from('lead_fallback_queue').insert({
+        source_channel: rawPayload?.source_channel || 'UNKNOWN',
+        payload: (rawPayload || {}) as unknown as Record<string, unknown>,
+        error_message: error instanceof Error ? error.message : 'Unknown error',
+      });
+      console.log('Lead saved to fallback queue');
+    } catch (fallbackErr) {
+      console.error('Fallback queue write also failed:', fallbackErr);
+    }
+
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

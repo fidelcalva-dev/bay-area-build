@@ -242,6 +242,38 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
+    // =====================================================
+    // Unified pipeline: route through lead-ingest (non-blocking)
+    // =====================================================
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      if (supabaseUrl && supabaseServiceKey) {
+        await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            source_channel: 'GHL_QUOTE',
+            source_detail: 'highlevel_webhook',
+            name: name ?? null,
+            phone: e164Phone ?? null,
+            email: email ?? null,
+            zip: zip ?? null,
+            project_type: project_type ?? null,
+            material_category: waste_type ?? null,
+            size_preference: selected_size ? `${selected_size}yd` : null,
+            consent_status: 'OPTED_IN',
+            raw_payload: { quote_id, event, estimated_total, yard_name, distance_miles },
+          }),
+        });
+      }
+    } catch (ingestErr) {
+      console.error('[highlevel-webhook] lead-ingest failed (non-critical):', ingestErr);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
