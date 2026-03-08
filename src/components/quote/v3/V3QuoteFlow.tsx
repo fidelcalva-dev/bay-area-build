@@ -1047,6 +1047,23 @@ export function V3QuoteFlow() {
         {/* ============================== */}
         {/* STEP 5: PRICE MOMENT */}
         {/* ============================== */}
+        {step === 'price' && !quote.isValid && (
+          <StepTransition stepKey="price-fallback">
+            <div className="space-y-5">
+              <BackButton />
+              <div className="p-6 rounded-xl bg-muted/30 border border-border/60 text-center">
+                <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-3" />
+                <p className="font-semibold text-foreground">Calculating your price...</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  We'll confirm the exact price after reviewing your location.
+                </p>
+              </div>
+              <Button variant="outline" className="w-full rounded-xl" onClick={goBack}>
+                <ChevronLeft className="w-4 h-4" /> Go Back
+              </Button>
+            </div>
+          </StepTransition>
+        )}
         {step === 'price' && quote.isValid && (
           <StepTransition stepKey="price">
             <div className="space-y-5">
@@ -1153,7 +1170,7 @@ export function V3QuoteFlow() {
                     )}
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <Star className="w-3 h-3 text-primary" />
-                      Trusted by Bay Area homeowners and contractors since 2010
+                      Trusted by Bay Area homeowners and contractors since 2009
                     </p>
                   </div>
                 </div>
@@ -1328,9 +1345,19 @@ export function V3QuoteFlow() {
                   </label>
                   <Input
                     type="tel"
+                    inputMode="tel"
                     placeholder="(510) 555-1234"
                     value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      if (raw.length >= 7) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}`);
+                      } else if (raw.length >= 4) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3)}`);
+                      } else {
+                        setCustomerPhone(raw);
+                      }
+                    }}
                     className="h-12 rounded-xl border-border/60"
                   />
                 </div>
@@ -1370,6 +1397,18 @@ export function V3QuoteFlow() {
                 <label htmlFor="terms-v3" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
                   {getButtons().TERMS_TEXT}
                 </label>
+              </div>
+
+              {/* Urgency + trust before CTA */}
+              <div className="flex items-center justify-center gap-4 py-2">
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Shield className="w-3 h-3 text-primary" />
+                  Licensed & Insured
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Clock className="w-3 h-3 text-primary" />
+                  15-min response
+                </span>
               </div>
 
               <Button
@@ -1549,6 +1588,14 @@ export function V3QuoteFlow() {
                   <p className="text-sm text-muted-foreground mt-1.5">
                     {ORDER_CONFIRMED_SUBTITLE}
                   </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-4 rounded-xl"
+                    onClick={() => navigate('/')}
+                  >
+                    Back to Home
+                  </Button>
                 </div>
               )}
 
