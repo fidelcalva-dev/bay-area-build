@@ -1048,6 +1048,9 @@ const App = () => {
                 <Route path="leads" element={
                   <Suspense fallback={<PageLoader />}><AdminLeadsHub /></Suspense>
                 } />
+                <Route path="leads-health" element={
+                  <Suspense fallback={<PageLoader />}><LeadsHealthDashboard /></Suspense>
+                } />
                 {/* Email Config */}
                 <Route path="email-config" element={
                   <Suspense fallback={<PageLoader />}><EmailConfigPanel /></Suspense>
