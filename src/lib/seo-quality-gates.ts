@@ -1,5 +1,6 @@
 // SEO Quality Gates — Anti-spam validation for all SEO pages
-// Pages must pass ALL gates before being considered publishable
+// Pages must pass ALL gates to be considered fully optimized
+// WARNING: Quality gates are diagnostic ONLY — they never block page rendering
 
 export interface QualityGateResult {
   passed: boolean;
@@ -10,6 +11,7 @@ export interface QualityGateResult {
   faqCount: number;
   internalLinkCount: number;
   neighborhoodMentions: number;
+  scores: QualityScores;
 }
 
 export interface QualityCheck {
@@ -19,13 +21,23 @@ export interface QualityCheck {
   actual: number | string;
 }
 
+export interface QualityScores {
+  content: number;    // 0-100
+  authority: number;  // 0-100
+  links: number;      // 0-100
+  local: number;      // 0-100
+  overall: number;    // 0-100
+}
+
 // Minimum thresholds by page type
 const THRESHOLDS: Record<string, { minWords: number; minFaqs: number; minLinks: number; minNeighborhoods: number }> = {
-  CITY: { minWords: 400, minFaqs: 4, minLinks: 4, minNeighborhoods: 1 },
-  CITY_SIZE: { minWords: 300, minFaqs: 2, minLinks: 4, minNeighborhoods: 0 },
-  CITY_MATERIAL: { minWords: 300, minFaqs: 1, minLinks: 4, minNeighborhoods: 0 },
-  CITY_JOB: { minWords: 300, minFaqs: 3, minLinks: 4, minNeighborhoods: 0 },
-  ZIP: { minWords: 300, minFaqs: 4, minLinks: 4, minNeighborhoods: 1 },
+  CITY:          { minWords: 700, minFaqs: 4, minLinks: 6, minNeighborhoods: 1 },
+  CITY_SIZE:     { minWords: 350, minFaqs: 3, minLinks: 6, minNeighborhoods: 0 },
+  CITY_MATERIAL: { minWords: 350, minFaqs: 2, minLinks: 6, minNeighborhoods: 0 },
+  CITY_JOB:      { minWords: 350, minFaqs: 3, minLinks: 6, minNeighborhoods: 0 },
+  ZIP:           { minWords: 400, minFaqs: 4, minLinks: 6, minNeighborhoods: 1 },
+  COUNTY:        { minWords: 600, minFaqs: 4, minLinks: 6, minNeighborhoods: 1 },
+  USE_CASE:      { minWords: 900, minFaqs: 4, minLinks: 6, minNeighborhoods: 0 },
 };
 
 /**
@@ -58,6 +70,26 @@ export function countNeighborhoodMentions(content: string, neighborhoods: string
 }
 
 /**
+ * Calculate quality scores (0-100) per dimension
+ */
+function calculateScores(
+  wordCount: number,
+  faqCount: number,
+  linkCount: number,
+  neighborhoodMentions: number,
+  thresholds: { minWords: number; minFaqs: number; minLinks: number; minNeighborhoods: number },
+): QualityScores {
+  const content = Math.min(100, Math.round((wordCount / thresholds.minWords) * 100));
+  const authority = Math.min(100, Math.round((faqCount / Math.max(thresholds.minFaqs, 1)) * 100));
+  const links = Math.min(100, Math.round((linkCount / Math.max(thresholds.minLinks, 1)) * 100));
+  const local = thresholds.minNeighborhoods === 0
+    ? 100
+    : Math.min(100, Math.round((neighborhoodMentions / thresholds.minNeighborhoods) * 100));
+  const overall = Math.round(content * 0.4 + authority * 0.2 + links * 0.2 + local * 0.2);
+  return { content, authority, links, local, overall };
+}
+
+/**
  * Run all quality gates for a page
  */
 export function runQualityGates(
@@ -71,7 +103,7 @@ export function runQualityGates(
   const thresholds = THRESHOLDS[pageType] || THRESHOLDS.CITY;
   const wordCount = countPageWords(sections, faqs);
   const faqCount = faqs.length;
-  
+
   // Build full text for neighborhood check
   let fullText = '';
   for (const s of sections) {
@@ -110,6 +142,8 @@ export function runQualityGates(
     },
   ];
 
+  const scores = calculateScores(wordCount, faqCount, internalLinkCount, neighborhoodMentions, thresholds);
+
   return {
     passed: checks.every(c => c.passed),
     pageType,
@@ -119,6 +153,7 @@ export function runQualityGates(
     faqCount,
     internalLinkCount,
     neighborhoodMentions,
+    scores,
   };
 }
 
