@@ -1153,7 +1153,7 @@ export function V3QuoteFlow() {
                     )}
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <Star className="w-3 h-3 text-primary" />
-                      Trusted by Bay Area homeowners and contractors since 2010
+                      Trusted by Bay Area homeowners and contractors since 2009
                     </p>
                   </div>
                 </div>
