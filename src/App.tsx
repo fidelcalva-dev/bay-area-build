@@ -288,6 +288,7 @@ const CSLeadInbox = lazy(() => import("./pages/cs/CSLeadInbox"));
 // Admin Lead Hub
 const AdminLeadsHub = lazy(() => import("./pages/admin/AdminLeadsHub"));
 const LeadsHealthDashboard = lazy(() => import("./pages/admin/LeadsHealthDashboard"));
+const SystemResetPage = lazy(() => import("./pages/admin/SystemResetPage"));
 const EmailConfigPanel = lazy(() => import("./pages/admin/EmailConfigPanel"));
 
 // Dispatch Portal
