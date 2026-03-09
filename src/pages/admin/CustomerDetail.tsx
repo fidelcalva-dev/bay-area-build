@@ -4,7 +4,7 @@ import {
   User, Phone, Mail, Building2, MapPin, FileText, DollarSign, 
   ArrowLeft, Loader2, Package, Activity, Receipt, CreditCard,
   MessageSquare, Camera, StickyNote, Clock, Plus, Send,
-  Truck, Star, Upload, ExternalLink
+  Truck, Star, Upload, ExternalLink, Image, FolderOpen, MapPinned
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { TimelineView, AddNoteDialog } from '@/components/timeline';
 import { getCustomerTimeline, type TimelineEvent } from '@/lib/timelineService';
 import { HealthScoreCard, HealthEventsTimeline, HealthBadge } from '@/components/health';
 import { getCustomerHealthScore, type CustomerHealthScore } from '@/lib/customerHealthService';
+import { CommunicationTimeline } from '@/components/communication/CommunicationTimeline';
 import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
@@ -43,6 +44,7 @@ interface Order {
   created_at: string;
   scheduled_delivery_date: string | null;
   scheduled_pickup_date: string | null;
+  site_address: string | null;
 }
 
 interface Invoice {
@@ -115,7 +117,7 @@ export default function CustomerDetail() {
           .single(),
         supabase
           .from('orders')
-          .select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date')
+          .select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date, site_address')
           .eq('customer_id', id)
           .order('created_at', { ascending: false }),
         supabase
@@ -137,7 +139,7 @@ export default function CustomerDetail() {
       ]);
 
       if (customerResult.data) setCustomer(customerResult.data);
-      if (ordersResult.data) setOrders(ordersResult.data);
+      if (ordersResult.data) setOrders(ordersResult.data as Order[]);
       if (invoicesResult.data) setInvoices(invoicesResult.data as Invoice[]);
       if (paymentsResult.data) setPayments(paymentsResult.data as Payment[]);
       if (quotesResult.data) setQuotes(quotesResult.data as Quote[]);
@@ -196,6 +198,21 @@ export default function CustomerDetail() {
   const totalRevenue = payments.filter(p => p.status === 'approved' || p.status === 'completed').reduce((sum, p) => sum + (p.amount || 0), 0);
   const totalOutstanding = invoices.reduce((sum, i) => sum + (i.balance_due || 0), 0);
   const activeOrders = orders.filter(o => !['completed', 'cancelled'].includes(o.status)).length;
+
+  // Unique sites from orders
+  const uniqueSites = [...new Set(orders.map(o => o.site_address).filter(Boolean))] as string[];
+
+  // Photos from timeline (photo-related events)
+  const photoEvents = timelineEvents.filter(e => {
+    const details = e.details_json as Record<string, unknown> | null;
+    return details?.photo_url || details?.photos || e.event_type === 'DUMP_TICKET';
+  });
+
+  // Document events
+  const documentEvents = timelineEvents.filter(e => {
+    const details = e.details_json as Record<string, unknown> | null;
+    return details?.document_url || details?.file_url || e.event_type === 'SYSTEM' && e.summary?.toLowerCase().includes('document');
+  });
 
   return (
     <div className="container mx-auto py-6 space-y-6 max-w-7xl">
@@ -278,10 +295,14 @@ export default function CustomerDetail() {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="sites">Sites ({uniqueSites.length})</TabsTrigger>
           <TabsTrigger value="orders">Orders ({orders.length})</TabsTrigger>
           <TabsTrigger value="quotes">Quotes ({quotes.length})</TabsTrigger>
           <TabsTrigger value="invoices">Invoices ({invoices.length})</TabsTrigger>
           <TabsTrigger value="payments">Payments ({payments.length})</TabsTrigger>
+          <TabsTrigger value="communications">Communications</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="photos">Photos</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="health">Health</TabsTrigger>
@@ -352,6 +373,7 @@ export default function CustomerDetail() {
                   <div className="flex justify-between"><span className="text-muted-foreground">Active Orders</span><span className="font-medium">{activeOrders}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Total Invoices</span><span className="font-medium">{invoices.length}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Total Payments</span><span className="font-medium">{payments.length}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Known Sites</span><span className="font-medium">{uniqueSites.length}</span></div>
                 </div>
               </CardContent>
             </Card>
@@ -359,6 +381,44 @@ export default function CustomerDetail() {
             {/* Health Summary */}
             {healthScore && <HealthScoreCard customerId={customer.id} />}
           </div>
+        </TabsContent>
+
+        {/* ─── SITES TAB ─── */}
+        <TabsContent value="sites">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Service Sites</CardTitle>
+              <CardDescription>All unique addresses from this customer's orders</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {uniqueSites.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <MapPinned className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>No service sites recorded</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {uniqueSites.map((site, idx) => {
+                    const siteOrders = orders.filter(o => o.site_address === site);
+                    return (
+                      <div key={idx} className="flex items-start justify-between p-4 rounded-lg border">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                          <div>
+                            <p className="font-medium">{site}</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {siteOrders.length} order{siteOrders.length !== 1 ? 's' : ''} at this site
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant="outline">{siteOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* ─── ORDERS TAB ─── */}
@@ -384,6 +444,7 @@ export default function CustomerDetail() {
                           <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
                           <p className="text-sm text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString()}
+                            {order.site_address && ` · ${order.site_address}`}
                           </p>
                         </div>
                       </div>
@@ -545,6 +606,112 @@ export default function CustomerDetail() {
           </Card>
         </TabsContent>
 
+        {/* ─── COMMUNICATIONS TAB ─── */}
+        <TabsContent value="communications">
+          <CommunicationTimeline
+            entityType="customer"
+            entityId={customer.id}
+            title="All Communications"
+            maxHeight="600px"
+          />
+        </TabsContent>
+
+        {/* ─── DOCUMENTS TAB ─── */}
+        <TabsContent value="documents">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Documents</CardTitle>
+                  <CardDescription>Contracts, receipts, and uploaded files</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" disabled>
+                  <Upload className="w-4 h-4 mr-1.5" />
+                  Upload
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {documentEvents.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>No documents yet</p>
+                  <p className="text-xs mt-1">Contracts, dump tickets, and uploaded files will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {documentEvents.map(event => {
+                    const details = event.details_json as Record<string, unknown> | null;
+                    const url = (details?.document_url || details?.file_url) as string | undefined;
+                    return (
+                      <div key={event.id} className="flex items-center justify-between p-3 rounded-lg border">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-5 h-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm font-medium">{event.summary}</p>
+                            <p className="text-xs text-muted-foreground">{new Date(event.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        {url && (
+                          <Button variant="ghost" size="sm" onClick={() => window.open(url, '_blank')}>
+                            <ExternalLink className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── PHOTOS TAB ─── */}
+        <TabsContent value="photos">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Photos & Media</CardTitle>
+              <CardDescription>Site photos, dump tickets, and delivery documentation</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {photoEvents.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>No photos yet</p>
+                  <p className="text-xs mt-1">Delivery photos, site images, and dump tickets will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {photoEvents.map(event => {
+                    const details = event.details_json as Record<string, unknown> | null;
+                    const photoUrl = details?.photo_url as string | undefined;
+                    const photos = details?.photos as string[] | undefined;
+                    return (
+                      <div key={event.id} className="p-3 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Camera className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm font-medium">{event.summary}</span>
+                          <span className="text-xs text-muted-foreground ml-auto">{new Date(event.created_at).toLocaleDateString()}</span>
+                        </div>
+                        {photoUrl && (
+                          <img src={photoUrl} alt={event.summary} className="w-full max-w-md rounded-md border" loading="lazy" />
+                        )}
+                        {photos && photos.length > 0 && (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                            {photos.map((url, i) => (
+                              <img key={i} src={url} alt={`Photo ${i + 1}`} className="w-full h-32 object-cover rounded-md border cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={() => window.open(url, '_blank')} />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* ─── TIMELINE TAB ─── */}
         <TabsContent value="timeline">
           <Card>
@@ -675,6 +842,10 @@ function QuickActionsMenu({ customerId, customerEmail }: { customerId: string; c
         <DropdownMenuItem onClick={() => navigate(`/admin/customers/${customerId}?tab=notes`)}>
           <StickyNote className="w-4 h-4 mr-2" />
           Add Note
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Upload className="w-4 h-4 mr-2" />
+          Upload Document
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Star className="w-4 h-4 mr-2" />
