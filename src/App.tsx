@@ -1166,22 +1166,6 @@ const App = () => {
                 } />
               </Route>
 
-              {/* Maintenance Portal */}
-              <Route path="/admin/maintenance" element={
-                <Suspense fallback={<PageLoader />}><MaintenanceDashboard /></Suspense>
-              } />
-              <Route path="/admin/maintenance/trucks" element={
-                <Suspense fallback={<PageLoader />}><MaintenanceTrucks /></Suspense>
-              } />
-              <Route path="/admin/maintenance/issues" element={
-                <Suspense fallback={<PageLoader />}><MaintenanceIssues /></Suspense>
-              } />
-              <Route path="/admin/maintenance/work-orders" element={
-                <Suspense fallback={<PageLoader />}><MaintenanceWorkOrders /></Suspense>
-              } />
-              <Route path="/admin/vehicles/:id" element={
-                <Suspense fallback={<PageLoader />}><VehicleProfile /></Suspense>
-              } />
 
               {/* Sales Portal */}
               <Route path="/sales" element={
