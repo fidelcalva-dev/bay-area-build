@@ -150,12 +150,7 @@ export default function RouteHealthPage() {
         </p>
       </div>
 
-      {/* Cross-links */}
-      <div className="flex flex-wrap gap-2">
-        <Link to="/admin/qa/duplicate-pages" className="text-xs text-primary underline">Duplicate Pages</Link>
-        <Link to="/admin/qa/public-vs-crm" className="text-xs text-primary underline">Public vs CRM</Link>
-        <Link to="/admin/seo/health" className="text-xs text-primary underline">SEO Health</Link>
-      </div>
+      <QaNavStrip />
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         <Card>
