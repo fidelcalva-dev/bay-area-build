@@ -5,7 +5,8 @@ import {
   Home, Loader2, Percent, Warehouse, Settings, 
   Package, FileText, Truck, Calendar, Receipt, 
   Boxes, UserCog, MapPinned, Banknote, Bell,
-  BarChart3, TrendingUp, PieChart, Search, Link2, Phone, MessageSquare, Send, Brain
+  BarChart3, TrendingUp, PieChart, Search, Link2, Phone, MessageSquare, Send, Brain,
+  Globe, Layout
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -15,10 +16,10 @@ import { AlertBadge } from '@/components/alerts';
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 import AiControlWidget from '@/components/ai/AiControlWidget';
 
-// Navigation items grouped by section - Full CRM Navigation
+// Navigation items grouped by operational category
 const navSections = [
   {
-    title: 'Overview',
+    title: 'Command',
     items: [
       { path: '/admin', label: 'Control Center', icon: Home, end: true },
       { path: '/admin/executive', label: 'Executive View', icon: BarChart3 },
@@ -38,6 +39,72 @@ const navSections = [
     ],
   },
   {
+    title: 'Sales',
+    items: [
+      { path: '/admin/leads', label: 'Lead Hub', icon: Users },
+      { path: '/admin/leads-health', label: 'Lead Health', icon: TrendingUp },
+      { path: '/admin/leads/settings', label: 'Lead Engine', icon: Settings },
+      { path: '/admin/sales-performance', label: 'Sales Performance', icon: BarChart3 },
+    ],
+  },
+  {
+    title: 'Operations',
+    items: [
+      { path: '/admin/orders', label: 'Orders', icon: Package },
+      { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
+      { path: '/admin/assets', label: 'Asset Control Tower', icon: Boxes },
+      { path: '/admin/drivers', label: 'Drivers', icon: Truck },
+      { path: '/admin/movements', label: 'Movement Log', icon: FileText },
+      { path: '/admin/inventory', label: 'Inventory (Legacy)', icon: Warehouse },
+      { path: '/admin/quick-links', label: 'Quick Links', icon: Link2 },
+    ],
+  },
+  {
+    title: 'Customers',
+    items: [
+      { path: '/admin/customers', label: 'Customer List', icon: Users },
+      { path: '/admin/customer-health', label: 'Customer Health', icon: TrendingUp },
+      { path: '/admin/activation', label: 'Activation', icon: Send },
+      { path: '/admin/overdue', label: 'Overdue Billing', icon: Receipt },
+    ],
+  },
+  {
+    title: 'Finance',
+    items: [
+      { path: '/admin/tickets', label: 'Tickets & Receipts', icon: Receipt },
+      { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
+      { path: '/admin/compensation', label: 'Compensation', icon: DollarSign },
+      { path: '/admin/profitability', label: 'Profitability', icon: BarChart3 },
+      { path: '/admin/heavy-risk', label: 'Heavy Risk', icon: Shield },
+    ],
+  },
+  {
+    title: 'Configuration',
+    items: [
+      { path: '/admin/configuration', label: 'Config Center', icon: Settings },
+      { path: '/admin/yards', label: 'Yard Manager', icon: Warehouse },
+      { path: '/admin/zones', label: 'ZIP-to-Zone', icon: MapPin },
+      { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
+      { path: '/admin/city-rates', label: 'City Rates', icon: Banknote },
+      { path: '/admin/toll-surcharges', label: 'Toll Surcharges', icon: MapPinned },
+      { path: '/admin/vendors', label: 'Vendors', icon: Truck },
+      { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
+      { path: '/admin/config', label: 'Business Rules', icon: Settings },
+      { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
+    ],
+  },
+  {
+    title: 'SEO',
+    items: [
+      { path: '/admin/seo/dashboard', label: 'SEO Dashboard', icon: Globe },
+      { path: '/admin/seo/cities', label: 'Cities', icon: MapPin },
+      { path: '/admin/seo/pages', label: 'Pages', icon: FileText },
+      { path: '/admin/seo/health', label: 'Health', icon: TrendingUp },
+      { path: '/admin/seo/metrics', label: 'Metrics', icon: BarChart3 },
+      { path: '/admin/seo/generate', label: 'Generate', icon: Plus },
+    ],
+  },
+  {
     title: 'Google Ads',
     items: [
       { path: '/admin/ads', label: 'Ads Overview', icon: TrendingUp, end: true },
@@ -48,90 +115,41 @@ const navSections = [
     ],
   },
   {
-    title: 'Operations',
-    items: [
-      { path: '/admin/orders', label: 'Orders', icon: Package },
-      { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
-      { path: '/admin/assets', label: 'Asset Control Tower', icon: Boxes },
-      { path: '/admin/overdue', label: 'Overdue Billing', icon: Receipt },
-      { path: '/admin/inventory', label: 'Inventory (Legacy)', icon: Warehouse },
-      { path: '/admin/movements', label: 'Movement Log', icon: FileText },
-      { path: '/admin/customers', label: 'Customers', icon: Users },
-      { path: '/admin/activation', label: 'Activation', icon: Send },
-      { path: '/admin/drivers', label: 'Drivers', icon: Truck },
-      { path: '/admin/quick-links', label: 'Quick Links', icon: Link2 },
-    ],
-  },
-  {
-    title: 'Finance',
-    items: [
-      { path: '/admin/tickets', label: 'Tickets & Receipts', icon: Receipt },
-      { path: '/admin/city-rates', label: 'City Rates', icon: Banknote },
-      { path: '/admin/toll-surcharges', label: 'Toll Surcharges', icon: MapPinned },
-    ],
-  },
-  {
-    title: 'Configuration',
-    items: [
-      { path: '/admin/configuration', label: 'Config Center', icon: Settings },
-      { path: '/admin/yards', label: 'Yard Manager', icon: Warehouse },
-      { path: '/admin/zones', label: 'ZIP-to-Zone', icon: MapPin },
-      { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
-      { path: '/admin/vendors', label: 'Vendors', icon: Truck },
-      { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
-      { path: '/admin/config', label: 'Business Rules', icon: Settings },
-    ],
-  },
-  {
-    title: 'Programs',
-    items: [
-      { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
-      { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
-      { path: '/admin/compensation', label: 'Compensation', icon: DollarSign },
-    ],
-  },
-  {
     title: 'Telephony',
     items: [
       { path: '/admin/telephony/calls', label: 'Call Logs', icon: Phone },
       { path: '/admin/telephony/numbers', label: 'Phone Numbers', icon: Phone },
       { path: '/admin/telephony/analytics', label: 'Call Analytics', icon: BarChart3 },
-      { path: '/admin/telephony/migration', label: 'GHL Migration', icon: Phone },
-      { path: '/admin/telephony/test', label: 'Test Call', icon: Phone },
-      { path: '/admin/telephony/import', label: 'Import History', icon: FileText },
     ],
   },
   {
     title: 'Integrations',
     items: [
       { path: '/admin/google', label: 'Google Workspace', icon: Link2 },
-    ],
-  },
-  {
-    title: 'Resources',
-    items: [
-      { path: '/admin/docs', label: 'Internal Docs', icon: FileText },
+      { path: '/admin/messaging', label: 'Messaging', icon: MessageSquare },
+      { path: '/admin/setup/functions', label: 'Functions Map', icon: Settings },
     ],
   },
   {
     title: 'AI',
     items: [
       { path: '/admin/ai/performance', label: 'AI Performance', icon: Brain },
+      { path: '/admin/ai/chat', label: 'AI Chat', icon: MessageSquare },
     ],
   },
   {
-    title: 'System',
+    title: 'QA & System',
     items: [
       { path: '/admin/qa/control-center', label: 'QA Control Center', icon: Shield },
+      { path: '/admin/qa/page-organization', label: 'Page Organization', icon: Layout },
+      { path: '/admin/qa/route-health', label: 'Route Health', icon: TrendingUp },
       { path: '/admin/alerts', label: 'Alerts', icon: Bell },
       { path: '/admin/security', label: 'Security Health', icon: Shield },
-      { path: '/admin/setup/functions', label: 'Functions Map', icon: Settings },
-      { path: '/admin/setup/what-missing', label: "What's Missing", icon: Shield },
-      { path: '/admin/risk', label: 'Risk Review', icon: Shield },
-      { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
       { path: '/admin/users', label: 'User Management', icon: UserCog },
       { path: '/admin/access-requests', label: 'Access Requests', icon: UserCog },
       { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
+      { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
+      { path: '/admin/docs', label: 'Internal Docs', icon: FileText },
     ],
   },
 ];
