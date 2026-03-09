@@ -646,6 +646,7 @@ const App = () => {
                   <Suspense fallback={<PageLoader />}><CustomerDocuments /></Suspense>
                 </PortalAuthGuard>
               } />
+              {/* Legacy SMS link pattern — keep alias for backward compatibility */}
               <Route path="/portal/order/:orderId" element={
                 <PortalAuthGuard>
                   <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
