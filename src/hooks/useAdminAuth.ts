@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
-export type AppRole = 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin' | 'cs' | 'cs_agent' | 'billing_specialist' | 'executive';
+export type AppRole = 'owner' | 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin' | 'cs' | 'cs_agent' | 'billing_specialist' | 'executive' | 'sales_rep' | 'customer_service' | 'fleet_maintenance' | 'marketing_seo' | 'read_only';
 
 interface AdminAuthState {
   user: User | null;
