@@ -38,13 +38,19 @@ export function useAdminAuth() {
 useEffect(() => {
     let isMounted = true;
 
-    const fetchRoles = async (user: User) => {
+    const fetchRoles = async (user: User, retries = 3) => {
       try {
         // Fetch all roles for this user
-        const { data: rolesData } = await supabase
+        const { data: rolesData, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id);
+
+        // Retry on network errors
+        if (error && retries > 0) {
+          await new Promise(r => setTimeout(r, 1000));
+          return fetchRoles(user, retries - 1);
+        }
 
         const roles = (rolesData?.map((r) => r.role as AppRole) || []);
 
