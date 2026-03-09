@@ -1086,6 +1086,22 @@ const App = () => {
                 <Route path="sales-performance" element={
                   <Suspense fallback={<PageLoader />}><SalesPerformanceDashboard /></Suspense>
                 } />
+                {/* Maintenance Routes */}
+                <Route path="maintenance" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceDashboard /></Suspense>
+                } />
+                <Route path="maintenance/trucks" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceTrucks /></Suspense>
+                } />
+                <Route path="maintenance/issues" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceIssues /></Suspense>
+                } />
+                <Route path="maintenance/work-orders" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceWorkOrders /></Suspense>
+                } />
+                <Route path="vehicles/:id" element={
+                  <Suspense fallback={<PageLoader />}><VehicleProfile /></Suspense>
+                } />
               </Route>
 
               {/* Driver App with Layout */}
