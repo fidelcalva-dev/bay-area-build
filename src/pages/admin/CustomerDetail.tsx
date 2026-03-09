@@ -408,12 +408,8 @@ export default function CustomerDetail() {
                           <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                           <div>
                             <p className="font-medium">{site}</p>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {siteOrders.length} order{siteOrders.length !== 1 ? 's' : ''} at this site
-                            </p>
                           </div>
                         </div>
-                        <Badge variant="outline">{siteOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</Badge>
                       </div>
                     );
                   })}
