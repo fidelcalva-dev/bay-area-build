@@ -341,22 +341,18 @@ export default function CustomerDetail() {
               </CardContent>
             </Card>
 
-            {/* Sites / Addresses */}
+            {/* Service Summary */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Service Sites</CardTitle>
+                <CardTitle className="text-base">Service Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                {(() => {
-                  const sites = [...new Set(orders.map(o => o.site_address).filter(Boolean))];
-                  if (sites.length === 0) return <p className="text-sm text-muted-foreground text-center py-4">No sites on record</p>;
-                  return sites.map((site, i) => (
-                    <div key={i} className="flex items-center gap-2 py-2 border-b last:border-0">
-                      <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
-                      <span className="text-sm">{site}</span>
-                    </div>
-                  ));
-                })()}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Total Orders</span><span className="font-medium">{orders.length}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Active Orders</span><span className="font-medium">{activeOrders}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Total Invoices</span><span className="font-medium">{invoices.length}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Total Payments</span><span className="font-medium">{payments.length}</span></div>
+                </div>
               </CardContent>
             </Card>
 
