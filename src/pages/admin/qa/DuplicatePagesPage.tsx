@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import QaNavStrip from '@/components/admin/qa/QaNavStrip';
 
 type FinalDecision = 'REMOVE_DUPLICATE' | 'REDIRECT_TO_CANONICAL' | 'KEEP_BOTH_WITH_UNIQUE_CANONICAL' | 'KEEP_ALIAS';
 
@@ -136,12 +136,7 @@ export default function DuplicatePagesPage() {
         </p>
       </div>
 
-      {/* Cross-links */}
-      <div className="flex flex-wrap gap-2">
-        <Link to="/admin/qa/route-health" className="text-xs text-primary underline">Route Health</Link>
-        <Link to="/admin/qa/public-vs-crm" className="text-xs text-primary underline">Public vs CRM</Link>
-        <Link to="/admin/seo/health" className="text-xs text-primary underline">SEO Health</Link>
-      </div>
+      <QaNavStrip />
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">

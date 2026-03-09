@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle, AlertTriangle, XCircle, Search, Globe, Shield } from 'lucide-react';
+import QaNavStrip from '@/components/admin/qa/QaNavStrip';
 
 type RouteStatus = 'working' | 'duplicate' | 'redirect' | 'unrouted';
 type RouteCategory = 'public' | 'seo' | 'blog' | 'crm-admin' | 'crm-sales' | 'crm-cs' | 'crm-dispatch' | 'crm-driver' | 'crm-finance' | 'portal' | 'internal' | 'preview' | 'legacy';
@@ -150,12 +151,7 @@ export default function RouteHealthPage() {
         </p>
       </div>
 
-      {/* Cross-links */}
-      <div className="flex flex-wrap gap-2">
-        <Link to="/admin/qa/duplicate-pages" className="text-xs text-primary underline">Duplicate Pages</Link>
-        <Link to="/admin/qa/public-vs-crm" className="text-xs text-primary underline">Public vs CRM</Link>
-        <Link to="/admin/seo/health" className="text-xs text-primary underline">SEO Health</Link>
-      </div>
+      <QaNavStrip />
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         <Card>
