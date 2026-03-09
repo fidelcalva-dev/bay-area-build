@@ -41,9 +41,8 @@ interface Order {
   status: string;
   amount_due: number | null;
   created_at: string;
-  delivery_date: string | null;
-  pickup_date: string | null;
-  site_address: string | null;
+  scheduled_delivery_date: string | null;
+  scheduled_pickup_date: string | null;
 }
 
 interface Invoice {
