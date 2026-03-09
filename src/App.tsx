@@ -710,6 +710,9 @@ const App = () => {
                 <Route index element={
                   <Suspense fallback={<PageLoader />}><CalsanControlCenter /></Suspense>
                 } />
+                <Route path="control-center" element={
+                  <Suspense fallback={<PageLoader />}><CalsanControlCenter /></Suspense>
+                } />
                 <Route path="modules" element={
                   <Suspense fallback={<PageLoader />}><ControlCenter /></Suspense>
                 } />
