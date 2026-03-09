@@ -400,19 +400,12 @@ export default function CustomerDetail() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {uniqueSites.map((site, idx) => {
-                    return (
-                    return (
-                      <div key={idx} className="flex items-start justify-between p-4 rounded-lg border">
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                          <div>
-                            <p className="font-medium">{site}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {uniqueSites.map((site, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-4 rounded-lg border">
+                      <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                      <p className="font-medium">{site}</p>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
