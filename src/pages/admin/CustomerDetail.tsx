@@ -116,7 +116,7 @@ export default function CustomerDetail() {
           .single(),
         supabase
           .from('orders')
-          .select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date, destination_address')
+          .select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date')
           .eq('customer_id', id)
           .order('created_at', { ascending: false }),
         supabase
