@@ -372,8 +372,17 @@ const crmMarketingAnalytics: RouteEntry[] = [
 ];
 
 const crmAI: RouteEntry[] = [
-  { path: '/admin/ai/performance', name: 'AI Performance', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Brain, sidebarOrder: 0, visibleTo: ['admin'] },
-  { path: '/admin/ai/chat', name: 'AI Chat', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: MessageSquare, sidebarOrder: 1, visibleTo: ['admin'] },
+  { path: '/admin/ai/control-center', name: 'AI Control Center', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Brain, sidebarLabel: 'AI Control Center', sidebarEnd: true, sidebarOrder: 0 },
+  { path: '/admin/ai/sales', name: 'AI Sales Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: TrendingUp, sidebarLabel: 'Sales Copilot', sidebarOrder: 1, visibleTo: ['admin', 'sales'] },
+  { path: '/admin/ai/customer-service', name: 'AI CS Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Users, sidebarLabel: 'CS Copilot', sidebarOrder: 2, visibleTo: ['admin', 'cs'] },
+  { path: '/admin/ai/dispatch', name: 'AI Dispatch Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Truck, sidebarLabel: 'Dispatch Copilot', sidebarOrder: 3, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
+  { path: '/admin/ai/driver', name: 'AI Driver Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Truck, sidebarLabel: 'Driver Copilot', sidebarOrder: 4, visibleTo: ['admin', 'driver'] },
+  { path: '/admin/ai/fleet', name: 'AI Fleet Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Warehouse, sidebarLabel: 'Fleet Copilot', sidebarOrder: 5, visibleTo: ['admin', 'fleet_maintenance'] },
+  { path: '/admin/ai/finance', name: 'AI Finance Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: DollarSign, sidebarLabel: 'Finance Copilot', sidebarOrder: 6, visibleTo: ['admin', 'finance'] },
+  { path: '/admin/ai/seo', name: 'AI SEO Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Globe, sidebarLabel: 'SEO Copilot', sidebarOrder: 7, visibleTo: ['admin', 'marketing_seo'] },
+  { path: '/admin/ai/admin', name: 'AI Admin Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Shield, sidebarLabel: 'Admin Copilot', sidebarOrder: 8, visibleTo: ['admin'] },
+  { path: '/admin/ai/performance', name: 'AI Performance', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: BarChart3, sidebarOrder: 9, visibleTo: ['admin'] },
+  { path: '/admin/ai/chat', name: 'AI Chat', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: MessageSquare, sidebarOrder: 10, visibleTo: ['admin'] },
 ];
 
 const crmIntegrations: RouteEntry[] = [
