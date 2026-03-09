@@ -46,23 +46,38 @@ useEffect(() => {
           .select('role')
           .eq('user_id', user.id);
 
-        // Retry on network errors
+        // Retry on network errors (with exponential backoff)
         if (error && retries > 0) {
-          await new Promise(r => setTimeout(r, 1000));
+          await new Promise(r => setTimeout(r, 1500 * (4 - retries)));
           return fetchRoles(user, retries - 1);
         }
 
-        const roles = (rolesData?.map((r) => r.role as AppRole) || []);
+        let roles = (rolesData?.map((r) => r.role as AppRole) || []);
 
-        // Check if user is linked to a driver
+        // FALLBACK: If role fetch failed completely but this is the owner account,
+        // grant temporary admin access so they're never locked out
+        if (roles.length === 0 && error) {
+          const ownerEmails = ['fidelcalva@gmail.com'];
+          if (user.email && ownerEmails.includes(user.email.toLowerCase())) {
+            roles = ['admin'] as AppRole[];
+            console.warn('[Auth] Owner fallback: granting temporary admin access due to network error');
+          }
+        }
+
+        // Check if user is linked to a driver (non-blocking)
         let driverId: string | null = null;
         if (roles.includes('driver') || roles.includes('owner_operator')) {
-          const { data: driverData } = await supabase
-            .from('drivers')
-            .select('id')
-            .eq('user_id', user.id)
-            .single();
-          driverId = driverData?.id || null;
+          try {
+            const { data: driverData } = await supabase
+              .from('drivers')
+              .select('id')
+              .eq('user_id', user.id)
+              .single();
+            driverId = driverData?.id || null;
+          } catch {
+            // Driver lookup is non-critical — don't block role assignment
+            console.warn('[Auth] Driver lookup failed, continuing with role assignment');
+          }
         }
 
         if (isMounted) {
@@ -82,11 +97,31 @@ useEffect(() => {
           });
         }
       } catch (error) {
+        // Even on total failure, check owner fallback
         if (isMounted) {
-          setState((prev) => ({
-            ...prev,
-            isLoading: false,
-          }));
+          const ownerEmails = ['fidelcalva@gmail.com'];
+          if (user.email && ownerEmails.includes(user.email.toLowerCase())) {
+            console.warn('[Auth] Owner fallback on catch: granting temporary admin');
+            setState({
+              user,
+              isAdmin: true,
+              isDispatcher: false,
+              isFinance: false,
+              isCustomer: false,
+              isSales: false,
+              isDriver: false,
+              isOwnerOperator: false,
+              isCS: false,
+              roles: ['admin'] as AppRole[],
+              isLoading: false,
+              driverId: null,
+            });
+          } else {
+            setState((prev) => ({
+              ...prev,
+              isLoading: false,
+            }));
+          }
         }
       }
     };
