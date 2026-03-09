@@ -1089,6 +1089,48 @@ export type Database = {
           },
         ]
       }
+      ai_control_events: {
+        Row: {
+          action_type: string
+          confidence_score: number | null
+          copilot_type: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          prompt_summary: string | null
+          recommendation_summary: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action_type: string
+          confidence_score?: number | null
+          copilot_type: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          prompt_summary?: string | null
+          recommendation_summary?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action_type?: string
+          confidence_score?: number | null
+          copilot_type?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          prompt_summary?: string | null
+          recommendation_summary?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: []
+      }
       ai_control_knowledge: {
         Row: {
           category: string
