@@ -162,6 +162,7 @@ const SeoHealthDashboard = lazy(() => import("./pages/admin/qa/SeoHealthDashboar
 const RouteHealthPage = lazy(() => import("./pages/admin/qa/RouteHealthPage"));
 const DuplicatePagesPage = lazy(() => import("./pages/admin/qa/DuplicatePagesPage"));
 const PublicVsCrmPage = lazy(() => import("./pages/admin/qa/PublicVsCrmPage"));
+const PageOrganizationPage = lazy(() => import("./pages/admin/qa/PageOrganizationPage"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
