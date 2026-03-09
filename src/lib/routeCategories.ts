@@ -229,13 +229,13 @@ const crmSales: RouteEntry[] = [
 ];
 
 const crmCustomerService: RouteEntry[] = [
-  { path: '/cs', name: 'CS Dashboard', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/orders', name: 'CS Orders', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/requests', name: 'CS Requests', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/templates', name: 'CS Templates', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/messages', name: 'CS Messages', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/calls', name: 'CS Calls', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/lead-inbox', name: 'CS Lead Inbox', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
+  { path: '/cs', name: 'CS Dashboard', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/orders', name: 'CS Orders', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/requests', name: 'CS Requests', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/templates', name: 'CS Templates', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/messages', name: 'CS Messages', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/calls', name: 'CS Calls', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/lead-inbox', name: 'CS Lead Inbox', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/activation', name: 'Customer Activation', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Send, sidebarLabel: 'Activation', sidebarOrder: 2, visibleTo: ['admin', 'cs', 'sales'] },
   { path: '/admin/customers', name: 'Customers Manager', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Users, sidebarLabel: 'Customer List', sidebarOrder: 0 },
   { path: '/admin/customers/:id', name: 'Customer Detail', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, isDynamic: true },
@@ -270,11 +270,11 @@ const crmDriver: RouteEntry[] = [
 ];
 
 const crmMaintenance: RouteEntry[] = [
-  { path: '/admin/maintenance', name: 'Maintenance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
-  { path: '/admin/maintenance/trucks', name: 'Maintenance Trucks', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
-  { path: '/admin/maintenance/issues', name: 'Maintenance Issues', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
-  { path: '/admin/maintenance/work-orders', name: 'Work Orders', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
-  { path: '/admin/vehicles/:id', name: 'Vehicle Profile', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false, isDynamic: true },
+  { path: '/admin/maintenance', name: 'Maintenance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarLabel: 'Maintenance', sidebarOrder: 2, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/maintenance/trucks', name: 'Maintenance Trucks', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Truck, sidebarLabel: 'Truck List', sidebarOrder: 3, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/maintenance/issues', name: 'Maintenance Issues', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Bell, sidebarLabel: 'Issues', sidebarOrder: 4, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/maintenance/work-orders', name: 'Work Orders', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: FileText, sidebarLabel: 'Work Orders', sidebarOrder: 5, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/vehicles/:id', name: 'Vehicle Profile', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, isDynamic: true },
 ];
 
 const crmFinance: RouteEntry[] = [

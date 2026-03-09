@@ -1086,6 +1086,22 @@ const App = () => {
                 <Route path="sales-performance" element={
                   <Suspense fallback={<PageLoader />}><SalesPerformanceDashboard /></Suspense>
                 } />
+                {/* Maintenance Routes */}
+                <Route path="maintenance" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceDashboard /></Suspense>
+                } />
+                <Route path="maintenance/trucks" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceTrucks /></Suspense>
+                } />
+                <Route path="maintenance/issues" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceIssues /></Suspense>
+                } />
+                <Route path="maintenance/work-orders" element={
+                  <Suspense fallback={<PageLoader />}><MaintenanceWorkOrders /></Suspense>
+                } />
+                <Route path="vehicles/:id" element={
+                  <Suspense fallback={<PageLoader />}><VehicleProfile /></Suspense>
+                } />
               </Route>
 
               {/* Driver App with Layout */}
@@ -1119,6 +1135,37 @@ const App = () => {
               <Route path="/driver/legacy" element={
                 <Suspense fallback={<PageLoader />}><DriverApp /></Suspense>
               } />
+
+              {/* CS Portal */}
+              <Route path="/cs" element={
+                <Suspense fallback={<PageLoader />}><CSLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><CSDashboard /></Suspense>
+                } />
+                <Route path="orders" element={
+                  <Suspense fallback={<PageLoader />}><CSOrders /></Suspense>
+                } />
+                <Route path="requests" element={
+                  <Suspense fallback={<PageLoader />}><CSRequests /></Suspense>
+                } />
+                <Route path="templates" element={
+                  <Suspense fallback={<PageLoader />}><CSTemplates /></Suspense>
+                } />
+                <Route path="messages" element={
+                  <Suspense fallback={<PageLoader />}><CSMessages /></Suspense>
+                } />
+                <Route path="calls" element={
+                  <Suspense fallback={<PageLoader />}><CSCalls /></Suspense>
+                } />
+                <Route path="leads" element={
+                  <Suspense fallback={<PageLoader />}><CSLeads /></Suspense>
+                } />
+                <Route path="lead-inbox" element={
+                  <Suspense fallback={<PageLoader />}><CSLeadInbox /></Suspense>
+                } />
+              </Route>
+
 
               {/* Sales Portal */}
               <Route path="/sales" element={
