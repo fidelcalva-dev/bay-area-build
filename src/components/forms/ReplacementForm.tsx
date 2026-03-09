@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RefreshCw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 export function ReplacementForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     address: '',
@@ -25,10 +27,33 @@ export function ReplacementForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    navigate('/thank-you', { state: { formData, type: 'replacement' } });
+    setError(null);
+
+    try {
+      // Create lead via lead-ingest for CRM visibility
+      await supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'WEBSITE_CONTACT',
+          source_detail: 'replacement_pickup_form',
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          address: formData.address.trim(),
+          notes: [
+            `Request: ${formData.requestType}`,
+            formData.desiredDate ? `Desired date: ${formData.desiredDate}` : '',
+            formData.dumpsterNumber ? `Dumpster #: ${formData.dumpsterNumber}` : '',
+            formData.notes || '',
+          ].filter(Boolean).join(' | '),
+          consent_status: 'FORM_SUBMIT',
+        },
+      });
+
+      navigate('/thank-you', { state: { formData, type: 'replacement' } });
+    } catch (err) {
+      console.error('Lead ingest error:', err);
+      // Still navigate on failure — non-blocking for UX
+      navigate('/thank-you', { state: { formData, type: 'replacement' } });
+    }
   };
 
   return (
