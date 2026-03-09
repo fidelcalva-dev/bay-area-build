@@ -401,7 +401,7 @@ export default function CustomerDetail() {
               ) : (
                 <div className="space-y-2">
                   {uniqueSites.map((site, idx) => {
-                    const siteOrders = orders.filter(o => o.site_address === site);
+                    return (
                     return (
                       <div key={idx} className="flex items-start justify-between p-4 rounded-lg border">
                         <div className="flex items-start gap-3">
