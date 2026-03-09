@@ -63,7 +63,7 @@ const ROUTE_INVENTORY: RouteEntry[] = [
   { path: '/admin/orders', component: 'OrdersManager', category: 'crm-admin', isPublic: false, indexable: false, status: 'working' },
   { path: '/admin/customers', component: 'CustomersManager', category: 'crm-admin', isPublic: false, indexable: false, status: 'working' },
   { path: '/admin/ads', component: 'AdsOverview', category: 'crm-admin', isPublic: false, indexable: false, status: 'working' },
-  { path: '/admin/ads/overview', component: 'AdsOverview', category: 'crm-admin', isPublic: false, indexable: false, status: 'duplicate', note: 'Same as /admin/ads' },
+  { path: '/admin/ads/overview', component: '→ /admin/ads', category: 'crm-admin', isPublic: false, indexable: false, status: 'redirect', note: 'Redirects to /admin/ads' },
 
   // Sales
   { path: '/sales', component: 'SalesDashboard', category: 'crm-sales', isPublic: false, indexable: false, status: 'working' },
