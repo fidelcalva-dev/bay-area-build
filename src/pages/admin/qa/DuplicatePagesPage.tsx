@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import QaNavStrip from '@/components/admin/qa/QaNavStrip';
 
 type FinalDecision = 'REMOVE_DUPLICATE' | 'REDIRECT_TO_CANONICAL' | 'KEEP_BOTH_WITH_UNIQUE_CANONICAL' | 'KEEP_ALIAS';
 
