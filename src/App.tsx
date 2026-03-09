@@ -979,6 +979,15 @@ const App = () => {
                 <Route path="qa/seo-health" element={
                   <Suspense fallback={<PageLoader />}><SeoHealthDashboard /></Suspense>
                 } />
+                <Route path="qa/route-health" element={
+                  <Suspense fallback={<PageLoader />}><RouteHealthPage /></Suspense>
+                } />
+                <Route path="qa/duplicate-pages" element={
+                  <Suspense fallback={<PageLoader />}><DuplicatePagesPage /></Suspense>
+                } />
+                <Route path="qa/public-vs-crm" element={
+                  <Suspense fallback={<PageLoader />}><PublicVsCrmPage /></Suspense>
+                } />
                 {/* SEO Admin Routes */}
                 <Route path="seo" element={<Navigate to="/admin/seo/dashboard" replace />} />
                 <Route path="seo/dashboard" element={
