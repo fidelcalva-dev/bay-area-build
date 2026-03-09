@@ -233,7 +233,13 @@ useEffect(() => {
 
   // Check if user can access admin portal (any staff role)
   const canAccessAdmin = () => {
-    return state.isAdmin || state.isDispatcher || state.isFinance || state.isSales || state.isCS;
+    const staffRoles: AppRole[] = [
+      'owner', 'admin', 'system_admin', 'executive', 'ops_admin',
+      'sales_admin', 'sales_rep', 'sales', 'customer_service', 'cs', 'cs_agent',
+      'dispatcher', 'fleet_maintenance', 'finance', 'finance_admin',
+      'billing_specialist', 'marketing_seo', 'read_only_admin', 'read_only',
+    ];
+    return state.roles.some(r => staffRoles.includes(r));
   };
 
   // Check if user can access driver app
