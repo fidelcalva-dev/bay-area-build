@@ -928,9 +928,7 @@ const App = () => {
                 <Route path="ads" element={
                   <Suspense fallback={<PageLoader />}><AdsOverview /></Suspense>
                 } />
-                <Route path="ads/overview" element={
-                  <Suspense fallback={<PageLoader />}><AdsOverview /></Suspense>
-                } />
+                <Route path="ads/overview" element={<Navigate to="/admin/ads" replace />} />
                 <Route path="ads/campaigns" element={
                   <Suspense fallback={<PageLoader />}><AdsCampaigns /></Suspense>
                 } />
