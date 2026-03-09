@@ -229,13 +229,13 @@ const crmSales: RouteEntry[] = [
 ];
 
 const crmCustomerService: RouteEntry[] = [
-  { path: '/cs', name: 'CS Dashboard', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/orders', name: 'CS Orders', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/requests', name: 'CS Requests', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/templates', name: 'CS Templates', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/messages', name: 'CS Messages', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/calls', name: 'CS Calls', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/cs/lead-inbox', name: 'CS Lead Inbox', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
+  { path: '/cs', name: 'CS Dashboard', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/orders', name: 'CS Orders', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/requests', name: 'CS Requests', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/templates', name: 'CS Templates', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/messages', name: 'CS Messages', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/calls', name: 'CS Calls', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/cs/lead-inbox', name: 'CS Lead Inbox', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/activation', name: 'Customer Activation', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Send, sidebarLabel: 'Activation', sidebarOrder: 2, visibleTo: ['admin', 'cs', 'sales'] },
   { path: '/admin/customers', name: 'Customers Manager', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Users, sidebarLabel: 'Customer List', sidebarOrder: 0 },
   { path: '/admin/customers/:id', name: 'Customer Detail', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, isDynamic: true },
