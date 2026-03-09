@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import QaNavStrip from '@/components/admin/qa/QaNavStrip';
 import { Badge } from '@/components/ui/badge';
 import { Globe, Shield, CheckCircle, XCircle } from 'lucide-react';
 
