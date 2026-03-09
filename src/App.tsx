@@ -646,8 +646,12 @@ const App = () => {
                   <Suspense fallback={<PageLoader />}><CustomerDocuments /></Suspense>
                 </PortalAuthGuard>
               } />
-              {/* Legacy SMS link pattern — redirect to canonical */}
-              <Route path="/portal/order/:orderId" element={<Navigate to="../orders/:orderId" replace />} />
+              {/* Legacy SMS link pattern — keep alias for backward compatibility */}
+              <Route path="/portal/order/:orderId" element={
+                <PortalAuthGuard>
+                  <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
+                </PortalAuthGuard>
+              } />
               <Route path="/portal/orders/:orderId" element={
                 <PortalAuthGuard>
                   <Suspense fallback={<PageLoader />}><CustomerOrderDetail /></Suspense>
