@@ -1120,6 +1120,53 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}><DriverApp /></Suspense>
               } />
 
+              {/* CS Portal */}
+              <Route path="/cs" element={
+                <Suspense fallback={<PageLoader />}><CSLayout /></Suspense>
+              }>
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}><CSDashboard /></Suspense>
+                } />
+                <Route path="orders" element={
+                  <Suspense fallback={<PageLoader />}><CSOrders /></Suspense>
+                } />
+                <Route path="requests" element={
+                  <Suspense fallback={<PageLoader />}><CSRequests /></Suspense>
+                } />
+                <Route path="templates" element={
+                  <Suspense fallback={<PageLoader />}><CSTemplates /></Suspense>
+                } />
+                <Route path="messages" element={
+                  <Suspense fallback={<PageLoader />}><CSMessages /></Suspense>
+                } />
+                <Route path="calls" element={
+                  <Suspense fallback={<PageLoader />}><CSCalls /></Suspense>
+                } />
+                <Route path="leads" element={
+                  <Suspense fallback={<PageLoader />}><CSLeads /></Suspense>
+                } />
+                <Route path="lead-inbox" element={
+                  <Suspense fallback={<PageLoader />}><CSLeadInbox /></Suspense>
+                } />
+              </Route>
+
+              {/* Maintenance Portal */}
+              <Route path="/admin/maintenance" element={
+                <Suspense fallback={<PageLoader />}><MaintenanceDashboard /></Suspense>
+              } />
+              <Route path="/admin/maintenance/trucks" element={
+                <Suspense fallback={<PageLoader />}><MaintenanceTrucks /></Suspense>
+              } />
+              <Route path="/admin/maintenance/issues" element={
+                <Suspense fallback={<PageLoader />}><MaintenanceIssues /></Suspense>
+              } />
+              <Route path="/admin/maintenance/work-orders" element={
+                <Suspense fallback={<PageLoader />}><MaintenanceWorkOrders /></Suspense>
+              } />
+              <Route path="/admin/vehicles/:id" element={
+                <Suspense fallback={<PageLoader />}><VehicleProfile /></Suspense>
+              } />
+
               {/* Sales Portal */}
               <Route path="/sales" element={
                 <Suspense fallback={<PageLoader />}><SalesLayout /></Suspense>
