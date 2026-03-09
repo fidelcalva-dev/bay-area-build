@@ -1,12 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  Home, BarChart3, Users, Package, Truck, Calendar, DollarSign,
-  Globe, Shield, Settings, Bell, Phone, Brain, MessageSquare,
-  FileText, Link2, TrendingUp, Warehouse, MapPin, Plus,
-  Boxes, Receipt, Percent, Banknote, MapPinned, UserCog,
-  Send, Layout, PieChart, LogOut, Star, Clock, ChevronDown,
-  ChevronRight, Zap, AlertCircle, Activity,
+  Shield, LogOut, Star, Clock, ChevronDown, ChevronRight,
+  Search, X, Globe, Zap, Users, Truck, Bell,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,217 +10,133 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertBadge } from '@/components/alerts';
+import { Input } from '@/components/ui/input';
+import {
+  SIDEBAR_SECTIONS,
+  getSidebarItems,
+  getVisibleSections,
+  searchSidebarItems,
+  type SidebarSectionMeta,
+  type RouteEntry,
+  type VisibleRole,
+} from '@/lib/routeCategories';
+import { useAdminAuth, type AppRole } from '@/hooks/useAdminAuth';
+import { useAlerts } from '@/hooks/useAlerts';
+import { supabase } from '@/integrations/supabase/client';
 
-// ─── NAV ITEM TYPE ────────────────────────────────────────────
-export interface SidebarNavItem {
-  path: string;
+// ─── ROLE MAPPING ────────────────────────────────────────────────
+function mapRolesToVisibleRoles(roles: AppRole[]): VisibleRole[] {
+  const map: Record<string, VisibleRole> = {
+    admin: 'admin',
+    sales: 'sales',
+    cs: 'cs',
+    cs_agent: 'cs',
+    dispatcher: 'dispatcher',
+    finance: 'finance',
+    driver: 'driver',
+    ops_admin: 'ops_admin',
+    executive: 'executive',
+    system_admin: 'admin',
+    sales_admin: 'sales',
+    finance_admin: 'finance',
+    read_only_admin: 'admin',
+    billing_specialist: 'finance',
+  };
+  const result = new Set<VisibleRole>();
+  roles.forEach(r => {
+    const mapped = map[r];
+    if (mapped) result.add(mapped);
+  });
+  return Array.from(result);
+}
+
+// ─── QUICK STATUS TYPES ──────────────────────────────────────────
+type StatusLevel = 'LIVE' | 'WARNING' | 'ERROR' | 'NO_DATA';
+
+interface QuickStatusData {
   label: string;
   icon: LucideIcon;
-  end?: boolean;
+  status: StatusLevel;
 }
 
-export interface SidebarSection {
-  id: string;
-  title: string;
-  icon: LucideIcon;
-  items: SidebarNavItem[];
-  defaultOpen?: boolean;
+const statusColors: Record<StatusLevel, string> = {
+  LIVE: 'text-emerald-500',
+  WARNING: 'text-amber-500',
+  ERROR: 'text-destructive',
+  NO_DATA: 'text-muted-foreground',
+};
+
+const statusDots: Record<StatusLevel, string> = {
+  LIVE: 'bg-emerald-500',
+  WARNING: 'bg-amber-500',
+  ERROR: 'bg-destructive',
+  NO_DATA: 'bg-muted-foreground/40',
+};
+
+// ─── QUICK STATUS HOOK ──────────────────────────────────────────
+function useQuickStatus(): QuickStatusData[] {
+  const { criticalCount } = useAlerts({ resolved: false });
+  const [leadStatus, setLeadStatus] = useState<StatusLevel>('NO_DATA');
+  const [dispatchStatus, setDispatchStatus] = useState<StatusLevel>('NO_DATA');
+
+  useEffect(() => {
+    // Check lead health: pending fallback queue entries = WARNING, recent errors = ERROR
+    const checkLeads = async () => {
+      try {
+        const { count: fallbackCount } = await supabase
+          .from('lead_fallback_queue')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending');
+        
+        if (fallbackCount && fallbackCount > 0) {
+          setLeadStatus('WARNING');
+        } else {
+          setLeadStatus('LIVE');
+        }
+      } catch {
+        setLeadStatus('NO_DATA');
+      }
+    };
+
+    // Check dispatch: today's runs exist = LIVE
+    const checkDispatch = async () => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { count } = await supabase
+          .from('runs')
+          .select('*', { count: 'exact', head: true })
+          .gte('scheduled_date', today)
+          .lte('scheduled_date', today);
+        
+        setDispatchStatus(count !== null && count >= 0 ? 'LIVE' : 'NO_DATA');
+      } catch {
+        setDispatchStatus('NO_DATA');
+      }
+    };
+
+    checkLeads();
+    checkDispatch();
+  }, []);
+
+  const alertStatus: StatusLevel = criticalCount > 0 ? 'ERROR' : 'LIVE';
+
+  return [
+    { label: 'Website', icon: Globe, status: 'LIVE' },
+    { label: 'CRM', icon: Zap, status: 'LIVE' },
+    { label: 'Leads', icon: Users, status: leadStatus },
+    { label: 'Dispatch', icon: Truck, status: dispatchStatus },
+    { label: 'Alerts', icon: Bell, status: alertStatus },
+  ];
 }
 
-// ─── SECTIONS — SOURCE OF TRUTH ──────────────────────────────
-export const CRM_SIDEBAR_SECTIONS: SidebarSection[] = [
-  {
-    id: 'control-center',
-    title: 'Control Center',
-    icon: Home,
-    defaultOpen: true,
-    items: [
-      { path: '/admin', label: 'Command Center', icon: Home, end: true },
-      { path: '/admin/executive', label: 'Executive View', icon: BarChart3 },
-      { path: '/admin/modules', label: 'Module Registry', icon: Settings },
-      { path: '/admin/activity', label: 'Activity Feed', icon: Activity },
-    ],
-  },
-  {
-    id: 'analytics',
-    title: 'Analytics',
-    icon: BarChart3,
-    items: [
-      { path: '/admin/dashboards/overview', label: 'Overview', icon: BarChart3 },
-      { path: '/admin/dashboards/leads', label: 'Lead Performance', icon: Users },
-      { path: '/admin/dashboards/kpis', label: 'KPI Optimization', icon: TrendingUp },
-      { path: '/admin/dashboards/sales', label: 'Sales Funnel', icon: TrendingUp },
-      { path: '/admin/dashboards/operations', label: 'Operations', icon: Truck },
-      { path: '/admin/dashboards/finance', label: 'Finance', icon: DollarSign },
-      { path: '/admin/dashboards/customers', label: 'Customers', icon: PieChart },
-    ],
-  },
-  {
-    id: 'sales',
-    title: 'Sales',
-    icon: TrendingUp,
-    items: [
-      { path: '/admin/leads', label: 'Lead Hub', icon: Users },
-      { path: '/admin/leads-health', label: 'Lead Health', icon: TrendingUp },
-      { path: '/admin/leads/settings', label: 'Lead Engine', icon: Settings },
-      { path: '/admin/sales-performance', label: 'Sales Performance', icon: BarChart3 },
-    ],
-  },
-  {
-    id: 'customers',
-    title: 'Customer Service',
-    icon: Users,
-    items: [
-      { path: '/admin/customers', label: 'Customer List', icon: Users },
-      { path: '/admin/customer-health', label: 'Customer Health', icon: TrendingUp },
-      { path: '/admin/activation', label: 'Activation', icon: Send },
-      { path: '/admin/customer-type-rules', label: 'Customer Rules', icon: Settings },
-    ],
-  },
-  {
-    id: 'operations',
-    title: 'Operations',
-    icon: Package,
-    items: [
-      { path: '/admin/orders', label: 'Orders', icon: Package },
-      { path: '/admin/dispatch', label: 'Dispatch Calendar', icon: Calendar },
-      { path: '/admin/assets', label: 'Asset Control Tower', icon: Boxes },
-      { path: '/admin/movements', label: 'Movement Log', icon: FileText },
-      { path: '/admin/markets', label: 'Markets', icon: MapPin },
-      { path: '/admin/quick-links', label: 'Quick Links', icon: Link2 },
-    ],
-  },
-  {
-    id: 'driver',
-    title: 'Driver App',
-    icon: Truck,
-    items: [
-      { path: '/admin/drivers', label: 'Driver Management', icon: Truck },
-    ],
-  },
-  {
-    id: 'fleet',
-    title: 'Fleet & Maintenance',
-    icon: Boxes,
-    items: [
-      { path: '/admin/inventory', label: 'Inventory', icon: Warehouse },
-      { path: '/admin/fleet/cameras', label: 'Fleet Cameras', icon: Boxes },
-    ],
-  },
-  {
-    id: 'finance',
-    title: 'Finance',
-    icon: DollarSign,
-    items: [
-      { path: '/admin/tickets', label: 'Tickets & Receipts', icon: Receipt },
-      { path: '/admin/overdue', label: 'Overdue Billing', icon: Receipt },
-      { path: '/admin/approval-queue', label: 'Approval Queue', icon: FileText },
-      { path: '/admin/compensation', label: 'Compensation', icon: DollarSign },
-      { path: '/admin/profitability', label: 'Profitability', icon: BarChart3 },
-      { path: '/admin/heavy-risk', label: 'Heavy Risk', icon: Shield },
-    ],
-  },
-  {
-    id: 'seo-marketing',
-    title: 'SEO & Marketing',
-    icon: Globe,
-    items: [
-      { path: '/admin/seo/dashboard', label: 'SEO Dashboard', icon: Globe },
-      { path: '/admin/seo/cities', label: 'SEO Cities', icon: MapPin },
-      { path: '/admin/seo/pages', label: 'SEO Pages', icon: FileText },
-      { path: '/admin/seo/health', label: 'SEO Health', icon: TrendingUp },
-      { path: '/admin/seo/metrics', label: 'SEO Metrics', icon: BarChart3 },
-      { path: '/admin/seo/generate', label: 'Generate Pages', icon: Plus },
-      { path: '/admin/ads', label: 'Google Ads', icon: TrendingUp, end: true },
-      { path: '/admin/ads/campaigns', label: 'Ad Campaigns', icon: BarChart3 },
-      { path: '/admin/marketing/dashboard', label: 'Marketing', icon: BarChart3 },
-      { path: '/admin/marketing/visitors', label: 'Visitors', icon: Users },
-    ],
-  },
-  {
-    id: 'integrations',
-    title: 'Integrations',
-    icon: Link2,
-    items: [
-      { path: '/admin/google', label: 'Google Workspace', icon: Link2 },
-      { path: '/admin/messaging', label: 'Messaging', icon: MessageSquare },
-      { path: '/admin/telephony/calls', label: 'Call Logs', icon: Phone },
-      { path: '/admin/telephony/numbers', label: 'Phone Numbers', icon: Phone },
-      { path: '/admin/telephony/analytics', label: 'Call Analytics', icon: BarChart3 },
-      { path: '/admin/setup/functions', label: 'Functions Map', icon: Settings },
-    ],
-  },
-  {
-    id: 'configuration',
-    title: 'Configuration',
-    icon: Settings,
-    items: [
-      { path: '/admin/configuration', label: 'Config Center', icon: Settings },
-      { path: '/admin/yards', label: 'Yard Manager', icon: Warehouse },
-      { path: '/admin/zones', label: 'ZIP-to-Zone', icon: MapPin },
-      { path: '/admin/pricing', label: 'Pricing Tables', icon: DollarSign },
-      { path: '/admin/city-rates', label: 'City Rates', icon: Banknote },
-      { path: '/admin/toll-surcharges', label: 'Toll Surcharges', icon: MapPinned },
-      { path: '/admin/vendors', label: 'Vendors', icon: Truck },
-      { path: '/admin/extras', label: 'Extras Catalog', icon: Plus },
-      { path: '/admin/config', label: 'Business Rules', icon: Settings },
-      { path: '/admin/volume-commitments', label: 'Volume Discounts', icon: Percent },
-      { path: '/admin/email-config', label: 'Email Config', icon: MessageSquare },
-    ],
-  },
-  {
-    id: 'ai',
-    title: 'AI',
-    icon: Brain,
-    items: [
-      { path: '/admin/ai/performance', label: 'AI Performance', icon: Brain },
-      { path: '/admin/ai/chat', label: 'AI Chat', icon: MessageSquare },
-    ],
-  },
-  {
-    id: 'admin-qa',
-    title: 'Admin & QA',
-    icon: Shield,
-    items: [
-      { path: '/admin/qa/control-center', label: 'QA Control Center', icon: Shield },
-      { path: '/admin/qa/page-organization', label: 'Page Organization', icon: Layout },
-      { path: '/admin/qa/route-health', label: 'Route Health', icon: TrendingUp },
-      { path: '/admin/alerts', label: 'Alerts', icon: Bell },
-      { path: '/admin/security', label: 'Security Health', icon: Shield },
-      { path: '/admin/users', label: 'User Management', icon: UserCog },
-      { path: '/admin/access-requests', label: 'Access Requests', icon: UserCog },
-      { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileText },
-      { path: '/admin/fraud-flags', label: 'Fraud Flags', icon: Shield },
-      { path: '/admin/risk', label: 'Risk Review', icon: Shield },
-      { path: '/admin/docs', label: 'Internal Docs', icon: FileText },
-    ],
-  },
-];
-
-// ─── QUICK STATUS ITEMS ──────────────────────────────────────
-interface QuickStatusItem {
-  label: string;
-  icon: LucideIcon;
-  color: string;
-}
-
-const QUICK_STATUS_ITEMS: QuickStatusItem[] = [
-  { label: 'Website', icon: Globe, color: 'text-emerald-500' },
-  { label: 'CRM', icon: Zap, color: 'text-blue-500' },
-  { label: 'Leads', icon: Users, color: 'text-amber-500' },
-  { label: 'Dispatch', icon: Truck, color: 'text-violet-500' },
-  { label: 'Alerts', icon: AlertCircle, color: 'text-rose-500' },
-];
-
-// ─── FAVORITES / RECENTS PERSISTENCE ─────────────────────────
+// ─── FAVORITES / RECENTS PERSISTENCE ─────────────────────────────
 const FAVORITES_KEY = 'calsan-admin-favorites';
 const RECENTS_KEY = 'calsan-admin-recents';
 const MAX_RECENTS = 5;
 
 function loadFavorites(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
-  } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'); }
+  catch { return []; }
 }
 
 function saveFavorites(favs: string[]) {
@@ -232,9 +144,8 @@ function saveFavorites(favs: string[]) {
 }
 
 function loadRecents(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(RECENTS_KEY) || '[]');
-  } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(RECENTS_KEY) || '[]'); }
+  catch { return []; }
 }
 
 function pushRecent(path: string) {
@@ -243,25 +154,35 @@ function pushRecent(path: string) {
   localStorage.setItem(RECENTS_KEY, JSON.stringify(recents.slice(0, MAX_RECENTS)));
 }
 
-// ─── FIND NAV ITEM BY PATH ──────────────────────────────────
-function findNavItem(path: string): SidebarNavItem | undefined {
-  for (const sec of CRM_SIDEBAR_SECTIONS) {
-    const item = sec.items.find(i => i.path === path);
+// ─── FIND SIDEBAR ITEM BY PATH ──────────────────────────────────
+function findSidebarRoute(path: string): RouteEntry | undefined {
+  // Search all sidebar items in all sections
+  for (const section of SIDEBAR_SECTIONS) {
+    const items = getSidebarItems(section.id);
+    const item = items.find(i => i.path === path);
     if (item) return item;
   }
   return undefined;
 }
 
-// ─── COLLAPSIBLE SECTION ─────────────────────────────────────
+// ─── IS ACTIVE CHECK ─────────────────────────────────────────────
+function isItemActive(item: RouteEntry, currentPath: string): boolean {
+  if (item.sidebarEnd) return currentPath === item.path;
+  return currentPath.startsWith(item.path) && item.path !== '/admin';
+}
+
+// ─── COLLAPSIBLE SECTION ─────────────────────────────────────────
 function CollapsibleSection({
   section,
+  items,
   isOpen,
   onToggle,
   currentPath,
   favorites,
   onToggleFavorite,
 }: {
-  section: SidebarSection;
+  section: SidebarSectionMeta;
+  items: RouteEntry[];
   isOpen: boolean;
   onToggle: () => void;
   currentPath: string;
@@ -269,9 +190,9 @@ function CollapsibleSection({
   onToggleFavorite: (path: string) => void;
 }) {
   const SectionIcon = section.icon;
-  const hasActiveChild = section.items.some(item =>
-    item.end ? currentPath === item.path : currentPath.startsWith(item.path) && item.path !== '/admin'
-  );
+  const hasActiveChild = items.some(item => isItemActive(item, currentPath));
+
+  if (items.length === 0) return null;
 
   return (
     <div className="mb-0.5">
@@ -286,6 +207,7 @@ function CollapsibleSection({
       >
         <SectionIcon className="w-3.5 h-3.5 shrink-0" />
         <span className="flex-1 text-left">{section.title}</span>
+        <span className="text-[10px] font-normal text-muted-foreground/60 tabular-nums mr-1">{items.length}</span>
         {isOpen ? (
           <ChevronDown className="w-3 h-3 shrink-0 opacity-50" />
         ) : (
@@ -295,27 +217,25 @@ function CollapsibleSection({
 
       {isOpen && (
         <div className="mt-0.5 ml-2 pl-3 border-l border-border/40 space-y-0.5">
-          {section.items.map(item => {
-            const Icon = item.icon;
-            const isActive = item.end
-              ? currentPath === item.path
-              : currentPath.startsWith(item.path) && item.path !== '/admin';
+          {items.map(item => {
+            const Icon = item.sidebarIcon!;
+            const active = isItemActive(item, currentPath);
             const isFav = favorites.includes(item.path);
 
             return (
               <div key={item.path} className="group flex items-center">
                 <NavLink
                   to={item.path}
-                  end={item.end}
+                  end={item.sidebarEnd}
                   className={cn(
                     'flex-1 flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-all',
-                    isActive
+                    active
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                   )}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{item.sidebarLabel || item.name}</span>
                 </NavLink>
                 <button
                   onClick={(e) => { e.stopPropagation(); onToggleFavorite(item.path); }}
@@ -335,7 +255,7 @@ function CollapsibleSection({
   );
 }
 
-// ─── MAIN SIDEBAR COMPONENT ─────────────────────────────────
+// ─── MAIN SIDEBAR COMPONENT ─────────────────────────────────────
 interface AdminSidebarProps {
   userEmail?: string;
   onSignOut: () => void;
@@ -344,28 +264,46 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps) {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { roles } = useAdminAuth();
+  const quickStatus = useQuickStatus();
+
+  const visibleRoles = useMemo(() => mapRolesToVisibleRoles(roles), [roles]);
+
+  // Visible sections for this user
+  const visibleSections = useMemo(() => getVisibleSections(visibleRoles), [visibleRoles]);
+
+  // Items per section
+  const sectionItems = useMemo(() => {
+    const map: Record<string, RouteEntry[]> = {};
+    visibleSections.forEach(s => {
+      map[s.id] = getSidebarItems(s.id, visibleRoles);
+    });
+    return map;
+  }, [visibleSections, visibleRoles]);
+
+  // Search
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchResults = useMemo(
+    () => searchSidebarItems(searchQuery, visibleRoles),
+    [searchQuery, visibleRoles]
+  );
 
   // Collapsed sections state
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
-    CRM_SIDEBAR_SECTIONS.forEach(s => {
-      initial[s.id] = s.defaultOpen || false;
-    });
+    SIDEBAR_SECTIONS.forEach(s => { initial[s.id] = s.defaultOpen || false; });
     return initial;
   });
 
-  // Favorites
+  // Favorites & Recents
   const [favorites, setFavorites] = useState<string[]>(loadFavorites);
-
-  // Recents
   const [recents, setRecents] = useState<string[]>(loadRecents);
 
   // Auto-open section containing active route
   useEffect(() => {
-    for (const section of CRM_SIDEBAR_SECTIONS) {
-      const hasActive = section.items.some(item =>
-        item.end ? currentPath === item.path : currentPath.startsWith(item.path) && item.path !== '/admin'
-      );
+    for (const section of visibleSections) {
+      const items = sectionItems[section.id] || [];
+      const hasActive = items.some(item => isItemActive(item, currentPath));
       if (hasActive) {
         setOpenSections(prev => ({ ...prev, [section.id]: true }));
         break;
@@ -373,7 +311,7 @@ export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps
     }
     pushRecent(currentPath);
     setRecents(loadRecents());
-  }, [currentPath]);
+  }, [currentPath, visibleSections, sectionItems]);
 
   const toggleSection = useCallback((id: string) => {
     setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
@@ -387,18 +325,20 @@ export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps
     });
   }, []);
 
-  // Resolve favorites and recents to nav items
+  // Resolve favorites and recents to route entries
   const favoriteItems = useMemo(() =>
-    favorites.map(findNavItem).filter(Boolean) as SidebarNavItem[], [favorites]
+    favorites.map(findSidebarRoute).filter(Boolean) as RouteEntry[], [favorites]
   );
 
   const recentItems = useMemo(() =>
     recents
       .filter(r => !favorites.includes(r))
-      .map(findNavItem)
-      .filter(Boolean) as SidebarNavItem[],
+      .map(findSidebarRoute)
+      .filter(Boolean) as RouteEntry[],
     [recents, favorites]
   );
+
+  const isSearching = searchQuery.trim().length > 0;
 
   return (
     <aside className="w-[272px] bg-card border-r border-border flex flex-col shrink-0">
@@ -421,18 +361,24 @@ export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps
       {/* Quick Status Strip */}
       <div className="px-3 py-2.5 border-b border-border/60 bg-muted/20">
         <div className="flex items-center justify-between gap-1">
-          {QUICK_STATUS_ITEMS.map(item => {
+          {quickStatus.map(item => {
             const Icon = item.icon;
             return (
               <Tooltip key={item.label}>
                 <TooltipTrigger asChild>
-                  <div className="flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-md hover:bg-muted/60 transition-colors cursor-default">
-                    <Icon className={cn('w-3.5 h-3.5', item.color)} />
+                  <div className="flex flex-col items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 transition-colors cursor-default">
+                    <div className="relative">
+                      <Icon className={cn('w-3.5 h-3.5', statusColors[item.status])} />
+                      <span className={cn(
+                        'absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full',
+                        statusDots[item.status]
+                      )} />
+                    </div>
                     <span className="text-[9px] font-medium text-muted-foreground leading-none">{item.label}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="text-xs">
-                  {item.label} Status
+                  {item.label}: {item.status}
                 </TooltipContent>
               </Tooltip>
             );
@@ -440,84 +386,157 @@ export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="px-3 pt-3 pb-1">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search pages..."
+            className="h-8 pl-8 pr-8 text-xs bg-muted/40 border-border/60"
+          />
+          {isSearching && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Scrollable Nav Area */}
       <ScrollArea className="flex-1">
         <div className="p-3 space-y-3">
-          {/* Favorites */}
-          {favoriteItems.length > 0 && (
-            <div className="mb-1">
-              <p className="flex items-center gap-1.5 px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-amber-500/80">
-                <Star className="w-3 h-3 fill-amber-500/60" />
-                Favorites
+          {/* ─── SEARCH RESULTS ─── */}
+          {isSearching ? (
+            <div>
+              <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
               </p>
-              <div className="space-y-0.5">
-                {favoriteItems.map(item => {
-                  const Icon = item.icon;
-                  const isActive = item.end ? currentPath === item.path : currentPath.startsWith(item.path) && item.path !== '/admin';
-                  return (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      end={item.end}
-                      className={cn(
-                        'flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all',
-                        isActive
-                          ? 'bg-primary text-primary-foreground shadow-sm'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                      )}
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span className="truncate">{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </div>
+              {searchResults.length === 0 ? (
+                <p className="px-3 text-xs text-muted-foreground py-4 text-center">
+                  No pages match "{searchQuery}"
+                </p>
+              ) : (
+                <div className="space-y-0.5">
+                  {searchResults.map(item => {
+                    const Icon = item.sidebarIcon!;
+                    const active = isItemActive(item, currentPath);
+                    const section = SIDEBAR_SECTIONS.find(s => s.id === item.sidebarSection);
+                    return (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        end={item.sidebarEnd}
+                        onClick={() => setSearchQuery('')}
+                        className={cn(
+                          'flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium transition-all',
+                          active
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                        )}
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <span className="truncate block">{item.sidebarLabel || item.name}</span>
+                          <span className="text-[10px] opacity-60 truncate block">{section?.title}</span>
+                        </div>
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          )}
+          ) : (
+            <>
+              {/* ─── FAVORITES ─── */}
+              {favoriteItems.length > 0 && (
+                <div className="mb-1">
+                  <p className="flex items-center gap-1.5 px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-amber-500/80">
+                    <Star className="w-3 h-3 fill-amber-500/60" />
+                    Favorites
+                  </p>
+                  <div className="space-y-0.5">
+                    {favoriteItems.map(item => {
+                      const Icon = item.sidebarIcon!;
+                      const active = isItemActive(item, currentPath);
+                      return (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          end={item.sidebarEnd}
+                          className={cn(
+                            'flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-all',
+                            active
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'text-foreground/80 hover:text-foreground hover:bg-muted/60'
+                          )}
+                        >
+                          <Icon className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{item.sidebarLabel || item.name}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-          {/* Recents */}
-          {recentItems.length > 0 && (
-            <div className="mb-1">
-              <p className="flex items-center gap-1.5 px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                <Clock className="w-3 h-3" />
-                Recent
-              </p>
-              <div className="space-y-0.5">
-                {recentItems.slice(0, 3).map(item => {
-                  const Icon = item.icon;
-                  return (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      end={item.end}
-                      className="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-muted-foreground/70 hover:text-foreground hover:bg-muted/40 transition-all"
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span className="truncate">{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+              {/* ─── RECENTS ─── */}
+              {recentItems.length > 0 && (
+                <div className="mb-1">
+                  <p className="flex items-center gap-1.5 px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+                    <Clock className="w-3 h-3" />
+                    Recent
+                  </p>
+                  <div className="space-y-0.5">
+                    {recentItems.slice(0, 3).map(item => {
+                      const Icon = item.sidebarIcon!;
+                      return (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          end={item.sidebarEnd}
+                          className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                        >
+                          <Icon className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{item.sidebarLabel || item.name}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-          {/* Separator if favorites/recents exist */}
-          {(favoriteItems.length > 0 || recentItems.length > 0) && (
-            <div className="border-t border-border/40 my-2" />
-          )}
+              {/* ─── EMPTY STATE ─── */}
+              {favoriteItems.length === 0 && recentItems.length === 0 && (
+                <div className="px-3 py-2 text-[11px] text-muted-foreground/50 text-center italic">
+                  Star items to pin them here
+                </div>
+              )}
 
-          {/* Category Sections */}
-          {CRM_SIDEBAR_SECTIONS.map(section => (
-            <CollapsibleSection
-              key={section.id}
-              section={section}
-              isOpen={!!openSections[section.id]}
-              onToggle={() => toggleSection(section.id)}
-              currentPath={currentPath}
-              favorites={favorites}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
+              {/* Separator */}
+              {(favoriteItems.length > 0 || recentItems.length > 0) && (
+                <div className="border-t border-border/40 my-2" />
+              )}
+
+              {/* ─── CATEGORY SECTIONS ─── */}
+              {visibleSections.map(section => (
+                <CollapsibleSection
+                  key={section.id}
+                  section={section}
+                  items={sectionItems[section.id] || []}
+                  isOpen={!!openSections[section.id]}
+                  onToggle={() => toggleSection(section.id)}
+                  currentPath={currentPath}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ))}
+            </>
+          )}
         </div>
       </ScrollArea>
 
@@ -531,7 +550,9 @@ export default function AdminSidebar({ userEmail, onSignOut }: AdminSidebarProps
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-medium text-foreground truncate">{userEmail || 'Admin'}</p>
-            <p className="text-[11px] text-muted-foreground">Administrator</p>
+            <p className="text-[11px] text-muted-foreground">
+              {roles.length > 0 ? roles[0].replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Staff'}
+            </p>
           </div>
         </div>
         <Button
