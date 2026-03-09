@@ -432,7 +432,7 @@ const crmDriverSidebar: RouteEntry[] = [
 
 // Fleet sidebar items
 const crmFleetSidebar: RouteEntry[] = [
-  { path: '/admin/inventory', name: 'Inventory', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarOrder: 0, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/inventory', name: 'Inventory', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarOrder: 0, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
 ];
 
 // ─── CUSTOMER PORTAL ─────────────────────────────────────────────
