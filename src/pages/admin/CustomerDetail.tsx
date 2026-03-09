@@ -44,7 +44,6 @@ interface Order {
   created_at: string;
   scheduled_delivery_date: string | null;
   scheduled_pickup_date: string | null;
-  destination_address: string | null;
 }
 
 interface Invoice {
