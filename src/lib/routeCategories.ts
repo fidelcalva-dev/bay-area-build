@@ -62,7 +62,7 @@ export type SidebarSectionId =
   | 'admin-qa';
 
 /** Roles that can see a sidebar item */
-export type VisibleRole = 'admin' | 'sales' | 'cs' | 'dispatcher' | 'finance' | 'driver' | 'ops_admin' | 'executive';
+export type VisibleRole = 'admin' | 'sales' | 'cs' | 'dispatcher' | 'finance' | 'driver' | 'ops_admin' | 'executive' | 'fleet_maintenance' | 'marketing_seo' | 'read_only';
 
 export interface RouteEntry {
   path: string;
