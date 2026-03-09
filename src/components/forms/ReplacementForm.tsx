@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RefreshCw, ArrowRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { RefreshCw, ArrowRight, Phone, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { BUSINESS_INFO } from '@/lib/seo';
 
 export function ReplacementForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [hardError, setHardError] = useState(false);
   
   const [formData, setFormData] = useState({
     address: '',
@@ -24,35 +26,53 @@ export function ReplacementForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const buildPayload = () => ({
+    source_channel: 'WEBSITE_CONTACT',
+    source_detail: 'replacement_pickup_form',
+    name: formData.name.trim(),
+    phone: formData.phone.trim(),
+    address: formData.address.trim(),
+    notes: [
+      `Request: ${formData.requestType}`,
+      formData.desiredDate ? `Desired date: ${formData.desiredDate}` : '',
+      formData.dumpsterNumber ? `Dumpster #: ${formData.dumpsterNumber}` : '',
+      formData.notes || '',
+    ].filter(Boolean).join(' | '),
+    consent_status: 'FORM_SUBMIT',
+    created_from_page: location.pathname,
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
+    setHardError(false);
+
+    const payload = buildPayload();
 
     try {
-      // Create lead via lead-ingest for CRM visibility
-      await supabase.functions.invoke('lead-ingest', {
-        body: {
-          source_channel: 'WEBSITE_CONTACT',
-          source_detail: 'replacement_pickup_form',
-          name: formData.name.trim(),
-          phone: formData.phone.trim(),
-          address: formData.address.trim(),
-          notes: [
-            `Request: ${formData.requestType}`,
-            formData.desiredDate ? `Desired date: ${formData.desiredDate}` : '',
-            formData.dumpsterNumber ? `Dumpster #: ${formData.dumpsterNumber}` : '',
-            formData.notes || '',
-          ].filter(Boolean).join(' | '),
-          consent_status: 'FORM_SUBMIT',
-        },
-      });
-
+      // Step 1: Try lead-ingest
+      const { error } = await supabase.functions.invoke('lead-ingest', { body: payload });
+      if (error) throw error;
       navigate('/thank-you', { state: { formData, type: 'replacement' } });
-    } catch (err) {
-      console.error('Lead ingest error:', err);
-      // Still navigate on failure — non-blocking for UX
-      navigate('/thank-you', { state: { formData, type: 'replacement' } });
+    } catch (ingestErr) {
+      console.error('lead-ingest failed, attempting fallback queue:', ingestErr);
+      try {
+        // Step 2: Fallback queue
+        const { error: fbError } = await (supabase.from('lead_fallback_queue' as any) as any)
+          .insert({
+            payload_json: payload,
+            source: 'replacement_pickup_form',
+            status: 'pending',
+            retry_count: 0,
+          });
+        if (fbError) throw fbError;
+        navigate('/thank-you', { state: { formData, type: 'replacement', fallback: true } });
+      } catch (fallbackErr) {
+        // Step 3: Hard failure — show inline error
+        console.error('Fallback queue also failed:', fallbackErr);
+        setHardError(true);
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -67,6 +87,21 @@ export function ReplacementForm() {
           <p className="text-sm text-muted-foreground">Already have a dumpster? Request service here.</p>
         </div>
       </div>
+
+      {hardError && (
+        <div className="mb-4 p-4 bg-destructive/10 border border-destructive/30 rounded-xl flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-destructive">We had trouble submitting your request.</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Please try again or call us now at{' '}
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary font-semibold hover:underline">
+                {BUSINESS_INFO.phone.salesFormatted}
+              </a>
+            </p>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +210,7 @@ export function ReplacementForm() {
         </div>
 
         <Button type="submit" variant="default" size="lg" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit Request'}
+          {isSubmitting ? 'Submitting...' : hardError ? 'Try Again' : 'Submit Request'}
           <ArrowRight className="w-4 h-4" />
         </Button>
 
