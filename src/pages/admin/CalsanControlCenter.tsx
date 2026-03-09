@@ -68,9 +68,9 @@ function useLiveKPIs() {
           (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'pending'),
           (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'overdue'),
           (supabase.from('approval_requests').select('id', countOpts) as any).eq('status', 'pending'),
-          (supabase.from('seo_city_pages').select('id', countOpts) as any).eq('is_active', true).catch(() => ({ count: 0 })),
-          (supabase.from('seo_zip_pages').select('id', countOpts) as any).eq('is_active', true).catch(() => ({ count: 0 })),
-          (supabase.from('lead_fallback_queue').select('id', countOpts) as any).eq('status', 'pending').catch(() => ({ count: 0 })),
+          ((supabase as any).from('seo_city_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
+          ((supabase as any).from('seo_zip_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
+          ((supabase as any).from('lead_fallback_queue').select('id', countOpts)).eq('status', 'pending').catch(() => ({ count: 0 })),
         ]);
 
         let deliveries = 0, pickups = 0;
