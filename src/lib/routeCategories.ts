@@ -522,7 +522,7 @@ export const SIDEBAR_SECTIONS: SidebarSectionMeta[] = [
   { id: 'seo-marketing', title: 'SEO & Marketing', icon: Globe, visibleTo: ['admin', 'marketing_seo', 'executive'] },
   { id: 'integrations', title: 'Integrations', icon: Link2, visibleTo: ['admin'] },
   { id: 'configuration', title: 'Configuration', icon: Settings, visibleTo: ['admin'] },
-  { id: 'ai', title: 'AI', icon: Brain, visibleTo: ['admin'] },
+  { id: 'ai', title: 'AI Copilots', icon: Brain, visibleTo: ['admin', 'sales', 'cs', 'dispatcher', 'ops_admin', 'driver', 'fleet_maintenance', 'finance', 'marketing_seo'] },
   { id: 'admin-qa', title: 'Admin & QA', icon: Shield, visibleTo: ['admin'] },
 ];
 
