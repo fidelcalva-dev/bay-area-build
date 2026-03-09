@@ -9,6 +9,15 @@
  * 5. Use canonical paths — avoid aliases unless for backward compatibility.
  */
 
+import {
+  Home, BarChart3, Users, Package, Truck, Calendar, DollarSign,
+  Globe, Shield, Settings, Bell, Phone, Brain, MessageSquare,
+  FileText, Link2, TrendingUp, Warehouse, MapPin, Plus,
+  Boxes, Receipt, Percent, Banknote, MapPinned, UserCog,
+  Send, Layout, PieChart, Star, Activity, Zap,
+  type LucideIcon,
+} from 'lucide-react';
+
 export type RouteGroup = 'PUBLIC_WEBSITE' | 'CRM_INTERNAL' | 'CUSTOMER_PORTAL';
 
 export type PublicSubcategory = 'Core' | 'SEO' | 'Blog' | 'Marketing' | 'Quote/Contact' | 'Legal' | 'Redirect';
@@ -36,6 +45,25 @@ export type PortalSubcategory = 'Auth' | 'Orders' | 'Documents' | 'Payments' | '
 
 export type Subcategory = PublicSubcategory | CRMSubcategory | PortalSubcategory;
 
+/** Sidebar section ID — maps subcategories to sidebar groups */
+export type SidebarSectionId =
+  | 'control-center'
+  | 'analytics'
+  | 'sales'
+  | 'customers'
+  | 'operations'
+  | 'driver'
+  | 'fleet'
+  | 'finance'
+  | 'seo-marketing'
+  | 'integrations'
+  | 'configuration'
+  | 'ai'
+  | 'admin-qa';
+
+/** Roles that can see a sidebar item */
+export type VisibleRole = 'admin' | 'sales' | 'cs' | 'dispatcher' | 'finance' | 'driver' | 'ops_admin' | 'executive';
+
 export interface RouteEntry {
   path: string;
   name: string;
@@ -43,12 +71,25 @@ export interface RouteEntry {
   subcategory: Subcategory;
   isProtected: boolean;
   indexable: boolean;
-  /** If this is an alias, the canonical path it maps to */
   canonicalAlias?: string;
-  /** Whether the route is currently mounted in App.tsx */
   mounted: boolean;
-  /** Dynamic route parameter */
   isDynamic?: boolean;
+
+  // ─── Sidebar metadata ──────────────────────
+  /** Icon for sidebar display */
+  sidebarIcon?: LucideIcon;
+  /** Sidebar section this route belongs to */
+  sidebarSection?: SidebarSectionId;
+  /** Short label for sidebar (defaults to name) */
+  sidebarLabel?: string;
+  /** Whether this shows in sidebar at all */
+  showInSidebar?: boolean;
+  /** Exact match for active state */
+  sidebarEnd?: boolean;
+  /** Roles that can see this item (empty = all staff) */
+  visibleTo?: VisibleRole[];
+  /** Display order within its section */
+  sidebarOrder?: number;
 }
 
 // ─── PUBLIC WEBSITE ──────────────────────────────────────────────
@@ -88,7 +129,6 @@ const publicQuoteContact: RouteEntry[] = [
 ];
 
 const publicSEO: RouteEntry[] = [
-  // Dynamic SEO city engine
   { path: '/dumpster-rental/:citySlug', name: 'City Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/dumpster-rental/:citySlug/:sizeSlug-yard', name: 'City + Size', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/dumpster-rental/:citySlug/:materialSlug', name: 'City + Material', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
@@ -96,18 +136,15 @@ const publicSEO: RouteEntry[] = [
   { path: '/county/:countySlug/dumpster-rental', name: 'County Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/use-cases/:useCaseSlug', name: 'Use Case Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/yards/:yardSlug', name: 'Yard Hub', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
-  // Service-specific city routes
   { path: '/concrete-disposal/:citySlug', name: 'Concrete Disposal City', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/yard-waste-removal/:citySlug', name: 'Yard Waste Removal City', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/debris-removal/:citySlug', name: 'Debris Removal City', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/construction-debris/:citySlug', name: 'Construction Debris City', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
   { path: '/yard-waste-disposal/:citySlug', name: 'Yard Waste Disposal City', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true, isDynamic: true },
-  // Hub pages
   { path: '/california-dumpster-rental', name: 'California Hub', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/bay-area-dumpster-rental', name: 'Bay Area Hub', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/southern-california-dumpster-rental', name: 'SoCal Hub', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/central-valley-dumpster-rental', name: 'Central Valley Hub', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
-  // Static SEO pages
   { path: '/dumpster-rental-oakland-ca', name: 'Oakland SEO', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/dumpster-rental-san-jose-ca', name: 'San Jose SEO', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/dumpster-rental-san-francisco-ca', name: 'San Francisco SEO', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
@@ -116,12 +153,10 @@ const publicSEO: RouteEntry[] = [
   { path: '/commercial-dumpster-rental', name: 'Commercial Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/construction-dumpsters', name: 'Construction Dumpsters', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/warehouse-cleanout-dumpsters', name: 'Warehouse Cleanout', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
-  // Size intent pages
   { path: '/10-yard-dumpster-rental', name: '10 Yard Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/20-yard-dumpster-rental', name: '20 Yard Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/30-yard-dumpster-rental', name: '30 Yard Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/40-yard-dumpster-rental', name: '40 Yard Landing', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
-  // Material intent pages
   { path: '/concrete-dumpster-rental', name: 'Concrete Rental', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/dirt-dumpster-rental', name: 'Dirt Rental', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
   { path: '/roofing-dumpster-rental', name: 'Roofing Rental', group: 'PUBLIC_WEBSITE', subcategory: 'SEO', isProtected: false, indexable: true, mounted: true },
@@ -161,11 +196,21 @@ const crmAuth: RouteEntry[] = [
 ];
 
 const crmControlCenter: RouteEntry[] = [
-  { path: '/admin', name: 'Calsan Control Center', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/modules', name: 'Module Registry', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/executive', name: 'Executive Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin', name: 'Calsan Control Center', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Home, sidebarLabel: 'Command Center', sidebarEnd: true, sidebarOrder: 0 },
+  { path: '/admin/executive', name: 'Executive Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: BarChart3, sidebarLabel: 'Executive View', sidebarOrder: 1 },
+  { path: '/admin/modules', name: 'Module Registry', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Settings, sidebarOrder: 2 },
+  { path: '/admin/activity', name: 'Activity Feed', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Activity, sidebarOrder: 3 },
   { path: '/admin/legacy-dashboard', name: 'Legacy Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/activity', name: 'Activity Feed', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
+];
+
+const crmAnalytics: RouteEntry[] = [
+  { path: '/admin/dashboards/overview', name: 'Analytics Overview', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: BarChart3, sidebarLabel: 'Overview', sidebarOrder: 0 },
+  { path: '/admin/dashboards/leads', name: 'Lead Performance', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: Users, sidebarOrder: 1 },
+  { path: '/admin/dashboards/kpis', name: 'KPI Optimization', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: TrendingUp, sidebarOrder: 2 },
+  { path: '/admin/dashboards/sales', name: 'Sales Funnel', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: TrendingUp, sidebarOrder: 3, visibleTo: ['admin', 'sales', 'executive'] },
+  { path: '/admin/dashboards/operations', name: 'Operations', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: Truck, sidebarOrder: 4 },
+  { path: '/admin/dashboards/finance', name: 'Finance', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: DollarSign, sidebarOrder: 5, visibleTo: ['admin', 'finance', 'executive'] },
+  { path: '/admin/dashboards/customers', name: 'Customers', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'analytics', sidebarIcon: PieChart, sidebarOrder: 6 },
 ];
 
 const crmSales: RouteEntry[] = [
@@ -177,14 +222,13 @@ const crmSales: RouteEntry[] = [
   { path: '/sales/quotes/new', name: 'New Quote', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
   { path: '/sales/calls', name: 'Sales Calls', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
   { path: '/sales/order-builder', name: 'Order Builder', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/leads', name: 'Admin Lead Hub', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/leads-health', name: 'Lead Health Dashboard', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/leads/settings', name: 'Lead Engine Settings', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/sales-performance', name: 'Sales Performance', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/leads', name: 'Admin Lead Hub', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'sales', sidebarIcon: Users, sidebarLabel: 'Lead Hub', sidebarOrder: 0, visibleTo: ['admin', 'sales', 'cs'] },
+  { path: '/admin/leads-health', name: 'Lead Health Dashboard', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'sales', sidebarIcon: TrendingUp, sidebarLabel: 'Lead Health', sidebarOrder: 1, visibleTo: ['admin', 'sales'] },
+  { path: '/admin/leads/settings', name: 'Lead Engine Settings', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'sales', sidebarIcon: Settings, sidebarLabel: 'Lead Engine', sidebarOrder: 2, visibleTo: ['admin'] },
+  { path: '/admin/sales-performance', name: 'Sales Performance', group: 'CRM_INTERNAL', subcategory: 'Sales', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'sales', sidebarIcon: BarChart3, sidebarOrder: 3, visibleTo: ['admin', 'sales', 'executive'] },
 ];
 
 const crmCustomerService: RouteEntry[] = [
-  // CS portal routes are imported but NOT mounted — orphaned
   { path: '/cs', name: 'CS Dashboard', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
   { path: '/cs/orders', name: 'CS Orders', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
   { path: '/cs/requests', name: 'CS Requests', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
@@ -192,11 +236,11 @@ const crmCustomerService: RouteEntry[] = [
   { path: '/cs/messages', name: 'CS Messages', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
   { path: '/cs/calls', name: 'CS Calls', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
   { path: '/cs/lead-inbox', name: 'CS Lead Inbox', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: false },
-  { path: '/admin/activation', name: 'Customer Activation', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/customers', name: 'Customers Manager', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/activation', name: 'Customer Activation', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Send, sidebarLabel: 'Activation', sidebarOrder: 2, visibleTo: ['admin', 'cs', 'sales'] },
+  { path: '/admin/customers', name: 'Customers Manager', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Users, sidebarLabel: 'Customer List', sidebarOrder: 0 },
   { path: '/admin/customers/:id', name: 'Customer Detail', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, isDynamic: true },
-  { path: '/admin/customer-health', name: 'Customer Health', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/customer-type-rules', name: 'Customer Type Rules', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/customer-health', name: 'Customer Health', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: TrendingUp, sidebarOrder: 1, visibleTo: ['admin', 'cs'] },
+  { path: '/admin/customer-type-rules', name: 'Customer Type Rules', group: 'CRM_INTERNAL', subcategory: 'Customer Service', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'customers', sidebarIcon: Settings, sidebarLabel: 'Customer Rules', sidebarOrder: 3, visibleTo: ['admin'] },
 ];
 
 const crmDispatch: RouteEntry[] = [
@@ -226,7 +270,6 @@ const crmDriver: RouteEntry[] = [
 ];
 
 const crmMaintenance: RouteEntry[] = [
-  // Maintenance routes are imported but NOT mounted — orphaned
   { path: '/admin/maintenance', name: 'Maintenance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
   { path: '/admin/maintenance/trucks', name: 'Maintenance Trucks', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
   { path: '/admin/maintenance/issues', name: 'Maintenance Issues', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: false },
@@ -244,118 +287,111 @@ const crmFinance: RouteEntry[] = [
   { path: '/finance/ar-aging', name: 'AR Aging Dashboard', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
   { path: '/finance/ar-aging/invoices', name: 'AR Aging Invoices', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
   { path: '/finance/ar-aging/customers', name: 'AR Aging Customers', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/tickets', name: 'Tickets & Receipts', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/overdue', name: 'Overdue Billing', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/approval-queue', name: 'Approval Queue', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/compensation', name: 'Compensation', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/profitability', name: 'Profitability', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/heavy-risk', name: 'Heavy Risk', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/tickets', name: 'Tickets & Receipts', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: Receipt, sidebarOrder: 0, visibleTo: ['admin', 'finance'] },
+  { path: '/admin/overdue', name: 'Overdue Billing', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: Receipt, sidebarOrder: 1, visibleTo: ['admin', 'finance'] },
+  { path: '/admin/approval-queue', name: 'Approval Queue', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: FileText, sidebarOrder: 2, visibleTo: ['admin', 'finance'] },
+  { path: '/admin/compensation', name: 'Compensation', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: DollarSign, sidebarOrder: 3, visibleTo: ['admin', 'finance', 'executive'] },
+  { path: '/admin/profitability', name: 'Profitability', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: BarChart3, sidebarOrder: 4, visibleTo: ['admin', 'finance', 'executive'] },
+  { path: '/admin/heavy-risk', name: 'Heavy Risk', group: 'CRM_INTERNAL', subcategory: 'Finance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'finance', sidebarIcon: Shield, sidebarOrder: 5, visibleTo: ['admin', 'finance'] },
 ];
 
 const crmOperations: RouteEntry[] = [
-  { path: '/admin/orders', name: 'Orders Manager', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/assets', name: 'Asset Control Tower', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/orders', name: 'Orders Manager', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: Package, sidebarLabel: 'Orders', sidebarOrder: 0 },
+  { path: '/admin/dispatch', name: 'Admin Dispatch Calendar', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: Calendar, sidebarLabel: 'Dispatch Calendar', sidebarOrder: 1, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
+  { path: '/admin/assets', name: 'Asset Control Tower', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: Boxes, sidebarOrder: 2 },
+  { path: '/admin/movements', name: 'Movement Log', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: FileText, sidebarOrder: 3 },
+  { path: '/admin/markets', name: 'Markets Manager', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: MapPin, sidebarOrder: 4 },
+  { path: '/admin/quick-links', name: 'Quick Links', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'operations', sidebarIcon: Link2, sidebarOrder: 5 },
   { path: '/admin/inventory', name: 'Inventory (Legacy)', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/movements', name: 'Movement Log', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/fleet/cameras', name: 'Fleet Cameras', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/markets', name: 'Markets Manager', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/fleet/cameras', name: 'Fleet Cameras', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Boxes, sidebarOrder: 1 },
   { path: '/admin/markets/new-location', name: 'New Location Wizard', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/facilities', name: 'Facilities Manager', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/disposal-search', name: 'Disposal Search', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/facilities/finder', name: 'Facilities Finder', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/quick-links', name: 'Quick Links', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmConfiguration: RouteEntry[] = [
-  { path: '/admin/configuration', name: 'Config Center', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/yards', name: 'Yard Manager', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/zones', name: 'ZIP-to-Zone', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/pricing', name: 'Pricing Tables', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/configuration', name: 'Config Center', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Settings, sidebarOrder: 0, visibleTo: ['admin'] },
+  { path: '/admin/yards', name: 'Yard Manager', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Warehouse, sidebarOrder: 1, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/zones', name: 'ZIP-to-Zone', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: MapPin, sidebarOrder: 2, visibleTo: ['admin'] },
+  { path: '/admin/pricing', name: 'Pricing Tables', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: DollarSign, sidebarOrder: 3, visibleTo: ['admin', 'finance'] },
   { path: '/admin/pricing/locations', name: 'Location Pricing', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/vendors', name: 'Vendors', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/extras', name: 'Extras Catalog', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/config', name: 'Business Rules', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/city-rates', name: 'City Rates', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/toll-surcharges', name: 'Toll Surcharges', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/volume-commitments', name: 'Volume Discounts', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/vendors', name: 'Vendors', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Truck, sidebarOrder: 5, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/extras', name: 'Extras Catalog', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Plus, sidebarOrder: 6, visibleTo: ['admin'] },
+  { path: '/admin/config', name: 'Business Rules', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Settings, sidebarOrder: 7, visibleTo: ['admin'] },
+  { path: '/admin/city-rates', name: 'City Rates', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Banknote, sidebarOrder: 4, visibleTo: ['admin', 'finance'] },
+  { path: '/admin/toll-surcharges', name: 'Toll Surcharges', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: MapPinned, sidebarOrder: 8, visibleTo: ['admin'] },
+  { path: '/admin/volume-commitments', name: 'Volume Discounts', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: Percent, sidebarOrder: 9, visibleTo: ['admin', 'sales'] },
   { path: '/admin/config/health', name: 'Config Health', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/materials/catalog', name: 'Material Catalog', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/materials/categories', name: 'Project Categories', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/materials/offers', name: 'Material Offers', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/email-config', name: 'Email Config', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/email-config', name: 'Email Config', group: 'CRM_INTERNAL', subcategory: 'Configuration', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'configuration', sidebarIcon: MessageSquare, sidebarOrder: 10, visibleTo: ['admin'] },
 ];
 
 const crmTelephony: RouteEntry[] = [
-  { path: '/admin/telephony/calls', name: 'Call Logs', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/telephony/numbers', name: 'Phone Numbers', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/telephony/analytics', name: 'Call Analytics', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/telephony/calls', name: 'Call Logs', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: Phone, sidebarOrder: 3 },
+  { path: '/admin/telephony/numbers', name: 'Phone Numbers', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: Phone, sidebarOrder: 4 },
+  { path: '/admin/telephony/analytics', name: 'Call Analytics', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: BarChart3, sidebarOrder: 5 },
   { path: '/admin/telephony/migration', name: 'GHL Migration', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/telephony/test', name: 'Test Call', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/telephony/import', name: 'Import History', group: 'CRM_INTERNAL', subcategory: 'Telephony', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmGoogleAds: RouteEntry[] = [
-  { path: '/admin/ads', name: 'Ads Overview', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/ads/campaigns', name: 'Campaigns', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/ads', name: 'Ads Overview', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: TrendingUp, sidebarLabel: 'Google Ads', sidebarEnd: true, sidebarOrder: 20 },
+  { path: '/admin/ads/campaigns', name: 'Campaigns', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: BarChart3, sidebarLabel: 'Ad Campaigns', sidebarOrder: 21 },
   { path: '/admin/ads/rules', name: 'Automation Rules', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/ads/markets', name: 'Ads Markets Config', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/ads/logs', name: 'Ads Sync Logs', group: 'CRM_INTERNAL', subcategory: 'Google Ads', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmSeoAdmin: RouteEntry[] = [
-  { path: '/admin/seo/dashboard', name: 'SEO Dashboard', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/seo/cities', name: 'SEO Cities', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/seo/pages', name: 'SEO Pages', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/seo/dashboard', name: 'SEO Dashboard', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Globe, sidebarOrder: 0 },
+  { path: '/admin/seo/cities', name: 'SEO Cities', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: MapPin, sidebarOrder: 1 },
+  { path: '/admin/seo/pages', name: 'SEO Pages', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: FileText, sidebarOrder: 2 },
+  { path: '/admin/seo/health', name: 'SEO Health', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: TrendingUp, sidebarOrder: 3 },
+  { path: '/admin/seo/metrics', name: 'SEO Metrics', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: BarChart3, sidebarOrder: 4 },
+  { path: '/admin/seo/generate', name: 'SEO Generate', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Plus, sidebarLabel: 'Generate Pages', sidebarOrder: 5 },
   { path: '/admin/seo/sitemap', name: 'SEO Sitemap', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/gbp-plan', name: 'GBP Domination Plan', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/seo/health', name: 'SEO Health', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/repair', name: 'SEO Repair', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/indexing', name: 'SEO Indexing', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/queue', name: 'SEO Queue', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/rules', name: 'SEO Rules', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/seo/metrics', name: 'SEO Metrics', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/seo/generate', name: 'SEO Generate', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/grid', name: 'SEO Grid', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/seo/audit', name: 'SEO Audit', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmMarketingAnalytics: RouteEntry[] = [
-  { path: '/admin/marketing/visitors', name: 'Visitors Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/marketing/dashboard', name: 'Marketing Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: BarChart3, sidebarLabel: 'Marketing', sidebarOrder: 10 },
+  { path: '/admin/marketing/visitors', name: 'Visitors Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Users, sidebarLabel: 'Visitors', sidebarOrder: 11 },
   { path: '/admin/marketing/sessions', name: 'Sessions Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/marketing/google-setup', name: 'Google Setup Wizard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/marketing/dashboard', name: 'Marketing Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/marketing/ga4-debug', name: 'GA4 Debug Panel', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true },
 ];
 
-const crmAnalytics: RouteEntry[] = [
-  { path: '/admin/dashboards/overview', name: 'Analytics Overview', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/sales', name: 'Sales Funnel', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/operations', name: 'Operations Dashboard', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/finance', name: 'Finance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/customers', name: 'Customers Dashboard', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/kpis', name: 'KPI Optimization', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/dashboards/leads', name: 'Lead Performance', group: 'CRM_INTERNAL', subcategory: 'Analytics', isProtected: true, indexable: false, mounted: true },
-];
-
 const crmAI: RouteEntry[] = [
-  { path: '/admin/ai/chat', name: 'AI Chat', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/ai/performance', name: 'AI Performance', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/ai/performance', name: 'AI Performance', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Brain, sidebarOrder: 0, visibleTo: ['admin'] },
+  { path: '/admin/ai/chat', name: 'AI Chat', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: MessageSquare, sidebarOrder: 1, visibleTo: ['admin'] },
 ];
 
 const crmIntegrations: RouteEntry[] = [
-  { path: '/admin/google', name: 'Google Workspace', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/google', name: 'Google Workspace', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: Link2, sidebarOrder: 0, visibleTo: ['admin'] },
   { path: '/admin/google/setup', name: 'Google Setup', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/google/logs', name: 'Google Logs', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/messaging', name: 'Messaging', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/messaging', name: 'Messaging', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: MessageSquare, sidebarOrder: 1, visibleTo: ['admin'] },
   { path: '/admin/email-test', name: 'Email Test', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/ghl', name: 'GHL Integration', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/setup/functions', name: 'Functions Map', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/setup/functions', name: 'Functions Map', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'integrations', sidebarIcon: Settings, sidebarOrder: 2, visibleTo: ['admin'] },
   { path: '/admin/setup/what-missing', name: "What's Missing", group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/setup/search-index', name: 'Search Index', group: 'CRM_INTERNAL', subcategory: 'Integrations', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmQA: RouteEntry[] = [
-  { path: '/admin/qa/control-center', name: 'QA Control Center', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/qa/control-center', name: 'QA Control Center', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Shield, sidebarOrder: 0, visibleTo: ['admin'] },
+  { path: '/admin/qa/page-organization', name: 'Page Organization', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Layout, sidebarOrder: 1, visibleTo: ['admin'] },
+  { path: '/admin/qa/route-health', name: 'Route Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: TrendingUp, sidebarOrder: 2, visibleTo: ['admin'] },
   { path: '/admin/qa/workflows', name: 'Workflows Explorer', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/workflow-graph', name: 'Workflow Graph', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/photo-ai-test', name: 'Photo AI Test', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
@@ -363,23 +399,22 @@ const crmQA: RouteEntry[] = [
   { path: '/admin/qa/env-health', name: 'Env Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/build-health', name: 'Build Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/seo-health', name: 'SEO Health Check', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/qa/route-health', name: 'Route Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/duplicate-pages', name: 'Duplicate Pages', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/public-vs-crm', name: 'Public vs CRM', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/calculator/logs', name: 'Calculator Logs', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
 ];
 
 const crmSystem: RouteEntry[] = [
-  { path: '/admin/alerts', name: 'Alerts', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/alerts', name: 'Alerts', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Bell, sidebarOrder: 10, visibleTo: ['admin'] },
   { path: '/admin/notifications/internal', name: 'Internal Alerts', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/security', name: 'Security Health', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/fraud-flags', name: 'Fraud Flags', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/risk', name: 'Risk Review', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/users', name: 'User Management', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/access-requests', name: 'Access Requests', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/audit-logs', name: 'Audit Logs', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/security', name: 'Security Health', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Shield, sidebarOrder: 11, visibleTo: ['admin'] },
+  { path: '/admin/fraud-flags', name: 'Fraud Flags', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Shield, sidebarOrder: 12, visibleTo: ['admin'] },
+  { path: '/admin/risk', name: 'Risk Review', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: Shield, sidebarOrder: 13, visibleTo: ['admin'] },
+  { path: '/admin/users', name: 'User Management', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: UserCog, sidebarOrder: 14, visibleTo: ['admin'] },
+  { path: '/admin/access-requests', name: 'Access Requests', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: UserCog, sidebarOrder: 15, visibleTo: ['admin'] },
+  { path: '/admin/audit-logs', name: 'Audit Logs', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: FileText, sidebarOrder: 16, visibleTo: ['admin'] },
   { path: '/admin/system/reset', name: 'System Reset', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/docs', name: 'Internal Docs', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/docs', name: 'Internal Docs', group: 'CRM_INTERNAL', subcategory: 'System', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'admin-qa', sidebarIcon: FileText, sidebarOrder: 17, visibleTo: ['admin'] },
 ];
 
 const crmInternal: RouteEntry[] = [
@@ -388,6 +423,16 @@ const crmInternal: RouteEntry[] = [
   { path: '/sales/calculator', name: 'Sales Calculator Alias', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, canonicalAlias: '/internal/calculator' },
   { path: '/cs/calculator', name: 'CS Calculator Alias', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, canonicalAlias: '/internal/calculator' },
   { path: '/dispatch/calculator', name: 'Dispatch Calculator Alias', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, canonicalAlias: '/internal/calculator' },
+];
+
+// Driver sidebar items
+const crmDriverSidebar: RouteEntry[] = [
+  { path: '/admin/drivers', name: 'Driver Management', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'driver', sidebarIcon: Truck, sidebarOrder: 0, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
+];
+
+// Fleet sidebar items
+const crmFleetSidebar: RouteEntry[] = [
+  { path: '/admin/inventory', name: 'Inventory', group: 'CRM_INTERNAL', subcategory: 'Operations', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarOrder: 0, visibleTo: ['admin', 'ops_admin'] },
 ];
 
 // ─── CUSTOMER PORTAL ─────────────────────────────────────────────
@@ -406,7 +451,6 @@ const portalRoutes: RouteEntry[] = [
   { path: '/portal/pay/:paymentId', name: 'Payment Redirect', group: 'CUSTOMER_PORTAL', subcategory: 'Payments', isProtected: false, indexable: false, mounted: true, isDynamic: true },
   { path: '/portal/sign-quote-contract', name: 'Sign Contract', group: 'CUSTOMER_PORTAL', subcategory: 'Documents', isProtected: false, indexable: false, mounted: true },
   { path: '/portal/activate', name: 'Account Activation', group: 'CUSTOMER_PORTAL', subcategory: 'Auth', isProtected: false, indexable: false, mounted: true },
-  // Green Halo Portal (demo)
   { path: '/green-halo/portal', name: 'Green Halo Login', group: 'CUSTOMER_PORTAL', subcategory: 'Green Halo', isProtected: false, indexable: false, mounted: true },
   { path: '/green-halo/portal/dashboard', name: 'Green Halo Dashboard', group: 'CUSTOMER_PORTAL', subcategory: 'Green Halo', isProtected: false, indexable: false, mounted: true },
   { path: '/green-halo/portal/project/:projectId', name: 'Green Halo Project', group: 'CUSTOMER_PORTAL', subcategory: 'Green Halo', isProtected: false, indexable: false, mounted: true, isDynamic: true },
@@ -442,8 +486,75 @@ export const ALL_ROUTES: RouteEntry[] = [
   ...crmQA,
   ...crmSystem,
   ...crmInternal,
+  ...crmDriverSidebar,
+  ...crmFleetSidebar,
   ...portalRoutes,
 ];
+
+// ─── SIDEBAR SECTION METADATA ────────────────────────────────────
+export interface SidebarSectionMeta {
+  id: SidebarSectionId;
+  title: string;
+  icon: LucideIcon;
+  defaultOpen?: boolean;
+  /** Roles that can see this section (empty = all) */
+  visibleTo?: VisibleRole[];
+}
+
+export const SIDEBAR_SECTIONS: SidebarSectionMeta[] = [
+  { id: 'control-center', title: 'Control Center', icon: Home, defaultOpen: true },
+  { id: 'analytics', title: 'Analytics', icon: BarChart3 },
+  { id: 'sales', title: 'Sales', icon: TrendingUp, visibleTo: ['admin', 'sales', 'cs', 'executive'] },
+  { id: 'customers', title: 'Customer Service', icon: Users, visibleTo: ['admin', 'cs', 'sales'] },
+  { id: 'operations', title: 'Operations', icon: Package, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
+  { id: 'driver', title: 'Driver App', icon: Truck, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
+  { id: 'fleet', title: 'Fleet & Maintenance', icon: Boxes, visibleTo: ['admin', 'ops_admin'] },
+  { id: 'finance', title: 'Finance', icon: DollarSign, visibleTo: ['admin', 'finance', 'executive'] },
+  { id: 'seo-marketing', title: 'SEO & Marketing', icon: Globe, visibleTo: ['admin'] },
+  { id: 'integrations', title: 'Integrations', icon: Link2, visibleTo: ['admin'] },
+  { id: 'configuration', title: 'Configuration', icon: Settings, visibleTo: ['admin'] },
+  { id: 'ai', title: 'AI', icon: Brain, visibleTo: ['admin'] },
+  { id: 'admin-qa', title: 'Admin & QA', icon: Shield, visibleTo: ['admin'] },
+];
+
+/** Get sidebar items for a section, optionally filtered by role */
+export function getSidebarItems(sectionId: SidebarSectionId, userRoles?: VisibleRole[]): RouteEntry[] {
+  return ALL_ROUTES
+    .filter(r => r.showInSidebar && r.sidebarSection === sectionId && r.mounted)
+    .filter(r => {
+      if (!userRoles || !r.visibleTo || r.visibleTo.length === 0) return true;
+      return r.visibleTo.some(role => userRoles.includes(role));
+    })
+    .sort((a, b) => (a.sidebarOrder ?? 99) - (b.sidebarOrder ?? 99));
+}
+
+/** Get visible sections for a user's roles */
+export function getVisibleSections(userRoles?: VisibleRole[]): SidebarSectionMeta[] {
+  return SIDEBAR_SECTIONS.filter(s => {
+    if (!userRoles || !s.visibleTo || s.visibleTo.length === 0) return true;
+    return s.visibleTo.some(role => userRoles.includes(role));
+  });
+}
+
+/** Search sidebar items by label, path, or section title */
+export function searchSidebarItems(query: string, userRoles?: VisibleRole[]): RouteEntry[] {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  return ALL_ROUTES
+    .filter(r => r.showInSidebar && r.mounted)
+    .filter(r => {
+      if (!userRoles || !r.visibleTo || r.visibleTo.length === 0) return true;
+      return r.visibleTo.some(role => userRoles.includes(role));
+    })
+    .filter(r => {
+      const label = (r.sidebarLabel || r.name).toLowerCase();
+      const path = r.path.toLowerCase();
+      const section = SIDEBAR_SECTIONS.find(s => s.id === r.sidebarSection);
+      const sectionTitle = section?.title.toLowerCase() || '';
+      return label.includes(q) || path.includes(q) || sectionTitle.includes(q);
+    })
+    .sort((a, b) => (a.sidebarOrder ?? 99) - (b.sidebarOrder ?? 99));
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────
 export function getRoutesByGroup(group: RouteGroup) {
@@ -489,6 +600,6 @@ export function getSubcategorySummary() {
  * 6. If this is an alias for another route, set canonicalAlias.
  * 7. Never mount CRM routes on public-facing path prefixes.
  * 8. Never mount public pages behind auth guards.
- * 9. Update AdminLayout navSections if adding a new admin page.
+ * 9. For sidebar items, set showInSidebar=true + sidebarSection + sidebarIcon.
  * 10. Run /admin/qa/page-organization to verify after adding.
  */
