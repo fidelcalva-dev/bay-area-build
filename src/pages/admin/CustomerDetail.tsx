@@ -200,7 +200,7 @@ export default function CustomerDetail() {
   const activeOrders = orders.filter(o => !['completed', 'cancelled'].includes(o.status)).length;
 
   // Unique sites from orders
-  const uniqueSites = [...new Set(orders.map(o => o.site_address).filter(Boolean))] as string[];
+  const uniqueSites = [...new Set(orders.map(o => o.destination_address).filter(Boolean))] as string[];
 
   // Photos from timeline (photo-related events)
   const photoEvents = timelineEvents.filter(e => {
