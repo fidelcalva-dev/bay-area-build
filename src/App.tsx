@@ -159,6 +159,9 @@ const BuildInfo = lazy(() => import("./pages/admin/qa/BuildInfo"));
 const EnvHealth = lazy(() => import("./pages/admin/qa/EnvHealth"));
 const BuildHealth = lazy(() => import("./pages/admin/qa/BuildHealth"));
 const SeoHealthDashboard = lazy(() => import("./pages/admin/qa/SeoHealthDashboard"));
+const RouteHealthPage = lazy(() => import("./pages/admin/qa/RouteHealthPage"));
+const DuplicatePagesPage = lazy(() => import("./pages/admin/qa/DuplicatePagesPage"));
+const PublicVsCrmPage = lazy(() => import("./pages/admin/qa/PublicVsCrmPage"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
@@ -975,6 +978,15 @@ const App = () => {
                 } />
                 <Route path="qa/seo-health" element={
                   <Suspense fallback={<PageLoader />}><SeoHealthDashboard /></Suspense>
+                } />
+                <Route path="qa/route-health" element={
+                  <Suspense fallback={<PageLoader />}><RouteHealthPage /></Suspense>
+                } />
+                <Route path="qa/duplicate-pages" element={
+                  <Suspense fallback={<PageLoader />}><DuplicatePagesPage /></Suspense>
+                } />
+                <Route path="qa/public-vs-crm" element={
+                  <Suspense fallback={<PageLoader />}><PublicVsCrmPage /></Suspense>
                 } />
                 {/* SEO Admin Routes */}
                 <Route path="seo" element={<Navigate to="/admin/seo/dashboard" replace />} />
