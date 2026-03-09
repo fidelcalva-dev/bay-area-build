@@ -25,7 +25,7 @@ interface AdminPermissionsState {
 }
 
 // Admin roles that can access config
-const ADMIN_ROLES: AppRole[] = ['admin', 'system_admin', 'ops_admin', 'finance_admin', 'sales_admin', 'read_only_admin'];
+const ADMIN_ROLES: AppRole[] = ['owner', 'admin', 'system_admin', 'ops_admin', 'finance_admin', 'sales_admin', 'read_only_admin', 'executive', 'marketing_seo', 'fleet_maintenance', 'read_only'];
 
 // Critical modules that require approval workflow
 export const CRITICAL_MODULES: AdminModule[] = ['city_rates', 'heavy_pricing', 'toll_surcharges', 'programs'];

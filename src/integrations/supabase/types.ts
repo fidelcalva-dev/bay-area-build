@@ -19399,6 +19399,12 @@ export type Database = {
         | "cs_agent"
         | "billing_specialist"
         | "executive"
+        | "owner"
+        | "sales_rep"
+        | "customer_service"
+        | "fleet_maintenance"
+        | "marketing_seo"
+        | "read_only"
       approval_status: "pending" | "approved" | "rejected"
       assignment_type: "IN_HOUSE" | "CARRIER"
       call_ai_event_type:
@@ -19771,6 +19777,12 @@ export const Constants = {
         "cs_agent",
         "billing_specialist",
         "executive",
+        "owner",
+        "sales_rep",
+        "customer_service",
+        "fleet_maintenance",
+        "marketing_seo",
+        "read_only",
       ],
       approval_status: ["pending", "approved", "rejected"],
       assignment_type: ["IN_HOUSE", "CARRIER"],

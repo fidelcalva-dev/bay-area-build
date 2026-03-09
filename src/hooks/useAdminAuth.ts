@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
-export type AppRole = 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin' | 'cs' | 'cs_agent' | 'billing_specialist' | 'executive';
+export type AppRole = 'owner' | 'admin' | 'customer' | 'dispatcher' | 'finance' | 'driver' | 'sales' | 'owner_operator' | 'system_admin' | 'ops_admin' | 'finance_admin' | 'sales_admin' | 'read_only_admin' | 'cs' | 'cs_agent' | 'billing_specialist' | 'executive' | 'sales_rep' | 'customer_service' | 'fleet_maintenance' | 'marketing_seo' | 'read_only';
 
 interface AdminAuthState {
   user: User | null;
@@ -81,16 +81,17 @@ useEffect(() => {
         }
 
         if (isMounted) {
+          const isAdminLevel = roles.some(r => ['owner', 'admin', 'system_admin', 'executive', 'ops_admin'].includes(r));
           setState({
             user,
-            isAdmin: roles.includes('admin'),
-            isDispatcher: roles.includes('dispatcher'),
-            isFinance: roles.includes('finance'),
+            isAdmin: isAdminLevel,
+            isDispatcher: roles.includes('dispatcher') || roles.includes('ops_admin'),
+            isFinance: roles.some(r => ['finance', 'finance_admin', 'billing_specialist'].includes(r)),
             isCustomer: roles.includes('customer'),
-            isSales: roles.includes('sales'),
+            isSales: roles.some(r => ['sales', 'sales_admin', 'sales_rep'].includes(r)),
             isDriver: roles.includes('driver'),
             isOwnerOperator: roles.includes('owner_operator'),
-            isCS: roles.includes('cs') || roles.includes('cs_agent'),
+            isCS: roles.some(r => ['cs', 'cs_agent', 'customer_service'].includes(r)),
             roles,
             isLoading: false,
             driverId,
@@ -233,7 +234,13 @@ useEffect(() => {
 
   // Check if user can access admin portal (any staff role)
   const canAccessAdmin = () => {
-    return state.isAdmin || state.isDispatcher || state.isFinance || state.isSales || state.isCS;
+    const staffRoles: AppRole[] = [
+      'owner', 'admin', 'system_admin', 'executive', 'ops_admin',
+      'sales_admin', 'sales_rep', 'sales', 'customer_service', 'cs', 'cs_agent',
+      'dispatcher', 'fleet_maintenance', 'finance', 'finance_admin',
+      'billing_specialist', 'marketing_seo', 'read_only_admin', 'read_only',
+    ];
+    return state.roles.some(r => staffRoles.includes(r));
   };
 
   // Check if user can access driver app
@@ -243,14 +250,18 @@ useEffect(() => {
 
   // Get primary role for routing
   const getPrimaryRole = (): AppRole | null => {
-    if (state.isAdmin) return 'admin';
-    if (state.isSales) return 'sales';
-    if (state.isCS) return 'cs';
-    if (state.isDispatcher) return 'dispatcher';
-    if (state.isFinance) return 'finance';
-    if (state.isOwnerOperator) return 'owner_operator';
-    if (state.isDriver) return 'driver';
-    if (state.isCustomer) return 'customer';
+    // Priority order: highest privilege first
+    const priority: AppRole[] = [
+      'owner', 'admin', 'system_admin', 'executive', 'ops_admin',
+      'sales_admin', 'finance_admin', 'sales_rep', 'sales',
+      'customer_service', 'cs', 'cs_agent', 'dispatcher',
+      'fleet_maintenance', 'finance', 'billing_specialist',
+      'marketing_seo', 'read_only_admin', 'read_only',
+      'owner_operator', 'driver', 'customer',
+    ];
+    for (const role of priority) {
+      if (state.roles.includes(role)) return role;
+    }
     return null;
   };
 
