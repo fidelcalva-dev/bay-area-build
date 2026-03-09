@@ -136,12 +136,7 @@ export default function DuplicatePagesPage() {
         </p>
       </div>
 
-      {/* Cross-links */}
-      <div className="flex flex-wrap gap-2">
-        <Link to="/admin/qa/route-health" className="text-xs text-primary underline">Route Health</Link>
-        <Link to="/admin/qa/public-vs-crm" className="text-xs text-primary underline">Public vs CRM</Link>
-        <Link to="/admin/seo/health" className="text-xs text-primary underline">SEO Health</Link>
-      </div>
+      <QaNavStrip />
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">

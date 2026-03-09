@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle, AlertTriangle, XCircle, Search, Globe, Shield } from 'lucide-react';
+import QaNavStrip from '@/components/admin/qa/QaNavStrip';
 
 type RouteStatus = 'working' | 'duplicate' | 'redirect' | 'unrouted';
 type RouteCategory = 'public' | 'seo' | 'blog' | 'crm-admin' | 'crm-sales' | 'crm-cs' | 'crm-dispatch' | 'crm-driver' | 'crm-finance' | 'portal' | 'internal' | 'preview' | 'legacy';
