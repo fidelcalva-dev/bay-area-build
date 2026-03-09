@@ -1054,6 +1054,33 @@ const App = () => {
                 <Route path="ai/performance" element={
                   <Suspense fallback={<PageLoader />}><AIPerformanceDashboard /></Suspense>
                 } />
+                <Route path="ai/control-center" element={
+                  <Suspense fallback={<PageLoader />}><AIControlCenter /></Suspense>
+                } />
+                <Route path="ai/sales" element={
+                  <Suspense fallback={<PageLoader />}><AISalesCopilot /></Suspense>
+                } />
+                <Route path="ai/customer-service" element={
+                  <Suspense fallback={<PageLoader />}><AICsCopilot /></Suspense>
+                } />
+                <Route path="ai/dispatch" element={
+                  <Suspense fallback={<PageLoader />}><AIDispatchCopilot /></Suspense>
+                } />
+                <Route path="ai/driver" element={
+                  <Suspense fallback={<PageLoader />}><AIDriverCopilot /></Suspense>
+                } />
+                <Route path="ai/fleet" element={
+                  <Suspense fallback={<PageLoader />}><AIFleetCopilot /></Suspense>
+                } />
+                <Route path="ai/finance" element={
+                  <Suspense fallback={<PageLoader />}><AIFinanceCopilot /></Suspense>
+                } />
+                <Route path="ai/seo" element={
+                  <Suspense fallback={<PageLoader />}><AISeoCopilot /></Suspense>
+                } />
+                <Route path="ai/admin" element={
+                  <Suspense fallback={<PageLoader />}><AIAdminCopilot /></Suspense>
+                } />
                 {/* Marketing / Visitor Intelligence */}
                 <Route path="marketing/visitors" element={
                   <Suspense fallback={<PageLoader />}><VisitorsDashboard /></Suspense>
