@@ -986,6 +986,9 @@ const App = () => {
                 <Route path="qa/public-vs-crm" element={
                   <Suspense fallback={<PageLoader />}><PublicVsCrmPage /></Suspense>
                 } />
+                <Route path="qa/page-organization" element={
+                  <Suspense fallback={<PageLoader />}><PageOrganizationPage /></Suspense>
+                } />
                 {/* SEO Admin Routes */}
                 <Route path="seo" element={<Navigate to="/admin/seo/dashboard" replace />} />
                 <Route path="seo/dashboard" element={
