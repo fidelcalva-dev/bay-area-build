@@ -249,14 +249,18 @@ useEffect(() => {
 
   // Get primary role for routing
   const getPrimaryRole = (): AppRole | null => {
-    if (state.isAdmin) return 'admin';
-    if (state.isSales) return 'sales';
-    if (state.isCS) return 'cs';
-    if (state.isDispatcher) return 'dispatcher';
-    if (state.isFinance) return 'finance';
-    if (state.isOwnerOperator) return 'owner_operator';
-    if (state.isDriver) return 'driver';
-    if (state.isCustomer) return 'customer';
+    // Priority order: highest privilege first
+    const priority: AppRole[] = [
+      'owner', 'admin', 'system_admin', 'executive', 'ops_admin',
+      'sales_admin', 'finance_admin', 'sales_rep', 'sales',
+      'customer_service', 'cs', 'cs_agent', 'dispatcher',
+      'fleet_maintenance', 'finance', 'billing_specialist',
+      'marketing_seo', 'read_only_admin', 'read_only',
+      'owner_operator', 'driver', 'customer',
+    ];
+    for (const role of priority) {
+      if (state.roles.includes(role)) return role;
+    }
     return null;
   };
 

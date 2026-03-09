@@ -12,22 +12,28 @@ const LOGIN_PATH = '/admin/login';
  * Maps a staff role to its default dashboard path.
  */
 const ROLE_DASHBOARDS: Record<string, string> = {
+  owner: '/admin',
   admin: '/admin',
   system_admin: '/admin',
-  ops_admin: '/admin',
-  sales: '/sales',
+  executive: '/admin',
+  ops_admin: '/dispatch',
   sales_admin: '/sales',
+  sales_rep: '/sales',
+  sales: '/sales',
+  customer_service: '/cs',
   cs: '/cs',
   cs_agent: '/cs',
-  billing_specialist: '/finance',
-  executive: '/admin/executive',
   dispatcher: '/dispatch',
-  finance: '/finance',
-  finance_admin: '/finance',
   driver: '/driver',
   owner_operator: '/driver',
-  customer: '/',
+  fleet_maintenance: '/admin/maintenance',
+  finance: '/finance',
+  finance_admin: '/finance',
+  billing_specialist: '/finance',
+  marketing_seo: '/admin/seo',
   read_only_admin: '/admin',
+  read_only: '/admin',
+  customer: '/',
 };
 
 /**

@@ -503,14 +503,14 @@ export interface SidebarSectionMeta {
 
 export const SIDEBAR_SECTIONS: SidebarSectionMeta[] = [
   { id: 'control-center', title: 'Control Center', icon: Home, defaultOpen: true },
-  { id: 'analytics', title: 'Analytics', icon: BarChart3 },
+  { id: 'analytics', title: 'Analytics', icon: BarChart3, visibleTo: ['admin', 'executive', 'read_only'] },
   { id: 'sales', title: 'Sales', icon: TrendingUp, visibleTo: ['admin', 'sales', 'cs', 'executive'] },
   { id: 'customers', title: 'Customer Service', icon: Users, visibleTo: ['admin', 'cs', 'sales'] },
   { id: 'operations', title: 'Operations', icon: Package, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
-  { id: 'driver', title: 'Driver App', icon: Truck, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
-  { id: 'fleet', title: 'Fleet & Maintenance', icon: Boxes, visibleTo: ['admin', 'ops_admin'] },
+  { id: 'driver', title: 'Driver App', icon: Truck, visibleTo: ['admin', 'dispatcher', 'ops_admin', 'driver'] },
+  { id: 'fleet', title: 'Fleet & Maintenance', icon: Boxes, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
   { id: 'finance', title: 'Finance', icon: DollarSign, visibleTo: ['admin', 'finance', 'executive'] },
-  { id: 'seo-marketing', title: 'SEO & Marketing', icon: Globe, visibleTo: ['admin'] },
+  { id: 'seo-marketing', title: 'SEO & Marketing', icon: Globe, visibleTo: ['admin', 'marketing_seo'] },
   { id: 'integrations', title: 'Integrations', icon: Link2, visibleTo: ['admin'] },
   { id: 'configuration', title: 'Configuration', icon: Settings, visibleTo: ['admin'] },
   { id: 'ai', title: 'AI', icon: Brain, visibleTo: ['admin'] },

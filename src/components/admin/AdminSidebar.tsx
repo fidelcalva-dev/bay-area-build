@@ -26,26 +26,32 @@ import { supabase } from '@/integrations/supabase/client';
 
 // ─── ROLE MAPPING ────────────────────────────────────────────────
 function mapRolesToVisibleRoles(roles: AppRole[]): VisibleRole[] {
-  const map: Record<string, VisibleRole> = {
-    admin: 'admin',
-    sales: 'sales',
-    cs: 'cs',
-    cs_agent: 'cs',
-    dispatcher: 'dispatcher',
-    finance: 'finance',
-    driver: 'driver',
-    ops_admin: 'ops_admin',
-    executive: 'executive',
-    system_admin: 'admin',
-    sales_admin: 'sales',
-    finance_admin: 'finance',
-    read_only_admin: 'admin',
-    billing_specialist: 'finance',
+  const map: Record<string, VisibleRole[]> = {
+    owner: ['admin'],
+    admin: ['admin'],
+    system_admin: ['admin'],
+    executive: ['executive', 'admin'],
+    ops_admin: ['ops_admin', 'dispatcher'],
+    sales_admin: ['sales'],
+    sales_rep: ['sales'],
+    sales: ['sales'],
+    customer_service: ['cs'],
+    cs: ['cs'],
+    cs_agent: ['cs'],
+    dispatcher: ['dispatcher'],
+    driver: ['driver'],
+    fleet_maintenance: ['fleet_maintenance', 'ops_admin'],
+    finance: ['finance'],
+    finance_admin: ['finance'],
+    billing_specialist: ['finance'],
+    marketing_seo: ['marketing_seo', 'admin'],
+    read_only_admin: ['read_only', 'admin'],
+    read_only: ['read_only'],
   };
   const result = new Set<VisibleRole>();
   roles.forEach(r => {
     const mapped = map[r];
-    if (mapped) result.add(mapped);
+    if (mapped) mapped.forEach(v => result.add(v));
   });
   return Array.from(result);
 }
