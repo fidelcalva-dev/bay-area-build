@@ -198,8 +198,11 @@ export default function CustomerDetail() {
   const totalOutstanding = invoices.reduce((sum, i) => sum + (i.balance_due || 0), 0);
   const activeOrders = orders.filter(o => !['completed', 'cancelled'].includes(o.status)).length;
 
-  // Unique sites from orders
-  const uniqueSites = [...new Set(orders.map(o => o.destination_address).filter(Boolean))] as string[];
+  // Unique sites — derived from quotes' zip codes and customer address
+  const siteAddresses: string[] = [];
+  if (customer.billing_address) siteAddresses.push(customer.billing_address);
+  quotes.forEach(q => { if (q.zip_code && !siteAddresses.some(s => s.includes(q.zip_code!))) siteAddresses.push(`ZIP ${q.zip_code}`); });
+  const uniqueSites = [...new Set(siteAddresses)];
 
   // Photos from timeline (photo-related events)
   const photoEvents = timelineEvents.filter(e => {
