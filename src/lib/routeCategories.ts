@@ -270,10 +270,10 @@ const crmDriver: RouteEntry[] = [
 ];
 
 const crmMaintenance: RouteEntry[] = [
-  { path: '/admin/maintenance', name: 'Maintenance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarLabel: 'Maintenance', sidebarOrder: 2, visibleTo: ['admin', 'ops_admin'] },
-  { path: '/admin/maintenance/trucks', name: 'Maintenance Trucks', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Truck, sidebarLabel: 'Truck List', sidebarOrder: 3, visibleTo: ['admin', 'ops_admin'] },
-  { path: '/admin/maintenance/issues', name: 'Maintenance Issues', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Bell, sidebarLabel: 'Issues', sidebarOrder: 4, visibleTo: ['admin', 'ops_admin'] },
-  { path: '/admin/maintenance/work-orders', name: 'Work Orders', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: FileText, sidebarLabel: 'Work Orders', sidebarOrder: 5, visibleTo: ['admin', 'ops_admin'] },
+  { path: '/admin/maintenance', name: 'Maintenance Dashboard', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Warehouse, sidebarLabel: 'Maintenance', sidebarOrder: 2, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
+  { path: '/admin/maintenance/trucks', name: 'Maintenance Trucks', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Truck, sidebarLabel: 'Truck List', sidebarOrder: 3, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
+  { path: '/admin/maintenance/issues', name: 'Maintenance Issues', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: Bell, sidebarLabel: 'Issues', sidebarOrder: 4, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
+  { path: '/admin/maintenance/work-orders', name: 'Work Orders', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'fleet', sidebarIcon: FileText, sidebarLabel: 'Work Orders', sidebarOrder: 5, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
   { path: '/admin/vehicles/:id', name: 'Vehicle Profile', group: 'CRM_INTERNAL', subcategory: 'Maintenance', isProtected: true, indexable: false, mounted: true, isDynamic: true },
 ];
 
