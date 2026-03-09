@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Globe, Shield, CheckCircle, XCircle } from 'lucide-react';
@@ -84,6 +85,12 @@ export default function PublicVsCrmPage() {
         </p>
       </div>
 
+      {/* Cross-links */}
+      <div className="flex flex-wrap gap-2">
+        <Link to="/admin/qa/route-health" className="text-xs text-primary underline">Route Health</Link>
+        <Link to="/admin/qa/duplicate-pages" className="text-xs text-primary underline">Duplicate Pages</Link>
+        <Link to="/admin/seo/health" className="text-xs text-primary underline">SEO Health</Link>
+      </div>
       {/* Overall Score */}
       <Card className="border-green-200 bg-green-50/30">
         <CardContent className="p-6 text-center">
