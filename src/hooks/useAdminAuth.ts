@@ -81,16 +81,17 @@ useEffect(() => {
         }
 
         if (isMounted) {
+          const isAdminLevel = roles.some(r => ['owner', 'admin', 'system_admin', 'executive', 'ops_admin'].includes(r));
           setState({
             user,
-            isAdmin: roles.includes('admin'),
-            isDispatcher: roles.includes('dispatcher'),
-            isFinance: roles.includes('finance'),
+            isAdmin: isAdminLevel,
+            isDispatcher: roles.includes('dispatcher') || roles.includes('ops_admin'),
+            isFinance: roles.some(r => ['finance', 'finance_admin', 'billing_specialist'].includes(r)),
             isCustomer: roles.includes('customer'),
-            isSales: roles.includes('sales'),
+            isSales: roles.some(r => ['sales', 'sales_admin', 'sales_rep'].includes(r)),
             isDriver: roles.includes('driver'),
             isOwnerOperator: roles.includes('owner_operator'),
-            isCS: roles.includes('cs') || roles.includes('cs_agent'),
+            isCS: roles.some(r => ['cs', 'cs_agent', 'customer_service'].includes(r)),
             roles,
             isLoading: false,
             driverId,
