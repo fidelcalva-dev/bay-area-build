@@ -442,7 +442,6 @@ export default function CustomerDetail() {
                           <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
                           <p className="text-sm text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString()}
-                            {order.site_address && ` · ${order.site_address}`}
                           </p>
                         </div>
                       </div>
