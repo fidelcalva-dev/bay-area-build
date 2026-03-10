@@ -15,7 +15,7 @@ import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
-import { getOverageInfo, PRICING_POLICIES } from '@/lib/shared-data';
+import { getOverageInfo, PRICING_POLICIES, HEAVY_IN_GENERAL_WARNING, CONTAMINATION_POLICY } from '@/lib/shared-data';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 
 // Extra Tons Pre-Purchase
