@@ -182,6 +182,7 @@ const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage")
 const AdminEmailTest = lazy(() => import("./pages/admin/AdminEmailTest"));
 const ActivationDashboard = lazy(() => import("./pages/admin/ActivationDashboard"));
 const ExecutiveDashboard = lazy(() => import("./pages/admin/ExecutiveDashboard"));
+const BusinessIntelligenceDashboard = lazy(() => import("./pages/admin/BusinessIntelligenceDashboard"));
 const SalesPerformanceDashboard = lazy(() => import("./pages/admin/SalesPerformanceDashboard"));
 const SeoAdminCities = lazy(() => import("./pages/admin/SeoAdminCities"));
 const SeoAdminPages = lazy(() => import("./pages/admin/SeoAdminPages"));
