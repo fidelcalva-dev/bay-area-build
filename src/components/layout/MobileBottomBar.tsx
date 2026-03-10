@@ -15,7 +15,7 @@ export function MobileBottomBar() {
       <div className="relative bg-card border-t border-border shadow-2xl">
         <div className="grid grid-cols-3 divide-x divide-border">
           {/* Quote - Primary CTA */}
-          <Link to="/quote" className="block" onClick={() => ga4.clickGetQuote({ page: location.pathname })}>
+          <Link to="/quote?v3=1" className="block" onClick={() => ga4.clickGetQuote({ page: location.pathname })}>
             <Button variant="mobileBarCta" className="w-full h-full rounded-none min-h-[56px]">
               <FileText className="w-5 h-5" strokeWidth={2} />
               <span className="text-xs font-bold">Quote</span>
