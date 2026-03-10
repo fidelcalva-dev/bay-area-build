@@ -166,20 +166,20 @@ export function SitesTab({ customerId, sites, billingAddress, onRefresh }: Props
                     </Button>
                   )}
                 </div>
-                {'gate_code' in site && (site as CustomerSite).gate_code && (
+                {!site.is_legacy && 'gate_code' in site && (site as unknown as CustomerSite).gate_code && (
                   <div className="flex items-center gap-1.5 text-sm text-muted-foreground ml-8">
-                    <Lock className="w-3.5 h-3.5" />Gate: {(site as CustomerSite).gate_code}
+                    <Lock className="w-3.5 h-3.5" />Gate: {(site as unknown as CustomerSite).gate_code}
                   </div>
                 )}
-                {'placement_instructions' in site && (site as CustomerSite).placement_instructions && (
+                {!site.is_legacy && 'placement_instructions' in site && (site as unknown as CustomerSite).placement_instructions && (
                   <div className="flex items-start gap-1.5 text-sm text-muted-foreground ml-8">
-                    <FileText className="w-3.5 h-3.5 mt-0.5" />{(site as CustomerSite).placement_instructions}
+                    <FileText className="w-3.5 h-3.5 mt-0.5" />{(site as unknown as CustomerSite).placement_instructions}
                   </div>
                 )}
-                {'permit_notes' in site && (site as CustomerSite).permit_notes && (
+                {!site.is_legacy && 'permit_notes' in site && (site as unknown as CustomerSite).permit_notes && (
                   <div className="flex items-start gap-1.5 text-sm ml-8">
                     <Badge variant="outline" className="text-xs">Permit</Badge>
-                    <span className="text-muted-foreground">{(site as CustomerSite).permit_notes}</span>
+                    <span className="text-muted-foreground">{(site as unknown as CustomerSite).permit_notes}</span>
                   </div>
                 )}
               </div>
