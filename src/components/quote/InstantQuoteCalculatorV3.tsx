@@ -636,6 +636,12 @@ export function InstantQuoteCalculatorV3() {
         greenHaloDumpFee: generalClassification?.isGreenHalo ? calculateGreenHaloDumpFee(formData.size) : undefined,
         greenHaloHandlingFee: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloHandlingFee : undefined,
         greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloDumpFeePerTon : undefined,
+        // Heavy material & contamination risk flags
+        heavyMaterialClass: heavyClassification?.materialClass || undefined,
+        heavyMaterialIncrement: heavyClassification?.increment,
+        isTrashContaminated: debrisSelection?.isHeavyMaterial && debrisSelection?.reclassified ? true : false,
+        reclassifiedToMixed: debrisSelection?.reclassified || false,
+        originalMaterialType: formData.material,
       });
 
       if (!result.success) {
@@ -1395,7 +1401,38 @@ export function InstantQuoteCalculatorV3() {
               />
             </div>
 
-            {/* Estimator Buttons */}
+            {/* Heavy-in-General Interstitial Warning */}
+            {formData.material === 'general' && debrisSelection?.isHeavyMaterial && !debrisSelection?.reclassified && (
+              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-300 dark:border-amber-700">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0">
+                    <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">
+                      Heavy Material Detected
+                    </p>
+                    <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                      {HEAVY_IN_GENERAL_WARNING}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 border-amber-400 text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:border-amber-600 dark:hover:bg-amber-900/50"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, material: 'heavy', size: 10 }));
+                        setDebrisSelection(null);
+                        setGeneralClassification(null);
+                      }}
+                    >
+                      <HardHat className="w-4 h-4 mr-1.5" />
+                      Switch to Heavy Material Dumpster
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex gap-2">
               <button
                 type="button"
@@ -2055,7 +2092,10 @@ export function InstantQuoteCalculatorV3() {
                 </div>
               </div>
               <div className="text-sm text-muted-foreground mt-1">
-                {formData.rentalDays} days • {quote.includedTons}T included • ZIP {formData.zip}
+                {formData.material === 'heavy'
+                  ? `${formData.rentalDays} days • Flat fee – disposal included • ZIP ${formData.zip}`
+                  : `${formData.rentalDays} days • ${quote.includedTons}T included • ZIP ${formData.zip}`
+                }
               </div>
             </div>
 
