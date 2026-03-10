@@ -273,7 +273,7 @@ function getConfidenceAssessment(
   // Heavy material confidence rules
   if (materialType === 'heavy') {
     const isSmallHeavy = project?.id === 'concrete-small';
-    const isMediumHeavy = project?.id === 'concrete-medium';
+    const isMediumHeavy = project?.id === 'concrete-medium' || project?.id === 'concrete-removal' || project?.id === 'dirt-soil-removal';
     const isLargeHeavy = project?.id === 'concrete-large';
     
     if (selectedSize === 6) {
