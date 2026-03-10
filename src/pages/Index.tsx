@@ -6,7 +6,7 @@ import { getFAQsForSchema, DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, ArrowRight, Phone, CheckCircle, Scale, MessageSquare, Truck, Star, Clock, Wrench } from 'lucide-react';
+import { Shield, MapPin, ArrowRight, Phone, CheckCircle, Scale, MessageSquare, Truck, Star, Clock, Wrench, Upload, Package, Hammer } from 'lucide-react';
 import { GuidedAssistant } from '@/components/home/GuidedAssistant';
 
 const FAQSection = lazy(() =>
@@ -23,10 +23,10 @@ const SectionLoader = () => (
 );
 
 const TRUST_STRIP = [
-  { icon: Shield, label: 'Licensed & Insured' },
+  { icon: Star, label: '4.9★ Google Reviews' },
+  { icon: Shield, label: 'BBB A+ Rated' },
   { icon: Scale, label: 'Transparent Pricing' },
-  { icon: Wrench, label: 'Contractor-Ready' },
-  { icon: MessageSquare, label: 'Professional Dispatch' },
+  { icon: Clock, label: 'Same-Day Available' },
 ];
 
 const HERO_PHOTOS = [
@@ -61,6 +61,22 @@ const SERVICE_AREAS_LIST = [
   { name: 'Concord', slug: 'concord' },
 ];
 
+const HOW_IT_WORKS_STEPS = [
+  { number: '1', icon: ArrowRight, title: 'Get Instant Quote', desc: 'Enter your ZIP and project type' },
+  { number: '2', icon: Clock, title: 'Schedule Delivery', desc: 'Pick a date that works for you' },
+  { number: '3', icon: Package, title: 'Fill the Dumpster', desc: 'Load at your own pace' },
+  { number: '4', icon: Truck, title: 'We Pick It Up', desc: 'We haul it away, you\'re done' },
+];
+
+const PROJECT_TYPES = [
+  { label: 'Kitchen Remodel', slug: 'kitchen-remodel', icon: Hammer },
+  { label: 'Roof Replacement', slug: 'roof-replacement', icon: Wrench },
+  { label: 'Garage Cleanout', slug: 'garage-cleanout', icon: Package },
+  { label: 'Construction Debris', slug: 'construction-debris', icon: Truck },
+  { label: 'Yard Cleanup', slug: 'yard-cleanup', icon: MapPin },
+  { label: 'Estate Cleanout', slug: 'estate-cleanout', icon: Scale },
+];
+
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
 
@@ -82,26 +98,52 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-8 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Same-Day Dumpster Rental in the Bay Area
+              Rent a Dumpster in 60 Seconds
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-[560px] mx-auto">
-              Powered by Real Local Yards, Not Brokers. Transparent pricing by ZIP code.
+            <p className="text-lg md:text-xl text-muted-foreground font-medium">
+              Fast Delivery Across the Bay Area
             </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-x-6 gap-y-1 text-sm text-muted-foreground">
+              <span className="flex items-center justify-center gap-1.5">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                Transparent pricing
+              </span>
+              <span className="flex items-center justify-center gap-1.5">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                Same-day delivery available
+              </span>
+              <span className="flex items-center justify-center gap-1.5">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                No hidden fees
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[500px] mx-auto">
-            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-semibold px-8 shadow-cta text-base">
+          {/* Primary CTA: Get Exact Price */}
+          <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[520px] mx-auto">
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-semibold px-8 shadow-cta text-base flex-1">
               <Link to="/quote?v3=1">
                 Get Exact Price
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 text-base">
-              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                <Phone className="w-4 h-4 mr-2" />
-                Speak With Our Team
-              </a>
+            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-base">
+              <Link to="/sizes">
+                <Package className="w-4 h-4 mr-2" />
+                Check Dumpster Size
+              </Link>
             </Button>
+          </div>
+
+          {/* Tertiary: Talk to a Specialist */}
+          <div className="mt-3 text-center">
+            <a
+              href={`tel:${BUSINESS_INFO.phone.sales}`}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              Talk to a Specialist: {BUSINESS_INFO.phone.salesFormatted}
+            </a>
           </div>
 
           {/* Trust badges */}
@@ -153,13 +195,45 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 4 — DUMPSTER SIZES ========== */}
+      {/* ========== SECTION 4 — HOW IT WORKS (4 steps) ========== */}
       <section className="py-14 md:py-20 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              How It Works
+            </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              From quote to pickup in 4 simple steps.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-4xl mx-auto">
+            {HOW_IT_WORKS_STEPS.map((step) => (
+              <div key={step.number} className="text-center">
+                <div className="relative mx-auto mb-3 w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <step.icon className="w-6 h-6 md:w-7 md:h-7 text-primary" strokeWidth={1.75} />
+                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-primary text-primary-foreground rounded-full text-xs font-bold flex items-center justify-center">
+                    {step.number}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-foreground text-sm md:text-base mb-1">{step.title}</h3>
+                <p className="text-xs text-muted-foreground">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 5 — DUMPSTER SIZES + PRICE PREVIEW ========== */}
+      <section className="py-14 md:py-20 bg-muted/30">
         <div className="container-wide">
           <div className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Dumpster Sizes
+              Dumpster Sizes &amp; Estimated Pricing
             </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              Exact price depends on your ZIP code and material type.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 max-w-4xl mx-auto">
@@ -203,7 +277,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 5 — WHY CALSAN ========== */}
+      {/* ========== SECTION 6 — COMMON PROJECT TYPES ========== */}
+      <section className="py-14 md:py-20 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Common Project Types
+            </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              We handle debris from every type of project.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
+            {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
+              <Link
+                key={slug}
+                to={`/quote?v3=1&project=${slug}`}
+                className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
+              >
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
+                </div>
+                <span>{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 7 — WHY CALSAN ========== */}
       <section className="py-14 md:py-20 bg-muted/30">
         <div className="container-wide">
           <div className="text-center mb-10">
@@ -228,12 +331,42 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 6 — REVIEWS ========== */}
+      {/* ========== SECTION 8 — SOCIAL PROOF STRIP ========== */}
+      <section className="py-10 md:py-14 bg-background border-y border-border">
+        <div className="container-wide">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star key={i} className="w-5 h-5 text-accent fill-accent" />
+              ))}
+            </div>
+            <p className="text-lg font-semibold text-foreground">
+              4.9 Rating · 300+ Customers Served
+            </p>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-primary" />
+                Google Reviews
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-primary" />
+                Yelp
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-primary" />
+                BBB A+
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 9 — REVIEWS ========== */}
       <Suspense fallback={<SectionLoader />}>
         <ReviewsSection />
       </Suspense>
 
-      {/* ========== SECTION 7 — SERVICE AREAS ========== */}
+      {/* ========== SECTION 10 — SERVICE AREAS ========== */}
       <section className="py-14 md:py-20 bg-background">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
@@ -266,20 +399,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 8 — FINAL CTA ========== */}
+      {/* ========== SECTION 11 — FINAL CTA ========== */}
       <section className="py-16 md:py-24 gradient-hero">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            Get Exact Dumpster Pricing
+            Get Your Dumpster Price Now
           </h2>
           <p className="text-primary-foreground/70 mb-6 text-base">
-            See your price before confirming. No surprises, no hidden fees.
+            See your exact price before confirming. No surprises, no hidden fees.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
               <Link to="/quote?v3=1">
-                Start Instant Quote
+                Get Your Dumpster Price Now
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>

@@ -129,10 +129,10 @@ export function AskSpecialist() {
     <div className="bg-card border border-border rounded-2xl p-5 md:p-6 mb-6">
       {/* Header */}
       <h3 className="text-base font-semibold text-foreground mb-0.5">
-        Ask a Dumpster Specialist
+        Not sure what size you need?
       </h3>
       <p className="text-sm text-muted-foreground mb-4">
-        Quick answers. Then get exact pricing by ZIP.
+        Ask our specialist. Quick answers, then get exact pricing by ZIP.
       </p>
 
       {/* Input */}
