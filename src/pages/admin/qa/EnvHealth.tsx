@@ -9,7 +9,7 @@ export default function EnvHealth() {
   const envLabel = (() => {
     const host = window.location.hostname;
     if (host === 'calsandumpsterspro.com') return 'PRODUCTION';
-    if (host === 'app.calsandumpsterspro.com') return 'CRM-PRODUCTION';
+    if (host === 'calsandumpsterspro.com') return 'PRODUCTION';
     if (host.includes('lovable.app') || host.includes('lovableproject.com')) return 'PREVIEW';
     if (host === 'localhost') return 'LOCAL';
     return 'UNKNOWN';
@@ -24,7 +24,7 @@ export default function EnvHealth() {
     { key: 'SW_SUPPORT', value: swStatus },
     { key: 'SW_STRATEGY', value: 'NetworkFirst (index.html)' },
     { key: 'HOME_SOURCE', value: 'src/pages/Index.tsx' },
-    { key: 'CRM_DOMAIN', value: 'app.calsandumpsterspro.com' },
+    { key: 'CRM_DOMAIN', value: 'calsandumpsterspro.com (path-based: /admin, /sales, etc.)' },
     { key: 'PUBLIC_DOMAIN', value: 'calsandumpsterspro.com' },
     { key: 'WWW_REDIRECT', value: 'www → non-www (enforced)' },
     { key: 'HTTPS_ENFORCE', value: 'Yes (client-side)' },

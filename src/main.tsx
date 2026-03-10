@@ -3,7 +3,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { enforceCrmDomainRedirect } from "./lib/domainConfig";
 
-// Redirect legacy crm.calsandumpsterspro.com → app.calsandumpsterspro.com
+// Enforce HTTPS, www→non-www, and legacy subdomain redirects
 enforceCrmDomainRedirect();
 
 createRoot(document.getElementById("root")!).render(<App />);

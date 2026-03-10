@@ -5,7 +5,7 @@ import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
 import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
-import { getStaffLoginUrl } from '@/lib/domainConfig';
+
 
 export function Footer() {
   const { t } = useLanguage();
@@ -338,13 +338,13 @@ export function Footer() {
                 Privacy Policy
               </Link>
               <span className="text-secondary-foreground/30">|</span>
-              <a
-                href={getStaffLoginUrl()}
+              <Link
+                to="/admin/login"
                 rel="nofollow"
                 className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors"
               >
                 Staff Login
-              </a>
+              </Link>
             </div>
           </div>
           
