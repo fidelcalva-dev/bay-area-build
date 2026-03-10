@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { subDays } from 'date-fns';
 import { Truck, Calendar, Boxes, MapPin, AlertTriangle, CheckCircle } from 'lucide-react';
+import { OperationsIntelligencePanel } from '@/components/dispatch/OperationsIntelligencePanel';
 import { 
   DashboardKPICard, 
   DashboardFilters, 
@@ -161,6 +162,9 @@ export default function OperationsDashboard() {
         height={350}
         loading={loading}
       />
+
+      {/* Operations Intelligence */}
+      <OperationsIntelligencePanel />
     </div>
   );
 }

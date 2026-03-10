@@ -5430,6 +5430,97 @@ export type Database = {
         }
         Relationships: []
       }
+      dump_tickets: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          dump_fee: number | null
+          facility_id: string | null
+          id: string
+          material_type: string | null
+          notes: string | null
+          order_id: string | null
+          run_id: string | null
+          ticket_number: string | null
+          ticket_photo_url: string | null
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          dump_fee?: number | null
+          facility_id?: string | null
+          id?: string
+          material_type?: string | null
+          notes?: string | null
+          order_id?: string | null
+          run_id?: string | null
+          ticket_number?: string | null
+          ticket_photo_url?: string | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          dump_fee?: number | null
+          facility_id?: string | null
+          id?: string
+          material_type?: string | null
+          notes?: string | null
+          order_id?: string | null
+          run_id?: string | null
+          ticket_number?: string | null
+          ticket_photo_url?: string | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dump_tickets_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dump_tickets_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dump_tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "dump_tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dump_tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "dump_tickets_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dumpster_dimensions: {
         Row: {
           created_at: string
