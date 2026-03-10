@@ -512,17 +512,17 @@ export interface SidebarSectionMeta {
 
 export const SIDEBAR_SECTIONS: SidebarSectionMeta[] = [
   { id: 'control-center', title: 'Control Center', icon: Home, defaultOpen: true, visibleTo: ['admin', 'executive', 'read_only', 'sales', 'cs', 'dispatcher', 'ops_admin', 'finance', 'fleet_maintenance', 'marketing_seo'] },
-  { id: 'analytics', title: 'Analytics', icon: BarChart3, visibleTo: ['admin', 'executive', 'read_only', 'sales', 'finance'] },
+  { id: 'analytics', title: 'Analytics', icon: BarChart3, visibleTo: ['admin', 'executive', 'read_only', 'sales', 'cs', 'finance', 'dispatcher', 'ops_admin'] },
   { id: 'sales', title: 'Sales', icon: TrendingUp, visibleTo: ['admin', 'sales', 'cs', 'executive'] },
-  { id: 'customers', title: 'Customer Service', icon: Users, visibleTo: ['admin', 'cs', 'sales', 'finance', 'dispatcher'] },
-  { id: 'operations', title: 'Operations', icon: Package, visibleTo: ['admin', 'dispatcher', 'ops_admin', 'cs'] },
+  { id: 'customers', title: 'Customer Service', icon: Users, visibleTo: ['admin', 'cs', 'sales', 'finance', 'dispatcher', 'ops_admin', 'executive'] },
+  { id: 'operations', title: 'Operations', icon: Package, visibleTo: ['admin', 'dispatcher', 'ops_admin', 'cs', 'finance'] },
   { id: 'driver', title: 'Driver App', icon: Truck, visibleTo: ['admin', 'dispatcher', 'ops_admin', 'driver'] },
-  { id: 'fleet', title: 'Fleet & Maintenance', icon: Boxes, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance'] },
-  { id: 'finance', title: 'Finance', icon: DollarSign, visibleTo: ['admin', 'finance', 'executive'] },
+  { id: 'fleet', title: 'Fleet & Maintenance', icon: Boxes, visibleTo: ['admin', 'ops_admin', 'fleet_maintenance', 'dispatcher'] },
+  { id: 'finance', title: 'Finance', icon: DollarSign, visibleTo: ['admin', 'finance', 'executive', 'read_only'] },
   { id: 'seo-marketing', title: 'SEO & Marketing', icon: Globe, visibleTo: ['admin', 'marketing_seo', 'executive'] },
   { id: 'integrations', title: 'Integrations', icon: Link2, visibleTo: ['admin'] },
-  { id: 'configuration', title: 'Configuration', icon: Settings, visibleTo: ['admin'] },
-  { id: 'ai', title: 'AI Copilots', icon: Brain, visibleTo: ['admin', 'sales', 'cs', 'dispatcher', 'ops_admin', 'driver', 'fleet_maintenance', 'finance', 'marketing_seo'] },
+  { id: 'configuration', title: 'Configuration', icon: Settings, visibleTo: ['admin', 'ops_admin'] },
+  { id: 'ai', title: 'AI Copilots', icon: Brain, visibleTo: ['admin', 'sales', 'cs', 'dispatcher', 'ops_admin', 'driver', 'fleet_maintenance', 'finance', 'marketing_seo', 'executive'] },
   { id: 'admin-qa', title: 'Admin & QA', icon: Shield, visibleTo: ['admin'] },
 ];
 
