@@ -122,10 +122,11 @@ export default function ContractSignPage() {
       await supabase
         .from('timeline_events')
         .insert({
-          entity_type: 'CUSTOMER',
+          entity_type: 'CUSTOMER' as const,
           entity_id: contract.customer_id,
           customer_id: contract.customer_id,
-          event_type: 'SYSTEM',
+          event_type: 'SYSTEM' as const,
+          event_action: 'COMPLETED' as const,
           summary: `Contract signed by ${signerName.trim()}`,
           details_json: {
             contract_id: contract.id,

@@ -54,10 +54,11 @@ export function SendPaymentButton({ customerId, customerPhone, customerEmail, ou
 
       // Timeline event
       await supabase.from('timeline_events').insert({
-        entity_type: 'CUSTOMER',
+        entity_type: 'CUSTOMER' as const,
         entity_id: customerId,
         customer_id: customerId,
-        event_type: 'SYSTEM',
+        event_type: 'PAYMENT' as const,
+        event_action: 'SENT' as const,
         summary: `Payment link sent for $${numAmount.toFixed(2)}`,
         details_json: { payment_request_id: pr.id, amount: numAmount, event: 'PAYMENT_LINK_SENT' },
       });
