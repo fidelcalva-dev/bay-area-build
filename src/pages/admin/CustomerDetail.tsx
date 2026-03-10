@@ -28,6 +28,8 @@ import {
   type Customer, type Order, type Invoice, type Payment, type Quote,
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
+import { ContractsTab } from '@/components/customer360/ContractsTab';
+import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -202,6 +204,7 @@ export default function CustomerDetail() {
           <TabsTrigger value="sites">Sites ({sites.length})</TabsTrigger>
           <TabsTrigger value="orders">Orders ({orders.length})</TabsTrigger>
           <TabsTrigger value="quotes">Quotes ({quotes.length})</TabsTrigger>
+          <TabsTrigger value="contracts">Contracts</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
@@ -276,6 +279,16 @@ export default function CustomerDetail() {
         {/* ─── QUOTES ─── */}
         <TabsContent value="quotes">
           <QuotesTab quotes={quotes} customerId={customer.id} />
+        </TabsContent>
+
+        {/* ─── CONTRACTS ─── */}
+        <TabsContent value="contracts">
+          <ContractsTab
+            customerId={customer.id}
+            customerPhone={customer.billing_phone}
+            customerEmail={customer.billing_email}
+            customerName={customer.contact_name}
+          />
         </TabsContent>
 
         {/* ─── REQUESTS ─── */}

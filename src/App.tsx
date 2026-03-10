@@ -85,6 +85,7 @@ const PortalSchedule = lazy(() => import("./pages/portal/PortalSchedule"));
 const PortalPay = lazy(() => import("./pages/portal/PortalPay"));
 const SignQuoteContract = lazy(() => import("./pages/portal/SignQuoteContract"));
 const PortalActivate = lazy(() => import("./pages/portal/PortalActivate"));
+const ContractSignPage = lazy(() => import("./pages/contract/ContractSignPage"));
 
 // Portal Auth Guard
 import { PortalAuthGuard } from "./components/portal/PortalAuthGuard";
@@ -685,6 +686,9 @@ const App = () => {
               } />
               <Route path="/portal/sign-quote-contract" element={
                 <Suspense fallback={<PageLoader />}><SignQuoteContract /></Suspense>
+              } />
+              <Route path="/contract/:token" element={
+                <Suspense fallback={<PageLoader />}><ContractSignPage /></Suspense>
               } />
               <Route path="/portal/activate" element={
                 <Suspense fallback={<PageLoader />}><PortalActivate /></Suspense>
