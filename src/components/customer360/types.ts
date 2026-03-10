@@ -21,7 +21,6 @@ export interface Order {
   created_at: string;
   scheduled_delivery_date: string | null;
   scheduled_pickup_date: string | null;
-  dumpster_size_id: string | null;
   service_address: string | null;
 }
 
