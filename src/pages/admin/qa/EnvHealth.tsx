@@ -9,7 +9,7 @@ export default function EnvHealth() {
   const envLabel = (() => {
     const host = window.location.hostname;
     if (host === 'calsandumpsterspro.com') return 'PRODUCTION';
-    if (host === 'app.calsandumpsterspro.com') return 'CRM-PRODUCTION';
+    if (host === 'calsandumpsterspro.com') return 'PRODUCTION';
     if (host.includes('lovable.app') || host.includes('lovableproject.com')) return 'PREVIEW';
     if (host === 'localhost') return 'LOCAL';
     return 'UNKNOWN';
