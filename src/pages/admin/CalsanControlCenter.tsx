@@ -505,18 +505,20 @@ export default function CalsanControlCenter() {
           subtitle="Today's dispatch and service activity"
           action={{ label: 'Dispatch', route: '/dispatch/calendar' }}
         />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'No data yet'} icon={Package} route="/dispatch/today" />
-          <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'No data yet'} icon={Truck} route="/dispatch/today" />
-          <SnapshotCard label="Swap Jobs" value="No data yet" icon={Activity} route="/dispatch/today" />
-          <SnapshotCard label="Dump Returns" value="No data yet" icon={MapPin} route="/dispatch/yard-hold" />
-          <SnapshotCard label="Drivers On Route" value="No data yet" icon={Truck} route="/admin/drivers" />
-          <SnapshotCard label="Services Paused" value="No data yet" icon={Clock} route="/dispatch/yard-hold" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
+          <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'N/A'} icon={Package} route="/dispatch/today" />
+          <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'N/A'} icon={Truck} route="/dispatch/today" />
+          <SnapshotCard label="Swap Jobs" value="N/A" icon={Activity} route="/dispatch/today" />
+          <SnapshotCard label="Dump Returns" value="N/A" icon={MapPin} route="/dispatch/yard-hold" />
+          <SnapshotCard label="Drivers On Route" value="N/A" icon={Truck} route="/admin/drivers" />
+          <SnapshotCard label="Services Paused" value="N/A" icon={Clock} route="/dispatch/yard-hold" />
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/calendar">Open Dispatch</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/today">Runs Calendar</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-3 md:mt-4">
+          <div className="flex gap-2 w-max md:w-auto md:flex-wrap">
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/calendar">Open Dispatch</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/today">Runs Calendar</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
+          </div>
         </div>
       </section>
 
