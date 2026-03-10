@@ -392,14 +392,14 @@ const SIZE_INDEX: Record<number, { heavy: number; debris: number }> = {
 /** Available dumpster sizes in the price list */
 export const PRICE_LIST_SIZES = [8, 10, 15, 20, 25, 30, 40] as const;
 
-/** Included tonnage per size */
+/** Included tonnage per size (general debris only; heavy = flat fee) */
 export const INCLUDED_TONS: Record<number, number> = {
-  8: 1,
-  10: 2,
-  15: 4,
-  20: 4,
-  25: 4,
-  30: 4,
+  8: 0.5,
+  10: 1,
+  15: 1.5,
+  20: 2,
+  25: 2.5,
+  30: 3,
   40: 4,
 };
 

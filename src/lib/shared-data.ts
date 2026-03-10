@@ -478,29 +478,29 @@ export function getHeavyPricingDisplay() {
   return {
     base: {
       label: 'Base Materials',
-      description: 'Clean concrete, soil, sand, gravel',
+      description: 'Clean concrete, clean soil, sand, gravel',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'base')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'base')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'base')),
+        10: 695.50,
+        8: 595,
+        6: 495,
       },
     },
     plus_200: {
       label: '+$200 Materials',
       description: 'Brick, asphalt, tile, roofing gravel, rock/stone',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'plus_200')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'plus_200')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'plus_200')),
+        10: 895.50,
+        8: 795,
+        6: 695,
       },
     },
     mixed_heavy: {
       label: '+$300 Mixed Heavy',
       description: 'Mix of heavy materials (concrete + soil, etc.)',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'mixed_heavy')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'mixed_heavy')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'mixed_heavy')),
+        10: 995.50,
+        8: 895,
+        6: 795,
       },
     },
   };
