@@ -520,6 +520,7 @@ export default function SalesLeads() {
             </Table>
           </CardContent>
         </Card>
+        )}
       </Tabs>
 
       {/* Add Lead Dialog */}
