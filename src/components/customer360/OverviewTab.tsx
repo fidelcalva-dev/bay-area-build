@@ -6,6 +6,8 @@ import { TimelineView } from '@/components/timeline';
 import { HealthScoreCard } from '@/components/health';
 import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
+import { SalesIntelligencePanel } from './SalesIntelligencePanel';
+import { RecommendedScriptWidget } from './RecommendedScriptWidget';
 
 interface Props {
   data: Customer360Data;
@@ -97,6 +99,17 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
 
       {/* Right Column */}
       <div className="space-y-6">
+        {/* Sales Intelligence */}
+        <SalesIntelligencePanel data={data} timelineEvents={timelineEvents} />
+
+        {/* Recommended Script */}
+        <RecommendedScriptWidget
+          customerType={customer.customer_type}
+          quoteStatus={data.quotes[0]?.status}
+          hasOverdue={invoices.some(i => i.payment_status === 'overdue')}
+          isExistingCustomer={orders.length > 0}
+        />
+
         {/* Health */}
         <HealthScoreCard customerId={customer.id} />
 
