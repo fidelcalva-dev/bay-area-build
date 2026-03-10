@@ -13,6 +13,8 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
 import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
 import { HotAILeadsQueue } from "@/components/sales/HotAILeadsQueue";
+import { SalesPipelineCards } from "@/components/sales/SalesPipelineCards";
+import { SalesScriptLibrary } from "@/components/sales/SalesScriptLibrary";
 
 interface DashboardStats {
   leads: { total: number; new: number; converted: number };
