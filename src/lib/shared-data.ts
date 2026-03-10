@@ -236,6 +236,40 @@ export const getFAQsForSchema = (count = 4) =>
   }));
 
 // ============================================================
+// MATERIAL CLASSIFICATION — Canonical categories
+// ============================================================
+
+export type MaterialClassification =
+  | 'GENERAL_DEBRIS'
+  | 'CLEAN_SOIL'
+  | 'CLEAN_CONCRETE'
+  | 'MIXED_SOIL'
+  | 'MIXED_CONSTRUCTION'
+  | 'UNKNOWN';
+
+/** Materials considered "heavy" — must use heavy-material dumpsters */
+export const HEAVY_MATERIAL_CODES: MaterialClassification[] = [
+  'CLEAN_SOIL',
+  'CLEAN_CONCRETE',
+  'MIXED_SOIL',
+];
+
+/** Human-readable labels */
+export const MATERIAL_CLASSIFICATION_LABELS: Record<MaterialClassification, string> = {
+  GENERAL_DEBRIS: 'General Debris',
+  CLEAN_SOIL: 'Clean Soil / Dirt',
+  CLEAN_CONCRETE: 'Clean Concrete',
+  MIXED_SOIL: 'Mixed Soil',
+  MIXED_CONSTRUCTION: 'Mixed Construction',
+  UNKNOWN: 'Unknown / Other',
+};
+
+/** Check whether a classification requires a heavy-material dumpster */
+export function isHeavyClassification(c: MaterialClassification): boolean {
+  return HEAVY_MATERIAL_CODES.includes(c);
+}
+
+// ============================================================
 // PRICING POLICIES - Single source of truth (from v56 spreadsheet)
 // ============================================================
 
@@ -269,10 +303,47 @@ export const PRICING_POLICIES = {
   // Surcharges
   heavyMaterialSurcharge: 100,  // Flat surcharge for heavy in general container
   
+  // Contamination & Reroute surcharges
+  contaminationSurcharge: 150,  // Trash/mixed debris in heavy-material container
+  rerouteSurcharge: 150,        // Misdeclared material → wrong facility reroute
+
   // Green Halo pricing (mid-range estimates)
   greenHaloDumpFeePerTon: 150,  // Mid-range estimate ($75-250)
   greenHaloHandlingFee: 150,  // Mid-range of $100-200
+
+  // Dump fee net by city (per ton, used internally)
+  dumpFeeNetOakland: 115,
+  dumpFeeNetSanJose: 120,
+  dumpFeeNetSanFrancisco: 125,
+
+  // Green Halo surcharge per ton
+  greenHaloSurchargePerTon: 165,
 } as const;
+
+// ============================================================
+// CONTAMINATION & REROUTE POLICY TEXT
+// ============================================================
+
+export const CONTAMINATION_POLICY = {
+  customerWarning:
+    'If heavy material containers are contaminated with trash or mixed debris, additional disposal charges plus a $150 surcharge will apply.',
+  customerWarningEs:
+    'Si los contenedores de material pesado se contaminan con basura o escombros mezclados, se aplicarán cargos adicionales de eliminación más un recargo de $150.',
+  internalFormula: 'actual_dump_cost + material_reclassification + $150 contamination surcharge',
+} as const;
+
+export const REROUTE_POLICY = {
+  customerWarning:
+    'If materials are misdeclared and require disposal at a different facility, additional costs plus a $150 reroute surcharge may apply.',
+  customerWarningEs:
+    'Si los materiales se declaran incorrectamente y requieren eliminación en una instalación diferente, pueden aplicarse costos adicionales más un recargo de $150 por desvío.',
+  internalFormula: 'actual_disposal_cost + transport_rerouting_cost + $150 reroute surcharge',
+} as const;
+
+export const HEAVY_MATERIAL_CUSTOMER_MESSAGE =
+  'Heavy materials such as dirt, soil, and concrete require special containers. Using the correct dumpster helps avoid overweight fees.';
+export const HEAVY_MATERIAL_CUSTOMER_MESSAGE_ES =
+  'Los materiales pesados como tierra, suelo y concreto requieren contenedores especiales. Usar el contenedor correcto ayuda a evitar cargos por sobrepeso.';
 
 // ============================================================
 // EXTRA TON PRICING - Pre-purchase discounts
