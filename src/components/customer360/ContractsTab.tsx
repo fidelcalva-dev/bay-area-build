@@ -92,10 +92,11 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
       // Timeline event
       await supabase.from('timeline_events').insert({
-        entity_type: 'CUSTOMER',
+        entity_type: 'CUSTOMER' as const,
         entity_id: customerId,
         customer_id: customerId,
-        event_type: 'SYSTEM',
+        event_type: 'SYSTEM' as const,
+        event_action: 'SENT' as const,
         summary: `Contract sent via ${method.toUpperCase()}`,
         details_json: { contract_id: contractId, method, event: 'CONTRACT_SENT' },
       });
