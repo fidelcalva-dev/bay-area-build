@@ -28,7 +28,7 @@
   "materials": {
     "general": {
       "label": "General Debris",
-      "allowedSizes": [6, 8, 10, 20, 30, 40, 50],
+      "allowedSizes": [10, 20, 30, 40],
       "examples": ["Household junk", "Furniture", "Drywall", "Wood", "Carpet", "Roofing shingles", "Mixed C&D debris"],
       "overagePolicy": "$165 per ton beyond included tonnage, based on certified scale ticket"
     },
