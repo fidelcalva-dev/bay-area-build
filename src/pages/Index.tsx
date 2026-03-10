@@ -6,7 +6,10 @@ import { getFAQsForSchema, DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, MapPin, ArrowRight, Phone, CheckCircle, Scale, MessageSquare, Truck, Star, Clock, Wrench, Upload, Package, Hammer } from 'lucide-react';
+import {
+  Shield, MapPin, ArrowRight, Phone, CheckCircle, Scale, MessageSquare,
+  Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
+} from 'lucide-react';
 import { GuidedAssistant } from '@/components/home/GuidedAssistant';
 
 const FAQSection = lazy(() =>
@@ -22,17 +25,23 @@ const SectionLoader = () => (
   </div>
 );
 
-const TRUST_STRIP = [
-  { icon: Star, label: '4.9★ Google Reviews' },
-  { icon: Shield, label: 'BBB A+ Rated' },
-  { icon: Scale, label: 'Transparent Pricing' },
+const TRUST_BADGES = [
+  { icon: Shield, label: 'Licensed & Insured' },
+  { icon: Star, label: '4.9★ (200+ Verified)' },
   { icon: Clock, label: 'Same-Day Available' },
+  { icon: MapPin, label: 'Local Bay Area Yard' },
+  { icon: Scale, label: 'Transparent Pricing' },
+  { icon: HardHat, label: 'Contractor Ready' },
+  { icon: Globe, label: 'Español disponible' },
 ];
 
-const HERO_PHOTOS = [
-  { src: '/images/dumpsters/20yd-photo-1.jpg', alt: 'Dumpster delivery on a Bay Area job site' },
-  { src: '/images/dumpsters/30yd-photo-2.jpg', alt: 'Roll-off truck delivering dumpster' },
-  { src: '/images/dumpsters/40yd-photo-1.jpg', alt: 'Construction project cleanup with dumpster' },
+const WHATS_INCLUDED = [
+  'All-inclusive pricing — no hidden fees',
+  'Delivery & pickup included',
+  'Weight allowance included',
+  '7-day standard rental',
+  'Bay Area coverage (9 counties)',
+  'Professional local dispatch',
 ];
 
 const DUMPSTER_CARDS = [
@@ -62,8 +71,8 @@ const SERVICE_AREAS_LIST = [
 ];
 
 const HOW_IT_WORKS_STEPS = [
-  { number: '1', icon: ArrowRight, title: 'Get Instant Quote', desc: 'Enter your ZIP and project type' },
-  { number: '2', icon: Clock, title: 'Schedule Delivery', desc: 'Pick a date that works for you' },
+  { number: '1', icon: ArrowRight, title: 'Get Your Exact Price', desc: 'Enter your ZIP and project type' },
+  { number: '2', icon: Clock, title: 'Choose Delivery Date', desc: 'Pick a date that works for you' },
   { number: '3', icon: Package, title: 'Fill the Dumpster', desc: 'Load at your own pace' },
   { number: '4', icon: Truck, title: 'We Pick It Up', desc: 'We haul it away, you\'re done' },
 ];
@@ -75,6 +84,45 @@ const PROJECT_TYPES = [
   { label: 'Construction Debris', slug: 'construction-debris', icon: Truck },
   { label: 'Yard Cleanup', slug: 'yard-cleanup', icon: MapPin },
   { label: 'Estate Cleanout', slug: 'estate-cleanout', icon: Scale },
+];
+
+const CUSTOMER_ACTIONS = [
+  {
+    label: 'Get Exact Price',
+    desc: 'See your exact pricing by ZIP in under a minute.',
+    icon: ArrowRight,
+    href: '/quote?v3=1',
+    primary: true,
+  },
+  {
+    label: 'Upload Photo for Size Help',
+    desc: 'Not sure what size you need? Show us your project.',
+    icon: Upload,
+    href: '/quote?v3=1&tab=photo',
+    primary: false,
+  },
+  {
+    label: 'Schedule a Delivery',
+    desc: 'Already know what you need? Pick your preferred delivery date.',
+    icon: Clock,
+    href: '/quote?v3=1',
+    primary: false,
+  },
+  {
+    label: 'Talk to a Specialist',
+    desc: 'Call or text a real local team member now.',
+    icon: Phone,
+    href: `tel:${BUSINESS_INFO.phone.sales}`,
+    primary: false,
+    external: true,
+  },
+  {
+    label: 'Contractor Pricing',
+    desc: 'Fast service and repeat-job support for contractors.',
+    icon: HardHat,
+    href: '/quote/contractor',
+    primary: false,
+  },
 ];
 
 const Index = () => {
@@ -98,25 +146,12 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-8 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Rent a Dumpster in 60 Seconds
+              Get Your Dumpster Quote
+              <span className="block text-primary mt-1">In 60 Seconds</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-medium">
-              Fast Delivery Across the Bay Area
+            <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-lg mx-auto">
+              Transparent, all-inclusive pricing for roll-off dumpster rentals across the Bay Area. No surprises, no hidden fees.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-x-6 gap-y-1 text-sm text-muted-foreground">
-              <span className="flex items-center justify-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                Transparent pricing
-              </span>
-              <span className="flex items-center justify-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                Same-day delivery available
-              </span>
-              <span className="flex items-center justify-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                No hidden fees
-              </span>
-            </div>
           </div>
 
           {/* Primary CTA: Get Exact Price */}
@@ -128,65 +163,124 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-base">
-              <Link to="/sizes">
-                <Package className="w-4 h-4 mr-2" />
-                Check Dumpster Size
+              <Link to="/quote?v3=1&tab=photo">
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Photo for Size Help
               </Link>
             </Button>
           </div>
 
-          {/* Tertiary: Talk to a Specialist */}
-          <div className="mt-3 text-center">
+          {/* Tertiary: Call / Text */}
+          <div className="mt-3 flex justify-center gap-4">
             <a
               href={`tel:${BUSINESS_INFO.phone.sales}`}
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
             >
               <Phone className="w-3.5 h-3.5" />
-              Talk to a Specialist: {BUSINESS_INFO.phone.salesFormatted}
+              Call {BUSINESS_INFO.phone.salesFormatted}
+            </a>
+            <a
+              href={`sms:${BUSINESS_INFO.phone.sales}`}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Text Us
             </a>
           </div>
+        </div>
+      </section>
 
-          {/* Trust badges */}
-          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-[640px] mx-auto">
-            {TRUST_STRIP.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      {/* ========== SECTION 2 — TRUST BADGES ========== */}
+      <section className="bg-muted/30 py-5 border-y border-border">
+        <div className="container-wide">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2.5">
+            {TRUST_BADGES.map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
                 <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
                 <span>{label}</span>
               </div>
             ))}
           </div>
-
-          <p className="mt-5 text-center text-xs text-muted-foreground/60">
-            Serving the Bay Area since 2009. <Link to="/why-local-yards" className="underline hover:text-primary transition-colors">Why local yards matter</Link>
-          </p>
         </div>
       </section>
 
-      {/* ========== SECTION 2 — SERVICE PHOTOS ========== */}
-      <section className="bg-background pb-10 md:pb-16">
+      {/* ========== SECTION 3 — WHAT'S INCLUDED ========== */}
+      <section className="py-10 md:py-14 bg-background">
         <div className="container-wide">
-          <div className="grid grid-cols-3 gap-2 md:gap-3 max-w-5xl mx-auto">
-            {HERO_PHOTOS.map((photo) => (
-              <div key={photo.src} className="rounded-xl overflow-hidden">
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  className="w-full h-[120px] md:h-[200px] object-cover"
-                  loading="eager"
-                />
-              </div>
-            ))}
+          <div className="max-w-2xl mx-auto bg-card rounded-2xl border border-border p-6 md:p-8">
+            <h2 className="font-bold text-foreground text-lg md:text-xl mb-4 text-center">
+              What's Included in Every Rental
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {WHATS_INCLUDED.map((item) => (
+                <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 text-success shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-center mt-5">
+              <Link to="/quote?v3=1" className="text-sm text-primary font-semibold hover:underline inline-flex items-center gap-1">
+                See your exact price <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 3 — INSTANT QUOTE SYSTEM ========== */}
+      {/* ========== SECTION 4 — MAIN CUSTOMER ACTIONS ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
           <div className="text-center mb-6">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Get Your Dumpster Quote in 60 Seconds
+              How Can We Help You?
             </h2>
+            <p className="text-sm text-muted-foreground mt-2">Select one option to get started.</p>
+          </div>
+          <div className="max-w-xl mx-auto space-y-3">
+            {CUSTOMER_ACTIONS.map((action) => {
+              const Icon = action.icon;
+              const Comp = action.external ? 'a' : Link;
+              const linkProps = action.external
+                ? { href: action.href }
+                : { to: action.href };
+              return (
+                <Comp
+                  key={action.label}
+                  {...(linkProps as any)}
+                  className={`flex items-center gap-4 px-5 py-4 rounded-xl border transition-all min-h-[64px] ${
+                    action.primary
+                      ? 'bg-primary/5 border-primary/30 hover:border-primary hover:shadow-md'
+                      : 'bg-card border-border hover:border-primary/40 hover:bg-muted/30'
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                    action.primary ? 'bg-primary/15' : 'bg-muted'
+                  }`}>
+                    <Icon className={`w-5 h-5 ${action.primary ? 'text-primary' : 'text-muted-foreground'}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground text-sm">{action.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{action.desc}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                </Comp>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 5 — AI ASSISTANT / SIZE HELP ========== */}
+      <section className="py-12 md:py-16 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Not Sure What Size You Need?
+            </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              Ask our specialist. Quick answers, then get exact pricing by ZIP.
+            </p>
           </div>
           <GuidedAssistant />
           <p className="text-center text-sm text-muted-foreground mt-4">
@@ -195,8 +289,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 4 — HOW IT WORKS (4 steps) ========== */}
-      <section className="py-14 md:py-20 bg-background">
+      {/* ========== SECTION 6 — HOW IT WORKS ========== */}
+      <section className="py-14 md:py-20 bg-muted/30">
         <div className="container-wide">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
@@ -224,7 +318,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 5 — DUMPSTER SIZES + PRICE PREVIEW ========== */}
+      {/* ========== SECTION 7 — COMMON PROJECT TYPES ========== */}
+      <section className="py-14 md:py-20 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Common Project Types
+            </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              We handle debris from every type of project.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
+            {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
+              <Link
+                key={slug}
+                to={`/quote?v3=1&project=${slug}`}
+                className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
+              >
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
+                </div>
+                <span>{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 8 — PRICE PREVIEW ========== */}
       <section className="py-14 md:py-20 bg-muted/30">
         <div className="container-wide">
           <div className="text-center mb-8">
@@ -274,99 +397,14 @@ const Index = () => {
               );
             })}
           </div>
+
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            You'll see your total before confirming. No surprises.
+          </p>
         </div>
       </section>
 
-      {/* ========== SECTION 6 — COMMON PROJECT TYPES ========== */}
-      <section className="py-14 md:py-20 bg-background">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Common Project Types
-            </h2>
-            <p className="text-muted-foreground mt-2 text-sm">
-              We handle debris from every type of project.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
-            {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
-              <Link
-                key={slug}
-                to={`/quote?v3=1&project=${slug}`}
-                className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
-              >
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
-                </div>
-                <span>{label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 7 — WHY CALSAN ========== */}
-      <section className="py-14 md:py-20 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Why Customers Choose Calsan
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            {WHY_CALSAN.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4 items-start p-5 bg-card rounded-2xl border border-border">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground mb-1">{title}</div>
-                  <div className="text-xs text-muted-foreground leading-relaxed">{desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 8 — SOCIAL PROOF STRIP ========== */}
-      <section className="py-10 md:py-14 bg-background border-y border-border">
-        <div className="container-wide">
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="w-5 h-5 text-accent fill-accent" />
-              ))}
-            </div>
-            <p className="text-lg font-semibold text-foreground">
-              4.9 Rating · 300+ Customers Served
-            </p>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <Star className="w-4 h-4 text-primary" />
-                Google Reviews
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Star className="w-4 h-4 text-primary" />
-                Yelp
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-primary" />
-                BBB A+
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 9 — REVIEWS ========== */}
-      <Suspense fallback={<SectionLoader />}>
-        <ReviewsSection />
-      </Suspense>
-
-      {/* ========== SECTION 10 — SERVICE AREAS ========== */}
+      {/* ========== SECTION 9 — SERVICE AREAS ========== */}
       <section className="py-14 md:py-20 bg-background">
         <div className="container-wide">
           <div className="max-w-3xl mx-auto text-center">
@@ -395,6 +433,68 @@ const Index = () => {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 10 — SOCIAL PROOF + REVIEWS ========== */}
+      <section className="py-10 md:py-14 bg-muted/30 border-y border-border">
+        <div className="container-wide">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star key={i} className="w-5 h-5 text-accent fill-accent" />
+              ))}
+            </div>
+            <p className="text-lg font-semibold text-foreground">
+              4.9 Rating · 300+ Customers Served
+            </p>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-primary" />
+                Google Reviews
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-primary" />
+                Yelp
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-primary" />
+                BBB A+
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mt-2">
+              Real Bay Area yards. Real dispatch. No broker middleman.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewsSection />
+      </Suspense>
+
+      {/* ========== SECTION 10b — WHY CALSAN ========== */}
+      <section className="py-14 md:py-20 bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Why Customers Choose Calsan
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
+            {WHY_CALSAN.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex gap-4 items-start p-5 bg-card rounded-2xl border border-border">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-primary" strokeWidth={1.8} />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground mb-1">{title}</div>
+                  <div className="text-xs text-muted-foreground leading-relaxed">{desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
