@@ -412,7 +412,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Table (shared across all tabs) */}
+        {/* Pipeline Board or Table */}
+        {viewMode === 'pipeline' ? (
+          <div className="mt-4">
+            <SalesPipelineBoard leads={leads as any} />
+          </div>
+        ) : (
         <Card className="mt-4">
           <CardContent className="p-0">
             <Table>
