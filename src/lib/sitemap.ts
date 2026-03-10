@@ -9,6 +9,7 @@ import { SEO_USE_CASES } from './seo-use-cases';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 import { YARD_HUBS } from './yard-hub-data';
 import { GRID_SERVICE_TYPES, GRID_SIZES, getAllGridCities } from './seo-grid';
+import { SEO_ZIP_DATA } from './seo-zips';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
