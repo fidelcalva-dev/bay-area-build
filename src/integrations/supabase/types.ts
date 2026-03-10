@@ -3871,6 +3871,45 @@ export type Database = {
           },
         ]
       }
+      crm_errors: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          error_detail: Json | null
+          error_message: string
+          id: string
+          resolved: boolean | null
+          source_page: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_detail?: Json | null
+          error_message: string
+          id?: string
+          resolved?: boolean | null
+          source_page?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_detail?: Json | null
+          error_message?: string
+          id?: string
+          resolved?: boolean | null
+          source_page?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       crm_notes: {
         Row: {
           body: string
