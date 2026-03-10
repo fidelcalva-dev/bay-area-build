@@ -95,6 +95,7 @@ export default function SalesLeads() {
   const { user } = useAdminAuth();
 
   const [activeTab, setActiveTab] = useState<LeadHubTab>('new');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
