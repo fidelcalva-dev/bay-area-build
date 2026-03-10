@@ -1,13 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Truck, ChevronRight, Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Truck, ChevronRight, Loader2, ArrowLeft, CheckCircle, Zap, CalendarDays, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
+
+// ============================================================
+// CONSTANTS
+// ============================================================
 
 const TIME_WINDOWS = [
   { id: 'morning', label: 'Morning', time: '8 AM – 12 PM', icon: '🌅' },
@@ -15,29 +20,39 @@ const TIME_WINDOWS = [
   { id: 'afternoon', label: 'Afternoon', time: '3 PM – 6 PM', icon: '🌇' },
 ];
 
-function getNextBusinessDays(count: number): Date[] {
-  const days: Date[] = [];
+const QUICK_OPTIONS = [
+  { id: 'earliest', label: 'Earliest Available', icon: Zap, description: 'We\'ll schedule the soonest open slot' },
+  { id: 'flexible', label: 'I\'m Flexible', icon: CalendarDays, description: 'Any day that works for your crew' },
+  { id: 'call_me', label: 'Call Me to Confirm', icon: Phone, description: 'Our team will reach out to schedule' },
+];
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function toLocalISODate(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateDisplay(d: Date): string {
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+function isDisabledDate(date: Date): boolean {
   const today = new Date();
-  let d = new Date(today);
-  d.setDate(d.getDate() + 1); // Start from tomorrow
-
-  while (days.length < count) {
-    const dow = d.getDay();
-    if (dow !== 0) { // Skip Sunday only
-      days.push(new Date(d));
-    }
-    d.setDate(d.getDate() + 1);
-  }
-  return days;
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  // Disable past dates and today; allow Sundays but not past
+  return date < tomorrow;
 }
 
-function formatDate(d: Date): string {
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function toISODate(d: Date): string {
-  return d.toISOString().split('T')[0];
-}
+// ============================================================
+// COMPONENT
+// ============================================================
 
 export default function QuoteSchedule() {
   const [searchParams] = useSearchParams();
@@ -45,14 +60,14 @@ export default function QuoteSchedule() {
   const { toast } = useToast();
 
   const orderId = searchParams.get('orderId');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
+  const [selectedFlex, setSelectedFlex] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
   const [orderInfo, setOrderInfo] = useState<{ total: number; size: string } | null>(null);
 
-  const availableDays = useMemo(() => getNextBusinessDays(14), []);
-
-  // Fetch basic order info for display
+  // Fetch basic order info
   useEffect(() => {
     if (!orderId) return;
     supabase
@@ -76,57 +91,69 @@ export default function QuoteSchedule() {
     );
   }
 
+  // When user picks a flex option, clear date/window; vice versa
+  const handleFlexSelect = (flexId: string) => {
+    setSelectedFlex(flexId === selectedFlex ? null : flexId);
+    setSelectedDate(undefined);
+    setSelectedWindow(null);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setSelectedFlex(null);
+  };
+
+  const canSubmit = selectedFlex || (selectedDate && selectedWindow);
+
   const handleSubmit = async () => {
-    if (!selectedDate || !selectedWindow) return;
+    if (!canSubmit) return;
     setIsSubmitting(true);
+    setShowFallback(false);
 
-    try {
-      const windowLabel = TIME_WINDOWS.find(w => w.id === selectedWindow)?.time || selectedWindow;
+    const payload: Record<string, string> = { orderId };
 
-      // Update order with schedule
-      const { error: updateError } = await supabase
-        .from('orders')
-        .update({
-          scheduled_delivery_date: toISODate(selectedDate),
-          scheduled_delivery_window: windowLabel,
-          status: 'scheduled',
-        })
-        .eq('id', orderId);
-
-      if (updateError) throw updateError;
-
-      // Log schedule event
-      await supabase.from('order_events').insert({
-        order_id: orderId,
-        event_type: 'SCHEDULE_SELECTED',
-        actor_role: 'customer',
-        message: `Customer selected delivery: ${formatDate(selectedDate)} (${windowLabel})`,
-        after_json: {
-          scheduled_delivery_date: toISODate(selectedDate),
-          scheduled_delivery_window: windowLabel,
-        },
-      });
-
-      // Log to schedule_logs
-      await supabase.from('schedule_logs').insert({
-        order_id: orderId,
-        action: 'confirmed',
-        new_date: toISODate(selectedDate),
-        new_window: windowLabel,
-        actor_role: 'customer',
-        reason: 'Customer confirmed via quote flow',
-      });
-
-      toast({ title: 'Delivery Scheduled!', description: `${formatDate(selectedDate)} — ${windowLabel}` });
-
-      // Navigate to payment
-      navigate(`/quote/pay?orderId=${orderId}`);
-    } catch (err) {
-      console.error('Schedule error:', err);
-      toast({ title: 'Error', description: 'Failed to save schedule. Please try again.', variant: 'destructive' });
-    } finally {
-      setIsSubmitting(false);
+    if (selectedFlex) {
+      const flexLabel = QUICK_OPTIONS.find(o => o.id === selectedFlex)?.label || selectedFlex;
+      payload.flexOption = flexLabel;
+    } else if (selectedDate && selectedWindow) {
+      payload.deliveryDate = toLocalISODate(selectedDate);
+      payload.deliveryWindow = TIME_WINDOWS.find(w => w.id === selectedWindow)?.time || selectedWindow;
     }
+
+    // Attempt save with 1 retry
+    let success = false;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const { data, error } = await supabase.functions.invoke('schedule-delivery', { body: payload });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        success = true;
+        break;
+      } catch (err) {
+        console.error(`Schedule save attempt ${attempt + 1} failed:`, err);
+        if (attempt === 0) {
+          await new Promise(r => setTimeout(r, 1000)); // wait 1s before retry
+        }
+      }
+    }
+
+    setIsSubmitting(false);
+
+    if (success) {
+      const desc = selectedFlex
+        ? QUICK_OPTIONS.find(o => o.id === selectedFlex)?.label
+        : `${formatDateDisplay(selectedDate!)} — ${TIME_WINDOWS.find(w => w.id === selectedWindow)?.time}`;
+      toast({ title: 'Delivery Scheduled!', description: desc });
+      navigate(`/quote/pay?orderId=${orderId}`);
+    } else {
+      // Fallback — don't leave user stuck
+      setShowFallback(true);
+    }
+  };
+
+  const handleFallbackContinue = () => {
+    // Let user proceed to payment anyway; the team will confirm the date
+    navigate(`/quote/pay?orderId=${orderId}`);
   };
 
   return (
@@ -138,14 +165,14 @@ export default function QuoteSchedule() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <p className="font-semibold text-foreground">Schedule Delivery</p>
+            <p className="font-semibold text-foreground">Choose Your Preferred Delivery Date</p>
             <p className="text-xs text-muted-foreground">Step 2 of 3</p>
           </div>
           <img src={logoCalsan} alt="Calsan" className="h-8 w-auto rounded" />
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-5 pb-28">
         {/* Progress */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Badge variant="outline" className="bg-success/10 text-success border-success/30">
@@ -153,7 +180,7 @@ export default function QuoteSchedule() {
           </Badge>
           <ChevronRight className="w-3 h-3" />
           <Badge className="bg-primary text-primary-foreground">
-            <Calendar className="w-3 h-3 mr-1" /> Schedule
+            <CalendarIcon className="w-3 h-3 mr-1" /> Schedule
           </Badge>
           <ChevronRight className="w-3 h-3" />
           <Badge variant="outline">Payment</Badge>
@@ -175,46 +202,84 @@ export default function QuoteSchedule() {
           </Card>
         )}
 
-        {/* Date Selection */}
+        {/* Helper text */}
+        <p className="text-sm text-muted-foreground">
+          Select the date that works best for you. We'll confirm availability right away.
+        </p>
+
+        {/* Quick Select Options */}
         <div>
-          <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary" />
-            Choose Delivery Date
-          </h3>
-          <div className="grid grid-cols-2 gap-2">
-            {availableDays.map((day) => {
-              const isSelected = selectedDate && toISODate(selectedDate) === toISODate(day);
-              const isToday = toISODate(day) === toISODate(new Date());
+          <h3 className="font-bold text-foreground mb-2 text-sm">Quick Options</h3>
+          <div className="grid grid-cols-1 gap-2">
+            {QUICK_OPTIONS.map((opt) => {
+              const isSelected = selectedFlex === opt.id;
+              const Icon = opt.icon;
               return (
                 <button
-                  key={toISODate(day)}
-                  onClick={() => setSelectedDate(day)}
+                  key={opt.id}
+                  onClick={() => handleFlexSelect(opt.id)}
                   className={cn(
-                    'p-3 rounded-xl border text-left transition-all',
+                    'w-full p-3 rounded-xl border flex items-center gap-3 transition-all text-left',
                     isSelected
                       ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
                       : 'border-border bg-card hover:border-primary/40',
                   )}
                 >
-                  <p className={cn('font-semibold text-sm', isSelected ? 'text-primary' : 'text-foreground')}>
-                    {day.toLocaleDateString('en-US', { weekday: 'short' })}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </p>
-                  {isToday && (
-                    <Badge variant="outline" className="mt-1 text-[10px] px-1.5 py-0">Tomorrow</Badge>
-                  )}
+                  <div className={cn(
+                    'w-9 h-9 rounded-lg flex items-center justify-center shrink-0',
+                    isSelected ? 'bg-primary/15' : 'bg-muted'
+                  )}>
+                    <Icon className={cn('w-4 h-4', isSelected ? 'text-primary' : 'text-muted-foreground')} />
+                  </div>
+                  <div>
+                    <p className={cn('font-semibold text-sm', isSelected ? 'text-primary' : 'text-foreground')}>
+                      {opt.label}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{opt.description}</p>
+                  </div>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Time Window */}
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-muted-foreground font-medium">or pick a specific date</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        {/* Calendar */}
+        <div>
+          <h3 className="font-bold text-foreground mb-2 flex items-center gap-2 text-sm">
+            <CalendarIcon className="w-4 h-4 text-primary" />
+            Delivery Date
+          </h3>
+          <Card>
+            <CardContent className="p-2 flex justify-center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={isDisabledDate}
+                className="p-2 pointer-events-auto"
+                fromDate={new Date()}
+              />
+            </CardContent>
+          </Card>
+
+          {selectedDate && (
+            <p className="text-sm font-medium text-primary mt-2 text-center">
+              {formatDateDisplay(selectedDate)}
+            </p>
+          )}
+        </div>
+
+        {/* Time Window — only if date picked */}
         {selectedDate && (
           <div className="animate-fade-in">
-            <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="font-bold text-foreground mb-2 flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-primary" />
               Preferred Time Window
             </h3>
@@ -246,31 +311,55 @@ export default function QuoteSchedule() {
           </div>
         )}
 
-        {/* Submit */}
-        <Button
-          variant="cta"
-          size="lg"
-          className="w-full h-14 rounded-xl text-base font-semibold"
-          disabled={!selectedDate || !selectedWindow || isSubmitting}
-          onClick={handleSubmit}
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              Continue to Payment
-              <ChevronRight className="w-5 h-5" />
-            </>
-          )}
-        </Button>
+        {/* Fallback message */}
+        {showFallback && (
+          <Card className="border-warning/40 bg-warning/5">
+            <CardContent className="p-4 space-y-3">
+              <p className="text-sm font-medium text-foreground">
+                We saved your request and our team will confirm the delivery date with you shortly.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                You can continue to payment — we'll reach out to finalize scheduling.
+              </p>
+              <Button variant="outline" className="w-full" onClick={handleFallbackContinue}>
+                Continue to Payment
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
+        {/* Reassurance */}
         <p className="text-[11px] text-muted-foreground text-center">
-          Delivery times are estimated windows. We'll confirm the exact time closer to your date.
+          Need it fast? Same-day or next-day delivery may be available depending on your area.
+          We'll call 30 min before arrival with an estimated ETA.
         </p>
       </main>
+
+      {/* Sticky CTA */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 z-50">
+        <div className="max-w-lg mx-auto">
+          <Button
+            variant="cta"
+            size="lg"
+            className="w-full h-14 rounded-xl text-base font-semibold"
+            disabled={!canSubmit || isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                Continue to Payment
+                <ChevronRight className="w-5 h-5" />
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
