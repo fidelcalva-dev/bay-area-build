@@ -9,13 +9,16 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { TimelineView, AddNoteDialog } from '@/components/timeline';
 import { getCustomerTimeline, type TimelineEvent } from '@/lib/timelineService';
 import { HealthScoreCard, HealthEventsTimeline, HealthBadge } from '@/components/health';
 import { getCustomerHealthScore, type CustomerHealthScore } from '@/lib/customerHealthService';
 import { CommunicationTimeline } from '@/components/communication/CommunicationTimeline';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileScrollTabs } from '@/components/mobile/MobileScrollTabs';
+import { MobileQuickActions } from '@/components/mobile/MobileQuickActions';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
@@ -31,6 +34,7 @@ export default function CustomerDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'overview';
+  const isMobile = useIsMobile();
 
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -119,68 +123,80 @@ export default function CustomerDetail() {
   });
 
   return (
-    <div className="container mx-auto py-6 space-y-6 max-w-7xl">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/admin/customers"><ArrowLeft className="w-5 h-5" /></Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <User className="w-6 h-6 text-primary" />
-              {customer.company_name || customer.contact_name || 'Customer'}
-              {healthScore && <HealthBadge status={healthScore.status} showScore score={healthScore.score} size="sm" />}
-            </h1>
-            <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-              {customer.customer_type && <Badge variant="secondary">{customer.customer_type}</Badge>}
-              {customer.is_active ? <Badge variant="default" className="text-xs">Active</Badge> : <Badge variant="outline" className="text-xs">Inactive</Badge>}
-              <span className="text-sm">Since {new Date(customer.created_at).toLocaleDateString()}</span>
+    <div className="mx-auto py-4 md:py-6 space-y-4 md:space-y-6 max-w-7xl px-4 md:px-6">
+      {/* ─── HEADER ─── */}
+      {isMobile ? (
+        <MobileCustomerHeader
+          customer={customer}
+          healthScore={healthScore}
+          totalRevenue={totalRevenue}
+          totalOutstanding={totalOutstanding}
+          onLoadTimeline={loadTimeline}
+        />
+      ) : (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/admin/customers"><ArrowLeft className="w-5 h-5" /></Link>
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <User className="w-6 h-6 text-primary" />
+                  {customer.company_name || customer.contact_name || 'Customer'}
+                  {healthScore && <HealthBadge status={healthScore.status} showScore score={healthScore.score} size="sm" />}
+                </h1>
+                <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+                  {customer.customer_type && <Badge variant="secondary">{customer.customer_type}</Badge>}
+                  {customer.is_active ? <Badge variant="default" className="text-xs">Active</Badge> : <Badge variant="outline" className="text-xs">Inactive</Badge>}
+                  <span className="text-sm">Since {new Date(customer.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <AddNoteDialog entityType="CUSTOMER" entityId={customer.id} customerId={customer.id} onNoteAdded={loadTimeline} />
+              <QuickActionsMenu customerId={customer.id} customerEmail={customer.billing_email} />
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <AddNoteDialog entityType="CUSTOMER" entityId={customer.id} customerId={customer.id} onNoteAdded={loadTimeline} />
-          <QuickActionsMenu customerId={customer.id} customerEmail={customer.billing_email} />
-        </div>
-      </div>
 
-      {/* Contact Strip */}
-      <Card>
-        <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3">
-          {customer.billing_phone && (
-            <a href={`tel:${customer.billing_phone}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
-              <Phone className="w-4 h-4" />{customer.billing_phone}
-            </a>
-          )}
-          {customer.phone && customer.phone !== customer.billing_phone && (
-            <a href={`tel:${customer.phone}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
-              <Phone className="w-4 h-4" />{customer.phone}
-            </a>
-          )}
-          {customer.billing_email && (
-            <a href={`mailto:${customer.billing_email}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline truncate">
-              <Mail className="w-4 h-4" />{customer.billing_email}
-            </a>
-          )}
-          {customer.company_name && (
-            <span className="flex items-center gap-1.5 text-sm"><Building2 className="w-4 h-4 text-muted-foreground" />{customer.company_name}</span>
-          )}
-          {customer.billing_address && (
-            <span className="flex items-center gap-1.5 text-sm truncate"><MapPin className="w-4 h-4 text-muted-foreground" />{customer.billing_address}</span>
-          )}
-          <div className="ml-auto flex items-center gap-4 text-sm font-medium">
-            <span className="text-muted-foreground">Revenue: <span className="text-foreground">${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></span>
-            {totalOutstanding > 0 && (
-              <span className="text-destructive">Outstanding: ${totalOutstanding.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          {/* Contact Strip - Desktop */}
+          <Card>
+            <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3">
+              {customer.billing_phone && (
+                <a href={`tel:${customer.billing_phone}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
+                  <Phone className="w-4 h-4" />{customer.billing_phone}
+                </a>
+              )}
+              {customer.phone && customer.phone !== customer.billing_phone && (
+                <a href={`tel:${customer.phone}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
+                  <Phone className="w-4 h-4" />{customer.phone}
+                </a>
+              )}
+              {customer.billing_email && (
+                <a href={`mailto:${customer.billing_email}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline truncate">
+                  <Mail className="w-4 h-4" />{customer.billing_email}
+                </a>
+              )}
+              {customer.company_name && (
+                <span className="flex items-center gap-1.5 text-sm"><Building2 className="w-4 h-4 text-muted-foreground" />{customer.company_name}</span>
+              )}
+              {customer.billing_address && (
+                <span className="flex items-center gap-1.5 text-sm truncate"><MapPin className="w-4 h-4 text-muted-foreground" />{customer.billing_address}</span>
+              )}
+              <div className="ml-auto flex items-center gap-4 text-sm font-medium">
+                <span className="text-muted-foreground">Revenue: <span className="text-foreground">${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></span>
+                {totalOutstanding > 0 && (
+                  <span className="text-destructive">Outstanding: ${totalOutstanding.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
-      {/* Main Tabs */}
+      {/* ─── MAIN TABS ─── */}
       <Tabs defaultValue={defaultTab} className="space-y-4">
-        <TabsList className="flex-wrap h-auto gap-1">
+        <MobileScrollTabs>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="contacts">Contacts ({contacts.length})</TabsTrigger>
           <TabsTrigger value="sites">Sites ({sites.length})</TabsTrigger>
@@ -189,11 +205,11 @@ export default function CustomerDetail() {
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="communications">Communications</TabsTrigger>
+          <TabsTrigger value="communications">Comms</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="photos">Photos</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
+        </MobileScrollTabs>
 
         {/* ─── OVERVIEW ─── */}
         <TabsContent value="overview">
@@ -225,26 +241,28 @@ export default function CustomerDetail() {
         {/* ─── ORDERS ─── */}
         <TabsContent value="orders">
           <Card>
-            <CardHeader><CardTitle className="text-lg">All Orders</CardTitle></CardHeader>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">All Orders</CardTitle>
+            </CardHeader>
             <CardContent>
               {orders.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">No orders yet</p>
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {orders.map(order => (
-                    <Link key={order.id} to={`/admin/orders?id=${order.id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <Package className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
-                          <p className="text-sm text-muted-foreground">
+                    <Link key={order.id} to={`/admin/orders?id=${order.id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Package className="w-5 h-5 text-muted-foreground shrink-0" />
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">Order #{order.id.slice(0, 8)}</p>
+                          <p className="text-xs text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>{order.status}</Badge>
-                        {order.amount_due != null && <span className="font-medium">${order.amount_due.toFixed(2)}</span>}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant={order.status === 'completed' ? 'default' : 'secondary'} className="text-xs">{order.status}</Badge>
+                        {order.amount_due != null && <span className="font-medium text-sm">${order.amount_due.toFixed(2)}</span>}
                       </div>
                     </Link>
                   ))}
@@ -262,9 +280,9 @@ export default function CustomerDetail() {
         {/* ─── TIMELINE ─── */}
         <TabsContent value="timeline">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg">Full Activity Timeline</CardTitle>
-              <CardDescription>Calls, texts, emails, orders, payments, notes — all interactions</CardDescription>
+              {!isMobile && <CardDescription>Calls, texts, emails, orders, payments, notes — all interactions</CardDescription>}
             </CardHeader>
             <CardContent>
               <TimelineView events={timelineEvents} isLoading={isTimelineLoading} onRefresh={loadTimeline} />
@@ -274,32 +292,32 @@ export default function CustomerDetail() {
 
         {/* ─── PAYMENTS ─── */}
         <TabsContent value="payments">
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Invoices */}
             <Card>
-              <CardHeader><CardTitle className="text-lg">Invoices</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-lg">Invoices</CardTitle></CardHeader>
               <CardContent>
                 {invoices.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No invoices yet</p>
                 ) : (
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {invoices.map(inv => (
-                      <Link key={inv.id} to={`/finance/invoices/${inv.order_id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <Receipt className="w-5 h-5 text-muted-foreground" />
-                          <div>
-                            <p className="font-medium">{inv.invoice_number || `INV-${inv.id.slice(0, 8)}`}</p>
-                            <p className="text-sm text-muted-foreground">
+                      <Link key={inv.id} to={`/finance/invoices/${inv.order_id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Receipt className="w-5 h-5 text-muted-foreground shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm truncate">{inv.invoice_number || `INV-${inv.id.slice(0, 8)}`}</p>
+                            <p className="text-xs text-muted-foreground truncate">
                               {inv.issue_date ? new Date(inv.issue_date).toLocaleDateString() : new Date(inv.created_at).toLocaleDateString()}
                               {inv.due_date && ` · Due ${new Date(inv.due_date).toLocaleDateString()}`}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Badge variant={inv.payment_status === 'paid' ? 'default' : inv.payment_status === 'overdue' ? 'destructive' : 'secondary'}>{inv.payment_status}</Badge>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Badge variant={inv.payment_status === 'paid' ? 'default' : inv.payment_status === 'overdue' ? 'destructive' : 'secondary'} className="text-xs">{inv.payment_status}</Badge>
                           <div className="text-right">
-                            <p className="font-medium">${inv.amount_due.toFixed(2)}</p>
-                            {inv.balance_due > 0 && <p className="text-xs text-destructive">Bal: ${inv.balance_due.toFixed(2)}</p>}
+                            <p className="font-medium text-sm">${inv.amount_due.toFixed(2)}</p>
+                            {inv.balance_due > 0 && <p className="text-[10px] text-destructive">Bal: ${inv.balance_due.toFixed(2)}</p>}
                           </div>
                         </div>
                       </Link>
@@ -311,27 +329,27 @@ export default function CustomerDetail() {
 
             {/* Payments */}
             <Card>
-              <CardHeader><CardTitle className="text-lg">Payment History</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-lg">Payment History</CardTitle></CardHeader>
               <CardContent>
                 {payments.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No payments recorded</p>
                 ) : (
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {payments.map(pmt => (
-                      <div key={pmt.id} className="flex items-center justify-between p-3 rounded-lg border">
-                        <div className="flex items-center gap-3">
-                          <CreditCard className="w-5 h-5 text-muted-foreground" />
-                          <div>
-                            <p className="font-medium">{pmt.payment_type}</p>
-                            <p className="text-sm text-muted-foreground">
+                      <div key={pmt.id} className="flex items-center justify-between p-3 rounded-lg border gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <CreditCard className="w-5 h-5 text-muted-foreground shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm">{pmt.payment_type}</p>
+                            <p className="text-xs text-muted-foreground truncate">
                               {new Date(pmt.created_at).toLocaleDateString()}
                               {pmt.card_type && pmt.card_last_four && ` · ${pmt.card_type} ****${pmt.card_last_four}`}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Badge variant={pmt.status === 'approved' || pmt.status === 'completed' ? 'default' : pmt.status === 'failed' || pmt.status === 'declined' ? 'destructive' : 'secondary'}>{pmt.status}</Badge>
-                          <span className="font-medium">${pmt.amount.toFixed(2)}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Badge variant={pmt.status === 'approved' || pmt.status === 'completed' ? 'default' : pmt.status === 'failed' || pmt.status === 'declined' ? 'destructive' : 'secondary'} className="text-xs">{pmt.status}</Badge>
+                          <span className="font-medium text-sm">${pmt.amount.toFixed(2)}</span>
                         </div>
                       </div>
                     ))}
@@ -345,11 +363,11 @@ export default function CustomerDetail() {
         {/* ─── DOCUMENTS ─── */}
         <TabsContent value="documents">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">Documents</CardTitle>
-                  <CardDescription>Contracts, receipts, and uploaded files</CardDescription>
+                  {!isMobile && <CardDescription>Contracts, receipts, and uploaded files</CardDescription>}
                 </div>
                 <Button variant="outline" size="sm" disabled><Upload className="w-4 h-4 mr-1.5" />Upload</Button>
               </div>
@@ -367,11 +385,11 @@ export default function CustomerDetail() {
                     const details = event.details_json as Record<string, unknown> | null;
                     const url = (details?.document_url || details?.file_url) as string | undefined;
                     return (
-                      <div key={event.id} className="flex items-center justify-between p-3 rounded-lg border">
-                        <div className="flex items-center gap-3">
-                          <FileText className="w-5 h-5 text-muted-foreground" />
-                          <div>
-                            <p className="text-sm font-medium">{event.summary}</p>
+                      <div key={event.id} className="flex items-center justify-between p-3 rounded-lg border gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate">{event.summary}</p>
                             <p className="text-xs text-muted-foreground">{new Date(event.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
@@ -387,17 +405,17 @@ export default function CustomerDetail() {
 
         {/* ─── COMMUNICATIONS ─── */}
         <TabsContent value="communications">
-          <CommunicationTimeline entityType="customer" entityId={customer.id} title="All Communications" maxHeight="600px" />
+          <CommunicationTimeline entityType="customer" entityId={customer.id} title="All Communications" maxHeight={isMobile ? "400px" : "600px"} />
         </TabsContent>
 
         {/* ─── NOTES ─── */}
         <TabsContent value="notes">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">Internal Notes</CardTitle>
-                  <CardDescription>Notes visible only to staff</CardDescription>
+                  {!isMobile && <CardDescription>Notes visible only to staff</CardDescription>}
                 </div>
                 <AddNoteDialog entityType="CUSTOMER" entityId={customer.id} customerId={customer.id} onNoteAdded={loadTimeline} />
               </div>
@@ -416,9 +434,9 @@ export default function CustomerDetail() {
         {/* ─── PHOTOS ─── */}
         <TabsContent value="photos">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg">Photos & Media</CardTitle>
-              <CardDescription>Site photos, dump tickets, and delivery documentation</CardDescription>
+              {!isMobile && <CardDescription>Site photos, dump tickets, and delivery documentation</CardDescription>}
             </CardHeader>
             <CardContent>
               {photoEvents.length === 0 ? (
@@ -437,8 +455,8 @@ export default function CustomerDetail() {
                       <div key={event.id} className="p-3 rounded-lg border">
                         <div className="flex items-center gap-2 mb-2">
                           <Camera className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">{event.summary}</span>
-                          <span className="text-xs text-muted-foreground ml-auto">{new Date(event.created_at).toLocaleDateString()}</span>
+                          <span className="text-sm font-medium truncate">{event.summary}</span>
+                          <span className="text-xs text-muted-foreground ml-auto shrink-0">{new Date(event.created_at).toLocaleDateString()}</span>
                         </div>
                         {photoUrl && <img src={photoUrl} alt={event.summary} className="w-full max-w-md rounded-md border" loading="lazy" />}
                         {photos && photos.length > 0 && (
@@ -462,11 +480,112 @@ export default function CustomerDetail() {
           <AnalyticsTab data={data} />
         </TabsContent>
       </Tabs>
+
+      {/* ─── MOBILE FAB (Quick Actions) ─── */}
+      {isMobile && customer && (
+        <MobileQuickActions
+          customerPhone={customer.billing_phone}
+          address={customer.billing_address}
+          extraActions={[
+            {
+              icon: <FileText className="w-5 h-5" />,
+              label: 'Create Quote',
+              onClick: () => navigate('/sales/quotes/new'),
+            },
+            {
+              icon: <Package className="w-5 h-5" />,
+              label: 'Create Order',
+              onClick: () => navigate(`/admin/orders?action=new&customer=${customer.id}`),
+            },
+            {
+              icon: <Truck className="w-5 h-5" />,
+              label: 'Schedule Pickup',
+              onClick: () => navigate(`/dispatch?action=pickup&customer=${customer.id}`),
+            },
+            {
+              icon: <CreditCard className="w-5 h-5" />,
+              label: 'Send Payment Link',
+              onClick: () => navigate(`/finance/payment-actions?customer=${customer.id}`),
+            },
+          ]}
+        />
+      )}
     </div>
   );
 }
 
-// ─── QUICK ACTIONS MENU ──────────────────────────────────────────
+// ─── MOBILE CUSTOMER HEADER ──────────────────────────────────────
+function MobileCustomerHeader({ customer, healthScore, totalRevenue, totalOutstanding, onLoadTimeline }: {
+  customer: Customer;
+  healthScore: CustomerHealthScore | null;
+  totalRevenue: number;
+  totalOutstanding: number;
+  onLoadTimeline: () => void;
+}) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="space-y-3">
+      {/* Back + Name */}
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" className="shrink-0 -ml-2 h-9 w-9" asChild>
+          <Link to="/admin/customers"><ArrowLeft className="w-4 h-4" /></Link>
+        </Button>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg font-bold truncate flex items-center gap-2">
+            {customer.company_name || customer.contact_name || 'Customer'}
+            {healthScore && <HealthBadge status={healthScore.status} size="sm" />}
+          </h1>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            {customer.customer_type && <Badge variant="secondary" className="text-[10px] h-5">{customer.customer_type}</Badge>}
+            {customer.is_active ? <Badge variant="default" className="text-[10px] h-5">Active</Badge> : <Badge variant="outline" className="text-[10px] h-5">Inactive</Badge>}
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Actions Row */}
+      <div className="flex gap-2">
+        {customer.billing_phone && (
+          <>
+            <a href={`tel:${customer.billing_phone}`} className="flex-1">
+              <Button variant="outline" size="sm" className="w-full h-11 text-xs gap-1.5">
+                <Phone className="w-4 h-4" />Call
+              </Button>
+            </a>
+            <a href={`sms:${customer.billing_phone}`} className="flex-1">
+              <Button variant="outline" size="sm" className="w-full h-11 text-xs gap-1.5">
+                <Mail className="w-4 h-4" />Text
+              </Button>
+            </a>
+          </>
+        )}
+        {customer.billing_email && (
+          <a href={`mailto:${customer.billing_email}`} className="flex-1">
+            <Button variant="outline" size="sm" className="w-full h-11 text-xs gap-1.5">
+              <Mail className="w-4 h-4" />Email
+            </Button>
+          </a>
+        )}
+      </div>
+
+      {/* Revenue Summary */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-xl border bg-card p-3">
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Revenue</p>
+          <p className="text-lg font-bold text-foreground">${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+        </div>
+        <div className={`rounded-xl border p-3 ${totalOutstanding > 0 ? 'border-destructive/30 bg-destructive/5' : 'bg-card'}`}>
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Outstanding</p>
+          <p className={`text-lg font-bold ${totalOutstanding > 0 ? 'text-destructive' : 'text-foreground'}`}>
+            ${totalOutstanding.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── QUICK ACTIONS MENU (Desktop) ──────────────────────────────────
 function QuickActionsMenu({ customerId, customerEmail }: { customerId: string; customerEmail: string | null }) {
   const navigate = useNavigate();
 

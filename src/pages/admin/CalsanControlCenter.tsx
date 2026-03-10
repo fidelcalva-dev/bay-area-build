@@ -170,28 +170,28 @@ function KPICard({ label, value, helper, icon: Icon, route, danger, loading }: {
   return (
     <Link to={route} className="block group">
       <div className={cn(
-        'rounded-2xl border bg-card p-4 transition-all h-full',
+        'rounded-2xl border bg-card p-3 md:p-4 transition-all h-full',
         danger ? 'border-destructive/30 hover:border-destructive/50' : 'border-border/60 hover:border-primary/30',
         'hover:shadow-lg hover:-translate-y-0.5'
       )}>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2 md:mb-3">
           <div className={cn(
-            'w-9 h-9 rounded-xl flex items-center justify-center',
+            'w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center',
             danger ? 'bg-destructive/10' : 'bg-muted'
           )}>
-            <Icon className={cn('w-4 h-4', danger ? 'text-destructive' : 'text-muted-foreground')} />
+            <Icon className={cn('w-3.5 h-3.5 md:w-4 md:h-4', danger ? 'text-destructive' : 'text-muted-foreground')} />
           </div>
-          <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
         </div>
         {loading ? (
-          <Skeleton className="h-8 w-14 rounded-lg" />
+          <Skeleton className="h-7 md:h-8 w-14 rounded-lg" />
         ) : (
-          <div className={cn('text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>
+          <div className={cn('text-xl md:text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>
             {value}
           </div>
         )}
-        <p className="text-xs text-muted-foreground mt-1.5 font-medium">{label}</p>
-        {helper && <p className="text-[10px] text-muted-foreground/60 mt-0.5">{helper}</p>}
+        <p className="text-[10px] md:text-xs text-muted-foreground mt-1 md:mt-1.5 font-medium leading-tight">{label}</p>
+        {helper && <p className="text-[9px] md:text-[10px] text-muted-foreground/60 mt-0.5 hidden md:block">{helper}</p>}
       </div>
     </Link>
   );
@@ -325,12 +325,12 @@ function QuickAccessCard({ label, icon: Icon, route, description }: {
 }) {
   return (
     <Link to={route} className="block group">
-      <div className="rounded-2xl border border-border/60 bg-card p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 transition-all h-full text-center">
-        <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-          <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+      <div className="rounded-2xl border border-border/60 bg-card p-3 md:p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 transition-all h-full text-center">
+        <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-muted flex items-center justify-center mx-auto mb-2 md:mb-3 group-hover:bg-primary/10 transition-colors">
+          <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
-        <p className="text-sm font-semibold text-foreground">{label}</p>
-        <p className="text-[11px] text-muted-foreground mt-1">{description}</p>
+        <p className="text-xs md:text-sm font-semibold text-foreground">{label}</p>
+        <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 md:mt-1 hidden sm:block">{description}</p>
       </div>
     </Link>
   );
@@ -364,53 +364,75 @@ export default function CalsanControlCenter() {
   }, []);
 
   return (
-    <div className="p-4 lg:p-8 space-y-10 max-w-[1440px] mx-auto">
+    <div className="p-4 lg:p-8 space-y-6 md:space-y-10 max-w-[1440px] mx-auto">
 
       {/* ════════ SECTION 1 — EXECUTIVE HEADER ════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 md:gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1 max-w-xl hidden md:block">
             Executive overview of sales, operations, dispatch, finance, SEO, integrations, and system health.
           </p>
-          <div className="flex items-center gap-3 mt-1.5">
-            <p className="text-xs text-muted-foreground/70">
-              {format(now, 'EEEE, MMMM d, yyyy · h:mm a')}
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-[10px] md:text-xs text-muted-foreground/70">
+              {format(now, 'EEE, MMM d · h:mm a')}
             </p>
             {user?.email && (
               <>
-                <span className="text-muted-foreground/30">·</span>
-                <p className="text-xs text-muted-foreground/70">{user.email}</p>
+                <span className="text-muted-foreground/30 hidden md:inline">·</span>
+                <p className="text-xs text-muted-foreground/70 hidden md:block">{user.email}</p>
               </>
             )}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { label: 'Lead Hub', route: '/sales/leads', icon: Users },
-            { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
-            { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
-            { label: 'SEO Health', route: '/admin/seo/health', icon: Globe },
-          ].map(a => (
-            <Button key={a.label} asChild variant="outline" size="sm" className="h-9 text-xs gap-1.5 rounded-xl">
-              <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
-            </Button>
-          ))}
+        {/* Quick links — horizontally scrollable on mobile */}
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-2 w-max md:w-auto">
+            {[
+              { label: 'Lead Hub', route: '/sales/leads', icon: Users },
+              { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
+              { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
+              { label: 'SEO', route: '/admin/seo/health', icon: Globe },
+            ].map(a => (
+              <Button key={a.label} asChild variant="outline" size="sm" className="h-9 text-xs gap-1.5 rounded-xl shrink-0">
+                <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ════════ SECTION 2 — KPI STRIP ════════ */}
       <section>
         <SectionHeader title="Business Snapshot" subtitle="Key performance indicators across all departments" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
-          <KPICard label="New Leads Today" helper="From all channels" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
-          <KPICard label="Hot Leads" helper="Score ≥ 70" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
-          <KPICard label="Quotes Pending" helper="Draft & pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
-          <KPICard label="Jobs Today" helper="Scheduled runs" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
-          <KPICard label="Drivers Active" helper="On route now" value={kpi?.driversActive || 'No data yet'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
-          <KPICard label="Payments Pending" helper="Awaiting payment" value={kpi?.paymentsPending ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
-          <KPICard label="Overdue Invoices" helper="Past due date" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
-          <KPICard label="SEO Score" helper="Site health" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
+        {/* Horizontally scrollable on mobile, grid on desktop */}
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible">
+          <div className="flex gap-3 w-max md:w-auto md:grid md:grid-cols-4 xl:grid-cols-8">
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="New Leads Today" helper="From all channels" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Hot Leads" helper="Score ≥ 70" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Quotes Pending" helper="Draft & pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Jobs Today" helper="Scheduled runs" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Drivers Active" helper="On route now" value={kpi?.driversActive || 'N/A'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Payments Pending" helper="Awaiting payment" value={kpi?.paymentsPending ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Overdue Invoices" helper="Past due date" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="SEO Score" helper="Site health" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -483,18 +505,20 @@ export default function CalsanControlCenter() {
           subtitle="Today's dispatch and service activity"
           action={{ label: 'Dispatch', route: '/dispatch/calendar' }}
         />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'No data yet'} icon={Package} route="/dispatch/today" />
-          <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'No data yet'} icon={Truck} route="/dispatch/today" />
-          <SnapshotCard label="Swap Jobs" value="No data yet" icon={Activity} route="/dispatch/today" />
-          <SnapshotCard label="Dump Returns" value="No data yet" icon={MapPin} route="/dispatch/yard-hold" />
-          <SnapshotCard label="Drivers On Route" value="No data yet" icon={Truck} route="/admin/drivers" />
-          <SnapshotCard label="Services Paused" value="No data yet" icon={Clock} route="/dispatch/yard-hold" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
+          <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'N/A'} icon={Package} route="/dispatch/today" />
+          <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'N/A'} icon={Truck} route="/dispatch/today" />
+          <SnapshotCard label="Swap Jobs" value="N/A" icon={Activity} route="/dispatch/today" />
+          <SnapshotCard label="Dump Returns" value="N/A" icon={MapPin} route="/dispatch/yard-hold" />
+          <SnapshotCard label="Drivers On Route" value="N/A" icon={Truck} route="/admin/drivers" />
+          <SnapshotCard label="Services Paused" value="N/A" icon={Clock} route="/dispatch/yard-hold" />
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/calendar">Open Dispatch</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/today">Runs Calendar</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-3 md:mt-4">
+          <div className="flex gap-2 w-max md:w-auto md:flex-wrap">
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/calendar">Open Dispatch</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/today">Runs Calendar</Link></Button>
+            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
+          </div>
         </div>
       </section>
 
@@ -620,7 +644,7 @@ export default function CalsanControlCenter() {
       {/* ════════ SECTION 10 — QUICK ACCESS GRID ════════ */}
       <section>
         <SectionHeader title="Quick Access" subtitle="Jump to any department" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
           {QUICK_ACCESS_GRID.map(item => (
             <QuickAccessCard key={item.label} {...item} />
           ))}
