@@ -5,9 +5,9 @@ import { BUSINESS_INFO, SERVICE_AREAS } from './seo';
 
 // ============================================================
 // DUMPSTER SIZES - Official inventory
-// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
-// Heavy Materials: 6, 8, 10 yard only
-// General Debris: 6, 8, 10, 20, 30, 40, 50 yard
+// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
+// Heavy Materials: 6, 8, 10 yard only (flat-fee, disposal included)
+// General Debris: 10, 20, 30, 40 yard
 // ============================================================
 
 export interface DumpsterSizeData {
@@ -352,7 +352,7 @@ export function getOverageInfo(materialType: 'general' | 'heavy', sizeYards: num
 // Standard overage note for display (legacy - use getOverageInfo instead)
 export const OVERAGE_NOTE = 'Overage billed per ton after disposal scale ticket.';
 
-// Official included tonnage by size for GENERAL DEBRIS (single source of truth - v56 Page 15)
+// Official included tonnage by size for GENERAL DEBRIS (single source of truth)
 // Note: For HEAVY materials, tonnage is NOT displayed (flat fee)
 export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   6: 0.5,
@@ -361,7 +361,6 @@ export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   20: 2,
   30: 3,
   40: 4,
-  50: 5,
 };
 
 // ============================================================
@@ -385,68 +384,75 @@ export const PLAN_A_PRICING: V56PricingTier[] = [
   { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
   { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
   { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
-  { size: 50, basePrice: 1135, priceRangeLow: 1135, priceRangeHigh: 1350, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================
-// HEAVY MATERIAL PRICING CANON (Proportional 10→8→6)
-// Base 10yd = $638, 8yd = 0.8×, 6yd = 0.6×
+// HEAVY MATERIAL PRICING CANON (Approved flat-rate ladder)
+// Clean Soil / Clean Concrete: 6yd=$495, 8yd=$595, 10yd=$695.50
+// +$200 materials (brick, asphalt, tile): added directly to base
+// +$300 mixed heavy: added directly to base
 // ============================================================
 
-// Heavy base rate for Oakland/San Jose (used as default)
-export const HEAVY_BASE_10YD = 638;
-
-// Size factors for proportional pricing
-export const HEAVY_SIZE_FACTORS: Record<number, number> = {
-  10: 1.0,
-  8: 0.8,
-  6: 0.6,
+// Approved heavy material base prices by size (flat-rate, disposal included)
+export const HEAVY_BASE_PRICES: Record<number, number> = {
+  6: 495,
+  8: 595,
+  10: 695.50,
 };
 
-// Material class increments (applied to base BEFORE factor)
+// Legacy alias for backward compatibility
+export const HEAVY_BASE_10YD = 695.50;
+
+// Legacy size factors (kept for any external callers, but not used internally)
+export const HEAVY_SIZE_FACTORS: Record<number, number> = {
+  10: 1.0,
+  8: 595 / 695.50,
+  6: 495 / 695.50,
+};
+
+// Material class increments (added directly to base price)
 export const HEAVY_INCREMENTS = {
-  base: 0,       // Clean concrete, soil, sand, gravel
+  base: 0,       // Clean concrete, clean soil, sand, gravel
   plus_200: 200, // Brick, asphalt, tile, roofing gravel, rock/stone
   mixed_heavy: 300, // Mix of heavy materials (no trash)
 } as const;
 
 export type HeavyMaterialClass = keyof typeof HEAVY_INCREMENTS;
 
-// Calculate heavy price: (BASE + increment) × factor
+// Calculate heavy price: BASE_PRICE[size] + increment
 export function calculateHeavyMaterialPrice(
   size: 6 | 8 | 10,
   materialClass: HeavyMaterialClass = 'base',
-  baseRate: number = HEAVY_BASE_10YD
+  _baseRate?: number // ignored, kept for backward compatibility
 ): number {
+  const basePrice = HEAVY_BASE_PRICES[size] || 695.50;
   const increment = HEAVY_INCREMENTS[materialClass];
-  const factor = HEAVY_SIZE_FACTORS[size] || 1.0;
-  return Math.round((baseRate + increment) * factor * 100) / 100;
+  return Math.round((basePrice + increment) * 100) / 100;
 }
 
-// Heavy Material / Lowboy pricing (6, 8, 10 only) - Base materials pricing
-// Note: These are BASE prices. +$200 and +$300 are applied on top via proportional calc
+// Heavy Material / Lowboy pricing (6, 8, 10 only) - FLAT FEE, disposal included
 export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
   { 
     size: 6, 
-    basePrice: calculateHeavyMaterialPrice(6, 'base'), // 638 × 0.6 = 382.80
-    priceRangeLow: Math.round(calculateHeavyMaterialPrice(6, 'base')), 
-    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(6, 'mixed_heavy')), 
+    basePrice: 495,
+    priceRangeLow: 495, 
+    priceRangeHigh: calculateHeavyMaterialPrice(6, 'mixed_heavy'), // 795
     includedTons: 0, // FLAT FEE - no tons displayed
     category: 'heavy' 
   },
   { 
     size: 8, 
-    basePrice: calculateHeavyMaterialPrice(8, 'base'), // 638 × 0.8 = 510.40
-    priceRangeLow: Math.round(calculateHeavyMaterialPrice(8, 'base')), 
-    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(8, 'mixed_heavy')), 
+    basePrice: 595,
+    priceRangeLow: 595, 
+    priceRangeHigh: calculateHeavyMaterialPrice(8, 'mixed_heavy'), // 895
     includedTons: 0, 
     category: 'heavy' 
   },
   { 
     size: 10, 
-    basePrice: calculateHeavyMaterialPrice(10, 'base'), // 638 × 1.0 = 638.00
-    priceRangeLow: Math.round(calculateHeavyMaterialPrice(10, 'base')), 
-    priceRangeHigh: Math.round(calculateHeavyMaterialPrice(10, 'mixed_heavy')), 
+    basePrice: 695.50,
+    priceRangeLow: 695.50, 
+    priceRangeHigh: calculateHeavyMaterialPrice(10, 'mixed_heavy'), // 995.50
     includedTons: 0, 
     category: 'heavy' 
   },
@@ -472,29 +478,29 @@ export function getHeavyPricingDisplay() {
   return {
     base: {
       label: 'Base Materials',
-      description: 'Clean concrete, soil, sand, gravel',
+      description: 'Clean concrete, clean soil, sand, gravel',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'base')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'base')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'base')),
+        10: 695.50,
+        8: 595,
+        6: 495,
       },
     },
     plus_200: {
       label: '+$200 Materials',
       description: 'Brick, asphalt, tile, roofing gravel, rock/stone',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'plus_200')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'plus_200')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'plus_200')),
+        10: 895.50,
+        8: 795,
+        6: 695,
       },
     },
     mixed_heavy: {
       label: '+$300 Mixed Heavy',
       description: 'Mix of heavy materials (concrete + soil, etc.)',
       prices: {
-        10: Math.round(calculateHeavyMaterialPrice(10, 'mixed_heavy')),
-        8: Math.round(calculateHeavyMaterialPrice(8, 'mixed_heavy')),
-        6: Math.round(calculateHeavyMaterialPrice(6, 'mixed_heavy')),
+        10: 995.50,
+        8: 895,
+        6: 795,
       },
     },
   };

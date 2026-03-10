@@ -164,7 +164,6 @@ export const DUMPSTER_SIZES = [
   '20 Yard Dumpster',
   '30 Yard Dumpster',
   '40 Yard Dumpster',
-  '50 Yard Dumpster',
 ] as const;
 
 // Page-specific SEO configurations
@@ -177,13 +176,13 @@ export const PAGE_SEO = {
   },
   pricing: {
     title: 'Dumpster Rental Prices Bay Area | Transparent Flat-Rate Pricing',
-    description: 'Bay Area dumpster rental pricing from $390. No hidden fees, flat-rate for concrete & dirt. 6-50 yard sizes. Oakland, San Jose, SF. Get instant quote.',
+    description: 'Bay Area dumpster rental pricing from $390. No hidden fees, flat-rate for concrete & dirt. 6-40 yard sizes. Oakland, San Jose, SF. Get instant quote.',
     canonical: '/pricing',
     ogImage: '/og-image.jpg',
   },
   sizes: {
-    title: 'Dumpster Sizes Guide | 6 to 50 Yard Dumpsters',
-    description: 'Compare dumpster sizes from 6 to 50 yards. Heavy material sizes for concrete and dirt. General debris sizes for renovations and cleanouts.',
+    title: 'Dumpster Sizes Guide | 6 to 40 Yard Dumpsters',
+    description: 'Compare dumpster sizes from 6 to 40 yards. Heavy material sizes for concrete and dirt. General debris sizes for renovations and cleanouts.',
     canonical: '/sizes',
     ogImage: '/og-image.jpg',
   },

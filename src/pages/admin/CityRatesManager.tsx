@@ -39,7 +39,7 @@ export default function CityRatesManager() {
     city_name: "",
     extra_ton_rate_standard: "165",
     prepay_discount_pct: "5",
-    heavy_base_10yd: "638",
+    heavy_base_10yd: "695.50",
     is_active: true,
   });
 
@@ -72,7 +72,7 @@ export default function CityRatesManager() {
       city_name: "",
       extra_ton_rate_standard: "165",
       prepay_discount_pct: "5",
-      heavy_base_10yd: "638",
+      heavy_base_10yd: "695.50",
       is_active: true,
     });
     setDialogOpen(true);
@@ -102,7 +102,7 @@ export default function CityRatesManager() {
       city_name: form.city_name.trim(),
       extra_ton_rate_standard: parseFloat(form.extra_ton_rate_standard) || 165,
       prepay_discount_pct: (parseFloat(form.prepay_discount_pct) || 5) / 100,
-      heavy_base_10yd: parseFloat(form.heavy_base_10yd) || 638,
+      heavy_base_10yd: parseFloat(form.heavy_base_10yd) || 695.50,
       is_active: form.is_active,
     };
 

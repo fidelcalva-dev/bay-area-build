@@ -129,8 +129,8 @@ export interface HeavyPriceResult {
 }
 
 /**
- * Calculate heavy material price based on proportional pricing
- * Formula: (HEAVY_BASE_10YD + increment) × factor
+ * Calculate heavy material price based on approved flat-rate ladder
+ * Base prices: 6yd=$495, 8yd=$595, 10yd=$695.50 + material increment
  */
 export function calculateHeavyPrice(
   size: 6 | 8 | 10,
@@ -149,10 +149,11 @@ export function calculateHeavyPrice(
   
   // Calculate savings message for smaller sizes
   let savingsMessage: string | null = null;
-  if (size === 8) {
-    savingsMessage = '20% less than 10 yd';
-  } else if (size === 6) {
-    savingsMessage = '40% less than 10 yd';
+  const savings10yd = ((adjustedBase - roundedPrice) / adjustedBase * 100);
+  if (size === 8 && savings10yd > 0) {
+    savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
+  } else if (size === 6 && savings10yd > 0) {
+    savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
   }
   
   return {

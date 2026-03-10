@@ -37,7 +37,7 @@ export const CANONICAL_CONFIG = {
   'pricing.weekend_fee': { category: 'pricing', key: 'weekend_fee', default: 75 },
   'pricing.override_requires_approval': { category: 'pricing', key: 'override_requires_approval', default: true },
   'pricing.max_discount_pct_without_approval': { category: 'pricing', key: 'max_discount_pct_without_approval', default: 10 },
-  'pricing.heavy_base_10yd': { category: 'pricing', key: 'heavy_base_10yd', default: 638 },
+  'pricing.heavy_base_10yd': { category: 'pricing', key: 'heavy_base_10yd', default: 695.50 },
 
   // Overdue
   'overdue.enabled': { category: 'overdue', key: 'enabled', default: true },

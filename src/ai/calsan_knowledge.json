@@ -14,26 +14,23 @@
   },
   "dumpsterSizes": {
     "heavyMaterial": [
-      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Small concrete removal, dirt, driveway work"},
-      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Foundation demo, brick and block, garage cleanouts"},
-      {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal"}
+      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Small concrete removal, dirt, driveway work", "flatRate": 495},
+18:       {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Foundation demo, brick and block, garage cleanouts", "flatRate": 595},
+19:       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal", "flatRate": 695.50}
     ],
     "generalDebris": [
-      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "bestFor": "Small cleanouts, yard debris"},
-      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "bestFor": "Bathroom remodel, garage cleanouts"},
       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "bestFor": "Small renovations, deck removal"},
       {"yards": 20, "dimensions": "18' L x 7.5' W x 4' H", "includedTons": 2, "bestFor": "Full room renovations, roofing, large cleanouts"},
       {"yards": 30, "dimensions": "18' L x 7.5' W x 6' H", "includedTons": 3, "bestFor": "Major renovations, new construction, estate cleanouts"},
-      {"yards": 40, "dimensions": "24' L x 7.5' W x 6' H", "includedTons": 4, "bestFor": "Commercial projects, large demolition"},
-      {"yards": 50, "dimensions": "24' L x 7.5' W x 7.5' H", "includedTons": 5, "bestFor": "Industrial sites, warehouse cleanouts"}
+      {"yards": 40, "dimensions": "24' L x 7.5' W x 6' H", "includedTons": 4, "bestFor": "Commercial projects, large demolition"}
     ]
   },
   "materials": {
     "general": {
       "label": "General Debris",
-      "allowedSizes": [6, 8, 10, 20, 30, 40, 50],
+      "allowedSizes": [10, 20, 30, 40],
       "examples": ["Household junk", "Furniture", "Drywall", "Wood", "Carpet", "Roofing shingles", "Mixed C&D debris"],
-      "overagePolicy": "$165 per ton beyond included tonnage, based on certified scale ticket"
+      "overagePolicy": "$165 per ton beyond included tonnage, based on certified scale ticket. Heavy materials use flat-fee pricing with no weight overage."
     },
     "heavy": {
       "label": "Heavy / Inert Materials",
