@@ -32,6 +32,7 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   new: { label: "New", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
   contacted: { label: "Contacted", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
   qualified: { label: "Qualified", className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
+  quote_created: { label: "Quote Created", className: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300" },
   quoted: { label: "Quoted", className: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
   quote_sent: { label: "Quote Sent", className: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
   quote_accepted: { label: "Quote Accepted", className: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300" },
@@ -415,7 +416,7 @@ export default function SalesLeads() {
         {/* Pipeline Board or Table */}
         {viewMode === 'pipeline' ? (
           <div className="mt-4">
-            <SalesPipelineBoard leads={leads as any} />
+            <SalesPipelineBoard leads={leads as any} onRefresh={refetch} />
           </div>
         ) : (
         <Card className="mt-4">

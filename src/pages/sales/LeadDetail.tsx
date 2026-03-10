@@ -523,7 +523,7 @@ export default function LeadDetail() {
                     <Select value={editForm.lead_status || 'new'} onValueChange={v => setEditForm({...editForm, lead_status: v})}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {['new','contacted','qualified','quote_sent','quote_accepted','contract_sent','contract_signed','payment_received','order_created','converted','lost'].map(s => (
+                        {['new','contacted','qualified','quote_created','quote_sent','quote_accepted','contract_sent','contract_signed','payment_received','order_created','converted','lost','attention_required'].map(s => (
                           <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>
                         ))}
                       </SelectContent>
