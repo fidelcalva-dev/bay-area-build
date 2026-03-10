@@ -331,7 +331,7 @@ export async function upsertMarketRates(
       extra_ton_rate_standard: rates.extra_ton_rate_standard ?? 165,
       extra_ton_rate_prepay: rates.extra_ton_rate_prepay,
       prepay_discount_pct: rates.prepay_discount_pct ?? 5,
-      heavy_base_10yd: rates.heavy_base_10yd ?? 638,
+      heavy_base_10yd: rates.heavy_base_10yd ?? 695.50,
       mixed_small_overage_rate: rates.mixed_small_overage_rate ?? 30,
       rental_day_3_factor: rates.rental_day_3_factor ?? 0.6,
       rental_day_7_factor: rates.rental_day_7_factor ?? 1.0,
