@@ -259,6 +259,13 @@ export default function SalesLeads() {
           <p className="text-sm text-muted-foreground">Omni-channel inbox — every lead, one place</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'pipeline' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode(viewMode === 'list' ? 'pipeline' : 'list')}
+          >
+            <LayoutGrid className="w-4 h-4 mr-1" /> Pipeline
+          </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
