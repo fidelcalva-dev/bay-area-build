@@ -146,6 +146,13 @@ const USE_CASE_PAGES: SitemapEntry[] = SEO_USE_CASES.map(uc => ({
   priority: 0.8,
 }));
 
+// ZIP pages (300+ targeted ZIP codes)
+const ZIP_PAGES: SitemapEntry[] = SEO_ZIP_DATA.map(z => ({
+  url: `/service-area/${z.zip}/dumpster-rental`,
+  changefreq: 'monthly' as const,
+  priority: z.tier === 'A' ? 0.8 : z.tier === 'B' ? 0.7 : 0.6,
+}));
+
 // Fetch SEO engine pages from database
 async function fetchSeoPages(): Promise<SitemapEntry[]> {
   try {
