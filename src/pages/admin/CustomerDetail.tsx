@@ -28,6 +28,8 @@ import {
   type Customer, type Order, type Invoice, type Payment, type Quote,
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
+import { ContractsTab } from '@/components/customer360/ContractsTab';
+import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
