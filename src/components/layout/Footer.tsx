@@ -5,7 +5,7 @@ import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
 import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
-import { getStaffLoginUrl } from '@/lib/domainConfig';
+
 
 export function Footer() {
   const { t } = useLanguage();
