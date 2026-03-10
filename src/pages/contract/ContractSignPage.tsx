@@ -171,12 +171,12 @@ export default function ContractSignPage() {
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
-            <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-600" />
+            <CheckCircle className="w-16 h-16 mx-auto mb-4 text-primary" />
             <h2 className="text-2xl font-bold mb-2">Contract Signed!</h2>
             <p className="text-muted-foreground mb-4">
               Thank you for signing. You'll receive a confirmation shortly.
             </p>
-            <Badge className="bg-green-100 text-green-800">Signed Successfully</Badge>
+            <Badge variant="default">Signed Successfully</Badge>
           </CardContent>
         </Card>
       </div>

@@ -195,7 +195,7 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
                   {/* Signed info */}
                   {contract.status === 'signed' && (
-                    <div className="text-xs text-muted-foreground bg-green-50 dark:bg-green-900/10 rounded p-2">
+                    <div className="text-xs text-muted-foreground bg-primary/5 rounded p-2">
                       Signed by <span className="font-medium">{contract.signer_name || 'Unknown'}</span>
                       {contract.signed_at && ` on ${format(new Date(contract.signed_at), 'MMM d, yyyy h:mm a')}`}
                     </div>
