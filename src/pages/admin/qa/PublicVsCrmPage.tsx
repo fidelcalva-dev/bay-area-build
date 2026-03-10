@@ -45,7 +45,7 @@ const CHECKS: SeparationCheck[] = [
     area: 'Canonical Domain',
     description: 'Public pages use calsandumpsterspro.com canonical',
     status: 'pass',
-    detail: 'All canonical URLs reference https://calsandumpsterspro.com. CRM runs on app.calsandumpsterspro.com in production.',
+    detail: 'All canonical URLs reference https://calsandumpsterspro.com. CRM runs on same domain via path-based routing (/admin, /sales, /dispatch).',
   },
   {
     area: 'Data Leak Prevention',

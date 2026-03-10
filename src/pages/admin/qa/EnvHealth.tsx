@@ -24,7 +24,7 @@ export default function EnvHealth() {
     { key: 'SW_SUPPORT', value: swStatus },
     { key: 'SW_STRATEGY', value: 'NetworkFirst (index.html)' },
     { key: 'HOME_SOURCE', value: 'src/pages/Index.tsx' },
-    { key: 'CRM_DOMAIN', value: 'app.calsandumpsterspro.com' },
+    { key: 'CRM_DOMAIN', value: 'calsandumpsterspro.com (path-based: /admin, /sales, etc.)' },
     { key: 'PUBLIC_DOMAIN', value: 'calsandumpsterspro.com' },
     { key: 'WWW_REDIRECT', value: 'www → non-www (enforced)' },
     { key: 'HTTPS_ENFORCE', value: 'Yes (client-side)' },
