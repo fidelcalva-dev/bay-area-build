@@ -15,7 +15,7 @@ import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
-import { getOverageInfo, PRICING_POLICIES } from '@/lib/shared-data';
+import { getOverageInfo, PRICING_POLICIES, HEAVY_IN_GENERAL_WARNING, CONTAMINATION_POLICY } from '@/lib/shared-data';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 
 // Extra Tons Pre-Purchase
@@ -1792,6 +1792,14 @@ export function InstantQuoteCalculatorV3() {
                 {formData.material === 'general' && (
                   <div className="text-[10px] text-muted-foreground bg-muted/30 rounded px-2 py-1.5">
                     Included tons + overage at $165/ton based on scale ticket
+                  </div>
+                )}
+
+                {/* Contamination & fill-line policy - only for heavy materials */}
+                {formData.material === 'heavy' && (
+                  <div className="text-[10px] text-muted-foreground bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 rounded px-2 py-1.5 space-y-1">
+                    <p className="font-medium text-amber-700 dark:text-amber-400">⚠ Heavy Material Policy</p>
+                    <p>{CONTAMINATION_POLICY.customerWarning}</p>
                   </div>
                 )}
               </div>

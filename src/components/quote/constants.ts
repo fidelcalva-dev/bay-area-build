@@ -7,7 +7,15 @@ import {
   getGeneralSizes,
   PRICING_POLICIES,
   OVERAGE_NOTE as MASTER_OVERAGE_NOTE,
-  INCLUDED_TONS_BY_SIZE 
+  INCLUDED_TONS_BY_SIZE,
+  CONTAMINATION_POLICY,
+  REROUTE_POLICY,
+  HEAVY_IN_GENERAL_WARNING,
+  HEAVY_IN_GENERAL_WARNING_ES,
+  GENERAL_DEBRIS_OVERAGE_TEXT,
+  HEAVY_MATERIAL_CUSTOMER_MESSAGE,
+  type MaterialClassification,
+  isHeavyClassification,
 } from '@/lib/shared-data';
 
 // Re-export overage note from master
@@ -15,6 +23,18 @@ export const OVERAGE_NOTE = MASTER_OVERAGE_NOTE;
 
 // Re-export included tons lookup
 export { INCLUDED_TONS_BY_SIZE };
+
+// Re-export material classification & policy constants
+export { 
+  CONTAMINATION_POLICY, 
+  REROUTE_POLICY, 
+  HEAVY_IN_GENERAL_WARNING, 
+  HEAVY_IN_GENERAL_WARNING_ES,
+  GENERAL_DEBRIS_OVERAGE_TEXT,
+  HEAVY_MATERIAL_CUSTOMER_MESSAGE,
+  isHeavyClassification,
+};
+export type { MaterialClassification };
 
 // Service Zones - Bay Area coverage
 export const PRICING_ZONES: PricingZone[] = [
