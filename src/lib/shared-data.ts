@@ -245,6 +245,8 @@ export type MaterialClassification =
   | 'CLEAN_CONCRETE'
   | 'MIXED_SOIL'
   | 'MIXED_CONSTRUCTION'
+  | 'ROOFING'
+  | 'YARD_WASTE'
   | 'UNKNOWN';
 
 /** Materials considered "heavy" — must use heavy-material dumpsters */
@@ -261,6 +263,8 @@ export const MATERIAL_CLASSIFICATION_LABELS: Record<MaterialClassification, stri
   CLEAN_CONCRETE: 'Clean Concrete',
   MIXED_SOIL: 'Mixed Soil',
   MIXED_CONSTRUCTION: 'Mixed Construction',
+  ROOFING: 'Roofing',
+  YARD_WASTE: 'Yard Waste',
   UNKNOWN: 'Unknown / Other',
 };
 
