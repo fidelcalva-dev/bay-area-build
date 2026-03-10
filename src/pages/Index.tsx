@@ -86,44 +86,6 @@ const PROJECT_TYPES = [
   { label: 'Estate Cleanout', slug: 'estate-cleanout', icon: Scale },
 ];
 
-const CUSTOMER_ACTIONS = [
-  {
-    label: 'Get Exact Price',
-    desc: 'See your exact pricing by ZIP in under a minute.',
-    icon: ArrowRight,
-    href: '/quote?v3=1',
-    primary: true,
-  },
-  {
-    label: 'Upload Photo for Size Help',
-    desc: 'Not sure what size you need? Show us your project.',
-    icon: Upload,
-    href: '/quote?v3=1&tab=photo',
-    primary: false,
-  },
-  {
-    label: 'Schedule a Delivery',
-    desc: 'Already know what you need? Pick your preferred delivery date.',
-    icon: Clock,
-    href: '/quote?v3=1',
-    primary: false,
-  },
-  {
-    label: 'Talk to a Specialist',
-    desc: 'Call or text a real local team member now.',
-    icon: Phone,
-    href: `tel:${BUSINESS_INFO.phone.sales}`,
-    primary: false,
-    external: true,
-  },
-  {
-    label: 'Contractor Pricing',
-    desc: 'Fast service and repeat-job support for contractors.',
-    icon: HardHat,
-    href: '/quote/contractor',
-    primary: false,
-  },
-];
 
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
@@ -228,51 +190,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 4 — MAIN CUSTOMER ACTIONS ========== */}
+      {/* ========== SECTION 4 — GUIDED ASSISTANT / SIZE HELP ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              How Can We Help You?
-            </h2>
-            <p className="text-sm text-muted-foreground mt-2">Select one option to get started.</p>
-          </div>
-          <div className="max-w-xl mx-auto space-y-3">
-            {CUSTOMER_ACTIONS.map((action) => {
-              const Icon = action.icon;
-              const Comp = action.external ? 'a' : Link;
-              const linkProps = action.external
-                ? { href: action.href }
-                : { to: action.href };
-              return (
-                <Comp
-                  key={action.label}
-                  {...(linkProps as any)}
-                  className={`flex items-center gap-4 px-5 py-4 rounded-xl border transition-all min-h-[64px] ${
-                    action.primary
-                      ? 'bg-primary/5 border-primary/30 hover:border-primary hover:shadow-md'
-                      : 'bg-card border-border hover:border-primary/40 hover:bg-muted/30'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                    action.primary ? 'bg-primary/15' : 'bg-muted'
-                  }`}>
-                    <Icon className={`w-5 h-5 ${action.primary ? 'text-primary' : 'text-muted-foreground'}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground text-sm">{action.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{action.desc}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                </Comp>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 5 — AI ASSISTANT / SIZE HELP ========== */}
-      <section className="py-12 md:py-16 bg-background">
         <div className="container-wide">
           <div className="text-center mb-6">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
