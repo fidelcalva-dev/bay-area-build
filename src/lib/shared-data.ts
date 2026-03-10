@@ -352,7 +352,7 @@ export function getOverageInfo(materialType: 'general' | 'heavy', sizeYards: num
 // Standard overage note for display (legacy - use getOverageInfo instead)
 export const OVERAGE_NOTE = 'Overage billed per ton after disposal scale ticket.';
 
-// Official included tonnage by size for GENERAL DEBRIS (single source of truth - v56 Page 15)
+// Official included tonnage by size for GENERAL DEBRIS (single source of truth)
 // Note: For HEAVY materials, tonnage is NOT displayed (flat fee)
 export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   6: 0.5,
@@ -361,7 +361,6 @@ export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   20: 2,
   30: 3,
   40: 4,
-  50: 5,
 };
 
 // ============================================================
