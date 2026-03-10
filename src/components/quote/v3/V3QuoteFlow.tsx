@@ -1303,25 +1303,107 @@ export function V3QuoteFlow() {
                 <p className="text-sm text-muted-foreground">{getButtons().CONFIRM_HELP}</p>
               </div>
 
-              {/* Summary */}
+              {/* Quote Summary — Full Breakdown */}
               <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
-                <div className="p-4 space-y-2.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Dumpster</span>
-                    <span className="font-semibold text-foreground">{getSizeLabel()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Project</span>
-                    <span className="font-semibold text-foreground">{selectedProject?.label || 'General'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Rental</span>
-                    <span className="font-semibold text-foreground">7 days</span>
+                {/* Dumpster Details */}
+                <div className="p-4 border-b border-border/50">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Dumpster Details</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Dumpster Size</span>
+                      <span className="font-semibold text-foreground">{getSizeLabel()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Project Type</span>
+                      <span className="font-semibold text-foreground">{selectedProject?.label || 'General'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Material</span>
+                      <span className="font-semibold text-foreground">{isHeavy ? 'Heavy Material' : 'General Debris'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Rental Period</span>
+                      <span className="font-semibold text-foreground">7 days</span>
+                    </div>
+                    {!quote.isFlatFee && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Weight Included</span>
+                        <span className="font-semibold text-foreground">{quote.includedTons} tons</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="px-4 py-3 bg-muted/20 border-t border-border/50 flex justify-between items-center">
-                  <span className="font-semibold text-foreground text-sm">Total</span>
-                  <span className="font-bold text-foreground text-xl">${quote.subtotal.toLocaleString()}</span>
+
+                {/* Location */}
+                <div className="p-4 border-b border-border/50">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Location</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">ZIP Code</span>
+                      <span className="font-semibold text-foreground">{zip}</span>
+                    </div>
+                    {addressResult?.formattedAddress && (
+                      <div className="flex justify-between text-sm gap-4">
+                        <span className="text-muted-foreground shrink-0">Address</span>
+                        <span className="font-semibold text-foreground text-right">{addressResult.formattedAddress}</span>
+                      </div>
+                    )}
+                    {distanceCalc.distance && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Nearest Yard</span>
+                        <span className="font-semibold text-foreground">{distanceCalc.distance.yard.name} ({distanceCalc.distance.distanceMiles.toFixed(1)} mi)</span>
+                      </div>
+                    )}
+                    {accessData?.placementType && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Placement</span>
+                        <span className="font-semibold text-foreground capitalize">{accessData.placementType}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pricing Breakdown */}
+                <div className="p-4 border-b border-border/50">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Pricing</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Base Price</span>
+                      <span className="text-foreground">${quote.subtotal.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3 text-success" /> Delivery & Pickup
+                      </span>
+                      <span className="text-success text-xs font-medium">Included</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3 text-success" /> Disposal
+                      </span>
+                      <span className="text-success text-xs font-medium">Included</span>
+                    </div>
+                    {!quote.isFlatFee && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3 text-success" /> {quote.includedTons}T Weight Allowance
+                        </span>
+                        <span className="text-success text-xs font-medium">Included</span>
+                      </div>
+                    )}
+                    {!quote.isFlatFee && (
+                      <div className="flex justify-between text-xs text-muted-foreground pt-1 border-t border-border/30">
+                        <span>Overage rate</span>
+                        <span>$165/ton beyond {quote.includedTons}T</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Total */}
+                <div className="px-4 py-3 bg-primary/5 flex justify-between items-center">
+                  <span className="font-bold text-foreground">Total Estimate</span>
+                  <span className="font-bold text-foreground text-2xl">${quote.subtotal.toLocaleString()}</span>
                 </div>
               </div>
 
