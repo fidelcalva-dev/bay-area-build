@@ -241,7 +241,7 @@ export async function generateFullSitemapXml(): Promise<string> {
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...ZIP_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES];
 }
 
 // Get all entries including async SEO pages
