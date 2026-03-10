@@ -416,7 +416,7 @@ export default function SalesLeads() {
         {/* Pipeline Board or Table */}
         {viewMode === 'pipeline' ? (
           <div className="mt-4">
-            <SalesPipelineBoard leads={leads as any} />
+            <SalesPipelineBoard leads={leads as any} onRefresh={refetch} />
           </div>
         ) : (
         <Card className="mt-4">
