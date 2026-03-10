@@ -47,6 +47,16 @@ export interface ProjectType {
 export const PROJECT_TYPES: ProjectType[] = [
   // General Debris Projects
   { 
+    id: 'home-cleanout', 
+    label: 'Home Cleanout', 
+    icon: 'home', 
+    generalSizeSmall: 10, 
+    generalSizeLarge: 20,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'General household items, furniture, clutter' 
+  },
+  { 
     id: 'garage', 
     label: 'Garage Cleanout', 
     icon: 'warehouse', 
@@ -55,6 +65,26 @@ export const PROJECT_TYPES: ProjectType[] = [
     allowsGeneral: true,
     allowsHeavy: false,
     description: 'Boxes, furniture, misc items' 
+  },
+  { 
+    id: 'estate-cleanout', 
+    label: 'Estate Cleanout', 
+    icon: 'home', 
+    generalSizeSmall: 20, 
+    generalSizeLarge: 30,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'Full-house cleanout, large volume of mixed items' 
+  },
+  { 
+    id: 'moving-cleanout', 
+    label: 'Moving Cleanout', 
+    icon: 'home', 
+    generalSizeSmall: 10, 
+    generalSizeLarge: 20,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'Pre/post-move junk removal' 
   },
   { 
     id: 'remodel', 
@@ -87,6 +117,16 @@ export const PROJECT_TYPES: ProjectType[] = [
     description: 'Large roof, heavy shingles' 
   },
   { 
+    id: 'construction', 
+    label: 'Construction Debris', 
+    icon: 'construction', 
+    generalSizeSmall: 20, 
+    generalSizeLarge: 30,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'New build waste, framing, mixed C&D' 
+  },
+  { 
     id: 'demo', 
     label: 'Demo / Full Cleanout', 
     icon: 'boom-box', 
@@ -97,14 +137,14 @@ export const PROJECT_TYPES: ProjectType[] = [
     description: 'Mixed debris, structural materials' 
   },
   { 
-    id: 'commercial', 
-    label: 'Commercial / Very Large', 
-    icon: 'building-2', 
-    generalSizeSmall: 30, 
-    generalSizeLarge: 40,
+    id: 'yard-cleanup', 
+    label: 'Yard Cleanup', 
+    icon: 'tree-pine', 
+    generalSizeSmall: 10, 
+    generalSizeLarge: 20,
     allowsGeneral: true,
     allowsHeavy: false,
-    description: 'Large-scale cleanout or construction' 
+    description: 'Branches, sod, landscaping debris' 
   },
   { 
     id: 'landscaping', 
@@ -116,7 +156,37 @@ export const PROJECT_TYPES: ProjectType[] = [
     allowsHeavy: false,
     description: 'Branches, sod, yard waste' 
   },
+  { 
+    id: 'commercial', 
+    label: 'Commercial / Very Large', 
+    icon: 'building-2', 
+    generalSizeSmall: 30, 
+    generalSizeLarge: 40,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'Large-scale cleanout or construction' 
+  },
   // Heavy Material Projects
+  { 
+    id: 'concrete-removal', 
+    label: 'Concrete Removal', 
+    icon: 'hard-hat', 
+    heavySizeSmall: 8, 
+    heavySizeLarge: 10,
+    allowsGeneral: false,
+    allowsHeavy: true,
+    description: 'Patio, driveway, walkway concrete' 
+  },
+  { 
+    id: 'dirt-soil-removal', 
+    label: 'Dirt / Soil Removal', 
+    icon: 'hard-hat', 
+    heavySizeSmall: 8, 
+    heavySizeLarge: 10,
+    allowsGeneral: false,
+    allowsHeavy: true,
+    description: 'Excavation, grading, trenching' 
+  },
   { 
     id: 'concrete-small', 
     label: 'Concrete / Soil (Small)', 
@@ -146,6 +216,16 @@ export const PROJECT_TYPES: ProjectType[] = [
     allowsGeneral: false,
     allowsHeavy: true,
     description: 'Full driveway, foundation work' 
+  },
+  { 
+    id: 'mixed-debris', 
+    label: 'Mixed Debris', 
+    icon: 'construction', 
+    generalSizeSmall: 20, 
+    generalSizeLarge: 30,
+    allowsGeneral: true,
+    allowsHeavy: false,
+    description: 'Combination of multiple material types' 
   },
 ];
 

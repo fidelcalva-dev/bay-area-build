@@ -2055,7 +2055,10 @@ export function InstantQuoteCalculatorV3() {
                 </div>
               </div>
               <div className="text-sm text-muted-foreground mt-1">
-                {formData.rentalDays} days • {quote.includedTons}T included • ZIP {formData.zip}
+                {formData.material === 'heavy'
+                  ? `${formData.rentalDays} days • Flat fee – disposal included • ZIP ${formData.zip}`
+                  : `${formData.rentalDays} days • ${quote.includedTons}T included • ZIP ${formData.zip}`
+                }
               </div>
             </div>
 
