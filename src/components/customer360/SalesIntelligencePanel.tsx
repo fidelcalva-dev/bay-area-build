@@ -55,7 +55,7 @@ export function SalesIntelligencePanel({ data, timelineEvents }: Props) {
   const preferredSize = 'See orders';
 
   // Derive lead source from timeline
-  const leadEvent = timelineEvents.find(e => e.event_type === 'LEAD_CREATED' || e.event_type === 'SYSTEM');
+  const leadEvent = timelineEvents.find(e => e.event_type === 'SYSTEM');
   const leadSource = leadEvent
     ? (leadEvent.details_json as Record<string, unknown>)?.source_channel as string || 'Unknown'
     : 'Unknown';
