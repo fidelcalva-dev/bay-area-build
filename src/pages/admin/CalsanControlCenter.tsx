@@ -170,28 +170,28 @@ function KPICard({ label, value, helper, icon: Icon, route, danger, loading }: {
   return (
     <Link to={route} className="block group">
       <div className={cn(
-        'rounded-2xl border bg-card p-4 transition-all h-full',
+        'rounded-2xl border bg-card p-3 md:p-4 transition-all h-full',
         danger ? 'border-destructive/30 hover:border-destructive/50' : 'border-border/60 hover:border-primary/30',
         'hover:shadow-lg hover:-translate-y-0.5'
       )}>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2 md:mb-3">
           <div className={cn(
-            'w-9 h-9 rounded-xl flex items-center justify-center',
+            'w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center',
             danger ? 'bg-destructive/10' : 'bg-muted'
           )}>
-            <Icon className={cn('w-4 h-4', danger ? 'text-destructive' : 'text-muted-foreground')} />
+            <Icon className={cn('w-3.5 h-3.5 md:w-4 md:h-4', danger ? 'text-destructive' : 'text-muted-foreground')} />
           </div>
-          <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
         </div>
         {loading ? (
-          <Skeleton className="h-8 w-14 rounded-lg" />
+          <Skeleton className="h-7 md:h-8 w-14 rounded-lg" />
         ) : (
-          <div className={cn('text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>
+          <div className={cn('text-xl md:text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>
             {value}
           </div>
         )}
-        <p className="text-xs text-muted-foreground mt-1.5 font-medium">{label}</p>
-        {helper && <p className="text-[10px] text-muted-foreground/60 mt-0.5">{helper}</p>}
+        <p className="text-[10px] md:text-xs text-muted-foreground mt-1 md:mt-1.5 font-medium leading-tight">{label}</p>
+        {helper && <p className="text-[9px] md:text-[10px] text-muted-foreground/60 mt-0.5 hidden md:block">{helper}</p>}
       </div>
     </Link>
   );
