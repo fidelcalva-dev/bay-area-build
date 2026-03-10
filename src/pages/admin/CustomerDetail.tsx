@@ -281,6 +281,16 @@ export default function CustomerDetail() {
           <QuotesTab quotes={quotes} customerId={customer.id} />
         </TabsContent>
 
+        {/* ─── CONTRACTS ─── */}
+        <TabsContent value="contracts">
+          <ContractsTab
+            customerId={customer.id}
+            customerPhone={customer.billing_phone}
+            customerEmail={customer.billing_email}
+            customerName={customer.contact_name}
+          />
+        </TabsContent>
+
         {/* ─── REQUESTS ─── */}
         <TabsContent value="requests">
           <RequestsTab timelineEvents={timelineEvents} isLoading={isTimelineLoading} />
