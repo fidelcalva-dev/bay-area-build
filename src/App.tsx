@@ -1124,6 +1124,9 @@ const App = () => {
                 <Route path="executive" element={
                   <Suspense fallback={<PageLoader />}><ExecutiveDashboard /></Suspense>
                 } />
+                <Route path="intelligence" element={
+                  <Suspense fallback={<PageLoader />}><BusinessIntelligenceDashboard /></Suspense>
+                } />
                 <Route path="sales-performance" element={
                   <Suspense fallback={<PageLoader />}><SalesPerformanceDashboard /></Suspense>
                 } />
