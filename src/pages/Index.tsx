@@ -65,7 +65,7 @@ const HOW_IT_WORKS_STEPS = [
   { number: '1', icon: ArrowRight, title: 'Get Instant Quote', desc: 'Enter your ZIP and project type' },
   { number: '2', icon: Clock, title: 'Schedule Delivery', desc: 'Pick a date that works for you' },
   { number: '3', icon: Package, title: 'Fill the Dumpster', desc: 'Load at your own pace' },
-  { number: '4', icon: Truck, title: 'We Pick It Up', desc: 'We haul it away, you're done' },
+  { number: '4', icon: Truck, title: 'We Pick It Up', desc: 'We haul it away, you\'re done' },
 ];
 
 const PROJECT_TYPES = [
