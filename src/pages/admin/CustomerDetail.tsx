@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import {
-  OverviewTab, ContactsTab, SitesTab, RequestsTab, AnalyticsTab,
+  OverviewTab, ContactsTab, SitesTab, RequestsTab, AnalyticsTab, QuotesTab,
   type Customer, type Order, type Invoice, type Payment, type Quote,
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
@@ -201,6 +201,7 @@ export default function CustomerDetail() {
           <TabsTrigger value="contacts">Contacts ({contacts.length})</TabsTrigger>
           <TabsTrigger value="sites">Sites ({sites.length})</TabsTrigger>
           <TabsTrigger value="orders">Orders ({orders.length})</TabsTrigger>
+          <TabsTrigger value="quotes">Quotes ({quotes.length})</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
@@ -270,6 +271,11 @@ export default function CustomerDetail() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* ─── QUOTES ─── */}
+        <TabsContent value="quotes">
+          <QuotesTab quotes={quotes} customerId={customer.id} />
         </TabsContent>
 
         {/* ─── REQUESTS ─── */}

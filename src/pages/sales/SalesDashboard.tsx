@@ -13,6 +13,8 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
 import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
 import { HotAILeadsQueue } from "@/components/sales/HotAILeadsQueue";
+import { SalesPipelineCards } from "@/components/sales/SalesPipelineCards";
+import { SalesScriptLibrary } from "@/components/sales/SalesScriptLibrary";
 
 interface DashboardStats {
   leads: { total: number; new: number; converted: number };
@@ -106,6 +108,9 @@ export default function SalesDashboard() {
 
       {/* Hot AI Leads */}
       <HotAILeadsQueue />
+
+      {/* Pipeline Cards */}
+      <SalesPipelineCards />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -224,6 +229,9 @@ export default function SalesDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Sales Scripts */}
+      <SalesScriptLibrary />
           </div>
         </TabsContent>
 

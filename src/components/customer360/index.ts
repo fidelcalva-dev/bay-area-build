@@ -3,4 +3,5 @@ export { ContactsTab } from './ContactsTab';
 export { SitesTab } from './SitesTab';
 export { RequestsTab } from './RequestsTab';
 export { AnalyticsTab } from './AnalyticsTab';
+export { QuotesTab } from './QuotesTab';
 export type * from './types';
