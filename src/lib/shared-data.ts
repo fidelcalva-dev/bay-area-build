@@ -384,7 +384,6 @@ export const PLAN_A_PRICING: V56PricingTier[] = [
   { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
   { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
   { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
-  { size: 50, basePrice: 1135, priceRangeLow: 1135, priceRangeHigh: 1350, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================
