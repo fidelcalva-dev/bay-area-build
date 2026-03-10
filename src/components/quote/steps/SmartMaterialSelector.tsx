@@ -182,8 +182,8 @@ function MaterialCard({
               <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
               <span>
                 {isSpanish 
-                  ? 'Material pesado: máximo 10 toneladas. Requiere línea de llenado. Peso extra = $165/ton.' 
-                  : 'Heavy material: 10-ton max. Fill-line required. Extra weight = $165/ton.'}
+                  ? 'Material pesado: requiere contenedor especial (5–10 yd). Tarifa plana, eliminación incluida. Llenar hasta la línea.' 
+                  : 'Heavy material: requires special container (5–10 yd). Flat fee, disposal included. Fill to the line.'}
               </span>
             </div>
           )}
