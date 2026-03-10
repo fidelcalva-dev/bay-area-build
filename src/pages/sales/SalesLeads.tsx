@@ -61,6 +61,8 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'all', label: 'All', icon: Users },
 ];
 
+type ViewMode = 'list' | 'pipeline';
+
 const SOURCE_LABELS: Record<string, string> = {
   WEBSITE_QUOTE: "Website Quote",
   WEBSITE_ORDER_NOW: "Order Now",
