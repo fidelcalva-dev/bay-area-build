@@ -72,7 +72,7 @@ export default function CityRatesManager() {
       city_name: "",
       extra_ton_rate_standard: "165",
       prepay_discount_pct: "5",
-      heavy_base_10yd: "638",
+      heavy_base_10yd: "695.50",
       is_active: true,
     });
     setDialogOpen(true);
