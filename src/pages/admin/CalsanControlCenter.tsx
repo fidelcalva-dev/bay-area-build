@@ -325,12 +325,12 @@ function QuickAccessCard({ label, icon: Icon, route, description }: {
 }) {
   return (
     <Link to={route} className="block group">
-      <div className="rounded-2xl border border-border/60 bg-card p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 transition-all h-full text-center">
-        <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-          <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+      <div className="rounded-2xl border border-border/60 bg-card p-3 md:p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 transition-all h-full text-center">
+        <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-muted flex items-center justify-center mx-auto mb-2 md:mb-3 group-hover:bg-primary/10 transition-colors">
+          <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
-        <p className="text-sm font-semibold text-foreground">{label}</p>
-        <p className="text-[11px] text-muted-foreground mt-1">{description}</p>
+        <p className="text-xs md:text-sm font-semibold text-foreground">{label}</p>
+        <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 md:mt-1 hidden sm:block">{description}</p>
       </div>
     </Link>
   );
