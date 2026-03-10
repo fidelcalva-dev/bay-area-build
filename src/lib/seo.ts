@@ -164,7 +164,6 @@ export const DUMPSTER_SIZES = [
   '20 Yard Dumpster',
   '30 Yard Dumpster',
   '40 Yard Dumpster',
-  '50 Yard Dumpster',
 ] as const;
 
 // Page-specific SEO configurations
