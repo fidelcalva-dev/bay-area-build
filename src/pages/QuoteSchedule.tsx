@@ -117,7 +117,7 @@ export default function QuoteSchedule() {
       payload.flexOption = flexLabel;
     } else if (selectedDate && selectedWindow) {
       payload.deliveryDate = toLocalISODate(selectedDate);
-      payload.deliveryWindow = TIME_WINDOWS.find(w => w.id === selectedWindow)?.time || selectedWindow;
+      payload.deliveryWindow = selectedWindow;
     }
 
     // Attempt save with 1 retry
