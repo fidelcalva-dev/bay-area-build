@@ -609,6 +609,9 @@ function QuickActionsMenu({ customerId, customerEmail }: { customerId: string; c
         <DropdownMenuItem onClick={() => navigate(`/admin/orders?action=new&customer=${customerId}`)}>
           <Package className="w-4 h-4 mr-2" />Create Order
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate(`/admin/customers/${customerId}?tab=quotes`)}>
+          <Send className="w-4 h-4 mr-2" />Send Contract
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate(`/dispatch?customer=${customerId}`)}>
           <Truck className="w-4 h-4 mr-2" />Schedule Delivery
