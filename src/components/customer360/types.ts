@@ -21,7 +21,6 @@ export interface Order {
   created_at: string;
   scheduled_delivery_date: string | null;
   scheduled_pickup_date: string | null;
-  service_address: string | null;
 }
 
 export interface Invoice {

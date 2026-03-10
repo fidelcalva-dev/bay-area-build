@@ -58,7 +58,7 @@ export default function CustomerDetail() {
 
     const [customerResult, ordersResult, invoicesResult, paymentsResult, quotesResult, contactsResult, sitesResult, health] = await Promise.all([
       supabase.from('customers').select('*').eq('id', id).single(),
-      supabase.from('orders').select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date, service_address').eq('customer_id', id).order('created_at', { ascending: false }),
+      supabase.from('orders').select('id, status, amount_due, created_at, scheduled_delivery_date, scheduled_pickup_date').eq('customer_id', id).order('created_at', { ascending: false }),
       supabase.from('invoices').select('*').eq('customer_id', id).order('created_at', { ascending: false }),
       supabase.from('payments').select('*').eq('customer_id', id).order('created_at', { ascending: false }),
       supabase.from('customers').select('billing_email').eq('id', id).single().then(async (res) => {

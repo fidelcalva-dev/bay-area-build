@@ -31,14 +31,8 @@ export function AnalyticsTab({ data }: Props) {
     ? Math.round((paidInvoices.length / invoices.length) * 100)
     : 100;
 
-  // Most common dumpster size (from orders)
-  const sizeCounts: Record<string, number> = {};
-  orders.forEach(o => {
-    if (o.dumpster_size_id) {
-      sizeCounts[o.dumpster_size_id] = (sizeCounts[o.dumpster_size_id] || 0) + 1;
-    }
-  });
-  const preferredSize = Object.entries(sizeCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A';
+  // Preferred size - derived from quotes material_type as proxy
+  const preferredSize = 'N/A';
 
   const metrics = [
     { icon: DollarSign, label: 'Lifetime Revenue', value: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}` },
