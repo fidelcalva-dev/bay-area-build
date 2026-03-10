@@ -345,6 +345,22 @@ export const HEAVY_MATERIAL_CUSTOMER_MESSAGE =
 export const HEAVY_MATERIAL_CUSTOMER_MESSAGE_ES =
   'Los materiales pesados como tierra, suelo y concreto requieren contenedores especiales. Usar el contenedor correcto ayuda a evitar cargos por sobrepeso.';
 
+// Quote flow warning when heavy material selected with general debris
+export const HEAVY_IN_GENERAL_WARNING =
+  'Heavy materials should not be placed in general debris dumpsters. This may result in overweight charges.';
+export const HEAVY_IN_GENERAL_WARNING_ES =
+  'Los materiales pesados no deben colocarse en contenedores de escombros generales. Esto puede resultar en cargos por sobrepeso.';
+
+// General debris overage display text
+export const GENERAL_DEBRIS_OVERAGE_TEXT =
+  'Additional weight beyond included tonnage will be charged per ton based on local disposal rates.';
+export const GENERAL_DEBRIS_OVERAGE_TEXT_ES =
+  'El peso adicional más allá del tonelaje incluido se cobrará por tonelada según las tarifas de eliminación locales.';
+
+// Sales script helper for heavy materials
+export const SALES_HEAVY_MATERIAL_SCRIPT =
+  'If your project includes dirt or concrete, I recommend a heavy-material container so you avoid overweight fees.';
+
 // ============================================================
 // EXTRA TON PRICING - Pre-purchase discounts
 // ============================================================
