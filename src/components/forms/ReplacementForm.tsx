@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RefreshCw, ArrowRight, Phone, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { logCrmError } from '@/lib/crmErrorLogger';
 import { BUSINESS_INFO } from '@/lib/seo';
 
 export function ReplacementForm() {
@@ -68,8 +69,15 @@ export function ReplacementForm() {
         if (fbError) throw fbError;
         navigate('/thank-you', { state: { formData, type: 'replacement', fallback: true } });
       } catch (fallbackErr) {
-        // Step 3: Hard failure — show inline error
+        // Step 3: Hard failure — show inline error + log to crm_errors
         console.error('Fallback queue also failed:', fallbackErr);
+        logCrmError({
+          action: 'LEAD_CAPTURE_HARD_FAILURE',
+          error_message: fallbackErr instanceof Error ? fallbackErr.message : 'Unknown error',
+          error_detail: { payload, ingest_error: String(ingestErr), fallback_error: String(fallbackErr) },
+          entity_type: 'lead',
+          source_page: location.pathname,
+        });
         setHardError(true);
         setIsSubmitting(false);
       }

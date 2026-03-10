@@ -189,6 +189,32 @@ export function QuoteOrderFlow({
         title: 'Quote Saved!',
         description: 'Your information has been saved.',
       });
+
+      // ── Lead Ingest: ensure this submission appears in the Lead Hub ──
+      try {
+        await supabase.functions.invoke('lead-ingest', {
+          body: {
+            source_channel: 'WEBSITE_QUOTE',
+            source_detail: 'quote_order_flow',
+            name: contact.name,
+            phone: contact.phone,
+            email: contact.email || null,
+            zip: quoteSummary.zipCode || null,
+            project_type: quoteSummary.materialType || null,
+            material_category: quoteSummary.materialType || null,
+            size_preference: quoteSummary.sizeLabel || null,
+            consent_status: 'FORM_SUBMIT',
+            raw_payload: {
+              quote_id: savedQuoteId,
+              estimated_min: quoteSummary.estimatedMin,
+              estimated_max: quoteSummary.estimatedMax,
+              rental_days: quoteSummary.rentalDays,
+            },
+          },
+        });
+      } catch (leadErr) {
+        console.error('[QuoteOrderFlow] lead-ingest failed (non-blocking):', leadErr);
+      }
       
       setStep('address');
     } catch (error) {
