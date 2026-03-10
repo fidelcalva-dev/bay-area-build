@@ -162,6 +162,9 @@ export default function OperationsDashboard() {
         height={350}
         loading={loading}
       />
+
+      {/* Operations Intelligence */}
+      <OperationsIntelligencePanel />
     </div>
   );
 }
