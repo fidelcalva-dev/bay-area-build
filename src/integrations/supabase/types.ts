@@ -8385,6 +8385,48 @@ export type Database = {
           },
         ]
       }
+      lead_intelligence: {
+        Row: {
+          budget_score: number | null
+          created_at: string
+          id: string
+          intent_score: number | null
+          lead_id: string
+          overall_grade: string | null
+          project_type: string | null
+          recommended_price: number | null
+          recommended_size: number | null
+          signals_json: Json | null
+          updated_at: string
+        }
+        Insert: {
+          budget_score?: number | null
+          created_at?: string
+          id?: string
+          intent_score?: number | null
+          lead_id: string
+          overall_grade?: string | null
+          project_type?: string | null
+          recommended_price?: number | null
+          recommended_size?: number | null
+          signals_json?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          budget_score?: number | null
+          created_at?: string
+          id?: string
+          intent_score?: number | null
+          lead_id?: string
+          overall_grade?: string | null
+          project_type?: string | null
+          recommended_price?: number | null
+          recommended_size?: number | null
+          signals_json?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lead_routing_rules: {
         Row: {
           assign_team: string
@@ -12280,6 +12322,57 @@ export type Database = {
           price?: number
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      pricing_intelligence: {
+        Row: {
+          ai_recommendation: string | null
+          avg_dump_fee: number | null
+          avg_margin: number | null
+          avg_revenue: number | null
+          city: string
+          created_at: string
+          dumpster_size: number | null
+          id: string
+          job_count: number | null
+          material_category: string
+          period_end: string | null
+          period_start: string | null
+          recommendation_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_recommendation?: string | null
+          avg_dump_fee?: number | null
+          avg_margin?: number | null
+          avg_revenue?: number | null
+          city: string
+          created_at?: string
+          dumpster_size?: number | null
+          id?: string
+          job_count?: number | null
+          material_category: string
+          period_end?: string | null
+          period_start?: string | null
+          recommendation_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_recommendation?: string | null
+          avg_dump_fee?: number | null
+          avg_margin?: number | null
+          avg_revenue?: number | null
+          city?: string
+          created_at?: string
+          dumpster_size?: number | null
+          id?: string
+          job_count?: number | null
+          material_category?: string
+          period_end?: string | null
+          period_start?: string | null
+          recommendation_type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
