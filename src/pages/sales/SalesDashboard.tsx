@@ -229,6 +229,9 @@ export default function SalesDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Sales Scripts */}
+      <SalesScriptLibrary />
           </div>
         </TabsContent>
 
