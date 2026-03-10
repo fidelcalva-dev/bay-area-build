@@ -247,5 +247,5 @@ export function getAllSitemapEntries(): SitemapEntry[] {
 // Get all entries including async SEO pages
 export async function getAllSitemapEntriesWithSeo(): Promise<SitemapEntry[]> {
   const seoPages = await fetchSeoPages();
-  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...ZIP_PAGES, ...seoPages];
 }
