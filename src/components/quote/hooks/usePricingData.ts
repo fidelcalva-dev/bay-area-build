@@ -283,11 +283,14 @@ export async function getZonePricing(zoneId: string, sizeId: string): Promise<{
 
 /**
  * Calculate included tons based on size.
- * Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
- * Same tonnage for both general debris and heavy materials.
+ * Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
+ * For HEAVY materials, tonnage is NOT displayed (flat fee).
  */
 export function calculateIncludedTons(sizeValue: number, materialType: 'general' | 'heavy'): number {
-  // Official tonnage by size (same for all material types)
+  // Heavy materials: flat fee, no tonnage displayed
+  if (materialType === 'heavy') return 0;
+
+  // Official tonnage by size for general debris
   const tonsBySize: Record<number, number> = {
     6: 0.5,
     8: 0.5,
@@ -295,7 +298,6 @@ export function calculateIncludedTons(sizeValue: number, materialType: 'general'
     20: 2,
     30: 3,
     40: 4,
-    50: 5,
   };
 
   return tonsBySize[sizeValue] || 0.5;
