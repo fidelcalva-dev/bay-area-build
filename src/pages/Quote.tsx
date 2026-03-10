@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { V3QuoteFlow } from '@/components/quote/v3';
-import { CheckCircle, MessageCircle, Shield, ArrowRight } from 'lucide-react';
+import { CheckCircle, MessageCircle, Shield, ArrowRight, Package, Clock, Truck } from 'lucide-react';
 import { TrustStrip, PhoneCTA } from '@/components/shared';
 import { PriceTransparencyNote } from '@/components/seo/LocalSEOSchema';
 import { CalculatorSeoFaq } from '@/components/seo/CalculatorSeoFaq';
@@ -13,6 +13,13 @@ const benefits = [
   '7-day standard rental',
   'Bay Area coverage (9 counties)',
   'Español disponible',
+];
+
+const HOW_IT_WORKS = [
+  { number: '1', icon: ArrowRight, title: 'Get your exact price', desc: 'Enter ZIP and project type' },
+  { number: '2', icon: Clock, title: 'Choose delivery date', desc: 'Pick a date that works' },
+  { number: '3', icon: Package, title: 'Fill the dumpster', desc: 'Load at your own pace' },
+  { number: '4', icon: Truck, title: 'We pick it up', desc: 'We haul it away' },
 ];
 
 export default function Quote() {
@@ -45,7 +52,7 @@ export default function Quote() {
               </p>
 
               {/* Benefits List */}
-              <div className="bg-card rounded-2xl border border-border p-6 mb-8">
+              <div className="bg-card rounded-2xl border border-border p-6 mb-6">
                 <h2 className="font-bold text-foreground mb-4">What's Included</h2>
                 <ul className="space-y-3">
                   {benefits.map((benefit) => (
@@ -55,6 +62,24 @@ export default function Quote() {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* How It Works — Mini */}
+              <div className="bg-card rounded-2xl border border-border p-6 mb-6">
+                <h2 className="font-bold text-foreground mb-4">How It Works</h2>
+                <div className="space-y-3">
+                  {HOW_IT_WORKS.map((step) => (
+                    <div key={step.number} className="flex items-center gap-3">
+                      <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                        {step.number}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{step.title}</p>
+                        <p className="text-xs text-muted-foreground">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Phone CTA */}
@@ -77,7 +102,7 @@ export default function Quote() {
                   <Shield className="w-4 h-4" />
                   Your information is secure and never shared
                 </p>
-                {/* Price Transparency Note (Phase 3, Item 8) */}
+                {/* Price Transparency Note */}
                 <PriceTransparencyNote className="text-xs text-muted-foreground mt-2" />
                 <p className="text-xs text-muted-foreground mt-1">
                   We'll contact you within 15 minutes during business hours (6AM–9PM daily)
