@@ -636,6 +636,11 @@ export function InstantQuoteCalculatorV3() {
         greenHaloDumpFee: generalClassification?.isGreenHalo ? calculateGreenHaloDumpFee(formData.size) : undefined,
         greenHaloHandlingFee: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloHandlingFee : undefined,
         greenHaloDumpFeePerTon: generalClassification?.isGreenHalo ? PRICING_POLICIES.greenHaloDumpFeePerTon : undefined,
+        // Heavy material & contamination risk flags
+        heavyMaterialFlag: formData.material === 'heavy',
+        contaminationRisk: debrisSelection?.isHeavyMaterial && debrisSelection?.reclassified ? true : false,
+        debrisCategoryId: debrisSelection?.categoryId || undefined,
+        heavyMaterialClass: heavyClassification?.materialClass || undefined,
       });
 
       if (!result.success) {
