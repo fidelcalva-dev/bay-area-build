@@ -3987,6 +3987,56 @@ export type Database = {
           },
         ]
       }
+      customer_contacts: {
+        Row: {
+          contact_name: string
+          contact_role: string | null
+          created_at: string
+          customer_id: string
+          email: string | null
+          id: string
+          is_primary: boolean | null
+          notes: string | null
+          phone: string | null
+          preferred_method: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_name: string
+          contact_role?: string | null
+          created_at?: string
+          customer_id: string
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          phone?: string | null
+          preferred_method?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string
+          contact_role?: string | null
+          created_at?: string
+          customer_id?: string
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          phone?: string | null
+          preferred_method?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_contacts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_health_events: {
         Row: {
           created_at: string
@@ -4320,6 +4370,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "customer_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_sites: {
+        Row: {
+          address: string
+          city: string | null
+          created_at: string
+          customer_id: string
+          gate_code: string | null
+          id: string
+          is_primary: boolean | null
+          permit_notes: string | null
+          placement_instructions: string | null
+          site_name: string
+          site_notes: string | null
+          state: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address: string
+          city?: string | null
+          created_at?: string
+          customer_id: string
+          gate_code?: string | null
+          id?: string
+          is_primary?: boolean | null
+          permit_notes?: string | null
+          placement_instructions?: string | null
+          site_name?: string
+          site_notes?: string | null
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string | null
+          created_at?: string
+          customer_id?: string
+          gate_code?: string | null
+          id?: string
+          is_primary?: boolean | null
+          permit_notes?: string | null
+          placement_instructions?: string | null
+          site_name?: string
+          site_notes?: string | null
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_sites_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
