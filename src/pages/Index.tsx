@@ -86,44 +86,6 @@ const PROJECT_TYPES = [
   { label: 'Estate Cleanout', slug: 'estate-cleanout', icon: Scale },
 ];
 
-const CUSTOMER_ACTIONS = [
-  {
-    label: 'Get Exact Price',
-    desc: 'See your exact pricing by ZIP in under a minute.',
-    icon: ArrowRight,
-    href: '/quote?v3=1',
-    primary: true,
-  },
-  {
-    label: 'Upload Photo for Size Help',
-    desc: 'Not sure what size you need? Show us your project.',
-    icon: Upload,
-    href: '/quote?v3=1&tab=photo',
-    primary: false,
-  },
-  {
-    label: 'Schedule a Delivery',
-    desc: 'Already know what you need? Pick your preferred delivery date.',
-    icon: Clock,
-    href: '/quote?v3=1',
-    primary: false,
-  },
-  {
-    label: 'Talk to a Specialist',
-    desc: 'Call or text a real local team member now.',
-    icon: Phone,
-    href: `tel:${BUSINESS_INFO.phone.sales}`,
-    primary: false,
-    external: true,
-  },
-  {
-    label: 'Contractor Pricing',
-    desc: 'Fast service and repeat-job support for contractors.',
-    icon: HardHat,
-    href: '/quote/contractor',
-    primary: false,
-  },
-];
 
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
