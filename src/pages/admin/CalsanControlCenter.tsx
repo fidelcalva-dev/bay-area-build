@@ -364,53 +364,75 @@ export default function CalsanControlCenter() {
   }, []);
 
   return (
-    <div className="p-4 lg:p-8 space-y-10 max-w-[1440px] mx-auto">
+    <div className="p-4 lg:p-8 space-y-6 md:space-y-10 max-w-[1440px] mx-auto">
 
       {/* ════════ SECTION 1 — EXECUTIVE HEADER ════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 md:gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1 max-w-xl hidden md:block">
             Executive overview of sales, operations, dispatch, finance, SEO, integrations, and system health.
           </p>
-          <div className="flex items-center gap-3 mt-1.5">
-            <p className="text-xs text-muted-foreground/70">
-              {format(now, 'EEEE, MMMM d, yyyy · h:mm a')}
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-[10px] md:text-xs text-muted-foreground/70">
+              {format(now, 'EEE, MMM d · h:mm a')}
             </p>
             {user?.email && (
               <>
-                <span className="text-muted-foreground/30">·</span>
-                <p className="text-xs text-muted-foreground/70">{user.email}</p>
+                <span className="text-muted-foreground/30 hidden md:inline">·</span>
+                <p className="text-xs text-muted-foreground/70 hidden md:block">{user.email}</p>
               </>
             )}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { label: 'Lead Hub', route: '/sales/leads', icon: Users },
-            { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
-            { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
-            { label: 'SEO Health', route: '/admin/seo/health', icon: Globe },
-          ].map(a => (
-            <Button key={a.label} asChild variant="outline" size="sm" className="h-9 text-xs gap-1.5 rounded-xl">
-              <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
-            </Button>
-          ))}
+        {/* Quick links — horizontally scrollable on mobile */}
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-2 w-max md:w-auto">
+            {[
+              { label: 'Lead Hub', route: '/sales/leads', icon: Users },
+              { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
+              { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
+              { label: 'SEO', route: '/admin/seo/health', icon: Globe },
+            ].map(a => (
+              <Button key={a.label} asChild variant="outline" size="sm" className="h-9 text-xs gap-1.5 rounded-xl shrink-0">
+                <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ════════ SECTION 2 — KPI STRIP ════════ */}
       <section>
         <SectionHeader title="Business Snapshot" subtitle="Key performance indicators across all departments" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
-          <KPICard label="New Leads Today" helper="From all channels" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
-          <KPICard label="Hot Leads" helper="Score ≥ 70" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
-          <KPICard label="Quotes Pending" helper="Draft & pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
-          <KPICard label="Jobs Today" helper="Scheduled runs" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
-          <KPICard label="Drivers Active" helper="On route now" value={kpi?.driversActive || 'No data yet'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
-          <KPICard label="Payments Pending" helper="Awaiting payment" value={kpi?.paymentsPending ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
-          <KPICard label="Overdue Invoices" helper="Past due date" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
-          <KPICard label="SEO Score" helper="Site health" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
+        {/* Horizontally scrollable on mobile, grid on desktop */}
+        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible">
+          <div className="flex gap-3 w-max md:w-auto md:grid md:grid-cols-4 xl:grid-cols-8">
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="New Leads Today" helper="From all channels" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Hot Leads" helper="Score ≥ 70" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Quotes Pending" helper="Draft & pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Jobs Today" helper="Scheduled runs" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Drivers Active" helper="On route now" value={kpi?.driversActive || 'N/A'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Payments Pending" helper="Awaiting payment" value={kpi?.paymentsPending ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="Overdue Invoices" helper="Past due date" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
+            </div>
+            <div className="w-[140px] md:w-auto shrink-0">
+              <KPICard label="SEO Score" helper="Site health" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
+            </div>
+          </div>
         </div>
       </section>
 

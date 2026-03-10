@@ -360,3 +360,27 @@
     pointer-events: none !important;
   }
 }
+
+/* ─── Mobile Utilities ─── */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Minimum tap target for accessibility */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
