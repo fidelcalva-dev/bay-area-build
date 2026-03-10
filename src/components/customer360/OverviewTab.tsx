@@ -6,6 +6,8 @@ import { TimelineView } from '@/components/timeline';
 import { HealthScoreCard } from '@/components/health';
 import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
+import { SalesIntelligencePanel } from './SalesIntelligencePanel';
+import { RecommendedScriptWidget } from './RecommendedScriptWidget';
 
 interface Props {
   data: Customer360Data;
