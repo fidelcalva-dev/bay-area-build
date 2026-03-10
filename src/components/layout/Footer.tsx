@@ -338,13 +338,13 @@ export function Footer() {
                 Privacy Policy
               </Link>
               <span className="text-secondary-foreground/30">|</span>
-              <a
-                href={getStaffLoginUrl()}
+              <Link
+                to="/admin/login"
                 rel="nofollow"
                 className="text-secondary-foreground/50 hover:text-secondary-foreground text-xs transition-colors"
               >
                 Staff Login
-              </a>
+              </Link>
             </div>
           </div>
           
