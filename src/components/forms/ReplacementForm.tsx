@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RefreshCw, ArrowRight, Phone, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { logCrmError } from '@/lib/crmErrorLogger';
 import { BUSINESS_INFO } from '@/lib/seo';
 
 export function ReplacementForm() {
