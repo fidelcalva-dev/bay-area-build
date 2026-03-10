@@ -272,6 +272,11 @@ export default function CustomerDetail() {
           </Card>
         </TabsContent>
 
+        {/* ─── QUOTES ─── */}
+        <TabsContent value="quotes">
+          <QuotesTab quotes={quotes} customerId={customer.id} />
+        </TabsContent>
+
         {/* ─── REQUESTS ─── */}
         <TabsContent value="requests">
           <RequestsTab timelineEvents={timelineEvents} isLoading={isTimelineLoading} />
