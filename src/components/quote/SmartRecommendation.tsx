@@ -265,9 +265,9 @@ function getConfidenceAssessment(
   materialType: 'general' | 'heavy'
 ): { confidence: ConfidenceLevel; confidenceLabel: string; confidenceNote: string } {
   const project = projectType ? PROJECT_TYPES.find(p => p.id === projectType) : null;
-  const isSmallProject = project?.id === 'garage' || project?.id === 'landscaping';
-  const isMediumProject = project?.id === 'remodel' || project?.id === 'roofing-small';
-  const isLargeProject = project?.id === 'demo' || project?.id === 'roofing-large';
+  const isSmallProject = project?.id === 'garage' || project?.id === 'landscaping' || project?.id === 'home-cleanout' || project?.id === 'moving-cleanout' || project?.id === 'yard-cleanup';
+  const isMediumProject = project?.id === 'remodel' || project?.id === 'roofing-small' || project?.id === 'construction' || project?.id === 'mixed-debris';
+  const isLargeProject = project?.id === 'demo' || project?.id === 'roofing-large' || project?.id === 'estate-cleanout';
   const isVeryLargeProject = project?.id === 'commercial';
   
   // Heavy material confidence rules
