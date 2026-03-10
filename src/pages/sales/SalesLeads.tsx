@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import {
   Users, Phone, Mail, MessageSquare, FileText, Search, Plus, Clock,
   CheckCircle2, XCircle, TrendingUp, AlertTriangle, Shield, Loader2,
-  Download, Calendar, Filter, Inbox, UserCheck, Zap
+  Download, Calendar, Filter, Inbox, UserCheck, Zap, LayoutGrid
 } from "lucide-react";
+import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,8 +33,16 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   contacted: { label: "Contacted", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
   qualified: { label: "Qualified", className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
   quoted: { label: "Quoted", className: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
+  quote_sent: { label: "Quote Sent", className: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
+  quote_accepted: { label: "Quote Accepted", className: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300" },
+  contract_sent: { label: "Contract Sent", className: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
+  contract_signed: { label: "Contract Signed", className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  payment_received: { label: "Paid", className: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300" },
+  order_created: { label: "Order Created", className: "bg-lime-100 text-lime-800 dark:bg-lime-900/30 dark:text-lime-300" },
   converted: { label: "Won", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
   lost: { label: "Lost", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
+  attention_required: { label: "Attention Required", className: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
+  dormant: { label: "Dormant", className: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" },
 };
 
 const QUALITY_COLORS: Record<string, string> = {
@@ -51,6 +60,8 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'high_risk', label: 'High Risk', icon: Shield },
   { key: 'all', label: 'All', icon: Users },
 ];
+
+type ViewMode = 'list' | 'pipeline';
 
 const SOURCE_LABELS: Record<string, string> = {
   WEBSITE_QUOTE: "Website Quote",
@@ -84,6 +95,7 @@ export default function SalesLeads() {
   const { user } = useAdminAuth();
 
   const [activeTab, setActiveTab] = useState<LeadHubTab>('new');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
@@ -247,6 +259,13 @@ export default function SalesLeads() {
           <p className="text-sm text-muted-foreground">Omni-channel inbox — every lead, one place</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'pipeline' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode(viewMode === 'list' ? 'pipeline' : 'list')}
+          >
+            <LayoutGrid className="w-4 h-4 mr-1" /> Pipeline
+          </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
@@ -393,7 +412,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Table (shared across all tabs) */}
+        {/* Pipeline Board or Table */}
+        {viewMode === 'pipeline' ? (
+          <div className="mt-4">
+            <SalesPipelineBoard leads={leads as any} />
+          </div>
+        ) : (
         <Card className="mt-4">
           <CardContent className="p-0">
             <Table>
@@ -496,6 +520,7 @@ export default function SalesLeads() {
             </Table>
           </CardContent>
         </Card>
+        )}
       </Tabs>
 
       {/* Add Lead Dialog */}

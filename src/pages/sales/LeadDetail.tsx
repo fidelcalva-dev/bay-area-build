@@ -337,29 +337,67 @@ export default function LeadDetail() {
       />
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" onClick={() => {
-          if (lead.customer_phone) window.open(`tel:${lead.customer_phone}`);
-          logAction('CALL_OUT', `Called ${lead.customer_phone}`);
-        }}>
-          <Phone className="w-4 h-4 mr-1" /> Call
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => {
-          if (lead.customer_phone) window.open(`sms:${lead.customer_phone}`);
-          logAction('SMS_OUT', `SMS to ${lead.customer_phone}`);
-        }}>
-          <MessageSquare className="w-4 h-4 mr-1" /> SMS
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => {
-          if (lead.customer_email) window.open(`mailto:${lead.customer_email}`);
-          logAction('EMAIL_OUT', `Email to ${lead.customer_email}`);
-        }}>
-          <Mail className="w-4 h-4 mr-1" /> Email
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}`)}>
-          <FileText className="w-4 h-4 mr-1" /> Create Quote
-        </Button>
-      </div>
+      <Card>
+        <CardContent className="pt-4 pb-4">
+          <p className="text-xs font-medium text-muted-foreground mb-3">Quick Actions</p>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => {
+              if (lead.customer_phone) window.open(`tel:${lead.customer_phone}`);
+              logAction('CALL_OUT', `Called ${lead.customer_phone}`);
+            }}>
+              <Phone className="w-4 h-4 mr-1" /> Call
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              if (lead.customer_phone) window.open(`sms:${lead.customer_phone}`);
+              logAction('SMS_OUT', `SMS to ${lead.customer_phone}`);
+            }}>
+              <MessageSquare className="w-4 h-4 mr-1" /> SMS
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              if (lead.customer_email) window.open(`mailto:${lead.customer_email}`);
+              logAction('EMAIL_OUT', `Email to ${lead.customer_email}`);
+            }}>
+              <Mail className="w-4 h-4 mr-1" /> Email
+            </Button>
+            <Separator orientation="vertical" className="h-8" />
+            <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}`)}>
+              <FileText className="w-4 h-4 mr-1" /> Create Quote
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              // Navigate to quote sending flow - find existing quote or create
+              navigate(`/sales/quotes/new?lead_id=${lead.id}&action=send`);
+              logAction('QUOTE_SENT', 'Initiated quote send');
+            }}>
+              <ExternalLink className="w-4 h-4 mr-1" /> Send Quote
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              navigate(`/sales/quotes/new?lead_id=${lead.id}&action=contract`);
+              logAction('CONTRACT_INITIATED', 'Initiated contract send');
+            }}>
+              <Shield className="w-4 h-4 mr-1" /> Send Contract
+            </Button>
+            <Separator orientation="vertical" className="h-8" />
+            <Button size="sm" variant="outline" onClick={() => {
+              navigate(`/sales/quotes/new?lead_id=${lead.id}&action=payment`);
+              logAction('PAYMENT_REQUESTED', 'Initiated payment collection');
+            }}>
+              <TrendingUp className="w-4 h-4 mr-1" /> Collect Payment
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              navigate(`/sales/quotes/new?lead_id=${lead.id}&action=order`);
+              logAction('ORDER_INITIATED', 'Initiated order creation');
+            }}>
+              <CheckCircle2 className="w-4 h-4 mr-1" /> Create Order
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => {
+              navigate(`/sales/quotes/new?lead_id=${lead.id}&action=schedule`);
+              logAction('SCHEDULE_INITIATED', 'Initiated delivery scheduling');
+            }}>
+              <Clock className="w-4 h-4 mr-1" /> Schedule Delivery
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Tabs */}
       <Tabs defaultValue="overview">
@@ -485,7 +523,7 @@ export default function LeadDetail() {
                     <Select value={editForm.lead_status || 'new'} onValueChange={v => setEditForm({...editForm, lead_status: v})}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {['new','contacted','qualified','quoted','booked','converted','lost'].map(s => (
+                        {['new','contacted','qualified','quote_sent','quote_accepted','contract_sent','contract_signed','payment_received','order_created','converted','lost'].map(s => (
                           <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>
                         ))}
                       </SelectContent>
