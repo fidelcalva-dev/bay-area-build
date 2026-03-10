@@ -9,6 +9,7 @@ import { SEO_USE_CASES } from './seo-use-cases';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 import { YARD_HUBS } from './yard-hub-data';
 import { GRID_SERVICE_TYPES, GRID_SIZES, getAllGridCities } from './seo-grid';
+import { SEO_ZIP_DATA } from './seo-zips';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SitemapEntry {
@@ -145,6 +146,13 @@ const USE_CASE_PAGES: SitemapEntry[] = SEO_USE_CASES.map(uc => ({
   priority: 0.8,
 }));
 
+// ZIP pages (300+ targeted ZIP codes)
+const ZIP_PAGES: SitemapEntry[] = SEO_ZIP_DATA.map(z => ({
+  url: `/service-area/${z.zip}/dumpster-rental`,
+  changefreq: 'monthly' as const,
+  priority: z.tier === 'A' ? 0.8 : z.tier === 'B' ? 0.7 : 0.6,
+}));
+
 // Fetch SEO engine pages from database
 async function fetchSeoPages(): Promise<SitemapEntry[]> {
   try {
@@ -203,7 +211,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...ZIP_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();
@@ -233,11 +241,11 @@ export async function generateFullSitemapXml(): Promise<string> {
 
 // Get all entries for programmatic use
 export function getAllSitemapEntries(): SitemapEntry[] {
-  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...ZIP_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES];
 }
 
 // Get all entries including async SEO pages
 export async function getAllSitemapEntriesWithSeo(): Promise<SitemapEntry[]> {
   const seoPages = await fetchSeoPages();
-  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...seoPages];
+  return [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...ZIP_PAGES, ...seoPages];
 }
