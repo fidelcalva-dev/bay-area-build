@@ -644,7 +644,7 @@ export default function CalsanControlCenter() {
       {/* ════════ SECTION 10 — QUICK ACCESS GRID ════════ */}
       <section>
         <SectionHeader title="Quick Access" subtitle="Jump to any department" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
           {QUICK_ACCESS_GRID.map(item => (
             <QuickAccessCard key={item.label} {...item} />
           ))}
