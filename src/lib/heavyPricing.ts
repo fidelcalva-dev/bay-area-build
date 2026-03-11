@@ -219,7 +219,7 @@ export function checkTrashContamination(
       newMaterialType: 'general',
       reason: 'Reclassified as mixed debris due to trash contamination. Per-ton billing applies.',
       reasonEs: 'Reclasificado como escombros mixtos debido a contaminación con basura. Se aplica facturación por tonelada.',
-      allowedSizes: [6, 8, 10, 20, 30, 40, 50], // General debris sizes
+      allowedSizes: [5, 8, 10, 20, 30, 40, 50], // General debris sizes
     };
   }
   
