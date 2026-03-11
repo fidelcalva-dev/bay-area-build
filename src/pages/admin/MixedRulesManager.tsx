@@ -164,7 +164,7 @@ export default function MixedRulesManager() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Percent className="w-5 h-5" />
-              Small Container Rules (6/8/10 yd)
+              Small Container Rules (5/8/10 yd)
             </CardTitle>
             <CardDescription>
               Per-yard overage for smaller containers
