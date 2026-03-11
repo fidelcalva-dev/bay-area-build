@@ -1,7 +1,11 @@
 // Shared Data - Single Source of Truth
-// This file contains all shared data used across the site to prevent inconsistencies
+// This file re-exports canonical pricing from src/config/pricingConfig.ts
+// and contains additional operational data (FAQs, CTA links, etc.)
 
 import { BUSINESS_INFO, SERVICE_AREAS } from './seo';
+
+// Re-export the canonical pricing config so existing consumers keep working
+export { PRICING_CONFIG, GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL, HEAVY_ALLOWED_SIZES, POLICIES, getGeneralSize, getGeneralPrice, getIncludedTons, getStartingPrice, getHeavyPrice, isHeavyAllowedSize, formatPrice, getSizeRangeLabel, getGeneralSizeList, getGeneralSizeListLabel, getHeavySizeListLabel } from '@/config/pricingConfig';
 
 // ============================================================
 // DUMPSTER SIZES - Official inventory
