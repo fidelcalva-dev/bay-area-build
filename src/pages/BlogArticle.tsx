@@ -51,7 +51,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
       { heading: 'How to Get the Best Price', body: `1. Choose the right size — oversizing costs more, undersizing requires a second haul.\n2. Separate heavy materials — concrete in its own flat-fee dumpster saves money.\n3. Order in advance — same-day delivery has a $${PRICING_POLICIES.sameDayDelivery} premium.\n4. Ask about volume discounts if you need multiple dumpsters.` },
     ],
     faqs: [
-      { question: 'What is the cheapest dumpster in Oakland?', answer: `The most affordable option is a 6-yard dumpster starting at $${DUMPSTER_SIZES_DATA[0].priceFrom}. This holds 2-3 pickup loads and is perfect for small cleanouts and concrete removal.` },
+      { question: 'What is the cheapest dumpster in Oakland?', answer: `The most affordable option is a 5-yard dumpster starting at $${DUMPSTER_SIZES_DATA[0].priceFrom}. This holds 2-3 pickup loads and is perfect for small cleanouts and concrete removal.` },
       { question: 'Are there hidden fees?', answer: `No. Our quoted price includes delivery, pickup, and your weight allowance. The only additional charge is $${PRICING_POLICIES.overagePerTonGeneral}/ton overage if your general debris load exceeds included tonnage. Heavy materials are flat-fee with no overage.` },
       { question: 'Is there a deposit required?', answer: 'No deposit is required for most residential rentals. Commercial accounts may have credit terms available.' },
     ],
