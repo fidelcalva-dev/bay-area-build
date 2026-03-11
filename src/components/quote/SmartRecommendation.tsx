@@ -276,7 +276,7 @@ function getConfidenceAssessment(
     const isMediumHeavy = project?.id === 'concrete-medium' || project?.id === 'concrete-removal' || project?.id === 'dirt-soil-removal';
     const isLargeHeavy = project?.id === 'concrete-large';
     
-    if (selectedSize === 6) {
+    if (selectedSize === 5) {
       if (isSmallHeavy || !projectType) {
         return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Good for small concrete/dirt jobs like patios or walkways' };
       } else if (isMediumHeavy) {
