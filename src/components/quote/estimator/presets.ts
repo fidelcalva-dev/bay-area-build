@@ -218,7 +218,7 @@ export const PRESETS: Record<PresetTab, Preset[]> = {
       volumeHigh: 6,
       weightLow: 5,
       weightHigh: 9,
-      recommendedSize: 6,
+      recommendedSize: 5,
       icon: 'mountain',
     },
     // Heavy: Concrete/Soil Medium
