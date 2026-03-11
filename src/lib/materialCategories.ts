@@ -137,7 +137,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Construction & demolition mix of materials',
     descriptionEs: 'Mezcla de materiales de construcción y demolición',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'All C&D loads go to licensed transfer stations with state-mandated diversion rates',
