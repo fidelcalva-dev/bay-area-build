@@ -162,19 +162,19 @@ export function calculateSizeRecommendation(
     // East Bay mapping: default 10, smaller based on score
     if (volumeScore <= 3) {
       recommendedSize = 5;
-      alternativeSizes = [6, 8];
+      alternativeSizes = [8];
       confidenceScore = 70;
     } else if (volumeScore <= 4) {
-      recommendedSize = 6;
-      alternativeSizes = [5, 8];
+      recommendedSize = 5;
+      alternativeSizes = [8];
       confidenceScore = 75;
     } else if (volumeScore <= 6) {
       recommendedSize = 8;
-      alternativeSizes = [6, 10];
+      alternativeSizes = [5, 10];
       confidenceScore = 80;
     } else {
       recommendedSize = 10;
-      alternativeSizes = [8, 6];
+      alternativeSizes = [8, 5];
       confidenceScore = 90;
     }
 
