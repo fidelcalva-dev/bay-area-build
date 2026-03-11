@@ -113,7 +113,7 @@ export function generateCityPageContent(city: SeoCity): Omit<SeoPage, 'id' | 'ci
   const urlPath = cityUrl(city.city_slug);
 
   const title = `Dumpster Rental ${city.city_name} CA | Same-Day Delivery | Local Yard`;
-  const metaDescription = `Local dumpster rental in ${city.city_name}, CA. Same-day delivery from our ${yard?.city || 'Bay Area'} yard. 6-50 yard sizes, flat-fee concrete, transparent pricing. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
+  const metaDescription = `Local dumpster rental in ${city.city_name}, CA. Same-day delivery from our ${yard?.city || 'Bay Area'} yard. 5-50 yard sizes, flat-fee concrete, transparent pricing. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
   const h1 = `Dumpster Rental in ${city.city_name}, CA`;
 
   const sections: ContentSection[] = [

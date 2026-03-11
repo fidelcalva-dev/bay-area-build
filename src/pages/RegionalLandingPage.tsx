@@ -121,7 +121,7 @@ export default function RegionalLandingPage() {
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Real Yard in {yard?.city}</span></div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery</span></div>
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Not a Broker</span></div>
-            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>6-50 Yard Sizes</span></div>
+            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>5-50 Yard Sizes</span></div>
           </div>
         </div>
       </section>
