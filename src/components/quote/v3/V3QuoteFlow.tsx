@@ -390,7 +390,7 @@ export function V3QuoteFlow() {
   const handleSizeSelect = (s: number) => {
     setSize(s);
     ga4.quoteSizeSelected({ size_yd: s, was_recommended: s === recommendedSize });
-    setTimeout(() => setStep('price'), 200);
+    setTimeout(() => setStep('contact'), 200);
   };
 
   // Save quote
