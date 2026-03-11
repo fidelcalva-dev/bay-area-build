@@ -136,8 +136,8 @@ WEIGHT ESTIMATION (use these density ranges in tons/cubic yard):
 ${Object.entries(DENSITY_RANGES).map(([k, v]) => `- ${k}: ${v.low}-${v.high} tons/cy`).join('\n')}
 
 DUMPSTER SIZE RULES (LOCKED - NEVER DEVIATE):
-- HEAVY MATERIALS (concrete, dirt, asphalt, brick, tile, rock, soil, roofing): ONLY 6, 8, or 10 yard containers allowed
-- GENERAL/MIXED DEBRIS: 6, 8, 10, 20, 30, 40, or 50 yard containers
+- HEAVY MATERIALS (concrete, dirt, asphalt, brick, tile, rock, soil, roofing): ONLY 5, 8, or 10 yard containers allowed
+- GENERAL/MIXED DEBRIS: 5, 8, 10, 20, 30, 40, or 50 yard containers
 
 RECOMMENDATION LOGIC:
 1. If dominant materials are heavy (>60% by estimated volume) → recommend heavy flow, sizes 6/8/10 only
