@@ -81,7 +81,7 @@ export function generateFallbackFaqs(cityName: string, existingCount: number): E
     },
     {
       question: `How does pricing work for heavy materials like concrete?`,
-      answer: `Heavy material dumpsters (concrete, dirt, asphalt) are available in 6, 8, and 10-yard sizes only, with flat-fee pricing that includes disposal. No surprise weight charges. Loads must be clean — if mixed debris is found, overage rates of $165/ton apply.`,
+      answer: `Heavy material dumpsters (concrete, dirt, asphalt) are available in 5, 8, and 10-yard sizes only, with flat-fee pricing that includes disposal. No surprise weight charges. Loads must be clean — if mixed debris is found, overage rates of $165/ton apply.`,
     },
     {
       question: `What happens if I overfill the dumpster?`,

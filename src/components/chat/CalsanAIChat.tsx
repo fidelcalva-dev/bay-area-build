@@ -1336,7 +1336,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                         <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2">
                           <p className="text-xs text-foreground font-medium">Heavy material detected</p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
-                            Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 6, 8, or 10 yard.
+                            Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 5, 8, or 10 yard.
                           </p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
                             Fill-line rules may apply for safe transport.
