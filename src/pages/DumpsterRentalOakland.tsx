@@ -70,7 +70,7 @@ const FAQS = [
   },
   {
     question: 'How much does dumpster rental cost in Oakland?',
-    answer: `Dumpster rental in Oakland starts at $${DUMPSTER_SIZES_DATA[0]?.priceFrom || 390} for a ${DUMPSTER_SIZES_DATA[0]?.yards || 6}-yard dumpster. Final pricing depends on dumpster size, material type, your ZIP code, and distance from our yard. Heavy material dumpsters (concrete, dirt) use flat-fee pricing with no weight overage. Use our online calculator for an instant, exact quote.`,
+    answer: `Dumpster rental in Oakland starts at $${DUMPSTER_SIZES_DATA[0]?.priceFrom || 395} for a ${DUMPSTER_SIZES_DATA[0]?.yards || 5}-yard dumpster. Final pricing depends on dumpster size, material type, your ZIP code, and distance from our yard. Heavy material dumpsters (concrete, dirt) use flat-fee pricing with no weight overage. Use our online calculator for an instant, exact quote.`,
   },
   {
     question: 'Do I need a permit in Oakland?',
