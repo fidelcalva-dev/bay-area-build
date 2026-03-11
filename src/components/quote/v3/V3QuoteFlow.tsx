@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
+import { getPriceRangeForZip, type PriceRange } from '@/lib/masterPricingService';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
 import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
