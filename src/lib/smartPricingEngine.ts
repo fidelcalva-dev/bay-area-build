@@ -754,7 +754,8 @@ export async function calculateSmartQuoteFromZip(
     }
   }
 
-  return calculateSmartQuote({
+  // Try smart engine first
+  const smartResult = await calculateSmartQuote({
     lat,
     lng,
     zip,
@@ -763,5 +764,41 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired: options?.greenHaloRequired,
     isContractor: options?.isContractor,
     contractorDiscountPct: options?.contractorDiscountPct,
+    isSameDay: options?.isSameDay,
   });
+
+  if (smartResult) return smartResult;
+
+  // Vendor fallback: if no local coverage, try vendor marketplace
+  const vendorQuote = await findVendorFallback(zip, sizeYd);
+  if (vendorQuote) {
+    // Build a synthetic SmartQuote from vendor data
+    return {
+      yard: null as any, // No local yard
+      dumpSite: null as any,
+      materialRule: (await getMaterialRule(materialClass))!,
+      internalCost: {
+        delivery: 0, pickup: 0, dumpFee: 0, fuel: 0, labor: 0,
+        overhead: 0, routeAdjustment: 0, greenHaloCost: 0,
+        totalInternal: vendorQuote.vendorPrice,
+      },
+      publicPriceLow: vendorQuote.customerPrice,
+      publicPriceHigh: vendorQuote.customerPrice + RANGE_SPREAD,
+      includedTons: 0,
+      overweightFeePerTon: 165,
+      isFlatFee: false,
+      isManualReview: true,
+      marginPct: vendorQuote.markupPct,
+      surgeMultiplier: 1,
+      capacityUtilization: 0,
+      isVendorFallback: true,
+      vendorName: vendorQuote.vendorName,
+      warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],
+      greenHaloApplied: false,
+      contaminationRisk: false,
+      outsideServiceRadius: true,
+    };
+  }
+
+  return null;
 }
