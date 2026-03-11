@@ -32,7 +32,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     metaDescription: 'Rent a concrete dumpster with flat-fee pricing—no weight overage charges. 6, 8, and 10 yard sizes for concrete, brick, and block removal. Same-day delivery. Call (510) 680-2150.',
     intro: 'Need to dispose of concrete, brick, or block? Our heavy material dumpsters are designed for dense loads with flat-fee pricing—disposal included, no weight surprises. We route clean concrete to certified recycling facilities in the East Bay.',
     icon: Hammer,
-    sizes: [6, 8, 10],
+    sizes: [5, 8, 10],
     pricing: 'Concrete dumpsters use FLAT FEE pricing. Disposal is included with no weight overage charges. This applies to clean loads only—mixing trash or general debris may result in reclassification.',
     rules: [
       'Only clean concrete, brick, block, and rebar-free material',
