@@ -328,7 +328,7 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
 function generateSafeAnswer(question: string): string {
   const q = question.toLowerCase();
   if (q.includes('heavy') || q.includes('concrete') || q.includes('dirt') || q.includes('soil') || q.includes('rock') || q.includes('brick')) {
-    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 6-10 yard containers. These have a mandatory fill-line — you cannot exceed it. Included tonnage is typically 4-5 tons depending on size. Overage charges apply beyond included weight.\n\nWould you like exact pricing for your ZIP?';
+    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 5, 8, and 10 yard containers. These are flat-fee — disposal is included with no extra weight charges. A mandatory fill-line applies for safe transport.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('ton') || q.includes('weight') || q.includes('included') || q.includes('overage')) {
     return 'Each dumpster includes a set amount of disposal tonnage (typically 1-5 tons depending on size and material). If your debris exceeds the included weight, an overage charge of $165 per additional ton applies. The included tons are clearly shown during the quote process.\n\nWould you like exact pricing for your ZIP?';
@@ -340,7 +340,7 @@ function generateSafeAnswer(question: string): string {
     return 'Pricing varies by ZIP code, dumpster size, and material type. We offer transparent, all-inclusive pricing with no hidden fees. Use the Guided Quote to see your exact price in seconds.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('size') || q.includes('yard') || q.includes('which dumpster') || q.includes('recommend')) {
-    return 'For most residential cleanouts, a 15-20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 6-10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
+    return 'For most residential cleanouts, a 20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 5, 8, and 10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('deliver') || q.includes('schedule') || q.includes('when') || q.includes('pickup') || q.includes('next day')) {
     return 'We deliver Monday through Friday. Next-business-day delivery is available in most service areas. You can choose your preferred delivery window during booking: Morning, Midday, or Afternoon.\n\nWould you like exact pricing for your ZIP?';
@@ -1336,7 +1336,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                         <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2">
                           <p className="text-xs text-foreground font-medium">Heavy material detected</p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
-                            Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 6, 8, or 10 yard.
+                            Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 5, 8, or 10 yard.
                           </p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
                             Fill-line rules may apply for safe transport.
@@ -1442,7 +1442,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2 mb-4">
                   <p className="text-xs text-foreground font-medium">Heavy Material Notice</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Heavy materials are restricted to 6-10 yard containers with mandatory fill-line compliance.
+                    Heavy materials are restricted to 5, 8, and 10 yard containers with mandatory fill-line compliance.
                   </p>
                 </div>
               )}

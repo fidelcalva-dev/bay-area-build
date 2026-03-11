@@ -38,12 +38,12 @@ const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
   weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
-  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 6 ? '40% less than 10 yd' : null,
+  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 5 ? '40% less than 10 yd' : null,
 }));
 
 function getIdealFor(size: number, isHeavy: boolean): string {
   if (isHeavy) {
-    if (size === 6) return 'Small concrete or dirt removal';
+    if (size === 5) return 'Small concrete or dirt removal';
     if (size === 8) return 'Driveway or patio demolition';
     return 'Large concrete or foundation removal';
   }

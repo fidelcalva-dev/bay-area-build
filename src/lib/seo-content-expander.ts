@@ -33,7 +33,7 @@ export function generateSeoExpansion(cityName: string, countyName?: string): Exp
     },
     {
       heading: `Materials Accepted in ${cityName} Dumpsters`,
-      body: `Our dumpster rental service in ${cityName} accepts a wide range of materials including household junk, furniture, drywall, wood, carpet, roofing shingles, and mixed construction debris. We also offer specialized heavy-material dumpsters for concrete, dirt, soil, brick, block, and asphalt — available in 6, 8, and 10-yard sizes with flat-fee pricing. Prohibited items include hazardous waste, paint, batteries, medical waste, and pressurized tanks.`,
+      body: `Our dumpster rental service in ${cityName} accepts a wide range of materials including household junk, furniture, drywall, wood, carpet, roofing shingles, and mixed construction debris. We also offer specialized heavy-material dumpsters for concrete, dirt, soil, brick, block, and asphalt — available in 5, 8, and 10-yard sizes with flat-fee pricing. Prohibited items include hazardous waste, paint, batteries, medical waste, and pressurized tanks.`,
     },
     {
       heading: `How Dumpster Delivery Works in ${cityName}`,
@@ -81,7 +81,7 @@ export function generateFallbackFaqs(cityName: string, existingCount: number): E
     },
     {
       question: `How does pricing work for heavy materials like concrete?`,
-      answer: `Heavy material dumpsters (concrete, dirt, asphalt) are available in 6, 8, and 10-yard sizes only, with flat-fee pricing that includes disposal. No surprise weight charges. Loads must be clean — if mixed debris is found, overage rates of $165/ton apply.`,
+      answer: `Heavy material dumpsters (concrete, dirt, asphalt) are available in 5, 8, and 10-yard sizes only, with flat-fee pricing that includes disposal. No surprise weight charges. Loads must be clean — if mixed debris is found, overage rates of $165/ton apply.`,
     },
     {
       question: `What happens if I overfill the dumpster?`,

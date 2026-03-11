@@ -146,7 +146,7 @@ const BUSINESS_SCENARIOS = [
 const CONCRETE_CAPACITY = [
   { size: 10, slab4in: '150–250 sq ft', slab6in: '100–170 sq ft', slab4inEs: '150–250 pies²', slab6inEs: '100–170 pies²' },
   { size: 8, slab4in: '120–200 sq ft', slab6in: '80–140 sq ft', slab4inEs: '120–200 pies²', slab6inEs: '80–140 pies²' },
-  { size: 6, slab4in: '90–150 sq ft', slab6in: '60–110 sq ft', slab4inEs: '90–150 pies²', slab6inEs: '60–110 pies²' },
+  { size: 5, slab4in: '75–125 sq ft', slab6in: '50–90 sq ft', slab4inEs: '75–125 pies²', slab6inEs: '50–90 pies²' },
 ];
 
 interface ScenarioCardProps {

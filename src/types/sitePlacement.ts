@@ -62,7 +62,7 @@ export interface PlacementFormData {
 // Default fallback dimensions if database fetch fails
 export const DEFAULT_DUMPSTER_DIMENSIONS: Record<number, { width_ft: number; length_ft: number }> = {
   5: { width_ft: 4, length_ft: 8 },
-  6: { width_ft: 5, length_ft: 10 },
+  // 6yd entry removed — canonical sizes are 5, 8, 10, 20, 30, 40, 50
   8: { width_ft: 6, length_ft: 12 },
   10: { width_ft: 7, length_ft: 14 },
   20: { width_ft: 8, length_ft: 22 },

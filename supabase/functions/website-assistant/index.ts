@@ -27,7 +27,7 @@ SIZING GUIDELINES (general only — never tie to a price):
 - Roofing (single layer): 10-20 yard
 - Roofing (multiple layers): 20-30 yard
 - New construction: 30-40 yard
-- Concrete/dirt: 6-10 yard (flat-fee, no weight overage)
+- Concrete/dirt: 5-10 yard (flat-fee, no weight overage)
 - Yard waste/landscaping: 10-20 yard
 
 INTENT CLASSIFICATION:

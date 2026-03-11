@@ -26,7 +26,7 @@ let OVERAGE_RATE_PER_TON = 165;
 
 // Included tons by size (general debris only)
 const INCLUDED_TONS: Record<number, number> = {
-  6: 0.5,
+  5: 0.5,
   8: 0.5,
   10: 1,
   20: 2,

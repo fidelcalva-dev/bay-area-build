@@ -25,7 +25,7 @@ export default function CityLandingPage() {
     { question: `How much does a dumpster rental cost in ${city.name}?`, answer: `Dumpster rental in ${city.name} starts at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. Pricing depends on size, material type, and rental duration. Heavy materials (concrete, dirt) are flat-fee with no weight overage. General debris overages are billed at $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
     { question: `How fast can I get a dumpster in ${city.name}?`, answer: `Same-day delivery is available for most ${city.name} addresses when ordered before noon. Our ${yard?.name || 'nearest yard'} is close by, ensuring fast turnaround. Next-day delivery is standard for all orders.` },
     { question: `Do I need a permit for a dumpster in ${city.name}?`, answer: city.permitInfo },
-    { question: `What sizes are available in ${city.name}?`, answer: `We offer 6, 8, 10, 20, 30, 40, and 50 yard dumpsters in ${city.name}. Heavy material dumpsters (concrete, dirt) are available in 6-10 yard sizes. General debris dumpsters are available in all sizes.` },
+    { question: `What sizes are available in ${city.name}?`, answer: `We offer 5, 8, 10, 20, 30, 40, and 50 yard dumpsters in ${city.name}. Heavy material dumpsters (concrete, dirt) are available in 5-10 yard sizes. General debris dumpsters are available in all sizes.` },
   ];
 
   const faqSchema = generateFAQSchema(localFaqs);

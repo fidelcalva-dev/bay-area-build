@@ -218,7 +218,7 @@ export const PRESETS: Record<PresetTab, Preset[]> = {
       volumeHigh: 6,
       weightLow: 5,
       weightHigh: 9,
-      recommendedSize: 6,
+      recommendedSize: 5,
       icon: 'mountain',
     },
     // Heavy: Concrete/Soil Medium
@@ -338,7 +338,7 @@ export function getPresetConfidence(
   
   // For general debris, check included tons
   const includedTons: Record<number, number> = {
-    6: 0.5, 8: 0.5, 10: 1, 20: 2, 30: 3, 40: 4, 50: 5,
+    5: 0.5, 8: 0.5, 10: 1, 20: 2, 30: 3, 40: 4, 50: 5,
   };
   const included = includedTons[recommendedSize] || 2;
   

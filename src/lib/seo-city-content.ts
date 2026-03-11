@@ -42,7 +42,7 @@ export function generateCityFAQs(cityName: string, county: string) {
   return [
     {
       question: `What dumpster sizes are available in ${cityName}?`,
-      answer: `We offer 10, 15, 20, 30, and 40 yard roll-off dumpsters in ${cityName}. For heavy materials like concrete or dirt, we also have 6, 8, and 10 yard heavy-duty containers with flat-fee pricing.`
+      answer: `We offer 5, 8, 10, 20, 30, 40, and 50 yard roll-off dumpsters in ${cityName}. For heavy materials like concrete or dirt, we have 5, 8, and 10 yard heavy-duty containers with flat-fee pricing.`
     },
     {
       question: `How fast can you deliver a dumpster in ${cityName}?`,

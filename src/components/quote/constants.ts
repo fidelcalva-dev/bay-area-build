@@ -136,8 +136,8 @@ export const DUMPSTER_SIZES: DumpsterSize[] = DUMPSTER_SIZES_DATA.map(size => ({
 // ============================================================
 // MATERIAL TYPES - Dynamically derived from MASTER data
 // ============================================================
-// Heavy = sizes where category is 'heavy' or 'both' (6, 8, 10)
-// General = sizes where category is 'general' or 'both' (6, 8, 10, 20, 30, 40, 50)
+// Heavy = sizes where category is 'heavy' or 'both' (5, 8, 10)
+// General = sizes where category is 'general' or 'both' (5, 8, 10, 20, 30, 40, 50)
 
 export const MATERIAL_TYPES: MaterialType[] = [
   {

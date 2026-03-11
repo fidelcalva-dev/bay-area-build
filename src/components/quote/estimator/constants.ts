@@ -155,7 +155,7 @@ export const INPUT_METHODS: InputMethodConfig[] = [
 
 // Included tons by size (for general debris only)
 export const INCLUDED_TONS: Record<number, number> = {
-  6: 0.5,
+  5: 0.5,
   8: 0.5,
   10: 1,
   20: 2,
@@ -166,7 +166,7 @@ export const INCLUDED_TONS: Record<number, number> = {
 
 // Volume to size recommendations (cubic yards)
 export const SIZE_THRESHOLDS = [
-  { maxVolume: 6, size: 6, nextSize: 8 },
+  { maxVolume: 5, size: 5, nextSize: 8 },
   { maxVolume: 8, size: 8, nextSize: 10 },
   { maxVolume: 10, size: 10, nextSize: 20 },
   { maxVolume: 20, size: 20, nextSize: 30 },
