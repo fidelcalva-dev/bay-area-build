@@ -1519,7 +1519,7 @@ export function V3QuoteFlow() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Base Price</span>
-                      <span className="text-foreground">${quote.subtotal.toLocaleString()}</span>
+                      <span className="text-foreground">${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground flex items-center gap-1">
