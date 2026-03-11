@@ -422,10 +422,33 @@ export function V3QuoteFlow() {
     setTimeout(() => setStep('size'), 200);
   };
 
+  // Upsell nudge state
+  const [showUpsellNudge, setShowUpsellNudge] = useState(false);
+
   // Handle size tap
   const handleSizeSelect = (s: number) => {
     setSize(s);
     ga4.quoteSizeSelected({ size_yd: s, was_recommended: s === recommendedSize });
+
+    // Upsell: if 10yd selected for general debris, nudge toward 20yd
+    if (s === 10 && !isHeavy && availableSizes.includes(20)) {
+      setShowUpsellNudge(true);
+      return; // don't auto-advance — show nudge first
+    }
+
+    setShowUpsellNudge(false);
+    setTimeout(() => setStep('contact'), 200);
+  };
+
+  const handleAcceptUpsell = () => {
+    setSize(20);
+    setShowUpsellNudge(false);
+    ga4.quoteSizeSelected({ size_yd: 20, was_recommended: false });
+    setTimeout(() => setStep('contact'), 200);
+  };
+
+  const handleDeclineUpsell = () => {
+    setShowUpsellNudge(false);
     setTimeout(() => setStep('contact'), 200);
   };
 
@@ -959,7 +982,38 @@ export function V3QuoteFlow() {
                 </p>
               </div>
 
-              {/* Hero card — recommended size */}
+              {/* Urgency bar */}
+              {availability.sameDayLikely && (
+                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-primary/5 border border-primary/20 animate-fade-in">
+                  <Zap className="w-4 h-4 text-primary shrink-0" />
+                  <p className="text-xs font-semibold text-primary">
+                    Same-day delivery available — limited slots remaining
+                  </p>
+                </div>
+              )}
+
+              {/* Contractor perks banner */}
+              {customerType === 'contractor' && (
+                <div className="rounded-xl bg-muted/40 border border-border/60 p-3.5">
+                  <p className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-2">Contractor Benefits</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center text-center gap-1">
+                      <Zap className="w-4 h-4 text-primary" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Priority Delivery</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center gap-1">
+                      <Star className="w-4 h-4 text-primary" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Volume Pricing</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center gap-1">
+                      <Phone className="w-4 h-4 text-primary" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Dedicated Support</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Hero card — recommended size (anchored to 20yd for general) */}
               <button
                 onClick={() => handleSizeSelect(recommendedSize)}
                 className={cn(
@@ -968,11 +1022,16 @@ export function V3QuoteFlow() {
                 )}
               >
                 {/* Recommended badge */}
-                <div className="px-4 py-2 bg-primary/5 border-b border-primary/10">
+                <div className="px-4 py-2 bg-primary/5 border-b border-primary/10 flex items-center justify-between">
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-primary uppercase tracking-wider">
                     <Star className="w-3 h-3" />
-                    Recommended
+                    {recommendedSize === 20 ? 'Best Value' : 'Recommended'}
                   </span>
+                  {recommendedSize === 20 && (
+                    <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      Most Popular
+                    </span>
+                  )}
                 </div>
 
                 <div className="p-4">
@@ -1027,7 +1086,7 @@ export function V3QuoteFlow() {
                 </span>
               </div>
 
-              {/* Alternatives */}
+              {/* Alternatives with value labels */}
               {(alternativeSizes.smaller || alternativeSizes.larger) && (
                 <div className="grid grid-cols-2 gap-3">
                   {alternativeSizes.smaller && (
@@ -1044,7 +1103,8 @@ export function V3QuoteFlow() {
                         )}
                       </div>
                       <p className="text-xl font-bold text-foreground">{alternativeSizes.smaller}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium mt-0.5">Yard (smaller)</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium mt-0.5">Yard</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Good for small projects</p>
                     </button>
                   )}
                   {alternativeSizes.larger && (
@@ -1061,9 +1121,45 @@ export function V3QuoteFlow() {
                         )}
                       </div>
                       <p className="text-xl font-bold text-foreground">{alternativeSizes.larger}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium mt-0.5">Yard (larger)</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium mt-0.5">Yard</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">For large jobs</p>
                     </button>
                   )}
+                </div>
+              )}
+
+              {/* Upsell nudge: 10yd → 20yd */}
+              {showUpsellNudge && !isHeavy && (
+                <div className="rounded-2xl border-2 border-primary/40 bg-primary/5 p-4 space-y-3 animate-fade-in">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Navigation className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground text-sm">Upgrade to 20 Yard?</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                        More space for your project. Less risk of overflow. Better value per cubic yard.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="cta"
+                      size="sm"
+                      className="rounded-xl text-xs font-semibold"
+                      onClick={handleAcceptUpsell}
+                    >
+                      Yes, upgrade to 20 yd
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl text-xs font-semibold"
+                      onClick={handleDeclineUpsell}
+                    >
+                      Keep 10 yd
+                    </Button>
+                  </div>
                 </div>
               )}
 
