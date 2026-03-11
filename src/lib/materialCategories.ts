@@ -444,7 +444,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Rock, stone, gravel, granite',
     descriptionEs: 'Roca, piedra, grava, granito',
     classification: 'HEAVY_PLUS_200',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: false,
     icon: Mountain,
