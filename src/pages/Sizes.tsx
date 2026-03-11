@@ -144,8 +144,8 @@ export default function Sizes() {
                   <div>
                     <p className="font-semibold text-foreground mb-1">Flat Fee Pricing – No Weight Worries</p>
                     <p className="text-sm text-muted-foreground">
-                      Heavy material dumpsters (6/8/10 yard) are FLAT FEE. Disposal is included with no extra weight charges.
-                      If trash or debris is mixed in, the load may be reclassified and additional charges may apply.
+                      Heavy material dumpsters (5/8/10 yard) are FLAT FEE. Disposal is included with no extra weight charges.
+                      If trash or debris is mixed in, the load may be reclassified and additional charges plus a $150 contamination surcharge may apply.
                     </p>
                   </div>
                 </div>
