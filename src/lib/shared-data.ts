@@ -200,8 +200,8 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'Do you offer dumpsters for concrete and dirt?',
     questionEs: '¿Ofrecen contenedores para concreto y tierra?',
-    answer: 'Yes! We have heavy material dumpsters (6, 8, and 10 yard) specifically for concrete, dirt, rock, and asphalt. These are FLAT FEE—disposal is included with no extra weight charges. Heavy materials cannot be mixed with other debris.',
-    answerEs: '¡Sí! Tenemos contenedores para materiales pesados (6, 8 y 10 yardas) específicamente para concreto, tierra, roca y asfalto. Son TARIFA PLANA—sin cargos adicionales por peso.',
+    answer: 'Yes! We have heavy material dumpsters (5, 8, and 10 yard) specifically for concrete, dirt, rock, and asphalt. These are FLAT FEE—disposal is included with no extra weight charges. Heavy materials cannot be mixed with other debris.',
+    answerEs: '¡Sí! Tenemos contenedores para materiales pesados (5, 8 y 10 yardas) específicamente para concreto, tierra, roca y asfalto. Son TARIFA PLANA—sin cargos adicionales por peso.',
     category: 'materials',
   },
   // Contractor-focused FAQs
