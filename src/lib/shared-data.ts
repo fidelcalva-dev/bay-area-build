@@ -36,7 +36,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 390,  // v56 Plan A base
+    priceFrom: 395,  // Approved public price
     useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
     loads: '2–3 pickup loads',
     description: 'Compact size for small jobs.',
