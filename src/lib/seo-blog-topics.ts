@@ -70,7 +70,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
   {
     slug: 'heavy-material-dumpsters-explained',
     title: 'Heavy Material Dumpsters Explained: Concrete, Dirt & Rock',
-    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, size limits (6-10 yard), clean load rules, and when to use them vs general debris containers.',
+    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, size limits (5-10 yard), clean load rules, and when to use them vs general debris containers.',
     targetKeyword: 'heavy material dumpster',
     category: 'materials',
     outline: ['What qualifies as heavy material', 'Size restrictions (6-10yd)', 'Flat-fee vs overage pricing', 'Clean load requirements', 'Contamination reclassification'],
