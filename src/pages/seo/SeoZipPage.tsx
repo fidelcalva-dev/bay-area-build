@@ -25,7 +25,7 @@ export default function SeoZipPage() {
   const canonicalUrlFull = `${BUSINESS_INFO.url}${canonicalPath}`;
 
   const faqs = [
-    { question: `How much is a dumpster rental in ${zipData.zip}?`, answer: `Dumpster rental in ${zipData.zip} (${zipData.city}) starts from $390 for a 6-yard container. Price depends on size and material type. Heavy materials are flat-fee. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
+    { question: `How much is a dumpster rental in ${zipData.zip}?`, answer: `Dumpster rental in ${zipData.zip} (${zipData.city}) starts from $390 for a 5-yard container. Price depends on size and material type. Heavy materials are flat-fee. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
     { question: `How fast can I get a dumpster in ${zipData.zip}?`, answer: `Same-day delivery to ${zipData.zip} (${zipData.neighborhoods.join(', ')}) is available when ordered before noon. Our ${yard?.name || 'local yard'} is close by for fast turnaround.` },
     { question: `Do I need a permit for a dumpster in ${zipData.zip}?`, answer: `If placing the dumpster on your private driveway, no permit is needed. Street placement in ${zipData.city} requires a permit from public works. We recommend driveway placement.` },
     { question: `What sizes are available for delivery to ${zipData.zip}?`, answer: `All sizes from 6 to 50 yards deliver to ${zipData.zip}. Heavy material containers (concrete, dirt) are available in 6, 8, and 10 yard sizes.` },
