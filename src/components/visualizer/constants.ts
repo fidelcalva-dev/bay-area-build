@@ -3,7 +3,7 @@
  * All dimensions in feet (W × L × H)
  */
 
-export type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40;
+export type DumpsterSize = 5 | 8 | 10 | 20 | 30 | 40;
 
 export interface DumpsterSpec {
   yards: DumpsterSize;
