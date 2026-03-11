@@ -2,6 +2,7 @@
 // Each pool contains 12+ questions to allow unique 8-FAQ selections per city
 
 import { PRICING_POLICIES } from './shared-data';
+import { getStartingPrice, POLICIES } from '@/config/pricingConfig';
 
 export interface SeoFaq {
   id: string;
