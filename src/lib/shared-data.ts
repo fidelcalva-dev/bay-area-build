@@ -528,7 +528,7 @@ export type HeavyMaterialClass = keyof typeof HEAVY_INCREMENTS;
 
 // Calculate heavy price: BASE_PRICE[size] + increment
 export function calculateHeavyMaterialPrice(
-  size: 6 | 8 | 10,
+  size: 5 | 8 | 10,
   materialClass: HeavyMaterialClass = 'base',
   _baseRate?: number // ignored, kept for backward compatibility
 ): number {
