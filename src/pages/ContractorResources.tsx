@@ -70,6 +70,7 @@ export default function ContractorResources() {
     <Layout
       title="Contractor Resource Hub | Permit Guides & Dumpster Planning"
       description="Contractor resources for dumpster rental in the Bay Area. Permit guides for Oakland, San Jose, and San Francisco. Sizing, materials, and project planning tools."
+      canonical="/contractor-resources"
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

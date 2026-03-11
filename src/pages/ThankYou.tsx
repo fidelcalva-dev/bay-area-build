@@ -10,7 +10,7 @@ export default function ThankYou() {
   const { formData, estimate, type } = location.state || {};
 
   return (
-    <Layout title="Thank You | Request Received">
+    <Layout title="Thank You | Request Received" noindex={true}>
       <section className="section-padding bg-background min-h-[70vh] flex items-center">
         <div className="container-narrow">
           <div className="text-center">

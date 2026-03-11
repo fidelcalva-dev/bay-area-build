@@ -110,7 +110,7 @@ const CONTRACTOR_SCENARIOS = [
   {
     titleKey: 'scenario.concrete',
     icon: HardHat,
-    recommended: ['6 yd', '8 yd', '10 yd'],
+    recommended: ['5 yd', '8 yd', '10 yd'],
     whyKey: 'scenario.concreteWhy',
     weightNoteKey: 'scenario.concreteWeight',
     isHeavy: true,
