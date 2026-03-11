@@ -229,7 +229,7 @@ export function checkTrashContamination(
       newMaterialType: 'heavy',
       reason: 'Clean heavy material qualifies for flat-fee pricing.',
       reasonEs: 'Material pesado limpio califica para tarifa plana.',
-      allowedSizes: [6, 8, 10], // Heavy-only sizes
+      allowedSizes: [5, 8, 10], // Heavy-only sizes
     };
   }
   
