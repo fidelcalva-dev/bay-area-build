@@ -279,8 +279,8 @@ export function getMaterialClassIncrement(materialClass: HeavyMaterialClass): st
 /**
  * Validate size is allowed for heavy materials
  */
-export function isValidHeavySize(size: number): size is 6 | 8 | 10 {
-  return size === 6 || size === 8 || size === 10;
+export function isValidHeavySize(size: number): size is 5 | 8 | 10 {
+  return size === 5 || size === 8 || size === 10;
 }
 
 /**
