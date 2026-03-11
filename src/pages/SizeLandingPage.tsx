@@ -16,12 +16,12 @@ const SIZE_CONTENT: Record<number, {
   commonMistakes: string[];
   tips: string[];
 }> = {
-  6: {
+  5: {
     headline: 'The compact workhorse for small jobs.',
-    description: 'A 6-yard dumpster is perfect for small cleanouts, single-room renovations, and concrete removal. At just 2.25 feet tall, it fits in tight driveways and is easy to load.',
+    description: 'A 5-yard dumpster is perfect for small cleanouts, single-room renovations, and concrete removal. At just 2.25 feet tall, it fits in tight driveways and is easy to load.',
     whoItsFor: ['Homeowners doing garage cleanouts', 'Small concrete or brick removal', 'Bathroom remodels', 'Yard debris cleanup'],
     whatFits: ['2-3 pickup truck loads', 'A small bathroom worth of demolition', 'A single concrete slab', 'A large pile of yard waste'],
-    commonMistakes: ['Overestimating how much fits—6 yards is compact', 'Mixing heavy materials with general debris', 'Overfilling above the walls'],
+    commonMistakes: ['Overestimating how much fits—5 yards is compact', 'Mixing heavy materials with general debris', 'Overfilling above the walls'],
     tips: ['Great for heavy materials like concrete at flat-fee pricing', 'Fits in most standard driveways', 'Order early for same-day delivery'],
   },
   8: {

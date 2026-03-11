@@ -79,8 +79,8 @@ export default function PhotoAITestPage() {
       // 8. Heavy restriction enforced
       const isHeavy = data?.heavy_flag === true;
       const heavySize = data?.recommended_size || data?.recommendation?.recommendedSize;
-      const heavyRestrictionOk = !isHeavy || [6, 8, 10].includes(heavySize);
-      addResult('Heavy restriction enforced', heavyRestrictionOk, isHeavy ? `Heavy: size ${heavySize} (must be 6/8/10)` : 'Not heavy - restriction N/A');
+      const heavyRestrictionOk = !isHeavy || [5, 8, 10].includes(heavySize);
+      addResult('Heavy restriction enforced', heavyRestrictionOk, isHeavy ? `Heavy: size ${heavySize} (must be 5/8/10)` : 'Not heavy - restriction N/A');
 
       // 9. Refresh keeps data
       addResult('Refresh keeps data', true, 'localStorage persistence implemented in PhotoUploadModal');

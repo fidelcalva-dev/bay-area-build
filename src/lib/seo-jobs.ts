@@ -106,7 +106,7 @@ export const SEO_JOB_TYPES: SeoJobType[] = [
     typicalProjects: 'Driveway replacement, patio demolition, sidewalk removal, foundation demo, pool removal concrete, and retaining wall teardown',
     whyDumpster: 'Concrete is extremely heavy — a single driveway can weigh 5-10 tons. Our heavy-material dumpsters are flat-fee, so you know the exact cost upfront with no surprise weight charges.',
     faqs: [
-      { question: 'How much concrete fits in a dumpster?', answer: 'A 6-yard dumpster holds approximately 3-4 cubic yards of broken concrete (half full by volume due to weight). A 10-yard handles a typical single-car driveway removal.' },
+      { question: 'How much concrete fits in a dumpster?', answer: 'A 5-yard dumpster holds approximately 2-3 cubic yards of broken concrete (half full by volume due to weight). A 10-yard handles a typical single-car driveway removal.' },
       { question: 'Is there a weight limit for concrete dumpsters?', answer: 'Our heavy-material dumpsters are flat-fee — disposal is included and there are no weight overage charges. The key rule is keeping loads clean: only concrete, no trash or mixed debris.' },
       { question: 'Can I mix concrete with other debris?', answer: 'No. Heavy material dumpsters must be clean loads only (concrete, brick, block, asphalt, rock, dirt). If trash or mixed debris is found, the load is reclassified to general debris at $165/ton overage.' },
     ],

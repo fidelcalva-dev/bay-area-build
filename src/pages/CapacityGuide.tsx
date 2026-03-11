@@ -23,7 +23,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 // Pickup truck load estimates by size
 const PICKUP_TRUCK_LOADS = [
-  { yards: 6, loads: '2–3', noteKey: 'pickup.note6' },
+  { yards: 5, loads: '2–3', noteKey: 'pickup.note5' },
   { yards: 8, loads: '3–4', noteKey: 'pickup.note8' },
   { yards: 10, loads: '4–5', noteKey: 'pickup.note10' },
   { yards: 20, loads: '6–8', noteKey: 'pickup.note20' },
