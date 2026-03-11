@@ -3,6 +3,7 @@
 
 import { BUSINESS_INFO, OPERATIONAL_YARDS } from './seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from './shared-data';
+import { getStartingPrice } from '@/config/pricingConfig';
 
 export interface CityPageData {
   slug: string; // URL-friendly: oakland (no -ca suffix, matches DB canonical)
