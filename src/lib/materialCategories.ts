@@ -648,7 +648,7 @@ export function checkReclassification(check: ReclassificationCheck): Reclassific
     return {
       reclassified: true,
       newClassification: 'MIXED_GENERAL',
-      newAllowedSizes: [6, 8, 10, 20, 30, 40, 50],
+      newAllowedSizes: [5, 8, 10, 20, 30, 40, 50],
       message: 'Reclassified to mixed debris due to trash contamination. Per-ton billing applies for 20+ yd.',
       messageEs: 'Reclasificado a escombros mixtos por contaminación. Se aplica facturación por tonelada para 20+ yd.',
     };
