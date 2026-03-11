@@ -4,7 +4,7 @@
  * Each size renders unique proportions based on canonical dimensions
  * 
  * CANONICAL DIMENSIONS (W × L × H in feet):
- * 6 yd:  6   × 12 × 2.25
+ * 5 yd:  5   × 12 × 2.25
  * 8 yd:  6   × 12 × 3
  * 10 yd: 7.5 × 12 × 3
  * 20 yd: 7.5 × 18 × 4
@@ -13,7 +13,7 @@
  * 50 yd: 7.5 × 24 × 7.5
  */
 
-type DumpsterSizeYd = 6 | 8 | 10 | 20 | 30 | 40 | 50;
+type DumpsterSizeYd = 5 | 8 | 10 | 20 | 30 | 40 | 50;
 
 interface DumpsterSilhouettePlainProps {
   size?: DumpsterSizeYd;
