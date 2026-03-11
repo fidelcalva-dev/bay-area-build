@@ -1553,7 +1553,7 @@ export function V3QuoteFlow() {
                 {/* Total */}
                 <div className="px-4 py-3 bg-primary/5 flex justify-between items-center">
                   <span className="font-bold text-foreground">Total Estimate</span>
-                  <span className="font-bold text-foreground text-2xl">${quote.subtotal.toLocaleString()}</span>
+                  <span className="font-bold text-foreground text-2xl">${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}</span>
                 </div>
               </div>
 
