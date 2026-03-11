@@ -224,7 +224,7 @@ const translations: Record<Language, Record<string, string>> = {
     'scenario.commercialWeight': 'Watch for weight limits on mixed loads.',
     'scenario.concrete': 'Concrete / Dirt (HEAVY)',
     'scenario.concreteWhy': 'FLAT FEE pricing for pure heavy material loads. Weight not a concern.',
-    'scenario.concreteWeight': 'HEAVY ONLY: Must be clean loads (no trash). 6/8/10 yard ONLY.',
+    'scenario.concreteWeight': 'HEAVY ONLY: Must be clean loads (no trash). 5/8/10 yard ONLY.',
     'scenario.retail': 'Retail / Office Cleanout',
     'scenario.retailWhy': 'Furniture, fixtures, equipment, and general office waste.',
     'scenario.retailWeight': 'Metal fixtures and equipment add weight.',
