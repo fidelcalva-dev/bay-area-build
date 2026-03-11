@@ -22,13 +22,13 @@ interface SizeInfo {
 }
 
 const SIZES: SizeInfo[] = [
-  { yards: 5, basePrice: 390, includedTons: 0.5, category: 'both' },
-  { yards: 8, basePrice: 460, includedTons: 0.5, category: 'both' },
-  { yards: 10, basePrice: 580, includedTons: 1, category: 'both' },
-  { yards: 20, basePrice: 620, includedTons: 2, category: 'general' },
-  { yards: 30, basePrice: 770, includedTons: 3, category: 'general' },
-  { yards: 40, basePrice: 895, includedTons: 4, category: 'general' },
-  { yards: 50, basePrice: 1135, includedTons: 5, category: 'general' },
+  { yards: 5, basePrice: 395, includedTons: 0.5, category: 'both' },
+  { yards: 8, basePrice: 425, includedTons: 0.5, category: 'both' },
+  { yards: 10, basePrice: 495, includedTons: 1, category: 'both' },
+  { yards: 20, basePrice: 650, includedTons: 2, category: 'general' },
+  { yards: 30, basePrice: 775, includedTons: 3, category: 'general' },
+  { yards: 40, basePrice: 925, includedTons: 4, category: 'general' },
+  { yards: 50, basePrice: 1095, includedTons: 5, category: 'general' },
 ];
 
 function isZone1(zip: string): boolean {
