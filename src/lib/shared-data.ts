@@ -417,7 +417,7 @@ export const WHOLESALER_APPROVAL_THRESHOLD = 0.07; // 7%+ requires manual approv
 // ============================================================
 
 // CANONICAL RULES:
-// Heavy Materials (5/6/8/10yd): FLAT FEE - no overage, no tons displayed
+// Heavy Materials (5/8/10yd): FLAT FEE - no overage, no tons displayed
 // General Debris (ALL SIZES 5-50yd): $165 per ton overage
 
 export type OverageRule = 'flat_fee' | 'per_ton';
