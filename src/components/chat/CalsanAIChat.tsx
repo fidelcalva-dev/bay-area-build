@@ -328,7 +328,7 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
 function generateSafeAnswer(question: string): string {
   const q = question.toLowerCase();
   if (q.includes('heavy') || q.includes('concrete') || q.includes('dirt') || q.includes('soil') || q.includes('rock') || q.includes('brick')) {
-    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 6-10 yard containers. These have a mandatory fill-line — you cannot exceed it. Included tonnage is typically 4-5 tons depending on size. Overage charges apply beyond included weight.\n\nWould you like exact pricing for your ZIP?';
+    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 5, 8, and 10 yard containers. These are flat-fee — disposal is included with no extra weight charges. A mandatory fill-line applies for safe transport.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('ton') || q.includes('weight') || q.includes('included') || q.includes('overage')) {
     return 'Each dumpster includes a set amount of disposal tonnage (typically 1-5 tons depending on size and material). If your debris exceeds the included weight, an overage charge of $165 per additional ton applies. The included tons are clearly shown during the quote process.\n\nWould you like exact pricing for your ZIP?';
