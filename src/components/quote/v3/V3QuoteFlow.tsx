@@ -84,6 +84,7 @@ interface ZoneResult {
   zoneName: string;
   cityName?: string;
   multiplier: number;
+  marketCode?: string;
 }
 
 // ============================================================
