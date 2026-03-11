@@ -462,8 +462,8 @@ export function DebrisDetailsSelector({
                 <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
                 <p className="text-xs text-amber-700">
                   {isSpanish 
-                    ? 'Materiales pesados limitados a contenedores de 6-10 yardas'
-                    : 'Heavy materials limited to 6-10 yd containers only'}
+                    ? 'Materiales pesados limitados a contenedores de 5-10 yardas'
+                    : 'Heavy materials limited to 5-10 yd containers only'}
                 </p>
               </div>
             </div>

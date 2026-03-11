@@ -892,7 +892,7 @@ export function V3QuoteFlow() {
                       <p className="text-[11px] text-muted-foreground leading-tight">{project.description}</p>
                       {project.isHeavy && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground">
-                          6-10 yd only
+                          5-10 yd only
                         </span>
                       )}
                     </button>

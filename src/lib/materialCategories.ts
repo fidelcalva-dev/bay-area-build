@@ -31,7 +31,7 @@ export type MaterialClassification =
 /**
  * Pricing mode determines how overage is calculated:
  * - HEAVY_FLAT_FEE: No weight charges, disposal included
- * - MIXED_YARD_OVERAGE: $30/yd extra for 6-10 yd containers
+ * - MIXED_YARD_OVERAGE: $30/yd extra for 5-10 yd containers
  * - MIXED_TON_OVERAGE: $165/ton for 20+ yd containers
  */
 export type PricingMode = 

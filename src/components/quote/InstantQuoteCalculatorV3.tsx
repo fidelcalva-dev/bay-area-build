@@ -1322,7 +1322,7 @@ export function InstantQuoteCalculatorV3() {
                             <h5 className="font-semibold text-foreground">{type.label}</h5>
                             {type.value === 'heavy' && (
                               <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded font-medium">
-                                6-10 yd only
+                                5-10 yd only
                               </span>
                             )}
                           </div>
