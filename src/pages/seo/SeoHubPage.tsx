@@ -27,7 +27,7 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     title: 'Dumpster Rental in California',
     h1: 'Dumpster Rental Across California',
     description: 'Calsan Dumpsters Pro serves communities across California with professional roll-off dumpster rental. From the Bay Area to Los Angeles, Sacramento to San Diego — find your local service.',
-    metaDescription: 'California dumpster rental from Calsan Dumpsters Pro. 10-50 yard sizes, same-day delivery, transparent pricing. Serving the Bay Area, LA, Sacramento, and beyond.',
+    metaDescription: 'California dumpster rental from Calsan Dumpsters Pro. 5-50 yard sizes, same-day delivery, transparent pricing. Serving the Bay Area, LA, Sacramento, and beyond.',
     countyFilter: [],
   },
   'bay-area-dumpster-rental': {
