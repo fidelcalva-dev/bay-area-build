@@ -333,8 +333,8 @@ export function V3QuoteFlow() {
 
   // Step index for progress
   const stepIndex = useMemo(() => {
-    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
-    return Math.min(map[step], 7);
+    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
+    return Math.min(map[step], 8);
   }, [step]);
 
   // Swap toggle (moved up for draft effects)
