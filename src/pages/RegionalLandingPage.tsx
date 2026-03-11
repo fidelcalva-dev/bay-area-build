@@ -44,7 +44,7 @@ const REGIONS: Record<string, RegionData> = {
     name: 'South Bay',
     h1: 'Dumpster Rental South Bay — San Jose Yard, Fast Delivery',
     metaTitle: 'Dumpster Rental South Bay CA | San Jose Yard | Same-Day Delivery',
-    metaDescription: 'South Bay dumpster rental from our San Jose yard. Same-day delivery to San Jose, Santa Clara, Sunnyvale, Palo Alto & all Silicon Valley cities. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'South Bay dumpster rental from our San Jose yard. Same-day delivery to San Jose, Santa Clara, Sunnyvale, Palo Alto & all Silicon Valley cities. 5-50 yard sizes. Call (510) 680-2150.',
     intro: 'Our San Jose yard at 2071 Ringwood Ave serves the entire South Bay and Silicon Valley. Same-day delivery is available for most San Jose, Santa Clara, Sunnyvale, and Palo Alto addresses when ordered before noon.',
     yardId: 'sanjose',
     counties: ['Santa Clara County', 'San Mateo County'],
