@@ -5596,6 +5596,72 @@ export type Database = {
         }
         Relationships: []
       }
+      dumpster_pricing: {
+        Row: {
+          allowed_materials: string[]
+          contamination_surcharge: number
+          created_at: string
+          delivery_fee: number
+          dump_fee: number
+          extra_day_fee: number
+          id: string
+          included_days: number
+          included_tons: number
+          is_active: boolean
+          is_heavy_only: boolean
+          material_type: string
+          notes: string | null
+          overweight_fee_per_ton: number
+          pickup_fee: number
+          rental_fee: number
+          size_yd: number
+          total_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          allowed_materials?: string[]
+          contamination_surcharge?: number
+          created_at?: string
+          delivery_fee?: number
+          dump_fee?: number
+          extra_day_fee?: number
+          id?: string
+          included_days?: number
+          included_tons?: number
+          is_active?: boolean
+          is_heavy_only?: boolean
+          material_type?: string
+          notes?: string | null
+          overweight_fee_per_ton?: number
+          pickup_fee?: number
+          rental_fee?: number
+          size_yd: number
+          total_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          allowed_materials?: string[]
+          contamination_surcharge?: number
+          created_at?: string
+          delivery_fee?: number
+          dump_fee?: number
+          extra_day_fee?: number
+          id?: string
+          included_days?: number
+          included_tons?: number
+          is_active?: boolean
+          is_heavy_only?: boolean
+          material_type?: string
+          notes?: string | null
+          overweight_fee_per_ton?: number
+          pickup_fee?: number
+          rental_fee?: number
+          size_yd?: number
+          total_price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dumpster_sizes: {
         Row: {
           base_price: number
