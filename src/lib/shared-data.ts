@@ -131,7 +131,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
 
 // Helper functions
 export const getHeavySizes = () => DUMPSTER_SIZES_DATA.filter(s => s.category === 'heavy' || s.category === 'both');
-export const getGeneralSizes = () => DUMPSTER_SIZES_DATA.filter(s => (s.category === 'general' || s.category === 'both') && s.yards >= 10);
+export const getGeneralSizes = () => DUMPSTER_SIZES_DATA.filter(s => s.category === 'general' || s.category === 'both');
 export const getSizeByYards = (yards: number) => DUMPSTER_SIZES_DATA.find(s => s.yards === yards);
 
 // ============================================================
