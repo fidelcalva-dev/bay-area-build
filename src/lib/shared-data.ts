@@ -5,9 +5,9 @@ import { BUSINESS_INFO, SERVICE_AREAS } from './seo';
 
 // ============================================================
 // DUMPSTER SIZES - Official inventory
-// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
-// Heavy Materials: 6, 8, 10 yard only (flat-fee, disposal included)
-// General Debris: 10, 20, 30, 40 yard
+// Official Included Tonnage: 5yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+// Heavy Materials: 5, 8, 10 yard only (flat-fee, disposal included)
+// General Debris: 5, 8, 10, 20, 30, 40, 50 yard
 // ============================================================
 
 export interface DumpsterSizeData {
