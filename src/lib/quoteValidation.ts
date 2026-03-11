@@ -54,7 +54,7 @@ export const quoteDataSchema = z.object({
   
   sizeYards: z.number()
     .int()
-    .min(6, 'Minimum size is 6 yards')
+    .min(5, 'Minimum size is 5 yards')
     .max(50, 'Maximum size is 50 yards'),
   
   rentalDays: z.number()

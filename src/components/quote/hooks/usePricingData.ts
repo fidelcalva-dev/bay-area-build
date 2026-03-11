@@ -283,7 +283,7 @@ export async function getZonePricing(zoneId: string, sizeId: string): Promise<{
 
 /**
  * Calculate included tons based on size.
- * Official included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
+ * Official included tonnage: 5yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
  * For HEAVY materials, tonnage is NOT displayed (flat fee).
  */
 export function calculateIncludedTons(sizeValue: number, materialType: 'general' | 'heavy'): number {
