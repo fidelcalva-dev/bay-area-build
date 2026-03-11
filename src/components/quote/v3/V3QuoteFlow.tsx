@@ -604,12 +604,13 @@ export function V3QuoteFlow() {
             />
           </div>
           <div className="flex justify-between mt-1.5">
-            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 7</span>
+            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 8</span>
             <span className="text-[10px] font-medium text-foreground">
               {step === 'zip' && 'Location'}
               {step === 'customer-type' && 'Profile'}
               {step === 'project' && 'Project'}
               {step === 'size' && 'Size'}
+              {step === 'contact' && 'Contact'}
               {step === 'price' && 'Price'}
               {step === 'access' && 'Access'}
               {step === 'confirm' && 'Confirm'}
