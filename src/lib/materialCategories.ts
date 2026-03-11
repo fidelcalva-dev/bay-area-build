@@ -288,7 +288,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Clean broken concrete, no rebar or trash',
     descriptionEs: 'Concreto roto limpio, sin rebar ni basura',
     classification: 'HEAVY_CLEAN_BASE',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Concrete recycled as aggregate',
