@@ -23,8 +23,8 @@ export default function Sizes() {
 
   return (
     <Layout
-      title="Dumpster Sizes Guide | 6 to 40 Yard Dumpsters"
-      description="Compare dumpster sizes from 6 to 40 yards. Heavy material sizes for concrete and dirt. General debris sizes for renovations and cleanouts."
+      title="Dumpster Sizes Guide | 5 to 50 Yard Dumpsters"
+      description="Compare dumpster sizes from 5 to 50 yards. Heavy material sizes (5, 8, 10 yard) for concrete and dirt. General debris sizes for renovations and cleanouts."
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
@@ -69,7 +69,7 @@ export default function Sizes() {
               >
                 <Home className="w-4 h-4" />
                 <span>General Debris</span>
-                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">10-40 yd</span>
+                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">5-50 yd</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="heavy" 
@@ -91,7 +91,7 @@ export default function Sizes() {
                 <h2 className="heading-lg text-foreground mb-3">For Renovations, Roofing & Cleanouts</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Full range of sizes for household junk, construction debris, roofing shingles, and more. 
-                  Tonnage included by size—<span className="font-semibold text-foreground">1T to 4T included</span>.
+                  Tonnage included by size—<span className="font-semibold text-foreground">0.5T to 5T included</span>.
                 </p>
               </div>
 
@@ -144,8 +144,8 @@ export default function Sizes() {
                   <div>
                     <p className="font-semibold text-foreground mb-1">Flat Fee Pricing – No Weight Worries</p>
                     <p className="text-sm text-muted-foreground">
-                      Heavy material dumpsters (6/8/10 yard) are FLAT FEE. Disposal is included with no extra weight charges.
-                      If trash or debris is mixed in, the load may be reclassified and additional charges may apply.
+                      Heavy material dumpsters (5/8/10 yard) are FLAT FEE. Disposal is included with no extra weight charges.
+                      If trash or debris is mixed in, the load may be reclassified and additional charges plus a $150 contamination surcharge may apply.
                     </p>
                   </div>
                 </div>

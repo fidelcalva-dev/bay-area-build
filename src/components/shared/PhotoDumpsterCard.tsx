@@ -15,9 +15,9 @@ const DUMPSTER_PHOTOS: Record<number, string> = DUMPSTER_PHOTO_MAP;
 /**
  * CANONICAL SPECS (LOCKED) - W × L × H
  * All sizes from shared-data.ts for consistency
- * 6: 6 × 12 × 2.25   | 8: 6 × 12 × 3     | 10: 7.5 × 12 × 3
+ * 5: 5 × 12 × 2.25   | 8: 6 × 12 × 3     | 10: 7.5 × 12 × 3
  * 20: 7.5 × 18 × 4   | 30: 7.5 × 18 × 6  | 40: 7.5 × 24 × 6
- * 50: 7.5 × 24 × 7.5
+ * 50: 7.5 × 30 × 6
  */
 const DUMPSTER_SPECS: Record<number, {
   length: string;
@@ -28,13 +28,13 @@ const DUMPSTER_SPECS: Record<number, {
   popular?: boolean;
   priceFrom?: number;
 }> = {
-  6:  { length: "12'", width: "6'",   height: "2.25'", tons: 0.5, loads: '2–3 loads', priceFrom: 390 },
-  8:  { length: "12'", width: "6'",   height: "3'",    tons: 0.5, loads: '3–4 loads', priceFrom: 460, popular: true },
-  10: { length: "12'", width: "7.5'", height: "3'",    tons: 1, loads: '4–5 loads', priceFrom: 580 },
-  20: { length: "18'", width: "7.5'", height: "4'",    tons: 2, loads: '6–8 loads', priceFrom: 620, popular: true },
-  30: { length: "18'", width: "7.5'", height: "6'",    tons: 3, loads: '9–12 loads', priceFrom: 770 },
-  40: { length: "24'", width: "7.5'", height: "6'",    tons: 4, loads: '12–16 loads', priceFrom: 895 },
-  50: { length: "24'", width: "7.5'", height: "7.5'",  tons: 5, loads: '16–20 loads', priceFrom: 1135 },
+  5:  { length: "12'", width: "5'",   height: "2.25'", tons: 0.5, loads: '2–3 loads', priceFrom: 395 },
+  8:  { length: "12'", width: "6'",   height: "3'",    tons: 0.5, loads: '3–4 loads', priceFrom: 425, popular: true },
+  10: { length: "12'", width: "7.5'", height: "3'",    tons: 1, loads: '4–5 loads', priceFrom: 495 },
+  20: { length: "18'", width: "7.5'", height: "4'",    tons: 2, loads: '6–8 loads', priceFrom: 650, popular: true },
+  30: { length: "18'", width: "7.5'", height: "6'",    tons: 3, loads: '9–12 loads', priceFrom: 775 },
+  40: { length: "24'", width: "7.5'", height: "6'",    tons: 4, loads: '12–16 loads', priceFrom: 925 },
+  50: { length: "30'", width: "7.5'", height: "6'",    tons: 5, loads: '16–20 loads', priceFrom: 1095 },
 };
 
 type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40 | 50;

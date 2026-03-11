@@ -89,7 +89,7 @@ export function calculateFitStatus(
   const capacity = spec.volumeCuYd;
   const ratio = estimatedVolume / capacity;
   
-  // Heavy materials can only use 6/8/10
+  // Heavy materials can only use 5/8/10
   const availableSizes = isHeavy ? HEAVY_SIZES : GENERAL_SIZES;
   
   if (ratio <= 0.8) {

@@ -164,7 +164,7 @@ export default function MixedRulesManager() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Percent className="w-5 h-5" />
-              Small Container Rules (6/8/10 yd)
+              Small Container Rules (5/8/10 yd)
             </CardTitle>
             <CardDescription>
               Per-yard overage for smaller containers
@@ -183,8 +183,8 @@ export default function MixedRulesManager() {
             <div className="p-3 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">Note:</p>
               <p className="text-sm">
-                Small mixed containers (6/8/10 yd) charge ${smallOverageRate}/yard for overage
-                instead of per-ton billing.
+                 Small mixed containers (5/8/10 yd) charge ${smallOverageRate}/yard for overage
+                 instead of per-ton billing.
               </p>
             </div>
           </CardContent>
@@ -228,7 +228,7 @@ export default function MixedRulesManager() {
           <div>
             <h3 className="font-medium text-blue-800">Mixed Pricing Logic</h3>
             <ul className="text-sm text-blue-700 mt-1 space-y-1">
-              <li>• Mixed 6/8/10 yd: Base price + ${smallOverageRate}/additional yard</li>
+              <li>• Mixed 5/8/10 yd: Base price + ${smallOverageRate}/additional yard</li>
               <li>• Mixed 20+ yd: Included tons + ${standardTonRate}/ton overage (${prepayRate.toFixed(2)} prepaid)</li>
               <li>• Heavy + Trash contamination → Auto-reclass to Mixed (per-ton)</li>
             </ul>

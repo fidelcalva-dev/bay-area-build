@@ -44,9 +44,9 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
   'construction-dumpsters': {
     slug: 'construction-dumpsters',
     h1: 'Construction Dumpsters — Bay Area Job Sites',
-    metaTitle: 'Construction Dumpsters Bay Area | Job Site Delivery | 6-50 Yard',
-    metaDescription: 'Construction dumpsters for Bay Area job sites. 6-50 yard sizes for new builds, renovations, demolition. Flat-fee concrete. Same-day delivery from Oakland & San Jose yards.',
-    intro: 'Construction job sites need reliable debris removal to stay on schedule. Our full range of 6-50 yard dumpsters handles everything from small residential remodels to large commercial builds. Heavy material dumpsters for concrete and dirt are flat-fee with no weight overage.',
+    metaTitle: 'Construction Dumpsters Bay Area | Job Site Delivery | 5-50 Yard',
+    metaDescription: 'Construction dumpsters for Bay Area job sites. 5-50 yard sizes for new builds, renovations, demolition. Flat-fee concrete. Same-day delivery from Oakland & San Jose yards.',
+    intro: 'Construction job sites need reliable debris removal to stay on schedule. Our full range of 5-50 yard dumpsters handles everything from small residential remodels to large commercial builds. Heavy material dumpsters for concrete and dirt are flat-fee with no weight overage.',
     icon: HardHat,
     sizes: [5, 8, 10, 20, 30, 40, 50],
     useCases: [

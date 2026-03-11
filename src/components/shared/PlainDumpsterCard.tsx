@@ -8,22 +8,22 @@ import { getCanonicalDumpsterImage } from '@/lib/canonicalDumpsterImages';
  * CANONICAL DUMPSTER SPECS (LOCKED)
  * All dimensions: W × L × H in feet
  * 
- * 6 yd:  W 6   × L 12  × H 2.25
+ * 5 yd:  W 5   × L 12  × H 2.25
  * 8 yd:  W 6   × L 12  × H 3
  * 10 yd: W 7.5 × L 12  × H 3
  * 20 yd: W 7.5 × L 18  × H 4
  * 30 yd: W 7.5 × L 18  × H 6
  * 40 yd: W 7.5 × L 24  × H 6
- * 50 yd: W 7.5 × L 24  × H 7.5
+ * 50 yd: W 7.5 × L 30  × H 6
  */
 export const DUMPSTER_SPECS = {
-  6:  { lengthFt: 12, widthFt: 6,   heightFt: 2.25, tonsIncluded: 0.5, pickupLoads: '2–3' },
+  5:  { lengthFt: 12, widthFt: 5,   heightFt: 2.25, tonsIncluded: 0.5, pickupLoads: '2–3' },
   8:  { lengthFt: 12, widthFt: 6,   heightFt: 3,    tonsIncluded: 0.5, pickupLoads: '3–4' },
   10: { lengthFt: 12, widthFt: 7.5, heightFt: 3,    tonsIncluded: 1,   pickupLoads: '4–5' },
   20: { lengthFt: 18, widthFt: 7.5, heightFt: 4,    tonsIncluded: 2,   pickupLoads: '6–8' },
   30: { lengthFt: 18, widthFt: 7.5, heightFt: 6,    tonsIncluded: 3,   pickupLoads: '9–12' },
   40: { lengthFt: 24, widthFt: 7.5, heightFt: 6,    tonsIncluded: 4,   pickupLoads: '12–16' },
-  50: { lengthFt: 24, widthFt: 7.5, heightFt: 7.5,  tonsIncluded: 5,   pickupLoads: '16–20' },
+  50: { lengthFt: 30, widthFt: 7.5, heightFt: 6,    tonsIncluded: 5,   pickupLoads: '16–20' },
 } as const;
 
 export type DumpsterSizeYd = keyof typeof DUMPSTER_SPECS;

@@ -12,7 +12,7 @@ interface SEOHeadProps {
 }
 
 const DEFAULT_TITLE = `${BUSINESS_INFO.name} | Dumpster Rental Oakland, San Jose & SF`;
-const DEFAULT_DESCRIPTION = 'Same-day dumpster rental in Oakland, San Jose & San Francisco. Transparent pricing, real local yards, 6-50 yard roll-off dumpsters. Instant quote in 60 seconds. Hablamos Español.';
+const DEFAULT_DESCRIPTION = 'Same-day dumpster rental in Oakland, San Jose & San Francisco. Transparent pricing, real local yards, 5-50 yard roll-off dumpsters. Instant quote in 60 seconds. Hablamos Español.';
 
 export function SEOHead({ 
   title, 

@@ -37,8 +37,8 @@ export const SERVICE_CITIES: CityPageData[] = [
     dumpRules: 'Oakland requires encroachment permits for dumpsters placed on public streets. Concrete and soil are routed to our partner facility at Argent Materials on Baldwin St. C&D debris goes to Davis Street Transfer Station.',
     pricingNote: 'Oakland pricing starts at competitive base rates with no hidden fees. Heavy materials (concrete, dirt) are flat-fee—no weight overage charges.',
     permitInfo: 'Oakland Public Works issues encroachment permits for street placement. Allow 3-5 business days for processing. Dumpsters on private property (driveways) do not require permits.',
-    metaTitle: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $390',
-    metaDescription: 'Local dumpster rental in Oakland, CA. Same-day delivery from our Oakland yard. 6-50 yard sizes for concrete, debris, cleanouts. Flat-fee heavy materials. Call (510) 680-2150.',
+    metaTitle: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $395',
+    metaDescription: 'Local dumpster rental in Oakland, CA. Same-day delivery from our Oakland yard. 5-50 yard sizes for concrete, debris, cleanouts. Flat-fee heavy materials. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'alameda-ca', 'san-leandro-ca', 'emeryville-ca'],
   },
   {
@@ -209,8 +209,8 @@ export const SERVICE_CITIES: CityPageData[] = [
     dumpRules: 'San Jose has strict construction debris recycling requirements under its Zero Waste policy. Concrete, asphalt, and clean dirt are routed to certified recycling facilities. Mixed C&D loads must achieve minimum diversion rates.',
     pricingNote: 'San Jose pricing starts at competitive base rates. Heavy materials (concrete, dirt, rock) are flat-fee with no weight overage charges.',
     permitInfo: 'San Jose DOT issues encroachment permits for street-placed dumpsters. Apply online through the city portal. Allow 5-7 business days.',
-    metaTitle: 'Dumpster Rental San Jose CA | Local Yard | From $390',
-    metaDescription: 'Local dumpster rental in San Jose, CA. Same-day delivery from our Ringwood Ave yard. 6-50 yard sizes, flat-fee concrete disposal. Call (510) 680-2150.',
+    metaTitle: 'Dumpster Rental San Jose CA | Local Yard | From $395',
+    metaDescription: 'Local dumpster rental in San Jose, CA. Same-day delivery from our Ringwood Ave yard. 5-50 yard sizes, flat-fee concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['santa-clara-ca', 'sunnyvale-ca', 'milpitas-ca', 'campbell-ca'],
   },
   {

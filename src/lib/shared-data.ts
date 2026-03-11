@@ -36,7 +36,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 390,  // v56 Plan A base
+    priceFrom: 395,  // Approved public price
     useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
     loads: '2–3 pickup loads',
     description: 'Compact size for small jobs.',
@@ -50,7 +50,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "3'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 460,  // v56 Plan A base
+    priceFrom: 425,  // Approved public price
     useCases: ['Foundation demo', 'Brick & block', 'Garage cleanouts', 'Bathroom remodel'],
     loads: '3–4 pickup loads',
     description: 'Popular for driveway and foundation work.',
@@ -65,7 +65,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "3'",
     includedTons: 1,
     category: 'both',
-    priceFrom: 580,  // v56 Plan A base
+    priceFrom: 495,  // Approved public price
     useCases: ['Large concrete jobs', 'Small renovations', 'Deck removal'],
     loads: '4–5 pickup loads',
     description: 'Versatile size for small to medium projects.',
@@ -79,7 +79,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "4'",
     includedTons: 2,
     category: 'general',
-    priceFrom: 620,  // v56 Plan A base
+    priceFrom: 650,  // Approved public price
     useCases: ['Full room renovations', 'Roofing projects', 'Large cleanouts'],
     loads: '6-8 pickup loads',
     description: 'Our most popular size for home renovations.',
@@ -94,7 +94,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 3,
     category: 'general',
-    priceFrom: 770,  // v56 Plan A base
+    priceFrom: 775,  // Approved public price
     useCases: ['Major renovations', 'New construction', 'Estate cleanouts'],
     loads: '9-12 pickup loads',
     description: 'High walls for bulky items and major projects.',
@@ -108,7 +108,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 4,
     category: 'general',
-    priceFrom: 895,  // v56 Plan A base
+    priceFrom: 925,  // Approved public price
     useCases: ['Commercial projects', 'Large demolition', 'Industrial waste'],
     loads: '12-16 pickup loads',
     description: 'Commercial-grade capacity for large-scale projects.',
@@ -122,7 +122,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 5,
     category: 'general',
-    priceFrom: 1050,
+    priceFrom: 1095,  // Approved public price
     useCases: ['Large commercial', 'Major demolition', 'Industrial cleanouts'],
     loads: '16-20 pickup loads',
     description: 'Maximum capacity for the largest projects.',
@@ -482,15 +482,15 @@ export interface V56PricingTier {
   category: 'heavy' | 'general' | 'both';
 }
 
-// Plan A pricing (General Debris - includes tons)
+// Plan A pricing (General Debris - includes tons) — Approved public prices
 export const PLAN_A_PRICING: V56PricingTier[] = [
-  { size: 5, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
-  { size: 8, basePrice: 460, priceRangeLow: 460, priceRangeHigh: 550, includedTons: 0.5, category: 'both' },
-  { size: 10, basePrice: 580, priceRangeLow: 580, priceRangeHigh: 675, includedTons: 1, category: 'both' },
-  { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
-  { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
-  { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
-  { size: 50, basePrice: 1050, priceRangeLow: 1050, priceRangeHigh: 1200, includedTons: 5, category: 'general' },
+  { size: 5, basePrice: 395, priceRangeLow: 395, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 8, basePrice: 425, priceRangeLow: 425, priceRangeHigh: 510, includedTons: 0.5, category: 'both' },
+  { size: 10, basePrice: 495, priceRangeLow: 495, priceRangeHigh: 595, includedTons: 1, category: 'both' },
+  { size: 20, basePrice: 650, priceRangeLow: 650, priceRangeHigh: 780, includedTons: 2, category: 'general' },
+  { size: 30, basePrice: 775, priceRangeLow: 775, priceRangeHigh: 930, includedTons: 3, category: 'general' },
+  { size: 40, basePrice: 925, priceRangeLow: 925, priceRangeHigh: 1100, includedTons: 4, category: 'general' },
+  { size: 50, basePrice: 1095, priceRangeLow: 1095, priceRangeHigh: 1300, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================

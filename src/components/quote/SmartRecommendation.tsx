@@ -356,8 +356,8 @@ function getConfidenceAssessment(
  * Get smart size recommendation based on waste type and project type
  * 
  * Rules:
- * - Heavy: Only 6/8/10 available, default = 8, project-specific adjustments
- * - General: 6-50 available, default = 20, project-specific adjustments
+  * - Heavy: Only 5/8/10 available, default = 8, project-specific adjustments
+  * - General: 5-50 available, default = 20, project-specific adjustments
  */
 export function getSmartRecommendation(
   selectedSize: number,

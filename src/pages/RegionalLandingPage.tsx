@@ -26,8 +26,8 @@ const REGIONS: Record<string, RegionData> = {
     slug: 'dumpster-rental-east-bay',
     name: 'East Bay',
     h1: 'Dumpster Rental East Bay — Local Yards, Same-Day Delivery',
-    metaTitle: 'Dumpster Rental East Bay CA | 6-50 Yard Roll-Off | Local Yard',
-    metaDescription: 'East Bay dumpster rental from our Oakland yard. Same-day delivery to Oakland, Berkeley, Hayward, Fremont & all Alameda/Contra Costa cities. 6-50 yard sizes. Call (510) 680-2150.',
+    metaTitle: 'Dumpster Rental East Bay CA | 5-50 Yard Roll-Off | Local Yard',
+    metaDescription: 'East Bay dumpster rental from our Oakland yard. Same-day delivery to Oakland, Berkeley, Hayward, Fremont & all Alameda/Contra Costa cities. 5-50 yard sizes. Call (510) 680-2150.',
     intro: 'The East Bay is our home turf. Our Oakland yard at 1000 46th Ave puts us minutes from your job site in Oakland, Berkeley, San Leandro, Hayward, and beyond. We deliver same-day to most Alameda and Contra Costa County addresses.',
     yardId: 'oakland',
     counties: ['Alameda County', 'Contra Costa County'],
@@ -44,7 +44,7 @@ const REGIONS: Record<string, RegionData> = {
     name: 'South Bay',
     h1: 'Dumpster Rental South Bay — San Jose Yard, Fast Delivery',
     metaTitle: 'Dumpster Rental South Bay CA | San Jose Yard | Same-Day Delivery',
-    metaDescription: 'South Bay dumpster rental from our San Jose yard. Same-day delivery to San Jose, Santa Clara, Sunnyvale, Palo Alto & all Silicon Valley cities. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'South Bay dumpster rental from our San Jose yard. Same-day delivery to San Jose, Santa Clara, Sunnyvale, Palo Alto & all Silicon Valley cities. 5-50 yard sizes. Call (510) 680-2150.',
     intro: 'Our San Jose yard at 2071 Ringwood Ave serves the entire South Bay and Silicon Valley. Same-day delivery is available for most San Jose, Santa Clara, Sunnyvale, and Palo Alto addresses when ordered before noon.',
     yardId: 'sanjose',
     counties: ['Santa Clara County', 'San Mateo County'],
@@ -121,7 +121,7 @@ export default function RegionalLandingPage() {
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Real Yard in {yard?.city}</span></div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery</span></div>
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Not a Broker</span></div>
-            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>6-50 Yard Sizes</span></div>
+            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>5-50 Yard Sizes</span></div>
           </div>
         </div>
       </section>

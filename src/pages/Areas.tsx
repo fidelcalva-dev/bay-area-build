@@ -149,7 +149,7 @@ export default function Areas() {
             </p>
             <p>
               Looking for "dumpster rental near me" in the Bay Area? You've found your local provider. We offer transparent pricing, 
-              flexible rental periods, and the full range of dumpster sizes from 6 to 50 yards. <strong>Hablamos español</strong> — 
+              flexible rental periods, and the full range of dumpster sizes from 5 to 50 yards. <strong>Hablamos español</strong> — 
               our bilingual team is ready to help.
             </p>
           </div>
