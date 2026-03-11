@@ -451,7 +451,7 @@ export function V3QuoteFlow() {
         extras: [],
         subtotal: quote.subtotal,
         estimatedMin: quote.subtotal,
-        estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
+        estimatedMax: quote.subtotalHigh,
         isCalsanFulfillment: true,
         customerLat: addressResult?.lat ?? distanceCalc.geocoding?.lat,
         customerLng: addressResult?.lng ?? distanceCalc.geocoding?.lng,
