@@ -20,7 +20,7 @@ export default function SeoZipPage() {
   const yard = OPERATIONAL_YARDS.find(y => y.id === zipData.yardId);
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'zip', city: zipData.city, zip: zipData.zip, slug: zipData.zip });
   const pageTitle = `Dumpster Rental ${zipData.zip} | ${zipData.city}, CA | Calsan`;
-  const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 6-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
+  const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 5-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
   const canonicalPath = zipUrl(zipData.zip);
   const canonicalUrlFull = `${BUSINESS_INFO.url}${canonicalPath}`;
 
