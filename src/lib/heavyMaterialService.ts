@@ -54,7 +54,7 @@ export interface HeavyQuoteData {
 }
 
 // Constants
-export const HEAVY_SIZES = [5, 6, 8, 10] as const;
+export const HEAVY_SIZES = [5, 8, 10] as const;
 export const MAX_WEIGHT_TONS = 10;
 export const EXTRA_TON_RATE = 165; // $165/ton
 export const OVERDUE_DAILY_RATE = 35; // $35/day
@@ -62,8 +62,7 @@ export const OVERDUE_DAILY_RATE = 35; // $35/day
 // Included tons by size for debris reclassification
 export const DEBRIS_INCLUDED_TONS: Record<number, number> = {
   5: 0.50,
-  6: 0.60,
-  8: 0.80,
+  8: 0.50,
   10: 1.00,
 };
 
