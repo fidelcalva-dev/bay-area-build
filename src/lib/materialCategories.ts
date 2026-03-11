@@ -320,7 +320,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Clean dirt, soil, or sand only',
     descriptionEs: 'Solo tierra limpia o arena',
     classification: 'HEAVY_CLEAN_BASE',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: false,
     icon: Mountain,
