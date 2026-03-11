@@ -218,6 +218,7 @@ export default function CapacityGuide() {
       description={language === 'es' 
         ? 'Estimados reales de capacidad de dumpster para proyectos comunes. Cargas de pickup, escenarios de propietarios, contratistas y guía de concreto.'
         : 'Real-world dumpster capacity estimates for common projects. Pickup truck loads, homeowner scenarios, contractor scenarios, and concrete slab capacity guide.'}
+      canonical="/capacity-guide"
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
