@@ -709,6 +709,7 @@ export async function calculateSmartQuoteFromZip(
     contractorDiscountPct?: number;
     lat?: number;
     lng?: number;
+    isSameDay?: boolean;
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
