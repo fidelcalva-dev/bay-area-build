@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const SIZE_DATA = [
-  { size: 6, tons: 0.5, color: 'from-green-500 to-green-600', fillPercent: 12.5, typical: 'Small cleanouts, yard debris' },
+  { size: 5, tons: 0.5, color: 'from-green-500 to-green-600', fillPercent: 10, typical: 'Small cleanouts, yard debris' },
   { size: 8, tons: 0.5, color: 'from-emerald-500 to-emerald-600', fillPercent: 12.5, typical: 'Bathroom remodel, garage cleanout' },
   { size: 10, tons: 1.0, color: 'from-teal-500 to-teal-600', fillPercent: 25, typical: 'Light debris, small cleanouts' },
   { size: 20, tons: 2.0, color: 'from-cyan-500 to-cyan-600', fillPercent: 50, typical: 'Roof tear-off, room addition' },
