@@ -247,7 +247,7 @@ export function V3QuoteFlow() {
   const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
   // Track step timing + GA4 step viewed
-  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
+  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
   useEffect(() => {
     setStepStartTime(Date.now());
     ga4.quoteStepViewed({ flow_version: 'v3', step_name: step, step_index: stepIndexMap[step] });
@@ -304,7 +304,7 @@ export function V3QuoteFlow() {
   // Available sizes
   const availableSizes = useMemo(() => {
     if (isHeavy) return [5, 8, 10];
-    return [10, 20, 30, 40, 50];
+    return [5, 8, 10, 20, 30, 40, 50];
   }, [isHeavy]);
 
   // Recommended + alternatives
@@ -333,8 +333,8 @@ export function V3QuoteFlow() {
 
   // Step index for progress
   const stepIndex = useMemo(() => {
-    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
-    return Math.min(map[step], 7);
+    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
+    return Math.min(map[step], 8);
   }, [step]);
 
   // Swap toggle (moved up for draft effects)
@@ -353,7 +353,8 @@ export function V3QuoteFlow() {
       zip: 'customer-type',
       'customer-type': 'project',
       project: 'size',
-      size: 'price',
+      size: 'contact',
+      contact: 'price',
       price: 'access',
       access: 'confirm',
       confirm: 'placement',
@@ -368,7 +369,8 @@ export function V3QuoteFlow() {
       'customer-type': 'zip',
       project: 'customer-type',
       size: 'project',
-      price: 'size',
+      contact: 'size',
+      price: 'contact',
       access: 'price',
       confirm: 'access',
       placement: 'confirm',
@@ -388,7 +390,7 @@ export function V3QuoteFlow() {
   const handleSizeSelect = (s: number) => {
     setSize(s);
     ga4.quoteSizeSelected({ size_yd: s, was_recommended: s === recommendedSize });
-    setTimeout(() => setStep('price'), 200);
+    setTimeout(() => setStep('contact'), 200);
   };
 
   // Save quote
@@ -598,16 +600,17 @@ export function V3QuoteFlow() {
           <div className="relative h-1 bg-muted rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(stepIndex / 7) * 100}%` }}
+              style={{ width: `${(stepIndex / 8) * 100}%` }}
             />
           </div>
           <div className="flex justify-between mt-1.5">
-            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 7</span>
+            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 8</span>
             <span className="text-[10px] font-medium text-foreground">
               {step === 'zip' && 'Location'}
               {step === 'customer-type' && 'Profile'}
               {step === 'project' && 'Project'}
               {step === 'size' && 'Size'}
+              {step === 'contact' && 'Contact'}
               {step === 'price' && 'Price'}
               {step === 'access' && 'Access'}
               {step === 'confirm' && 'Confirm'}
@@ -1045,7 +1048,118 @@ export function V3QuoteFlow() {
         )}
 
         {/* ============================== */}
-        {/* STEP 5: PRICE MOMENT */}
+        {/* STEP 5: CONTACT / LEAD CAPTURE */}
+        {/* ============================== */}
+        {step === 'contact' && (
+          <StepTransition stepKey="contact">
+            <div className="space-y-5">
+              <BackButton />
+
+              <div>
+                <h4 className="text-xl font-bold text-foreground tracking-tight mb-1">
+                  Almost there — who should we contact?
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  We'll send your exact price and next steps.
+                </p>
+              </div>
+
+              {/* Contact form */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-muted-foreground" /> Name
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="John Smith"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="h-12 rounded-xl border-border/60"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-muted-foreground" /> Phone
+                  </label>
+                  <Input
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="(510) 555-1234"
+                    value={customerPhone}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      if (raw.length >= 7) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}`);
+                      } else if (raw.length >= 4) {
+                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3)}`);
+                      } else {
+                        setCustomerPhone(raw);
+                      }
+                    }}
+                    className="h-12 rounded-xl border-border/60"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-muted-foreground" /> Email
+                    <span className="text-muted-foreground font-normal">(optional)</span>
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="you@email.com"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="h-12 rounded-xl border-border/60"
+                  />
+                </div>
+              </div>
+
+              {/* SMS Consent */}
+              <div className="space-y-2.5">
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  By clicking, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+                </p>
+              </div>
+
+              {/* Trust */}
+              <div className="flex items-center justify-center gap-4 py-1">
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Shield className="w-3 h-3 text-primary" />
+                  Secure & private
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+                  <Clock className="w-3 h-3 text-primary" />
+                  15-min response
+                </span>
+              </div>
+
+              <Button
+                variant="cta"
+                size="lg"
+                className="w-full h-14 rounded-xl text-base font-semibold"
+                onClick={goNext}
+                disabled={!customerName || !customerPhone}
+              >
+                See My Exact Price
+                <ChevronRight className="w-5 h-5 ml-1" />
+              </Button>
+
+              <p className="text-[11px] text-muted-foreground text-center">
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Privacy Policy</a>
+                {' · '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Terms of Service</a>
+              </p>
+            </div>
+          </StepTransition>
+        )}
+
+        {/* ============================== */}
+        {/* STEP 6: PRICE MOMENT */}
         {/* ============================== */}
         {step === 'price' && !quote.isValid && (
           <StepTransition stepKey="price-fallback">
@@ -1407,65 +1521,27 @@ export function V3QuoteFlow() {
                 </div>
               </div>
 
-              {/* Contact form */}
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-muted-foreground" /> Name
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="John Smith"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="h-12 rounded-xl border-border/60"
-                  />
+              {/* Contact summary */}
+              <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+                <div className="p-4">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Contact</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Name</span>
+                      <span className="font-semibold text-foreground">{customerName}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Phone</span>
+                      <span className="font-semibold text-foreground">{customerPhone}</span>
+                    </div>
+                    {customerEmail && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Email</span>
+                        <span className="font-semibold text-foreground">{customerEmail}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-muted-foreground" /> Phone
-                  </label>
-                  <Input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="(510) 555-1234"
-                    value={customerPhone}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
-                      if (raw.length >= 7) {
-                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}`);
-                      } else if (raw.length >= 4) {
-                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3)}`);
-                      } else {
-                        setCustomerPhone(raw);
-                      }
-                    }}
-                    className="h-12 rounded-xl border-border/60"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-muted-foreground" /> Email
-                    <span className="text-muted-foreground font-normal">(optional)</span>
-                  </label>
-                  <Input
-                    type="email"
-                    placeholder="you@email.com"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="h-12 rounded-xl border-border/60"
-                  />
-                </div>
-              </div>
-
-              {/* SMS Consent Disclosures */}
-              <div className="space-y-2.5">
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  By clicking, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
-                </p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
-                </p>
               </div>
 
               {/* Terms */}
