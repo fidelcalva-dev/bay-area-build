@@ -239,7 +239,7 @@ export function checkTrashContamination(
     newMaterialType: 'general',
     reason: '',
     reasonEs: '',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
   };
 }
 
