@@ -52,7 +52,7 @@ const GROUP_OPTIONS = [
   'Commercial Waste',
 ];
 
-const SIZE_OPTIONS = [6, 8, 10, 20, 30, 40, 50];
+const SIZE_OPTIONS = [5, 8, 10, 20, 30, 40, 50];
 
 export default function MaterialCatalogPage() {
   const [materials, setMaterials] = useState<MaterialCatalogRow[]>([]);
