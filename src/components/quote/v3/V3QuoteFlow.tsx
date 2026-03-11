@@ -266,7 +266,7 @@ export function V3QuoteFlow() {
     try {
       const { data, error } = await supabase
         .from('zone_zip_codes')
-        .select(`zone_id, city_name, zone:pricing_zones!inner(id, name, base_multiplier, is_active)`)
+        .select(`zone_id, city_name, market_id, zone:pricing_zones!inner(id, name, base_multiplier, is_active)`)
         .eq('zip_code', zipCode)
         .maybeSingle();
 
@@ -276,6 +276,7 @@ export function V3QuoteFlow() {
           zoneName: (data.zone as any).name,
           cityName: data.city_name || undefined,
           multiplier: Number((data.zone as any).base_multiplier),
+          marketCode: data.market_id || undefined,
         });
         return;
       }
@@ -318,11 +319,44 @@ export function V3QuoteFlow() {
     return { smaller, larger };
   }, [recommendedSize, availableSizes]);
 
-  // Calculate quote
+  // City-specific master pricing from dumpster_pricing table
+  const [masterPriceRange, setMasterPriceRange] = useState<PriceRange | null>(null);
+  useEffect(() => {
+    if (!zip || zip.length !== 5 || !zoneResult) {
+      setMasterPriceRange(null);
+      return;
+    }
+    let cancelled = false;
+    getPriceRangeForZip(zip, size, materialTypeForPricing as 'general' | 'heavy').then((range) => {
+      if (!cancelled) setMasterPriceRange(range);
+    });
+    return () => { cancelled = true; };
+  }, [zip, size, materialTypeForPricing, zoneResult]);
+
+  // Calculate quote — use master pricing when available, fallback to legacy
   const quote = useMemo(() => {
-    if (!zoneResult) return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
+    if (!zoneResult) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
+
+    // Master pricing path (city-specific from dumpster_pricing table)
+    if (masterPriceRange) {
+      let low = masterPriceRange.low;
+      let high = masterPriceRange.high;
+      if (distanceCalc.distance?.priceAdjustment) {
+        low += distanceCalc.distance.priceAdjustment;
+        high += distanceCalc.distance.priceAdjustment;
+      }
+      return {
+        subtotal: low,
+        subtotalHigh: high,
+        includedTons: masterPriceRange.includedTons,
+        isValid: true,
+        isFlatFee: masterPriceRange.isFlatFee,
+      };
+    }
+
+    // Legacy fallback
     const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
-    if (!sizeData) return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
+    if (!sizeData) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
 
     const isFlatFee = isHeavy;
     const includedTons = isFlatFee ? 0 : calculateIncludedTons(size, materialTypeForPricing);
@@ -330,8 +364,8 @@ export function V3QuoteFlow() {
     if (isHeavy) subtotal += 200;
     if (distanceCalc.distance?.priceAdjustment) subtotal += distanceCalc.distance.priceAdjustment;
 
-    return { subtotal, includedTons, isValid: true, isFlatFee };
-  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing]);
+    return { subtotal, subtotalHigh: subtotal + 70, includedTons, isValid: true, isFlatFee };
+  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange]);
 
   // Step index for progress
   const stepIndex = useMemo(() => {
