@@ -2,6 +2,8 @@
 // Each topic targets a long-tail keyword with unique, high-quality content outline
 // Links to: city pages, size pages, /quote
 
+import { getStartingPrice } from '@/config/pricingConfig';
+
 export interface SeoBlogTopic {
   slug: string;
   title: string;
