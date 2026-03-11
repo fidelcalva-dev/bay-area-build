@@ -228,7 +228,7 @@ export default function MixedRulesManager() {
           <div>
             <h3 className="font-medium text-blue-800">Mixed Pricing Logic</h3>
             <ul className="text-sm text-blue-700 mt-1 space-y-1">
-              <li>• Mixed 6/8/10 yd: Base price + ${smallOverageRate}/additional yard</li>
+              <li>• Mixed 5/8/10 yd: Base price + ${smallOverageRate}/additional yard</li>
               <li>• Mixed 20+ yd: Included tons + ${standardTonRate}/ton overage (${prepayRate.toFixed(2)} prepaid)</li>
               <li>• Heavy + Trash contamination → Auto-reclass to Mixed (per-ton)</li>
             </ul>
