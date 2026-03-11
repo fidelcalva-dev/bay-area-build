@@ -27,12 +27,12 @@ export interface DumpsterSizeData {
 
 // Pricing data derived from v56 spreadsheet (Plan A base prices)
 export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
-  // Both Heavy and General (6 yard) - 6 × 12 × 2.25 = 162 cu ft / 27 = 6 cu yd
+  // Both Heavy and General (5 yard) - 5 × 12 × 2.25 = 135 cu ft / 27 = 5 cu yd
   {
-    yards: 6,
-    dimensions: "12' L × 6' W × 2.25' H",
+    yards: 5,
+    dimensions: "12' L × 5' W × 2.25' H",
     length: "12'",
-    width: "6'",
+    width: "5'",
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
