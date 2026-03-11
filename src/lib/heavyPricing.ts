@@ -133,7 +133,7 @@ export interface HeavyPriceResult {
  * Base prices: 6yd=$495, 8yd=$595, 10yd=$695.50 + material increment
  */
 export function calculateHeavyPrice(
-  size: 6 | 8 | 10,
+  size: 5 | 8 | 10,
   materialClass: HeavyMaterialClass,
   cityId: string = 'oakland'
 ): HeavyPriceResult {
