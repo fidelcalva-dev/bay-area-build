@@ -71,7 +71,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
       'Wet soil is significantly heavier—factor this into size selection',
     ],
     faqs: [
-      { question: 'How much does a dirt dumpster cost?', answer: 'Dirt dumpsters start at $495 for a 5-yard container. Flat-fee pricing means no weight overage charges.' },
+      { question: 'How much does a dirt dumpster cost?', answer: `Dirt dumpsters start at ${formatPrice(HEAVY_MATERIAL.cleanSoil.prices[5])} for a 5-yard container. Flat-fee pricing means no weight overage charges.` },
       { question: 'Can I put wet soil in the dumpster?', answer: 'Yes, but wet soil is much heavier. This won\'t affect your price (flat-fee), but ensure the dumpster isn\'t overfilled above the walls.' },
       { question: 'What about contaminated soil?', answer: 'Contaminated soil requires special handling and disposal. Call us to discuss your situation—we can arrange proper disposal if needed.' },
     ],

@@ -182,8 +182,8 @@ export const PAGE_SEO = {
     ogImage: '/og-image.jpg',
   },
   sizes: {
-    title: 'Dumpster Sizes Guide | 6 to 40 Yard Dumpsters',
-    description: 'Compare dumpster sizes from 6 to 40 yards. Heavy material sizes for concrete and dirt. General debris sizes for renovations and cleanouts.',
+    title: 'Dumpster Sizes Guide | 5 to 50 Yard Dumpsters',
+    description: 'Compare dumpster sizes from 5 to 50 yards. Heavy material sizes (5, 8, 10 yard) for concrete and dirt. General debris sizes for renovations and cleanouts.',
     canonical: '/sizes',
     ogImage: '/og-image.jpg',
   },

@@ -12,7 +12,7 @@ const OAKLAND_YARD = OPERATIONAL_YARDS.find(y => y.id === 'oakland')!;
 
 const META = {
   title: 'Dumpster Rental Oakland CA | Roll Off Dumpsters | Calsan Dumpsters Pro',
-  description: 'Professional dumpster rental in Oakland, CA. 10-40 yard roll-off dumpsters. Local yard dispatch. Transparent pricing. Same-day availability.',
+  description: 'Professional dumpster rental in Oakland, CA. 5-50 yard roll-off dumpsters. Local yard dispatch. Transparent pricing. Same-day availability.',
   slug: 'dumpster-rental-oakland-ca',
 };
 

@@ -70,7 +70,7 @@ const priceFactors = [
   { 
     icon: Weight, 
     title: 'Weight & Overage', 
-    description: 'Heavy materials: FLAT FEE (no weight overage). General debris 20-50yd: $165/ton. General debris 6-10yd: $30/yard.',
+    description: `Heavy materials: FLAT FEE (no weight overage). General debris: $${PRICING_POLICIES.overagePerTonGeneral}/ton overage beyond included tonnage.`,
     impact: 'Varies by material & size'
   },
   { 

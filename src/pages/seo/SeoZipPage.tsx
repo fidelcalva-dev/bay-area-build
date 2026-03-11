@@ -40,7 +40,7 @@ export default function SeoZipPage() {
     generateServiceSchema({
       name: `Dumpster Rental in ${zipData.zip} — ${zipData.city}, CA`,
       description: pageDescription,
-      price: '$395',
+      price: formatPrice(getStartingPrice()),
       areaServed: [zipData.city, 'Bay Area', 'California'],
     }),
     generateFAQSchema(faqs),
