@@ -302,7 +302,7 @@ export default function CityRatesManager() {
               />
               <p className="text-xs text-muted-foreground">
                 8yd = {(parseFloat(form.heavy_base_10yd) * 0.8).toFixed(0)}, 
-                6yd = {(parseFloat(form.heavy_base_10yd) * 0.6).toFixed(0)}
+                5yd = {(parseFloat(form.heavy_base_10yd) * 0.6).toFixed(0)}
               </p>
             </div>
             <div className="flex items-center gap-2">

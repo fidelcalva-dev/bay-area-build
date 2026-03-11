@@ -42,7 +42,7 @@ export const YARD_HUBS: YardHubData[] = [
     coverageDescription: 'Our Oakland yard is the primary hub for the East Bay and North Bay, serving Oakland, Berkeley, Alameda, San Leandro, Hayward, Emeryville, and surrounding communities. With direct freeway access via I-880 and I-580, deliveries from this yard reach most East Bay addresses within 1–3 hours.',
     deliverySpeed: 'Most deliveries from our Oakland yard arrive within 1–3 hours during business hours.',
     equipmentStored: [
-      '6-yard roll-off dumpsters (heavy material rated)',
+      '5-yard roll-off dumpsters (heavy material rated)',
       '8-yard roll-off dumpsters (heavy material rated)',
       '10-yard roll-off dumpsters (heavy material rated)',
       '20-yard roll-off dumpsters (general debris)',
@@ -93,7 +93,7 @@ export const YARD_HUBS: YardHubData[] = [
     coverageDescription: 'Our San Jose yard is the South Bay and Silicon Valley hub, providing fast dumpster delivery to San Jose, Santa Clara, Sunnyvale, Milpitas, Campbell, and the greater South Bay area. Located near the US-101 and I-880 interchange for rapid access across the region.',
     deliverySpeed: 'Most deliveries from our San Jose yard arrive within 1–3 hours during business hours.',
     equipmentStored: [
-      '6-yard roll-off dumpsters (heavy material rated)',
+      '5-yard roll-off dumpsters (heavy material rated)',
       '8-yard roll-off dumpsters (heavy material rated)',
       '10-yard roll-off dumpsters (heavy material rated)',
       '20-yard roll-off dumpsters (general debris)',
@@ -143,7 +143,7 @@ export const YARD_HUBS: YardHubData[] = [
     coverageDescription: 'Our San Francisco yard serves the city of San Francisco, Daly City, South San Francisco, and Pacifica. Located in the Potrero Hill / Dogpatch area with quick access to I-280 and US-101, this yard enables rapid delivery across the Peninsula and SF neighborhoods.',
     deliverySpeed: 'Most deliveries from our San Francisco yard arrive within 1–3 hours during business hours.',
     equipmentStored: [
-      '6-yard roll-off dumpsters (heavy material rated)',
+      '5-yard roll-off dumpsters (heavy material rated)',
       '8-yard roll-off dumpsters (heavy material rated)',
       '10-yard roll-off dumpsters (heavy material rated)',
       '20-yard roll-off dumpsters (general debris)',

@@ -20,16 +20,16 @@ export default function SeoZipPage() {
   const yard = OPERATIONAL_YARDS.find(y => y.id === zipData.yardId);
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'zip', city: zipData.city, zip: zipData.zip, slug: zipData.zip });
   const pageTitle = `Dumpster Rental ${zipData.zip} | ${zipData.city}, CA | Calsan`;
-  const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 6-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
+  const pageDescription = `Dumpster rental in ZIP ${zipData.zip} — ${zipData.city}, CA. Same-day delivery from our ${yard?.city || 'local'} yard. 5-50 yard sizes. Transparent pricing. Call (510) 680-2150.`;
   const canonicalPath = zipUrl(zipData.zip);
   const canonicalUrlFull = `${BUSINESS_INFO.url}${canonicalPath}`;
 
   const faqs = [
-    { question: `How much is a dumpster rental in ${zipData.zip}?`, answer: `Dumpster rental in ${zipData.zip} (${zipData.city}) starts from $390 for a 6-yard container. Price depends on size and material type. Heavy materials are flat-fee. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
+    { question: `How much is a dumpster rental in ${zipData.zip}?`, answer: `Dumpster rental in ${zipData.zip} (${zipData.city}) starts from $390 for a 5-yard container. Price depends on size and material type. Heavy materials are flat-fee. General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton.` },
     { question: `How fast can I get a dumpster in ${zipData.zip}?`, answer: `Same-day delivery to ${zipData.zip} (${zipData.neighborhoods.join(', ')}) is available when ordered before noon. Our ${yard?.name || 'local yard'} is close by for fast turnaround.` },
     { question: `Do I need a permit for a dumpster in ${zipData.zip}?`, answer: `If placing the dumpster on your private driveway, no permit is needed. Street placement in ${zipData.city} requires a permit from public works. We recommend driveway placement.` },
-    { question: `What sizes are available for delivery to ${zipData.zip}?`, answer: `All sizes from 6 to 50 yards deliver to ${zipData.zip}. Heavy material containers (concrete, dirt) are available in 6, 8, and 10 yard sizes.` },
-    { question: `Can I get a concrete dumpster in ${zipData.zip}?`, answer: `Yes. We deliver 6, 8, and 10 yard concrete dumpsters to ${zipData.zip}. Heavy materials are flat-fee pricing — disposal included, no weight overage charges.` },
+    { question: `What sizes are available for delivery to ${zipData.zip}?`, answer: `All sizes from 5 to 50 yards deliver to ${zipData.zip}. Heavy material containers (concrete, dirt) are available in 5, 8, and 10 yard sizes.` },
+    { question: `Can I get a concrete dumpster in ${zipData.zip}?`, answer: `Yes. We deliver 5, 8, and 10 yard concrete dumpsters to ${zipData.zip}. Heavy materials are flat-fee pricing — disposal included, no weight overage charges.` },
     { question: `What areas does ${zipData.zip} cover?`, answer: `ZIP code ${zipData.zip} covers ${zipData.neighborhoods.join(', ')} in ${zipData.city}, CA. We deliver to all addresses within this ZIP.` },
     { question: `Is same-day delivery available to ${zipData.zip}?`, answer: `Yes, same-day delivery is typically available for ${zipData.zip} orders placed before noon. Our ${yard?.city || 'local'} yard is close enough for rapid dispatch.` },
     { question: `What is included in the rental price for ${zipData.zip}?`, answer: `Every rental includes delivery, pickup, and base tonnage (by size). Standard rental is ${PRICING_POLICIES.standardRentalDays} days. Extra days are $${PRICING_POLICIES.extraDayCost}/day.` },
@@ -148,7 +148,7 @@ export default function SeoZipPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground mt-3">Available in 6, 8, 10 yard. No weight overage.</p>
+              <p className="text-xs text-muted-foreground mt-3">Available in 5, 8, 10 yard. No weight overage.</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="font-semibold text-foreground mb-3">General Debris</h3>

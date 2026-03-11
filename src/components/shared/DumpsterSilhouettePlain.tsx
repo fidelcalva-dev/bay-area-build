@@ -4,7 +4,7 @@
  * Each size renders unique proportions based on canonical dimensions
  * 
  * CANONICAL DIMENSIONS (W × L × H in feet):
- * 6 yd:  6   × 12 × 2.25
+ * 5 yd:  5   × 12 × 2.25
  * 8 yd:  6   × 12 × 3
  * 10 yd: 7.5 × 12 × 3
  * 20 yd: 7.5 × 18 × 4
@@ -13,7 +13,7 @@
  * 50 yd: 7.5 × 24 × 7.5
  */
 
-type DumpsterSizeYd = 6 | 8 | 10 | 20 | 30 | 40 | 50;
+type DumpsterSizeYd = 5 | 8 | 10 | 20 | 30 | 40 | 50;
 
 interface DumpsterSilhouettePlainProps {
   size?: DumpsterSizeYd;
@@ -34,7 +34,7 @@ interface DumpsterSilhouettePlainProps {
  * - 7.5ft = 75 × 3.333 = 250px
  * 
  * VERIFICATION:
- * - 8yd/6yd height: 100/75 = 1.333 ✓
+ * - 8yd/5yd height: 100/75 = 1.333 ✓
  * - 30yd/20yd height: 200/133 = 1.504 ✓
  * - 50yd/40yd height: 250/200 = 1.25 ✓
  * - 18ft/12ft length: 600/400 = 1.5 ✓
@@ -47,8 +47,8 @@ const SIZE_PROPS: Record<DumpsterSizeYd, {
   bodyHeight: number;
   ribCount: number;
 }> = {
-  // 12ft × 2.25ft (6yd)
-  6:  { viewBoxWidth: 480, viewBoxHeight: 130, bodyWidth: 400, bodyHeight: 75,  ribCount: 6 },
+  // 12ft × 2.25ft (5yd)
+  5:  { viewBoxWidth: 480, viewBoxHeight: 130, bodyWidth: 400, bodyHeight: 75,  ribCount: 6 },
   // 12ft × 3ft (8yd, 10yd)
   8:  { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },
   10: { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },

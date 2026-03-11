@@ -19,8 +19,8 @@ const YARD_WASTE_CODES = ['GRASS_YARD_WASTE', 'YARD_WASTE', 'GRASS', 'LEAVES', '
 const RECYCLING_CODES = ['CLEAN_WOOD', 'WOOD_CHIPS', 'CARDBOARD', 'METAL_SCRAP'];
 const CLEAN_WOOD_CODES = ['CLEAN_WOOD', 'WOOD_CHIPS'];
 
-const HEAVY_SIZES = [5, 6, 8, 10];
-const DEBRIS_SIZES = [10, 20, 30, 40];
+const HEAVY_SIZES = [5, 8, 10];
+const DEBRIS_SIZES = [5, 8, 10, 20, 30, 40, 50];
 const RECYCLING_SIZES = [10, 20, 30];
 
 // Volume scoring (East Bay tuned)

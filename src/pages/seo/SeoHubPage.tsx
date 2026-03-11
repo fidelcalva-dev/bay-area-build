@@ -89,7 +89,7 @@ export default function SeoHubPage() {
   ]);
 
   const faqs = [
-    { question: `What dumpster sizes do you offer?`, answer: 'We offer 6, 8, 10, 15, 20, 30, and 40 yard roll-off dumpsters. Heavy material containers and large 50 yard options are also available for commercial projects.' },
+    { question: `What dumpster sizes do you offer?`, answer: 'We offer 5, 8, 10, 20, 30, 40, and 50 yard roll-off dumpsters. Heavy material containers are available in 5, 8, and 10 yard sizes.' },
     { question: `How much does dumpster rental cost?`, answer: 'Pricing depends on dumpster size, material type, and delivery location. Enter your ZIP code for instant, transparent pricing with no hidden fees.' },
     { question: `Do you offer same-day delivery?`, answer: 'Same-day delivery is available for most addresses based on scheduling and inventory. Next-day delivery is standard.' },
     { question: `Do you serve contractors?`, answer: 'Yes. We offer contractor accounts with volume pricing, priority scheduling, and Net-30 terms for qualified businesses.' },

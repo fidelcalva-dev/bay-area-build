@@ -26,7 +26,7 @@ const pricingTiers = PLAN_A_PRICING
   }));
 
 // Heavy material pricing from v56 - PROPORTIONAL PRICING (Flat Fee)
-// Base 10yd = $638, 8yd = 0.8×, 6yd = 0.6×
+// Base 10yd = $695.50, 8yd = $595, 5yd = $495
 // +$200 for specialty materials, +$300 for mixed heavy
 import { getHeavyPricingDisplay } from '@/lib/shared-data';
 

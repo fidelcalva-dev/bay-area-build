@@ -42,7 +42,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
       'Mixed loads may be reclassified as general debris with overage charges',
     ],
     faqs: [
-      { question: 'How much does a concrete dumpster cost?', answer: 'Concrete dumpsters start at $390 for a 6-yard. Pricing is flat-fee—disposal is included with no weight overage charges, regardless of how heavy the load is.' },
+      { question: 'How much does a concrete dumpster cost?', answer: 'Concrete dumpsters start at $495 for a 5-yard. Pricing is flat-fee—disposal is included with no weight overage charges, regardless of how heavy the load is.' },
       { question: 'Can I mix concrete with other materials?', answer: 'No. Concrete dumpsters are for clean loads only. Mixing with general debris or trash will result in reclassification and additional charges. Order a separate general debris dumpster for mixed waste.' },
       { question: 'Where does the concrete go?', answer: 'Clean concrete is routed to certified recycling facilities in the East Bay where it is crushed and reused as aggregate for road base and construction projects.' },
     ],
@@ -70,7 +70,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
       'Wet soil is significantly heavier—factor this into size selection',
     ],
     faqs: [
-      { question: 'How much does a dirt dumpster cost?', answer: 'Dirt dumpsters start at $390 for a 6-yard container. Flat-fee pricing means no weight overage charges.' },
+      { question: 'How much does a dirt dumpster cost?', answer: 'Dirt dumpsters start at $495 for a 5-yard container. Flat-fee pricing means no weight overage charges.' },
       { question: 'Can I put wet soil in the dumpster?', answer: 'Yes, but wet soil is much heavier. This won\'t affect your price (flat-fee), but ensure the dumpster isn\'t overfilled above the walls.' },
       { question: 'What about contaminated soil?', answer: 'Contaminated soil requires special handling and disposal. Call us to discuss your situation—we can arrange proper disposal if needed.' },
     ],

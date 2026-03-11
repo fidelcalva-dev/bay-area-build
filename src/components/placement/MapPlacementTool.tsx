@@ -246,7 +246,7 @@ export function MapPlacementTool({
                 <Select value={String(dumpsterSize)} onValueChange={(v) => setDumpsterSize(Number(v))}>
                   <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {[5, 6, 8, 10, 20, 30, 40, 50].map((size) => (
+                    {[5, 8, 10, 20, 30, 40, 50].map((size) => (
                       <SelectItem key={size} value={String(size)}>{size} yard</SelectItem>
                     ))}
                   </SelectContent>

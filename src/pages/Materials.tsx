@@ -44,7 +44,7 @@ const specialRules = [
 
 // Pickup truck load estimates
 const PICKUP_LOADS_QUICK = [
-  { yards: 6, loads: '2–3' },
+  { yards: 5, loads: '2–3' },
   { yards: 8, loads: '3–4' },
   { yards: 10, loads: '4–5' },
   { yards: 20, loads: '6–8' },

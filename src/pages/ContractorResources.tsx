@@ -47,7 +47,7 @@ const PERMIT_GUIDES = [
 const RESOURCES = [
   {
     title: 'Dumpster Size Guide for Contractors',
-    description: 'Choose the right dumpster size for your project scope. From 6-yard concrete removal to 50-yard commercial demolition.',
+    description: 'Choose the right dumpster size for your project scope. From 5-yard concrete removal to 50-yard commercial demolition.',
     link: '/sizes',
     icon: Truck,
   },

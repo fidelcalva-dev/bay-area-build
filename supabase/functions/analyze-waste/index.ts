@@ -63,8 +63,8 @@ const DENSITY_RANGES: Record<string, { low: number; high: number }> = {
   unknown: { low: 0.15, high: 0.40 },
 };
 
-const HEAVY_SIZES = [6, 8, 10];
-const GENERAL_SIZES = [6, 8, 10, 20, 30, 40, 50];
+const HEAVY_SIZES = [5, 8, 10];
+const GENERAL_SIZES = [5, 8, 10, 20, 30, 40, 50];
 
 // ============================================================
 // DRY_RUN SAMPLE RESULT
@@ -136,11 +136,11 @@ WEIGHT ESTIMATION (use these density ranges in tons/cubic yard):
 ${Object.entries(DENSITY_RANGES).map(([k, v]) => `- ${k}: ${v.low}-${v.high} tons/cy`).join('\n')}
 
 DUMPSTER SIZE RULES (LOCKED - NEVER DEVIATE):
-- HEAVY MATERIALS (concrete, dirt, asphalt, brick, tile, rock, soil, roofing): ONLY 6, 8, or 10 yard containers allowed
-- GENERAL/MIXED DEBRIS: 6, 8, 10, 20, 30, 40, or 50 yard containers
+- HEAVY MATERIALS (concrete, dirt, asphalt, brick, tile, rock, soil, roofing): ONLY 5, 8, or 10 yard containers allowed
+- GENERAL/MIXED DEBRIS: 5, 8, 10, 20, 30, 40, or 50 yard containers
 
 RECOMMENDATION LOGIC:
-1. If dominant materials are heavy (>60% by estimated volume) → recommend heavy flow, sizes 6/8/10 only
+1. If dominant materials are heavy (>60% by estimated volume) → recommend heavy flow, sizes 5/8/10 only
 2. If heavy materials mixed with trash → recommend "mixed" flow, any size based on volume
 3. If hazards detected with confidence >= 0.6 → flag "hazard_review_required"
 4. Green Halo eligible if: clean concrete, clean wood, clean roofing, green waste, clean C&D

@@ -86,16 +86,16 @@ export function validateHeavyFactors(factors: Record<number, number>): Validatio
     }
   }
 
-  // 6-yard should be between 0.4-0.8
-  if (factors[6] !== undefined) {
-    if (factors[6] < 0.4 || factors[6] > 0.8) {
-      errors.push('6-yard factor must be between 0.4 and 0.8');
+  // 5-yard should be between 0.4-0.8
+  if (factors[5] !== undefined) {
+    if (factors[5] < 0.4 || factors[5] > 0.8) {
+      errors.push('5-yard factor must be between 0.4 and 0.8');
     }
   }
 
   // Factors should be in descending order
-  if (factors[6] >= factors[8]) {
-    errors.push('6-yard factor must be less than 8-yard factor');
+  if (factors[5] >= factors[8]) {
+    errors.push('5-yard factor must be less than 8-yard factor');
   }
   if (factors[8] >= factors[10]) {
     errors.push('8-yard factor must be less than 10-yard factor');

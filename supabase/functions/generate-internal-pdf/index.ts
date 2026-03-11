@@ -37,7 +37,7 @@ const NON_NEGOTIABLE_RULES: DocContent = {
       heading: "3. BILLING & PRICING RULES",
       items: [
         "EXTRA TON RATE: $165/ton in Oakland/SJ markets. Pre-pay discount: $156.75/ton (5% off).",
-        "INCLUDED TONS BY SIZE: 5yd=0.5T, 6yd=0.6T, 8yd=0.8T, 10yd=1.0T. Never round down.",
+        "INCLUDED TONS BY SIZE: 5yd=0.5T, 8yd=0.5T, 10yd=1.0T, 20yd=2.0T, 30yd=3.0T, 40yd=4.0T, 50yd=5.0T. Never round down.",
         "OVERDUE RATE: $35/day after included rental period.",
         "AUTO-BILL LIMITS: Contractors up to $250 auto-billed. Homeowners require approval for ANY auto-billing."
       ]

@@ -22,7 +22,7 @@ interface SizeInfo {
 }
 
 const SIZES: SizeInfo[] = [
-  { yards: 6, basePrice: 390, includedTons: 0.5, category: 'both' },
+  { yards: 5, basePrice: 390, includedTons: 0.5, category: 'both' },
   { yards: 8, basePrice: 460, includedTons: 0.5, category: 'both' },
   { yards: 10, basePrice: 580, includedTons: 1, category: 'both' },
   { yards: 20, basePrice: 620, includedTons: 2, category: 'general' },
@@ -296,8 +296,8 @@ Always move the conversation forward. Never let it stall.
 ==============================
 KNOWLEDGE BASE
 ==============================
-- Sizes: Standard 6, 8, 10, 20, 30, 40, 50 yard. Heavy material: 6, 8, 10 yard only.
-- Included tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+- Sizes: Standard 5, 8, 10, 20, 30, 40, 50 yard. Heavy material: 5, 8, 10 yard only.
+- Included tonnage: 5yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
 - Heavy: Flat fee, disposal included, no overage, clean loads required, fill-line enforced
 - General overage: $165/ton beyond included, certified scale ticket
 - Rental: 7 days included, extra days $35/day

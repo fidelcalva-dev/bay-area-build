@@ -360,7 +360,7 @@ serve(async (req) => {
       "CLEAN_WOOD",
     ];
 
-    for (const sizeStr of ["5", "6", "8", "10"]) {
+    for (const sizeStr of ["5", "8", "10"]) {
       const size = parseInt(sizeStr);
       
       // HEAVY_BASE rates

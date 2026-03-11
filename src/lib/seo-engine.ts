@@ -469,7 +469,7 @@ function generateCityFaqs(city: SeoCity, yard?: typeof OPERATIONAL_YARDS[0]): Fa
     },
     {
       question: `What sizes are available in ${city.city_name}?`,
-      answer: `We offer 6, 8, 10, 20, 30, 40, and 50 yard dumpsters in ${city.city_name}. Heavy material dumpsters (concrete, dirt) are available in 6-10 yard sizes. General debris dumpsters are available in all sizes.`,
+      answer: `We offer 5, 8, 10, 20, 30, 40, and 50 yard dumpsters in ${city.city_name}. Heavy material dumpsters (concrete, dirt) are available in 5, 8, and 10 yard sizes. General debris dumpsters are available in all sizes.`,
     },
     {
       question: `What materials can I put in a dumpster in ${city.city_name}?`,

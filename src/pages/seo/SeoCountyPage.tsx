@@ -54,7 +54,7 @@ export default function SeoCountyPage() {
   ]);
 
   const faqs = [
-    { question: `What dumpster sizes are available in ${county.name}?`, answer: `We offer 10, 15, 20, 30, and 40 yard roll-off dumpsters throughout ${county.name}. Heavy material containers (6-10 yard) are also available.` },
+    { question: `What dumpster sizes are available in ${county.name}?`, answer: `We offer 5, 8, 10, 20, 30, 40, and 50 yard roll-off dumpsters throughout ${county.name}. Heavy material containers (5, 8, 10 yard) are also available.` },
     { question: `How fast can you deliver a dumpster in ${county.name}?`, answer: `Same-day delivery is available for most ${county.name} addresses based on scheduling and inventory.` },
     { question: `Do I need a permit for a dumpster in ${county.name}?`, answer: `Dumpsters on private property typically do not need permits. Street placement requirements vary by city within ${county.name}.` },
     { question: `Which cities in ${county.name} do you serve?`, answer: `We serve all cities in ${county.name} including ${county.majorCities.map(s => s.replace(/-/g, ' ')).join(', ')}.` },

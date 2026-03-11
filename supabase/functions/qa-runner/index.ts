@@ -193,7 +193,7 @@ async function executeCheck(supabase: any, check: QaCheck): Promise<CheckResult>
           .eq('is_active', true);
         
         const invalidSizes: string[] = [];
-        const validSizes = [5, 6, 8, 10];
+        const validSizes = [5, 8, 10];
         
         for (const profile of (heavyProfiles || []) as { material_code: string; allowed_sizes: number[] }[]) {
           const sizes = profile.allowed_sizes || [];
@@ -311,7 +311,7 @@ async function executeCheck(supabase: any, check: QaCheck): Promise<CheckResult>
           status: 'PASS',
           details_json: { expected },
           fix_suggestion: null,
-          evidence: 'Included tons: 5yd=0.5T, 6yd=0.6T, 8yd=0.8T, 10yd=1.0T',
+          evidence: 'Included tons: 5yd=0.5T, 8yd=0.5T, 10yd=1.0T',
           admin_route: '/admin/config',
         };
       }

@@ -30,7 +30,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
       { url: '/quote', anchorText: 'Get Instant Quote' },
     ],
     faqs: [
-      { question: 'What is the cheapest dumpster rental in Oakland?', answer: 'A 6-yard dumpster starts from $390 in Oakland. This is ideal for small cleanouts and single-room projects.' },
+      { question: 'What is the cheapest dumpster rental in Oakland?', answer: 'A 5-yard dumpster starts from $390 in Oakland. This is ideal for small cleanouts and single-room projects.' },
       { question: 'Do Oakland dumpster companies charge by weight?', answer: 'General debris dumpsters include base tonnage. Overage is $165/ton. Heavy material dumpsters (concrete, dirt) are flat-fee with no weight overage.' },
     ],
   },
@@ -70,10 +70,10 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
   {
     slug: 'heavy-material-dumpsters-explained',
     title: 'Heavy Material Dumpsters Explained: Concrete, Dirt & Rock',
-    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, size limits (6-10 yard), clean load rules, and when to use them vs general debris containers.',
+    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, size limits (5-10 yard), clean load rules, and when to use them vs general debris containers.',
     targetKeyword: 'heavy material dumpster',
     category: 'materials',
-    outline: ['What qualifies as heavy material', 'Size restrictions (6-10yd)', 'Flat-fee vs overage pricing', 'Clean load requirements', 'Contamination reclassification'],
+    outline: ['What qualifies as heavy material', 'Size restrictions (5-10yd)', 'Flat-fee vs overage pricing', 'Clean load requirements', 'Contamination reclassification'],
     internalLinks: [
       { url: '/concrete-dumpster-rental', anchorText: 'Concrete Dumpster Rental' },
       { url: '/dumpster-rental/oakland', anchorText: 'Oakland Dumpster Service' },
