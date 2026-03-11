@@ -85,10 +85,10 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     title: 'Construction Debris Dumpster | All Sizes Available',
     h1: 'Construction Debris Dumpster Rental',
     description: 'Dumpsters for construction waste and renovation debris.',
-    metaDescription: 'Construction debris dumpsters from 6-50 yards. For drywall, lumber, roofing, siding. Tonnage included, $165/ton overage. Same-day Bay Area delivery. Call (510) 680-2150.',
-    intro: 'Renovation, remodel, or construction project? Our general debris dumpsters handle drywall, lumber, flooring, siding, insulation, and mixed construction waste. Available in all sizes from 6 to 50 yards.',
+    metaDescription: 'Construction debris dumpsters from 5-50 yards. For drywall, lumber, roofing, siding. Tonnage included, $165/ton overage. Same-day Bay Area delivery. Call (510) 680-2150.',
+    intro: 'Renovation, remodel, or construction project? Our general debris dumpsters handle drywall, lumber, flooring, siding, insulation, and mixed construction waste. Available in all sizes from 5 to 50 yards.',
     icon: HomeIcon,
-    sizes: [6, 8, 10, 20, 30, 40, 50],
+    sizes: [5, 8, 10, 20, 30, 40, 50],
     pricing: `Construction debris dumpsters include base tonnage by size (0.5T to 5T). Any weight beyond included tonnage is billed at $${PRICING_POLICIES.overagePerTonGeneral}/ton based on scale ticket.`,
     rules: [
       'Drywall, lumber, flooring, siding, insulation accepted',
