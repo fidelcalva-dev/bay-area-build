@@ -124,7 +124,7 @@ export default function MaterialCatalogPage() {
       description_short_es: '',
       default_pricing_model: 'DEBRIS',
       green_halo_allowed: false,
-      allowed_sizes_json: [6, 8, 10, 20, 30, 40, 50],
+      allowed_sizes_json: [5, 8, 10, 20, 30, 40, 50],
       icon: 'package',
       density_hint: 'Medium',
       requires_contamination_check: false,
