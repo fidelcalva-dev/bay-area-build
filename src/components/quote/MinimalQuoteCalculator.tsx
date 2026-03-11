@@ -117,7 +117,7 @@ const DEBRIS_SIZES: SizeOption[] = [
 ];
 
 const HEAVY_SIZES: SizeOption[] = [
-  { value: 6, label: '6 Yard', fits: 'Small concrete job' },
+  { value: 5, label: '5 Yard', fits: 'Small concrete job' },
   { value: 8, label: '8 Yard', fits: 'Patio or walkway' },
   { value: 10, label: '10 Yard', fits: 'Driveway demo', popular: true },
 ];
