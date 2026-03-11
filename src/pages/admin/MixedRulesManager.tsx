@@ -183,8 +183,8 @@ export default function MixedRulesManager() {
             <div className="p-3 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">Note:</p>
               <p className="text-sm">
-                Small mixed containers (6/8/10 yd) charge ${smallOverageRate}/yard for overage
-                instead of per-ton billing.
+                 Small mixed containers (5/8/10 yd) charge ${smallOverageRate}/yard for overage
+                 instead of per-ton billing.
               </p>
             </div>
           </CardContent>
