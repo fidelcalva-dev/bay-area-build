@@ -34,7 +34,7 @@ interface DumpsterSilhouettePlainProps {
  * - 7.5ft = 75 × 3.333 = 250px
  * 
  * VERIFICATION:
- * - 8yd/6yd height: 100/75 = 1.333 ✓
+ * - 8yd/5yd height: 100/75 = 1.333 ✓
  * - 30yd/20yd height: 200/133 = 1.504 ✓
  * - 50yd/40yd height: 250/200 = 1.25 ✓
  * - 18ft/12ft length: 600/400 = 1.5 ✓
