@@ -155,7 +155,7 @@ export const INPUT_METHODS: InputMethodConfig[] = [
 
 // Included tons by size (for general debris only)
 export const INCLUDED_TONS: Record<number, number> = {
-  6: 0.5,
+  5: 0.5,
   8: 0.5,
   10: 1,
   20: 2,
