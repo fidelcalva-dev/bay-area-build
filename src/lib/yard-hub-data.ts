@@ -75,8 +75,8 @@ export const YARD_HUBS: YardHubData[] = [
     faqs: [
       { question: 'How quickly can I get a dumpster delivered in Oakland?', answer: 'Most Oakland deliveries happen within 1–3 hours during business hours. Same-day delivery is available for orders placed before 2 PM.' },
       { question: 'Do I need a permit for a dumpster in Oakland?', answer: 'No permit is needed for dumpsters placed on private property like driveways. Street placements require an encroachment permit from Oakland Public Works.' },
-      { question: 'What sizes are available from the Oakland yard?', answer: 'We stock 6, 8, 10, 20, 30, and 40 yard dumpsters. Heavy material sizes (6–10 yard) are available for concrete, dirt, and asphalt.' },
-      { question: 'Can I rent a dumpster for concrete removal in Oakland?', answer: 'Yes, we offer flat-fee concrete dumpsters in 6, 8, and 10 yard sizes with no weight overage charges for clean concrete.' },
+      { question: 'What sizes are available from the Oakland yard?', answer: 'We stock 5, 8, 10, 20, 30, 40, and 50 yard dumpsters. Heavy material sizes (5–10 yard) are available for concrete, dirt, and asphalt.' },
+      { question: 'Can I rent a dumpster for concrete removal in Oakland?', answer: 'Yes, we offer flat-fee concrete dumpsters in 5, 8, and 10 yard sizes with no weight overage charges for clean concrete.' },
       { question: 'What areas does the Oakland yard serve?', answer: 'We serve Oakland, Berkeley, Alameda, San Leandro, Hayward, Emeryville, Castro Valley, and surrounding East Bay communities.' },
       { question: 'How much does a dumpster rental cost in Oakland?', answer: `Prices start at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. Final pricing depends on material type, weight, and delivery location. Get an exact price with our instant quote calculator.` },
     ],
