@@ -589,7 +589,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 695.50,
         8: 595,
-        6: 495,
+        5: 495,
       },
     },
     plus_200: {
@@ -598,7 +598,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 895.50,
         8: 795,
-        6: 695,
+        5: 695,
       },
     },
     mixed_heavy: {
@@ -607,7 +607,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 995.50,
         8: 895,
-        6: 795,
+        5: 795,
       },
     },
   };
