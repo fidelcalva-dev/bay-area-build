@@ -1224,10 +1224,10 @@ export function V3QuoteFlow() {
                 {/* Price hero */}
                 <div className="p-6 text-center bg-gradient-to-b from-muted/20 to-transparent">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                    Your Exact Price
+                    Your Price Range
                   </p>
                   <div className="text-5xl font-bold text-foreground tracking-tight">
-                    ${quote.subtotal.toLocaleString()}
+                    ${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}
                   </div>
                   <div className="mt-3 space-y-0.5">
                     <p className="text-sm text-foreground font-medium">
