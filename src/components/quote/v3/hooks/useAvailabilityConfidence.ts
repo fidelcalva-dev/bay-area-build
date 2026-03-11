@@ -12,7 +12,7 @@ export interface AvailabilityResult {
 
 // Size value → dumpster_sizes.size_value mapping
 const SIZE_TO_VALUE: Record<number, number> = {
-  6: 6, 8: 8, 10: 10, 20: 20, 30: 30, 40: 40,
+  5: 5, 8: 8, 10: 10, 20: 20, 30: 30, 40: 40, 50: 50,
 };
 
 const HIGH_THRESHOLD = 4;

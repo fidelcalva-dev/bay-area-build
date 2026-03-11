@@ -191,8 +191,8 @@ export const PROJECT_TYPES: ProjectType[] = [
     id: 'concrete-small', 
     label: 'Concrete / Soil (Small)', 
     icon: 'hard-hat', 
-    heavySizeSmall: 6, 
-    heavySizeLarge: 6,
+    heavySizeSmall: 5, 
+    heavySizeLarge: 5,
     allowsGeneral: false,
     allowsHeavy: true,
     description: 'Small patio, walkway' 
