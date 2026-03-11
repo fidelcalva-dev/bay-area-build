@@ -422,10 +422,33 @@ export function V3QuoteFlow() {
     setTimeout(() => setStep('size'), 200);
   };
 
+  // Upsell nudge state
+  const [showUpsellNudge, setShowUpsellNudge] = useState(false);
+
   // Handle size tap
   const handleSizeSelect = (s: number) => {
     setSize(s);
     ga4.quoteSizeSelected({ size_yd: s, was_recommended: s === recommendedSize });
+
+    // Upsell: if 10yd selected for general debris, nudge toward 20yd
+    if (s === 10 && !isHeavy && availableSizes.includes(20)) {
+      setShowUpsellNudge(true);
+      return; // don't auto-advance — show nudge first
+    }
+
+    setShowUpsellNudge(false);
+    setTimeout(() => setStep('contact'), 200);
+  };
+
+  const handleAcceptUpsell = () => {
+    setSize(20);
+    setShowUpsellNudge(false);
+    ga4.quoteSizeSelected({ size_yd: 20, was_recommended: false });
+    setTimeout(() => setStep('contact'), 200);
+  };
+
+  const handleDeclineUpsell = () => {
+    setShowUpsellNudge(false);
     setTimeout(() => setStep('contact'), 200);
   };
 
