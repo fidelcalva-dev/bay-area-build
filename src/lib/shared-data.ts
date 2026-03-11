@@ -482,15 +482,15 @@ export interface V56PricingTier {
   category: 'heavy' | 'general' | 'both';
 }
 
-// Plan A pricing (General Debris - includes tons)
+// Plan A pricing (General Debris - includes tons) — Approved public prices
 export const PLAN_A_PRICING: V56PricingTier[] = [
-  { size: 5, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
-  { size: 8, basePrice: 460, priceRangeLow: 460, priceRangeHigh: 550, includedTons: 0.5, category: 'both' },
-  { size: 10, basePrice: 580, priceRangeLow: 580, priceRangeHigh: 675, includedTons: 1, category: 'both' },
-  { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
-  { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
-  { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
-  { size: 50, basePrice: 1050, priceRangeLow: 1050, priceRangeHigh: 1200, includedTons: 5, category: 'general' },
+  { size: 5, basePrice: 395, priceRangeLow: 395, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 8, basePrice: 425, priceRangeLow: 425, priceRangeHigh: 510, includedTons: 0.5, category: 'both' },
+  { size: 10, basePrice: 495, priceRangeLow: 495, priceRangeHigh: 595, includedTons: 1, category: 'both' },
+  { size: 20, basePrice: 650, priceRangeLow: 650, priceRangeHigh: 780, includedTons: 2, category: 'general' },
+  { size: 30, basePrice: 775, priceRangeLow: 775, priceRangeHigh: 930, includedTons: 3, category: 'general' },
+  { size: 40, basePrice: 925, priceRangeLow: 925, priceRangeHigh: 1100, includedTons: 4, category: 'general' },
+  { size: 50, basePrice: 1095, priceRangeLow: 1095, priceRangeHigh: 1300, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================
