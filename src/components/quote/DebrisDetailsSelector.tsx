@@ -266,7 +266,7 @@ export function DebrisDetailsSelector({
                 )}
                 {category.allowedSizes.length <= 3 && (
                   <span className="text-[9px] text-muted-foreground">
-                    6-10 yd only
+                    5-10 yd only
                   </span>
                 )}
               </div>
