@@ -124,6 +124,14 @@ export interface SmartQuote {
   isManualReview: boolean;
   marginPct: number;
   
+  // Capacity & surge
+  surgeMultiplier: number;
+  capacityUtilization: number;
+  
+  // Vendor fallback
+  isVendorFallback: boolean;
+  vendorName?: string;
+  
   // Warnings
   warnings: string[];
   
@@ -143,6 +151,7 @@ export interface SmartQuoteInput {
   greenHaloRequired?: boolean;
   isContractor?: boolean;
   contractorDiscountPct?: number;
+  isSameDay?: boolean;
 }
 
 // =====================================================
@@ -383,6 +392,130 @@ export async function getMaterialRule(materialClass: string): Promise<MaterialRu
 }
 
 // =====================================================
+// PRICING RULES ENGINE
+// =====================================================
+
+interface PricingRule {
+  base_delivery_cost: number;
+  base_pickup_cost: number;
+  per_mile_cost: number;
+  per_mile_threshold: number;
+  overweight_cost_per_ton: number;
+  minimum_margin_percent: number;
+  surge_threshold_pct: number;
+  surge_multiplier: number;
+  same_day_premium: number;
+}
+
+const DEFAULT_RULES: PricingRule = {
+  base_delivery_cost: 85,
+  base_pickup_cost: 65,
+  per_mile_cost: 2,
+  per_mile_threshold: 15,
+  overweight_cost_per_ton: 165,
+  minimum_margin_percent: 15,
+  surge_threshold_pct: 85,
+  surge_multiplier: 1.08,
+  same_day_premium: 100,
+};
+
+async function fetchPricingRules(): Promise<PricingRule> {
+  const { data } = await supabase
+    .from('pricing_rules')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at')
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) return DEFAULT_RULES;
+  return {
+    base_delivery_cost: Number(data.base_delivery_cost),
+    base_pickup_cost: Number(data.base_pickup_cost),
+    per_mile_cost: Number(data.per_mile_cost),
+    per_mile_threshold: Number(data.per_mile_threshold),
+    overweight_cost_per_ton: Number(data.overweight_cost_per_ton),
+    minimum_margin_percent: Number(data.minimum_margin_percent),
+    surge_threshold_pct: Number(data.surge_threshold_pct),
+    surge_multiplier: Number(data.surge_multiplier),
+    same_day_premium: Number(data.same_day_premium),
+  };
+}
+
+// =====================================================
+// CAPACITY SURGE ENGINE
+// =====================================================
+
+async function getCapacityUtilization(yardId: string): Promise<number> {
+  // Check how many assets are deployed vs total for this yard
+  const { count: totalCount } = await supabase
+    .from('assets_dumpsters')
+    .select('id', { count: 'exact', head: true })
+    .eq('home_yard_id', yardId);
+
+  const { count: deployedCount } = await supabase
+    .from('assets_dumpsters')
+    .select('id', { count: 'exact', head: true })
+    .eq('home_yard_id', yardId)
+    .eq('asset_status', 'deployed');
+
+  const total = totalCount || 1;
+  const deployed = deployedCount || 0;
+  return Math.round((deployed / total) * 100);
+}
+
+// =====================================================
+// VENDOR FALLBACK ENGINE
+// =====================================================
+
+export interface VendorQuote {
+  vendorName: string;
+  vendorPrice: number;
+  customerPrice: number;
+  markupPct: number;
+  reliabilityScore: number;
+}
+
+async function findVendorFallback(
+  zip: string,
+  sizeYd: number,
+): Promise<VendorQuote | null> {
+  const { data: vendors } = await supabase
+    .from('vendors')
+    .select('*')
+    .eq('is_active', true)
+    .contains('size_support', [sizeYd]);
+
+  if (!vendors?.length) return null;
+
+  // Find vendors serving this ZIP
+  const matching = vendors.filter(v => {
+    const zips = v.coverage_zips || [];
+    return zips.includes(zip) || zips.length === 0;
+  });
+
+  if (!matching.length) return null;
+
+  // Pick best by reliability
+  const best = matching.sort((a, b) => (b.reliability_score || 0) - (a.reliability_score || 0))[0];
+
+  // Estimate vendor price from internal cost baseline (no vendor-specific price columns)
+  // Use a conservative estimate based on market rates
+  const vendorBasePrices: Record<number, number> = { 5: 300, 8: 350, 10: 400, 20: 550, 30: 650, 40: 800, 50: 950 };
+  const vendorPrice = vendorBasePrices[sizeYd] || 500;
+  const markupPct = 35;
+  const customerPrice = strategicRound(vendorPrice * (1 + markupPct / 100));
+
+  return {
+    vendorName: best.name,
+    vendorPrice,
+    customerPrice,
+    markupPct,
+    reliabilityScore: Number(best.reliability_score) || 0,
+  };
+}
+
+// =====================================================
 // COST ENGINE
 // =====================================================
 
@@ -403,27 +536,18 @@ function calculateInternalCost(
   // Dump fee calculation
   let dumpFee: number;
   if (materialRule.pricing_mode === 'flat_rate') {
-    // Flat rate from material rule or dump site
     const flatRate = materialRule.flat_rate_json[String(sizeYd)];
     dumpFee = flatRate ? flatRate - delivery - pickup : dumpSite.dumpCostBasis * sizeYd * 0.3;
   } else {
-    // Included tons pricing
     const includedTons = materialRule.included_tons_json[String(sizeYd)] || 0;
     dumpFee = includedTons * dumpSite.dumpCostBasis;
   }
 
-  // Fuel: base + distance-based
   const fuel = yard.yard.base_fuel_cost + (yard.distanceMiles > 15 ? (yard.distanceMiles - 15) * 1.5 : 0);
-
-  // Labor
   const labor = yard.yard.base_labor_cost;
-
-  // Route adjustment: dump site distance from yard adds cost
   const routeAdjustment = dumpSite.distanceFromYardMiles > 10
     ? Math.round((dumpSite.distanceFromYardMiles - 10) * 2)
     : 0;
-
-  // Green Halo surcharge
   const greenHaloCost = greenHaloRequired
     ? (materialRule.included_tons_json[String(sizeYd)] || 1) * GREEN_HALO_RATE
     : 0;
@@ -449,7 +573,6 @@ function calculateInternalCost(
 // =====================================================
 
 function strategicRound(price: number): number {
-  // Round to nearest $5 or clean .50
   if (price <= 500) return Math.round(price / 5) * 5;
   if (price <= 1000) return Math.round(price / 5) * 5;
   return Math.round(price / 10) * 10;
@@ -503,7 +626,28 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   // 4. Calculate internal cost
   const internalCost = calculateInternalCost(yard, dumpSite, materialRule, input.sizeYd, greenHalo);
 
-  // 5. Calculate public price
+  // 5. Capacity-based surge pricing
+  const pricingRules = await fetchPricingRules();
+  let capacityUtilization = 0;
+  let surgeMultiplier = 1.0;
+  try {
+    capacityUtilization = await getCapacityUtilization(yard.yard.id);
+    if (capacityUtilization >= pricingRules.surge_threshold_pct) {
+      surgeMultiplier = pricingRules.surge_multiplier;
+      warnings.push(`High demand area — ${capacityUtilization}% capacity utilization.`);
+    }
+  } catch {
+    // Non-critical, continue without surge
+  }
+
+  // 6. Same-day premium
+  let sameDayPremium = 0;
+  if (input.isSameDay) {
+    sameDayPremium = pricingRules.same_day_premium;
+    warnings.push(`Same-day delivery premium: $${sameDayPremium}`);
+  }
+
+  // 7. Calculate public price
   const marginPct = input.contractorDiscountPct
     ? DEFAULT_MARGIN_PCT - input.contractorDiscountPct
     : DEFAULT_MARGIN_PCT;
@@ -512,11 +656,9 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
-    // Flat rate: use canonical price directly
     publicPrice = materialRule.flat_rate_json[String(input.sizeYd)] || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
   } else {
-    // Cost-plus pricing
-    publicPrice = strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    publicPrice = strategicRound((internalCost.totalInternal + sameDayPremium) * surgeMultiplier * (1 + marginPct / 100));
   }
 
   const publicPriceLow = publicPrice;
@@ -543,6 +685,9 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     isFlatFee: materialRule.pricing_mode === 'flat_rate',
     isManualReview,
     marginPct,
+    surgeMultiplier,
+    capacityUtilization,
+    isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
     contaminationRisk: materialRule.requires_clean_load,
@@ -564,6 +709,7 @@ export async function calculateSmartQuoteFromZip(
     contractorDiscountPct?: number;
     lat?: number;
     lng?: number;
+    isSameDay?: boolean;
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
@@ -609,7 +755,8 @@ export async function calculateSmartQuoteFromZip(
     }
   }
 
-  return calculateSmartQuote({
+  // Try smart engine first
+  const smartResult = await calculateSmartQuote({
     lat,
     lng,
     zip,
@@ -618,5 +765,41 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired: options?.greenHaloRequired,
     isContractor: options?.isContractor,
     contractorDiscountPct: options?.contractorDiscountPct,
+    isSameDay: options?.isSameDay,
   });
+
+  if (smartResult) return smartResult;
+
+  // Vendor fallback: if no local coverage, try vendor marketplace
+  const vendorQuote = await findVendorFallback(zip, sizeYd);
+  if (vendorQuote) {
+    // Build a synthetic SmartQuote from vendor data
+    return {
+      yard: null as any, // No local yard
+      dumpSite: null as any,
+      materialRule: (await getMaterialRule(materialClass))!,
+      internalCost: {
+        delivery: 0, pickup: 0, dumpFee: 0, fuel: 0, labor: 0,
+        overhead: 0, routeAdjustment: 0, greenHaloCost: 0,
+        totalInternal: vendorQuote.vendorPrice,
+      },
+      publicPriceLow: vendorQuote.customerPrice,
+      publicPriceHigh: vendorQuote.customerPrice + RANGE_SPREAD,
+      includedTons: 0,
+      overweightFeePerTon: 165,
+      isFlatFee: false,
+      isManualReview: true,
+      marginPct: vendorQuote.markupPct,
+      surgeMultiplier: 1,
+      capacityUtilization: 0,
+      isVendorFallback: true,
+      vendorName: vendorQuote.vendorName,
+      warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],
+      greenHaloApplied: false,
+      contaminationRisk: false,
+      outsideServiceRadius: true,
+    };
+  }
+
+  return null;
 }

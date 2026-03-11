@@ -12624,6 +12624,75 @@ export type Database = {
           },
         ]
       }
+      pricing_rules: {
+        Row: {
+          base_delivery_cost: number
+          base_pickup_cost: number
+          contamination_surcharge: number
+          created_at: string
+          description: string | null
+          extra_day_fee: number
+          id: string
+          is_active: boolean
+          maximum_margin_percent: number
+          minimum_margin_percent: number
+          overweight_cost_per_ton: number
+          per_mile_cost: number
+          per_mile_threshold: number
+          reroute_surcharge: number
+          rule_name: string
+          same_day_premium: number
+          standard_rental_days: number
+          surge_multiplier: number
+          surge_threshold_pct: number
+          updated_at: string
+        }
+        Insert: {
+          base_delivery_cost?: number
+          base_pickup_cost?: number
+          contamination_surcharge?: number
+          created_at?: string
+          description?: string | null
+          extra_day_fee?: number
+          id?: string
+          is_active?: boolean
+          maximum_margin_percent?: number
+          minimum_margin_percent?: number
+          overweight_cost_per_ton?: number
+          per_mile_cost?: number
+          per_mile_threshold?: number
+          reroute_surcharge?: number
+          rule_name: string
+          same_day_premium?: number
+          standard_rental_days?: number
+          surge_multiplier?: number
+          surge_threshold_pct?: number
+          updated_at?: string
+        }
+        Update: {
+          base_delivery_cost?: number
+          base_pickup_cost?: number
+          contamination_surcharge?: number
+          created_at?: string
+          description?: string | null
+          extra_day_fee?: number
+          id?: string
+          is_active?: boolean
+          maximum_margin_percent?: number
+          minimum_margin_percent?: number
+          overweight_cost_per_ton?: number
+          per_mile_cost?: number
+          per_mile_threshold?: number
+          reroute_surcharge?: number
+          rule_name?: string
+          same_day_premium?: number
+          standard_rental_days?: number
+          surge_multiplier?: number
+          surge_threshold_pct?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pricing_zones: {
         Row: {
           base_multiplier: number
