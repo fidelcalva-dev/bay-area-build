@@ -901,6 +901,9 @@ const App = () => {
                 <Route path="pricing/locations" element={
                   <Suspense fallback={<PageLoader />}><LocationPricingManager /></Suspense>
                 } />
+                <Route path="pricing/simulator" element={
+                  <Suspense fallback={<PageLoader />}><PricingSimulator /></Suspense>
+                } />
                 {/* Telephony Routes */}
                 <Route path="telephony/calls" element={
                   <Suspense fallback={<PageLoader />}><CallsManager /></Suspense>
