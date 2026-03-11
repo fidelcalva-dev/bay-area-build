@@ -33,7 +33,7 @@ export function generateSeoExpansion(cityName: string, countyName?: string): Exp
     },
     {
       heading: `Materials Accepted in ${cityName} Dumpsters`,
-      body: `Our dumpster rental service in ${cityName} accepts a wide range of materials including household junk, furniture, drywall, wood, carpet, roofing shingles, and mixed construction debris. We also offer specialized heavy-material dumpsters for concrete, dirt, soil, brick, block, and asphalt — available in 6, 8, and 10-yard sizes with flat-fee pricing. Prohibited items include hazardous waste, paint, batteries, medical waste, and pressurized tanks.`,
+      body: `Our dumpster rental service in ${cityName} accepts a wide range of materials including household junk, furniture, drywall, wood, carpet, roofing shingles, and mixed construction debris. We also offer specialized heavy-material dumpsters for concrete, dirt, soil, brick, block, and asphalt — available in 5, 8, and 10-yard sizes with flat-fee pricing. Prohibited items include hazardous waste, paint, batteries, medical waste, and pressurized tanks.`,
     },
     {
       heading: `How Dumpster Delivery Works in ${cityName}`,
