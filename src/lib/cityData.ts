@@ -1744,3 +1744,11 @@ export function getCitySitemapEntries() {
     changefreq: 'monthly' as const,
   }));
 }
+
+/**
+ * Helper: Replace any hardcoded "$395" in city metaTitles with the canonical starting price.
+ * This ensures all city SEO titles stay in sync with pricingConfig.ts.
+ */
+export function getCityMetaTitle(city: CityPageData): string {
+  return city.metaTitle.replace(/\$\d{3,}/, `$${getStartingPrice()}`);
+}
