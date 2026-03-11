@@ -264,7 +264,7 @@ export function generateCityMaterialPageContent(city: SeoCity, materialSlug: str
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const urlPath = cityMaterialUrl(city.city_slug, material.slug);
-  const title = `${material.name} Dumpster Rental ${city.city_name} CA | ${material.category === 'heavy' ? 'Flat Fee' : `From $${DUMPSTER_SIZES_DATA.find(s => (material.sizes as readonly number[]).includes(s.yards))?.priceFrom || 390}`}`;
+  const title = `${material.name} Dumpster Rental ${city.city_name} CA | ${material.category === 'heavy' ? 'Flat Fee' : `From $${DUMPSTER_SIZES_DATA.find(s => (material.sizes as readonly number[]).includes(s.yards))?.priceFrom || 395}`}`;
   const metaDescription = `${material.name} dumpster rental in ${city.city_name}, CA. ${material.description} Available in ${material.sizes.join(', ')} yard sizes. Same-day delivery from our ${yard?.city || 'local'} yard.`;
   const h1 = `${material.name} Dumpster Rental in ${city.city_name}, CA`;
 
