@@ -177,8 +177,8 @@ export function getAllHeavyPrices(
   materialClass: HeavyMaterialClass,
   cityId: string = 'oakland'
 ): HeavyPriceResult[] {
-  return [10, 8, 6].map(size => 
-    calculateHeavyPrice(size as 6 | 8 | 10, materialClass, cityId)
+  return [10, 8, 5].map(size => 
+    calculateHeavyPrice(size as 5 | 8 | 10, materialClass, cityId)
   );
 }
 
