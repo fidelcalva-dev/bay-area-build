@@ -392,6 +392,131 @@ export async function getMaterialRule(materialClass: string): Promise<MaterialRu
 }
 
 // =====================================================
+// PRICING RULES ENGINE
+// =====================================================
+
+interface PricingRule {
+  base_delivery_cost: number;
+  base_pickup_cost: number;
+  per_mile_cost: number;
+  per_mile_threshold: number;
+  overweight_cost_per_ton: number;
+  minimum_margin_percent: number;
+  surge_threshold_pct: number;
+  surge_multiplier: number;
+  same_day_premium: number;
+}
+
+const DEFAULT_RULES: PricingRule = {
+  base_delivery_cost: 85,
+  base_pickup_cost: 65,
+  per_mile_cost: 2,
+  per_mile_threshold: 15,
+  overweight_cost_per_ton: 165,
+  minimum_margin_percent: 15,
+  surge_threshold_pct: 85,
+  surge_multiplier: 1.08,
+  same_day_premium: 100,
+};
+
+async function fetchPricingRules(): Promise<PricingRule> {
+  const { data } = await supabase
+    .from('pricing_rules')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at')
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) return DEFAULT_RULES;
+  return {
+    base_delivery_cost: Number(data.base_delivery_cost),
+    base_pickup_cost: Number(data.base_pickup_cost),
+    per_mile_cost: Number(data.per_mile_cost),
+    per_mile_threshold: Number(data.per_mile_threshold),
+    overweight_cost_per_ton: Number(data.overweight_cost_per_ton),
+    minimum_margin_percent: Number(data.minimum_margin_percent),
+    surge_threshold_pct: Number(data.surge_threshold_pct),
+    surge_multiplier: Number(data.surge_multiplier),
+    same_day_premium: Number(data.same_day_premium),
+  };
+}
+
+// =====================================================
+// CAPACITY SURGE ENGINE
+// =====================================================
+
+async function getCapacityUtilization(yardId: string): Promise<number> {
+  // Check how many assets are deployed vs total for this yard
+  const { count: totalCount } = await supabase
+    .from('assets_dumpsters')
+    .select('id', { count: 'exact', head: true })
+    .eq('home_yard_id', yardId);
+
+  const { count: deployedCount } = await supabase
+    .from('assets_dumpsters')
+    .select('id', { count: 'exact', head: true })
+    .eq('home_yard_id', yardId)
+    .eq('asset_status', 'deployed');
+
+  const total = totalCount || 1;
+  const deployed = deployedCount || 0;
+  return Math.round((deployed / total) * 100);
+}
+
+// =====================================================
+// VENDOR FALLBACK ENGINE
+// =====================================================
+
+export interface VendorQuote {
+  vendorName: string;
+  vendorPrice: number;
+  customerPrice: number;
+  markupPct: number;
+  reliabilityScore: number;
+}
+
+async function findVendorFallback(
+  zip: string,
+  sizeYd: number,
+): Promise<VendorQuote | null> {
+  const { data: vendors } = await supabase
+    .from('vendors')
+    .select('*')
+    .eq('is_active', true)
+    .contains('available_sizes', [sizeYd]);
+
+  if (!vendors?.length) return null;
+
+  // Find vendors serving this ZIP
+  const matching = vendors.filter(v => {
+    const zips = v.service_area_zips || [];
+    return zips.includes(zip) || zips.length === 0; // empty = serves all
+  });
+
+  if (!matching.length) return null;
+
+  // Pick best by reliability
+  const best = matching.sort((a, b) => (b.reliability_score || 0) - (a.reliability_score || 0))[0];
+
+  // Get vendor price for this size
+  const sizeKey = `vendor_price_${sizeYd}yd` as keyof typeof best;
+  const vendorPrice = Number(best[sizeKey]) || 0;
+  if (!vendorPrice) return null;
+
+  const markupPct = Number(best.markup_pct) || 35;
+  const customerPrice = strategicRound(vendorPrice * (1 + markupPct / 100));
+
+  return {
+    vendorName: best.company_name,
+    vendorPrice,
+    customerPrice,
+    markupPct,
+    reliabilityScore: Number(best.reliability_score) || 0,
+  };
+}
+
+// =====================================================
 // COST ENGINE
 // =====================================================
 
@@ -412,27 +537,18 @@ function calculateInternalCost(
   // Dump fee calculation
   let dumpFee: number;
   if (materialRule.pricing_mode === 'flat_rate') {
-    // Flat rate from material rule or dump site
     const flatRate = materialRule.flat_rate_json[String(sizeYd)];
     dumpFee = flatRate ? flatRate - delivery - pickup : dumpSite.dumpCostBasis * sizeYd * 0.3;
   } else {
-    // Included tons pricing
     const includedTons = materialRule.included_tons_json[String(sizeYd)] || 0;
     dumpFee = includedTons * dumpSite.dumpCostBasis;
   }
 
-  // Fuel: base + distance-based
   const fuel = yard.yard.base_fuel_cost + (yard.distanceMiles > 15 ? (yard.distanceMiles - 15) * 1.5 : 0);
-
-  // Labor
   const labor = yard.yard.base_labor_cost;
-
-  // Route adjustment: dump site distance from yard adds cost
   const routeAdjustment = dumpSite.distanceFromYardMiles > 10
     ? Math.round((dumpSite.distanceFromYardMiles - 10) * 2)
     : 0;
-
-  // Green Halo surcharge
   const greenHaloCost = greenHaloRequired
     ? (materialRule.included_tons_json[String(sizeYd)] || 1) * GREEN_HALO_RATE
     : 0;
@@ -458,7 +574,6 @@ function calculateInternalCost(
 // =====================================================
 
 function strategicRound(price: number): number {
-  // Round to nearest $5 or clean .50
   if (price <= 500) return Math.round(price / 5) * 5;
   if (price <= 1000) return Math.round(price / 5) * 5;
   return Math.round(price / 10) * 10;
