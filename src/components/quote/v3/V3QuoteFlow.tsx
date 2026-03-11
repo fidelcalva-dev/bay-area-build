@@ -1521,65 +1521,27 @@ export function V3QuoteFlow() {
                 </div>
               </div>
 
-              {/* Contact form */}
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-muted-foreground" /> Name
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="John Smith"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="h-12 rounded-xl border-border/60"
-                  />
+              {/* Contact summary */}
+              <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+                <div className="p-4">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Contact</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Name</span>
+                      <span className="font-semibold text-foreground">{customerName}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Phone</span>
+                      <span className="font-semibold text-foreground">{customerPhone}</span>
+                    </div>
+                    {customerEmail && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Email</span>
+                        <span className="font-semibold text-foreground">{customerEmail}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-muted-foreground" /> Phone
-                  </label>
-                  <Input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="(510) 555-1234"
-                    value={customerPhone}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
-                      if (raw.length >= 7) {
-                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3,6)}-${raw.slice(6)}`);
-                      } else if (raw.length >= 4) {
-                        setCustomerPhone(`(${raw.slice(0,3)}) ${raw.slice(3)}`);
-                      } else {
-                        setCustomerPhone(raw);
-                      }
-                    }}
-                    className="h-12 rounded-xl border-border/60"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-muted-foreground" /> Email
-                    <span className="text-muted-foreground font-normal">(optional)</span>
-                  </label>
-                  <Input
-                    type="email"
-                    placeholder="you@email.com"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="h-12 rounded-xl border-border/60"
-                  />
-                </div>
-              </div>
-
-              {/* SMS Consent Disclosures */}
-              <div className="space-y-2.5">
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  By clicking, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
-                </p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
-                </p>
               </div>
 
               {/* Terms */}
