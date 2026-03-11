@@ -626,7 +626,28 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   // 4. Calculate internal cost
   const internalCost = calculateInternalCost(yard, dumpSite, materialRule, input.sizeYd, greenHalo);
 
-  // 5. Calculate public price
+  // 5. Capacity-based surge pricing
+  const pricingRules = await fetchPricingRules();
+  let capacityUtilization = 0;
+  let surgeMultiplier = 1.0;
+  try {
+    capacityUtilization = await getCapacityUtilization(yard.yard.id);
+    if (capacityUtilization >= pricingRules.surge_threshold_pct) {
+      surgeMultiplier = pricingRules.surge_multiplier;
+      warnings.push(`High demand area — ${capacityUtilization}% capacity utilization.`);
+    }
+  } catch {
+    // Non-critical, continue without surge
+  }
+
+  // 6. Same-day premium
+  let sameDayPremium = 0;
+  if (input.isSameDay) {
+    sameDayPremium = pricingRules.same_day_premium;
+    warnings.push(`Same-day delivery premium: $${sameDayPremium}`);
+  }
+
+  // 7. Calculate public price
   const marginPct = input.contractorDiscountPct
     ? DEFAULT_MARGIN_PCT - input.contractorDiscountPct
     : DEFAULT_MARGIN_PCT;
@@ -635,11 +656,9 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
-    // Flat rate: use canonical price directly
     publicPrice = materialRule.flat_rate_json[String(input.sizeYd)] || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
   } else {
-    // Cost-plus pricing
-    publicPrice = strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    publicPrice = strategicRound((internalCost.totalInternal + sameDayPremium) * surgeMultiplier * (1 + marginPct / 100));
   }
 
   const publicPriceLow = publicPrice;
@@ -666,6 +685,9 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     isFlatFee: materialRule.pricing_mode === 'flat_rate',
     isManualReview,
     marginPct,
+    surgeMultiplier,
+    capacityUtilization,
+    isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
     contaminationRisk: materialRule.requires_clean_load,
