@@ -37,7 +37,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     slug: 'dumpster-cost-oakland',
     title: 'How Much Does a Dumpster Cost in Oakland?',
     metaTitle: 'How Much Does a Dumpster Cost in Oakland CA? [2026 Pricing]',
-    metaDescription: 'Oakland dumpster rental costs from $390 for a 6-yard to $1,135 for a 50-yard. Real local pricing, no broker markups. Flat-fee concrete. Get your exact price.',
+    metaDescription: 'Oakland dumpster rental costs from $390 for a 5-yard to $1,135 for a 50-yard. Real local pricing, no broker markups. Flat-fee concrete. Get your exact price.',
     h1: 'How Much Does a Dumpster Cost in Oakland?',
     date: 'February 10, 2026',
     readTime: '6 min read',
