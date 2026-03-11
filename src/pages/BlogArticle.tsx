@@ -74,7 +74,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
       { heading: 'Bay Area Concrete Recycling Facilities', body: 'Oakland: Argent Materials, Baldwin St\nSan Jose: Zanker Recycling\nSan Francisco: Recology SF\nHayward: Davis Street Transfer Station\n\nWe handle routing -- you just fill the dumpster with clean concrete.' },
     ],
     faqs: [
-      { question: 'How much concrete can I put in a 6-yard dumpster?', answer: 'A 6-yard dumpster can hold approximately 6 cubic yards of concrete, but weight is the limiting factor. Do not overfill above the walls. With flat-fee pricing, weight does not affect your cost.' },
+      { question: 'How much concrete can I put in a 5-yard dumpster?', answer: 'A 5-yard dumpster can hold approximately 5 cubic yards of concrete, but weight is the limiting factor. Do not overfill above the walls. With flat-fee pricing, weight does not affect your cost.' },
       { question: 'Can I mix concrete and dirt?', answer: 'No. Concrete and dirt should go in separate heavy material dumpsters. Both qualify for flat-fee pricing, but they must be clean, unmixed loads.' },
       { question: 'What if I have concrete with rebar?', answer: 'Rebar must be cut so it does not extend above the fill line. Concrete with protruding rebar cannot be safely transported.' },
     ],
