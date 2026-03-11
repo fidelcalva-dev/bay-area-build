@@ -163,6 +163,7 @@ const LocationPricingManager = lazy(() => import("./pages/admin/pricing/Location
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
+const PricingEngineDashboard = lazy(() => import("./pages/admin/PricingEngineDashboard"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 const PhotoAITest = lazy(() => import("./pages/admin/qa/PhotoAITest"));
