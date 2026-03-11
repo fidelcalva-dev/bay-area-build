@@ -213,7 +213,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Untreated lumber, pallets, plywood (100% clean)',
     descriptionEs: 'Madera sin tratar, paletas, madera contrachapada (100% limpia)',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Clean wood recycled or diverted upon request',
