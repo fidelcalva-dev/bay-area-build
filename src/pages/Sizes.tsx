@@ -69,7 +69,7 @@ export default function Sizes() {
               >
                 <Home className="w-4 h-4" />
                 <span>General Debris</span>
-                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">10-40 yd</span>
+                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">5-50 yd</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="heavy" 
