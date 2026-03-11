@@ -286,8 +286,8 @@ export function isValidHeavySize(size: number): size is 5 | 8 | 10 {
 /**
  * Get heavy size recommendation for volume
  */
-export function recommendHeavySize(estimatedVolumeCy: number): 6 | 8 | 10 {
-  if (estimatedVolumeCy <= 6) return 6;
+export function recommendHeavySize(estimatedVolumeCy: number): 5 | 8 | 10 {
+  if (estimatedVolumeCy <= 5) return 5;
   if (estimatedVolumeCy <= 8) return 8;
   return 10;
 }
