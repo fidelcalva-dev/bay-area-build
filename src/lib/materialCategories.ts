@@ -305,8 +305,8 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
       },
       {
         type: 'size_restriction',
-        message: 'Heavy materials limited to 6-10 yd containers only',
-        messageEs: 'Materiales pesados limitados a contenedores de 6-10 yardas',
+        message: 'Heavy materials limited to 5-10 yd containers only',
+        messageEs: 'Materiales pesados limitados a contenedores de 5-10 yardas',
       },
     ],
     requiresContaminationCheck: true,
