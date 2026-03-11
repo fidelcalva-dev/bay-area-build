@@ -27,7 +27,7 @@ const prohibited = [
 const specialRules = [
   {
     title: 'Concrete & Dirt Rules',
-    description: 'Concrete and clean dirt require a dedicated 6/8/10-yard dumpster. FLAT FEE pricing—disposal included with no extra weight charges. Cannot be mixed with other materials.',
+    description: 'Concrete and clean dirt require a dedicated 5/8/10-yard dumpster. FLAT FEE pricing—disposal included with no extra weight charges. Cannot be mixed with other materials.',
     icon: AlertTriangle,
   },
   {

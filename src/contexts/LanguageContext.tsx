@@ -459,7 +459,7 @@ const translations: Record<Language, Record<string, string>> = {
     'scenario.commercialWeight': 'Cuidado con los límites de peso en cargas mixtas.',
     'scenario.concrete': 'Concreto / Tierra (PESADO)',
     'scenario.concreteWhy': 'PRECIO FIJO para cargas de material pesado puro. El peso no es preocupación.',
-    'scenario.concreteWeight': 'SOLO PESADO: Deben ser cargas limpias (sin basura). SOLO 6/8/10 yardas.',
+    'scenario.concreteWeight': 'SOLO PESADO: Deben ser cargas limpias (sin basura). SOLO 5/8/10 yardas.',
     'scenario.retail': 'Limpieza de Local / Oficina',
     'scenario.retailWhy': 'Muebles, accesorios, equipo y basura general de oficina.',
     'scenario.retailWeight': 'Accesorios y equipo de metal añaden peso.',
