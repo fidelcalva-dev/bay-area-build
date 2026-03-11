@@ -1,9 +1,13 @@
 /**
- * Master Pricing Service
- * Fetches city-specific pricing from the dumpster_pricing table.
- * Single source of truth for all pricing across website, CRM, quotes, invoices.
+ * Master Pricing Service — Unified pricing gateway
+ * 
+ * Resolution order:
+ *   1. Smart Pricing Engine (location-aware, dynamic)
+ *   2. dumpster_pricing table (static, market-based)
+ *   3. Legacy fallback constants
  */
 import { supabase } from '@/integrations/supabase/client';
+import { calculateSmartQuoteFromZip, type SmartQuote } from './smartPricingEngine';
 
 // =====================================================
 // TYPES
@@ -34,6 +38,7 @@ export interface PriceRange {
   base: number;
   includedTons: number;
   isFlatFee: boolean;
+  isManualReview: boolean;
   deliveryFee: number;
   pickupFee: number;
   rentalFee: number;
@@ -43,27 +48,23 @@ export interface PriceRange {
   includedDays: number;
   extraDayFee: number;
   dumpCostPerTon: number;
+  // Smart engine data (when available)
+  smartQuote?: SmartQuote;
+  yardName?: string;
+  dumpSiteName?: string;
+  warnings: string[];
 }
 
-// City dump costs ($/ton)
-export const CITY_DUMP_COSTS: Record<string, number> = {
-  oakland_east_bay: 115,
-  san_jose_south_bay: 120,
-  san_francisco_peninsula: 125,
-  berkeley_north: 115, // same as Oakland
-};
-
 // Green Halo compliance rate
-export const GREEN_HALO_RATE = 165; // $/ton
+export const GREEN_HALO_RATE = 165;
 
-// Price range spread (accounts for distance/access variance)
+// Price range spread
 const RANGE_SPREAD = 70;
 
 // =====================================================
-// MARKET RESOLUTION
+// MARKET RESOLUTION (fallback path)
 // =====================================================
 
-/** Resolve market_code from ZIP via zone_zip_codes */
 export async function resolveMarketFromZip(zip: string): Promise<string> {
   if (!/^\d{5}$/.test(zip)) return 'oakland_east_bay';
 
@@ -75,7 +76,6 @@ export async function resolveMarketFromZip(zip: string): Promise<string> {
 
   if (data?.market_id) return data.market_id;
 
-  // Fallback: detect by city name
   const city = data?.city_name?.toLowerCase() || '';
   if (city.includes('san francisco') || city.includes('daly city') || city.includes('south san francisco') || city.includes('pacifica') || city.includes('burlingame') || city.includes('san mateo') || city.includes('brisbane')) {
     return 'san_francisco_peninsula';
@@ -84,14 +84,13 @@ export async function resolveMarketFromZip(zip: string): Promise<string> {
     return 'san_jose_south_bay';
   }
 
-  return 'oakland_east_bay'; // default
+  return 'oakland_east_bay';
 }
 
 // =====================================================
-// PRICING FETCH
+// STATIC TABLE FETCH (fallback)
 // =====================================================
 
-/** Fetch pricing for a specific size, material, and market */
 export async function getMasterPricing(
   sizeYd: number,
   materialType: 'general' | 'heavy',
@@ -128,8 +127,7 @@ export async function getMasterPricing(
   };
 }
 
-/** Calculate price range for display */
-export function calculatePriceRange(pricing: DumpsterPricing): PriceRange {
+function calculatePriceRangeFromStatic(pricing: DumpsterPricing): PriceRange {
   const base = pricing.total_price;
   const marginMultiplier = 1 + pricing.margin_pct / 100;
   const low = Math.round(base * marginMultiplier);
@@ -141,6 +139,7 @@ export function calculatePriceRange(pricing: DumpsterPricing): PriceRange {
     base,
     includedTons: pricing.included_tons,
     isFlatFee: pricing.is_heavy_only,
+    isManualReview: false,
     deliveryFee: pricing.delivery_fee,
     pickupFee: pricing.pickup_fee,
     rentalFee: pricing.rental_fee,
@@ -150,17 +149,81 @@ export function calculatePriceRange(pricing: DumpsterPricing): PriceRange {
     includedDays: pricing.included_days,
     extraDayFee: pricing.extra_day_fee,
     dumpCostPerTon: pricing.dump_cost_per_ton,
+    warnings: [],
   };
 }
 
-/** Convenience: resolve ZIP → market → pricing → range */
+// =====================================================
+// UNIFIED ENTRY — Smart Engine first, static fallback
+// =====================================================
+
+/** Map quote flow material type to canonical class */
+function resolveCanonicalClass(materialType: 'general' | 'heavy', projectLabel?: string): string {
+  if (materialType === 'general') return 'GENERAL_DEBRIS';
+  // Try to infer from project label
+  const label = (projectLabel || '').toLowerCase();
+  if (label.includes('soil') || label.includes('dirt')) return 'CLEAN_SOIL';
+  if (label.includes('concrete')) return 'CLEAN_CONCRETE';
+  if (label.includes('mixed soil')) return 'MIXED_SOIL';
+  return 'CLEAN_SOIL'; // default heavy
+}
+
 export async function getPriceRangeForZip(
   zip: string,
   sizeYd: number,
   materialType: 'general' | 'heavy',
+  options?: {
+    lat?: number;
+    lng?: number;
+    projectLabel?: string;
+    greenHaloRequired?: boolean;
+    isContractor?: boolean;
+  },
 ): Promise<PriceRange | null> {
+  // Path 1: Try Smart Pricing Engine
+  try {
+    const materialClass = resolveCanonicalClass(materialType, options?.projectLabel);
+    const smartQuote = await calculateSmartQuoteFromZip(zip, materialClass, sizeYd, {
+      lat: options?.lat,
+      lng: options?.lng,
+      greenHaloRequired: options?.greenHaloRequired,
+      isContractor: options?.isContractor,
+    });
+
+    if (smartQuote) {
+      return {
+        low: smartQuote.publicPriceLow,
+        high: smartQuote.publicPriceHigh,
+        base: smartQuote.internalCost.totalInternal,
+        includedTons: smartQuote.includedTons,
+        isFlatFee: smartQuote.isFlatFee,
+        isManualReview: smartQuote.isManualReview,
+        deliveryFee: smartQuote.internalCost.delivery,
+        pickupFee: smartQuote.internalCost.pickup,
+        rentalFee: 0, // included in overhead
+        dumpFee: smartQuote.internalCost.dumpFee,
+        overweightFeePerTon: smartQuote.overweightFeePerTon,
+        contaminationSurcharge: smartQuote.dumpSite.surchargeRules.contamination,
+        includedDays: 7,
+        extraDayFee: 35,
+        dumpCostPerTon: smartQuote.dumpSite.dumpCostBasis,
+        smartQuote,
+        yardName: smartQuote.yard.yard.name,
+        dumpSiteName: smartQuote.dumpSite.site.name,
+        warnings: smartQuote.warnings,
+      };
+    }
+  } catch (err) {
+    console.warn('Smart pricing engine failed, using static fallback:', err);
+  }
+
+  // Path 2: Static table fallback
   const marketCode = await resolveMarketFromZip(zip);
   const pricing = await getMasterPricing(sizeYd, materialType, marketCode);
   if (!pricing) return null;
-  return calculatePriceRange(pricing);
+  return calculatePriceRangeFromStatic(pricing);
 }
+
+// Re-export for backward compat
+export { calculateSmartQuoteFromZip } from './smartPricingEngine';
+export type { SmartQuote } from './smartPricingEngine';
