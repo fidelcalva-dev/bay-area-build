@@ -37,8 +37,8 @@ export const SERVICE_CITIES: CityPageData[] = [
     dumpRules: 'Oakland requires encroachment permits for dumpsters placed on public streets. Concrete and soil are routed to our partner facility at Argent Materials on Baldwin St. C&D debris goes to Davis Street Transfer Station.',
     pricingNote: 'Oakland pricing starts at competitive base rates with no hidden fees. Heavy materials (concrete, dirt) are flat-fee—no weight overage charges.',
     permitInfo: 'Oakland Public Works issues encroachment permits for street placement. Allow 3-5 business days for processing. Dumpsters on private property (driveways) do not require permits.',
-    metaTitle: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $390',
-    metaDescription: 'Local dumpster rental in Oakland, CA. Same-day delivery from our Oakland yard. 6-50 yard sizes for concrete, debris, cleanouts. Flat-fee heavy materials. Call (510) 680-2150.',
+    metaTitle: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $395',
+    metaDescription: 'Local dumpster rental in Oakland, CA. Same-day delivery from our Oakland yard. 5-50 yard sizes for concrete, debris, cleanouts. Flat-fee heavy materials. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'alameda-ca', 'san-leandro-ca', 'emeryville-ca'],
   },
   {
