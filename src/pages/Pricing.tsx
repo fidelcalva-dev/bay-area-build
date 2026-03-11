@@ -43,7 +43,7 @@ const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
 
 function getIdealFor(size: number, isHeavy: boolean): string {
   if (isHeavy) {
-    if (size === 6) return 'Small concrete or dirt removal';
+    if (size === 5) return 'Small concrete or dirt removal';
     if (size === 8) return 'Driveway or patio demolition';
     return 'Large concrete or foundation removal';
   }

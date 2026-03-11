@@ -15,7 +15,7 @@ const SIZE_DATA = [
 ];
 
 const HEAVY_SIZE_DATA = [
-  { size: 6, tons: 6.0, color: 'from-amber-500 to-amber-600', typical: 'Small concrete/dirt removal' },
+  { size: 5, tons: 5.0, color: 'from-amber-500 to-amber-600', typical: 'Small concrete/dirt removal' },
   { size: 8, tons: 8.0, color: 'from-orange-500 to-orange-600', typical: 'Driveway demo, patio removal' },
   { size: 10, tons: 10.0, color: 'from-red-500 to-red-600', typical: 'Foundation work, large demo' },
 ];

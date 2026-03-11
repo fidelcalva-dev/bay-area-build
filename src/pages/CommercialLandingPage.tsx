@@ -58,7 +58,7 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
     faqs: [
       { question: 'What dumpster for a construction site?', answer: 'It depends on the project. Small remodels: 10-20 yard. New construction: 30-40 yard. Heavy materials (concrete, dirt): 5-10 yard at flat-fee pricing.' },
       { question: 'Do you offer swap-outs for ongoing projects?', answer: 'Yes. Call us when your dumpster is full and we swap it for an empty one, usually within 24 hours. Volume discounts apply for ongoing projects.' },
-      { question: 'Is concrete disposal included?', answer: 'Yes. Heavy material dumpsters (6, 8, 10 yard) are flat-fee—disposal is included with no weight overage charges. Keep loads clean and unmixed.' },
+      { question: 'Is concrete disposal included?', answer: 'Yes. Heavy material dumpsters (5, 8, 10 yard) are flat-fee—disposal is included with no weight overage charges. Keep loads clean and unmixed.' },
       { question: 'What about job site permits?', answer: 'If the dumpster goes on the street, you need a permit from the city. On private property or your own job site, no permit needed. We can guide you through the process.' },
     ],
   },

@@ -231,7 +231,7 @@ export const LIVE_LOAD_POLICY = {
 export const HEAVY_MATERIAL_STRUCTURE = {
   title: 'Heavy Material Service Structure',
   items: [
-    '6-10 yard containers only',
+    '5, 8, and 10 yard containers only',
     'Fill-line compliance required',
     'Clean loads only',
     'Flat-fee disposal included',

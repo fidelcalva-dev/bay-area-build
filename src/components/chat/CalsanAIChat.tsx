@@ -1442,7 +1442,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <div className="bg-[hsl(40_90%_95%)] border border-[hsl(40_60%_80%)] rounded-lg px-3 py-2 mb-4">
                   <p className="text-xs text-foreground font-medium">Heavy Material Notice</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Heavy materials are restricted to 6-10 yard containers with mandatory fill-line compliance.
+                    Heavy materials are restricted to 5, 8, and 10 yard containers with mandatory fill-line compliance.
                   </p>
                 </div>
               )}

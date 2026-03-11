@@ -297,7 +297,7 @@ function getConfidenceAssessment(
   
   // General debris confidence rules
   if (materialType === 'general') {
-    if (selectedSize === 6 || selectedSize === 8) {
+    if (selectedSize === 5 || selectedSize === 8) {
       if (isSmallProject) {
         return { confidence: 'safe', confidenceLabel: 'Safe choice', confidenceNote: 'Good for small cleanups with light materials' };
       } else if (isMediumProject || isLargeProject) {

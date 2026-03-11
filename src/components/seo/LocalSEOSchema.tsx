@@ -44,7 +44,7 @@ export function LocalSEOSchema({
     
     const serviceDescription = sizeData
       ? `${sizeData.dimensions} dumpster rental. ${sizeData.description} Includes ${sizeData.includedTons} ton${sizeData.includedTons > 1 ? 's' : ''} and 7-day rental.`
-      : 'Roll-off dumpster rental with delivery and pickup included. Sizes from 6 to 40 yards.';
+      : 'Roll-off dumpster rental with delivery and pickup included. Sizes from 5 to 50 yards.';
     
     schemas.push(generateServiceSchema({
       name: serviceName,

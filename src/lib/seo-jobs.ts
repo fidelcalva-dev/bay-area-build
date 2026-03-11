@@ -36,8 +36,8 @@ export const SEO_JOB_TYPES: SeoJobType[] = [
     typicalProjects: 'Interior demolition, garage removal, shed teardown, partial structural demo, pool demolition, and foundation removal',
     whyDumpster: 'Demolition produces massive volumes of mixed debris quickly. Having the right size dumpster on-site from day one prevents delays, keeps the site safe, and ensures proper disposal.',
     faqs: [
-      { question: 'What size dumpster for demolition?', answer: 'Interior demo of a single room typically needs a 20-yard. Full house gut or garage teardown usually requires 30-40 yards. If the demo includes concrete or foundation, consider a separate heavy-material dumpster (6-10 yard).' },
-      { question: 'Can I put concrete from demolition in a regular dumpster?', answer: 'We recommend separating concrete into a dedicated heavy-material dumpster (6-10 yard, flat-fee pricing). Mixing concrete with general debris triggers $165/ton overage charges instead of flat-fee pricing.' },
+      { question: 'What size dumpster for demolition?', answer: 'Interior demo of a single room typically needs a 20-yard. Full house gut or garage teardown usually requires 30-40 yards. If the demo includes concrete or foundation, consider a separate heavy-material dumpster (5-10 yard).' },
+      { question: 'Can I put concrete from demolition in a regular dumpster?', answer: 'We recommend separating concrete into a dedicated heavy-material dumpster (5-10 yard, flat-fee pricing). Mixing concrete with general debris triggers $165/ton overage charges instead of flat-fee pricing.' },
       { question: 'Do I need a permit for a demolition dumpster?', answer: 'The dumpster itself only needs a permit if placed on a public street. However, your demolition project likely requires separate building permits from your city.' },
     ],
   },
