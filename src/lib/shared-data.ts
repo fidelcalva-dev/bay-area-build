@@ -79,7 +79,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "4'",
     includedTons: 2,
     category: 'general',
-    priceFrom: 620,  // v56 Plan A base
+    priceFrom: 650,  // Approved public price
     useCases: ['Full room renovations', 'Roofing projects', 'Large cleanouts'],
     loads: '6-8 pickup loads',
     description: 'Our most popular size for home renovations.',
