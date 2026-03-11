@@ -152,7 +152,7 @@ export function calculateHeavyPrice(
   const savings10yd = ((adjustedBase - roundedPrice) / adjustedBase * 100);
   if (size === 8 && savings10yd > 0) {
     savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
-  } else if (size === 6 && savings10yd > 0) {
+  } else if (size === 5 && savings10yd > 0) {
     savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
   }
   

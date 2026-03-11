@@ -108,11 +108,11 @@ export function validateHeavySizeLimit(sizes: number[]): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   
-  const allowedSizes = [6, 8, 10];
+  const allowedSizes = [5, 8, 10];
   
   for (const size of sizes) {
     if (!allowedSizes.includes(size)) {
-      errors.push(`Heavy material size ${size}-yard is not allowed. Only 6, 8, 10 permitted.`);
+      errors.push(`Heavy material size ${size}-yard is not allowed. Only 5, 8, 10 permitted.`);
     }
   }
 

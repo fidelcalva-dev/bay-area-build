@@ -303,8 +303,8 @@ export function V3QuoteFlow() {
 
   // Available sizes
   const availableSizes = useMemo(() => {
-    if (isHeavy) return [6, 8, 10];
-    return [10, 20, 30, 40];
+    if (isHeavy) return [5, 8, 10];
+    return [10, 20, 30, 40, 50];
   }, [isHeavy]);
 
   // Recommended + alternatives

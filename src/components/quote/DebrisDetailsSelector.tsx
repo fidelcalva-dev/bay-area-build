@@ -85,7 +85,7 @@ export function DebrisDetailsSelector({
         pricingMode: null,
         greenHaloEligible: false,
         isHeavyMaterial: false,
-        allowedSizes: materialType === 'heavy' ? [6, 8, 10] : [6, 8, 10, 20, 30, 40, 50],
+        allowedSizes: materialType === 'heavy' ? [5, 8, 10] : [5, 8, 10, 20, 30, 40, 50],
         reclassified: false,
         reclassificationMessage: null,
         isComplete: false,
