@@ -43,7 +43,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
       'Mixed loads may be reclassified as general debris with overage charges',
     ],
     faqs: [
-      { question: 'How much does a concrete dumpster cost?', answer: 'Concrete dumpsters start at $495 for a 5-yard. Pricing is flat-fee—disposal is included with no weight overage charges, regardless of how heavy the load is.' },
+      { question: 'How much does a concrete dumpster cost?', answer: `Concrete dumpsters start at ${formatPrice(HEAVY_MATERIAL.cleanConcrete.prices[5])} for a 5-yard. Pricing is flat-fee—disposal is included with no weight overage charges, regardless of how heavy the load is.` },
       { question: 'Can I mix concrete with other materials?', answer: 'No. Concrete dumpsters are for clean loads only. Mixing with general debris or trash will result in reclassification and additional charges. Order a separate general debris dumpster for mixed waste.' },
       { question: 'Where does the concrete go?', answer: 'Clean concrete is routed to certified recycling facilities in the East Bay where it is crushed and reused as aggregate for road base and construction projects.' },
     ],
