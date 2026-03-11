@@ -60,7 +60,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     metaDescription: 'Rent a dumpster for dirt and soil removal. Flat-fee pricing with no weight overage. 5-10 yard sizes. Clean fill dirt, topsoil, and gravel disposal. Call (510) 680-2150.',
     intro: 'Disposing of dirt, soil, gravel, or sand? Our heavy material dumpsters handle dense earth materials with flat-fee pricing. Clean fill dirt is routed to recycling and reuse facilities.',
     icon: Hammer,
-    sizes: [6, 8, 10],
+    sizes: [5, 8, 10],
     pricing: 'Dirt and soil dumpsters use FLAT FEE pricing. No weight overage charges for clean loads of fill dirt, topsoil, gravel, or sand.',
     rules: [
       'Clean fill dirt, topsoil, gravel, and sand accepted',
