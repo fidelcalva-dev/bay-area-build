@@ -140,7 +140,7 @@ DUMPSTER SIZE RULES (LOCKED - NEVER DEVIATE):
 - GENERAL/MIXED DEBRIS: 5, 8, 10, 20, 30, 40, or 50 yard containers
 
 RECOMMENDATION LOGIC:
-1. If dominant materials are heavy (>60% by estimated volume) → recommend heavy flow, sizes 6/8/10 only
+1. If dominant materials are heavy (>60% by estimated volume) → recommend heavy flow, sizes 5/8/10 only
 2. If heavy materials mixed with trash → recommend "mixed" flow, any size based on volume
 3. If hazards detected with confidence >= 0.6 → flag "hazard_review_required"
 4. Green Halo eligible if: clean concrete, clean wood, clean roofing, green waste, clean C&D

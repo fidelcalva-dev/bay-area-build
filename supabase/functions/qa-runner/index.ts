@@ -193,7 +193,7 @@ async function executeCheck(supabase: any, check: QaCheck): Promise<CheckResult>
           .eq('is_active', true);
         
         const invalidSizes: string[] = [];
-        const validSizes = [5, 6, 8, 10];
+        const validSizes = [5, 8, 10];
         
         for (const profile of (heavyProfiles || []) as { material_code: string; allowed_sizes: number[] }[]) {
           const sizes = profile.allowed_sizes || [];
