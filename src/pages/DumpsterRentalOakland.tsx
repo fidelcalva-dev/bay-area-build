@@ -107,7 +107,7 @@ const localBusinessSchema = {
     name: 'Oakland',
     sameAs: 'https://en.wikipedia.org/wiki/Oakland,_California',
   },
-  priceRange: `$${DUMPSTER_SIZES_DATA[0]?.priceFrom || 390} - $${DUMPSTER_SIZES_DATA[DUMPSTER_SIZES_DATA.length - 1]?.priceFrom || 1135}`,
+  priceRange: `$${DUMPSTER_SIZES_DATA[0]?.priceFrom || 395} - $${DUMPSTER_SIZES_DATA[DUMPSTER_SIZES_DATA.length - 1]?.priceFrom || 1095}`,
 };
 
 const serviceSchema = generateServiceSchema({
