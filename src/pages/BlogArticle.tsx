@@ -121,7 +121,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     ],
     faqs: [
       { question: 'Why are heavy material dumpsters smaller?', answer: 'Heavy materials like concrete weigh 4,000+ lbs per cubic yard. A 10-yard dumpster of concrete can weigh 20 tons. Smaller sizes keep total weight manageable for safe transport.' },
-      { question: 'Can I get a 20-yard dumpster for concrete?', answer: 'No. Heavy material dumpsters are available in 6, 8, and 10 yard sizes only. For larger concrete projects, order multiple smaller containers.' },
+      { question: 'Can I get a 20-yard dumpster for concrete?', answer: 'No. Heavy material dumpsters are available in 5, 8, and 10 yard sizes only. For larger concrete projects, order multiple smaller containers.' },
       { question: 'What happens if I mix materials?', answer: `Mixed loads are reclassified as general debris with $${PRICING_POLICIES.overagePerTonGeneral}/ton overage charges. Keep heavy materials separate for flat-fee pricing.` },
     ],
     relatedArticles: ['concrete-disposal-bay-area', 'dumpster-cost-oakland', 'dumpster-sizes-guide'],
