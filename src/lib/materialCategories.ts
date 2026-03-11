@@ -474,7 +474,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Scrap metal, pipes, fixtures',
     descriptionEs: 'Chatarra de metal, tuberías, accesorios',
     classification: 'HEAVY_PLUS_200',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Metal recycled at certified facilities',
