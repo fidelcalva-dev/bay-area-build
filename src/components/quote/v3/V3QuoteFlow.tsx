@@ -1128,6 +1128,41 @@ export function V3QuoteFlow() {
                 </div>
               )}
 
+              {/* Upsell nudge: 10yd → 20yd */}
+              {showUpsellNudge && !isHeavy && (
+                <div className="rounded-2xl border-2 border-primary/40 bg-primary/5 p-4 space-y-3 animate-fade-in">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Navigation className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground text-sm">Upgrade to 20 Yard?</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                        More space for your project. Less risk of overflow. Better value per cubic yard.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="cta"
+                      size="sm"
+                      className="rounded-xl text-xs font-semibold"
+                      onClick={handleAcceptUpsell}
+                    >
+                      Yes, upgrade to 20 yd
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl text-xs font-semibold"
+                      onClick={handleDeclineUpsell}
+                    >
+                      Keep 10 yd
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Heavy fill-line warning */}
               {isHeavy && (
                 <div className="rounded-xl bg-muted/40 border border-border/60 p-4">
