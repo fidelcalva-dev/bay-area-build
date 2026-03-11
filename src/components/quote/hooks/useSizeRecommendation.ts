@@ -36,7 +36,7 @@ const DEBRIS_SIZES = [10, 20, 30, 40, 50];
 const RECYCLING_SIZES = [10, 20, 30];
 
 // Heavy fallback order
-const HEAVY_FALLBACK_ORDER = [10, 8, 6, 5];
+const HEAVY_FALLBACK_ORDER = [10, 8, 5];
 // Debris fallback order
 const DEBRIS_FALLBACK_ORDER = [20, 10, 30, 40];
 

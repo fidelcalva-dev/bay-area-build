@@ -101,7 +101,7 @@ export const SEO_JOB_TYPES: SeoJobType[] = [
     slug: 'concrete-removal-dumpster',
     name: 'Concrete Removal',
     category: 'contractor',
-    recommendedSizes: [6, 8, 10],
+    recommendedSizes: [5, 8, 10],
     description: 'Flat-fee concrete dumpsters for driveway removal, patio demolition, foundation work, and sidewalk replacement. Heavy material — no weight overage charges.',
     typicalProjects: 'Driveway replacement, patio demolition, sidewalk removal, foundation demo, pool removal concrete, and retaining wall teardown',
     whyDumpster: 'Concrete is extremely heavy — a single driveway can weigh 5-10 tons. Our heavy-material dumpsters are flat-fee, so you know the exact cost upfront with no surprise weight charges.',

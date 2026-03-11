@@ -29,8 +29,8 @@ export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
   40: { yards: 40, widthFt: 7.5, lengthFt: 24, heightFt: 6,    pickupLoads: '12–16', volumeCuYd: 40, tonsIncluded: 4 },
 };
 
-export const GENERAL_SIZES: DumpsterSize[] = [6, 8, 10, 20, 30, 40];
-export const HEAVY_SIZES: DumpsterSize[] = [6, 8, 10];
+export const GENERAL_SIZES: DumpsterSize[] = [5, 8, 10, 20, 30, 40];
+export const HEAVY_SIZES: DumpsterSize[] = [5, 8, 10];
 
 // Debris presets for "Will it fit?" calculator
 export interface DebrisPreset {

@@ -324,7 +324,7 @@ export const DEBRIS_ITEMS: DebrisItem[] = [
 
 // Size recommendations based on volume (using canonical sizes only)
 export const SIZE_RECOMMENDATIONS: { maxVolume: number; size: number }[] = [
-  { maxVolume: 6, size: 6 },
+  { maxVolume: 5, size: 5 },
   { maxVolume: 8, size: 8 },
   { maxVolume: 10, size: 10 },
   { maxVolume: 20, size: 20 },
