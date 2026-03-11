@@ -22,7 +22,7 @@ interface SizeInfo {
 }
 
 const SIZES: SizeInfo[] = [
-  { yards: 6, basePrice: 390, includedTons: 0.5, category: 'both' },
+  { yards: 5, basePrice: 390, includedTons: 0.5, category: 'both' },
   { yards: 8, basePrice: 460, includedTons: 0.5, category: 'both' },
   { yards: 10, basePrice: 580, includedTons: 1, category: 'both' },
   { yards: 20, basePrice: 620, includedTons: 2, category: 'general' },
