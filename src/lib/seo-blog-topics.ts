@@ -2,6 +2,8 @@
 // Each topic targets a long-tail keyword with unique, high-quality content outline
 // Links to: city pages, size pages, /quote
 
+import { getStartingPrice } from '@/config/pricingConfig';
+
 export interface SeoBlogTopic {
   slug: string;
   title: string;
@@ -30,7 +32,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
       { url: '/quote', anchorText: 'Get Instant Quote' },
     ],
     faqs: [
-      { question: 'What is the cheapest dumpster rental in Oakland?', answer: 'A 5-yard dumpster starts from $395 in Oakland. This is ideal for small cleanouts and single-room projects.' },
+      { question: 'What is the cheapest dumpster rental in Oakland?', answer: `A 5-yard dumpster starts from $${getStartingPrice()} in Oakland. This is ideal for small cleanouts and single-room projects.` },
       { question: 'Do Oakland dumpster companies charge by weight?', answer: 'General debris dumpsters include base tonnage. Overage is $165/ton. Heavy material dumpsters (concrete, dirt) are flat-fee with no weight overage.' },
     ],
   },

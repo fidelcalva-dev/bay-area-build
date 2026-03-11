@@ -3,6 +3,7 @@
 
 import { BUSINESS_INFO, OPERATIONAL_YARDS } from './seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from './shared-data';
+import { getStartingPrice } from '@/config/pricingConfig';
 
 export interface CityPageData {
   slug: string; // URL-friendly: oakland (no -ca suffix, matches DB canonical)
@@ -1742,4 +1743,12 @@ export function getCitySitemapEntries() {
     priority: 0.8,
     changefreq: 'monthly' as const,
   }));
+}
+
+/**
+ * Helper: Replace any hardcoded "$395" in city metaTitles with the canonical starting price.
+ * This ensures all city SEO titles stay in sync with pricingConfig.ts.
+ */
+export function getCityMetaTitle(city: CityPageData): string {
+  return city.metaTitle.replace(/\$\d{3,}/, `$${getStartingPrice()}`);
 }

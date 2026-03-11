@@ -199,7 +199,7 @@ export default function YardHubPage() {
               away, adding transit time and fees that get passed to you.
             </p>
             <p>
-              Our {yard.name} at {yard.address} stores a full fleet of roll-off dumpsters ranging from 6 to 40 cubic 
+              Our {yard.name} at {yard.address} stores a full fleet of roll-off dumpsters ranging from 5 to 50 cubic{' '} 
               yards. Because we own and operate our equipment locally, we control the entire process — from dispatch 
               to delivery to pickup and disposal. There are no middlemen, no surprise fees, and no guessing when 
               your dumpster will arrive.

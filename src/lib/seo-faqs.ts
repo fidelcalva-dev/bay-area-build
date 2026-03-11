@@ -2,6 +2,7 @@
 // Each pool contains 12+ questions to allow unique 8-FAQ selections per city
 
 import { PRICING_POLICIES } from './shared-data';
+import { getStartingPrice, POLICIES } from '@/config/pricingConfig';
 
 export interface SeoFaq {
   id: string;
@@ -12,7 +13,7 @@ export interface SeoFaq {
 
 // City core FAQs — generic enough for any city, localized via template
 export const CITY_CORE_FAQ_POOL: SeoFaq[] = [
-  { id: 'cc1', category: 'pricing', question: 'How much does a dumpster rental cost in {city}?', answer: 'Dumpster rental in {city} starts at $495 for a 5-yard container. Pricing depends on size, material type, and rental duration. Heavy materials (concrete, dirt) are flat-fee with no weight overage. General debris overage is $165/ton.' },
+  { id: 'cc1', category: 'pricing', question: 'How much does a dumpster rental cost in {city}?', answer: `Dumpster rental in {city} starts at $${getStartingPrice()} for a 5-yard container. Pricing depends on size, material type, and rental duration. Heavy materials (concrete, dirt) are flat-fee with no weight overage. General debris overage is $${POLICIES.overweightCostPerTon}/ton.` },
   { id: 'cc2', category: 'scheduling', question: 'How fast can I get a dumpster in {city}?', answer: 'Same-day delivery is available for most {city} addresses when ordered before noon. Our {yard} is nearby, ensuring fast turnaround. Next-day delivery is standard for all orders.' },
   { id: 'cc3', category: 'permits', question: 'Do I need a permit for a dumpster in {city}?', answer: 'If placing the dumpster on your private driveway or yard, no permit is needed. Street placement in {city} requires a permit from your city public works department. We recommend driveway placement when possible.' },
   { id: 'cc4', category: 'sizes', question: 'What dumpster sizes are available in {city}?', answer: 'We offer 5, 8, 10, 20, 30, 40, and 50 yard dumpsters in {city}. Heavy material dumpsters (concrete, dirt) are available in 5, 8, and 10 yard sizes only. General debris dumpsters come in all sizes.' },
