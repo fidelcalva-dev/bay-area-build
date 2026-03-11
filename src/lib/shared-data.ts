@@ -94,7 +94,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 3,
     category: 'general',
-    priceFrom: 770,  // v56 Plan A base
+    priceFrom: 775,  // Approved public price
     useCases: ['Major renovations', 'New construction', 'Estate cleanouts'],
     loads: '9-12 pickup loads',
     description: 'High walls for bulky items and major projects.',
