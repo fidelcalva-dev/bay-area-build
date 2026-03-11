@@ -31,8 +31,8 @@ const QUANTITY_MULTIPLIERS: Record<string, number> = {
 const APPLIANCE_SHINGLE_CODES = ['APPLIANCES', 'ROOFING_SHINGLES'];
 
 // Heavy sizes (only 5-10 available)
-const HEAVY_SIZES = [5, 6, 8, 10];
-const DEBRIS_SIZES = [10, 20, 30, 40];
+const HEAVY_SIZES = [5, 8, 10];
+const DEBRIS_SIZES = [10, 20, 30, 40, 50];
 const RECYCLING_SIZES = [10, 20, 30];
 
 // Heavy fallback order
