@@ -65,7 +65,7 @@ const priceFactors = [
     icon: Trash2, 
     title: 'Debris Type', 
     description: 'Standard debris (furniture, wood, drywall) vs. heavy materials (concrete, dirt, brick).',
-    impact: 'Heavy materials use dedicated sizes (6-10yd)'
+    impact: 'Heavy materials use dedicated sizes (5-10yd)'
   },
   { 
     icon: Weight, 
