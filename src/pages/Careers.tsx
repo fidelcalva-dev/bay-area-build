@@ -466,7 +466,7 @@ const Careers = () => {
               <ul className="space-y-4">
                 {[
                   { icon: Building2, title: 'Yard Access', desc: 'Use our yards for staging and storage' },
-                  { icon: Truck, title: 'Dumpster Fleet', desc: 'Brand new dumpsters in all sizes (6-50 yard)' },
+                  { icon: Truck, title: 'Dumpster Fleet', desc: 'Brand new dumpsters in all sizes (5-50 yard)' },
                   { icon: Users, title: 'Dispatch & CRM', desc: 'Full dispatch software and customer management' },
                   { icon: DollarSign, title: 'Lead Generation', desc: 'Steady flow of customers from our marketing' },
                   { icon: Shield, title: 'Brand & Insurance', desc: 'Operate under our established brand' },

@@ -256,7 +256,7 @@ export default function DumpsterRentalOakland() {
 
           <div className="text-center mt-8">
             <Link to="/sizes" className="text-primary font-medium hover:underline text-sm">
-              View all 7 dumpster sizes (6-50 yard)
+              View all 7 dumpster sizes (5-50 yard)
             </Link>
           </div>
         </div>

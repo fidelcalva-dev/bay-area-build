@@ -34,7 +34,7 @@ export function CalculatorSeoFaq() {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: 'Dumpster Rental - Bay Area',
-    description: 'Roll-off dumpster rental service in the San Francisco Bay Area. Available in 6 to 50 yard sizes.',
+    description: 'Roll-off dumpster rental service in the San Francisco Bay Area. Available in 5 to 50 yard sizes.',
     brand: { '@type': 'Brand', name: BUSINESS_INFO.name },
     offers: {
       '@type': 'AggregateOffer',
