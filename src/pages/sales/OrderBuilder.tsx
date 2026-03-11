@@ -28,7 +28,7 @@ import {
 } from '@/services/extrasPricingEngine';
 
 // ── Constants ──────────────────────────────────────────
-const DUMPSTER_SIZES = [6, 8, 10, 20, 30, 40, 50];
+const DUMPSTER_SIZES = [5, 8, 10, 20, 30, 40, 50];
 const MATERIAL_CATEGORIES = [
   { value: 'general', label: 'General Debris' },
   { value: 'heavy', label: 'Heavy / C&D' },

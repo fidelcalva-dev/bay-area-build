@@ -130,7 +130,7 @@ export interface HeavyPriceResult {
 
 /**
  * Calculate heavy material price based on approved flat-rate ladder
- * Base prices: 6yd=$495, 8yd=$595, 10yd=$695.50 + material increment
+ * Base prices: 5yd=$495, 8yd=$595, 10yd=$695.50 + material increment
  */
 export function calculateHeavyPrice(
   size: 5 | 8 | 10,

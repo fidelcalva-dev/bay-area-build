@@ -497,7 +497,7 @@ export default function MaterialCatalogPage() {
                     onCheckedChange={(v) => setEditingMaterial({
                       ...editingMaterial,
                       is_heavy_material: v,
-                      allowed_sizes_json: v ? [6, 8, 10] : editingMaterial.allowed_sizes_json
+                      allowed_sizes_json: v ? [5, 8, 10] : editingMaterial.allowed_sizes_json
                     })}
                   />
                 </div>

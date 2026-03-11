@@ -24,7 +24,7 @@ import {
 } from '@/lib/quickLinkService';
 import { supabase } from '@/integrations/supabase/client';
 
-const DUMPSTER_SIZES = [6, 8, 10, 20, 30, 40, 50];
+const DUMPSTER_SIZES = [5, 8, 10, 20, 30, 40, 50];
 const EXPIRATION_OPTIONS = [
   { value: '7', label: '7 days' },
   { value: '14', label: '14 days' },
