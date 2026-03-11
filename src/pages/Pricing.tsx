@@ -38,7 +38,7 @@ const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
   weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
-  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 6 ? '40% less than 10 yd' : null,
+  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 5 ? '40% less than 10 yd' : null,
 }));
 
 function getIdealFor(size: number, isHeavy: boolean): string {
