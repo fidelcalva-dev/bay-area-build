@@ -526,7 +526,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Boxes, packaging, paper products',
     descriptionEs: 'Cajas, empaques, productos de papel',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Cardboard recycled at municipal facilities',
