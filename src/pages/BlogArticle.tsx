@@ -107,7 +107,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     slug: 'heavy-material-dumpsters-explained',
     title: 'Heavy Material Dumpsters Explained -- Flat-Fee Pricing',
     metaTitle: 'Heavy Material Dumpsters Explained | Flat-Fee Concrete & Dirt',
-    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, what qualifies, sizes available (6-10 yard), and rules. Concrete, dirt, rock, brick disposal guide.',
+    metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, what qualifies, sizes available (5-10 yard), and rules. Concrete, dirt, rock, brick disposal guide.',
     h1: 'Heavy Material Dumpsters Explained',
     date: 'January 20, 2026',
     readTime: '5 min read',
