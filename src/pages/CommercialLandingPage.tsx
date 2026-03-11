@@ -53,7 +53,7 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
       { title: 'New Construction', desc: 'Ongoing debris removal for residential and commercial new builds. Schedule regular pickups or swap-outs.' },
       { title: 'Demolition Projects', desc: 'High-capacity dumpsters for full and partial demolition. Separate heavy material containers available.' },
       { title: 'Renovation & Remodel', desc: 'Kitchen, bathroom, and whole-house renovation debris. 20-yard is most popular for residential remodels.' },
-      { title: 'Concrete & Foundation', desc: 'Flat-fee heavy material dumpsters (6-10 yard) for concrete, rebar, and foundation demolition.' },
+      { title: 'Concrete & Foundation', desc: 'Flat-fee heavy material dumpsters (5-10 yard) for concrete, rebar, and foundation demolition.' },
     ],
     faqs: [
       { question: 'What dumpster for a construction site?', answer: 'It depends on the project. Small remodels: 10-20 yard. New construction: 30-40 yard. Heavy materials (concrete, dirt): 6-10 yard at flat-fee pricing.' },
