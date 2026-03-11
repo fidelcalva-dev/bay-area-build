@@ -19,7 +19,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
   {
     slug: 'dumpster-cost-oakland',
     title: 'How Much Does a Dumpster Rental Cost in Oakland?',
-    metaDescription: 'Oakland dumpster rental pricing breakdown. 6-50 yard sizes, heavy material flat-fees, overage costs, and tips to save money. Updated 2025.',
+    metaDescription: 'Oakland dumpster rental pricing breakdown. 5-50 yard sizes, heavy material flat-fees, overage costs, and tips to save money. Updated 2025.',
     targetKeyword: 'dumpster rental cost oakland',
     targetCity: 'Oakland',
     category: 'cost',

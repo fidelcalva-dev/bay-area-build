@@ -86,7 +86,7 @@ export default function CityLandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <Truck className="w-4 h-4 text-primary" />
-              <span>6-50 Yard Sizes</span>
+              <span>5-50 Yard Sizes</span>
             </div>
           </div>
         </div>

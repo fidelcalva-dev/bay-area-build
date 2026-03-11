@@ -129,8 +129,8 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
   'dumpster-sizes-guide': {
     slug: 'dumpster-sizes-guide',
     title: 'Dumpster Sizes Guide -- Which Size Do You Need?',
-    metaTitle: 'Dumpster Sizes Guide | 6 to 50 Yard | Which Size Do I Need?',
-    metaDescription: 'Complete dumpster size guide: 6, 8, 10, 20, 30, 40, 50 yard dimensions, capacity, pricing. Find the right size for your project. Bay Area delivery.',
+    metaTitle: 'Dumpster Sizes Guide | 5 to 50 Yard | Which Size Do I Need?',
+    metaDescription: 'Complete dumpster size guide: 5, 8, 10, 20, 30, 40, 50 yard dimensions, capacity, pricing. Find the right size for your project. Bay Area delivery.',
     h1: 'Which Dumpster Size Do You Need?',
     date: 'January 15, 2026',
     readTime: '7 min read',
