@@ -114,7 +114,7 @@ const serviceSchema = generateServiceSchema({
   name: 'Dumpster Rental Oakland CA',
   description: META.description,
   areaServed: ['Oakland', 'Alameda County', 'East Bay'],
-  price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 390),
+  price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 395),
 });
 
 const breadcrumbSchema = generateBreadcrumbSchema([
