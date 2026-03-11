@@ -5,9 +5,9 @@
  */
 
 // Photos served from public/ to avoid bundling large images
-const photo6yd1 = '/images/dumpsters/6yd-photo-1.jpg';
-const photo6yd2 = '/images/dumpsters/6yd-photo-2.jpg';
-const photo6yd3 = '/images/dumpsters/6yd-photo-3.jpg';
+const photo5yd1 = '/images/dumpsters/6yd-photo-1.jpg';
+const photo5yd2 = '/images/dumpsters/6yd-photo-2.jpg';
+const photo5yd3 = '/images/dumpsters/6yd-photo-3.jpg';
 const photo8yd1 = '/images/dumpsters/8yd-photo-1.jpg';
 const photo8yd2 = '/images/dumpsters/8yd-photo-2.jpg';
 const photo8yd3 = '/images/dumpsters/8yd-photo-3.jpg';
