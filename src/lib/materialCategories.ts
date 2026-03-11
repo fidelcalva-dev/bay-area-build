@@ -256,7 +256,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Asphalt shingles, felt paper, flashing only',
     descriptionEs: 'Solo tejas asfálticas, papel de fieltro, tapajuntas',
     classification: 'HEAVY_PLUS_200',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Shingle recycling available at select facilities',
