@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
+import { getPriceRangeForZip, type PriceRange } from '@/lib/masterPricingService';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
 import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
@@ -84,6 +85,7 @@ interface ZoneResult {
   zoneName: string;
   cityName?: string;
   multiplier: number;
+  marketCode?: string;
 }
 
 // ============================================================
@@ -264,7 +266,7 @@ export function V3QuoteFlow() {
     try {
       const { data, error } = await supabase
         .from('zone_zip_codes')
-        .select(`zone_id, city_name, zone:pricing_zones!inner(id, name, base_multiplier, is_active)`)
+        .select(`zone_id, city_name, market_id, zone:pricing_zones!inner(id, name, base_multiplier, is_active)`)
         .eq('zip_code', zipCode)
         .maybeSingle();
 
@@ -274,6 +276,7 @@ export function V3QuoteFlow() {
           zoneName: (data.zone as any).name,
           cityName: data.city_name || undefined,
           multiplier: Number((data.zone as any).base_multiplier),
+          marketCode: data.market_id || undefined,
         });
         return;
       }
@@ -316,11 +319,44 @@ export function V3QuoteFlow() {
     return { smaller, larger };
   }, [recommendedSize, availableSizes]);
 
-  // Calculate quote
+  // City-specific master pricing from dumpster_pricing table
+  const [masterPriceRange, setMasterPriceRange] = useState<PriceRange | null>(null);
+  useEffect(() => {
+    if (!zip || zip.length !== 5 || !zoneResult) {
+      setMasterPriceRange(null);
+      return;
+    }
+    let cancelled = false;
+    getPriceRangeForZip(zip, size, materialTypeForPricing as 'general' | 'heavy').then((range) => {
+      if (!cancelled) setMasterPriceRange(range);
+    });
+    return () => { cancelled = true; };
+  }, [zip, size, materialTypeForPricing, zoneResult]);
+
+  // Calculate quote — use master pricing when available, fallback to legacy
   const quote = useMemo(() => {
-    if (!zoneResult) return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
+    if (!zoneResult) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
+
+    // Master pricing path (city-specific from dumpster_pricing table)
+    if (masterPriceRange) {
+      let low = masterPriceRange.low;
+      let high = masterPriceRange.high;
+      if (distanceCalc.distance?.priceAdjustment) {
+        low += distanceCalc.distance.priceAdjustment;
+        high += distanceCalc.distance.priceAdjustment;
+      }
+      return {
+        subtotal: low,
+        subtotalHigh: high,
+        includedTons: masterPriceRange.includedTons,
+        isValid: true,
+        isFlatFee: masterPriceRange.isFlatFee,
+      };
+    }
+
+    // Legacy fallback
     const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
-    if (!sizeData) return { subtotal: 0, includedTons: 0, isValid: false, isFlatFee: false };
+    if (!sizeData) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
 
     const isFlatFee = isHeavy;
     const includedTons = isFlatFee ? 0 : calculateIncludedTons(size, materialTypeForPricing);
@@ -328,8 +364,8 @@ export function V3QuoteFlow() {
     if (isHeavy) subtotal += 200;
     if (distanceCalc.distance?.priceAdjustment) subtotal += distanceCalc.distance.priceAdjustment;
 
-    return { subtotal, includedTons, isValid: true, isFlatFee };
-  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing]);
+    return { subtotal, subtotalHigh: subtotal + 70, includedTons, isValid: true, isFlatFee };
+  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange]);
 
   // Step index for progress
   const stepIndex = useMemo(() => {
@@ -415,7 +451,7 @@ export function V3QuoteFlow() {
         extras: [],
         subtotal: quote.subtotal,
         estimatedMin: quote.subtotal,
-        estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
+        estimatedMax: quote.subtotalHigh,
         isCalsanFulfillment: true,
         customerLat: addressResult?.lat ?? distanceCalc.geocoding?.lat,
         customerLng: addressResult?.lng ?? distanceCalc.geocoding?.lng,
@@ -444,7 +480,7 @@ export function V3QuoteFlow() {
             rentalDays: 7,
             zipCode: zip,
             estimatedMin: quote.subtotal,
-            estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
+            estimatedMax: quote.subtotalHigh,
             includedTons: quote.includedTons,
           },
         }).catch(() => {});
@@ -1188,10 +1224,10 @@ export function V3QuoteFlow() {
                 {/* Price hero */}
                 <div className="p-6 text-center bg-gradient-to-b from-muted/20 to-transparent">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                    Your Exact Price
+                    Your Price Range
                   </p>
                   <div className="text-5xl font-bold text-foreground tracking-tight">
-                    ${quote.subtotal.toLocaleString()}
+                    ${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}
                   </div>
                   <div className="mt-3 space-y-0.5">
                     <p className="text-sm text-foreground font-medium">
@@ -1483,7 +1519,7 @@ export function V3QuoteFlow() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Base Price</span>
-                      <span className="text-foreground">${quote.subtotal.toLocaleString()}</span>
+                      <span className="text-foreground">${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground flex items-center gap-1">
@@ -1517,7 +1553,7 @@ export function V3QuoteFlow() {
                 {/* Total */}
                 <div className="px-4 py-3 bg-primary/5 flex justify-between items-center">
                   <span className="font-bold text-foreground">Total Estimate</span>
-                  <span className="font-bold text-foreground text-2xl">${quote.subtotal.toLocaleString()}</span>
+                  <span className="font-bold text-foreground text-2xl">${quote.subtotal.toLocaleString()} — ${quote.subtotalHigh.toLocaleString()}</span>
                 </div>
               </div>
 
