@@ -39,10 +39,10 @@ export type DumpsterGalleryPhoto = {
 
 // Map of size → extra gallery photos (beyond the canonical dimension view)
 export const DUMPSTER_GALLERY: Record<number, DumpsterGalleryPhoto[]> = {
-  6: [
-    { src: photo6yd1, alt: '6-yard dumpster loaded with concrete debris' },
-    { src: photo6yd2, alt: '6-yard dumpster on residential driveway' },
-    { src: photo6yd3, alt: '6-yard dumpster at commercial job site' },
+  5: [
+    { src: photo5yd1, alt: '5-yard dumpster loaded with concrete debris' },
+    { src: photo5yd2, alt: '5-yard dumpster on residential driveway' },
+    { src: photo5yd3, alt: '5-yard dumpster at commercial job site' },
   ],
   8: [
     { src: photo8yd1, alt: '8-yard dumpster at job site with materials' },

@@ -110,10 +110,13 @@ const MATERIAL_OPTIONS: MaterialOption[] = [
 ];
 
 const DEBRIS_SIZES: SizeOption[] = [
-  { value: 10, label: '10 Yard', fits: '3-4 pickup loads' },
+  { value: 5, label: '5 Yard', fits: '2-3 pickup loads' },
+  { value: 8, label: '8 Yard', fits: '3-4 pickup loads' },
+  { value: 10, label: '10 Yard', fits: '4-5 pickup loads' },
   { value: 20, label: '20 Yard', fits: 'Most remodels', popular: true },
   { value: 30, label: '30 Yard', fits: 'Large projects' },
   { value: 40, label: '40 Yard', fits: 'Major construction' },
+  { value: 50, label: '50 Yard', fits: 'Commercial demolition' },
 ];
 
 const HEAVY_SIZES: SizeOption[] = [

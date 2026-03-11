@@ -73,7 +73,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
     metaDescription: 'Everything about heavy material dumpsters: flat-fee pricing, size limits (5-10 yard), clean load rules, and when to use them vs general debris containers.',
     targetKeyword: 'heavy material dumpster',
     category: 'materials',
-    outline: ['What qualifies as heavy material', 'Size restrictions (6-10yd)', 'Flat-fee vs overage pricing', 'Clean load requirements', 'Contamination reclassification'],
+    outline: ['What qualifies as heavy material', 'Size restrictions (5-10yd)', 'Flat-fee vs overage pricing', 'Clean load requirements', 'Contamination reclassification'],
     internalLinks: [
       { url: '/concrete-dumpster-rental', anchorText: 'Concrete Dumpster Rental' },
       { url: '/dumpster-rental/oakland', anchorText: 'Oakland Dumpster Service' },

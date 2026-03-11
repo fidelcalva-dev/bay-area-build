@@ -47,8 +47,8 @@ const SIZE_PROPS: Record<DumpsterSizeYd, {
   bodyHeight: number;
   ribCount: number;
 }> = {
-  // 12ft × 2.25ft (6yd)
-  6:  { viewBoxWidth: 480, viewBoxHeight: 130, bodyWidth: 400, bodyHeight: 75,  ribCount: 6 },
+  // 12ft × 2.25ft (5yd)
+  5:  { viewBoxWidth: 480, viewBoxHeight: 130, bodyWidth: 400, bodyHeight: 75,  ribCount: 6 },
   // 12ft × 3ft (8yd, 10yd)
   8:  { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },
   10: { viewBoxWidth: 480, viewBoxHeight: 155, bodyWidth: 400, bodyHeight: 100, ribCount: 6 },

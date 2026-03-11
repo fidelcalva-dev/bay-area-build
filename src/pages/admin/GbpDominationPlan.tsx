@@ -66,7 +66,7 @@ const PHASES: Phase[] = [
     icon: <Camera className="w-5 h-5" />,
     priority: 'P0',
     items: [
-      { id: 'photo-1', label: 'Upload photos: 5yd, 6yd, 8yd, 10yd dumpsters' },
+      { id: 'photo-1', label: 'Upload photos: 5yd, 8yd, 10yd dumpsters' },
       { id: 'photo-2', label: 'Upload photos: 20yd, 30yd, 40yd, 50yd dumpsters' },
       { id: 'photo-3', label: 'Upload branded truck photos (min 5)' },
       { id: 'photo-4', label: 'Upload Oakland yard photos (min 5)', detail: 'Geo-tag: 37.8044, -122.2712' },

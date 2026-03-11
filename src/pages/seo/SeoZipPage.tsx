@@ -148,7 +148,7 @@ export default function SeoZipPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground mt-3">Available in 6, 8, 10 yard. No weight overage.</p>
+              <p className="text-xs text-muted-foreground mt-3">Available in 5, 8, 10 yard. No weight overage.</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="font-semibold text-foreground mb-3">General Debris</h3>
