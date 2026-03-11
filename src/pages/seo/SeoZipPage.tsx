@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
+import { getStartingPrice, formatPrice, POLICIES } from '@/config/pricingConfig';
 import { SEO_MATERIALS } from '@/lib/seo-engine';
 import { getZipData } from '@/lib/seo-zips';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, CheckCircle } from 'lucide-react';
