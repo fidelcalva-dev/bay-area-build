@@ -5602,6 +5602,7 @@ export type Database = {
           contamination_surcharge: number
           created_at: string
           delivery_fee: number
+          dump_cost_per_ton: number
           dump_fee: number
           extra_day_fee: number
           id: string
@@ -5609,6 +5610,8 @@ export type Database = {
           included_tons: number
           is_active: boolean
           is_heavy_only: boolean
+          margin_pct: number
+          market_code: string
           material_type: string
           notes: string | null
           overweight_fee_per_ton: number
@@ -5623,6 +5626,7 @@ export type Database = {
           contamination_surcharge?: number
           created_at?: string
           delivery_fee?: number
+          dump_cost_per_ton?: number
           dump_fee?: number
           extra_day_fee?: number
           id?: string
@@ -5630,6 +5634,8 @@ export type Database = {
           included_tons?: number
           is_active?: boolean
           is_heavy_only?: boolean
+          margin_pct?: number
+          market_code?: string
           material_type?: string
           notes?: string | null
           overweight_fee_per_ton?: number
@@ -5644,6 +5650,7 @@ export type Database = {
           contamination_surcharge?: number
           created_at?: string
           delivery_fee?: number
+          dump_cost_per_ton?: number
           dump_fee?: number
           extra_day_fee?: number
           id?: string
@@ -5651,6 +5658,8 @@ export type Database = {
           included_tons?: number
           is_active?: boolean
           is_heavy_only?: boolean
+          margin_pct?: number
+          market_code?: string
           material_type?: string
           notes?: string | null
           overweight_fee_per_ton?: number
