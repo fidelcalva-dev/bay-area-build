@@ -42,7 +42,7 @@ export const YARD_HUBS: YardHubData[] = [
     coverageDescription: 'Our Oakland yard is the primary hub for the East Bay and North Bay, serving Oakland, Berkeley, Alameda, San Leandro, Hayward, Emeryville, and surrounding communities. With direct freeway access via I-880 and I-580, deliveries from this yard reach most East Bay addresses within 1–3 hours.',
     deliverySpeed: 'Most deliveries from our Oakland yard arrive within 1–3 hours during business hours.',
     equipmentStored: [
-      '6-yard roll-off dumpsters (heavy material rated)',
+      '5-yard roll-off dumpsters (heavy material rated)',
       '8-yard roll-off dumpsters (heavy material rated)',
       '10-yard roll-off dumpsters (heavy material rated)',
       '20-yard roll-off dumpsters (general debris)',
