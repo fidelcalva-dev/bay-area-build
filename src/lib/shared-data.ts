@@ -50,7 +50,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "3'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 460,  // v56 Plan A base
+    priceFrom: 425,  // Approved public price
     useCases: ['Foundation demo', 'Brick & block', 'Garage cleanouts', 'Bathroom remodel'],
     loads: '3–4 pickup loads',
     description: 'Popular for driveway and foundation work.',
