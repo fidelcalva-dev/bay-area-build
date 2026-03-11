@@ -47,7 +47,7 @@ export const SEO_USE_CASES: SeoUseCase[] = [
     name: 'Construction',
     h1: 'Construction Dumpster Rental in California',
     description: 'From new builds to commercial tenant improvements, construction generates massive volumes of debris. Our roll-off dumpsters keep your job site clean, safe, and compliant with California waste management regulations.',
-    metaDescription: 'Construction dumpster rental in California. 10-50 yard sizes for job sites. Same-day delivery, contractor accounts, volume pricing. Get an instant quote.',
+    metaDescription: 'Construction dumpster rental in California. 5-50 yard sizes for job sites. Same-day delivery, contractor accounts, volume pricing. Get an instant quote.',
     recommendedSizes: [20, 30, 40],
     benefits: ['Contractor accounts with Net-30 terms', 'Volume pricing for recurring projects', 'Priority scheduling', 'Heavy material containers available'],
     faqs: [
