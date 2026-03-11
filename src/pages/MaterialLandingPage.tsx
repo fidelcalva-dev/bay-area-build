@@ -99,7 +99,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     ],
     faqs: [
       { question: 'What size do I need for a renovation?', answer: 'A 20-yard dumpster is the most popular for full room renovations. For whole-house renovations, consider a 30 or 40-yard. Use our online calculator for a recommendation.' },
-      { question: 'How much does overage cost?', answer: `General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton based on scale ticket. Tonnage is included by size: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T.` },
+      { question: 'How much does overage cost?', answer: `General debris overage is $${PRICING_POLICIES.overagePerTonGeneral}/ton based on scale ticket. Tonnage is included by size: 5yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T.` },
       { question: 'Can I put roofing shingles in a construction dumpster?', answer: 'Yes! Roofing shingles go in general debris dumpsters. Note that shingles are very heavy—a 20-yard is recommended for roofing projects to stay within included tonnage.' },
     ],
     relatedLinks: [
