@@ -495,14 +495,14 @@ export const PLAN_A_PRICING: V56PricingTier[] = [
 
 // ============================================================
 // HEAVY MATERIAL PRICING CANON (Approved flat-rate ladder)
-// Clean Soil / Clean Concrete: 6yd=$495, 8yd=$595, 10yd=$695.50
+// Clean Soil / Clean Concrete: 5yd=$495, 8yd=$595, 10yd=$695.50
 // +$200 materials (brick, asphalt, tile): added directly to base
 // +$300 mixed heavy: added directly to base
 // ============================================================
 
 // Approved heavy material base prices by size (flat-rate, disposal included)
 export const HEAVY_BASE_PRICES: Record<number, number> = {
-  6: 495,
+  5: 495,
   8: 595,
   10: 695.50,
 };
@@ -514,7 +514,7 @@ export const HEAVY_BASE_10YD = 695.50;
 export const HEAVY_SIZE_FACTORS: Record<number, number> = {
   10: 1.0,
   8: 595 / 695.50,
-  6: 495 / 695.50,
+  5: 495 / 695.50,
 };
 
 // Material class increments (added directly to base price)
