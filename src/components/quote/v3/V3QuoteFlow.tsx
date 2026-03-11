@@ -247,7 +247,7 @@ export function V3QuoteFlow() {
   const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
   // Track step timing + GA4 step viewed
-  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, price: 5, access: 6, confirm: 7, placement: 8 };
+  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
   useEffect(() => {
     setStepStartTime(Date.now());
     ga4.quoteStepViewed({ flow_version: 'v3', step_name: step, step_index: stepIndexMap[step] });
