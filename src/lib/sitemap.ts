@@ -47,6 +47,8 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/how-it-works', changefreq: 'monthly', priority: 0.7 },
   { url: '/why-calsan', changefreq: 'monthly', priority: 0.7 },
   { url: '/waste-vision', changefreq: 'monthly', priority: 0.5 },
+  { url: '/visualizer', changefreq: 'monthly', priority: 0.6 },
+  { url: '/technology', changefreq: 'monthly', priority: 0.6 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   // Hub pages
