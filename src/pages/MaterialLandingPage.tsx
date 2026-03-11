@@ -113,10 +113,10 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     title: 'Green Waste & Yard Debris Dumpster Rental',
     h1: 'Green Waste Dumpster Rental',
     description: 'Dumpsters for yard waste and green debris.',
-    metaDescription: 'Green waste dumpster rental for yard debris, branches, grass, and leaves. Routed to composting facilities. 6-50 yard sizes. Bay Area delivery. Call (510) 680-2150.',
+    metaDescription: 'Green waste dumpster rental for yard debris, branches, grass, and leaves. Routed to composting facilities. 5-50 yard sizes. Bay Area delivery. Call (510) 680-2150.',
     intro: 'Yard cleanups, tree trimming, and landscaping projects generate a lot of green waste. Our dumpsters handle branches, grass clippings, leaves, and other organic yard debris. Green waste is routed to composting and recycling facilities.',
     icon: Leaf,
-    sizes: [6, 8, 10, 20, 30],
+    sizes: [5, 8, 10, 20, 30],
     pricing: `Green waste goes in general debris dumpsters. Tonnage included by size with overage at $${PRICING_POLICIES.overagePerTonGeneral}/ton. Green waste is lighter—you\'ll likely stay within included tonnage.`,
     rules: [
       'Branches, brush, grass clippings, and leaves accepted',

@@ -659,7 +659,7 @@ export function checkReclassification(check: ReclassificationCheck): Reclassific
     return {
       reclassified: true,
       newClassification: 'HEAVY_MIXED',
-      newAllowedSizes: [6, 8, 10],
+      newAllowedSizes: [5, 8, 10],
       message: 'Mixed heavy materials (+$300). Flat fee applies.',
       messageEs: 'Materiales pesados mixtos (+$300). Se aplica tarifa plana.',
     };
