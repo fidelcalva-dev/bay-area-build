@@ -484,12 +484,13 @@ export interface V56PricingTier {
 
 // Plan A pricing (General Debris - includes tons)
 export const PLAN_A_PRICING: V56PricingTier[] = [
-  { size: 6, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 5, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
   { size: 8, basePrice: 460, priceRangeLow: 460, priceRangeHigh: 550, includedTons: 0.5, category: 'both' },
   { size: 10, basePrice: 580, priceRangeLow: 580, priceRangeHigh: 675, includedTons: 1, category: 'both' },
   { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
   { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
   { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
+  { size: 50, basePrice: 1050, priceRangeLow: 1050, priceRangeHigh: 1200, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================
