@@ -187,7 +187,11 @@ const Careers = () => {
   };
 
   return (
-    <Layout>
+    <Layout
+      title={PAGE_SEO.careers.title}
+      description={PAGE_SEO.careers.description}
+      canonical={PAGE_SEO.careers.canonical}
+    >
       {/* Hero Section */}
       <section className="gradient-hero text-white py-20 md:py-28">
         <div className="container-wide">
