@@ -414,7 +414,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Ceramic, porcelain, or stone tile only',
     descriptionEs: 'Solo azulejo cerámico, porcelana o piedra',
     classification: 'HEAVY_PLUS_200',
-    allowedSizes: [6, 8, 10],
+    allowedSizes: [5, 8, 10],
     getPricingMode: getHeavyPricingMode,
     greenHaloEligible: true,
     icon: Square,
