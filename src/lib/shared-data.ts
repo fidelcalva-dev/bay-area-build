@@ -122,7 +122,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "6'",
     includedTons: 5,
     category: 'general',
-    priceFrom: 1050,
+    priceFrom: 1095,  // Approved public price
     useCases: ['Large commercial', 'Major demolition', 'Industrial cleanouts'],
     loads: '16-20 pickup loads',
     description: 'Maximum capacity for the largest projects.',
