@@ -157,7 +157,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Furniture, boxes, clothes, general clutter',
     descriptionEs: 'Muebles, cajas, ropa, desorden general',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: false,
     icon: Home,
