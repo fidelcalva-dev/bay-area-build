@@ -4908,17 +4908,25 @@ export type Database = {
         Row: {
           address: string
           city: string
+          clean_only_flag: boolean
           compliance_rating: number | null
+          contamination_surcharge: number
           created_at: string
+          dump_fee_per_ton: number
+          flat_rate_json: Json | null
+          green_halo_supported_flag: boolean
           hours: string | null
           id: string
           is_active: boolean
           lat: number | null
           lng: number | null
           materials_accepted: string[] | null
+          mixed_allowed_flag: boolean
           name: string
           notes: string | null
           phone: string | null
+          reroute_surcharge: number
+          service_radius_miles: number | null
           state: string
           ticket_required: boolean
           type: string
@@ -4929,17 +4937,25 @@ export type Database = {
         Insert: {
           address: string
           city: string
+          clean_only_flag?: boolean
           compliance_rating?: number | null
+          contamination_surcharge?: number
           created_at?: string
+          dump_fee_per_ton?: number
+          flat_rate_json?: Json | null
+          green_halo_supported_flag?: boolean
           hours?: string | null
           id?: string
           is_active?: boolean
           lat?: number | null
           lng?: number | null
           materials_accepted?: string[] | null
+          mixed_allowed_flag?: boolean
           name: string
           notes?: string | null
           phone?: string | null
+          reroute_surcharge?: number
+          service_radius_miles?: number | null
           state?: string
           ticket_required?: boolean
           type?: string
@@ -4950,17 +4966,25 @@ export type Database = {
         Update: {
           address?: string
           city?: string
+          clean_only_flag?: boolean
           compliance_rating?: number | null
+          contamination_surcharge?: number
           created_at?: string
+          dump_fee_per_ton?: number
+          flat_rate_json?: Json | null
+          green_halo_supported_flag?: boolean
           hours?: string | null
           id?: string
           is_active?: boolean
           lat?: number | null
           lng?: number | null
           materials_accepted?: string[] | null
+          mixed_allowed_flag?: boolean
           name?: string
           notes?: string | null
           phone?: string | null
+          reroute_surcharge?: number
+          service_radius_miles?: number | null
           state?: string
           ticket_required?: boolean
           type?: string
@@ -9743,6 +9767,69 @@ export type Database = {
         }
         Relationships: []
       }
+      material_rules: {
+        Row: {
+          allowed_sizes: number[]
+          contamination_policy: string | null
+          created_at: string
+          display_label: string
+          display_label_es: string | null
+          flat_rate_json: Json | null
+          green_halo_eligible: boolean
+          id: string
+          included_tons_json: Json | null
+          is_active: boolean
+          is_heavy: boolean
+          material_class: string
+          overweight_fee_per_ton: number
+          pricing_mode: string
+          public_warning: string | null
+          requires_clean_load: boolean
+          reroute_policy: string | null
+          updated_at: string
+        }
+        Insert: {
+          allowed_sizes?: number[]
+          contamination_policy?: string | null
+          created_at?: string
+          display_label: string
+          display_label_es?: string | null
+          flat_rate_json?: Json | null
+          green_halo_eligible?: boolean
+          id?: string
+          included_tons_json?: Json | null
+          is_active?: boolean
+          is_heavy?: boolean
+          material_class: string
+          overweight_fee_per_ton?: number
+          pricing_mode?: string
+          public_warning?: string | null
+          requires_clean_load?: boolean
+          reroute_policy?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allowed_sizes?: number[]
+          contamination_policy?: string | null
+          created_at?: string
+          display_label?: string
+          display_label_es?: string | null
+          flat_rate_json?: Json | null
+          green_halo_eligible?: boolean
+          id?: string
+          included_tons_json?: Json | null
+          is_active?: boolean
+          is_heavy?: boolean
+          material_class?: string
+          overweight_fee_per_ton?: number
+          pricing_mode?: string
+          public_warning?: string | null
+          requires_clean_load?: boolean
+          reroute_policy?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       material_types: {
         Row: {
           allowed_sizes: number[]
@@ -12540,32 +12627,75 @@ export type Database = {
       pricing_zones: {
         Row: {
           base_multiplier: number
+          city: string | null
+          county: string | null
           created_at: string
+          delivery_adjustment: number
+          fuel_adjustment: number
           id: string
           is_active: boolean
           name: string
+          pickup_adjustment: number
           slug: string
+          state: string | null
           updated_at: string
+          yard_id: string | null
         }
         Insert: {
           base_multiplier?: number
+          city?: string | null
+          county?: string | null
           created_at?: string
+          delivery_adjustment?: number
+          fuel_adjustment?: number
           id?: string
           is_active?: boolean
           name: string
+          pickup_adjustment?: number
           slug: string
+          state?: string | null
           updated_at?: string
+          yard_id?: string | null
         }
         Update: {
           base_multiplier?: number
+          city?: string | null
+          county?: string | null
           created_at?: string
+          delivery_adjustment?: number
+          fuel_adjustment?: number
           id?: string
           is_active?: boolean
           name?: string
+          pickup_adjustment?: number
           slug?: string
+          state?: string | null
           updated_at?: string
+          yard_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pricing_zones_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "pricing_zones_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pricing_zones_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profit_guardrail_events: {
         Row: {
@@ -18793,6 +18923,11 @@ export type Database = {
       yards: {
         Row: {
           address: string | null
+          base_delivery_fee: number
+          base_fuel_cost: number
+          base_labor_cost: number
+          base_pickup_fee: number
+          city: string | null
           created_at: string
           id: string
           is_active: boolean
@@ -18801,12 +18936,21 @@ export type Database = {
           market: string
           market_id: string | null
           name: string
+          overhead_pct: number
           priority_rank: number
+          service_radius_miles: number
           slug: string
+          state: string | null
           updated_at: string
+          zip: string | null
         }
         Insert: {
           address?: string | null
+          base_delivery_fee?: number
+          base_fuel_cost?: number
+          base_labor_cost?: number
+          base_pickup_fee?: number
+          city?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
@@ -18815,12 +18959,21 @@ export type Database = {
           market: string
           market_id?: string | null
           name: string
+          overhead_pct?: number
           priority_rank?: number
+          service_radius_miles?: number
           slug: string
+          state?: string | null
           updated_at?: string
+          zip?: string | null
         }
         Update: {
           address?: string | null
+          base_delivery_fee?: number
+          base_fuel_cost?: number
+          base_labor_cost?: number
+          base_pickup_fee?: number
+          city?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
@@ -18829,9 +18982,13 @@ export type Database = {
           market?: string
           market_id?: string | null
           name?: string
+          overhead_pct?: number
           priority_rank?: number
+          service_radius_miles?: number
           slug?: string
+          state?: string | null
           updated_at?: string
+          zip?: string | null
         }
         Relationships: [
           {

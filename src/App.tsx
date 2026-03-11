@@ -162,6 +162,7 @@ const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDas
 const LocationPricingManager = lazy(() => import("./pages/admin/pricing/LocationPricingManager"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
+const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
 const WorkflowsExplorer = lazy(() => import("./pages/admin/qa/WorkflowsExplorer"));
 const WorkflowGraph = lazy(() => import("./pages/admin/qa/WorkflowGraph"));
 const PhotoAITest = lazy(() => import("./pages/admin/qa/PhotoAITest"));
@@ -899,6 +900,9 @@ const App = () => {
                 } />
                 <Route path="pricing/locations" element={
                   <Suspense fallback={<PageLoader />}><LocationPricingManager /></Suspense>
+                } />
+                <Route path="pricing/simulator" element={
+                  <Suspense fallback={<PageLoader />}><PricingSimulator /></Suspense>
                 } />
                 {/* Telephony Routes */}
                 <Route path="telephony/calls" element={
