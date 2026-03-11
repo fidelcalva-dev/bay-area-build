@@ -18,7 +18,7 @@ import {
 
 interface HeavyMaterialSelectorProps {
   onClassificationChange: (result: HeavyClassificationResult) => void;
-  selectedSize: 6 | 8 | 10;
+  selectedSize: 5 | 8 | 10;
   cityId?: string;
 }
 

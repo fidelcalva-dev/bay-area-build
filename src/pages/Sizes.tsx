@@ -77,7 +77,7 @@ export default function Sizes() {
               >
                 <Hammer className="w-4 h-4" />
                 <span>Heavy Materials</span>
-                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">6-10 yd</span>
+                <span className="hidden sm:inline text-xs text-muted-foreground ml-1">5-10 yd</span>
               </TabsTrigger>
             </TabsList>
 

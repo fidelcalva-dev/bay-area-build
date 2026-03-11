@@ -13,13 +13,13 @@ import { QuoteOrderFlow } from '@/components/quote/QuoteOrderFlow';
 import type { QuoteFormData } from '@/components/quote/types';
 
 const DUMPSTER_SIZES: Record<number, { label: string; description: string }> = {
-  6: { label: '6 Yard', description: 'Compact — bathroom remodel, small cleanout' },
+  5: { label: '5 Yard', description: 'Compact — bathroom remodel, small cleanout' },
   8: { label: '8 Yard', description: 'Small — single room renovation' },
   10: { label: '10 Yard', description: 'Standard — garage cleanout, flooring' },
   20: { label: '20 Yard', description: 'Popular — kitchen remodel, roofing' },
   30: { label: '30 Yard', description: 'Large — whole house cleanout' },
   40: { label: '40 Yard', description: 'XL — construction, major demo' },
-  
+  50: { label: '50 Yard', description: 'Max — large commercial, major demolition' },
 };
 
 const MATERIAL_LABELS: Record<string, { label: string; icon: string }> = {

@@ -85,7 +85,7 @@ export function DebrisDetailsSelector({
         pricingMode: null,
         greenHaloEligible: false,
         isHeavyMaterial: false,
-        allowedSizes: materialType === 'heavy' ? [6, 8, 10] : [6, 8, 10, 20, 30, 40, 50],
+        allowedSizes: materialType === 'heavy' ? [5, 8, 10] : [5, 8, 10, 20, 30, 40, 50],
         reclassified: false,
         reclassificationMessage: null,
         isComplete: false,
@@ -266,7 +266,7 @@ export function DebrisDetailsSelector({
                 )}
                 {category.allowedSizes.length <= 3 && (
                   <span className="text-[9px] text-muted-foreground">
-                    6-10 yd only
+                    5-10 yd only
                   </span>
                 )}
               </div>
@@ -462,8 +462,8 @@ export function DebrisDetailsSelector({
                 <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
                 <p className="text-xs text-amber-700">
                   {isSpanish 
-                    ? 'Materiales pesados limitados a contenedores de 6-10 yardas'
-                    : 'Heavy materials limited to 6-10 yd containers only'}
+                    ? 'Materiales pesados limitados a contenedores de 5-10 yardas'
+                    : 'Heavy materials limited to 5-10 yd containers only'}
                 </p>
               </div>
             </div>

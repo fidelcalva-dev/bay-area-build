@@ -158,12 +158,13 @@ export const SERVICE_AREAS = [
 ] as const;
 
 export const DUMPSTER_SIZES = [
-  '6 Yard Dumpster',
+  '5 Yard Dumpster',
   '8 Yard Dumpster',
   '10 Yard Dumpster',
   '20 Yard Dumpster',
   '30 Yard Dumpster',
   '40 Yard Dumpster',
+  '50 Yard Dumpster',
 ] as const;
 
 // Page-specific SEO configurations

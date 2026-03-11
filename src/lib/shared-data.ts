@@ -5,9 +5,9 @@ import { BUSINESS_INFO, SERVICE_AREAS } from './seo';
 
 // ============================================================
 // DUMPSTER SIZES - Official inventory
-// Official Included Tonnage: 6yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T
-// Heavy Materials: 6, 8, 10 yard only (flat-fee, disposal included)
-// General Debris: 10, 20, 30, 40 yard
+// Official Included Tonnage: 5yd=0.5T, 8yd=0.5T, 10yd=1T, 20yd=2T, 30yd=3T, 40yd=4T, 50yd=5T
+// Heavy Materials: 5, 8, 10 yard only (flat-fee, disposal included)
+// General Debris: 5, 8, 10, 20, 30, 40, 50 yard
 // ============================================================
 
 export interface DumpsterSizeData {
@@ -27,12 +27,12 @@ export interface DumpsterSizeData {
 
 // Pricing data derived from v56 spreadsheet (Plan A base prices)
 export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
-  // Both Heavy and General (6 yard) - 6 × 12 × 2.25 = 162 cu ft / 27 = 6 cu yd
+  // Both Heavy and General (5 yard) - 5 × 12 × 2.25 = 135 cu ft / 27 = 5 cu yd
   {
-    yards: 6,
-    dimensions: "12' L × 6' W × 2.25' H",
+    yards: 5,
+    dimensions: "12' L × 5' W × 2.25' H",
     length: "12'",
-    width: "6'",
+    width: "5'",
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
@@ -113,11 +113,25 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '12-16 pickup loads',
     description: 'Commercial-grade capacity for large-scale projects.',
   },
+  // General Debris Only (50 yard) - 7.5 × 30 × 6 = 1350 cu ft / 27 = 50 cu yd
+  {
+    yards: 50,
+    dimensions: "30' L × 7.5' W × 6' H",
+    length: "30'",
+    width: "7.5'",
+    height: "6'",
+    includedTons: 5,
+    category: 'general',
+    priceFrom: 1050,
+    useCases: ['Large commercial', 'Major demolition', 'Industrial cleanouts'],
+    loads: '16-20 pickup loads',
+    description: 'Maximum capacity for the largest projects.',
+  },
 ];
 
 // Helper functions
 export const getHeavySizes = () => DUMPSTER_SIZES_DATA.filter(s => s.category === 'heavy' || s.category === 'both');
-export const getGeneralSizes = () => DUMPSTER_SIZES_DATA.filter(s => (s.category === 'general' || s.category === 'both') && s.yards >= 10);
+export const getGeneralSizes = () => DUMPSTER_SIZES_DATA.filter(s => s.category === 'general' || s.category === 'both');
 export const getSizeByYards = (yards: number) => DUMPSTER_SIZES_DATA.find(s => s.yards === yards);
 
 // ============================================================
@@ -186,8 +200,8 @@ export const MASTER_FAQS: FAQItem[] = [
   {
     question: 'Do you offer dumpsters for concrete and dirt?',
     questionEs: '¿Ofrecen contenedores para concreto y tierra?',
-    answer: 'Yes! We have heavy material dumpsters (6, 8, and 10 yard) specifically for concrete, dirt, rock, and asphalt. These are FLAT FEE—disposal is included with no extra weight charges. Heavy materials cannot be mixed with other debris.',
-    answerEs: '¡Sí! Tenemos contenedores para materiales pesados (6, 8 y 10 yardas) específicamente para concreto, tierra, roca y asfalto. Son TARIFA PLANA—sin cargos adicionales por peso.',
+    answer: 'Yes! We have heavy material dumpsters (5, 8, and 10 yard) specifically for concrete, dirt, rock, and asphalt. These are FLAT FEE—disposal is included with no extra weight charges. Heavy materials cannot be mixed with other debris.',
+    answerEs: '¡Sí! Tenemos contenedores para materiales pesados (5, 8 y 10 yardas) específicamente para concreto, tierra, roca y asfalto. Son TARIFA PLANA—sin cargos adicionales por peso.',
     category: 'materials',
   },
   // Contractor-focused FAQs
@@ -403,7 +417,7 @@ export const WHOLESALER_APPROVAL_THRESHOLD = 0.07; // 7%+ requires manual approv
 // ============================================================
 
 // CANONICAL RULES:
-// Heavy Materials (5/6/8/10yd): FLAT FEE - no overage, no tons displayed
+// Heavy Materials (5/8/10yd): FLAT FEE - no overage, no tons displayed
 // General Debris (ALL SIZES 5-50yd): $165 per ton overage
 
 export type OverageRule = 'flat_fee' | 'per_ton';
@@ -447,7 +461,6 @@ export const OVERAGE_NOTE = 'Overage billed per ton after disposal scale ticket.
 // Note: For HEAVY materials, tonnage is NOT displayed (flat fee)
 export const INCLUDED_TONS_BY_SIZE: Record<number, number> = {
   5: 0.5,
-  6: 0.5,
   8: 0.5,
   10: 1,
   20: 2,
@@ -471,24 +484,25 @@ export interface V56PricingTier {
 
 // Plan A pricing (General Debris - includes tons)
 export const PLAN_A_PRICING: V56PricingTier[] = [
-  { size: 6, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 5, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
   { size: 8, basePrice: 460, priceRangeLow: 460, priceRangeHigh: 550, includedTons: 0.5, category: 'both' },
   { size: 10, basePrice: 580, priceRangeLow: 580, priceRangeHigh: 675, includedTons: 1, category: 'both' },
   { size: 20, basePrice: 620, priceRangeLow: 620, priceRangeHigh: 750, includedTons: 2, category: 'general' },
   { size: 30, basePrice: 770, priceRangeLow: 770, priceRangeHigh: 895, includedTons: 3, category: 'general' },
   { size: 40, basePrice: 895, priceRangeLow: 895, priceRangeHigh: 1050, includedTons: 4, category: 'general' },
+  { size: 50, basePrice: 1050, priceRangeLow: 1050, priceRangeHigh: 1200, includedTons: 5, category: 'general' },
 ];
 
 // ============================================================
 // HEAVY MATERIAL PRICING CANON (Approved flat-rate ladder)
-// Clean Soil / Clean Concrete: 6yd=$495, 8yd=$595, 10yd=$695.50
+// Clean Soil / Clean Concrete: 5yd=$495, 8yd=$595, 10yd=$695.50
 // +$200 materials (brick, asphalt, tile): added directly to base
 // +$300 mixed heavy: added directly to base
 // ============================================================
 
 // Approved heavy material base prices by size (flat-rate, disposal included)
 export const HEAVY_BASE_PRICES: Record<number, number> = {
-  6: 495,
+  5: 495,
   8: 595,
   10: 695.50,
 };
@@ -500,7 +514,7 @@ export const HEAVY_BASE_10YD = 695.50;
 export const HEAVY_SIZE_FACTORS: Record<number, number> = {
   10: 1.0,
   8: 595 / 695.50,
-  6: 495 / 695.50,
+  5: 495 / 695.50,
 };
 
 // Material class increments (added directly to base price)
@@ -514,7 +528,7 @@ export type HeavyMaterialClass = keyof typeof HEAVY_INCREMENTS;
 
 // Calculate heavy price: BASE_PRICE[size] + increment
 export function calculateHeavyMaterialPrice(
-  size: 6 | 8 | 10,
+  size: 5 | 8 | 10,
   materialClass: HeavyMaterialClass = 'base',
   _baseRate?: number // ignored, kept for backward compatibility
 ): number {
@@ -523,13 +537,13 @@ export function calculateHeavyMaterialPrice(
   return Math.round((basePrice + increment) * 100) / 100;
 }
 
-// Heavy Material / Lowboy pricing (6, 8, 10 only) - FLAT FEE, disposal included
+// Heavy Material / Lowboy pricing (5, 8, 10 only) - FLAT FEE, disposal included
 export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
   { 
-    size: 6, 
+    size: 5, 
     basePrice: 495,
     priceRangeLow: 495, 
-    priceRangeHigh: calculateHeavyMaterialPrice(6, 'mixed_heavy'), // 795
+    priceRangeHigh: calculateHeavyMaterialPrice(5, 'mixed_heavy'),
     includedTons: 0, // FLAT FEE - no tons displayed
     category: 'heavy' 
   },
@@ -537,7 +551,7 @@ export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
     size: 8, 
     basePrice: 595,
     priceRangeLow: 595, 
-    priceRangeHigh: calculateHeavyMaterialPrice(8, 'mixed_heavy'), // 895
+    priceRangeHigh: calculateHeavyMaterialPrice(8, 'mixed_heavy'),
     includedTons: 0, 
     category: 'heavy' 
   },
@@ -545,7 +559,7 @@ export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
     size: 10, 
     basePrice: 695.50,
     priceRangeLow: 695.50, 
-    priceRangeHigh: calculateHeavyMaterialPrice(10, 'mixed_heavy'), // 995.50
+    priceRangeHigh: calculateHeavyMaterialPrice(10, 'mixed_heavy'),
     includedTons: 0, 
     category: 'heavy' 
   },
@@ -575,7 +589,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 695.50,
         8: 595,
-        6: 495,
+        5: 495,
       },
     },
     plus_200: {
@@ -584,7 +598,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 895.50,
         8: 795,
-        6: 695,
+        5: 695,
       },
     },
     mixed_heavy: {
@@ -593,7 +607,7 @@ export function getHeavyPricingDisplay() {
       prices: {
         10: 995.50,
         8: 895,
-        6: 795,
+        5: 795,
       },
     },
   };

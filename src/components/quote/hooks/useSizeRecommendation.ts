@@ -31,12 +31,12 @@ const QUANTITY_MULTIPLIERS: Record<string, number> = {
 const APPLIANCE_SHINGLE_CODES = ['APPLIANCES', 'ROOFING_SHINGLES'];
 
 // Heavy sizes (only 5-10 available)
-const HEAVY_SIZES = [5, 6, 8, 10];
-const DEBRIS_SIZES = [10, 20, 30, 40];
+const HEAVY_SIZES = [5, 8, 10];
+const DEBRIS_SIZES = [10, 20, 30, 40, 50];
 const RECYCLING_SIZES = [10, 20, 30];
 
 // Heavy fallback order
-const HEAVY_FALLBACK_ORDER = [10, 8, 6, 5];
+const HEAVY_FALLBACK_ORDER = [10, 8, 5];
 // Debris fallback order
 const DEBRIS_FALLBACK_ORDER = [20, 10, 30, 40];
 
@@ -162,19 +162,19 @@ export function calculateSizeRecommendation(
     // East Bay mapping: default 10, smaller based on score
     if (volumeScore <= 3) {
       recommendedSize = 5;
-      alternativeSizes = [6, 8];
+      alternativeSizes = [8];
       confidenceScore = 70;
     } else if (volumeScore <= 4) {
-      recommendedSize = 6;
-      alternativeSizes = [5, 8];
+      recommendedSize = 5;
+      alternativeSizes = [8];
       confidenceScore = 75;
     } else if (volumeScore <= 6) {
       recommendedSize = 8;
-      alternativeSizes = [6, 10];
+      alternativeSizes = [5, 10];
       confidenceScore = 80;
     } else {
       recommendedSize = 10;
-      alternativeSizes = [8, 6];
+      alternativeSizes = [8, 5];
       confidenceScore = 90;
     }
 

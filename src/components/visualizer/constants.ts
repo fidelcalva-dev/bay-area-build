@@ -3,7 +3,7 @@
  * All dimensions in feet (W × L × H)
  */
 
-export type DumpsterSize = 6 | 8 | 10 | 20 | 30 | 40;
+export type DumpsterSize = 5 | 8 | 10 | 20 | 30 | 40;
 
 export interface DumpsterSpec {
   yards: DumpsterSize;
@@ -21,7 +21,7 @@ export interface DumpsterSpec {
  * These dimensions are the single source of truth across all visualizations
  */
 export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
-  6:  { yards: 6,  widthFt: 6,   lengthFt: 12, heightFt: 2.25, pickupLoads: '2–3',   volumeCuYd: 6,  tonsIncluded: 0.5 },
+  5:  { yards: 5,  widthFt: 5,   lengthFt: 12, heightFt: 2.25, pickupLoads: '2–3',   volumeCuYd: 5,  tonsIncluded: 0.5 },
   8:  { yards: 8,  widthFt: 6,   lengthFt: 12, heightFt: 3,    pickupLoads: '3–4',   volumeCuYd: 8,  tonsIncluded: 0.5 },
   10: { yards: 10, widthFt: 7.5, lengthFt: 12, heightFt: 3,    pickupLoads: '4–5',   volumeCuYd: 10, tonsIncluded: 1 },
   20: { yards: 20, widthFt: 7.5, lengthFt: 18, heightFt: 4,    pickupLoads: '6–8',   volumeCuYd: 20, tonsIncluded: 2 },
@@ -29,8 +29,8 @@ export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
   40: { yards: 40, widthFt: 7.5, lengthFt: 24, heightFt: 6,    pickupLoads: '12–16', volumeCuYd: 40, tonsIncluded: 4 },
 };
 
-export const GENERAL_SIZES: DumpsterSize[] = [6, 8, 10, 20, 30, 40];
-export const HEAVY_SIZES: DumpsterSize[] = [6, 8, 10];
+export const GENERAL_SIZES: DumpsterSize[] = [5, 8, 10, 20, 30, 40];
+export const HEAVY_SIZES: DumpsterSize[] = [5, 8, 10];
 
 // Debris presets for "Will it fit?" calculator
 export interface DebrisPreset {

@@ -92,7 +92,7 @@ const MATERIAL_OPTIONS: MaterialOption[] = [
     title: 'Concrete & Dirt',
     subtitle: 'Rock, brick, asphalt, clean fill',
     icon: HardHat,
-    badge: '6-10 yd only',
+    badge: '5-10 yd only',
     badgeVariant: 'warning',
   },
   {

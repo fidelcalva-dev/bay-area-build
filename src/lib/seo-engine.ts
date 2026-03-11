@@ -73,9 +73,9 @@ export interface InternalLink {
 // ============================================================
 
 export const SEO_MATERIALS = [
-  { slug: 'concrete-dumpster', name: 'Concrete', category: 'heavy', sizes: [6, 8, 10], description: 'Heavy concrete, block, and masonry disposal with flat-fee pricing.' },
-  { slug: 'dirt-dumpster', name: 'Dirt & Soil', category: 'heavy', sizes: [6, 8, 10], description: 'Clean fill dirt, topsoil, and excavation material removal.' },
-  { slug: 'construction-debris-dumpster', name: 'Construction Debris', category: 'general', sizes: [10, 20, 30, 40], description: 'Mixed construction and demolition debris from remodels and builds.' },
+  { slug: 'concrete-dumpster', name: 'Concrete', category: 'heavy', sizes: [5, 8, 10], description: 'Heavy concrete, block, and masonry disposal with flat-fee pricing.' },
+  { slug: 'dirt-dumpster', name: 'Dirt & Soil', category: 'heavy', sizes: [5, 8, 10], description: 'Clean fill dirt, topsoil, and excavation material removal.' },
+  { slug: 'construction-debris-dumpster', name: 'Construction Debris', category: 'general', sizes: [10, 20, 30, 40, 50], description: 'Mixed construction and demolition debris from remodels and builds.' },
   { slug: 'yard-waste-dumpster', name: 'Yard Waste & Green Waste', category: 'general', sizes: [10, 20, 30], description: 'Branches, leaves, grass, and organic yard debris removal.' },
   { slug: 'commercial-dumpster-rental', name: 'Commercial', category: 'general', sizes: [20, 30, 40, 50], description: 'Commercial-grade dumpsters for office buildouts, tenant improvements, and warehouse cleanouts.' },
 ] as const;

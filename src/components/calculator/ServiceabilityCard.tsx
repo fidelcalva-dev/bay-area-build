@@ -70,8 +70,8 @@ export function ServiceabilityCard({ result }: ServiceabilityCardProps) {
               <p className="text-xs font-medium text-muted-foreground mb-2">Available Sizes</p>
               <div className="flex flex-wrap gap-1.5">
                 {(estimate.material_category === 'HEAVY'
-                  ? [6, 8, 10]
-                  : [6, 8, 10, 20, 30, 40, 50]
+                  ? [5, 8, 10]
+                  : [5, 8, 10, 20, 30, 40, 50]
                 ).map(size => (
                   <Badge
                     key={size}

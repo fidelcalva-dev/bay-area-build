@@ -61,7 +61,7 @@ export function MaterialSelector({ value, onChange }: MaterialSelectorProps) {
               {material.value === 'heavy' && (
                 <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
                   <AlertTriangle className="w-3 h-3" strokeWidth={2} />
-                  <span>Limited to 6-10 yd</span>
+                  <span>Limited to 5-10 yd</span>
                 </div>
               )}
               

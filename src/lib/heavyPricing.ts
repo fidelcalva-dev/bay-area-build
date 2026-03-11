@@ -130,10 +130,10 @@ export interface HeavyPriceResult {
 
 /**
  * Calculate heavy material price based on approved flat-rate ladder
- * Base prices: 6yd=$495, 8yd=$595, 10yd=$695.50 + material increment
+ * Base prices: 5yd=$495, 8yd=$595, 10yd=$695.50 + material increment
  */
 export function calculateHeavyPrice(
-  size: 6 | 8 | 10,
+  size: 5 | 8 | 10,
   materialClass: HeavyMaterialClass,
   cityId: string = 'oakland'
 ): HeavyPriceResult {
@@ -152,7 +152,7 @@ export function calculateHeavyPrice(
   const savings10yd = ((adjustedBase - roundedPrice) / adjustedBase * 100);
   if (size === 8 && savings10yd > 0) {
     savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
-  } else if (size === 6 && savings10yd > 0) {
+  } else if (size === 5 && savings10yd > 0) {
     savingsMessage = `${Math.round(savings10yd)}% less than 10 yd`;
   }
   
@@ -177,8 +177,8 @@ export function getAllHeavyPrices(
   materialClass: HeavyMaterialClass,
   cityId: string = 'oakland'
 ): HeavyPriceResult[] {
-  return [10, 8, 6].map(size => 
-    calculateHeavyPrice(size as 6 | 8 | 10, materialClass, cityId)
+  return [10, 8, 5].map(size => 
+    calculateHeavyPrice(size as 5 | 8 | 10, materialClass, cityId)
   );
 }
 
@@ -219,7 +219,7 @@ export function checkTrashContamination(
       newMaterialType: 'general',
       reason: 'Reclassified as mixed debris due to trash contamination. Per-ton billing applies.',
       reasonEs: 'Reclasificado como escombros mixtos debido a contaminación con basura. Se aplica facturación por tonelada.',
-      allowedSizes: [6, 8, 10, 20, 30, 40, 50], // General debris sizes
+      allowedSizes: [5, 8, 10, 20, 30, 40, 50], // General debris sizes
     };
   }
   
@@ -229,7 +229,7 @@ export function checkTrashContamination(
       newMaterialType: 'heavy',
       reason: 'Clean heavy material qualifies for flat-fee pricing.',
       reasonEs: 'Material pesado limpio califica para tarifa plana.',
-      allowedSizes: [6, 8, 10], // Heavy-only sizes
+      allowedSizes: [5, 8, 10], // Heavy-only sizes
     };
   }
   
@@ -239,7 +239,7 @@ export function checkTrashContamination(
     newMaterialType: 'general',
     reason: '',
     reasonEs: '',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
   };
 }
 
@@ -279,15 +279,15 @@ export function getMaterialClassIncrement(materialClass: HeavyMaterialClass): st
 /**
  * Validate size is allowed for heavy materials
  */
-export function isValidHeavySize(size: number): size is 6 | 8 | 10 {
-  return size === 6 || size === 8 || size === 10;
+export function isValidHeavySize(size: number): size is 5 | 8 | 10 {
+  return size === 5 || size === 8 || size === 10;
 }
 
 /**
  * Get heavy size recommendation for volume
  */
-export function recommendHeavySize(estimatedVolumeCy: number): 6 | 8 | 10 {
-  if (estimatedVolumeCy <= 6) return 6;
+export function recommendHeavySize(estimatedVolumeCy: number): 5 | 8 | 10 {
+  if (estimatedVolumeCy <= 5) return 5;
   if (estimatedVolumeCy <= 8) return 8;
   return 10;
 }

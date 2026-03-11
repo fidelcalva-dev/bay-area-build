@@ -75,8 +75,8 @@ export const YARD_HUBS: YardHubData[] = [
     faqs: [
       { question: 'How quickly can I get a dumpster delivered in Oakland?', answer: 'Most Oakland deliveries happen within 1–3 hours during business hours. Same-day delivery is available for orders placed before 2 PM.' },
       { question: 'Do I need a permit for a dumpster in Oakland?', answer: 'No permit is needed for dumpsters placed on private property like driveways. Street placements require an encroachment permit from Oakland Public Works.' },
-      { question: 'What sizes are available from the Oakland yard?', answer: 'We stock 6, 8, 10, 20, 30, and 40 yard dumpsters. Heavy material sizes (6–10 yard) are available for concrete, dirt, and asphalt.' },
-      { question: 'Can I rent a dumpster for concrete removal in Oakland?', answer: 'Yes, we offer flat-fee concrete dumpsters in 6, 8, and 10 yard sizes with no weight overage charges for clean concrete.' },
+      { question: 'What sizes are available from the Oakland yard?', answer: 'We stock 5, 8, 10, 20, 30, 40, and 50 yard dumpsters. Heavy material sizes (5–10 yard) are available for concrete, dirt, and asphalt.' },
+      { question: 'Can I rent a dumpster for concrete removal in Oakland?', answer: 'Yes, we offer flat-fee concrete dumpsters in 5, 8, and 10 yard sizes with no weight overage charges for clean concrete.' },
       { question: 'What areas does the Oakland yard serve?', answer: 'We serve Oakland, Berkeley, Alameda, San Leandro, Hayward, Emeryville, Castro Valley, and surrounding East Bay communities.' },
       { question: 'How much does a dumpster rental cost in Oakland?', answer: `Prices start at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. Final pricing depends on material type, weight, and delivery location. Get an exact price with our instant quote calculator.` },
     ],
@@ -125,7 +125,7 @@ export const YARD_HUBS: YardHubData[] = [
     faqs: [
       { question: 'How quickly can I get a dumpster in San Jose?', answer: 'Most San Jose deliveries happen within 1–3 hours during business hours. Same-day delivery is available for orders placed before 2 PM.' },
       { question: 'Do I need a permit for a dumpster in San Jose?', answer: 'No permit is needed for dumpsters on private property. Street placements require a temporary encroachment permit from San Jose DOT.' },
-      { question: 'What dumpster sizes are available in San Jose?', answer: 'We stock 6, 8, 10, 20, 30, and 40 yard dumpsters at our San Jose yard for both heavy materials and general debris.' },
+      { question: 'What dumpster sizes are available in San Jose?', answer: 'We stock 5, 8, 10, 20, 30, 40, and 50 yard dumpsters at our San Jose yard for both heavy materials and general debris.' },
       { question: 'Can I rent a dumpster for a roofing project in San Jose?', answer: 'Yes, our 20 and 30 yard dumpsters are popular for roofing projects. Pricing includes delivery, pickup, and disposal at certified facilities.' },
       { question: 'What areas does the San Jose yard serve?', answer: 'We serve San Jose, Santa Clara, Sunnyvale, Milpitas, Campbell, Cupertino, Los Gatos, and surrounding South Bay communities.' },
       { question: 'How much does a dumpster cost in San Jose?', answer: `Prices start at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. Get an exact price based on your ZIP code with our instant quote calculator.` },
