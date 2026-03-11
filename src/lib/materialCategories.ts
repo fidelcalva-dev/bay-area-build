@@ -637,7 +637,7 @@ export function checkReclassification(check: ReclassificationCheck): Reclassific
     return {
       reclassified: false,
       newClassification: 'MIXED_GENERAL',
-      newAllowedSizes: [6, 8, 10, 20, 30, 40, 50],
+      newAllowedSizes: [5, 8, 10, 20, 30, 40, 50],
       message: 'Category not found, defaulting to mixed debris',
       messageEs: 'Categoría no encontrada, por defecto escombros mixtos',
     };
