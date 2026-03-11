@@ -340,7 +340,7 @@ function generateSafeAnswer(question: string): string {
     return 'Pricing varies by ZIP code, dumpster size, and material type. We offer transparent, all-inclusive pricing with no hidden fees. Use the Guided Quote to see your exact price in seconds.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('size') || q.includes('yard') || q.includes('which dumpster') || q.includes('recommend')) {
-    return 'For most residential cleanouts, a 15-20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 6-10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
+    return 'For most residential cleanouts, a 20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 5, 8, and 10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
   }
   if (q.includes('deliver') || q.includes('schedule') || q.includes('when') || q.includes('pickup') || q.includes('next day')) {
     return 'We deliver Monday through Friday. Next-business-day delivery is available in most service areas. You can choose your preferred delivery window during booking: Morning, Midday, or Afternoon.\n\nWould you like exact pricing for your ZIP?';
