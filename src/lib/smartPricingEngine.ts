@@ -124,6 +124,14 @@ export interface SmartQuote {
   isManualReview: boolean;
   marginPct: number;
   
+  // Capacity & surge
+  surgeMultiplier: number;
+  capacityUtilization: number;
+  
+  // Vendor fallback
+  isVendorFallback: boolean;
+  vendorName?: string;
+  
   // Warnings
   warnings: string[];
   
@@ -143,6 +151,7 @@ export interface SmartQuoteInput {
   greenHaloRequired?: boolean;
   isContractor?: boolean;
   contractorDiscountPct?: number;
+  isSameDay?: boolean;
 }
 
 // =====================================================
