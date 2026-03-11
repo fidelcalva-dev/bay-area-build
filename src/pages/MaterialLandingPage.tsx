@@ -29,7 +29,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     title: 'Concrete Dumpster Rental | Flat-Fee Disposal',
     h1: 'Concrete Dumpster Rental',
     description: 'Flat-fee concrete dumpster rental in the Bay Area.',
-    metaDescription: 'Rent a concrete dumpster with flat-fee pricing—no weight overage charges. 6, 8, and 10 yard sizes for concrete, brick, and block removal. Same-day delivery. Call (510) 680-2150.',
+    metaDescription: 'Rent a concrete dumpster with flat-fee pricing—no weight overage charges. 5, 8, and 10 yard sizes for concrete, brick, and block removal. Same-day delivery. Call (510) 680-2150.',
     intro: 'Need to dispose of concrete, brick, or block? Our heavy material dumpsters are designed for dense loads with flat-fee pricing—disposal included, no weight surprises. We route clean concrete to certified recycling facilities in the East Bay.',
     icon: Hammer,
     sizes: [5, 8, 10],
