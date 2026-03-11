@@ -93,7 +93,7 @@ export const YARD_HUBS: YardHubData[] = [
     coverageDescription: 'Our San Jose yard is the South Bay and Silicon Valley hub, providing fast dumpster delivery to San Jose, Santa Clara, Sunnyvale, Milpitas, Campbell, and the greater South Bay area. Located near the US-101 and I-880 interchange for rapid access across the region.',
     deliverySpeed: 'Most deliveries from our San Jose yard arrive within 1–3 hours during business hours.',
     equipmentStored: [
-      '6-yard roll-off dumpsters (heavy material rated)',
+      '5-yard roll-off dumpsters (heavy material rated)',
       '8-yard roll-off dumpsters (heavy material rated)',
       '10-yard roll-off dumpsters (heavy material rated)',
       '20-yard roll-off dumpsters (general debris)',
