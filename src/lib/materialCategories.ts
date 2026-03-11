@@ -546,7 +546,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Plastic containers, packaging, materials',
     descriptionEs: 'Contenedores de plástico, empaques, materiales',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Plastic recycled where facilities accept',
