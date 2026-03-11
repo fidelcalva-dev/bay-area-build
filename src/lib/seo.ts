@@ -177,7 +177,7 @@ export const PAGE_SEO = {
   },
   pricing: {
     title: 'Dumpster Rental Prices Bay Area | Transparent Flat-Rate Pricing',
-    description: 'Bay Area dumpster rental pricing from $390. No hidden fees, flat-rate for concrete & dirt. 6-40 yard sizes. Oakland, San Jose, SF. Get instant quote.',
+    description: 'Bay Area dumpster rental pricing from $395. No hidden fees, flat-rate for concrete & dirt. 5-50 yard sizes. Oakland, San Jose, SF. Get instant quote.',
     canonical: '/pricing',
     ogImage: '/og-image.jpg',
   },

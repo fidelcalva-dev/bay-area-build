@@ -209,8 +209,8 @@ export const SERVICE_CITIES: CityPageData[] = [
     dumpRules: 'San Jose has strict construction debris recycling requirements under its Zero Waste policy. Concrete, asphalt, and clean dirt are routed to certified recycling facilities. Mixed C&D loads must achieve minimum diversion rates.',
     pricingNote: 'San Jose pricing starts at competitive base rates. Heavy materials (concrete, dirt, rock) are flat-fee with no weight overage charges.',
     permitInfo: 'San Jose DOT issues encroachment permits for street-placed dumpsters. Apply online through the city portal. Allow 5-7 business days.',
-    metaTitle: 'Dumpster Rental San Jose CA | Local Yard | From $390',
-    metaDescription: 'Local dumpster rental in San Jose, CA. Same-day delivery from our Ringwood Ave yard. 6-50 yard sizes, flat-fee concrete disposal. Call (510) 680-2150.',
+    metaTitle: 'Dumpster Rental San Jose CA | Local Yard | From $395',
+    metaDescription: 'Local dumpster rental in San Jose, CA. Same-day delivery from our Ringwood Ave yard. 5-50 yard sizes, flat-fee concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['santa-clara-ca', 'sunnyvale-ca', 'milpitas-ca', 'campbell-ca'],
   },
   {
