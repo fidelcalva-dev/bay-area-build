@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { PRICING_POLICIES, DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { HEAVY_MATERIAL, formatPrice } from '@/config/pricingConfig';
 import { SERVICE_CITIES } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, AlertTriangle, Truck, Hammer, Leaf, Home as HomeIcon } from 'lucide-react';
 import NotFound from './NotFound';
