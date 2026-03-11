@@ -600,7 +600,7 @@ export function V3QuoteFlow() {
           <div className="relative h-1 bg-muted rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(stepIndex / 7) * 100}%` }}
+              style={{ width: `${(stepIndex / 8) * 100}%` }}
             />
           </div>
           <div className="flex justify-between mt-1.5">
