@@ -111,7 +111,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Drywall, lumber, flooring, cabinets, mixed demo',
     descriptionEs: 'Paneles de yeso, madera, pisos, gabinetes, demolición',
     classification: 'MIXED_GENERAL',
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'C&D diversion support available upon request',
