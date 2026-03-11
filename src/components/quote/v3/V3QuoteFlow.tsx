@@ -480,7 +480,7 @@ export function V3QuoteFlow() {
             rentalDays: 7,
             zipCode: zip,
             estimatedMin: quote.subtotal,
-            estimatedMax: quote.subtotal + Math.round(quote.subtotal * 0.08),
+            estimatedMax: quote.subtotalHigh,
             includedTons: quote.includedTons,
           },
         }).catch(() => {});
