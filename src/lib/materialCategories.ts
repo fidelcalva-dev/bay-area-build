@@ -506,7 +506,7 @@ export const CANONICAL_MATERIAL_CATEGORIES: CanonicalMaterialCategory[] = [
     description: 'Sheetrock, gypsum board only',
     descriptionEs: 'Solo paneles de yeso, cartón yeso',
     classification: 'MIXED_GENERAL', // Drywall is not heavy, standard mixed pricing
-    allowedSizes: [6, 8, 10, 20, 30, 40, 50],
+    allowedSizes: [5, 8, 10, 20, 30, 40, 50],
     getPricingMode: getMixedPricingMode,
     greenHaloEligible: true,
     greenHaloNote: 'Drywall recycled at specialized facilities',
