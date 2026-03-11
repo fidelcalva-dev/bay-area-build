@@ -48,7 +48,7 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
     metaDescription: 'Construction dumpsters for Bay Area job sites. 6-50 yard sizes for new builds, renovations, demolition. Flat-fee concrete. Same-day delivery from Oakland & San Jose yards.',
     intro: 'Construction job sites need reliable debris removal to stay on schedule. Our full range of 6-50 yard dumpsters handles everything from small residential remodels to large commercial builds. Heavy material dumpsters for concrete and dirt are flat-fee with no weight overage.',
     icon: HardHat,
-    sizes: [6, 8, 10, 20, 30, 40, 50],
+    sizes: [5, 8, 10, 20, 30, 40, 50],
     useCases: [
       { title: 'New Construction', desc: 'Ongoing debris removal for residential and commercial new builds. Schedule regular pickups or swap-outs.' },
       { title: 'Demolition Projects', desc: 'High-capacity dumpsters for full and partial demolition. Separate heavy material containers available.' },
