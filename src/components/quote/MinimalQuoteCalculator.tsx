@@ -260,7 +260,7 @@ export function MinimalQuoteCalculator() {
     zip,
     marketCode: zoneResult?.zoneName || null,
     yardId: distanceCalc.distance?.yard?.id || null,
-    availableSizes: isHeavy ? [5, 6, 8, 10] : [10, 20, 30, 40],
+    availableSizes: isHeavy ? [5, 8, 10] : [5, 8, 10, 20, 30, 40, 50],
     customerType: 'homeowner',
   });
 
