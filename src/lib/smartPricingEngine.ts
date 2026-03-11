@@ -484,14 +484,14 @@ async function findVendorFallback(
     .from('vendors')
     .select('*')
     .eq('is_active', true)
-    .contains('available_sizes', [sizeYd]);
+    .contains('size_support', [sizeYd]);
 
   if (!vendors?.length) return null;
 
   // Find vendors serving this ZIP
   const matching = vendors.filter(v => {
-    const zips = v.service_area_zips || [];
-    return zips.includes(zip) || zips.length === 0; // empty = serves all
+    const zips = v.coverage_zips || [];
+    return zips.includes(zip) || zips.length === 0;
   });
 
   if (!matching.length) return null;
@@ -499,16 +499,15 @@ async function findVendorFallback(
   // Pick best by reliability
   const best = matching.sort((a, b) => (b.reliability_score || 0) - (a.reliability_score || 0))[0];
 
-  // Get vendor price for this size
-  const sizeKey = `vendor_price_${sizeYd}yd` as keyof typeof best;
-  const vendorPrice = Number(best[sizeKey]) || 0;
-  if (!vendorPrice) return null;
-
-  const markupPct = Number(best.markup_pct) || 35;
+  // Estimate vendor price from internal cost baseline (no vendor-specific price columns)
+  // Use a conservative estimate based on market rates
+  const vendorBasePrices: Record<number, number> = { 5: 300, 8: 350, 10: 400, 20: 550, 30: 650, 40: 800, 50: 950 };
+  const vendorPrice = vendorBasePrices[sizeYd] || 500;
+  const markupPct = 35;
   const customerPrice = strategicRound(vendorPrice * (1 + markupPct / 100));
 
   return {
-    vendorName: best.company_name,
+    vendorName: best.name,
     vendorPrice,
     customerPrice,
     markupPct,
