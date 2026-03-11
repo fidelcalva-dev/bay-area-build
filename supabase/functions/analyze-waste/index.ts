@@ -63,8 +63,8 @@ const DENSITY_RANGES: Record<string, { low: number; high: number }> = {
   unknown: { low: 0.15, high: 0.40 },
 };
 
-const HEAVY_SIZES = [6, 8, 10];
-const GENERAL_SIZES = [6, 8, 10, 20, 30, 40, 50];
+const HEAVY_SIZES = [5, 8, 10];
+const GENERAL_SIZES = [5, 8, 10, 20, 30, 40, 50];
 
 // ============================================================
 // DRY_RUN SAMPLE RESULT
