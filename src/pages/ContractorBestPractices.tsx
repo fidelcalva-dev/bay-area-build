@@ -359,6 +359,7 @@ export default function ContractorBestPractices() {
     <Layout
       title="Dumpster Rental Best Practices for Contractors | Bay Area | CALSAN Dumpsters"
       description="Contractor dumpster rental best practices for the Bay Area. Choose the right size, avoid fees, stay compliant with WMP requirements. Professional guide from CALSAN Dumpsters."
+      canonical="/contractor-best-practices"
     >
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary/5 via-background to-muted py-12 lg:py-16">

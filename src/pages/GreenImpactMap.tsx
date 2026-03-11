@@ -76,6 +76,7 @@ const GreenImpactMap = () => {
     <Layout
       title="Green Impact Map"
       description="See real recycling impact across California. Every dumpster we deliver helps divert material from landfills."
+      canonical="/green-impact"
     >
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">

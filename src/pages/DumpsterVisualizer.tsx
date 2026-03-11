@@ -27,6 +27,7 @@ export default function DumpsterVisualizer() {
     <Layout
       title="Dumpster Size Visualizer | Compare Dimensions & Capacity"
       description="Visual tool to compare dumpster sizes and dimensions. See how dumpsters compare to a pickup truck or garage door. Calculate if your debris will fit."
+      canonical="/visualizer"
     >
       {/* Back navigation */}
       <div className="bg-muted/30 border-b border-border">

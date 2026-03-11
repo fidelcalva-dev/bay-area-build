@@ -27,7 +27,7 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     title: 'Dumpster Rental in California',
     h1: 'Dumpster Rental Across California',
     description: 'Calsan Dumpsters Pro serves communities across California with professional roll-off dumpster rental. From the Bay Area to Los Angeles, Sacramento to San Diego — find your local service.',
-    metaDescription: 'California dumpster rental from Calsan Dumpsters Pro. 10-50 yard sizes, same-day delivery, transparent pricing. Serving the Bay Area, LA, Sacramento, and beyond.',
+    metaDescription: 'California dumpster rental from Calsan Dumpsters Pro. 5-50 yard sizes, same-day delivery, transparent pricing. Serving the Bay Area, LA, Sacramento, and beyond.',
     countyFilter: [],
   },
   'bay-area-dumpster-rental': {
@@ -35,7 +35,7 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     title: 'Bay Area Dumpster Rental',
     h1: 'Bay Area Dumpster Rental',
     description: 'Calsan Dumpsters Pro serves the entire San Francisco Bay Area with local yard operations in Oakland and San Jose. Same-day delivery, transparent pricing, contractor-ready service.',
-    metaDescription: 'Bay Area dumpster rental from local yards in Oakland and San Jose. 10-50 yard sizes, same-day delivery. Serving Alameda, Contra Costa, Santa Clara, San Francisco, and San Mateo counties.',
+    metaDescription: 'Bay Area dumpster rental from local yards in Oakland and San Jose. 5-50 yard sizes, same-day delivery. Serving Alameda, Contra Costa, Santa Clara, San Francisco, and San Mateo counties.',
     countyFilter: ['alameda-county', 'contra-costa-county', 'santa-clara-county', 'san-francisco-county', 'san-mateo-county', 'solano-county'],
   },
   'southern-california-dumpster-rental': {

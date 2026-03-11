@@ -31,6 +31,7 @@ export default function WasteVisionPage() {
     <Layout
       title="Photo Size Recommendation | Calsan Dumpsters"
       description="Upload photos of your debris for a dumpster size recommendation. Detect materials, estimate volume, and get accurate pricing."
+      canonical="/waste-vision"
     >
       {/* Back navigation */}
       <div className="bg-muted/30 border-b border-border">
