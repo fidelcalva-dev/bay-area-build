@@ -60,7 +60,7 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     h1: 'North Bay Dumpster Rental',
     description: 'Professional dumpster rental serving the North Bay including Marin, Sonoma, Napa, and Solano counties through our coordinated logistics network.',
     metaDescription: 'North Bay dumpster rental for Marin, Sonoma, Napa, and Solano counties. Roll-off containers for construction, renovation, and cleanouts. Transparent pricing.',
-    countyFilter: ['solano-county', 'sonoma-county'],
+    countyFilter: ['marin-county', 'sonoma-county', 'napa-county', 'solano-county'],
   },
 };
 
