@@ -278,7 +278,7 @@ export default function CustomerDetail() {
 
         {/* ─── QUOTES ─── */}
         <TabsContent value="quotes">
-          <QuotesTab quotes={quotes} customerId={customer.id} />
+          <QuotesTab quotes={quotes} customerId={customer.id} customerPhone={customer.billing_phone} customerEmail={customer.billing_email} />
         </TabsContent>
 
         {/* ─── CONTRACTS ─── */}
