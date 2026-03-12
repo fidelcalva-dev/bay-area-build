@@ -235,3 +235,18 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function StageChip({ label, status, done, active }: { label: string; status: string; done: boolean; active: boolean }) {
+  const displayStatus = status === 'none' ? '—' : status;
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium ${
+      done ? 'bg-primary/10 border-primary/30 text-primary' :
+      active ? 'bg-amber-50 border-amber-300/50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-700/40' :
+      'bg-muted border-border text-muted-foreground'
+    }`}>
+      {done ? <CheckCircle2 className="w-3 h-3" /> : active ? <AlertTriangle className="w-3 h-3" /> : null}
+      <span>{label}</span>
+      <Badge variant="outline" className="text-[10px] h-4 px-1">{displayStatus}</Badge>
+    </div>
+  );
+}
