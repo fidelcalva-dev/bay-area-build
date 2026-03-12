@@ -735,6 +735,23 @@ export function V3QuoteFlow() {
                )}
       {/* Content */}
       <div className="p-5 md:p-6">
+        {/* Compact service area banner when ZIP is known and past zip step */}
+        {step !== 'zip' && step !== 'placement' && zoneResult && zip && (
+          <div className="mb-4 flex items-center justify-between px-3 py-2.5 rounded-xl bg-muted/40 border border-border/50">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-xs font-medium text-foreground truncate">
+                {addressResult?.city || zoneResult.cityName || zoneResult.zoneName}, {zip}
+              </span>
+            </div>
+            <button
+              onClick={() => { setStep('zip'); prefillApplied.current = false; }}
+              className="text-xs font-medium text-primary hover:text-primary/80 transition-colors shrink-0 ml-2"
+            >
+              Change
+            </button>
+          </div>
+        )}
         {/* ============================== */}
         {/* STEP 1: ZIP + YARD MATCH */}
         {/* ============================== */}
