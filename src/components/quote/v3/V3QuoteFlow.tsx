@@ -304,7 +304,22 @@ export function V3QuoteFlow() {
     else setZoneResult(null);
   }, [zip, lookupZone]);
 
-  // Derived state
+  // Auto-advance past ZIP step when prefilled from homepage
+  useEffect(() => {
+    if (prefillApplied.current) return;
+    if (!zoneResult) return;
+    // Only auto-advance if ZIP came from URL and we're still on ZIP step
+    if (urlZip.length === 5 && step === 'zip') {
+      prefillApplied.current = true;
+      // If customer type was also provided, skip to project step
+      if (customerType) {
+        setStep('project');
+      } else {
+        setStep('customer-type');
+      }
+    }
+  }, [zoneResult, step, urlZip, customerType]);
+
   const isHeavy = selectedProject?.isHeavy ?? false;
   const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
