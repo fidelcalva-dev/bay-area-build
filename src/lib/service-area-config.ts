@@ -156,3 +156,49 @@ export function getServiceModelCopy(model: ServiceModel, cityName: string, regio
   }
   return `Service available in ${cityName}${regionName ? ` and the ${regionName}` : ''} through our coordinated logistics network.`;
 }
+
+// ============================================================
+// YARD CLUSTER MAPPING — Links cities to their support yard
+// ============================================================
+
+export type YardCluster = 'oakland' | 'sanjose' | 'sf';
+
+export const YARD_CLUSTER_MAP: Record<string, YardCluster> = {
+  // Oakland support cluster
+  'oakland': 'oakland',
+  'berkeley': 'oakland',
+  'alameda': 'oakland',
+  'san-leandro': 'oakland',
+  'hayward': 'oakland',
+  'walnut-creek': 'oakland',
+  'concord': 'oakland',
+  'pleasanton': 'oakland',
+  'dublin': 'oakland',
+  'livermore': 'oakland',
+  'richmond': 'oakland',
+  'emeryville': 'oakland',
+  // San Jose support cluster
+  'san-jose': 'sanjose',
+  'fremont': 'sanjose',
+  'santa-clara': 'sanjose',
+  'sunnyvale': 'sanjose',
+  'mountain-view': 'sanjose',
+  'palo-alto': 'sanjose',
+  'milpitas': 'sanjose',
+  'cupertino': 'sanjose',
+  'redwood-city': 'sanjose',
+  // SF cluster
+  'san-francisco': 'sf',
+};
+
+export const YARD_CLUSTER_LABELS: Record<YardCluster, { yardCity: string; regionLabel: string }> = {
+  oakland: { yardCity: 'Oakland', regionLabel: 'East Bay' },
+  sanjose: { yardCity: 'San Jose', regionLabel: 'South Bay' },
+  sf: { yardCity: 'San Francisco', regionLabel: 'San Francisco' },
+};
+
+export function getYardCluster(citySlug: string): { cluster: YardCluster; yardCity: string; regionLabel: string } | undefined {
+  const cluster = YARD_CLUSTER_MAP[citySlug];
+  if (!cluster) return undefined;
+  return { cluster, ...YARD_CLUSTER_LABELS[cluster] };
+}
