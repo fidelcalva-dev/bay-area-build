@@ -173,7 +173,7 @@ export const REVIEW_RESPONSE_TEMPLATES: ReviewResponseTemplate[] = [
     id: 'positive-residential',
     scenario: '5-Star Residential',
     template:
-      'Thank you so much for your kind words, {name}! We're glad the delivery went smoothly and your project in {city} is moving forward. We appreciate your business!',
+      "Thank you so much for your kind words, {name}! We're glad the delivery went smoothly and your project in {city} is moving forward. We appreciate your business!",
   },
   {
     id: 'positive-contractor',
