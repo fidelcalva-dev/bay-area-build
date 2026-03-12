@@ -213,6 +213,7 @@ export default function CustomerDetail() {
           <TabsTrigger value="communications">Comms</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="photos">Photos</TabsTrigger>
+          <TabsTrigger value="intelligence">Intelligence</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </MobileScrollTabs>
 
