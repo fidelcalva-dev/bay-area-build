@@ -11008,6 +11008,7 @@ export type Database = {
           custom_logistics_notes: string | null
           customer_id: string | null
           delivery_completed_at: string | null
+          delivery_notes: string | null
           delivery_started_at: string | null
           deposit_required_reason: string | null
           destination_type: string | null
@@ -11113,6 +11114,7 @@ export type Database = {
           custom_logistics_notes?: string | null
           customer_id?: string | null
           delivery_completed_at?: string | null
+          delivery_notes?: string | null
           delivery_started_at?: string | null
           deposit_required_reason?: string | null
           destination_type?: string | null
@@ -11218,6 +11220,7 @@ export type Database = {
           custom_logistics_notes?: string | null
           customer_id?: string | null
           delivery_completed_at?: string | null
+          delivery_notes?: string | null
           delivery_started_at?: string | null
           deposit_required_reason?: string | null
           destination_type?: string | null
