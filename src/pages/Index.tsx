@@ -191,7 +191,7 @@ const Index = () => {
           {/* Supporting CTAs */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[520px] mx-auto">
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
-              <Link to="/quote?v3=1&tab=photo">
+              <Link to={quoteUrl({ tab: 'photo' })}>
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo for Size Help
               </Link>
