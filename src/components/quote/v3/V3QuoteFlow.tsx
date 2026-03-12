@@ -443,6 +443,15 @@ export function V3QuoteFlow() {
   const leadCaptured = useRef<Record<string, boolean>>({});
   const capturePartialLead = useCallback(async (milestone: string) => {
     if (leadCaptured.current[milestone]) return;
+
+    // lead-ingest requires phone or email — skip early milestones that fire
+    // before the user enters contact info; they'll be captured at contact_captured
+    const hasContact = !!(customerPhone || customerEmail);
+    if (!hasContact) {
+      // Don't mark as captured so it can retry once contact info is available
+      return;
+    }
+
     leadCaptured.current[milestone] = true;
     try {
       await supabase.functions.invoke('lead-ingest', {
