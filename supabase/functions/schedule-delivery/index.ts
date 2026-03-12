@@ -51,7 +51,8 @@ Deno.serve(async (req) => {
       updatePayload.scheduled_delivery_date = null;
       updatePayload.scheduled_delivery_window = null;
       updatePayload.delivery_notes = `Customer preference: ${flexOption}`;
-      updatePayload.status = "pending_schedule";
+      // Must match orders_status_check allowed values
+      updatePayload.status = "scheduled_requested";
     } else if (deliveryDate && deliveryWindow) {
       // Validate date format (YYYY-MM-DD)
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
