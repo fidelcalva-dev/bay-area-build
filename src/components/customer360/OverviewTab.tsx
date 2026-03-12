@@ -73,6 +73,51 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
         <KPI label="Sites" value={sites.length} icon={MapPin} />
       </div>
 
+      {/* Commercial Stage Tracker */}
+      {quotes.length > 0 && (
+        <div className="lg:col-span-3">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                Commercial Pipeline
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap items-center gap-2">
+                <StageChip
+                  label="Quote"
+                  status={commercialStage.latestQuoteStatus || 'none'}
+                  done={['sent', 'accepted', 'converted'].includes(commercialStage.latestQuoteStatus || '')}
+                  active={commercialStage.latestQuoteStatus === 'saved' || commercialStage.latestQuoteStatus === 'pending'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Contract"
+                  status={commercialStage.contractStatus || 'none'}
+                  done={commercialStage.contractStatus === 'signed'}
+                  active={commercialStage.contractStatus === 'sent' || commercialStage.contractStatus === 'pending'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Payment"
+                  status={commercialStage.paymentStatus || 'none'}
+                  done={commercialStage.paymentStatus === 'paid' || commercialStage.paymentStatus === 'completed'}
+                  active={commercialStage.paymentStatus === 'sent'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Dispatch"
+                  status={commercialStage.dispatchReady ? 'ready' : activeOrders > 0 ? 'active' : 'none'}
+                  done={activeOrders > 0}
+                  active={commercialStage.dispatchReady}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Left Column */}
       <div className="lg:col-span-2 space-y-6">
         {/* Service Summary */}
