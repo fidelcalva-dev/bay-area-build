@@ -104,6 +104,14 @@ const Index = () => {
   const [heroProject, setHeroProject] = useState('');
   const isValidZip = heroZip.length === 5 && /^\d{5}$/.test(heroZip);
 
+  // Build quote URL with ZIP preserved
+  const quoteUrl = useCallback((extra?: Record<string, string>) => {
+    const params = new URLSearchParams({ v3: '1' });
+    if (isValidZip) params.set('zip', heroZip);
+    if (extra) Object.entries(extra).forEach(([k, v]) => params.set(k, v));
+    return `/quote?${params.toString()}`;
+  }, [isValidZip, heroZip]);
+
   const handleHeroQuote = useCallback(() => {
     const params = new URLSearchParams({ v3: '1' });
     if (isValidZip) params.set('zip', heroZip);
