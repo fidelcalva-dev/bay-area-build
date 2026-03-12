@@ -5,7 +5,7 @@ import {
   FileText, Camera, Trash2, ImageIcon, Send, ScrollText, CreditCard,
   Phone, MessageSquare, Mail, User, Building2, Package, Weight,
   DollarSign, CheckCircle2, XCircle, AlertTriangle, Truck, Pencil,
-  ShieldCheck, StickyNote, Zap
+  ShieldCheck, StickyNote, Zap, Eye, Ban, CircleDot, Info, Copy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +17,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText } from "@/services/outboundQuoteService";
 
+// ─── Constants ────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   pending: { label: "Draft", color: "bg-muted text-muted-foreground" },
   saved: { label: "Saved", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
@@ -43,47 +45,108 @@ const TIME_WINDOWS = [
 
 const DUMPSTER_SIZES = [6, 10, 15, 20, 30, 40];
 
-// ─── Dispatch Readiness Check ─────────────────────────────
-function DispatchReadyCheck({ quote, deliveryDate, deliveryAddress }: {
-  quote: any;
-  deliveryDate: Date | undefined;
-  deliveryAddress: string;
-}) {
+const DELIVERY_PREFERENCES = [
+  { value: "specific_date", label: "Specific Date" },
+  { value: "asap", label: "ASAP / Earliest Available" },
+  { value: "flexible", label: "Flexible — Any Day This Week" },
+  { value: "call_to_confirm", label: "Call to Confirm" },
+];
+
+// ─── Sales Readiness Badge ────────────────────────────────
+type ReadinessLevel = "ready" | "follow_up" | "missing";
+
+function getReadiness(quote: any, deliveryDate: Date | undefined, deliveryAddress: string, deliveryPref: string): { level: ReadinessLevel; label: string; missing: string[] } {
+  const missing: string[] = [];
+  if (!quote.customer_name) missing.push("Customer name");
+  if (!quote.customer_phone) missing.push("Phone");
+  if (!deliveryAddress || deliveryAddress.length < 6) missing.push("Service address");
+  if (!quote.material_type) missing.push("Material type");
   const sizeYd = quote.user_selected_size_yards || quote.recommended_size_yards;
-  const checks = [
-    { label: "Address valid", ok: !!deliveryAddress && deliveryAddress.length > 5 },
-    { label: "Dumpster size selected", ok: !!sizeYd },
-    { label: "Delivery date selected", ok: !!deliveryDate },
-    { label: "Customer phone", ok: !!quote.customer_phone },
-    { label: "Material type set", ok: !!quote.material_type },
-  ];
-  const allPassed = checks.every(c => c.ok);
+  if (!sizeYd) missing.push("Dumpster size");
+  if (!quote.subtotal) missing.push("Price");
+  const hasDeliveryIntent = !!deliveryDate || deliveryPref === "asap" || deliveryPref === "flexible" || deliveryPref === "call_to_confirm";
+  if (!hasDeliveryIntent) missing.push("Delivery preference");
+
+  if (missing.length === 0) return { level: "ready", label: "Ready to Schedule", missing };
+  if (missing.length <= 2) return { level: "follow_up", label: "Needs Follow-Up", missing };
+  return { level: "missing", label: "Missing Info", missing };
+}
+
+function ReadinessBadge({ level, label, missing }: { level: ReadinessLevel; label: string; missing: string[] }) {
+  const config = {
+    ready: { bg: "bg-success/10 border-success/30", text: "text-success", Icon: ShieldCheck },
+    follow_up: { bg: "bg-amber-100/80 border-amber-300/40 dark:bg-amber-900/20 dark:border-amber-700/40", text: "text-amber-700 dark:text-amber-400", Icon: AlertTriangle },
+    missing: { bg: "bg-destructive/10 border-destructive/30", text: "text-destructive", Icon: XCircle },
+  }[level];
 
   return (
-    <Card className={cn(
-      "border-2",
-      allPassed ? "border-success/50 bg-success/5" : "border-amber-300/50 bg-amber-50/50 dark:bg-amber-950/10"
-    )}>
+    <div className={cn("rounded-xl border-2 p-4", config.bg)}>
+      <div className="flex items-center gap-3">
+        <config.Icon className={cn("w-6 h-6 shrink-0", config.text)} />
+        <div className="min-w-0 flex-1">
+          <p className={cn("font-bold text-lg", config.text)}>{label}</p>
+          {missing.length > 0 && (
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Missing: {missing.join(" · ")}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Commercial Status Tracker ────────────────────────────
+interface CommercialStatus {
+  quoteSent: boolean;
+  contractStatus: string | null; // pending | signed | declined | expired | null
+  contractSentAt: string | null;
+  paymentStatus: string | null;
+  paymentSentAt: string | null;
+  orderCreated: boolean;
+  orderId: string | null;
+}
+
+function CommercialStatusCard({ status }: { status: CommercialStatus }) {
+  const steps = [
+    { label: "Quote Created", done: true, icon: FileText },
+    { label: "Quote Sent", done: status.quoteSent, icon: Send },
+    { label: "Contract", done: status.contractStatus === "signed", status: status.contractStatus, icon: ScrollText },
+    { label: "Payment", done: status.paymentStatus === "paid" || status.paymentStatus === "completed", status: status.paymentStatus, icon: CreditCard },
+    { label: "Order Created", done: status.orderCreated, icon: Package },
+  ];
+
+  const getStepBadge = (step: typeof steps[0]) => {
+    if (step.done) return <Badge className="bg-success/10 text-success border-success/30 text-[10px]">Done</Badge>;
+    if (step.status === "pending") return <Badge variant="outline" className="text-[10px]">Pending</Badge>;
+    if (step.status === "sent" || step.status === "link_sent") return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-[10px]">Sent</Badge>;
+    if (step.status === "viewed" || step.status === "opened") return <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 text-[10px]">Viewed</Badge>;
+    if (step.status === "declined" || step.status === "failed" || step.status === "expired")
+      return <Badge className="bg-destructive/10 text-destructive border-destructive/30 text-[10px]">{step.status}</Badge>;
+    return <Badge variant="outline" className="text-[10px] text-muted-foreground">Not started</Badge>;
+  };
+
+  return (
+    <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          {allPassed ? (
-            <ShieldCheck className="w-5 h-5 text-success" />
-          ) : (
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-          )}
-          {allPassed ? "Dispatch Ready" : "Not Ready for Dispatch"}
+          <CircleDot className="w-4 h-4 text-primary" /> Commercial Status
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {checks.map(c => (
-            <div key={c.label} className="flex items-center gap-1.5 text-sm">
-              {c.ok ? (
-                <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
-              ) : (
-                <XCircle className="w-4 h-4 text-destructive shrink-0" />
-              )}
-              <span className={c.ok ? "text-foreground" : "text-muted-foreground"}>{c.label}</span>
+        <div className="space-y-2">
+          {steps.map((step, i) => (
+            <div key={step.label} className="flex items-center justify-between py-1.5">
+              <div className="flex items-center gap-2.5">
+                {step.done ? (
+                  <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+                ) : (
+                  <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                )}
+                <step.icon className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className={cn("text-sm", step.done ? "text-foreground" : "text-muted-foreground")}>{step.label}</span>
+              </div>
+              {getStepBadge(step)}
             </div>
           ))}
         </div>
@@ -104,43 +167,120 @@ function PricingBreakdown({ quote }: { quote: any }) {
     ...(quote.toll_surcharge ? [{ label: "Toll Surcharge", value: quote.toll_surcharge }] : []),
   ];
 
-  const total = rows.reduce((sum, r) => sum + (r.value || 0), 0);
+  const isGreenHalo = quote.is_green_halo;
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <DollarSign className="w-4 h-4" /> Pricing Breakdown
+          <DollarSign className="w-4 h-4" /> Pricing Summary
+          {isGreenHalo && <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-[10px]">🌿 Green Halo</Badge>}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {rows.map((r, i) => (
           <div key={i} className="flex justify-between text-sm">
             <span className="text-muted-foreground">{r.label}</span>
-            <span className={cn(
-              "font-medium",
-              r.value < 0 ? "text-success" : "text-foreground"
-            )}>
+            <span className={cn("font-medium", r.value < 0 ? "text-success" : "text-foreground")}>
               {r.value === 0 && r.note ? (
                 <span className="text-success">{r.note}</span>
               ) : r.value < 0 ? (
                 `-$${Math.abs(r.value).toFixed(0)}`
               ) : (
-                `$${r.value.toFixed(0)}`
+                `$${r.value?.toFixed(0) || '0'}`
               )}
             </span>
           </div>
         ))}
         <Separator />
         <div className="flex justify-between">
-          <span className="font-semibold text-foreground">Estimate Range</span>
+          <span className="font-semibold text-foreground">Estimated Total</span>
           <span className="font-bold text-lg text-foreground">
             ${quote.estimated_min?.toFixed(0)} – ${quote.estimated_max?.toFixed(0)}
           </span>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Overage: $65/ton beyond included weight. Extra days: $15/day.
-        </p>
+        <div className="rounded-lg bg-muted/40 p-3 space-y-1">
+          <p className="text-xs text-muted-foreground">
+            Includes delivery, pickup, standard rental, and the pricing rules shown for your selected material.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Overage: $65/ton beyond included weight · Extra days: $15/day
+          </p>
+          {quote.is_heavy_material && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+              ⚠ Heavy material — fill-line rule applies. Overweight surcharges enforced.
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─── Recommended Script (inline mini version) ─────────────
+function QuoteScriptWidget({ quote }: { quote: any }) {
+  const { toast } = useToast();
+  const [expanded, setExpanded] = useState(false);
+
+  const name = quote.customer_name || "there";
+  const size = quote.user_selected_size_yards || quote.recommended_size_yards || "";
+  const price = quote.subtotal ? `$${quote.subtotal.toFixed(0)}` : "";
+  const isFollowUp = quote.status === "sent" || quote.status === "saved";
+
+  const smsScript = isFollowUp
+    ? `Hi ${name}, just following up on your dumpster quote${size ? ` (${size}yd)` : ''}${price ? ` at ${price}` : ''}. Ready to schedule? Reply YES or call (510) 680-2150.`
+    : `Hi ${name}, this is Calsan Dumpsters Pro. We received your request${size ? ` for a ${size}yd dumpster` : ''}. We can deliver as early as tomorrow. Reply here or call (510) 680-2150.`;
+
+  const callScript = isFollowUp
+    ? `Hi ${name}, this is [REP] from Calsan Dumpsters Pro. Following up on the ${size ? size + 'yd ' : ''}quote${price ? ` at ${price}` : ''}. Any questions? I can schedule delivery for you right now.`
+    : `Hi ${name}, this is [REP] from Calsan Dumpsters Pro. I see your request${size ? ` for a ${size}yd dumpster` : ''}. I can get one to you quickly — do you have a moment to confirm the details?`;
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: `${label} copied` });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-primary" />
+            Recommended Script
+          </span>
+          <Badge variant="outline" className="text-[10px]">{isFollowUp ? "Follow-Up" : "First Contact"}</Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="p-2.5 rounded-lg bg-muted/30 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+              <MessageSquare className="w-3 h-3" />SMS
+            </span>
+            <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => handleCopy(smsScript, 'SMS script')}>
+              <Copy className="w-3 h-3 mr-1" />Copy
+            </Button>
+          </div>
+          <p className="text-xs leading-relaxed">{smsScript}</p>
+        </div>
+
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-full"
+        >
+          <Phone className="w-3 h-3" />
+          {expanded ? "Hide" : "Show"} Call Script
+        </button>
+        {expanded && (
+          <div className="p-2.5 rounded-lg bg-muted/30 space-y-1.5">
+            <div className="flex items-center justify-end">
+              <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => handleCopy(callScript, 'Call script')}>
+                <Copy className="w-3 h-3 mr-1" />Copy
+              </Button>
+            </div>
+            <p className="text-xs leading-relaxed whitespace-pre-wrap">{callScript}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -163,6 +303,7 @@ export default function SalesQuoteDetail() {
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
   const [billingInstructions, setBillingInstructions] = useState("");
   const [deliveryTimeWindow, setDeliveryTimeWindow] = useState("");
+  const [deliveryPref, setDeliveryPref] = useState("specific_date");
   const [deliveryPhotos, setDeliveryPhotos] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -171,8 +312,17 @@ export default function SalesQuoteDetail() {
   const [salesNotes, setSalesNotes] = useState("");
   const [customerIntent, setCustomerIntent] = useState("");
 
+  // Commercial status
+  const [commercialStatus, setCommercialStatus] = useState<CommercialStatus>({
+    quoteSent: false, contractStatus: null, contractSentAt: null,
+    paymentStatus: null, paymentSentAt: null, orderCreated: false, orderId: null,
+  });
+
   useEffect(() => {
-    if (id) fetchQuote();
+    if (id) {
+      fetchQuote();
+      fetchCommercialStatus();
+    }
   }, [id]);
 
   async function fetchQuote() {
@@ -195,12 +345,57 @@ export default function SalesQuoteDetail() {
       setDeliveryPhotos(data.delivery_photos || []);
       setSelectedSize(String(data.user_selected_size_yards || data.recommended_size_yards || ""));
       setSalesNotes(data.scheduling_notes || "");
+
+      // Infer delivery preference
+      if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
+      else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
+      else if (data.preferred_delivery_window === "call_to_confirm") setDeliveryPref("call_to_confirm");
+      else if (data.delivery_date) setDeliveryPref("specific_date");
     } catch (err) {
       console.error(err);
       toast({ title: "Error loading quote", variant: "destructive" });
       navigate("/sales/quotes");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function fetchCommercialStatus() {
+    try {
+      // Check outbound quotes (sent status)
+      const { data: outbound } = await supabase
+        .from("outbound_quotes")
+        .select("id, status, created_at")
+        .eq("quote_id", id!)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      // Check contracts
+      const { data: contracts } = await supabase
+        .from("contracts")
+        .select("id, status, created_at")
+        .eq("quote_id", id!)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      // Check if order exists
+      const { data: quoteData } = await supabase
+        .from("quotes")
+        .select("order_id")
+        .eq("id", id!)
+        .single();
+
+      setCommercialStatus({
+        quoteSent: outbound && outbound.length > 0 && outbound[0].status !== "draft",
+        contractStatus: contracts && contracts.length > 0 ? contracts[0].status : null,
+        contractSentAt: contracts && contracts.length > 0 ? contracts[0].created_at : null,
+        paymentStatus: null, // Will be populated from payment_requests when available
+        paymentSentAt: null,
+        orderCreated: !!quoteData?.order_id,
+        orderId: quoteData?.order_id || null,
+      });
+    } catch (err) {
+      console.error("Failed to fetch commercial status", err);
     }
   }
 
@@ -211,7 +406,7 @@ export default function SalesQuoteDetail() {
       const { error } = await supabase
         .from("quotes")
         .update({
-          delivery_date: deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
+          delivery_date: deliveryPref === "specific_date" && deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
           delivery_address: deliveryAddress || null,
           delivery_instructions: deliveryInstructions || null,
           delivery_time_window: deliveryTimeWindow || null,
@@ -219,6 +414,7 @@ export default function SalesQuoteDetail() {
           delivery_photos: deliveryPhotos,
           user_selected_size_yards: selectedSize ? Number(selectedSize) : null,
           scheduling_notes: salesNotes || null,
+          preferred_delivery_window: deliveryPref !== "specific_date" ? deliveryPref : null,
         })
         .eq("id", id);
 
@@ -310,6 +506,7 @@ export default function SalesQuoteDetail() {
       const result = await sendOutboundQuote(outboundId, channels);
       if (result.success) {
         toast({ title: `Quote resent via ${channels.join(" & ")}` });
+        fetchCommercialStatus();
       } else {
         toast({ title: result.error || "Failed to resend", variant: "destructive" });
       }
@@ -331,6 +528,7 @@ export default function SalesQuoteDetail() {
       if (err) throw err;
       if (data?.success) {
         toast({ title: `Contract sent via ${(data.channels as string[])?.join(" & ").toUpperCase() || "pending"}` });
+        fetchCommercialStatus();
       } else {
         toast({ title: data?.error || "Failed to send contract", variant: "destructive" });
       }
@@ -352,6 +550,7 @@ export default function SalesQuoteDetail() {
       if (error) throw error;
       toast({ title: "Quote marked as converted" });
       fetchQuote();
+      fetchCommercialStatus();
     } catch (err) {
       console.error(err);
       toast({ title: "Error converting quote", variant: "destructive" });
@@ -370,9 +569,10 @@ export default function SalesQuoteDetail() {
 
   const statusConfig = STATUS_CONFIG[quote.status] || STATUS_CONFIG.pending;
   const sizeYd = quote.user_selected_size_yards || quote.recommended_size_yards;
+  const readiness = getReadiness(quote, deliveryDate, deliveryAddress, deliveryPref);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-5 py-4 px-4 sm:px-0">
+    <div className="max-w-4xl mx-auto space-y-4 py-4 px-4 sm:px-0 pb-24 sm:pb-8">
       {/* ─── HEADER ──────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -380,12 +580,13 @@ export default function SalesQuoteDetail() {
             <ChevronLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
+            <h1 className="text-xl font-bold flex items-center gap-2 flex-wrap">
               Quote {quote.display_id || quote.id.slice(0, 8)}
               <Badge className={statusConfig.color}>{statusConfig.label}</Badge>
             </h1>
             <p className="text-sm text-muted-foreground">
               Created {format(new Date(quote.created_at), "PPP")}
+              {quote.project_type && <> · <span className="capitalize">{quote.project_type}</span></>}
             </p>
           </div>
         </div>
@@ -405,11 +606,30 @@ export default function SalesQuoteDetail() {
         </div>
       </div>
 
-      {/* ─── DISPATCH READINESS ──────────────────────────── */}
-      <DispatchReadyCheck quote={quote} deliveryDate={deliveryDate} deliveryAddress={deliveryAddress} />
+      {/* ─── READINESS BADGE ─────────────────────────────── */}
+      <ReadinessBadge level={readiness.level} label={readiness.label} missing={readiness.missing} />
 
-      <div className="grid md:grid-cols-2 gap-5">
-        {/* ─── 1. CUSTOMER INFORMATION ─────────────────── */}
+      {/* ─── QUICK CONTACT (mobile-first) ────────────────── */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {quote.customer_phone && (
+          <>
+            <Button variant="outline" size="sm" className="gap-1.5" asChild>
+              <a href={`tel:${quote.customer_phone}`}><Phone className="w-3.5 h-3.5" /> Call</a>
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5" asChild>
+              <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-3.5 h-3.5" /> SMS</a>
+            </Button>
+          </>
+        )}
+        {quote.customer_email && (
+          <Button variant="outline" size="sm" className="gap-1.5" asChild>
+            <a href={`mailto:${quote.customer_email}`}><Mail className="w-3.5 h-3.5" /> Email</a>
+          </Button>
+        )}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* ─── A. CUSTOMER INFORMATION ─────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
@@ -420,7 +640,7 @@ export default function SalesQuoteDetail() {
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-muted-foreground text-xs">Name</p>
-                <p className="font-medium">{quote.customer_name || "—"}</p>
+                <p className="font-medium">{quote.customer_name || <span className="text-destructive">— Missing</span>}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Company</p>
@@ -428,7 +648,7 @@ export default function SalesQuoteDetail() {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Phone</p>
-                <p className="font-medium">{quote.customer_phone || "—"}</p>
+                <p className="font-medium">{quote.customer_phone || <span className="text-destructive">— Missing</span>}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Email</p>
@@ -443,39 +663,14 @@ export default function SalesQuoteDetail() {
                 <p className="font-medium">{quote.utm_source || "Direct"}</p>
               </div>
             </div>
-            {/* Quick Contact Actions */}
-            <Separator />
-            <div className="flex items-center gap-2 flex-wrap">
-              {quote.customer_phone && (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={`tel:${quote.customer_phone}`}>
-                      <Phone className="w-3.5 h-3.5 mr-1" /> Call
-                    </a>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={`sms:${quote.customer_phone}`}>
-                      <MessageSquare className="w-3.5 h-3.5 mr-1" /> SMS
-                    </a>
-                  </Button>
-                </>
-              )}
-              {quote.customer_email && (
-                <Button variant="outline" size="sm" asChild>
-                  <a href={`mailto:${quote.customer_email}`}>
-                    <Mail className="w-3.5 h-3.5 mr-1" /> Email
-                  </a>
-                </Button>
-              )}
-            </div>
           </CardContent>
         </Card>
 
-        {/* ─── 2. JOB SITE DETAILS ─────────────────────── */}
+        {/* ─── B. SERVICE ADDRESS ──────────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <MapPin className="w-4 h-4" /> Job Site Details
+              <MapPin className="w-4 h-4" /> Service Address
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -507,7 +702,7 @@ export default function SalesQuoteDetail() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Placement / Access Notes</Label>
+              <Label className="text-xs text-muted-foreground">Access / Placement Notes</Label>
               <Textarea
                 placeholder="Gate code, placement instructions, access notes..."
                 value={deliveryInstructions}
@@ -518,18 +713,26 @@ export default function SalesQuoteDetail() {
           </CardContent>
         </Card>
 
-        {/* ─── 3. DUMPSTER DETAILS ─────────────────────── */}
+        {/* ─── C. JOB DETAILS ─────────────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Package className="w-4 h-4" /> Dumpster Details
+              <Package className="w-4 h-4" /> Job Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
+                <p className="text-muted-foreground text-xs">Project Type</p>
+                <p className="font-medium capitalize">{quote.project_type || "—"}</p>
+              </div>
+              <div>
                 <p className="text-muted-foreground text-xs">Material Type</p>
-                <p className="font-medium capitalize">{quote.material_type}</p>
+                <p className="font-medium capitalize">{quote.material_type || <span className="text-destructive">— Missing</span>}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Material Class</p>
+                <p className="font-medium">{quote.heavy_material_class || (quote.is_heavy_material ? "Heavy" : "General")}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Rental Duration</p>
@@ -540,25 +743,32 @@ export default function SalesQuoteDetail() {
                 <p className="font-medium">{getIncludedTonsText(sizeYd || 10)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground text-xs">Heavy Material</p>
-                <p className="font-medium">{quote.is_heavy_material ? "Yes" : "No"}</p>
+                <p className="text-muted-foreground text-xs">Risk Flags</p>
+                <div className="flex items-center gap-1 flex-wrap">
+                  {quote.is_heavy_material && <Badge variant="outline" className="text-[10px]">Heavy</Badge>}
+                  {quote.is_trash_contaminated && <Badge variant="outline" className="text-[10px] text-amber-700">Contamination</Badge>}
+                  {!quote.is_heavy_material && !quote.is_trash_contaminated && <span className="font-medium">None</span>}
+                </div>
               </div>
             </div>
             <Separator />
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Dumpster Size (yards)</Label>
               <Select value={selectedSize} onValueChange={setSelectedSize}>
-                <SelectTrigger>
+                <SelectTrigger className={cn(!selectedSize && "border-destructive")}>
                   <SelectValue placeholder="Select size..." />
                 </SelectTrigger>
                 <SelectContent>
                   {DUMPSTER_SIZES.map(s => (
                     <SelectItem key={s} value={String(s)}>
-                      {s} Yard {s === (quote.recommended_size_yards) ? "(Recommended)" : ""}
+                      {s} Yard {s === quote.recommended_size_yards ? "(Recommended)" : ""}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {!selectedSize && (
+                <p className="text-xs text-destructive font-medium">⚠ Size is required before scheduling</p>
+              )}
               {quote.recommended_size_yards && selectedSize && Number(selectedSize) !== quote.recommended_size_yards && (
                 <p className="text-xs text-amber-600 dark:text-amber-400">
                   ⚠ AI recommended {quote.recommended_size_yards}yd
@@ -568,55 +778,84 @@ export default function SalesQuoteDetail() {
           </CardContent>
         </Card>
 
-        {/* ─── 4. DELIVERY SCHEDULING ──────────────────── */}
+        {/* ─── E. DELIVERY READINESS ──────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Truck className="w-4 h-4" /> Delivery Scheduling
+              <Truck className="w-4 h-4" /> Delivery Preference
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" /> Delivery Date
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn("w-full justify-start text-left font-normal", !deliveryDate && "text-muted-foreground")}
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {deliveryDate ? format(deliveryDate, "PPP") : "Select date..."}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={deliveryDate}
-                    onSelect={setDeliveryDate}
-                    disabled={date => date < new Date()}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> Time Window
-              </Label>
-              <Select value={deliveryTimeWindow} onValueChange={setDeliveryTimeWindow}>
+              <Label className="text-xs text-muted-foreground">Preference</Label>
+              <Select value={deliveryPref} onValueChange={setDeliveryPref}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select time window..." />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIME_WINDOWS.map(tw => (
-                    <SelectItem key={tw} value={tw}>{tw}</SelectItem>
+                  {DELIVERY_PREFERENCES.map(dp => (
+                    <SelectItem key={dp.value} value={dp.value}>{dp.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
+
+            {deliveryPref === "specific_date" && (
+              <>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" /> Delivery Date
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn("w-full justify-start text-left font-normal", !deliveryDate && "text-muted-foreground")}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {deliveryDate ? format(deliveryDate, "PPP") : "Select date..."}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={deliveryDate}
+                        onSelect={setDeliveryDate}
+                        disabled={date => date < new Date()}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" /> Time Window
+                  </Label>
+                  <Select value={deliveryTimeWindow} onValueChange={setDeliveryTimeWindow}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select time window..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIME_WINDOWS.map(tw => (
+                        <SelectItem key={tw} value={tw}>{tw}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+            {deliveryPref !== "specific_date" && (
+              <div className="rounded-lg bg-muted/40 p-3">
+                <p className="text-sm text-muted-foreground">
+                  {deliveryPref === "asap" && "Customer wants earliest available delivery. Contact to confirm exact date."}
+                  {deliveryPref === "flexible" && "Customer is flexible this week. Assign based on route optimization."}
+                  {deliveryPref === "call_to_confirm" && "Customer requested a callback to confirm date and time."}
+                </p>
+              </div>
+            )}
+
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Driver Notes</Label>
               <Textarea
@@ -630,10 +869,31 @@ export default function SalesQuoteDetail() {
         </Card>
       </div>
 
-      {/* ─── 5. PRICING BREAKDOWN (full width) ─────────── */}
+      {/* ─── D. PRICING SUMMARY (full width) ──────────── */}
       <PricingBreakdown quote={quote} />
 
-      {/* ─── 6. SALES ACTIONS ──────────────────────────── */}
+      {/* ─── TRUST COPY ────────────────────────────────── */}
+      <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-1.5">
+        <div className="flex items-start gap-2">
+          <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="text-sm text-foreground font-medium">Need help confirming details?</p>
+            <p className="text-xs text-muted-foreground">
+              Our team can review your quote with you before scheduling. No hidden fees — the price shown includes delivery, pickup, and standard rental.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* ─── F. COMMERCIAL STATUS ───────────────────── */}
+        <CommercialStatusCard status={commercialStatus} />
+
+        {/* ─── RECOMMENDED SCRIPT ────────────────────── */}
+        <QuoteScriptWidget quote={quote} />
+      </div>
+
+      {/* ─── SALES ACTIONS ─────────────────────────────── */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
@@ -642,46 +902,38 @@ export default function SalesQuoteDetail() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {quote.customer_phone && (
-              <Button variant="outline" size="sm" className="w-full" asChild>
-                <a href={`tel:${quote.customer_phone}`}>
-                  <Phone className="w-3.5 h-3.5 mr-1.5" /> Call
-                </a>
-              </Button>
-            )}
-            {quote.customer_phone && (
-              <Button variant="outline" size="sm" className="w-full" asChild>
-                <a href={`sms:${quote.customer_phone}`}>
-                  <MessageSquare className="w-3.5 h-3.5 mr-1.5" /> SMS
-                </a>
-              </Button>
-            )}
-            <Button variant="outline" size="sm" className="w-full" onClick={handleResend} disabled={isResending}>
-              <Send className="w-3.5 h-3.5 mr-1.5" /> Send Quote
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleResend} disabled={isResending}>
+              <Send className="w-3.5 h-3.5" /> Send Quote
             </Button>
-            <Button variant="outline" size="sm" className="w-full" onClick={handleSendContract} disabled={isSendingContract}>
-              <ScrollText className="w-3.5 h-3.5 mr-1.5" /> Contract
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleSendContract} disabled={isSendingContract}>
+              <ScrollText className="w-3.5 h-3.5" /> Send Contract
             </Button>
-            <Button variant="outline" size="sm" className="w-full">
-              <CreditCard className="w-3.5 h-3.5 mr-1.5" /> Collect Payment
+            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
+              <CreditCard className="w-3.5 h-3.5" /> Payment Link
             </Button>
-            <Button variant="outline" size="sm" className="w-full" onClick={() => navigate(`/sales/orders/new?quoteId=${id}`)}>
-              <FileText className="w-3.5 h-3.5 mr-1.5" /> Create Order
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/orders/new?quoteId=${id}`)}>
+              <FileText className="w-3.5 h-3.5" /> Create Order
             </Button>
-            <Button variant="outline" size="sm" className="w-full">
-              <Truck className="w-3.5 h-3.5 mr-1.5" /> Schedule
+            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
+              <Truck className="w-3.5 h-3.5" /> Schedule Delivery
+            </Button>
+            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
+              <StickyNote className="w-3.5 h-3.5" /> Add Note
+            </Button>
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/quotes/${id}`)}>
+              <Pencil className="w-3.5 h-3.5" /> Edit Quote
             </Button>
             {quote.status !== "converted" && (
-              <Button variant="default" size="sm" className="w-full" onClick={handleMarkConverted}>
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Convert
+              <Button size="sm" className="w-full gap-1.5" onClick={handleMarkConverted}>
+                <CheckCircle2 className="w-3.5 h-3.5" /> Convert
               </Button>
             )}
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-5">
-        {/* ─── 7. SALES NOTES ────────────────────────────── */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* ─── SALES NOTES ────────────────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
@@ -724,7 +976,7 @@ export default function SalesQuoteDetail() {
           </CardContent>
         </Card>
 
-        {/* ─── 8. PHOTOS ─────────────────────────────────── */}
+        {/* ─── PHOTOS ────────────────────────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
@@ -766,6 +1018,24 @@ export default function SalesQuoteDetail() {
             </Button>
           </CardContent>
         </Card>
+      </div>
+
+      {/* ─── MOBILE STICKY SAVE BAR ─────────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-background border-t border-border p-3 flex gap-2 z-50 safe-area-pb">
+        <Button className="flex-1 gap-1.5" onClick={handleSave} disabled={isSaving}>
+          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save
+        </Button>
+        {quote.customer_phone && (
+          <Button variant="outline" size="icon" asChild>
+            <a href={`tel:${quote.customer_phone}`}><Phone className="w-4 h-4" /></a>
+          </Button>
+        )}
+        {quote.customer_phone && (
+          <Button variant="outline" size="icon" asChild>
+            <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-4 h-4" /></a>
+          </Button>
+        )}
       </div>
     </div>
   );
