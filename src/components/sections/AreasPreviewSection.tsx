@@ -1,63 +1,77 @@
-// Service Areas Preview - Links to full Areas page
-// Uses master data from shared-data.ts
+// Service Areas Preview — Links to full Areas page
+// Shows regional hub structure with direct/partner split
 
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight, CheckCircle } from 'lucide-react';
+import { MapPin, ArrowRight, Truck, Building, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SERVICE_AREAS, CTA_LINKS } from '@/lib/shared-data';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { REGIONS, getCitiesForRegion } from '@/lib/service-area-config';
+import { cityUrl } from '@/lib/seo-urls';
+import { CTA_LINKS } from '@/lib/shared-data';
 
-const FEATURED_CITIES = [
-  'Oakland', 'San Francisco', 'San Jose', 'Concord', 'Walnut Creek',
-  'Richmond', 'Vallejo', 'Stockton', 'Modesto', 'Sacramento',
+const FEATURED_DIRECT_CITIES = [
+  { slug: 'oakland', name: 'Oakland' },
+  { slug: 'san-jose', name: 'San Jose' },
+  { slug: 'san-francisco', name: 'San Francisco' },
+  { slug: 'berkeley', name: 'Berkeley' },
+  { slug: 'fremont', name: 'Fremont' },
+  { slug: 'hayward', name: 'Hayward' },
+  { slug: 'walnut-creek', name: 'Walnut Creek' },
+  { slug: 'concord', name: 'Concord' },
+  { slug: 'sunnyvale', name: 'Sunnyvale' },
+  { slug: 'palo-alto', name: 'Palo Alto' },
 ];
 
 export function AreasPreviewSection() {
-  const { t } = useLanguage();
-
   return (
     <section className="section-padding bg-muted">
       <div className="container-wide">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
             <MapPin className="w-4 h-4" />
-            9 Counties • 100+ Cities
+            Local Yards • 100+ Cities
           </div>
-          <h2 className="heading-lg text-foreground mb-4">Proudly Serving Northern California</h2>
+          <h2 className="heading-lg text-foreground mb-4">Proudly Serving California</h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Same-day dumpster delivery across the San Francisco Bay Area and beyond.
+            Direct operations from our Bay Area yards with coordinated service across the state.
           </p>
         </div>
 
-        {/* Featured Cities */}
+        {/* Featured direct-operation cities */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
-          {FEATURED_CITIES.map((city) => (
-            <div
-              key={city}
-              className="flex items-center gap-2 p-3 bg-card rounded-lg border border-border"
+          {FEATURED_DIRECT_CITIES.map((city) => (
+            <Link
+              key={city.slug}
+              to={cityUrl(city.slug)}
+              className="flex items-center gap-2 p-3 bg-card rounded-lg border border-border hover:border-primary/30 transition-colors"
             >
               <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-              <span className="text-sm font-medium text-foreground">{city}</span>
-            </div>
+              <span className="text-sm font-medium text-foreground">{city.name}</span>
+            </Link>
           ))}
         </div>
 
-        {/* County Pills */}
+        {/* Region pills */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {SERVICE_AREAS.map((county) => (
-            <span
-              key={county}
-              className="px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-full text-sm text-foreground"
+          {REGIONS.map((region) => (
+            <Link
+              key={region.slug}
+              to={region.hubUrl}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-full text-sm text-foreground hover:bg-primary/10 transition-colors"
             >
-              {county.replace(' County', '')}
-            </span>
+              {region.serviceModel === 'DIRECT_OPERATION' ? (
+                <Truck className="w-3 h-3 text-primary" />
+              ) : (
+                <Building className="w-3 h-3 text-muted-foreground" />
+              )}
+              {region.name}
+            </Link>
           ))}
         </div>
 
         {/* CTA */}
         <div className="text-center">
           <p className="text-muted-foreground mb-4">
-            Not sure if we service your area? Enter your ZIP code for instant confirmation.
+            Enter your ZIP code for instant coverage confirmation and transparent pricing.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild variant="cta" size="lg">

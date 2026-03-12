@@ -1,15 +1,75 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, CheckCircle, MapPin, Phone } from 'lucide-react';
-import { CountySection } from '@/components/areas/CountySection';
-import { serviceAreas } from '@/data/serviceAreas';
+import { ArrowRight, CheckCircle, MapPin, Phone, Truck, Clock, Shield, Building } from 'lucide-react';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { REGIONS, getCitiesForRegion, type RegionConfig } from '@/lib/service-area-config';
+import { cityUrl } from '@/lib/seo-urls';
+
+function RegionCard({ region }: { region: RegionConfig }) {
+  const cities = getCitiesForRegion(region.slug);
+  const isDirect = region.serviceModel === 'DIRECT_OPERATION';
+
+  return (
+    <div className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-colors">
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">{region.name}</h3>
+              <p className="text-xs text-muted-foreground">{region.counties.join(' • ')}</p>
+            </div>
+          </div>
+          {isDirect ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-success/10 text-success rounded-full whitespace-nowrap">
+              <Truck className="w-3 h-3" /> Direct Operations
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-accent/50 text-muted-foreground rounded-full whitespace-nowrap">
+              <Building className="w-3 h-3" /> Service Network
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm text-muted-foreground mb-4">{region.description}</p>
+
+        {/* City links */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {cities.slice(0, 8).map(city => (
+            <Link
+              key={city.slug}
+              to={cityUrl(city.slug)}
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-muted rounded-full text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            >
+              <CheckCircle className="w-3 h-3 text-success" />
+              {city.name}
+            </Link>
+          ))}
+          {cities.length > 8 && (
+            <span className="inline-flex items-center px-3 py-1.5 text-sm text-muted-foreground">
+              +{cities.length - 8} more
+            </span>
+          )}
+        </div>
+
+        {/* Region hub link */}
+        <Link
+          to={region.hubUrl}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+        >
+          View all {region.name} cities <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function Areas() {
-  const [activeCounty, setActiveCounty] = useState(serviceAreas[0].slug);
+  const directRegions = REGIONS.filter(r => r.serviceModel === 'DIRECT_OPERATION');
+  const partnerRegions = REGIONS.filter(r => r.serviceModel === 'PARTNER_NETWORK');
 
   return (
     <Layout
@@ -23,20 +83,20 @@ export default function Areas() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm mb-4">
               <MapPin className="w-4 h-4" />
-              9 Counties • 100+ Cities
+              100+ Cities Across California
             </div>
-            <h1 className="heading-xl mb-4">Dumpster Rental Near You</h1>
+            <h1 className="heading-xl mb-4">Dumpster Rental Service Areas</h1>
             <p className="text-xl text-primary-foreground/85 mb-6">
-              Serving the entire San Francisco Bay Area with same-day delivery. Select your county below to find service in your city.
+              Local yard operations in the Bay Area with coordinated service across California. Select your region below to find fast, reliable dumpster delivery near you.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg">
-                <Link to="/#quote">
+                <Link to="/quote">
                   Get Instant Quote
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 hover:bg-white/20 text-primary-foreground">
+              <Button asChild variant="heroOutline" size="lg">
                 <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                   <Phone className="w-4 h-4" />
                   {BUSINESS_INFO.phone.salesFormatted}
@@ -47,60 +107,91 @@ export default function Areas() {
         </div>
       </section>
 
-      {/* County Tabs Section */}
-      <section className="section-padding bg-background">
+      {/* Trust Bar */}
+      <section className="py-5 bg-muted/50 border-b border-border">
         <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="heading-lg text-foreground mb-3">Select Your County</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Click on your county to see all cities we serve, with unique local information and FAQs for each area.
-            </p>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>Real Local Yards</span></div>
+            <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery</span></div>
+            <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Not a Broker</span></div>
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>5-50 Yard Sizes</span></div>
           </div>
-
-          <Tabs value={activeCounty} onValueChange={setActiveCounty} className="w-full">
-            {/* Scrollable Tab List */}
-            <div className="relative mb-8">
-              <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-                <TabsList className="inline-flex h-auto p-1 bg-muted rounded-xl gap-1 min-w-max">
-                  {serviceAreas.map((county) => (
-                    <TabsTrigger
-                      key={county.slug}
-                      value={county.slug}
-                      className="px-4 py-2.5 text-sm font-medium rounded-lg whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
-                    >
-                      {county.name.replace(' County', '')}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </div>
-              {/* Fade indicators */}
-              <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none md:hidden" />
-              <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
-            </div>
-
-            {/* Tab Content */}
-            {serviceAreas.map((county) => (
-              <TabsContent key={county.slug} value={county.slug} className="mt-0">
-                <CountySection county={county} />
-              </TabsContent>
-            ))}
-          </Tabs>
         </div>
       </section>
 
-      {/* Why Local Matters */}
+      {/* Direct Operations Regions */}
+      <section className="section-padding bg-background">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="heading-lg text-foreground mb-3">Direct Operations — Bay Area</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our fleet operates from local yards in Oakland, San Jose, and San Francisco. Same-day delivery, direct dispatch, and full fleet availability.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {directRegions.map(region => (
+              <RegionCard key={region.slug} region={region} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partner Network Regions */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="heading-lg text-foreground mb-3">Service Network — California</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Professional dumpster rental coordinated through our trusted logistics network, extending coverage across California.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {partnerRegions.map(region => (
+              <RegionCard key={region.slug} region={region} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Statewide Hub Link */}
+      <section className="section-padding bg-background">
+        <div className="container-narrow text-center">
+          <h2 className="heading-md text-foreground mb-4">Serving All of California</h2>
+          <p className="text-muted-foreground mb-6">
+            From the Bay Area to Los Angeles, Sacramento to San Diego — Calsan Dumpsters Pro provides reliable roll-off dumpster service with transparent pricing and professional dispatch.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/california-dumpster-rental">
+                View California Coverage
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/bay-area-dumpster-rental">
+                Bay Area Hub
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Local */}
       <section className="section-padding bg-muted">
         <div className="container-wide">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="heading-lg text-foreground mb-6">Why Choose a Local Provider?</h2>
+              <h2 className="heading-lg text-foreground mb-6">Why Choose a Local Yard Operator?</h2>
               <div className="space-y-4">
                 {[
-                  'Same-day delivery available in most areas',
-                  'No long-distance fuel surcharges',
+                  'Same-day delivery from nearby yards',
+                  'No broker markups or subcontractor delays',
                   'Drivers who know your neighborhood',
-                  'Quick response for pickups and swaps',
-                  'Supporting local Bay Area business',
+                  'Direct communication — no middlemen',
+                  'Supporting a real Bay Area business',
                   'Bilingual support (English & Spanish)',
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
@@ -113,45 +204,18 @@ export default function Areas() {
             <div className="bg-card rounded-2xl border border-border p-8">
               <h3 className="heading-sm text-foreground mb-4">Check Your Coverage</h3>
               <p className="text-muted-foreground mb-6">
-                Enter your ZIP code to confirm service availability and get an instant quote.
+                Enter your ZIP code to confirm service availability and get an instant quote with transparent pricing.
               </p>
               <Button asChild variant="cta" size="lg" className="w-full">
-                <Link to="/#quote">
+                <Link to="/quote">
                   Get Instant Quote
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
               <p className="text-sm text-muted-foreground text-center mt-4">
-                Or call <a href="tel:+15106802150" className="text-primary font-semibold">(510) 680-2150</a>
+                Or call <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary font-semibold">{BUSINESS_INFO.phone.salesFormatted}</a>
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Content */}
-      <section className="section-padding bg-background">
-        <div className="container-narrow">
-          <h2 className="heading-md text-foreground mb-6 text-center">
-            Bay Area Dumpster Rental Coverage
-          </h2>
-          <div className="prose prose-lg max-w-none text-muted-foreground">
-            <p>
-              Calsan Dumpsters Pro provides comprehensive roll-off dumpster rental service throughout the San Francisco Bay Area. 
-              Our service area spans nine counties: <strong>Alameda</strong>, <strong>Contra Costa</strong>, <strong>Santa Clara</strong>, 
-              <strong>San Francisco</strong>, <strong>San Mateo</strong>, <strong>Marin</strong>, <strong>Napa</strong>, <strong>Solano</strong>, 
-              and <strong>Sonoma</strong> counties.
-            </p>
-            <p>
-              Whether you're in Oakland, San Jose, San Francisco, or any of the 100+ cities we serve, you can count on same-day 
-              or next-day dumpster delivery. Our experienced drivers know the Bay Area roads and can navigate everything from 
-              downtown streets to hillside driveways.
-            </p>
-            <p>
-              Looking for "dumpster rental near me" in the Bay Area? You've found your local provider. We offer transparent pricing, 
-              flexible rental periods, and the full range of dumpster sizes from 5 to 50 yards. <strong>Hablamos español</strong> — 
-              our bilingual team is ready to help.
-            </p>
           </div>
         </div>
       </section>
@@ -164,10 +228,31 @@ export default function Areas() {
             We may still be able to serve you. Give us a call and we'll check if delivery is available in your area.
           </p>
           <Button asChild variant="cta" size="xl">
-            <a href="tel:+15106802150">
-              Call (510) 680-2150
+            <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+              Call {BUSINESS_INFO.phone.salesFormatted}
             </a>
           </Button>
+        </div>
+      </section>
+
+      {/* Internal Links */}
+      <section className="py-8 bg-muted/30 border-t border-border">
+        <div className="container-wide">
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <Link to="/sizes" className="text-primary hover:underline">All Dumpster Sizes</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/materials" className="text-primary hover:underline">Materials Guide</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/contractors" className="text-primary hover:underline">Contractor Service</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/dumpster-rental-east-bay" className="text-primary hover:underline">East Bay</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/dumpster-rental-south-bay" className="text-primary hover:underline">South Bay</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/dumpster-rental/san-francisco" className="text-primary hover:underline">San Francisco</Link>
+            <span className="text-muted-foreground">•</span>
+            <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
+          </div>
         </div>
       </section>
     </Layout>
