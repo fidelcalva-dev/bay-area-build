@@ -246,36 +246,7 @@ export default function CustomerDetail() {
 
         {/* ─── ORDERS ─── */}
         <TabsContent value="orders">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">All Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {orders.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">No orders yet</p>
-              ) : (
-                <div className="space-y-2">
-                  {orders.map(order => (
-                    <Link key={order.id} to={`/admin/orders?id=${order.id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors gap-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Package className="w-5 h-5 text-muted-foreground shrink-0" />
-                        <div className="min-w-0">
-                          <p className="font-medium text-sm truncate">Order #{order.id.slice(0, 8)}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(order.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <Badge variant={order.status === 'completed' ? 'default' : 'secondary'} className="text-xs">{order.status}</Badge>
-                        {order.amount_due != null && <span className="font-medium text-sm">${order.amount_due.toFixed(2)}</span>}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <OrdersTab customerId={customer.id} />
         </TabsContent>
 
         {/* ─── QUOTES ─── */}
