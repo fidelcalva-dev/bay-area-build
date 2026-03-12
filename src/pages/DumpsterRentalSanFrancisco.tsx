@@ -9,8 +9,8 @@ import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── SF-specific data ─────────────────────────────────────────
 const META = {
-  title: 'Dumpster Rental San Francisco CA | Roll Off | Same-Day',
-  description: 'Local dumpster rental in San Francisco, CA. 10-40 yard roll-off dumpsters for construction, renovation, and cleanouts. Transparent pricing, no brokers, same-day delivery available. Hablamos Español.',
+  title: 'Dumpster Rental San Francisco CA | Same-Day | From $395 | Calsan',
+  description: 'Local dumpster rental in San Francisco, CA from $395. 10-40 yard roll-off dumpsters for construction, renovation, and cleanouts. Same-day delivery, transparent pricing, no brokers. Hablamos Español.',
   slug: 'dumpster-rental-san-francisco-ca',
 };
 

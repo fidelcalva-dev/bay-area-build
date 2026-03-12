@@ -11,8 +11,8 @@ import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 const SJ_YARD = OPERATIONAL_YARDS.find(y => y.id === 'sanjose')!;
 
 const META = {
-  title: 'Dumpster Rental San Jose CA | 10-40 Yard Roll Off | Same-Day Delivery',
-  description: 'Local dumpster rental in San Jose, CA with real yard support and fast delivery. 10, 20, 30 & 40 yard roll-off dumpsters. Transparent pricing. Get an instant quote in 60 seconds.',
+  title: 'Dumpster Rental San Jose CA | Same-Day Delivery | From $395 | Calsan',
+  description: 'Local dumpster rental in San Jose, CA from $395. 10-40 yard roll-off dumpsters with same-day delivery from our San Jose yard. Transparent pricing, no brokers. Get an instant quote in 60 seconds.',
   slug: 'dumpster-rental-san-jose-ca',
 };
 

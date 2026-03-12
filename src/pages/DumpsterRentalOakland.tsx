@@ -376,11 +376,15 @@ export default function DumpsterRentalOakland() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
+              { to: '/dumpster-rental/oakland/10-yard', label: '10 Yard Dumpster Oakland', desc: 'Compact dumpster for cleanouts and small remodels.' },
+              { to: '/dumpster-rental/oakland/20-yard', label: '20 Yard Dumpster Oakland', desc: 'Most popular size for kitchen and bathroom renovations.' },
+              { to: '/dumpster-rental/oakland/30-yard', label: '30 Yard Dumpster Oakland', desc: 'Large capacity for major renovations and commercial jobs.' },
               { to: '/dumpster-rental-san-jose-ca', label: 'Dumpster Rental San Jose', desc: 'South Bay dumpster delivery from our San Jose yard.' },
               { to: '/dumpster-rental-san-francisco-ca', label: 'Dumpster Rental San Francisco', desc: 'Roll-off dumpsters delivered to SF job sites.' },
-              { to: '/contractor-dumpster-rental', label: 'Contractor Dumpster Rental', desc: 'Priority scheduling and volume pricing for licensed contractors.' },
-              { to: '/heavy-material-dumpsters', label: 'Heavy Material Dumpsters', desc: 'Concrete, dirt, and demolition debris hauling.' },
-              { to: '/commercial-dumpster-rental', label: 'Commercial Dumpster Rental', desc: 'Large-capacity dumpsters for commercial and industrial projects.' },
+              { to: '/dumpster-rental/oakland/concrete', label: 'Concrete Dumpster Oakland', desc: 'Flat-fee concrete and heavy material disposal.' },
+              { to: '/contractors', label: 'Contractor Dumpster Programs', desc: 'Priority scheduling and repeat-job coordination.' },
+              { to: '/sizes', label: 'All Dumpster Sizes', desc: 'Compare all sizes from 5 to 50 yards with pricing.' },
+              { to: '/materials', label: 'Accepted Materials Guide', desc: 'What you can and cannot put in a dumpster.' },
             ].map((link) => (
               <Link
                 key={link.to}
