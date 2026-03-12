@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import {
   Users, FileText, TrendingUp, DollarSign,
   Clock, Loader2, GitBranch, ScrollText, CreditCard,
-  Phone, MessageSquare, Zap, Target, Mail
+  Phone, MessageSquare, Zap, Target, Mail, Send, Truck,
+  StickyNote, Package,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
 import { HotAILeadsQueue } from "@/components/sales/HotAILeadsQueue";
 import { SalesPipelineCards } from "@/components/sales/SalesPipelineCards";
 import { SalesScriptLibrary } from "@/components/sales/SalesScriptLibrary";
+import { SalesReadinessPanel } from "@/components/sales/SalesReadinessPanel";
 
 interface DashboardStats {
   leadsTotal: number;
@@ -74,7 +76,6 @@ export default function SalesDashboard() {
 
       const hotLeads = leads.filter(l => l.lead_status === "new" && l.created_at >= twoHoursAgo).length;
 
-      // Build recent activity
       const recentActivity = [
         ...leads.slice(0, 2).map((l) => ({
           type: "lead" as const,
@@ -126,14 +127,14 @@ export default function SalesDashboard() {
   }
 
   const kpis = [
-    { label: "New Leads", value: stats.leadsNew, icon: Users, color: "text-blue-600" },
-    { label: "Hot Leads", value: stats.leadsHot, icon: Zap, color: "text-amber-500", alert: stats.leadsHot > 0 },
-    { label: "Quotes Ready", value: stats.quotesSaved, icon: FileText, color: "text-primary" },
-    { label: "Pipeline Value", value: `$${(stats.pipelineValue / 1000).toFixed(1)}k`, icon: DollarSign, color: "text-emerald-600" },
-    { label: "Contracts Pending", value: stats.contractsSent, icon: ScrollText, color: "text-purple-600" },
-    { label: "Payments Pending", value: stats.paymentsSent, icon: CreditCard, color: "text-emerald-500" },
-    { label: "Orders Today", value: stats.ordersCreated, icon: Target, color: "text-green-600" },
-    { label: "Follow-Ups Due", value: stats.followUpsDue, icon: Clock, color: "text-blue-500", alert: stats.followUpsDue > 0 },
+    { label: "New Leads", value: stats.leadsNew, icon: Users, alert: stats.leadsNew > 0 },
+    { label: "Hot Leads", value: stats.leadsHot, icon: Zap, alert: stats.leadsHot > 0 },
+    { label: "Quotes Ready", value: stats.quotesSaved, icon: FileText },
+    { label: "Pipeline Value", value: `$${(stats.pipelineValue / 1000).toFixed(1)}k`, icon: DollarSign },
+    { label: "Contracts Pending", value: stats.contractsSent, icon: ScrollText },
+    { label: "Payments Pending", value: stats.paymentsSent, icon: CreditCard },
+    { label: "Orders Today", value: stats.ordersCreated, icon: Target },
+    { label: "Follow-Ups Due", value: stats.followUpsDue, icon: Clock, alert: stats.followUpsDue > 0 },
   ];
 
   return (
@@ -141,6 +142,7 @@ export default function SalesDashboard() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="readiness"><CheckCircle className="w-3 h-3 mr-1" />Readiness</TabsTrigger>
           <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Pipeline</TabsTrigger>
         </TabsList>
 
@@ -156,7 +158,7 @@ export default function SalesDashboard() {
           <Card key={kpi.label}>
             <CardContent className="flex items-center gap-3 pt-4 pb-3">
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpi.alert ? 'bg-destructive/10' : 'bg-muted'}`}>
-                <kpi.icon className={`w-4 h-4 ${kpi.alert ? 'text-destructive' : kpi.color}`} />
+                <kpi.icon className={`w-4 h-4 ${kpi.alert ? 'text-destructive' : 'text-primary'}`} />
               </div>
               <div className="min-w-0">
                 <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
@@ -197,6 +199,26 @@ export default function SalesDashboard() {
                 <FileText className="w-4 h-4 mr-2" /> All Quotes
               </Link>
             </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/sales/calls">
+                <Phone className="w-4 h-4 mr-2" /> Call Log
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/admin/orders">
+                <Package className="w-4 h-4 mr-2" /> Orders
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/finance/payments">
+                <CreditCard className="w-4 h-4 mr-2" /> Payments
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/dispatch">
+                <Truck className="w-4 h-4 mr-2" /> Dispatch
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
@@ -211,10 +233,10 @@ export default function SalesDashboard() {
               ) : (
                 stats.recentActivity.map((activity, i) => {
                   const iconMap = {
-                    lead: { Icon: Users, bg: "bg-blue-100 dark:bg-blue-900/30", fg: "text-blue-600" },
-                    quote: { Icon: FileText, bg: "bg-green-100 dark:bg-green-900/30", fg: "text-green-600" },
-                    contract: { Icon: ScrollText, bg: "bg-purple-100 dark:bg-purple-900/30", fg: "text-purple-600" },
-                    payment: { Icon: CreditCard, bg: "bg-emerald-100 dark:bg-emerald-900/30", fg: "text-emerald-600" },
+                    lead: { Icon: Users, bg: "bg-primary/10", fg: "text-primary" },
+                    quote: { Icon: FileText, bg: "bg-primary/10", fg: "text-primary" },
+                    contract: { Icon: ScrollText, bg: "bg-primary/10", fg: "text-primary" },
+                    payment: { Icon: CreditCard, bg: "bg-primary/10", fg: "text-primary" },
                   }[activity.type];
                   return (
                     <div key={i} className="flex items-center justify-between">
@@ -243,6 +265,10 @@ export default function SalesDashboard() {
       {/* Sales Scripts */}
       <SalesScriptLibrary />
           </div>
+        </TabsContent>
+
+        <TabsContent value="readiness">
+          <SalesReadinessPanel />
         </TabsContent>
 
         <TabsContent value="lifecycle">
