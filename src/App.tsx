@@ -204,6 +204,15 @@ const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
 const SeoAuditDashboard = lazy(() => import("./pages/admin/SeoAuditDashboard"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
+// Local Search Admin Pages
+const LocalDashboard = lazy(() => import("./pages/admin/local/LocalDashboard"));
+const GoogleBusinessPage = lazy(() => import("./pages/admin/local/GoogleBusinessPage"));
+const BingPlacesPage = lazy(() => import("./pages/admin/local/BingPlacesPage"));
+const AppleBusinessPage = lazy(() => import("./pages/admin/local/AppleBusinessPage"));
+const ReviewsEnginePage = lazy(() => import("./pages/admin/local/ReviewsEnginePage"));
+const PhotosEnginePage = lazy(() => import("./pages/admin/local/PhotosEnginePage"));
+const CitationsPage = lazy(() => import("./pages/admin/local/CitationsPage"));
+
 // Marketing / Visitor Intelligence
 const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
 const SessionsDashboard = lazy(() => import("./pages/admin/marketing/SessionsDashboard"));
