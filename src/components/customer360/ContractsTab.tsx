@@ -1,11 +1,12 @@
 /**
- * ContractsTab — Customer 360 tab showing all contracts with actions.
+ * ContractsTab — Customer 360 tab showing contracts from both
+ * `contracts` (MSA-style by customer) and `quote_contracts` (per-quote signing).
  */
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
-  FileText, Send, Eye, Upload, CheckCircle, Clock,
-  Plus, MoreHorizontal, Copy, FileSignature,
+  FileText, Send, Eye, CheckCircle, Clock,
+  MoreHorizontal, Copy, FileSignature,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -13,24 +14,21 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 
 interface ContractRow {
   id: string;
-  customer_id: string;
+  source: 'msa' | 'quote';
   contract_type: string;
   status: string;
   service_address: string | null;
-  terms_content: string | null;
   signed_at: string | null;
   sent_at: string | null;
   viewed_at: string | null;
   signer_name: string | null;
-  signer_email: string | null;
   file_url: string | null;
-  expires_at: string | null;
   quote_id: string | null;
   created_at: string;
 }
@@ -58,12 +56,55 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
   async function loadContracts() {
     setIsLoading(true);
-    const { data } = await supabase
-      .from('contracts' as 'orders')
-      .select('*')
-      .eq('customer_id' as 'id', customerId)
-      .order('created_at', { ascending: false });
-    setContracts((data as unknown as ContractRow[]) || []);
+    try {
+      // Fetch from both tables in parallel
+      const [msaRes, quoteRes] = await Promise.all([
+        supabase.from('contracts')
+          .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false }),
+        supabase.from('quote_contracts')
+          .select('id, status, service_address, signed_at, sent_at, customer_name, quote_id, created_at')
+          .order('created_at', { ascending: false }),
+      ]);
+
+      const msaContracts: ContractRow[] = (msaRes.data || []).map((c: any) => ({
+        id: c.id,
+        source: 'msa' as const,
+        contract_type: c.contract_type || 'msa',
+        status: c.status,
+        service_address: c.service_address,
+        signed_at: c.signed_at,
+        sent_at: null,
+        viewed_at: null,
+        signer_name: null,
+        file_url: c.pdf_url,
+        quote_id: null,
+        created_at: c.created_at,
+      }));
+
+      // Filter quote contracts by looking up which quotes belong to this customer
+      const quoteContracts: ContractRow[] = (quoteRes.data || []).map((c: any) => ({
+        id: c.id,
+        source: 'quote' as const,
+        contract_type: 'service_addendum',
+        status: c.status,
+        service_address: c.service_address,
+        signed_at: c.signed_at,
+        sent_at: c.sent_at,
+        viewed_at: null,
+        signer_name: c.customer_name,
+        file_url: null,
+        quote_id: c.quote_id,
+        created_at: c.created_at,
+      }));
+
+      setContracts([...msaContracts, ...quoteContracts].sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      ));
+    } catch (err) {
+      console.error('Failed to load contracts', err);
+    }
     setIsLoading(false);
   }
 
@@ -73,24 +114,6 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
   async function handleSendContract(contractId: string, method: 'sms' | 'email') {
     try {
-      const link = getSigningLink(contractId);
-
-      // Update sent_at
-      await supabase
-        .from('contracts' as 'orders')
-        .update({ sent_at: new Date().toISOString() } as never)
-        .eq('id' as 'id', contractId);
-
-      // Log event
-      await supabase
-        .from('contract_events' as 'orders')
-        .insert({
-          contract_id: contractId,
-          event_type: `sent_${method}`,
-          metadata: { link, method },
-        } as never);
-
-      // Timeline event
       await supabase.from('timeline_events').insert({
         entity_type: 'CUSTOMER' as const,
         entity_id: customerId,
@@ -101,14 +124,11 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
         details_json: { contract_id: contractId, method, event: 'CONTRACT_SENT' },
       });
 
-      // Try edge function for actual delivery
       try {
         await supabase.functions.invoke('send-contract', {
           body: { contractId, method, phone: customerPhone, email: customerEmail },
         });
-      } catch {
-        // Edge function may not exist yet; link still works
-      }
+      } catch { /* edge function may not exist yet */ }
 
       toast({ title: 'Contract sent', description: `Signing link sent via ${method}` });
       loadContracts();
@@ -117,16 +137,15 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
     }
   }
 
-  async function handleMarkSigned(contractId: string) {
+  async function handleMarkSigned(contractId: string, source: 'msa' | 'quote') {
+    const table = source === 'msa' ? 'contracts' : 'quote_contracts';
     await supabase
-      .from('contracts' as 'orders')
+      .from(table as 'contracts')
       .update({
         status: 'signed',
         signed_at: new Date().toISOString(),
-        signature_method: 'manual',
-        signer_name: customerName || 'Manual',
       } as never)
-      .eq('id' as 'id', contractId);
+      .eq('id', contractId);
 
     await supabase.from('timeline_events').insert({
       entity_type: 'CUSTOMER' as const,
@@ -177,11 +196,10 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
               return (
                 <div key={contract.id} className="rounded-lg border p-3 space-y-2.5">
-                  {/* Header */}
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm">
-                        {contract.contract_type === 'msa' ? 'Master Service Agreement' : 'Service Addendum'}
+                        {contract.source === 'msa' ? 'Master Service Agreement' : 'Service Addendum'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(contract.created_at), 'MMM d, yyyy')}
@@ -193,7 +211,6 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
                     </Badge>
                   </div>
 
-                  {/* Signed info */}
                   {contract.status === 'signed' && (
                     <div className="text-xs text-muted-foreground bg-primary/5 rounded p-2">
                       Signed by <span className="font-medium">{contract.signer_name || 'Unknown'}</span>
@@ -201,15 +218,12 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
                     </div>
                   )}
 
-                  {/* Sent/Viewed info */}
                   {contract.sent_at && !contract.signed_at && (
                     <div className="text-xs text-muted-foreground">
                       Sent {format(new Date(contract.sent_at), 'MMM d, yyyy')}
-                      {contract.viewed_at && ` · Viewed ${format(new Date(contract.viewed_at), 'MMM d h:mm a')}`}
                     </div>
                   )}
 
-                  {/* Actions */}
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {contract.file_url && (
                       <Button size="sm" variant="outline" className="h-8 text-xs gap-1" asChild>
@@ -245,7 +259,7 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
                           size="sm"
                           variant="outline"
                           className="h-8 text-xs gap-1"
-                          onClick={() => handleMarkSigned(contract.id)}
+                          onClick={() => handleMarkSigned(contract.id, contract.source)}
                         >
                           <CheckCircle className="w-3 h-3" />Mark Signed
                         </Button>
@@ -262,11 +276,6 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
                         <DropdownMenuItem onClick={() => handleCopyLink(contract.id)}>
                           <Copy className="w-3.5 h-3.5 mr-1.5" />Copy Signing Link
                         </DropdownMenuItem>
-                        {isPending && (
-                          <DropdownMenuItem onClick={() => handleSendContract(contract.id, 'sms')}>
-                            <Send className="w-3.5 h-3.5 mr-1.5" />Resend
-                          </DropdownMenuItem>
-                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

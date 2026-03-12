@@ -7,14 +7,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   FileText, Send, CreditCard, Package, ExternalLink,
   Copy, MoreHorizontal, ScrollText, CheckCircle2,
-  AlertTriangle, XCircle, ShieldCheck, Truck
+  AlertTriangle, XCircle, ShieldCheck, Truck, Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DialogFooter, DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,6 +29,8 @@ import type { Quote } from './types';
 interface Props {
   quotes: Quote[];
   customerId: string;
+  customerPhone?: string | null;
+  customerEmail?: string | null;
 }
 
 const STATUS_STYLES: Record<string, string> = {
@@ -45,10 +53,10 @@ const STATUS_LABELS: Record<string, string> = {
   expired: 'Expired',
 };
 
-// Contract status from the contracts table
 interface QuoteCommercial {
   contractStatus: string | null;
   quoteSent: boolean;
+  paymentStatus: string | null;
 }
 
 function getReadinessIcon(quote: Quote) {
@@ -58,7 +66,93 @@ function getReadinessIcon(quote: Quote) {
   return <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />;
 }
 
-export function QuotesTab({ quotes, customerId }: Props) {
+// ─── Send Payment Link Dialog ─────────────────────────────
+function SendPaymentInline({ quoteId, customerId, customerPhone, amount }: {
+  quoteId: string; customerId: string; customerPhone?: string | null; amount: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const [payAmount, setPayAmount] = useState(amount > 0 ? amount.toFixed(2) : "");
+  const [sending, setSending] = useState(false);
+  const { toast } = useToast();
+
+  async function handleSend() {
+    const num = parseFloat(payAmount);
+    if (!num || num <= 0) {
+      toast({ title: "Enter a valid amount", variant: "destructive" });
+      return;
+    }
+    setSending(true);
+    try {
+      const { error } = await supabase
+        .from("payment_requests" as "orders")
+        .insert({
+          customer_id: customerId,
+          quote_id: quoteId,
+          amount: num,
+          status: "sent",
+          sent_via: customerPhone ? "sms" : "email",
+        } as never)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await supabase.from("timeline_events").insert({
+        entity_type: "CUSTOMER" as const,
+        entity_id: customerId,
+        customer_id: customerId,
+        event_type: "PAYMENT" as const,
+        event_action: "SENT" as const,
+        summary: `Payment link sent for $${num.toFixed(2)}`,
+        details_json: { quote_id: quoteId, amount: num, event: "PAYMENT_LINK_SENT" },
+      });
+
+      toast({ title: "Payment link sent", description: `$${num.toFixed(2)} payment request created` });
+      setOpen(false);
+    } catch {
+      toast({ title: "Failed to send payment link", variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="h-8 text-xs gap-1">
+          <CreditCard className="w-3 h-3" />Payment
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Send Payment Link</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3 py-2">
+          <div className="space-y-1.5">
+            <Label>Amount ($)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={payAmount}
+              onChange={e => setPayAmount(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleSend} disabled={sending}>
+            {sending ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+            {sending ? "Sending..." : "Send Link"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function QuotesTab({ quotes, customerId, customerPhone, customerEmail }: Props) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [commercialMap, setCommercialMap] = useState<Record<string, QuoteCommercial>>({});
@@ -71,33 +165,41 @@ export function QuotesTab({ quotes, customerId }: Props) {
   async function fetchCommercialData() {
     const quoteIds = quotes.map(q => q.id);
     const map: Record<string, QuoteCommercial> = {};
-    quoteIds.forEach(id => { map[id] = { contractStatus: null, quoteSent: false }; });
+    quoteIds.forEach(id => { map[id] = { contractStatus: null, quoteSent: false, paymentStatus: null }; });
 
     try {
-      // Fetch contracts for these quotes
-      const { data: contracts } = await supabase
-        .from("quote_contracts")
-        .select("quote_id, status")
-        .in("quote_id", quoteIds);
+      const [contractsRes, outboundRes, paymentsRes] = await Promise.all([
+        supabase.from("quote_contracts")
+          .select("quote_id, status")
+          .in("quote_id", quoteIds),
+        supabase.from("outbound_quotes")
+          .select("quote_id, status")
+          .in("quote_id", quoteIds),
+        supabase.from("payment_requests" as "orders")
+          .select("quote_id, status" as "*")
+          .in("quote_id" as "id", quoteIds),
+      ]);
 
-      if (contracts) {
-        contracts.forEach((c: any) => {
+      if (contractsRes.data) {
+        contractsRes.data.forEach((c: any) => {
           if (c.quote_id && map[c.quote_id]) {
             map[c.quote_id].contractStatus = c.status;
           }
         });
       }
 
-      // Fetch outbound quotes
-      const { data: outbound } = await supabase
-        .from("outbound_quotes")
-        .select("quote_id, status")
-        .in("quote_id", quoteIds);
-
-      if (outbound) {
-        outbound.forEach(o => {
+      if (outboundRes.data) {
+        outboundRes.data.forEach(o => {
           if (o.quote_id && map[o.quote_id] && o.status !== "draft") {
             map[o.quote_id].quoteSent = true;
+          }
+        });
+      }
+
+      if (paymentsRes.data) {
+        (paymentsRes.data as unknown as { quote_id: string; status: string }[]).forEach(p => {
+          if (p.quote_id && map[p.quote_id]) {
+            map[p.quote_id].paymentStatus = p.status;
           }
         });
       }
@@ -125,6 +227,22 @@ export function QuotesTab({ quotes, customerId }: Props) {
     return (
       <Badge className={`text-[10px] ${styles[status] || ''}`}>
         Contract: {status}
+      </Badge>
+    );
+  };
+
+  const getPaymentBadge = (status: string | null) => {
+    if (!status) return null;
+    const styles: Record<string, string> = {
+      sent: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+      opened: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+      paid: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+      failed: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+      expired: 'bg-muted text-muted-foreground',
+    };
+    return (
+      <Badge className={`text-[10px] ${styles[status] || ''}`}>
+        Payment: {status}
       </Badge>
     );
   };
@@ -193,6 +311,7 @@ export function QuotesTab({ quotes, customerId }: Props) {
                         <Badge variant="outline" className="text-[10px]">Quote Sent</Badge>
                       )}
                       {getContractBadge(commercial.contractStatus)}
+                      {getPaymentBadge(commercial.paymentStatus)}
                     </div>
                   )}
 
@@ -227,15 +346,12 @@ export function QuotesTab({ quotes, customerId }: Props) {
                     )}
 
                     {isActionable && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 text-xs gap-1"
-                        disabled
-                        title="Coming soon"
-                      >
-                        <CreditCard className="w-3 h-3" />Payment
-                      </Button>
+                      <SendPaymentInline
+                        quoteId={quote.id}
+                        customerId={customerId}
+                        customerPhone={customerPhone}
+                        amount={quote.subtotal || 0}
+                      />
                     )}
 
                     {canConvert && (

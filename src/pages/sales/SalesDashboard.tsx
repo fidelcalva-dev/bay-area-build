@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Users, FileText, TrendingUp, DollarSign, 
-  ArrowUpRight, ArrowDownRight, Clock, Loader2, GitBranch
+import {
+  Users, FileText, TrendingUp, DollarSign,
+  Clock, Loader2, GitBranch, ScrollText, CreditCard,
+  Phone, MessageSquare, Zap, Target, Mail
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,10 +18,19 @@ import { SalesPipelineCards } from "@/components/sales/SalesPipelineCards";
 import { SalesScriptLibrary } from "@/components/sales/SalesScriptLibrary";
 
 interface DashboardStats {
-  leads: { total: number; new: number; converted: number };
-  quotes: { total: number; saved: number; pipelineValue: number };
+  leadsTotal: number;
+  leadsNew: number;
+  leadsConverted: number;
+  leadsHot: number;
+  quotesTotal: number;
+  quotesSaved: number;
+  pipelineValue: number;
+  contractsSent: number;
+  paymentsSent: number;
+  ordersCreated: number;
+  followUpsDue: number;
   recentActivity: Array<{
-    type: "lead" | "quote";
+    type: "lead" | "quote" | "contract" | "payment";
     name: string;
     action: string;
     time: string;
@@ -31,53 +41,73 @@ export default function SalesDashboard() {
   const { user } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
-    leads: { total: 0, new: 0, converted: 0 },
-    quotes: { total: 0, saved: 0, pipelineValue: 0 },
+    leadsTotal: 0, leadsNew: 0, leadsConverted: 0, leadsHot: 0,
+    quotesTotal: 0, quotesSaved: 0, pipelineValue: 0,
+    contractsSent: 0, paymentsSent: 0, ordersCreated: 0, followUpsDue: 0,
     recentActivity: [],
   });
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  useEffect(() => { fetchStats(); }, []);
 
   async function fetchStats() {
     setIsLoading(true);
     try {
-      const [leadsRes, quotesRes] = await Promise.all([
-        supabase.from("sales_leads").select("lead_status, created_at"),
-        supabase.from("quotes").select("status, subtotal, created_at, customer_name").order("created_at", { ascending: false }).limit(100),
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+
+      const [leadsRes, quotesRes, contractsRes, paymentsRes, ordersRes, followUpRes] = await Promise.all([
+        supabase.from("sales_leads").select("lead_status, created_at, lead_quality_label"),
+        supabase.from("quotes").select("status, subtotal, created_at, customer_name").order("created_at", { ascending: false }).limit(200),
+        supabase.from("quote_contracts").select("status, created_at, customer_name").order("created_at", { ascending: false }).limit(50),
+        supabase.from("payment_requests" as "orders").select("status, amount, created_at" as "*").order("created_at", { ascending: false }).limit(50),
+        supabase.from("orders").select("id, created_at").gte("created_at", todayStart),
+        supabase.from("sales_leads").select("id").eq("lead_status", "contacted").not("last_contacted_at", "is", null),
       ]);
 
       const leads = leadsRes.data || [];
       const quotes = quotesRes.data || [];
+      const contracts = (contractsRes.data || []) as any[];
+      const payments = ((paymentsRes.data || []) as any[]);
+      const orders = ordersRes.data || [];
+      const followUps = followUpRes.data || [];
+
+      const hotLeads = leads.filter(l => l.lead_status === "new" && l.created_at >= twoHoursAgo).length;
 
       // Build recent activity
       const recentActivity = [
-        ...leads.slice(0, 3).map((l) => ({
+        ...leads.slice(0, 2).map((l) => ({
           type: "lead" as const,
           name: "New Lead",
           action: `Status: ${l.lead_status}`,
           time: l.created_at,
         })),
-        ...quotes.slice(0, 3).map((q) => ({
+        ...quotes.slice(0, 2).map((q) => ({
           type: "quote" as const,
           name: q.customer_name || "Quote",
           action: `$${q.subtotal?.toFixed(0) || 0}`,
           time: q.created_at,
         })),
-      ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
+        ...contracts.slice(0, 1).map((c: any) => ({
+          type: "contract" as const,
+          name: c.customer_name || "Contract",
+          action: `Status: ${c.status}`,
+          time: c.created_at,
+        })),
+      ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 6);
 
       setStats({
-        leads: {
-          total: leads.length,
-          new: leads.filter((l) => l.lead_status === "new").length,
-          converted: leads.filter((l) => l.lead_status === "converted").length,
-        },
-        quotes: {
-          total: quotes.length,
-          saved: quotes.filter((q) => q.status === "saved").length,
-          pipelineValue: quotes.reduce((sum, q) => sum + (q.subtotal || 0), 0),
-        },
+        leadsTotal: leads.length,
+        leadsNew: leads.filter((l) => l.lead_status === "new").length,
+        leadsConverted: leads.filter((l) => l.lead_status === "converted").length,
+        leadsHot: hotLeads,
+        quotesTotal: quotes.length,
+        quotesSaved: quotes.filter((q) => q.status === "saved").length,
+        pipelineValue: quotes.filter(q => q.status === "saved").reduce((sum, q) => sum + (q.subtotal || 0), 0),
+        contractsSent: contracts.filter((c: any) => c.status === "pending").length,
+        paymentsSent: payments.filter((p: any) => p.status === "sent").length,
+        ordersCreated: orders.length,
+        followUpsDue: followUps.length,
         recentActivity,
       });
     } catch (err) {
@@ -95,6 +125,17 @@ export default function SalesDashboard() {
     );
   }
 
+  const kpis = [
+    { label: "New Leads", value: stats.leadsNew, icon: Users, color: "text-blue-600" },
+    { label: "Hot Leads", value: stats.leadsHot, icon: Zap, color: "text-amber-500", alert: stats.leadsHot > 0 },
+    { label: "Quotes Ready", value: stats.quotesSaved, icon: FileText, color: "text-primary" },
+    { label: "Pipeline Value", value: `$${(stats.pipelineValue / 1000).toFixed(1)}k`, icon: DollarSign, color: "text-emerald-600" },
+    { label: "Contracts Pending", value: stats.contractsSent, icon: ScrollText, color: "text-purple-600" },
+    { label: "Payments Pending", value: stats.paymentsSent, icon: CreditCard, color: "text-emerald-500" },
+    { label: "Orders Today", value: stats.ordersCreated, icon: Target, color: "text-green-600" },
+    { label: "Follow-Ups Due", value: stats.followUpsDue, icon: Clock, color: "text-blue-500", alert: stats.followUpsDue > 0 },
+  ];
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="overview">
@@ -109,84 +150,51 @@ export default function SalesDashboard() {
       {/* Hot AI Leads */}
       <HotAILeadsQueue />
 
+      {/* KPI Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {kpis.map(kpi => (
+          <Card key={kpi.label}>
+            <CardContent className="flex items-center gap-3 pt-4 pb-3">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpi.alert ? 'bg-destructive/10' : 'bg-muted'}`}>
+                <kpi.icon className={`w-4 h-4 ${kpi.alert ? 'text-destructive' : kpi.color}`} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
+                <p className={`text-lg font-bold ${kpi.alert ? 'text-destructive' : ''}`}>{kpi.value}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       {/* Pipeline Cards */}
       <SalesPipelineCards />
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Leads</CardTitle>
-            <Users className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.leads.total}</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-blue-600 font-medium">{stats.leads.new} new</span> this week
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Converted</CardTitle>
-            <TrendingUp className="w-4 h-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.leads.converted}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.leads.total > 0 
-                ? `${((stats.leads.converted / stats.leads.total) * 100).toFixed(0)}% conversion rate`
-                : "No leads yet"
-              }
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Quotes</CardTitle>
-            <FileText className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.quotes.saved}</div>
-            <p className="text-xs text-muted-foreground">
-              Ready to convert
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pipeline Value</CardTitle>
-            <DollarSign className="w-4 h-4 text-amber-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-amber-600">
-              ${(stats.quotes.pipelineValue / 1000).toFixed(1)}k
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {stats.quotes.total} total quotes
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
+      {/* Quick Actions + Recent Activity */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Button className="w-full justify-start" asChild>
+          <CardContent className="grid grid-cols-2 gap-2">
+            <Button className="justify-start" asChild>
               <Link to="/sales/quotes/new">
-                <FileText className="w-4 h-4 mr-2" /> Create New Quote
+                <FileText className="w-4 h-4 mr-2" /> New Quote
               </Link>
             </Button>
-            <Button variant="outline" className="w-full justify-start" asChild>
+            <Button variant="outline" className="justify-start" asChild>
               <Link to="/sales/leads">
-                <Users className="w-4 h-4 mr-2" /> Add Lead
+                <Users className="w-4 h-4 mr-2" /> Lead Hub
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/admin/customers">
+                <Users className="w-4 h-4 mr-2" /> Customers
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-start" asChild>
+              <Link to="/sales/quotes">
+                <FileText className="w-4 h-4 mr-2" /> All Quotes
               </Link>
             </Button>
           </CardContent>
@@ -201,29 +209,31 @@ export default function SalesDashboard() {
               {stats.recentActivity.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
               ) : (
-                stats.recentActivity.map((activity, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        activity.type === "lead" ? "bg-blue-100" : "bg-green-100"
-                      }`}>
-                        {activity.type === "lead" ? (
-                          <Users className="w-3 h-3 text-blue-600" />
-                        ) : (
-                          <FileText className="w-3 h-3 text-green-600" />
-                        )}
+                stats.recentActivity.map((activity, i) => {
+                  const iconMap = {
+                    lead: { Icon: Users, bg: "bg-blue-100 dark:bg-blue-900/30", fg: "text-blue-600" },
+                    quote: { Icon: FileText, bg: "bg-green-100 dark:bg-green-900/30", fg: "text-green-600" },
+                    contract: { Icon: ScrollText, bg: "bg-purple-100 dark:bg-purple-900/30", fg: "text-purple-600" },
+                    payment: { Icon: CreditCard, bg: "bg-emerald-100 dark:bg-emerald-900/30", fg: "text-emerald-600" },
+                  }[activity.type];
+                  return (
+                    <div key={i} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${iconMap.bg}`}>
+                          <iconMap.Icon className={`w-3 h-3 ${iconMap.fg}`} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{activity.name}</p>
+                          <p className="text-xs text-muted-foreground">{activity.action}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium">{activity.name}</p>
-                        <p className="text-xs text-muted-foreground">{activity.action}</p>
-                      </div>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {format(new Date(activity.time), "h:mm a")}
+                      </span>
                     </div>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {format(new Date(activity.time), "h:mm a")}
-                    </span>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </CardContent>
