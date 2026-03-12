@@ -311,7 +311,7 @@ const Index = () => {
             {GENERAL_DEBRIS_SIZES.map((s) => (
               <Link
                 key={s.size}
-                to={`/quote?v3=1&size=${s.size}`}
+                to={quoteUrl({ size: String(s.size) })}
                 className="bg-card rounded-2xl border border-border p-4 text-center hover:border-primary/30 transition-colors group"
               >
                 <div className="text-2xl font-bold text-foreground mb-0.5">
