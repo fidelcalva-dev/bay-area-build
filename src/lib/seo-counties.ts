@@ -138,6 +138,22 @@ export const SEO_COUNTIES: SeoCounty[] = [
     description: 'Stanislaus County dumpster rental for Modesto, Turlock, and the Central Valley.',
     population: '552K',
   },
+  {
+    slug: 'marin-county',
+    name: 'Marin County',
+    state: 'CA',
+    majorCities: ['san-rafael'],
+    description: 'Marin County dumpster rental for San Rafael, Novato, Mill Valley, and surrounding North Bay communities.',
+    population: '262K',
+  },
+  {
+    slug: 'napa-county',
+    name: 'Napa County',
+    state: 'CA',
+    majorCities: ['napa'],
+    description: 'Napa County dumpster rental for Napa, American Canyon, and Wine Country renovation projects.',
+    population: '138K',
+  },
 ];
 
 export function getCountyBySlug(slug: string): SeoCounty | undefined {
