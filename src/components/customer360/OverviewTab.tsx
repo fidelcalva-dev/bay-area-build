@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, DollarSign, Receipt, Calendar, TrendingUp, Users, MapPin } from 'lucide-react';
+import { Package, DollarSign, Receipt, Calendar, TrendingUp, Users, MapPin, FileText, ScrollText, CreditCard, CheckCircle2, AlertTriangle, Truck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TimelineView } from '@/components/timeline';
@@ -8,6 +9,7 @@ import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { RecommendedScriptWidget } from './RecommendedScriptWidget';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   data: Customer360Data;
@@ -16,7 +18,7 @@ interface Props {
 }
 
 export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) {
-  const { customer, orders, invoices, payments, contacts, sites } = data;
+  const { customer, orders, invoices, payments, contacts, sites, quotes } = data;
 
   const totalRevenue = payments
     .filter(p => p.status === 'approved' || p.status === 'completed')
@@ -26,6 +28,38 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
   const lastServiceDate = orders.length > 0
     ? new Date(orders[0].created_at).toLocaleDateString()
     : 'N/A';
+
+  // Commercial stage data
+  const [commercialStage, setCommercialStage] = useState<{
+    latestQuoteStatus: string | null;
+    contractStatus: string | null;
+    paymentStatus: string | null;
+    dispatchReady: boolean;
+  }>({ latestQuoteStatus: null, contractStatus: null, paymentStatus: null, dispatchReady: false });
+
+  useEffect(() => {
+    async function loadCommercial() {
+      const latestQuote = quotes[0];
+      if (!latestQuote) return;
+
+      // Check contract and payment for latest quote
+      const [contractRes, paymentRes] = await Promise.all([
+        supabase.from('quote_contracts').select('status').eq('quote_id', latestQuote.id).order('created_at', { ascending: false }).limit(1),
+        (supabase.from('payment_requests' as any) as any).select('status').eq('quote_id', latestQuote.id).order('created_at', { ascending: false }).limit(1),
+      ]);
+
+      const contractStatus = (contractRes.data as any)?.[0]?.status || null;
+      const paymentStatus = (paymentRes.data as any)?.[0]?.status || null;
+
+      setCommercialStage({
+        latestQuoteStatus: latestQuote.status,
+        contractStatus,
+        paymentStatus,
+        dispatchReady: latestQuote.status === 'converted' || (contractStatus === 'signed' && (paymentStatus === 'paid' || paymentStatus === 'completed')),
+      });
+    }
+    loadCommercial();
+  }, [quotes]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -38,6 +72,51 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
         <KPI label="Contacts" value={contacts.length} icon={Users} />
         <KPI label="Sites" value={sites.length} icon={MapPin} />
       </div>
+
+      {/* Commercial Stage Tracker */}
+      {quotes.length > 0 && (
+        <div className="lg:col-span-3">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                Commercial Pipeline
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap items-center gap-2">
+                <StageChip
+                  label="Quote"
+                  status={commercialStage.latestQuoteStatus || 'none'}
+                  done={['sent', 'accepted', 'converted'].includes(commercialStage.latestQuoteStatus || '')}
+                  active={commercialStage.latestQuoteStatus === 'saved' || commercialStage.latestQuoteStatus === 'pending'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Contract"
+                  status={commercialStage.contractStatus || 'none'}
+                  done={commercialStage.contractStatus === 'signed'}
+                  active={commercialStage.contractStatus === 'sent' || commercialStage.contractStatus === 'pending'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Payment"
+                  status={commercialStage.paymentStatus || 'none'}
+                  done={commercialStage.paymentStatus === 'paid' || commercialStage.paymentStatus === 'completed'}
+                  active={commercialStage.paymentStatus === 'sent'}
+                />
+                <span className="text-muted-foreground">→</span>
+                <StageChip
+                  label="Dispatch"
+                  status={commercialStage.dispatchReady ? 'ready' : activeOrders > 0 ? 'active' : 'none'}
+                  done={activeOrders > 0}
+                  active={commercialStage.dispatchReady}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Left Column */}
       <div className="lg:col-span-2 space-y-6">
@@ -153,6 +232,21 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between">
       <span className="text-muted-foreground">{label}</span>
       <span className="font-medium">{value}</span>
+    </div>
+  );
+}
+
+function StageChip({ label, status, done, active }: { label: string; status: string; done: boolean; active: boolean }) {
+  const displayStatus = status === 'none' ? '—' : status;
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium ${
+      done ? 'bg-primary/10 border-primary/30 text-primary' :
+      active ? 'bg-amber-50 border-amber-300/50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-700/40' :
+      'bg-muted border-border text-muted-foreground'
+    }`}>
+      {done ? <CheckCircle2 className="w-3 h-3" /> : active ? <AlertTriangle className="w-3 h-3" /> : null}
+      <span>{label}</span>
+      <Badge variant="outline" className="text-[10px] h-4 px-1">{displayStatus}</Badge>
     </div>
   );
 }
