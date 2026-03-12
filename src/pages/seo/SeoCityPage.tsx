@@ -252,7 +252,6 @@ export default function SeoCityPage() {
           </div>
         </div>
       </section>
-      </section>
 
       {/* Sizes */}
       <section className="section-padding bg-muted/30">
