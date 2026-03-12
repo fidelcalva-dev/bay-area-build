@@ -237,6 +237,7 @@ export function V3QuoteFlow() {
     setZoneResult(null);
     setWantsSwap(false);
     draftApplied.current = false;
+    prefillApplied.current = false;
   }, [draft]);
 
   // Auto-detect ZIP
