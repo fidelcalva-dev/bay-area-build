@@ -84,8 +84,8 @@ export function PhotosTab({ customerId }: Props) {
 
       if (runs && runs.length > 0) {
         const runIds = runs.map((r: any) => r.id);
-        const { data: checkpoints } = await supabase
-          .from('run_checkpoints')
+        const { data: checkpoints } = await (supabase
+          .from('run_checkpoints') as any)
           .select('id, run_id, checkpoint_type, photo_urls, completed_at')
           .in('run_id', runIds)
           .not('photo_urls', 'is', null);
