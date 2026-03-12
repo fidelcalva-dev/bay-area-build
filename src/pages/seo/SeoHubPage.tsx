@@ -54,6 +54,14 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     metaDescription: 'Central Valley dumpster rental serving Sacramento, Stockton, Fresno, Bakersfield, and Modesto. Transparent pricing, same-day delivery available.',
     countyFilter: ['sacramento-county', 'san-joaquin-county', 'fresno-county', 'kern-county', 'stanislaus-county'],
   },
+  'north-bay-dumpster-rental': {
+    slug: 'north-bay-dumpster-rental',
+    title: 'North Bay Dumpster Rental',
+    h1: 'North Bay Dumpster Rental',
+    description: 'Professional dumpster rental serving the North Bay including Marin, Sonoma, Napa, and Solano counties through our coordinated logistics network.',
+    metaDescription: 'North Bay dumpster rental for Marin, Sonoma, Napa, and Solano counties. Roll-off containers for construction, renovation, and cleanouts. Transparent pricing.',
+    countyFilter: ['solano-county', 'sonoma-county'],
+  },
 };
 
 export default function SeoHubPage() {
