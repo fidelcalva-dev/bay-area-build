@@ -296,23 +296,25 @@ export default function QuotePayment() {
             </button>
           )}
 
-          {/* Pay Full */}
-          <button
-            onClick={() => setSelectedPaymentOption('balance')}
-            disabled={isProcessing || paymentBlocked}
-            className={cn(
-              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
-              selectedPaymentOption === 'balance'
-                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                : 'border-border bg-card hover:border-primary/40'
-            )}
-          >
-            <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
-            <p className="text-2xl font-bold text-foreground">${fullAmount.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Pay the full amount now — no balance remaining
-            </p>
-          </button>
+          {/* Pay Full — only show if amount > 0 */}
+          {fullAmount > 0 && (
+            <button
+              onClick={() => setSelectedPaymentOption('balance')}
+              disabled={isProcessing || paymentBlocked}
+              className={cn(
+                'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+                selectedPaymentOption === 'balance'
+                  ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                  : 'border-border bg-card hover:border-primary/40'
+              )}
+            >
+              <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
+              <p className="text-2xl font-bold text-foreground">${fullAmount.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Pay the full amount now — no balance remaining
+              </p>
+            </button>
+          )}
 
           {/* Pay Later — always available */}
           <button
