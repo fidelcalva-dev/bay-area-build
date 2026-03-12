@@ -49,7 +49,8 @@ Deno.serve(async (req) => {
     // Handle flex options (ASAP, Flexible, Call Me)
     if (flexOption) {
       updatePayload.scheduled_delivery_date = null;
-      updatePayload.scheduled_delivery_window = flexOption;
+      updatePayload.scheduled_delivery_window = null;
+      updatePayload.delivery_notes = `Customer preference: ${flexOption}`;
       updatePayload.status = "pending_schedule";
     } else if (deliveryDate && deliveryWindow) {
       // Validate date format (YYYY-MM-DD)
@@ -60,8 +61,17 @@ Deno.serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      // Normalize window to lowercase enum value
+      const normalizedWindow = deliveryWindow.toLowerCase();
+      const validWindows = ["morning", "midday", "afternoon"];
+      if (!validWindows.includes(normalizedWindow)) {
+        return new Response(JSON.stringify({ error: `Invalid delivery window. Must be one of: ${validWindows.join(", ")}` }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       updatePayload.scheduled_delivery_date = deliveryDate;
-      updatePayload.scheduled_delivery_window = deliveryWindow;
+      updatePayload.scheduled_delivery_window = normalizedWindow;
     } else {
       return new Response(JSON.stringify({ error: "deliveryDate + deliveryWindow or flexOption required" }), {
         status: 400,
