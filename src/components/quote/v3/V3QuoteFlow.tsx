@@ -134,22 +134,31 @@ export function V3QuoteFlow() {
   const pricingData = usePricingData();
   const { sizes: DUMPSTER_SIZES } = pricingData;
 
+  // URL param prefill
+  const urlZip = searchParams.get('zip') || '';
+  const urlType = searchParams.get('type') as CustomerType | null;
+  const urlProject = searchParams.get('project') || '';
+  const urlSize = searchParams.get('size');
+  const prefillApplied = useRef(false);
+
   // Draft autosave
   const urlDraftToken = searchParams.get('draft');
   const draft = useQuoteDraftAutosave(urlDraftToken);
   const draftApplied = useRef(false);
   const quoteStartedFired = useRef(false);
 
-  // Step state
+  // Step state — start at zip, will auto-advance if prefilled
   const [step, setStep] = useState<V3Step>('zip');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [stepStartTime, setStepStartTime] = useState(Date.now());
 
-  // Form state
-  const [zip, setZip] = useState('');
-  const [customerType, setCustomerType] = useState<CustomerType | null>(null);
+  // Form state — initialize from URL params
+  const [zip, setZip] = useState(urlZip.length === 5 && /^\d{5}$/.test(urlZip) ? urlZip : '');
+  const [customerType, setCustomerType] = useState<CustomerType | null>(
+    urlType && ['homeowner', 'contractor', 'commercial'].includes(urlType) ? urlType : null
+  );
   const [selectedProject, setSelectedProject] = useState<ProjectCard | null>(null);
   const [size, setSize] = useState(20);
   const [customerName, setCustomerName] = useState('');
