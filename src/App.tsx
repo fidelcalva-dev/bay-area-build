@@ -626,6 +626,9 @@ const App = () => {
               <Route path="/central-valley-dumpster-rental" element={
                 <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
               } />
+              <Route path="/north-bay-dumpster-rental" element={
+                <Suspense fallback={<PageLoader />}><SeoHubPage /></Suspense>
+              } />
 
               {/* Legacy URL redirects — 301 to canonical */}
               <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={<LegacySizeRedirect />} />
