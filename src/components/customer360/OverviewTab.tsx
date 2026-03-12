@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) {
-  const { customer, orders, invoices, payments, contacts, sites } = data;
+  const { customer, orders, invoices, payments, contacts, sites, quotes } = data;
 
   const totalRevenue = payments
     .filter(p => p.status === 'approved' || p.status === 'completed')
@@ -28,6 +28,38 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
   const lastServiceDate = orders.length > 0
     ? new Date(orders[0].created_at).toLocaleDateString()
     : 'N/A';
+
+  // Commercial stage data
+  const [commercialStage, setCommercialStage] = useState<{
+    latestQuoteStatus: string | null;
+    contractStatus: string | null;
+    paymentStatus: string | null;
+    dispatchReady: boolean;
+  }>({ latestQuoteStatus: null, contractStatus: null, paymentStatus: null, dispatchReady: false });
+
+  useEffect(() => {
+    async function loadCommercial() {
+      const latestQuote = quotes[0];
+      if (!latestQuote) return;
+
+      // Check contract and payment for latest quote
+      const [contractRes, paymentRes] = await Promise.all([
+        supabase.from('quote_contracts').select('status').eq('quote_id', latestQuote.id).order('created_at', { ascending: false }).limit(1),
+        (supabase.from('payment_requests' as any) as any).select('status').eq('quote_id', latestQuote.id).order('created_at', { ascending: false }).limit(1),
+      ]);
+
+      const contractStatus = (contractRes.data as any)?.[0]?.status || null;
+      const paymentStatus = (paymentRes.data as any)?.[0]?.status || null;
+
+      setCommercialStage({
+        latestQuoteStatus: latestQuote.status,
+        contractStatus,
+        paymentStatus,
+        dispatchReady: latestQuote.status === 'converted' || (contractStatus === 'signed' && (paymentStatus === 'paid' || paymentStatus === 'completed')),
+      });
+    }
+    loadCommercial();
+  }, [quotes]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
