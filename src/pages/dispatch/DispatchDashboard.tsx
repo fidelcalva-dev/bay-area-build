@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { format, isToday, isTomorrow, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { 
   Truck, Clock, MapPin, AlertTriangle, CheckCircle, 
-  Loader2, Calendar, GitBranch
+  Loader2, Calendar, GitBranch, BarChart3
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { DispatchLifecycleDashboard } from '@/components/lifecycle/dashboards';
+import { DispatchOperationsPanel } from '@/components/dispatch/DispatchOperationsPanel';
+import { OperationsIntelligencePanel } from '@/components/dispatch/OperationsIntelligencePanel';
 
 interface DashboardStats {
   todayDeliveries: number;
@@ -83,11 +85,13 @@ export default function DispatchDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <Tabs defaultValue="overview">
-        <TabsList>
+        <TabsList className="w-full md:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Pipeline</TabsTrigger>
+          <TabsTrigger value="operations">Operations</TabsTrigger>
+          <TabsTrigger value="intelligence"><BarChart3 className="w-3 h-3 mr-1" />Intel</TabsTrigger>
+          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -171,26 +175,43 @@ export default function DispatchDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Button 
           size="lg" 
-          className="h-16 text-lg"
+          className="h-14 text-base"
           onClick={() => navigate('/dispatch/today')}
         >
           <Truck className="w-5 h-5 mr-2" />
-          View Today's Jobs
+          Today's Jobs
         </Button>
         <Button 
           size="lg" 
           variant="outline"
-          className="h-16 text-lg"
+          className="h-14 text-base"
           onClick={() => navigate('/dispatch/calendar')}
         >
           <Calendar className="w-5 h-5 mr-2" />
-          Open Calendar
+          Calendar
+        </Button>
+        <Button 
+          size="lg" 
+          variant="outline"
+          className="h-14 text-base"
+          onClick={() => navigate('/admin/dispatch/control-tower')}
+        >
+          <MapPin className="w-5 h-5 mr-2" />
+          Control Tower
         </Button>
       </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="operations">
+          <DispatchOperationsPanel />
+        </TabsContent>
+
+        <TabsContent value="intelligence">
+          <OperationsIntelligencePanel />
         </TabsContent>
 
         <TabsContent value="lifecycle">
