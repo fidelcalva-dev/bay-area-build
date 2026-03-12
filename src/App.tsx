@@ -1074,6 +1074,28 @@ const App = () => {
                 <Route path="seo/audit" element={
                   <Suspense fallback={<PageLoader />}><SeoAuditDashboard /></Suspense>
                 } />
+                {/* Local Search Admin Routes */}
+                <Route path="local/dashboard" element={
+                  <Suspense fallback={<PageLoader />}><LocalDashboard /></Suspense>
+                } />
+                <Route path="local/google-business" element={
+                  <Suspense fallback={<PageLoader />}><GoogleBusinessPage /></Suspense>
+                } />
+                <Route path="local/bing-places" element={
+                  <Suspense fallback={<PageLoader />}><BingPlacesPage /></Suspense>
+                } />
+                <Route path="local/apple-business" element={
+                  <Suspense fallback={<PageLoader />}><AppleBusinessPage /></Suspense>
+                } />
+                <Route path="local/reviews" element={
+                  <Suspense fallback={<PageLoader />}><ReviewsEnginePage /></Suspense>
+                } />
+                <Route path="local/photos" element={
+                  <Suspense fallback={<PageLoader />}><PhotosEnginePage /></Suspense>
+                } />
+                <Route path="local/citations" element={
+                  <Suspense fallback={<PageLoader />}><CitationsPage /></Suspense>
+                } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>
                 } />
