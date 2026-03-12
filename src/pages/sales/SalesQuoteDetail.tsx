@@ -18,11 +18,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DialogFooter, DialogTrigger,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText } from "@/services/outboundQuoteService";
+import { addTimelineNote } from "@/lib/timelineService";
 
 // ─── Constants ────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
@@ -99,7 +104,7 @@ function ReadinessBadge({ level, label, missing }: { level: ReadinessLevel; labe
 // ─── Commercial Status Tracker ────────────────────────────
 interface CommercialStatus {
   quoteSent: boolean;
-  contractStatus: string | null; // pending | signed | declined | expired | null
+  contractStatus: string | null;
   contractSentAt: string | null;
   paymentStatus: string | null;
   paymentSentAt: string | null;
@@ -286,6 +291,153 @@ function QuoteScriptWidget({ quote }: { quote: any }) {
   );
 }
 
+// ─── Add Note Dialog ──────────────────────────────────────
+function AddNoteDialog({ quoteId, customerId, onAdded }: { quoteId: string; customerId?: string; onAdded: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  async function handleSave() {
+    if (!note.trim()) return;
+    setSaving(true);
+    try {
+      await addTimelineNote({
+        entityType: 'QUOTE',
+        entityId: quoteId,
+        note: note.trim(),
+        customerId: customerId || undefined,
+      });
+      toast({ title: "Note added" });
+      setNote("");
+      setOpen(false);
+      onAdded();
+    } catch {
+      toast({ title: "Failed to add note", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full gap-1.5">
+          <StickyNote className="w-3.5 h-3.5" /> Add Note
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Add Note</DialogTitle>
+        </DialogHeader>
+        <Textarea
+          placeholder="Enter note..."
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          rows={3}
+        />
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleSave} disabled={saving || !note.trim()}>
+            {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null}
+            Save Note
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ─── Send Payment Link Dialog ─────────────────────────────
+function SendPaymentDialog({ quoteId, customerId, customerPhone, amount, onSent }: {
+  quoteId: string; customerId?: string; customerPhone?: string; amount: number; onSent: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [payAmount, setPayAmount] = useState(amount > 0 ? amount.toFixed(2) : "");
+  const [sending, setSending] = useState(false);
+  const { toast } = useToast();
+
+  async function handleSend() {
+    const num = parseFloat(payAmount);
+    if (!num || num <= 0) {
+      toast({ title: "Enter a valid amount", variant: "destructive" });
+      return;
+    }
+    setSending(true);
+    try {
+      const { error } = await supabase
+        .from("payment_requests" as "orders")
+        .insert({
+          customer_id: customerId,
+          quote_id: quoteId,
+          amount: num,
+          status: "sent",
+          sent_via: customerPhone ? "sms" : "email",
+        } as never)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Timeline event
+      if (customerId) {
+        await supabase.from("timeline_events").insert({
+          entity_type: "CUSTOMER" as const,
+          entity_id: customerId,
+          customer_id: customerId,
+          event_type: "PAYMENT" as const,
+          event_action: "SENT" as const,
+          summary: `Payment link sent for $${num.toFixed(2)}`,
+          details_json: { quote_id: quoteId, amount: num, event: "PAYMENT_LINK_SENT" },
+        });
+      }
+
+      toast({ title: "Payment link sent", description: `$${num.toFixed(2)} payment request created` });
+      setOpen(false);
+      onSent();
+    } catch {
+      toast({ title: "Failed to send payment link", variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full gap-1.5">
+          <CreditCard className="w-3.5 h-3.5" /> Payment Link
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Send Payment Link</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3 py-2">
+          <div className="space-y-1.5">
+            <Label>Amount ($)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={payAmount}
+              onChange={e => setPayAmount(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleSend} disabled={sending}>
+            {sending ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+            {sending ? "Sending..." : "Send Link"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────
 export default function SalesQuoteDetail() {
   const { id } = useParams<{ id: string }>();
@@ -346,7 +498,6 @@ export default function SalesQuoteDetail() {
       setSelectedSize(String(data.user_selected_size_yards || data.recommended_size_yards || ""));
       setSalesNotes(data.scheduling_notes || "");
 
-      // Infer delivery preference
       if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
       else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
       else if (data.preferred_delivery_window === "call_to_confirm") setDeliveryPref("call_to_confirm");
@@ -362,37 +513,40 @@ export default function SalesQuoteDetail() {
 
   async function fetchCommercialStatus() {
     try {
-      // Check outbound quotes (sent status)
-      const { data: outbound } = await supabase
-        .from("outbound_quotes")
-        .select("id, status, created_at")
-        .eq("quote_id", id!)
-        .order("created_at", { ascending: false })
-        .limit(1);
+      const [outboundRes, contractsRes, paymentsRes, quoteDataRes] = await Promise.all([
+        supabase.from("outbound_quotes")
+          .select("id, status, created_at")
+          .eq("quote_id", id!)
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase.from("quote_contracts")
+          .select("id, status, created_at")
+          .eq("quote_id", id!)
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase.from("payment_requests" as "orders")
+          .select("id, status, created_at" as "*")
+          .eq("quote_id" as "id", id!)
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase.from("quotes")
+          .select("order_id")
+          .eq("id", id!)
+          .single(),
+      ]);
 
-      // Check contracts
-      const { data: contracts } = await supabase
-        .from("quote_contracts")
-        .select("id, status, created_at")
-        .eq("quote_id", id!)
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      // Check if order exists
-      const { data: quoteData } = await supabase
-        .from("quotes")
-        .select("order_id")
-        .eq("id", id!)
-        .single();
+      const outbound = outboundRes.data;
+      const contracts = contractsRes.data;
+      const payments = (paymentsRes.data || []) as unknown as { id: string; status: string; created_at: string }[];
 
       setCommercialStatus({
         quoteSent: outbound && outbound.length > 0 && outbound[0].status !== "draft",
         contractStatus: contracts && contracts.length > 0 ? contracts[0].status : null,
         contractSentAt: contracts && contracts.length > 0 ? contracts[0].created_at : null,
-        paymentStatus: null, // Will be populated from payment_requests when available
-        paymentSentAt: null,
-        orderCreated: !!quoteData?.order_id,
-        orderId: quoteData?.order_id || null,
+        paymentStatus: payments.length > 0 ? payments[0].status : null,
+        paymentSentAt: payments.length > 0 ? payments[0].created_at : null,
+        orderCreated: !!quoteDataRes.data?.order_id,
+        orderId: quoteDataRes.data?.order_id || null,
       });
     } catch (err) {
       console.error("Failed to fetch commercial status", err);
@@ -908,18 +1062,24 @@ export default function SalesQuoteDetail() {
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleSendContract} disabled={isSendingContract}>
               <ScrollText className="w-3.5 h-3.5" /> Send Contract
             </Button>
-            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
-              <CreditCard className="w-3.5 h-3.5" /> Payment Link
-            </Button>
+            <SendPaymentDialog
+              quoteId={id!}
+              customerId={quote.customer_id}
+              customerPhone={quote.customer_phone}
+              amount={quote.subtotal || 0}
+              onSent={fetchCommercialStatus}
+            />
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/orders/new?quoteId=${id}`)}>
               <FileText className="w-3.5 h-3.5" /> Create Order
             </Button>
             <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
               <Truck className="w-3.5 h-3.5" /> Schedule Delivery
             </Button>
-            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
-              <StickyNote className="w-3.5 h-3.5" /> Add Note
-            </Button>
+            <AddNoteDialog
+              quoteId={id!}
+              customerId={quote.customer_id}
+              onAdded={() => toast({ title: "Note saved to timeline" })}
+            />
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/quotes/${id}`)}>
               <Pencil className="w-3.5 h-3.5" /> Edit Quote
             </Button>

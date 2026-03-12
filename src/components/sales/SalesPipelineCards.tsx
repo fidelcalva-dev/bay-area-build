@@ -6,7 +6,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Zap, Clock, FileText, Send, DollarSign, Phone,
-  MessageSquare, ArrowRight, Loader2, AlertTriangle
+  MessageSquare, ArrowRight, Loader2, AlertTriangle,
+  ScrollText, CreditCard
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,10 +38,29 @@ interface PipelineQuote {
   material_type: string | null;
 }
 
+interface PipelineContract {
+  id: string;
+  customer_name: string;
+  status: string;
+  quote_id: string;
+  sent_at: string | null;
+  created_at: string;
+}
+
+interface PipelinePayment {
+  id: string;
+  amount: number;
+  status: string;
+  customer_id: string;
+  created_at: string;
+}
+
 export function SalesPipelineCards() {
   const [hotLeads, setHotLeads] = useState<PipelineLead[]>([]);
   const [staleLeads, setStaleLeads] = useState<PipelineLead[]>([]);
   const [pendingQuotes, setPendingQuotes] = useState<PipelineQuote[]>([]);
+  const [pendingContracts, setPendingContracts] = useState<PipelineContract[]>([]);
+  const [pendingPayments, setPendingPayments] = useState<PipelinePayment[]>([]);
   const [followUps, setFollowUps] = useState<PipelineLead[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,33 +74,41 @@ export function SalesPipelineCards() {
     const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
 
-    const [hotRes, staleRes, quotesRes, followUpRes] = await Promise.all([
-      // Hot: new leads in last 2 hours
+    const [hotRes, staleRes, quotesRes, followUpRes, contractsRes, paymentsRes] = await Promise.all([
       supabase.from('sales_leads')
         .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
         .eq('lead_status', 'new')
         .gte('created_at', twoHoursAgo)
         .order('created_at', { ascending: false })
         .limit(10),
-      // Stale: new or contacted, no contact in 24h+
       supabase.from('sales_leads')
         .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
         .in('lead_status', ['new', 'contacted'])
         .lt('created_at', twentyFourHoursAgo)
         .order('created_at', { ascending: true })
         .limit(10),
-      // Quotes pending
       supabase.from('quotes')
         .select('id, customer_name, customer_phone, status, subtotal, created_at, material_type')
         .eq('status', 'saved')
         .order('created_at', { ascending: false })
         .limit(10),
-      // Follow-ups: contacted leads needing follow-up (last contact > 4h ago)
       supabase.from('sales_leads')
         .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
         .eq('lead_status', 'contacted')
         .not('last_contacted_at', 'is', null)
         .order('last_contacted_at', { ascending: true })
+        .limit(10),
+      // Contracts pending signature
+      supabase.from('quote_contracts')
+        .select('id, customer_name, status, quote_id, sent_at, created_at')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(10),
+      // Payment requests pending
+      supabase.from('payment_requests' as 'orders')
+        .select('id, amount, status, customer_id, created_at' as '*')
+        .eq('status' as 'id', 'sent')
+        .order('created_at', { ascending: false })
         .limit(10),
     ]);
 
@@ -88,6 +116,8 @@ export function SalesPipelineCards() {
     setStaleLeads((staleRes.data || []) as PipelineLead[]);
     setPendingQuotes((quotesRes.data || []) as PipelineQuote[]);
     setFollowUps((followUpRes.data || []) as PipelineLead[]);
+    setPendingContracts((contractsRes.data || []) as unknown as PipelineContract[]);
+    setPendingPayments(((paymentsRes.data || []) as unknown as PipelinePayment[]));
     setLoading(false);
   }
 
@@ -100,7 +130,7 @@ export function SalesPipelineCards() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {/* Hot Leads */}
       <PipelineSection
         title="Hot Leads"
@@ -146,6 +176,48 @@ export function SalesPipelineCards() {
               <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
             </div>
           </Link>
+        ))}
+      </PipelineSection>
+
+      {/* Contracts Pending */}
+      <PipelineSection
+        title="Contracts Pending"
+        icon={<ScrollText className="w-4 h-4 text-purple-500" />}
+        count={pendingContracts.length}
+        borderColor="border-l-purple-500"
+        emptyText="No pending contracts"
+      >
+        {pendingContracts.map(c => (
+          <Link key={c.id} to={`/sales/quotes/${c.quote_id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">{c.customer_name}</p>
+              <p className="text-xs text-muted-foreground">
+                {c.sent_at ? `Sent ${formatDistanceToNow(new Date(c.sent_at), { addSuffix: true })}` : 'Not sent yet'}
+              </p>
+            </div>
+            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          </Link>
+        ))}
+      </PipelineSection>
+
+      {/* Payments Pending */}
+      <PipelineSection
+        title="Payments Pending"
+        icon={<CreditCard className="w-4 h-4 text-emerald-500" />}
+        count={pendingPayments.length}
+        borderColor="border-l-emerald-500"
+        emptyText="No pending payments"
+      >
+        {pendingPayments.map(p => (
+          <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">${p.amount.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">
+                Sent {formatDistanceToNow(new Date(p.created_at), { addSuffix: true })}
+              </p>
+            </div>
+            <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
+          </div>
         ))}
       </PipelineSection>
 
