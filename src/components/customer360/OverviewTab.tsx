@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, DollarSign, Receipt, Calendar, TrendingUp, Users, MapPin } from 'lucide-react';
+import { Package, DollarSign, Receipt, Calendar, TrendingUp, Users, MapPin, FileText, ScrollText, CreditCard, CheckCircle2, AlertTriangle, Truck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TimelineView } from '@/components/timeline';
@@ -8,6 +9,7 @@ import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { RecommendedScriptWidget } from './RecommendedScriptWidget';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   data: Customer360Data;
