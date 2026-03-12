@@ -1571,18 +1571,42 @@ export function V3QuoteFlow() {
                 className="w-full h-14 rounded-xl text-base font-semibold"
                 onClick={goNext}
               >
-                {getPriceMomentCopy(customerType, isHeavy, quote.includedTons)[isHeavy ? 'heavy' : 'general'].primaryButton}
+                Continue Booking
+                <ChevronRight className="w-5 h-5 ml-1" />
               </Button>
 
-              <Button
-                variant="outline"
-                size="default"
-                className="w-full rounded-xl"
-                onClick={() => window.open('tel:+15106802150', '_blank')}
-              >
-                <Phone className="w-4 h-4" />
-                Call (510) 680-2150
-              </Button>
+              {/* Follow-up options */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="rounded-xl text-xs"
+                  onClick={() => {
+                    capturePartialLead('text_quote_request');
+                    toast({ title: 'Quote texted!', description: "We'll text your quote details shortly." });
+                  }}
+                >
+                  <MessageSquare className="w-4 h-4 mr-1.5" />
+                  Text Me This Quote
+                </Button>
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="rounded-xl text-xs"
+                  onClick={() => {
+                    capturePartialLead('call_request');
+                    window.open('tel:+15106802150', '_blank');
+                  }}
+                >
+                  <Phone className="w-4 h-4 mr-1.5" />
+                  Call Me to Confirm
+                </Button>
+              </div>
+
+              {/* Reassurance */}
+              <p className="text-center text-xs text-muted-foreground">
+                You'll review everything before confirming. No hidden fees.
+              </p>
             </div>
           </StepTransition>
         )}
