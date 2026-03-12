@@ -406,7 +406,7 @@ const Index = () => {
             {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
               <Link
                 key={slug}
-                to={`/quote?v3=1&project=${slug}`}
+                to={quoteUrl({ project: slug })}
                 className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
               >
                 <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
