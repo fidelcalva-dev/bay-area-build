@@ -199,7 +199,7 @@ export default function SeoCityPage() {
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Local Yard in {yard?.city || 'Bay Area'}</span></div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery Available</span></div>
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Licensed & Insured</span></div>
-            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>10–40 Yard Sizes</span></div>
+            <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>5–50 Yard Sizes</span></div>
           </div>
         </div>
       </section>
