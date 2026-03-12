@@ -77,8 +77,8 @@ export function PhotosTab({ customerId }: Props) {
       }
 
       // 2. Get photos from run checkpoints for this customer's runs
-      const { data: runs } = await supabase
-        .from('runs')
+      const { data: runs } = await (supabase
+        .from('runs') as any)
         .select('id, order_id')
         .eq('customer_id', customerId);
 
