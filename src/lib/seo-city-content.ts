@@ -7,9 +7,9 @@ import { BUSINESS_INFO } from './seo';
 // SIZE BY PROJECT TABLE — Universal recommendations
 // ============================================================
 export const SIZE_BY_PROJECT_TABLE = [
-  { project: 'Garage cleanout', sizes: '10–15 yd', note: 'Single-car garage or small storage' },
+  { project: 'Garage cleanout', sizes: '10–20 yd', note: 'Single-car garage or small storage' },
   { project: 'Bathroom remodel', sizes: '10 yd', note: 'Fixtures, tile, and vanity removal' },
-  { project: 'Kitchen remodel', sizes: '15–20 yd', note: 'Cabinets, countertops, flooring' },
+  { project: 'Kitchen remodel', sizes: '20 yd', note: 'Cabinets, countertops, flooring' },
   { project: 'Whole-home renovation', sizes: '30–40 yd', note: 'Full interior or multi-room demo' },
   { project: 'Roof tear-off (single layer)', sizes: '20 yd', note: 'Up to ~25 squares' },
   { project: 'Roof tear-off (2+ layers)', sizes: '30 yd', note: '25+ squares or heavy material' },
