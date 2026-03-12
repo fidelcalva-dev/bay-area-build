@@ -47,8 +47,10 @@ export default function QuotePayment() {
       .then(({ data }) => {
         if (data) {
           const sizeLabel = (data.quotes as any)?.dumpster_sizes?.label || 'Dumpster';
+          // Use ?? to preserve real 0 values; || would treat 0 as falsy
+          const amount = data.balance_due ?? data.final_total ?? 0;
           setOrderInfo({
-            total: data.balance_due || data.final_total || 0,
+            total: amount,
             size: sizeLabel,
             schedDate: data.scheduled_delivery_date,
             schedWindow: data.scheduled_delivery_window,
@@ -294,23 +296,25 @@ export default function QuotePayment() {
             </button>
           )}
 
-          {/* Pay Full */}
-          <button
-            onClick={() => setSelectedPaymentOption('balance')}
-            disabled={isProcessing || paymentBlocked}
-            className={cn(
-              'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
-              selectedPaymentOption === 'balance'
-                ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                : 'border-border bg-card hover:border-primary/40'
-            )}
-          >
-            <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
-            <p className="text-2xl font-bold text-foreground">${fullAmount.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Pay the full amount now — no balance remaining
-            </p>
-          </button>
+          {/* Pay Full — only show if amount > 0 */}
+          {fullAmount > 0 && (
+            <button
+              onClick={() => setSelectedPaymentOption('balance')}
+              disabled={isProcessing || paymentBlocked}
+              className={cn(
+                'w-full p-4 rounded-xl border-2 text-left transition-all disabled:opacity-50',
+                selectedPaymentOption === 'balance'
+                  ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                  : 'border-border bg-card hover:border-primary/40'
+              )}
+            >
+              <p className={cn('font-semibold', selectedPaymentOption === 'balance' ? 'text-primary' : 'text-foreground')}>Pay in Full</p>
+              <p className="text-2xl font-bold text-foreground">${fullAmount.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Pay the full amount now — no balance remaining
+              </p>
+            </button>
+          )}
 
           {/* Pay Later — always available */}
           <button

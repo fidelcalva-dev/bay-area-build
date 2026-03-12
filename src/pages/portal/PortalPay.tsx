@@ -98,8 +98,10 @@ export default function PortalPay() {
 
         if (order) {
           const q = order.quotes as any;
+          // Use ?? to preserve real 0 values; || would treat 0 as falsy
+          const amount = order.balance_due ?? order.amount_due ?? order.final_total ?? 0;
           setOrderInfo({
-            total: order.balance_due || order.amount_due || order.final_total || 0,
+            total: amount,
             size: q?.dumpster_sizes?.label || 'Dumpster',
             schedDate: order.scheduled_delivery_date,
             schedWindow: order.scheduled_delivery_window,
