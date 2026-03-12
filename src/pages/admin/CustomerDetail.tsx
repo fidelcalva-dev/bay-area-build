@@ -423,48 +423,13 @@ export default function CustomerDetail() {
           </Card>
         </TabsContent>
 
-        {/* ─── PHOTOS ─── */}
         <TabsContent value="photos">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Photos & Media</CardTitle>
-              {!isMobile && <CardDescription>Site photos, dump tickets, and delivery documentation</CardDescription>}
-            </CardHeader>
-            <CardContent>
-              {photoEvents.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p>No photos yet</p>
-                  <p className="text-xs mt-1">Delivery photos, site images, and dump tickets will appear here</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {photoEvents.map(event => {
-                    const details = event.details_json as Record<string, unknown> | null;
-                    const photoUrl = details?.photo_url as string | undefined;
-                    const photos = details?.photos as string[] | undefined;
-                    return (
-                      <div key={event.id} className="p-3 rounded-lg border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Camera className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium truncate">{event.summary}</span>
-                          <span className="text-xs text-muted-foreground ml-auto shrink-0">{new Date(event.created_at).toLocaleDateString()}</span>
-                        </div>
-                        {photoUrl && <img src={photoUrl} alt={event.summary} className="w-full max-w-md rounded-md border" loading="lazy" />}
-                        {photos && photos.length > 0 && (
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                            {photos.map((url, i) => (
-                              <img key={i} src={url} alt={`Photo ${i + 1}`} className="w-full h-32 object-cover rounded-md border cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={() => window.open(url, '_blank')} />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <PhotosTab customerId={customer.id} />
+        </TabsContent>
+
+        {/* ─── SERVICE INTELLIGENCE ─── */}
+        <TabsContent value="intelligence">
+          <ServiceIntelligenceTab customerId={customer.id} />
         </TabsContent>
 
         {/* ─── ANALYTICS ─── */}
