@@ -76,12 +76,12 @@ export function QuotesTab({ quotes, customerId }: Props) {
     try {
       // Fetch contracts for these quotes
       const { data: contracts } = await supabase
-        .from("contracts")
+        .from("quote_contracts")
         .select("quote_id, status")
         .in("quote_id", quoteIds);
 
       if (contracts) {
-        contracts.forEach(c => {
+        contracts.forEach((c: any) => {
           if (c.quote_id && map[c.quote_id]) {
             map[c.quote_id].contractStatus = c.status;
           }

@@ -372,7 +372,7 @@ export default function SalesQuoteDetail() {
 
       // Check contracts
       const { data: contracts } = await supabase
-        .from("contracts")
+        .from("quote_contracts")
         .select("id, status, created_at")
         .eq("quote_id", id!)
         .order("created_at", { ascending: false })
