@@ -498,6 +498,7 @@ export const ALL_ROUTES: RouteEntry[] = [
   ...crmTelephony,
   ...crmGoogleAds,
   ...crmSeoAdmin,
+  ...crmLocalSearch,
   ...crmMarketingAnalytics,
   ...crmAnalytics,
   ...crmAI,
