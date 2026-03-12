@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity, AlertTriangle, ArrowRight, BarChart3, Bell,
@@ -7,355 +7,54 @@ import {
   Shield, Truck, TrendingUp, Users, Zap,
   FileText, Wrench, ArrowUpRight, Eye, Camera, Car,
   Phone, Mail, Map, CreditCard, Webhook, Star,
-  Layers, Search as SearchIcon, Link2, Brain, Hash
+  Layers, Search as SearchIcon, Link2, Brain, Hash,
+  Home, MessageSquare, Megaphone, CircleDot, Route
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { format } from 'date-fns';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useControlCenterKPIs, useControlCenterAlerts, useControlCenterPipeline } from '@/hooks/useControlCenterData';
+import { StatusStrip, buildSystemStatuses } from '@/components/control-center/StatusStrip';
+import {
+  SectionHeader, KPICard, SnapshotCard, QuickAction,
+  QuickAccessCard, AlertRow, ModuleRow, PipelineBar,
+} from '@/components/control-center/SummaryPanel';
 
-// ─── Types ───────────────────────────────────
-interface KPIData {
-  newLeadsToday: number;
-  hotLeads: number;
-  quotesPending: number;
-  jobsToday: number;
-  driversActive: number;
-  paymentsPending: number;
-  overdueInvoices: number;
-  seoScore: string;
-  approvalsPending: number;
-  deliveriesToday: number;
-  pickupsToday: number;
-  cityPagesActive: number;
-  zipPagesActive: number;
-  fallbackQueueCount: number;
-}
+// ─── Role helpers ────────────────────────────
+function useRoleVisibility() {
+  const { roles, isAdmin, isDispatcher, isFinance, isSales, isCS } = useAdminAuth();
+  const isExec = roles.some(r => ['owner', 'admin', 'executive', 'system_admin'].includes(r));
+  const isOps = isDispatcher || roles.includes('ops_admin');
+  const isReadOnly = roles.includes('read_only') || roles.includes('read_only_admin');
 
-interface AlertItem {
-  id: string;
-  title: string;
-  severity: 'critical' | 'warning' | 'info';
-  route: string;
-  source: string;
-  created_at: string;
-}
-
-// ─── Data Hooks ──────────────────────────────
-const today = () => new Date().toISOString().split('T')[0];
-
-function useLiveKPIs() {
-  const [data, setData] = useState<KPIData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const d = today();
-        const countOpts = { count: 'exact' as const, head: true };
-
-        const [leads, hotLeads, quotes, runs, pendingInv, overdueInv, approvals, cityPages, zipPages, fallbackQueue] = await Promise.all([
-          (supabase.from('sales_leads').select('id', countOpts) as any).gte('created_at', `${d}T00:00:00`),
-          (supabase.from('sales_leads').select('id', countOpts) as any).in('lead_status', ['new', 'contacted']).gte('lead_quality_score', 70),
-          (supabase.from('quotes').select('id', countOpts) as any).in('status', ['pending', 'draft']),
-          (supabase.from('runs').select('id', countOpts) as any).eq('scheduled_date', d),
-          (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'pending'),
-          (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'overdue'),
-          (supabase.from('approval_requests').select('id', countOpts) as any).eq('status', 'pending'),
-          ((supabase as any).from('seo_city_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
-          ((supabase as any).from('seo_zip_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
-          ((supabase as any).from('lead_fallback_queue').select('id', countOpts)).eq('status', 'pending').catch(() => ({ count: 0 })),
-        ]);
-
-        let deliveries = 0, pickups = 0;
-        try {
-          const { count: delCount } = await (supabase.from('service_requests').select('id', countOpts) as any)
-            .eq('scheduled_date', d).eq('request_type', 'delivery');
-          const { count: pickCount } = await (supabase.from('service_requests').select('id', countOpts) as any)
-            .eq('scheduled_date', d).eq('request_type', 'pickup');
-          deliveries = delCount ?? 0;
-          pickups = pickCount ?? 0;
-        } catch { /* table may not exist */ }
-
-        setData({
-          newLeadsToday: leads.count ?? 0,
-          hotLeads: hotLeads.count ?? 0,
-          quotesPending: quotes.count ?? 0,
-          jobsToday: runs.count ?? 0,
-          driversActive: 0,
-          paymentsPending: pendingInv.count ?? 0,
-          overdueInvoices: overdueInv.count ?? 0,
-          seoScore: 'N/A',
-          approvalsPending: approvals.count ?? 0,
-          deliveriesToday: deliveries,
-          pickupsToday: pickups,
-          cityPagesActive: cityPages?.count ?? 0,
-          zipPagesActive: zipPages?.count ?? 0,
-          fallbackQueueCount: fallbackQueue?.count ?? 0,
-        });
-      } catch (err) {
-        console.error('KPI load error:', err);
-        setData({
-          newLeadsToday: 0, hotLeads: 0, quotesPending: 0, jobsToday: 0,
-          driversActive: 0, paymentsPending: 0, overdueInvoices: 0, seoScore: 'N/A',
-          approvalsPending: 0, deliveriesToday: 0, pickupsToday: 0,
-          cityPagesActive: 0, zipPagesActive: 0, fallbackQueueCount: 0,
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-  return { data, loading };
-}
-
-function useLiveAlerts() {
-  const [alerts, setAlerts] = useState<AlertItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function load() {
-      try {
-        const { data } = await supabase
-          .from('alerts')
-          .select('id, title, severity, alert_type, entity_type, created_at')
-          .eq('is_resolved', false)
-          .order('created_at', { ascending: false })
-          .limit(12);
-        setAlerts((data || []).map(a => ({
-          id: a.id,
-          title: a.title,
-          severity: a.severity === 'critical' ? 'critical' as const : a.severity === 'warning' ? 'warning' as const : 'info' as const,
-          route: '/admin/alerts',
-          source: a.entity_type || a.alert_type,
-          created_at: a.created_at,
-        })));
-      } catch { setAlerts([]); }
-      finally { setLoading(false); }
-    }
-    load();
-  }, []);
-  return { alerts, loading };
-}
-
-function useSalesPipeline() {
-  const [pipeline, setPipeline] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function load() {
-      try {
-        const { data } = await supabase.from('sales_leads').select('lead_status');
-        const counts: Record<string, number> = {};
-        (data || []).forEach(l => { counts[l.lead_status] = (counts[l.lead_status] || 0) + 1; });
-        setPipeline(counts);
-      } catch { setPipeline({}); }
-      finally { setLoading(false); }
-    }
-    load();
-  }, []);
-  return { pipeline, loading };
-}
-
-// ─── Sub-components ──────────────────────────
-
-function KPICard({ label, value, helper, icon: Icon, route, danger, loading }: {
-  label: string; value: number | string; helper?: string; icon: React.ComponentType<{ className?: string }>; route: string; danger?: boolean; loading?: boolean;
-}) {
-  return (
-    <Link to={route} className="block group">
-      <div className={cn(
-        'rounded-2xl border bg-card p-3 md:p-4 transition-all h-full',
-        danger ? 'border-destructive/30 hover:border-destructive/50' : 'border-border/60 hover:border-primary/30',
-        'hover:shadow-lg hover:-translate-y-0.5'
-      )}>
-        <div className="flex items-center justify-between mb-2 md:mb-3">
-          <div className={cn(
-            'w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center',
-            danger ? 'bg-destructive/10' : 'bg-muted'
-          )}>
-            <Icon className={cn('w-3.5 h-3.5 md:w-4 md:h-4', danger ? 'text-destructive' : 'text-muted-foreground')} />
-          </div>
-          <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
-        </div>
-        {loading ? (
-          <Skeleton className="h-7 md:h-8 w-14 rounded-lg" />
-        ) : (
-          <div className={cn('text-xl md:text-2xl font-bold tracking-tight', danger ? 'text-destructive' : 'text-foreground')}>
-            {value}
-          </div>
-        )}
-        <p className="text-[10px] md:text-xs text-muted-foreground mt-1 md:mt-1.5 font-medium leading-tight">{label}</p>
-        {helper && <p className="text-[9px] md:text-[10px] text-muted-foreground/60 mt-0.5 hidden md:block">{helper}</p>}
-      </div>
-    </Link>
-  );
-}
-
-function SectionHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: { label: string; route: string } }) {
-  return (
-    <div className="flex items-end justify-between mb-5">
-      <div>
-        <h2 className="text-base font-semibold text-foreground">{title}</h2>
-        {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
-      </div>
-      {action && (
-        <Button asChild variant="ghost" size="sm" className="text-xs gap-1 h-7 text-muted-foreground hover:text-foreground">
-          <Link to={action.route}>{action.label} <ArrowRight className="w-3 h-3" /></Link>
-        </Button>
-      )}
-    </div>
-  );
-}
-
-function PipelineBar({ stages, loading }: { stages: { label: string; count: number; color: string }[]; loading?: boolean }) {
-  const total = stages.reduce((s, st) => s + st.count, 0) || 1;
-  if (loading) return <Skeleton className="h-10 w-full rounded-xl" />;
-  const hasData = stages.some(s => s.count > 0);
-  return (
-    <div className="space-y-4">
-      {hasData ? (
-        <div className="flex rounded-xl overflow-hidden h-9 bg-muted">
-          {stages.map(st => st.count > 0 && (
-            <div
-              key={st.label}
-              className={cn('flex items-center justify-center text-[10px] font-bold text-white transition-all', st.color)}
-              style={{ width: `${Math.max((st.count / total) * 100, 8)}%` }}
-            >
-              {st.count}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="h-9 bg-muted rounded-xl flex items-center justify-center">
-          <span className="text-xs text-muted-foreground">No data yet</span>
-        </div>
-      )}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-        {stages.map(st => (
-          <div key={st.label} className="text-center">
-            <div className="text-lg font-bold text-foreground">{st.count}</div>
-            <p className="text-[10px] text-muted-foreground leading-tight">{st.label}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-type ModuleStatus = 'LIVE' | 'DRY_RUN' | 'OFF' | 'ERROR' | 'NEEDS_SETUP' | 'NOT_BUILT' | 'NO_DATA';
-
-function StatusBadge({ status }: { status: ModuleStatus }) {
-  const styles: Record<ModuleStatus, string> = {
-    LIVE: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
-    DRY_RUN: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
-    OFF: 'bg-muted text-muted-foreground border-border',
-    ERROR: 'bg-destructive/10 text-destructive border-destructive/20',
-    NEEDS_SETUP: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/20',
-    NOT_BUILT: 'bg-muted/50 text-muted-foreground/60 border-border/50',
-    NO_DATA: 'bg-muted/50 text-muted-foreground/60 border-border/50',
+  return {
+    showSales: isAdmin || isExec || isSales || isCS,
+    showCustomers: isAdmin || isExec || isSales || isCS || isOps,
+    showDispatch: isAdmin || isExec || isOps,
+    showDriver: isAdmin || isExec || isOps,
+    showFleet: isAdmin || isExec || isOps || roles.includes('fleet_maintenance'),
+    showFinance: isAdmin || isExec || isFinance,
+    showSEO: isAdmin || isExec || roles.includes('marketing_seo'),
+    showIntegrations: isAdmin,
+    showAI: isAdmin || isExec,
+    showAlerts: true,
+    showQuickAccess: true,
+    isReadOnly,
   };
-  return (
-    <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full border', styles[status])}>
-      {status.replace(/_/g, ' ')}
-    </span>
-  );
 }
-
-function ModuleRow({ name, status, route }: { name: string; status: ModuleStatus; route: string | null }) {
-  const inner = (
-    <div className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-muted/50 transition-colors group">
-      <span className="text-sm text-foreground">{name}</span>
-      <div className="flex items-center gap-2 shrink-0">
-        <StatusBadge status={status} />
-        {route && <ExternalLink className="w-3 h-3 text-muted-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity" />}
-      </div>
-    </div>
-  );
-  if (!route) return inner;
-  return <Link to={route} className="block">{inner}</Link>;
-}
-
-function SnapshotCard({ label, value, icon: Icon, route }: {
-  label: string; value: string | number; icon: React.ComponentType<{ className?: string }>; route: string | null;
-}) {
-  const inner = (
-    <div className={cn(
-      'rounded-xl border border-border/60 bg-card p-3.5 flex items-center gap-3 transition-all h-full',
-      route && 'hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5 cursor-pointer'
-    )}>
-      <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-muted-foreground" />
-      </div>
-      <div className="min-w-0">
-        <p className="text-sm font-bold text-foreground">{value}</p>
-        <p className="text-[11px] text-muted-foreground truncate">{label}</p>
-      </div>
-    </div>
-  );
-  if (!route) return inner;
-  return <Link to={route} className="block">{inner}</Link>;
-}
-
-function AlertRow({ alert }: { alert: AlertItem }) {
-  const colors = {
-    critical: 'border-l-destructive bg-destructive/5',
-    warning: 'border-l-amber-500 bg-amber-50/50 dark:bg-amber-950/20',
-    info: 'border-l-muted-foreground/30 bg-muted/20',
-  };
-  return (
-    <Link to={alert.route} className="block">
-      <div className={cn('border-l-[3px] rounded-r-xl px-4 py-3 hover:shadow-sm transition-all', colors[alert.severity])}>
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-sm text-foreground truncate font-medium">{alert.title}</p>
-          <span className="text-[10px] text-muted-foreground shrink-0 font-medium uppercase tracking-wide">{alert.source}</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function QuickAccessCard({ label, icon: Icon, route, description }: {
-  label: string; icon: React.ComponentType<{ className?: string }>; route: string; description: string;
-}) {
-  return (
-    <Link to={route} className="block group">
-      <div className="rounded-2xl border border-border/60 bg-card p-3 md:p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 transition-all h-full text-center">
-        <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-muted flex items-center justify-center mx-auto mb-2 md:mb-3 group-hover:bg-primary/10 transition-colors">
-          <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-        </div>
-        <p className="text-xs md:text-sm font-semibold text-foreground">{label}</p>
-        <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 md:mt-1 hidden sm:block">{description}</p>
-      </div>
-    </Link>
-  );
-}
-
-// ─── Quick Access Data ───────────────────────
-const QUICK_ACCESS_GRID = [
-  { label: 'Website', icon: Globe, route: '/admin/modules', description: 'Public pages & tools' },
-  { label: 'Sales', icon: TrendingUp, route: '/sales/leads', description: 'Leads & pipeline' },
-  { label: 'Customer Service', icon: Headphones, route: '/admin/customers', description: 'Profiles & health' },
-  { label: 'Operations', icon: Package, route: '/dispatch/calendar', description: 'Dispatch & runs' },
-  { label: 'Driver App', icon: Truck, route: '/driver', description: 'Mobile driver tools' },
-  { label: 'Fleet', icon: Car, route: '/admin/drivers', description: 'Vehicles & maintenance' },
-  { label: 'Finance', icon: DollarSign, route: '/finance/invoices', description: 'Billing & payments' },
-  { label: 'SEO', icon: SearchIcon, route: '/admin/seo/dashboard', description: 'Rankings & pages' },
-  { label: 'Integrations', icon: Link2, route: '/admin/setup/functions', description: 'APIs & connections' },
-  { label: 'Admin & QA', icon: Shield, route: '/admin/qa/control-center', description: 'Health & security' },
-];
 
 // ─── Main Component ──────────────────────────
 export default function CalsanControlCenter() {
-  const { data: kpi, loading: kpiLoading } = useLiveKPIs();
-  const { alerts, loading: alertsLoading } = useLiveAlerts();
-  const { pipeline, loading: pipelineLoading } = useSalesPipeline();
-  const { user } = useAdminAuth();
+  const { data: kpi, loading: kpiLoading } = useControlCenterKPIs();
+  const { alerts, loading: alertsLoading } = useControlCenterAlerts();
+  const { pipeline, loading: pipelineLoading } = useControlCenterPipeline();
+  const { user, roles, getPrimaryRole } = useAdminAuth();
+  const vis = useRoleVisibility();
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -363,15 +62,17 @@ export default function CalsanControlCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="p-4 lg:p-8 space-y-6 md:space-y-10 max-w-[1440px] mx-auto">
+  const primaryRole = getPrimaryRole();
 
-      {/* ════════ SECTION 1 — EXECUTIVE HEADER ════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 md:gap-4">
+  return (
+    <div className="p-4 lg:p-8 space-y-5 md:space-y-8 max-w-[1440px] mx-auto">
+
+      {/* ════════ HEADER ════════ */}
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
         <div>
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">Calsan Control Center</h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1 max-w-xl hidden md:block">
-            Executive overview of sales, operations, dispatch, finance, SEO, integrations, and system health.
+            Executive view of sales, customers, dispatch, finance, SEO, and system health.
           </p>
           <div className="flex items-center gap-3 mt-1">
             <p className="text-[10px] md:text-xs text-muted-foreground/70">
@@ -383,17 +84,27 @@ export default function CalsanControlCenter() {
                 <p className="text-xs text-muted-foreground/70 hidden md:block">{user.email}</p>
               </>
             )}
+            {primaryRole && (
+              <>
+                <span className="text-muted-foreground/30 hidden md:inline">·</span>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-primary/20 bg-primary/5 text-primary hidden md:inline">
+                  {primaryRole.replace(/_/g, ' ').toUpperCase()}
+                </span>
+              </>
+            )}
           </div>
         </div>
-        {/* Quick links — horizontally scrollable on mobile */}
+        {/* Quick links */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
           <div className="flex gap-2 w-max md:w-auto">
             {[
-              { label: 'Lead Hub', route: '/sales/leads', icon: Users },
-              { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar },
-              { label: 'Finance', route: '/finance/invoices', icon: DollarSign },
-              { label: 'SEO', route: '/admin/seo/health', icon: Globe },
-            ].map(a => (
+              { label: 'Lead Hub', route: '/sales/leads', icon: Users, show: vis.showSales },
+              { label: 'Sales', route: '/sales/dashboard', icon: TrendingUp, show: vis.showSales },
+              { label: 'Dispatch', route: '/dispatch/calendar', icon: Calendar, show: vis.showDispatch },
+              { label: 'Finance', route: '/finance/invoices', icon: DollarSign, show: vis.showFinance },
+              { label: 'SEO', route: '/admin/seo/health', icon: Globe, show: vis.showSEO },
+              { label: 'Customers', route: '/admin/customers', icon: SearchIcon, show: vis.showCustomers },
+            ].filter(a => a.show).map(a => (
               <Button key={a.label} asChild variant="outline" size="sm" className="h-9 text-xs gap-1.5 rounded-xl shrink-0">
                 <Link to={a.route}><a.icon className="w-3.5 h-3.5" />{a.label}</Link>
               </Button>
@@ -402,254 +113,399 @@ export default function CalsanControlCenter() {
         </div>
       </div>
 
-      {/* ════════ SECTION 2 — KPI STRIP ════════ */}
+      {/* ════════ GLOBAL STATUS STRIP ════════ */}
+      <StatusStrip statuses={buildSystemStatuses(kpi)} />
+
+      {/* ════════ KPI STRIP ════════ */}
       <section>
         <SectionHeader title="Business Snapshot" subtitle="Key performance indicators across all departments" />
-        {/* Horizontally scrollable on mobile, grid on desktop */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible">
-          <div className="flex gap-3 w-max md:w-auto md:grid md:grid-cols-4 xl:grid-cols-8">
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="New Leads Today" helper="From all channels" value={kpi?.newLeadsToday ?? '—'} icon={Users} route="/sales/leads" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Hot Leads" helper="Score ≥ 70" value={kpi?.hotLeads ?? '—'} icon={Zap} route="/sales/leads" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Quotes Pending" helper="Draft & pending" value={kpi?.quotesPending ?? '—'} icon={FileText} route="/sales/quotes" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Jobs Today" helper="Scheduled runs" value={kpi?.jobsToday ?? '—'} icon={Calendar} route="/dispatch/today" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Drivers Active" helper="On route now" value={kpi?.driversActive || 'N/A'} icon={Truck} route="/admin/drivers" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Payments Pending" helper="Awaiting payment" value={kpi?.paymentsPending ?? '—'} icon={DollarSign} route="/finance/payments" loading={kpiLoading} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="Overdue Invoices" helper="Past due date" value={kpi?.overdueInvoices ?? '—'} icon={AlertTriangle} route="/admin/overdue" loading={kpiLoading} danger={(kpi?.overdueInvoices ?? 0) > 0} />
-            </div>
-            <div className="w-[140px] md:w-auto shrink-0">
-              <KPICard label="SEO Score" helper="Site health" value={kpi?.seoScore || 'N/A'} icon={BarChart3} route="/admin/seo/health" loading={kpiLoading} />
-            </div>
+          <div className="flex gap-2.5 w-max md:w-auto md:grid md:grid-cols-5 xl:grid-cols-10">
+            {[
+              { label: 'New Leads Today', value: kpi?.newLeadsToday, icon: Users, route: '/sales/leads', helper: 'All channels' },
+              { label: 'Hot Leads', value: kpi?.hotLeads, icon: Zap, route: '/sales/leads', helper: 'Score ≥ 70' },
+              { label: 'Quotes Pending', value: kpi?.quotesPending, icon: FileText, route: '/sales/quotes', helper: 'Draft & pending' },
+              { label: 'Contracts Pending', value: kpi?.contractsPending, icon: FileText, route: '/sales/quotes', helper: 'Sent, not signed' },
+              { label: 'Payments Pending', value: kpi?.paymentsPending, icon: DollarSign, route: '/finance/payments', helper: 'Awaiting payment' },
+              { label: 'Orders → Dispatch', value: kpi?.ordersReadyForDispatch, icon: Package, route: '/admin/orders', helper: 'Ready to schedule' },
+              { label: 'Jobs Today', value: kpi?.jobsToday, icon: Calendar, route: '/dispatch/today', helper: 'Scheduled runs' },
+              { label: 'Overdue Invoices', value: kpi?.overdueInvoices, icon: AlertTriangle, route: '/admin/overdue', helper: 'Past due', danger: true },
+              { label: 'SEO Score', value: kpi?.cityPagesActive ? `${kpi.cityPagesActive} cities` : 'N/A', icon: BarChart3, route: '/admin/seo/health', helper: 'Site health' },
+              { label: 'Open Alerts', value: kpi?.alertCount, icon: Bell, route: '/admin/alerts', helper: 'Unresolved', danger: (kpi?.alertCount ?? 0) > 0 },
+            ].map(item => (
+              <div key={item.label} className="w-[130px] md:w-auto shrink-0">
+                <KPICard
+                  label={item.label}
+                  value={item.value ?? '—'}
+                  helper={item.helper}
+                  icon={item.icon}
+                  route={item.route}
+                  loading={kpiLoading}
+                  danger={item.danger}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ════════ SECTION 3 — ALERTS ════════ */}
-      <section>
-        <SectionHeader
-          title="Alerts & Attention Needed"
-          subtitle="Unresolved issues requiring action"
-          action={{ label: 'All Alerts', route: '/admin/alerts' }}
-        />
-        <Card className="overflow-hidden">
-          <CardContent className="p-0">
-            {alertsLoading ? (
-              <div className="p-6 space-y-3">
-                {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
-              </div>
-            ) : alerts.length === 0 ? (
-              <div className="text-center py-10 text-muted-foreground">
-                <CheckCircle2 className="w-10 h-10 mx-auto mb-3 text-emerald-500/60" />
-                <p className="text-sm font-medium">All clear — no urgent items</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">System is operating normally</p>
-              </div>
-            ) : (
-              <div className="p-4 space-y-2">{alerts.map(a => <AlertRow key={a.id} alert={a} />)}</div>
-            )}
-          </CardContent>
-        </Card>
-      </section>
+      {/* ════════ ALERTS ════════ */}
+      {vis.showAlerts && (
+        <section>
+          <SectionHeader
+            title="Alerts & Attention Needed"
+            subtitle="Unresolved issues requiring action"
+            action={{ label: 'All Alerts', route: '/admin/alerts' }}
+          />
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              {alertsLoading ? (
+                <div className="p-4 space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 w-full rounded-xl" />)}
+                </div>
+              ) : alerts.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500/60" />
+                  <p className="text-sm font-medium">All clear — no urgent items</p>
+                </div>
+              ) : (
+                <div className="p-3 space-y-1.5">{alerts.map(a => <AlertRow key={a.id} alert={a} />)}</div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
-      {/* ════════ SECTION 4 — SALES PIPELINE ════════ */}
-      <section>
-        <SectionHeader
-          title="Sales & Lead Pipeline"
-          subtitle="Funnel overview from new leads to confirmed jobs"
-          action={{ label: 'Lead Hub', route: '/sales/leads' }}
-        />
-        <Card>
-          <CardContent className="p-6">
-            <PipelineBar
-              loading={pipelineLoading}
-              stages={[
-                { label: 'New', count: pipeline['new'] || 0, color: 'bg-blue-500' },
-                { label: 'Contacted', count: pipeline['contacted'] || 0, color: 'bg-amber-500' },
-                { label: 'Quoted', count: pipeline['quoted'] || 0, color: 'bg-violet-500' },
-                { label: 'Contract Sent', count: pipeline['contract_sent'] || 0, color: 'bg-orange-500' },
-                { label: 'Paid', count: pipeline['payment_received'] || 0, color: 'bg-emerald-500' },
-                { label: 'Confirmed', count: pipeline['converted'] || 0, color: 'bg-primary' },
-              ]}
+      {/* ════════ SALES + CUSTOMER 360 ROW ════════ */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Sales Summary */}
+        {vis.showSales && (
+          <section>
+            <SectionHeader
+              title="Sales & Lead Pipeline"
+              subtitle="Funnel from leads to confirmed orders"
+              action={{ label: 'Lead Hub', route: '/sales/leads' }}
             />
-            <Separator className="my-5" />
-            <div className="flex flex-wrap gap-2">
-              <Button asChild size="sm" className="h-9 text-xs rounded-xl">
-                <Link to="/sales/quotes/new">Create Quote</Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl">
-                <Link to="/sales/leads">Open Lead Hub</Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl">
-                <Link to="/admin/alerts">Follow-ups Due</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+            <Card>
+              <CardContent className="p-5 space-y-4">
+                <PipelineBar
+                  loading={pipelineLoading}
+                  stages={[
+                    { label: 'New', count: pipeline['new'] || 0, color: 'bg-blue-500' },
+                    { label: 'Contacted', count: pipeline['contacted'] || 0, color: 'bg-amber-500' },
+                    { label: 'Quoted', count: pipeline['quoted'] || 0, color: 'bg-violet-500' },
+                    { label: 'Contract Sent', count: pipeline['contract_sent'] || 0, color: 'bg-orange-500' },
+                    { label: 'Paid', count: pipeline['payment_received'] || 0, color: 'bg-emerald-500' },
+                    { label: 'Order Created', count: pipeline['order_created'] || 0, color: 'bg-blue-700' },
+                    { label: 'Confirmed', count: pipeline['converted'] || 0, color: 'bg-primary' },
+                  ]}
+                />
+                <Separator />
+                <div className="text-xs font-semibold text-muted-foreground mb-2">Sales Readiness</div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground">Quotes ready</span>
+                    <span className="font-bold text-foreground">{kpi?.quotesPending ?? 0}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground">Contracts pending</span>
+                    <span className="font-bold text-foreground">{kpi?.contractsPending ?? 0}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground">Payments pending</span>
+                    <span className="font-bold text-foreground">{kpi?.paymentsPending ?? 0}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground">Fallback queue</span>
+                    <span className="font-bold text-foreground">{kpi?.fallbackQueueCount ?? 0}</span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <QuickAction label="Create Quote" route="/sales/quotes/new" icon={FileText} />
+                  <QuickAction label="Open Lead Hub" route="/sales/leads" icon={Users} />
+                  <QuickAction label="Follow-ups" route="/admin/alerts" icon={Bell} />
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
-      {/* ════════ SECTION 5 — OPERATIONS SNAPSHOT ════════ */}
-      <section>
-        <SectionHeader
-          title="Operations Snapshot"
-          subtitle="Today's dispatch and service activity"
-          action={{ label: 'Dispatch', route: '/dispatch/calendar' }}
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
-          <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'N/A'} icon={Package} route="/dispatch/today" />
-          <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'N/A'} icon={Truck} route="/dispatch/today" />
-          <SnapshotCard label="Swap Jobs" value="N/A" icon={Activity} route="/dispatch/today" />
-          <SnapshotCard label="Dump Returns" value="N/A" icon={MapPin} route="/dispatch/yard-hold" />
-          <SnapshotCard label="Drivers On Route" value="N/A" icon={Truck} route="/admin/drivers" />
-          <SnapshotCard label="Services Paused" value="N/A" icon={Clock} route="/dispatch/yard-hold" />
-        </div>
-        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-3 md:mt-4">
-          <div className="flex gap-2 w-max md:w-auto md:flex-wrap">
-            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/calendar">Open Dispatch</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/today">Runs Calendar</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl shrink-0"><Link to="/dispatch/control-tower">Route Planner</Link></Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════ SECTION 6 — DRIVER + FLEET ════════ */}
-      <div className="grid lg:grid-cols-2 gap-8">
-        <section>
-          <SectionHeader title="Driver App" action={{ label: 'Open Driver App', route: '/driver' }} />
-          <div className="grid grid-cols-2 gap-3">
-            <SnapshotCard label="Drivers Logged In" value="No data yet" icon={Users} route="/admin/drivers" />
-            <SnapshotCard label="Runs In Progress" value={kpi?.jobsToday ?? 'No data yet'} icon={Truck} route="/dispatch/today" />
-            <SnapshotCard label="Dump Tickets Pending" value="No data yet" icon={FileText} route="/admin/tickets" />
-            <SnapshotCard label="Inspections Pending" value="Not built yet" icon={Eye} route={null} />
-          </div>
-        </section>
-        <section>
-          <SectionHeader title="Fleet & Maintenance" action={{ label: 'Fleet Dashboard', route: '/admin/drivers' }} />
-          <div className="grid grid-cols-2 gap-3">
-            <SnapshotCard label="Active Trucks" value="No data yet" icon={Car} route="/admin/drivers" />
-            <SnapshotCard label="Maintenance Alerts" value="Not built yet" icon={Wrench} route={null} />
-            <SnapshotCard label="Insurance Expiring" value="Not built yet" icon={Shield} route={null} />
-            <SnapshotCard label="GPS / Camera Status" value="No data yet" icon={Camera} route="/admin/fleet/cameras" />
-          </div>
-          <div className="flex flex-wrap gap-2 mt-4">
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/drivers">Open Fleet</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/fleet/cameras">Cameras</Link></Button>
-          </div>
-        </section>
+        {/* Customer 360 Summary */}
+        {vis.showCustomers && (
+          <section>
+            <SectionHeader
+              title="Customer 360"
+              subtitle="Customer operations snapshot"
+              action={{ label: 'Customer Search', route: '/admin/customers' }}
+            />
+            <Card>
+              <CardContent className="p-5 space-y-4">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <SnapshotCard label="Active Customers" value={kpi?.activeCustomers || 'N/A'} icon={Users} route="/admin/customers" />
+                  <SnapshotCard label="Open Orders" value={kpi?.ordersReadyForDispatch || 'N/A'} icon={Package} route="/admin/orders" />
+                  <SnapshotCard label="Outstanding Balances" value={kpi?.overdueInvoices || 'N/A'} icon={DollarSign} route="/admin/overdue" />
+                  <SnapshotCard label="Open Requests" value={kpi?.openRequests || 'N/A'} icon={MessageSquare} route="/admin/alerts" />
+                </div>
+                <Separator />
+                <div className="flex flex-wrap gap-2">
+                  <QuickAction label="Customer Search" route="/admin/customers" icon={SearchIcon} />
+                  <QuickAction label="Outstanding Balances" route="/admin/overdue" icon={DollarSign} />
+                  <QuickAction label="Recent Orders" route="/admin/orders" icon={Package} />
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
       </div>
 
-      {/* ════════ SECTION 7 — FINANCE ════════ */}
-      <section>
-        <SectionHeader
-          title="Finance Overview"
-          subtitle="Billing, payments, and accounts receivable"
-          action={{ label: 'Invoices', route: '/finance/invoices' }}
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <SnapshotCard label="Invoices Today" value="No data yet" icon={FileText} route="/finance/invoices" />
-          <SnapshotCard label="Payments Collected" value="No data yet" icon={DollarSign} route="/finance/payments" />
-          <SnapshotCard label="Approvals Pending" value={kpi?.approvalsPending ?? 'No data yet'} icon={CheckCircle2} route="/admin/approval-queue" />
-          <SnapshotCard label="Outstanding Balance" value="No data yet" icon={Layers} route="/finance/ar-aging" />
-          <SnapshotCard label="Overdue Accounts" value={kpi?.overdueInvoices ?? 'No data yet'} icon={AlertTriangle} route="/admin/overdue" />
-          <SnapshotCard label="Dump Fee Reconciliation" value="No data yet" icon={FileText} route="/admin/tickets" />
-        </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/finance/invoices">Open Invoices</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/finance/payments">Open Payments</Link></Button>
-          <Button asChild variant="outline" size="sm" className="h-9 text-xs rounded-xl"><Link to="/admin/approval-queue">Approval Queue</Link></Button>
-        </div>
-      </section>
-
-      {/* ════════ SECTION 8 — WEBSITE + SEO ════════ */}
-      <div className="grid lg:grid-cols-2 gap-8">
+      {/* ════════ DISPATCH OPERATIONS ════════ */}
+      {vis.showDispatch && (
         <section>
-          <SectionHeader title="Website Health" action={{ label: 'Diagnostics', route: '/admin/qa/control-center' }} />
-          <Card>
-            <CardContent className="p-4 space-y-0.5">
-              <ModuleRow name="Homepage" status="LIVE" route="/" />
-              <ModuleRow name="Quote Flow" status="LIVE" route="/quote" />
-              <ModuleRow name="AI Assistant" status="LIVE" route="/admin/ai/performance" />
-              <ModuleRow name="Photo Analysis" status="LIVE" route="/waste-vision" />
-              <ModuleRow name="Contact Requests" status="LIVE" route="/contact" />
-            </CardContent>
-          </Card>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/qa/build-info">Build Info</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/qa/env-health">Env Health</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/qa/control-center">Website Diagnostics</Link></Button>
+          <SectionHeader
+            title="Dispatch Operations"
+            subtitle="Today's dispatch and service activity"
+            action={{ label: 'Open Dispatch', route: '/dispatch/calendar' }}
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            <SnapshotCard label="Deliveries Today" value={kpi?.deliveriesToday || 'N/A'} icon={Package} route="/dispatch/today" />
+            <SnapshotCard label="Pickups Today" value={kpi?.pickupsToday || 'N/A'} icon={Truck} route="/dispatch/today" />
+            <SnapshotCard label="Unassigned Orders" value={kpi?.ordersReadyForDispatch || 'N/A'} icon={AlertTriangle} route="/admin/orders" />
+            <SnapshotCard label="Active Runs" value={kpi?.jobsToday || 'N/A'} icon={Route} route="/dispatch/today" />
+            <SnapshotCard label="Drivers On Route" value={kpi?.driversActive || 'N/A'} icon={Truck} route="/admin/drivers" />
+            <SnapshotCard label="Paused Services" value="N/A" icon={Clock} route="/dispatch/yard-hold" />
+          </div>
+          <div className="flex items-center gap-3 mt-3">
+            <div className="text-xs text-muted-foreground">Operations Readiness:</div>
+            <div className="flex gap-1.5">
+              {[
+                { label: 'Ready', count: kpi?.ordersReadyForDispatch ?? 0, color: 'bg-emerald-500' },
+                { label: 'Blocked', count: 0, color: 'bg-destructive' },
+                { label: 'Pending Payment', count: kpi?.paymentsPending ?? 0, color: 'bg-amber-500' },
+              ].map(r => (
+                <span key={r.label} className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full text-white', r.color)}>
+                  {r.count} {r.label}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-3">
+            <div className="flex gap-2 w-max md:w-auto md:flex-wrap">
+              <QuickAction label="Dispatch Calendar" route="/dispatch/calendar" icon={Calendar} />
+              <QuickAction label="Today's Board" route="/dispatch/today" icon={Activity} />
+              <QuickAction label="Control Tower" route="/dispatch/control-tower" icon={MapPin} />
+              <QuickAction label="Yard Hold" route="/dispatch/yard-hold" icon={Home} />
+              <QuickAction label="Route Planner" route="/dispatch/control-tower" icon={Route} />
+            </div>
           </div>
         </section>
+      )}
 
-        <section>
-          <SectionHeader title="SEO & Local Visibility" action={{ label: 'SEO Dashboard', route: '/admin/seo/dashboard' }} />
-          <Card>
-            <CardContent className="p-4 space-y-0.5">
-              <ModuleRow name="SEO Health Score" status="LIVE" route="/admin/seo/health" />
-              <ModuleRow name={`City Pages Active (${kpi?.cityPagesActive ?? '…'})`} status="LIVE" route="/admin/seo/cities" />
-              <ModuleRow name={`ZIP Pages Active (${kpi?.zipPagesActive ?? '…'})`} status="LIVE" route="/admin/seo/pages" />
-              <ModuleRow name="Sitemap Status" status="LIVE" route="/admin/seo/sitemap" />
-              <ModuleRow name="Indexing Status" status="LIVE" route="/admin/seo/indexing" />
-              <ModuleRow name="Google Business Profile" status="LIVE" route="/admin/seo/gbp-plan" />
-            </CardContent>
-          </Card>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/seo/health">SEO Health</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/qa/route-health">Route Health</Link></Button>
-            <Button asChild variant="outline" size="sm" className="h-8 text-xs rounded-xl"><Link to="/admin/qa/control-center">Website Diagnostics</Link></Button>
-          </div>
-        </section>
+      {/* ════════ DRIVER + FLEET ROW ════════ */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {vis.showDriver && (
+          <section>
+            <SectionHeader title="Driver & Field Ops" action={{ label: 'Driver App', route: '/driver' }} />
+            <div className="grid grid-cols-2 gap-2.5">
+              <SnapshotCard label="Drivers Active" value={kpi?.driversActive || 'N/A'} icon={Users} route="/admin/drivers" />
+              <SnapshotCard label="Runs In Progress" value={kpi?.jobsToday ?? 'N/A'} icon={Truck} route="/dispatch/today" />
+              <SnapshotCard label="Dump Tickets Pending" value="No data yet" icon={FileText} route="/admin/tickets" />
+              <SnapshotCard label="Missing Proof" value="No data yet" icon={Camera} route="/admin/tickets" />
+            </div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <QuickAction label="Driver App" route="/driver" icon={Truck} />
+              <QuickAction label="Dump Tickets" route="/admin/tickets" icon={FileText} />
+            </div>
+          </section>
+        )}
+
+        {vis.showFleet && (
+          <section>
+            <SectionHeader title="Fleet & Maintenance" action={{ label: 'Fleet', route: '/admin/drivers' }} />
+            <div className="grid grid-cols-2 gap-2.5">
+              <SnapshotCard label="Active Trucks" value="No data yet" icon={Car} route="/admin/drivers" />
+              <SnapshotCard label="Maintenance Alerts" value="No data yet" icon={Wrench} route="/admin/maintenance" />
+              <SnapshotCard label="Insurance Expiring" value="No data yet" icon={Shield} route="/admin/drivers" />
+              <SnapshotCard label="Camera/GPS Status" value="No data yet" icon={Camera} route="/admin/fleet/cameras" />
+            </div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <QuickAction label="Fleet Dashboard" route="/admin/drivers" icon={Car} />
+              <QuickAction label="Cameras" route="/admin/fleet/cameras" icon={Camera} />
+              <QuickAction label="Maintenance" route="/admin/maintenance" icon={Wrench} />
+            </div>
+          </section>
+        )}
       </div>
 
-      {/* ════════ SECTION 9 — INTEGRATIONS ════════ */}
-      <section>
-        <SectionHeader
-          title="Integrations"
-          subtitle="External service connectivity"
-          action={{ label: 'Functions Map', route: '/admin/setup/functions' }}
-        />
-        <Card>
-          <CardContent className="p-5">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-0.5">
-              <div className="space-y-0.5">
-                <ModuleRow name="Google Workspace" status="LIVE" route="/admin/google" />
-                <ModuleRow name="Gmail" status="LIVE" route="/admin/google" />
-                <ModuleRow name="Google Calendar" status="LIVE" route="/admin/google" />
-                <ModuleRow name="Google Drive" status="LIVE" route="/admin/google" />
-              </div>
-              <div className="space-y-0.5">
-                <ModuleRow name="Twilio / SMS" status="LIVE" route="/admin/telephony/calls" />
-                <ModuleRow name="Telephony" status="LIVE" route="/admin/telephony/calls" />
-                <ModuleRow name="Maps & Routing" status="LIVE" route="/dispatch/control-tower" />
-              </div>
-              <div className="space-y-0.5">
-                <ModuleRow name="Payment Gateway" status="LIVE" route="/finance/payments" />
-                <ModuleRow name="Email (Resend)" status="DRY_RUN" route="/admin/email-config" />
-                <ModuleRow name="GoHighLevel" status="DRY_RUN" route="/admin/ghl" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      {/* ════════ FINANCE ════════ */}
+      {vis.showFinance && (
+        <section>
+          <SectionHeader
+            title="Finance Overview"
+            subtitle="Billing, payments, and accounts receivable"
+            action={{ label: 'Invoices', route: '/finance/invoices' }}
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <SnapshotCard label="Invoices Today" value="No data yet" icon={FileText} route="/finance/invoices" />
+            <SnapshotCard label="Payments Collected" value="No data yet" icon={DollarSign} route="/finance/payments" />
+            <SnapshotCard label="Approvals Pending" value={kpi?.approvalsPending ?? 'N/A'} icon={CheckCircle2} route="/admin/approval-queue" />
+            <SnapshotCard label="Outstanding Balance" value="No data yet" icon={Layers} route="/finance/ar-aging" />
+            <SnapshotCard label="Overdue Accounts" value={kpi?.overdueInvoices ?? 'N/A'} icon={AlertTriangle} route="/admin/overdue" />
+            <SnapshotCard label="Dump Fee Reconciliation" value="No data yet" icon={FileText} route="/admin/tickets" />
+          </div>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <QuickAction label="Invoices" route="/finance/invoices" icon={FileText} />
+            <QuickAction label="Payments" route="/finance/payments" icon={DollarSign} />
+            <QuickAction label="Approval Queue" route="/admin/approval-queue" icon={CheckCircle2} />
+            <QuickAction label="Overdue" route="/admin/overdue" icon={AlertTriangle} />
+          </div>
+        </section>
+      )}
 
-      {/* ════════ SECTION 10 — QUICK ACCESS GRID ════════ */}
-      <section>
-        <SectionHeader title="Quick Access" subtitle="Jump to any department" />
-        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
-          {QUICK_ACCESS_GRID.map(item => (
-            <QuickAccessCard key={item.label} {...item} />
-          ))}
-        </div>
-      </section>
+      {/* ════════ SEO + AI ROW ════════ */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {vis.showSEO && (
+          <section>
+            <SectionHeader title="SEO & Growth" action={{ label: 'SEO Dashboard', route: '/admin/seo/dashboard' }} />
+            <Card>
+              <CardContent className="p-4 space-y-0.5">
+                <ModuleRow name="SEO Health Score" status="LIVE" route="/admin/seo/health" />
+                <ModuleRow name={`City Pages (${kpi?.cityPagesActive ?? '…'})`} status="LIVE" route="/admin/seo/cities" />
+                <ModuleRow name={`ZIP Pages (${kpi?.zipPagesActive ?? '…'})`} status="LIVE" route="/admin/seo/pages" />
+                <ModuleRow name="Sitemap Status" status="LIVE" route="/admin/seo/sitemap" />
+                <ModuleRow name="Google Business Profile" status="LIVE" route="/admin/seo/gbp-plan" />
+                <ModuleRow name="Google Ads" status="LIVE" route="/admin/ads" />
+              </CardContent>
+            </Card>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <QuickAction label="SEO Health" route="/admin/seo/health" icon={BarChart3} />
+              <QuickAction label="Route Health" route="/admin/qa/route-health" icon={Activity} />
+              <QuickAction label="Duplicate Pages" route="/admin/qa/duplicate-pages" icon={Layers} />
+            </div>
+          </section>
+        )}
+
+        {vis.showAI && (
+          <section>
+            <SectionHeader title="AI Control Layer" action={{ label: 'AI Control Center', route: '/admin/ai/control-center' }} />
+            <Card>
+              <CardContent className="p-4 space-y-0.5">
+                <ModuleRow name="AI Mode" status="DRY_RUN" route="/admin/ai/control-center" />
+                <ModuleRow name="Sales Copilot" status="LIVE" route="/admin/ai/sales" />
+                <ModuleRow name="CS Copilot" status="LIVE" route="/admin/ai/customer-service" />
+                <ModuleRow name="Dispatch Copilot" status="LIVE" route="/admin/ai/dispatch" />
+                <ModuleRow name="AI Performance" status="LIVE" route="/admin/ai/performance" />
+                <ModuleRow name="AI Chat Console" status="LIVE" route="/admin/ai/chat" />
+              </CardContent>
+            </Card>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <QuickAction label="AI Control" route="/admin/ai/control-center" icon={Brain} />
+              <QuickAction label="Sales AI" route="/admin/ai/sales" icon={TrendingUp} />
+              <QuickAction label="AI Performance" route="/admin/ai/performance" icon={BarChart3} />
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* ════════ INTEGRATIONS ════════ */}
+      {vis.showIntegrations && (
+        <section>
+          <SectionHeader
+            title="Integrations"
+            subtitle="External service connectivity"
+            action={{ label: 'Functions Map', route: '/admin/setup/functions' }}
+          />
+          <Card>
+            <CardContent className="p-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-0.5">
+                <div className="space-y-0.5">
+                  <ModuleRow name="Google Workspace" status="LIVE" route="/admin/google" />
+                  <ModuleRow name="Gmail" status="LIVE" route="/admin/google" />
+                  <ModuleRow name="Google Calendar" status="LIVE" route="/admin/google" />
+                  <ModuleRow name="Google Drive" status="LIVE" route="/admin/google" />
+                </div>
+                <div className="space-y-0.5">
+                  <ModuleRow name="Twilio / SMS" status="LIVE" route="/admin/telephony/calls" />
+                  <ModuleRow name="Telephony" status="LIVE" route="/admin/telephony/calls" />
+                  <ModuleRow name="Maps & Routing" status="LIVE" route="/dispatch/control-tower" />
+                </div>
+                <div className="space-y-0.5">
+                  <ModuleRow name="Payment Gateway" status="LIVE" route="/finance/payments" />
+                  <ModuleRow name="Email (Resend)" status="DRY_RUN" route="/admin/email-config" />
+                  <ModuleRow name="GoHighLevel" status="DRY_RUN" route="/admin/ghl" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {/* ════════ QUICK ACCESS GRID ════════ */}
+      {vis.showQuickAccess && (
+        <section>
+          <SectionHeader title="Quick Access" subtitle="Jump to any department" />
+          <div className="space-y-4">
+            {[
+              {
+                group: 'Sales', items: [
+                  { label: 'Lead Hub', icon: Users, route: '/sales/leads', description: 'All leads' },
+                  { label: 'Quotes', icon: FileText, route: '/sales/quotes', description: 'Quote management' },
+                  { label: 'Contracts', icon: FileText, route: '/sales/quotes', description: 'Contract flow' },
+                  { label: 'Follow-Ups', icon: Bell, route: '/admin/alerts', description: 'Pending actions' },
+                ], show: vis.showSales,
+              },
+              {
+                group: 'Customers', items: [
+                  { label: 'Customer Search', icon: SearchIcon, route: '/admin/customers', description: 'Find customers' },
+                  { label: 'Customer 360', icon: Users, route: '/admin/customers', description: 'Full profiles' },
+                  { label: 'Requests', icon: MessageSquare, route: '/admin/alerts', description: 'Service requests' },
+                  { label: 'Health', icon: Activity, route: '/admin/customer-health', description: 'Customer health' },
+                ], show: vis.showCustomers,
+              },
+              {
+                group: 'Operations', items: [
+                  { label: 'Dispatch', icon: Calendar, route: '/dispatch/calendar', description: 'Schedule & assign' },
+                  { label: 'Runs', icon: Route, route: '/dispatch/today', description: "Today's runs" },
+                  { label: 'Driver App', icon: Truck, route: '/driver', description: 'Field execution' },
+                  { label: 'Fleet', icon: Car, route: '/admin/drivers', description: 'Vehicles & maintenance' },
+                ], show: vis.showDispatch,
+              },
+              {
+                group: 'Finance', items: [
+                  { label: 'Invoices', icon: FileText, route: '/finance/invoices', description: 'Invoice mgmt' },
+                  { label: 'Payments', icon: DollarSign, route: '/finance/payments', description: 'Collections' },
+                  { label: 'Approval Queue', icon: CheckCircle2, route: '/admin/approval-queue', description: 'Pending approvals' },
+                  { label: 'Overdue', icon: AlertTriangle, route: '/admin/overdue', description: 'Past-due accounts' },
+                ], show: vis.showFinance,
+              },
+              {
+                group: 'Growth', items: [
+                  { label: 'SEO Health', icon: BarChart3, route: '/admin/seo/health', description: 'Page scores' },
+                  { label: 'Route Health', icon: Activity, route: '/admin/qa/route-health', description: 'Route audit' },
+                  { label: 'Duplicate Pages', icon: Layers, route: '/admin/qa/duplicate-pages', description: 'Dedup audit' },
+                  { label: 'Google Ads', icon: Megaphone, route: '/admin/ads', description: 'Campaigns' },
+                ], show: vis.showSEO,
+              },
+              {
+                group: 'System', items: [
+                  { label: 'Integrations', icon: Link2, route: '/admin/setup/functions', description: 'API connections' },
+                  { label: 'Domain Health', icon: Globe, route: '/admin/qa/route-health', description: 'DNS & SSL' },
+                  { label: 'Build Info', icon: Shield, route: '/admin/qa/build-info', description: 'Version info' },
+                  { label: 'Module Registry', icon: Layers, route: '/admin/modules', description: 'All modules' },
+                ], show: vis.showIntegrations,
+              },
+            ].filter(g => g.show).map(group => (
+              <div key={group.group}>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{group.group}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {group.items.map(item => (
+                    <QuickAccessCard key={item.label} {...item} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ════════ FOOTER ════════ */}
       <Separator />
