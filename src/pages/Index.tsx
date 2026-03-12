@@ -502,7 +502,7 @@ const Index = () => {
                   ))}
                 </div>
                 <Button asChild size="lg" className="rounded-full font-semibold px-6">
-                  <Link to="/quote?v3=1&type=contractor">
+                  <Link to={quoteUrl({ type: 'contractor' })}>
                     Request Contractor Pricing
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
