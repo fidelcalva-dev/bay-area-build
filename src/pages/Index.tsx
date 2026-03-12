@@ -531,7 +531,7 @@ const Index = () => {
           </h2>
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-4">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
-              <Link to="/quote?v3=1">
+              <Link to={quoteUrl()}>
                 Get Exact Price
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
