@@ -525,6 +525,31 @@ export default function DumpsterRentalSanFrancisco() {
         </div>
       </section>
 
+      {/* ── SIZE & SERVICE LINKS ──────────────────────────── */}
+      <section className="section-padding bg-background">
+        <div className="container-narrow">
+          <h2 className="heading-md text-foreground mb-6 text-center">Explore Dumpster Services in San Francisco</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { to: '/dumpster-rental/san-francisco/10-yard', label: '10 Yard Dumpster SF', desc: 'Compact size for tight SF driveways and small projects.' },
+              { to: '/dumpster-rental/san-francisco/20-yard', label: '20 Yard Dumpster SF', desc: 'Most popular for home renovations in the city.' },
+              { to: '/dumpster-rental/san-francisco/30-yard', label: '30 Yard Dumpster SF', desc: 'Large capacity for commercial and construction jobs.' },
+              { to: '/dumpster-rental-oakland-ca', label: 'Dumpster Rental Oakland', desc: 'East Bay service from our Oakland yard.' },
+              { to: '/dumpster-rental-san-jose-ca', label: 'Dumpster Rental San Jose', desc: 'South Bay delivery from our San Jose yard.' },
+              { to: '/dumpster-rental/san-francisco/concrete', label: 'Concrete Dumpster SF', desc: 'Flat-fee concrete and heavy material disposal.' },
+              { to: '/contractors', label: 'Contractor Programs', desc: 'Priority scheduling for licensed contractors.' },
+              { to: '/sizes', label: 'All Dumpster Sizes', desc: 'Compare all sizes from 5 to 50 yards.' },
+              { to: '/materials', label: 'Accepted Materials', desc: 'What you can and cannot dispose of.' },
+            ].map((link) => (
+              <Link key={link.to} to={link.to} className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors group">
+                <h3 className="font-semibold text-foreground text-sm mb-1 group-hover:text-primary transition-colors">{link.label}</h3>
+                <p className="text-xs text-muted-foreground">{link.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── 12. RELATED LOCATIONS ─────────────────────────── */}
       <RelatedLocations currentCity="san-francisco-ca" pageContext="sf-landing" title="Also Serving Nearby Areas" />
 
