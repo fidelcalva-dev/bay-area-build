@@ -160,7 +160,7 @@ export function V3QuoteFlow() {
     urlType && ['homeowner', 'contractor', 'commercial'].includes(urlType) ? urlType : null
   );
   const [selectedProject, setSelectedProject] = useState<ProjectCard | null>(null);
-  const [size, setSize] = useState(20);
+  const [size, setSize] = useState(urlSize ? parseInt(urlSize, 10) || 20 : 20);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
