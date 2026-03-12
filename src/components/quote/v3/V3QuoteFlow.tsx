@@ -13,7 +13,7 @@ import {
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
   Warehouse, UtensilsCrossed, Trees, Hammer, Mountain, Construction,
   DoorOpen, Store, RefreshCw, Scale, Calendar, Star, Info, RotateCcw, SkipForward,
-  Award, Zap, Navigation,
+  Award, Zap, Navigation, MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
