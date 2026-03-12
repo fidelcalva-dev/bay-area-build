@@ -132,6 +132,7 @@ export default function SeoCityPage() {
   }
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
+  const yardCluster = getYardCluster(city.city_slug);
   const neighborhoods = city.neighborhoods_json || [];
   const sections = (page?.sections_json as unknown as ContentSection[] | null) || [];
   const dbFaqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
@@ -153,6 +154,9 @@ export default function SeoCityPage() {
 
   // FAQ schema
   const faqSchema = generateFAQSchema(faqs);
+
+  const yardLabel = yardCluster ? `${yardCluster.yardCity} Yard` : (yard?.city ? `${yard.city} Yard` : 'Bay Area');
+  const regionLabel = yardCluster?.regionLabel || city.county || 'Bay Area';
 
   return (
     <Layout title={pageTitle} description={pageDescription}>
@@ -179,9 +183,12 @@ export default function SeoCityPage() {
             <h1 className="heading-xl mb-4">Dumpster Rental in {city.city_name}, CA</h1>
             <p className="text-xl text-primary-foreground/85 mb-2">Professional roll-off dumpster rental services in {city.city_name} and surrounding areas.</p>
             <p className="text-primary-foreground/70 mb-6">{city.local_intro}</p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
-                <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
+                <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              </Button>
+              <Button asChild variant="heroOutline" size="lg">
+                <Link to="/quote?step=photo"><Upload className="w-4 h-4 mr-2" />Upload Photo for Size Help</Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg" onClick={trackCallClick}>
                 <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
@@ -197,7 +204,7 @@ export default function SeoCityPage() {
       <section className="py-6 bg-muted/50 border-b border-border">
         <div className="container-wide">
           <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Local Yard in {yard?.city || 'Bay Area'}</span></div>
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /><span>Dispatched from {yardLabel}</span></div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /><span>Same-Day Delivery Available</span></div>
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>Licensed & Insured</span></div>
             <div className="flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /><span>5–50 Yard Sizes</span></div>
@@ -213,11 +220,38 @@ export default function SeoCityPage() {
             Calsan Dumpsters Pro provides professional dumpster rental services in {city.city_name} for homeowners, contractors, and businesses. 
             Whether you're tackling a home remodel, roof replacement, construction project, or property cleanout, we deliver the right size dumpster to your {city.city_name} address.
           </p>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-muted-foreground leading-relaxed mb-4">
             We serve {city.city_name} and surrounding communities throughout {city.county || 'the Bay Area'} with same-day delivery based on availability. 
             Our transparent pricing means you see your exact cost before confirming—no hidden fees or surprise charges.
           </p>
+          {yardCluster && city.city_slug !== yardCluster.cluster && (
+            <p className="text-muted-foreground leading-relaxed italic">
+              Serving {city.city_name} from our {yardCluster.yardCity} yard — fast {yardCluster.regionLabel} dispatch for residential and commercial projects.
+            </p>
+          )}
         </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide max-w-4xl mx-auto">
+          <h2 className="heading-lg text-foreground mb-8 text-center">How Dumpster Rental Works in {city.city_name}</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { step: '1', title: 'Get Your Price', desc: `Enter your ${city.city_name} ZIP code for instant, transparent pricing.` },
+              { step: '2', title: 'Schedule Delivery', desc: 'Pick your delivery date. Same-day available based on scheduling.' },
+              { step: '3', title: 'Fill Your Dumpster', desc: `Load your debris at your ${city.city_name} site. Standard 7-day rental included.` },
+              { step: '4', title: 'We Pick It Up', desc: 'Call when full or let the rental period end — we handle removal and disposal.' },
+            ].map(s => (
+              <div key={s.step} className="text-center">
+                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-3 font-bold text-lg">{s.step}</div>
+                <h3 className="font-semibold text-foreground mb-1">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       </section>
 
       {/* Sizes */}
