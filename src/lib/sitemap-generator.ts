@@ -50,6 +50,7 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
   { url: '/southern-california-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
   { url: '/central-valley-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
+  { url: '/north-bay-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.85 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.85 },
