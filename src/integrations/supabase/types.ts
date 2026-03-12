@@ -12111,6 +12111,96 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: string
+          expired_at: string | null
+          id: string
+          notes: string | null
+          opened_at: string | null
+          order_id: string | null
+          paid_at: string | null
+          quote_id: string | null
+          sent_at: string | null
+          sent_via: string | null
+          status: string
+          token: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          customer_id: string
+          expired_at?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          quote_id?: string | null
+          sent_at?: string | null
+          sent_via?: string | null
+          status?: string
+          token?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: string
+          expired_at?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          quote_id?: string | null
+          sent_at?: string | null
+          sent_via?: string | null
+          status?: string
+          token?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "payment_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "payment_requests_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
