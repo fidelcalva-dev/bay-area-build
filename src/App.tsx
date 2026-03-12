@@ -204,6 +204,15 @@ const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
 const SeoAuditDashboard = lazy(() => import("./pages/admin/SeoAuditDashboard"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
+// Local Search Admin Pages
+const LocalDashboard = lazy(() => import("./pages/admin/local/LocalDashboard"));
+const GoogleBusinessPage = lazy(() => import("./pages/admin/local/GoogleBusinessPage"));
+const BingPlacesPage = lazy(() => import("./pages/admin/local/BingPlacesPage"));
+const AppleBusinessPage = lazy(() => import("./pages/admin/local/AppleBusinessPage"));
+const ReviewsEnginePage = lazy(() => import("./pages/admin/local/ReviewsEnginePage"));
+const PhotosEnginePage = lazy(() => import("./pages/admin/local/PhotosEnginePage"));
+const CitationsPage = lazy(() => import("./pages/admin/local/CitationsPage"));
+
 // Marketing / Visitor Intelligence
 const VisitorsDashboard = lazy(() => import("./pages/admin/marketing/VisitorsDashboard"));
 const SessionsDashboard = lazy(() => import("./pages/admin/marketing/SessionsDashboard"));
@@ -1064,6 +1073,28 @@ const App = () => {
                 } />
                 <Route path="seo/audit" element={
                   <Suspense fallback={<PageLoader />}><SeoAuditDashboard /></Suspense>
+                } />
+                {/* Local Search Admin Routes */}
+                <Route path="local/dashboard" element={
+                  <Suspense fallback={<PageLoader />}><LocalDashboard /></Suspense>
+                } />
+                <Route path="local/google-business" element={
+                  <Suspense fallback={<PageLoader />}><GoogleBusinessPage /></Suspense>
+                } />
+                <Route path="local/bing-places" element={
+                  <Suspense fallback={<PageLoader />}><BingPlacesPage /></Suspense>
+                } />
+                <Route path="local/apple-business" element={
+                  <Suspense fallback={<PageLoader />}><AppleBusinessPage /></Suspense>
+                } />
+                <Route path="local/reviews" element={
+                  <Suspense fallback={<PageLoader />}><ReviewsEnginePage /></Suspense>
+                } />
+                <Route path="local/photos" element={
+                  <Suspense fallback={<PageLoader />}><PhotosEnginePage /></Suspense>
+                } />
+                <Route path="local/citations" element={
+                  <Suspense fallback={<PageLoader />}><CitationsPage /></Suspense>
                 } />
                 <Route path="qa/workflow-graph" element={
                   <Suspense fallback={<PageLoader />}><WorkflowGraph /></Suspense>

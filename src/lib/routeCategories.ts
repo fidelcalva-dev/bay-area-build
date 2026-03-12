@@ -363,6 +363,16 @@ const crmSeoAdmin: RouteEntry[] = [
   { path: '/admin/seo/audit', name: 'SEO Audit', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true },
 ];
 
+const crmLocalSearch: RouteEntry[] = [
+  { path: '/admin/local/dashboard', name: 'Local Dashboard', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: MapPinned, sidebarLabel: 'Local Search', sidebarOrder: 30 },
+  { path: '/admin/local/google-business', name: 'Google Business', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: MapPin, sidebarLabel: 'Google Business', sidebarOrder: 31 },
+  { path: '/admin/local/bing-places', name: 'Bing Places', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Globe, sidebarLabel: 'Bing Places', sidebarOrder: 32 },
+  { path: '/admin/local/apple-business', name: 'Apple Business', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: MapPin, sidebarLabel: 'Apple Business', sidebarOrder: 33 },
+  { path: '/admin/local/reviews', name: 'Reviews Engine', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Star, sidebarLabel: 'Reviews', sidebarOrder: 34 },
+  { path: '/admin/local/photos', name: 'Photos Engine', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: MapPin, sidebarLabel: 'Local Photos', sidebarOrder: 35 },
+  { path: '/admin/local/citations', name: 'Citations Tracker', group: 'CRM_INTERNAL', subcategory: 'SEO Admin', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Link2, sidebarLabel: 'Citations', sidebarOrder: 36 },
+];
+
 const crmMarketingAnalytics: RouteEntry[] = [
   { path: '/admin/marketing/dashboard', name: 'Marketing Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: BarChart3, sidebarLabel: 'Marketing', sidebarOrder: 10 },
   { path: '/admin/marketing/visitors', name: 'Visitors Dashboard', group: 'CRM_INTERNAL', subcategory: 'Marketing Analytics', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'seo-marketing', sidebarIcon: Users, sidebarLabel: 'Visitors', sidebarOrder: 11 },
@@ -488,6 +498,7 @@ export const ALL_ROUTES: RouteEntry[] = [
   ...crmTelephony,
   ...crmGoogleAds,
   ...crmSeoAdmin,
+  ...crmLocalSearch,
   ...crmMarketingAnalytics,
   ...crmAnalytics,
   ...crmAI,
