@@ -439,7 +439,51 @@ export function V3QuoteFlow() {
     setStep(prev[step]);
   };
 
-  // Handle project selection
+  // Progressive lead capture — fire at key milestones
+  const leadCaptured = useRef<Record<string, boolean>>({});
+  const capturePartialLead = useCallback(async (milestone: string) => {
+    if (leadCaptured.current[milestone]) return;
+    leadCaptured.current[milestone] = true;
+    try {
+      await supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'website_quote',
+          source_detail: `quote_${milestone}`,
+          name: customerName || null,
+          phone: customerPhone || null,
+          email: customerEmail || null,
+          zip: zip || null,
+          city: addressResult?.city || zoneResult?.cityName || null,
+          address: addressResult?.formattedAddress || null,
+          project_type: selectedProject?.label || null,
+          material_category: materialTypeForPricing || null,
+          message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            milestone,
+            size,
+            customer_type: customerType,
+            project_id: selectedProject?.id,
+            is_heavy: isHeavy,
+            quote_amount: quote.isValid ? quote.subtotal : null,
+          },
+        },
+      });
+    } catch (err) {
+      console.warn('Partial lead capture failed:', err);
+    }
+  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote]);
+
+  // Fire progressive captures on step transitions
+  useEffect(() => {
+    if (step === 'size' && zip && selectedProject) {
+      capturePartialLead('quote_started');
+    }
+    if (step === 'price' && quote.isValid) {
+      capturePartialLead('quote_priced');
+    }
+  }, [step, zip, selectedProject, quote.isValid]);
+
   const handleProjectSelect = (project: ProjectCard) => {
     setSelectedProject(project);
     setSize(project.suggestedSize);
