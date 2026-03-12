@@ -13,7 +13,7 @@ import {
   CheckCircle, Shield, Clock, Truck, Home, HardHat, Building2,
   Warehouse, UtensilsCrossed, Trees, Hammer, Mountain, Construction,
   DoorOpen, Store, RefreshCw, Scale, Calendar, Star, Info, RotateCcw, SkipForward,
-  Award, Zap, Navigation,
+  Award, Zap, Navigation, MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -134,24 +134,33 @@ export function V3QuoteFlow() {
   const pricingData = usePricingData();
   const { sizes: DUMPSTER_SIZES } = pricingData;
 
+  // URL param prefill
+  const urlZip = searchParams.get('zip') || '';
+  const urlType = searchParams.get('type') as CustomerType | null;
+  const urlProject = searchParams.get('project') || '';
+  const urlSize = searchParams.get('size');
+  const prefillApplied = useRef(false);
+
   // Draft autosave
   const urlDraftToken = searchParams.get('draft');
   const draft = useQuoteDraftAutosave(urlDraftToken);
   const draftApplied = useRef(false);
   const quoteStartedFired = useRef(false);
 
-  // Step state
+  // Step state — start at zip, will auto-advance if prefilled
   const [step, setStep] = useState<V3Step>('zip');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [stepStartTime, setStepStartTime] = useState(Date.now());
 
-  // Form state
-  const [zip, setZip] = useState('');
-  const [customerType, setCustomerType] = useState<CustomerType | null>(null);
+  // Form state — initialize from URL params
+  const [zip, setZip] = useState(urlZip.length === 5 && /^\d{5}$/.test(urlZip) ? urlZip : '');
+  const [customerType, setCustomerType] = useState<CustomerType | null>(
+    urlType && ['homeowner', 'contractor', 'commercial'].includes(urlType) ? urlType : null
+  );
   const [selectedProject, setSelectedProject] = useState<ProjectCard | null>(null);
-  const [size, setSize] = useState(20);
+  const [size, setSize] = useState(urlSize ? parseInt(urlSize, 10) || 20 : 20);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -228,6 +237,7 @@ export function V3QuoteFlow() {
     setZoneResult(null);
     setWantsSwap(false);
     draftApplied.current = false;
+    prefillApplied.current = false;
   }, [draft]);
 
   // Auto-detect ZIP
@@ -295,7 +305,22 @@ export function V3QuoteFlow() {
     else setZoneResult(null);
   }, [zip, lookupZone]);
 
-  // Derived state
+  // Auto-advance past ZIP step when prefilled from homepage
+  useEffect(() => {
+    if (prefillApplied.current) return;
+    if (!zoneResult) return;
+    // Only auto-advance if ZIP came from URL and we're still on ZIP step
+    if (urlZip.length === 5 && step === 'zip') {
+      prefillApplied.current = true;
+      // If customer type was also provided, skip to project step
+      if (customerType) {
+        setStep('project');
+      } else {
+        setStep('customer-type');
+      }
+    }
+  }, [zoneResult, step, urlZip, customerType]);
+
   const isHeavy = selectedProject?.isHeavy ?? false;
   const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
@@ -414,7 +439,51 @@ export function V3QuoteFlow() {
     setStep(prev[step]);
   };
 
-  // Handle project selection
+  // Progressive lead capture — fire at key milestones
+  const leadCaptured = useRef<Record<string, boolean>>({});
+  const capturePartialLead = useCallback(async (milestone: string) => {
+    if (leadCaptured.current[milestone]) return;
+    leadCaptured.current[milestone] = true;
+    try {
+      await supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'website_quote',
+          source_detail: `quote_${milestone}`,
+          name: customerName || null,
+          phone: customerPhone || null,
+          email: customerEmail || null,
+          zip: zip || null,
+          city: addressResult?.city || zoneResult?.cityName || null,
+          address: addressResult?.formattedAddress || null,
+          project_type: selectedProject?.label || null,
+          material_category: materialTypeForPricing || null,
+          message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            milestone,
+            size,
+            customer_type: customerType,
+            project_id: selectedProject?.id,
+            is_heavy: isHeavy,
+            quote_amount: quote.isValid ? quote.subtotal : null,
+          },
+        },
+      });
+    } catch (err) {
+      console.warn('Partial lead capture failed:', err);
+    }
+  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote]);
+
+  // Fire progressive captures on step transitions
+  useEffect(() => {
+    if (step === 'size' && zip && selectedProject) {
+      capturePartialLead('quote_started');
+    }
+    if (step === 'price' && quote.isValid) {
+      capturePartialLead('quote_priced');
+    }
+  }, [step, zip, selectedProject, quote.isValid]);
+
   const handleProjectSelect = (project: ProjectCard) => {
     setSelectedProject(project);
     setSize(project.suggestedSize);
@@ -711,6 +780,23 @@ export function V3QuoteFlow() {
                )}
       {/* Content */}
       <div className="p-5 md:p-6">
+        {/* Compact service area banner when ZIP is known and past zip step */}
+        {step !== 'zip' && step !== 'placement' && zoneResult && zip && (
+          <div className="mb-4 flex items-center justify-between px-3 py-2.5 rounded-xl bg-muted/40 border border-border/50">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-xs font-medium text-foreground truncate">
+                {addressResult?.city || zoneResult.cityName || zoneResult.zoneName}, {zip}
+              </span>
+            </div>
+            <button
+              onClick={() => { setStep('zip'); prefillApplied.current = false; }}
+              className="text-xs font-medium text-primary hover:text-primary/80 transition-colors shrink-0 ml-2"
+            >
+              Change
+            </button>
+          </div>
+        )}
         {/* ============================== */}
         {/* STEP 1: ZIP + YARD MATCH */}
         {/* ============================== */}
@@ -1485,18 +1571,42 @@ export function V3QuoteFlow() {
                 className="w-full h-14 rounded-xl text-base font-semibold"
                 onClick={goNext}
               >
-                {getPriceMomentCopy(customerType, isHeavy, quote.includedTons)[isHeavy ? 'heavy' : 'general'].primaryButton}
+                Continue Booking
+                <ChevronRight className="w-5 h-5 ml-1" />
               </Button>
 
-              <Button
-                variant="outline"
-                size="default"
-                className="w-full rounded-xl"
-                onClick={() => window.open('tel:+15106802150', '_blank')}
-              >
-                <Phone className="w-4 h-4" />
-                Call (510) 680-2150
-              </Button>
+              {/* Follow-up options */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="rounded-xl text-xs"
+                  onClick={() => {
+                    capturePartialLead('text_quote_request');
+                    toast({ title: 'Quote texted!', description: "We'll text your quote details shortly." });
+                  }}
+                >
+                  <MessageSquare className="w-4 h-4 mr-1.5" />
+                  Text Me This Quote
+                </Button>
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="rounded-xl text-xs"
+                  onClick={() => {
+                    capturePartialLead('call_request');
+                    window.open('tel:+15106802150', '_blank');
+                  }}
+                >
+                  <Phone className="w-4 h-4 mr-1.5" />
+                  Call Me to Confirm
+                </Button>
+              </div>
+
+              {/* Reassurance */}
+              <p className="text-center text-xs text-muted-foreground">
+                You'll review everything before confirming. No hidden fees.
+              </p>
             </div>
           </StepTransition>
         )}

@@ -104,6 +104,14 @@ const Index = () => {
   const [heroProject, setHeroProject] = useState('');
   const isValidZip = heroZip.length === 5 && /^\d{5}$/.test(heroZip);
 
+  // Build quote URL with ZIP preserved
+  const quoteUrl = useCallback((extra?: Record<string, string>) => {
+    const params = new URLSearchParams({ v3: '1' });
+    if (isValidZip) params.set('zip', heroZip);
+    if (extra) Object.entries(extra).forEach(([k, v]) => params.set(k, v));
+    return `/quote?${params.toString()}`;
+  }, [isValidZip, heroZip]);
+
   const handleHeroQuote = useCallback(() => {
     const params = new URLSearchParams({ v3: '1' });
     if (isValidZip) params.set('zip', heroZip);
@@ -183,7 +191,7 @@ const Index = () => {
           {/* Supporting CTAs */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[520px] mx-auto">
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
-              <Link to="/quote?v3=1&tab=photo">
+              <Link to={quoteUrl({ tab: 'photo' })}>
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo for Size Help
               </Link>
@@ -250,7 +258,7 @@ const Index = () => {
               return (
                 <Link
                   key={opt.label}
-                  to={opt.to!}
+                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&tab=photo' ? quoteUrl({ tab: 'photo' }) : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to === '/quote?v3=1&type=contractor' ? quoteUrl({ type: 'contractor' }) : opt.to!}
                   className={`flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-semibold transition-all ${
                     opt.primary
                       ? 'bg-primary text-primary-foreground shadow-cta hover:bg-primary/90'
@@ -303,7 +311,7 @@ const Index = () => {
             {GENERAL_DEBRIS_SIZES.map((s) => (
               <Link
                 key={s.size}
-                to={`/quote?v3=1&size=${s.size}`}
+                to={quoteUrl({ size: String(s.size) })}
                 className="bg-card rounded-2xl border border-border p-4 text-center hover:border-primary/30 transition-colors group"
               >
                 <div className="text-2xl font-bold text-foreground mb-0.5">
@@ -376,7 +384,7 @@ const Index = () => {
             </Suspense>
             <div className="text-center mt-4">
               <Button asChild size="lg" className="rounded-full font-semibold px-8">
-                <Link to="/quote?v3=1">
+                <Link to={quoteUrl()}>
                   Get Exact Price
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
@@ -398,7 +406,7 @@ const Index = () => {
             {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
               <Link
                 key={slug}
-                to={`/quote?v3=1&project=${slug}`}
+                to={quoteUrl({ project: slug })}
                 className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
               >
                 <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -494,7 +502,7 @@ const Index = () => {
                   ))}
                 </div>
                 <Button asChild size="lg" className="rounded-full font-semibold px-6">
-                  <Link to="/quote?v3=1&type=contractor">
+                  <Link to={quoteUrl({ type: 'contractor' })}>
                     Request Contractor Pricing
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
@@ -523,13 +531,13 @@ const Index = () => {
           </h2>
           <div className="flex flex-col sm:flex-row justify-center gap-3 mb-4">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
-              <Link to="/quote?v3=1">
+              <Link to={quoteUrl()}>
                 Get Exact Price
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
-              <Link to="/quote?v3=1&tab=photo">
+              <Link to={quoteUrl({ tab: 'photo' })}>
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo
               </Link>
