@@ -513,6 +513,9 @@ export default function SeoCityPage() {
             <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
             <Link to="/contact" className="text-primary hover:underline">Contact Us</Link>
             <span className="text-muted-foreground hidden sm:inline">|</span>
+            {internalLinks.filter(l => l.type === 'service').map(link => (
+              <Link key={link.url} to={link.url} className="text-primary hover:underline">{link.text}</Link>
+            ))}
             <Link to="/why-local-yards" className="text-primary hover:underline">Why Local Yards</Link>
             <Link to="/not-a-broker" className="text-primary hover:underline">Not a Broker</Link>
             <Link to="/how-it-works" className="text-primary hover:underline">How It Works</Link>
