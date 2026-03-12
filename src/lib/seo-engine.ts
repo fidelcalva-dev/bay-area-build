@@ -356,7 +356,7 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
 
   if (pageType === 'CITY') {
     // Size links
-    for (const sz of (city.common_sizes_json || [10, 20, 30, 40])) {
+    for (const sz of (city.common_sizes_json || [5, 10, 20, 30, 40, 50])) {
       links.push({
         text: `${sz}-yard dumpster in ${city.city_name}`,
         url: citySizeUrl(city.city_slug, sz),
@@ -371,6 +371,12 @@ export function generateInternalLinks(city: SeoCity, pageType: SeoPageType, allC
         type: 'material',
       });
     }
+    // Use-case links
+    links.push(
+      { text: 'Home Remodel Dumpster Guide', url: '/use-cases/home-remodel', type: 'service' },
+      { text: 'Construction Debris Rental', url: '/use-cases/construction', type: 'service' },
+      { text: 'Garage Cleanout Dumpsters', url: '/use-cases/garage-cleanout', type: 'service' },
+    );
   }
 
   if (pageType === 'CITY_SIZE') {
