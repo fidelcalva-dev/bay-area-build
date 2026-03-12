@@ -47,8 +47,10 @@ export default function QuotePayment() {
       .then(({ data }) => {
         if (data) {
           const sizeLabel = (data.quotes as any)?.dumpster_sizes?.label || 'Dumpster';
+          // Use ?? to preserve real 0 values; || would treat 0 as falsy
+          const amount = data.balance_due ?? data.final_total ?? 0;
           setOrderInfo({
-            total: data.balance_due || data.final_total || 0,
+            total: amount,
             size: sizeLabel,
             schedDate: data.scheduled_delivery_date,
             schedWindow: data.scheduled_delivery_window,
