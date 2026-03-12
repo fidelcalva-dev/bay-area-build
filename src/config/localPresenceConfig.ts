@@ -191,7 +191,7 @@ export const REVIEW_RESPONSE_TEMPLATES: ReviewResponseTemplate[] = [
     id: 'negative-resolution',
     scenario: 'Complaint With Resolution',
     template:
-      'Hi {name}, we sincerely apologize for the inconvenience. We've looked into your order and want to make this right. Please call us at (510) 680-2150 so our team can resolve this for you directly.',
+      "Hi {name}, we sincerely apologize for the inconvenience. We've looked into your order and want to make this right. Please call us at (510) 680-2150 so our team can resolve this for you directly.",
   },
 ];
 
