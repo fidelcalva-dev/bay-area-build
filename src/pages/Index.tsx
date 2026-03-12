@@ -384,7 +384,7 @@ const Index = () => {
             </Suspense>
             <div className="text-center mt-4">
               <Button asChild size="lg" className="rounded-full font-semibold px-8">
-                <Link to="/quote?v3=1">
+                <Link to={quoteUrl()}>
                   Get Exact Price
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
