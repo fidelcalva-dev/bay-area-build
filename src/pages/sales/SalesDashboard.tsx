@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Users, FileText, TrendingUp, DollarSign,
-  Clock, Loader2, GitBranch, ScrollText, CreditCard,
+  Clock, Loader2, GitBranch, ScrollText, CreditCard, CheckCircle,
   Phone, MessageSquare, Zap, Target, Mail, Send, Truck,
   StickyNote, Package,
 } from "lucide-react";
