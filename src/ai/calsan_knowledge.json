@@ -37,7 +37,7 @@
     },
     "heavy": {
       "label": "Heavy / Inert Materials",
-      "allowedSizes": [6, 8, 10],
+      "allowedSizes": [5, 8, 10],
       "examples": ["Concrete", "Dirt", "Soil", "Brick", "Block", "Asphalt", "Rock"],
       "overagePolicy": "Flat fee pricing. Disposal is included. No extra weight charges.",
       "rules": [
