@@ -1,4 +1,5 @@
 import { Layout } from '@/components/layout/Layout';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { 
@@ -25,6 +26,7 @@ export default function Technology() {
       description="Calsan integrates yard inventory, route optimization, AI-assisted quoting, and real-time dispatch into one logistics platform for the Bay Area."
       canonical="/technology"
     >
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground py-16 md:py-24">
         <div className="container-wide">

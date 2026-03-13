@@ -44,7 +44,7 @@ const QuoteSchedule = lazy(() => import("./pages/QuoteSchedule"));
 const QuotePayment = lazy(() => import("./pages/QuotePayment"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
-const Locations = lazy(() => import("./pages/Locations"));
+// Locations merged into Areas — redirect only
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const WasteVision = lazy(() => import("./pages/WasteVision"));
@@ -71,9 +71,7 @@ const SizeLandingPage = lazy(() => import("./pages/SizeLandingPage"));
 const MaterialLandingPage = lazy(() => import("./pages/MaterialLandingPage"));
 const YardHubPage = lazy(() => import("./pages/seo/YardHubPage"));
 
-// Preview Pages (v2 Uber-like experience)
-const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
-const PreviewHome = lazy(() => import("./pages/preview/PreviewHome"));
+// Preview pages archived — redirected to canonical routes
 
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
@@ -541,9 +539,7 @@ const App = () => {
               <Route path="/green-halo" element={
                 <Suspense fallback={<PageLoader />}><GreenHalo /></Suspense>
               } />
-              <Route path="/locations" element={
-                <Suspense fallback={<PageLoader />}><Locations /></Suspense>
-              } />
+              <Route path="/locations" element={<Navigate to="/areas" replace />} />
               <Route path="/terms" element={
                 <Suspense fallback={<PageLoader />}><Terms /></Suspense>
               } />
@@ -658,13 +654,9 @@ const App = () => {
               <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={<LegacySizeRedirect />} />
               <Route path="/:citySlug/:subSlug" element={<LegacySubpageRedirect />} />
 
-              {/* Preview Routes (v2 Uber-like experience) */}
-              <Route path="/preview/quote" element={
-                <Suspense fallback={<PageLoader />}><PreviewQuote /></Suspense>
-              } />
-              <Route path="/preview/home" element={
-                <Suspense fallback={<PageLoader />}><PreviewHome /></Suspense>
-              } />
+              {/* Preview Routes — archived, redirect to canonical */}
+              <Route path="/preview/quote" element={<Navigate to="/quote" replace />} />
+              <Route path="/preview/home" element={<Navigate to="/" replace />} />
               
               {/* Customer Portal (SMS OTP Auth) */}
               <Route path="/portal" element={
