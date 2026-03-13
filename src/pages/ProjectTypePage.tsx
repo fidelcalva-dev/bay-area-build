@@ -232,10 +232,10 @@ export default function ProjectTypePage() {
 
           {/* Heavy Material Warning */}
           {data.isHeavy && (
-            <Card className="border-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20">
+            <Card className="border-destructive/30 bg-accent/5">
               <CardContent className="p-6">
                 <h2 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
-                  <Scale className="w-5 h-5 text-amber-600" /> Heavy Material Rules
+                  <Scale className="w-5 h-5 text-accent-foreground" /> Heavy Material Rules
                 </h2>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• Heavy materials (soil, concrete, rock) are <strong>restricted to 5, 8, and 10 yard containers only</strong></li>
