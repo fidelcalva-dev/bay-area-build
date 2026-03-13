@@ -157,6 +157,11 @@ export default function CustomerDetail() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${customer.id}/edit`}>
+                  <Pencil className="w-4 h-4 mr-1" /> Edit
+                </Link>
+              </Button>
               <AddNoteDialog entityType="CUSTOMER" entityId={customer.id} customerId={customer.id} onNoteAdded={loadTimeline} />
               <QuickActionsMenu customerId={customer.id} customerEmail={customer.billing_email} />
             </div>
