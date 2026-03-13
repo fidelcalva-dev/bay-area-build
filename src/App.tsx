@@ -71,9 +71,7 @@ const SizeLandingPage = lazy(() => import("./pages/SizeLandingPage"));
 const MaterialLandingPage = lazy(() => import("./pages/MaterialLandingPage"));
 const YardHubPage = lazy(() => import("./pages/seo/YardHubPage"));
 
-// Preview Pages (v2 Uber-like experience)
-const PreviewQuote = lazy(() => import("./pages/preview/PreviewQuote"));
-const PreviewHome = lazy(() => import("./pages/preview/PreviewHome"));
+// Preview pages archived — redirected to canonical routes
 
 // Customer Portal pages (SMS OTP auth)
 const CustomerLogin = lazy(() => import("./pages/portal/CustomerLogin"));
