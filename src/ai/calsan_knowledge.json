@@ -14,9 +14,9 @@
   },
   "dumpsterSizes": {
     "heavyMaterial": [
-      {"yards": 6, "dimensions": "12' L x 6' W x 2.25' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Small concrete removal, dirt, driveway work", "flatRate": 495},
-18:       {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "pricing": "Flat fee, disposal included", "bestFor": "Foundation demo, brick and block, garage cleanouts", "flatRate": 595},
-19:       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal", "flatRate": 695.50}
+      {"yards": 5, "dimensions": "12' L x 5' W x 2.25' H", "includedTons": 0, "pricing": "Flat fee, disposal included", "bestFor": "Small concrete removal, dirt, driveway work", "flatRate": 495},
+      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0, "pricing": "Flat fee, disposal included", "bestFor": "Foundation demo, brick and block, garage cleanouts", "flatRate": 595},
+      {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 0, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal", "flatRate": 695.50}
     ],
     "generalDebris": [
       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "bestFor": "Small renovations, deck removal"},
