@@ -169,6 +169,17 @@ export default function CustomerForm() {
       if (error) {
         toast({ title: 'Create failed', description: error.message, variant: 'destructive' });
       } else if (data) {
+        // Auto-create site if service address was provided
+        if (serviceAddress && serviceZip) {
+          await supabase.from('customer_sites').insert({
+            customer_id: data.id,
+            site_name: serviceCity ? `${serviceCity} Site` : 'Primary Site',
+            address: serviceAddress,
+            city: serviceCity || null,
+            zip: serviceZip || null,
+            is_primary: true,
+          });
+        }
         toast({ title: 'Customer created' });
         navigate(`/admin/customers/${data.id}`);
       }
