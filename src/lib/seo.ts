@@ -402,7 +402,7 @@ export const GBP_QA_SEEDS = [
   { q: "Do you offer dumpsters for contractors?", a: "Yes, many of our customers are contractors and construction professionals. We offer volume programs, priority scheduling, and Net-30 terms for qualified contractors." },
   { q: "What areas do you serve?", a: "We serve the entire San Francisco Bay Area including Oakland, San Jose, San Francisco, Berkeley, Hayward, Fremont, and 30+ additional cities across 9 counties." },
   { q: "Can I put concrete in a dumpster?", a: "Yes, we offer dedicated concrete and heavy material dumpsters with flat-fee pricing. No weight overage charges for clean concrete, dirt, or asphalt." },
-  { q: "How long can I keep the dumpster?", a: "Standard rental periods are 7-14 days depending on the size and project type. Extensions are available at daily rates." },
+  { q: "How long can I keep the dumpster?", a: "Standard rental is 7 days. Extensions are available at $35 per day. Just let us know before your rental period ends." },
 ] as const;
 
 // GBP Google Post Templates
