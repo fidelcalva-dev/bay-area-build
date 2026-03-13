@@ -171,6 +171,7 @@ export default function SeoCityPage() {
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
+        {shouldNoindex && <meta name="robots" content="noindex, nofollow" />}
         <link rel="canonical" href={`${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`} />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
