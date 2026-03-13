@@ -4,12 +4,13 @@ import {
   Users, FileText, TrendingUp, DollarSign,
   Clock, Loader2, GitBranch, ScrollText, CreditCard, CheckCircle,
   Phone, MessageSquare, Zap, Target, Mail, Send, Truck,
-  StickyNote, Package,
+  StickyNote, Package, Filter, X,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
