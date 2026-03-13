@@ -537,7 +537,7 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
-              <Link to={quoteUrl({ tab: 'photo' })}>
+              <Link to="/waste-vision">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo
               </Link>
