@@ -109,7 +109,11 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
   const today = new Date().toISOString().split('T')[0];
 
   for (const city of cities) {
-    const isPrimary = city.is_primary_market;
+    // Skip cities that are not indexable per market classification
+    if (!isMarketIndexable(city.city_slug)) continue;
+
+    const market = getMarketClassification(city.city_slug);
+    const isPrimary = market?.focus === 'CORE_DIRECT';
 
     // City page
     entries.push({
