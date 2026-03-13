@@ -19,10 +19,13 @@
       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 0, "pricing": "Flat fee, disposal included", "bestFor": "Large concrete jobs, deck removal", "flatRate": 695.50}
     ],
     "generalDebris": [
+      {"yards": 5, "dimensions": "12' L x 5' W x 2.25' H", "includedTons": 0.5, "bestFor": "Small cleanouts, yard debris"},
+      {"yards": 8, "dimensions": "12' L x 6' W x 3' H", "includedTons": 0.5, "bestFor": "Small remodeling projects"},
       {"yards": 10, "dimensions": "12' L x 7.5' W x 3' H", "includedTons": 1, "bestFor": "Small renovations, deck removal"},
       {"yards": 20, "dimensions": "18' L x 7.5' W x 4' H", "includedTons": 2, "bestFor": "Full room renovations, roofing, large cleanouts"},
       {"yards": 30, "dimensions": "18' L x 7.5' W x 6' H", "includedTons": 3, "bestFor": "Major renovations, new construction, estate cleanouts"},
-      {"yards": 40, "dimensions": "24' L x 7.5' W x 6' H", "includedTons": 4, "bestFor": "Commercial projects, large demolition"}
+      {"yards": 40, "dimensions": "24' L x 7.5' W x 6' H", "includedTons": 4, "bestFor": "Commercial projects, large demolition"},
+      {"yards": 50, "dimensions": "24' L x 7.5' W x 8' H", "includedTons": 5, "bestFor": "High volume debris and commercial use"}
     ]
   },
   "materials": {
