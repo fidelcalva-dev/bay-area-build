@@ -18,6 +18,7 @@ const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
   { label: "Leads", href: "/sales/leads", icon: Users },
   { label: "Quotes", href: "/sales/quotes", icon: FileText },
+  { label: "Customers", href: "/admin/customers", icon: Search },
   { label: "Order Builder", href: "/sales/order-builder", icon: ShoppingCart },
   { label: "Calls", href: "/sales/calls", icon: Phone },
   { label: "Calculator", href: "/internal/calculator", icon: Calculator },

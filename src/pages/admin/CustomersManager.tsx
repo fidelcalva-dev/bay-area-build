@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Users, Search, Loader2, Building2, User, Mail, Phone,
-  Briefcase, Home, Building, Crown, Eye
+  Briefcase, Home, Building, Crown, Eye, Plus
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -100,10 +101,15 @@ export default function CustomersManager() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Customer Management</h1>
-        <p className="text-muted-foreground mt-1">
-          View and manage customer profiles
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Customer Management</h1>
+            <p className="text-muted-foreground mt-1">View and manage customer profiles</p>
+          </div>
+          <Button asChild>
+            <Link to="/admin/customers/new"><Plus className="w-4 h-4 mr-2" /> New Customer</Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -248,9 +254,13 @@ export default function CustomersManager() {
                     {format(new Date(customer.created_at), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                      <Eye className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/admin/customers/${customer.id}`}>
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

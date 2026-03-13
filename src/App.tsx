@@ -181,6 +181,7 @@ const DomainHealth = lazy(() => import("./pages/admin/qa/DomainHealth"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
+const CustomerForm = lazy(() => import("./pages/admin/CustomerForm"));
 const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
@@ -901,8 +902,14 @@ const App = () => {
                 <Route path="activity" element={
                   <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
                 } />
+                <Route path="customers/new" element={
+                  <Suspense fallback={<PageLoader />}><CustomerForm /></Suspense>
+                } />
                 <Route path="customers/:id" element={
                   <Suspense fallback={<PageLoader />}><CustomerDetail /></Suspense>
+                } />
+                <Route path="customers/:id/edit" element={
+                  <Suspense fallback={<PageLoader />}><CustomerForm /></Suspense>
                 } />
                 <Route path="customer-health" element={
                   <Suspense fallback={<PageLoader />}><CustomerHealthDashboard /></Suspense>
