@@ -275,6 +275,8 @@ const MaterialCatalogPage = lazy(() => import("./pages/admin/materials/MaterialC
 const ProjectCategoriesPage = lazy(() => import("./pages/admin/materials/ProjectCategoriesPage"));
 const MaterialOffersPage = lazy(() => import("./pages/admin/materials/MaterialOffersPage"));
 const CustomerTypeRulesPage = lazy(() => import("./pages/admin/CustomerTypeRulesPage"));
+const LocationsConfig = lazy(() => import("./pages/admin/config/LocationsConfig"));
+const SocialLinksConfig = lazy(() => import("./pages/admin/config/SocialLinksConfig"));
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
