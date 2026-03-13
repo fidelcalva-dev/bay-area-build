@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation, Star, Globe, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award, ExternalLink, Navigation, Star, Globe, MessageCircle, Linkedin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
 import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
 import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
+import { getFooterSocialLinks } from '@/config/socialConfig';
 
 
 export function Footer() {
