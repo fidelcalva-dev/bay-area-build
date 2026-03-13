@@ -119,6 +119,15 @@ export function SalesPipelineCards() {
     setFollowUps((followUpRes.data || []) as PipelineLead[]);
     setPendingContracts((contractsRes.data || []) as unknown as PipelineContract[]);
     setPendingPayments(((paymentsRes.data || []) as unknown as PipelinePayment[]));
+
+    // Fetch ready-for-dispatch quotes (converted status)
+    const { data: dispatchQuotes } = await supabase.from('quotes')
+      .select('id, customer_name, customer_phone, status, subtotal, created_at, material_type')
+      .eq('status', 'converted')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    setReadyForDispatch((dispatchQuotes || []) as PipelineQuote[]);
+
     setLoading(false);
   }
 
