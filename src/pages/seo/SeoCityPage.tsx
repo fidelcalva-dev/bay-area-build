@@ -82,6 +82,14 @@ export default function SeoCityPage() {
     return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
   }
 
+  // Handle paused/redirect markets
+  const marketClassification = getMarketClassification(citySlug || '');
+  const redirectTarget = getMarketRedirectTarget(citySlug || '');
+  if (marketClassification?.pageStatus === 'REDIRECT' && redirectTarget) {
+    return <Navigate to={redirectTarget} replace />;
+  }
+  const shouldNoindex = marketClassification ? !marketClassification.indexable : false;
+
   if (cityLoading) {
     return (
       <Layout>
