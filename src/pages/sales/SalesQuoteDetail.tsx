@@ -1058,6 +1058,19 @@ export default function SalesQuoteDetail() {
         </div>
       </div>
 
+      {/* ─── NEXT BEST ACTION ──────────────────────────── */}
+      <NextBestActionCard
+        quote={quote}
+        readiness={readiness}
+        commercialStatus={commercialStatus}
+        deliveryPref={deliveryPref}
+        deliveryDate={deliveryDate}
+        selectedSize={selectedSize}
+        onResend={handleResend}
+        onSendContract={handleSendContract}
+        onMarkConverted={handleMarkConverted}
+      />
+
       <div className="grid md:grid-cols-2 gap-4">
         {/* ─── F. COMMERCIAL STATUS ───────────────────── */}
         <CommercialStatusCard status={commercialStatus} />
