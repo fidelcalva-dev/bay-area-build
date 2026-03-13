@@ -89,7 +89,7 @@ const serviceSchema = generateServiceSchema({
   name: 'Dumpster Rental San Jose CA',
   description: META.description,
   areaServed: ['San Jose', 'Santa Clara County'],
-  price: '390',
+  price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 395),
 });
 
 const breadcrumbSchema = generateBreadcrumbSchema([
