@@ -210,8 +210,8 @@ export default function Contractors() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <Link to="/quote">
-                Get Contractor Quote
+              <Link to="/contractor-application">
+                Apply for Contractor Account
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
