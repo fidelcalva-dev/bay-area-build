@@ -134,9 +134,10 @@ const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
   const isDirectOp = cityConfig?.serviceModel === 'DIRECT_OPERATION';
   const tier = cityConfig?.tier || 3;
   const priority = tier === 1 ? 0.95 : tier === 2 ? 0.85 : isDirectOp ? 0.8 : 0.6;
+  const cf: 'weekly' | 'monthly' = isDirectOp ? 'weekly' : 'monthly';
   return {
     url: `/dumpster-rental/${canonical}`,
-    changefreq: (isDirectOp ? 'weekly' : 'monthly') as const,
+    changefreq: cf,
     priority,
   };
 });
