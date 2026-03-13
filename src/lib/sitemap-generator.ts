@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 import { SEO_COUNTIES } from './seo-counties';
 import { SEO_USE_CASES } from './seo-use-cases';
+import { isMarketIndexable, getMarketClassification } from './market-classification';
 
 export interface SitemapEntry {
   url: string;
