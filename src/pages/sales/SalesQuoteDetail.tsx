@@ -457,7 +457,61 @@ function SendPaymentDialog({ quoteId, customerId, customerPhone, amount, onSent 
   );
 }
 
-// ─── Main Component ───────────────────────────────────────
+// ─── Next Best Action Card ───────────────────────────────
+function NextBestActionCard({ quote, readiness, commercialStatus, deliveryPref, deliveryDate, selectedSize, onResend, onSendContract, onMarkConverted }: {
+  quote: any; readiness: { level: ReadinessLevel; missing: string[] }; commercialStatus: CommercialStatus;
+  deliveryPref: string; deliveryDate: Date | undefined; selectedSize: string;
+  onResend: () => void; onSendContract: () => void; onMarkConverted: () => void;
+}) {
+  // Determine next best action based on state
+  let action: { label: string; description: string; icon: typeof Zap; variant: 'default' | 'outline'; onClick?: () => void; href?: string } | null = null;
+
+  if (!quote.customer_phone && !quote.customer_name) {
+    action = { label: 'Gather Customer Info', description: 'Name and phone are required to proceed', icon: User, variant: 'outline' };
+  } else if (!selectedSize) {
+    action = { label: 'Select Dumpster Size', description: 'Size must be set before scheduling', icon: Package, variant: 'outline' };
+  } else if (!commercialStatus.quoteSent) {
+    action = { label: 'Send Quote to Customer', description: 'Customer hasn\'t received the quote yet', icon: Send, variant: 'default', onClick: onResend };
+  } else if (!commercialStatus.contractStatus || commercialStatus.contractStatus === 'draft') {
+    action = { label: 'Send Contract', description: 'Quote sent — now send the contract for signature', icon: ScrollText, variant: 'default', onClick: onSendContract };
+  } else if (commercialStatus.contractStatus === 'sent' || commercialStatus.contractStatus === 'viewed') {
+    action = { label: 'Follow Up on Contract', description: `Contract ${commercialStatus.contractStatus} — follow up with customer`, icon: Phone, variant: 'default', href: quote.customer_phone ? `tel:${quote.customer_phone}` : undefined };
+  } else if (commercialStatus.contractStatus === 'signed' && (!commercialStatus.paymentStatus || commercialStatus.paymentStatus === 'not_requested')) {
+    action = { label: 'Send Payment Link', description: 'Contract signed — collect payment', icon: CreditCard, variant: 'default' };
+  } else if (commercialStatus.paymentStatus === 'sent' || commercialStatus.paymentStatus === 'opened') {
+    action = { label: 'Follow Up on Payment', description: `Payment link ${commercialStatus.paymentStatus} — nudge customer`, icon: Phone, variant: 'default', href: quote.customer_phone ? `tel:${quote.customer_phone}` : undefined };
+  } else if ((commercialStatus.paymentStatus === 'paid' || commercialStatus.paymentStatus === 'completed') && !commercialStatus.orderCreated) {
+    action = { label: 'Convert to Order', description: 'Payment received — create the order for dispatch', icon: Truck, variant: 'default', onClick: onMarkConverted };
+  } else if (commercialStatus.orderCreated) {
+    action = { label: 'Ready for Dispatch', description: 'Order created — hand off to dispatch team', icon: CheckCircle2, variant: 'outline' };
+  }
+
+  if (!action) return null;
+
+  return (
+    <Card className="border-primary/30 bg-primary/5">
+      <CardContent className="flex items-center gap-4 py-4">
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <action.icon className="w-5 h-5 text-primary" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-foreground">{action.label}</p>
+          <p className="text-xs text-muted-foreground">{action.description}</p>
+        </div>
+        {action.onClick ? (
+          <Button size="sm" variant={action.variant} onClick={action.onClick} className="shrink-0">
+            {action.label.split(' ').slice(0, 2).join(' ')}
+          </Button>
+        ) : action.href ? (
+          <Button size="sm" variant={action.variant} asChild className="shrink-0">
+            <a href={action.href}>{action.label.split(' ').slice(0, 2).join(' ')}</a>
+          </Button>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SalesQuoteDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
