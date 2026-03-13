@@ -281,7 +281,7 @@ export default function About() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <Link to="/#quote">
+              <Link to="/quote">
                 Get Instant Quote
                 <ArrowRight className="w-5 h-5" />
               </Link>

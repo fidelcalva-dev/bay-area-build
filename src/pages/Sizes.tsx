@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator } from 'lucide-react';
+import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
 import { BUSINESS_INFO } from '@/lib/seo';
@@ -104,7 +104,7 @@ export default function Sizes() {
                     useCases={size.useCases}
                     isPopular={size.popular}
                     variant="general"
-                    ctaLink="/pricing"
+                    ctaLink="/quote"
                   />
                 ))}
               </div>
@@ -132,7 +132,7 @@ export default function Sizes() {
                     description={size.description}
                     useCases={size.useCases}
                     variant="heavy"
-                    ctaLink="/pricing"
+                    ctaLink="/quote"
                   />
                 ))}
               </div>
@@ -242,6 +242,31 @@ export default function Sizes() {
                 View Capacity & Scenarios Guide →
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Internal Links */}
+      <section className="section-padding bg-background">
+        <div className="container-wide">
+          <h2 className="heading-md text-foreground mb-6 text-center">Explore More</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <Link to="/materials" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+              Accepted Materials
+            </Link>
+            <Link to="/pricing" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <Calculator className="w-4 h-4 text-primary shrink-0" />
+              Full Pricing
+            </Link>
+            <Link to="/contractors" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <HardHat className="w-4 h-4 text-primary shrink-0" />
+              Contractor Services
+            </Link>
+            <Link to="/areas" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
+              Service Areas
+            </Link>
           </div>
         </div>
       </section>
