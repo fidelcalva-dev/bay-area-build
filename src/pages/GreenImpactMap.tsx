@@ -79,6 +79,7 @@ const GreenImpactMap = () => {
       description="See real recycling impact across California. Every dumpster we deliver helps divert material from landfills."
       canonical="/green-impact"
     >
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
         {/* Hero Section */}
