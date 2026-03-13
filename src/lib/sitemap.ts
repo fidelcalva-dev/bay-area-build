@@ -51,12 +51,11 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/technology', changefreq: 'monthly', priority: 0.6 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
-  // Hub pages
-  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
+  // Hub pages — only active regions in sitemap
+  { url: '/california-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
   { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
-  { url: '/southern-california-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
-  { url: '/central-valley-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
-  { url: '/north-bay-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
+  { url: '/north-bay-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
+  // Southern CA & Central Valley hubs paused — noindex until partner launch
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.9 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.9 },
@@ -125,22 +124,25 @@ const GRID_SERVICE_PAGES: SitemapEntry[] = (() => {
   return pages;
 })();
 
-// City pages from hardcoded data — prioritize direct-operation markets
+// City pages — use market classification to control sitemap inclusion
 import { CITY_DIRECTORY } from './service-area-config';
+import { getMarketClassification, isMarketIndexable } from './market-classification';
 
-const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
-  const canonical = city.slug.endsWith('-ca') ? city.slug.slice(0, -3) : city.slug;
-  const cityConfig = CITY_DIRECTORY.find(c => c.slug === canonical);
-  const isDirectOp = cityConfig?.serviceModel === 'DIRECT_OPERATION';
-  const tier = cityConfig?.tier || 3;
-  const priority = tier === 1 ? 0.95 : tier === 2 ? 0.85 : isDirectOp ? 0.8 : 0.6;
-  const cf: 'weekly' | 'monthly' = isDirectOp ? 'weekly' : 'monthly';
-  return {
-    url: `/dumpster-rental/${canonical}`,
-    changefreq: cf,
-    priority,
-  };
-});
+const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES
+  .map(city => {
+    const canonical = city.slug.endsWith('-ca') ? city.slug.slice(0, -3) : city.slug;
+    const market = getMarketClassification(canonical);
+    // Skip non-indexable markets (paused, noindex, future partner)
+    if (market && !market.indexable) return null;
+    const priority = market?.sitemapPriority ?? 0.6;
+    const cf: SitemapEntry['changefreq'] = market?.sitemapChangefreq ?? 'monthly';
+    return {
+      url: `/dumpster-rental/${canonical}`,
+      changefreq: cf,
+      priority,
+    } as SitemapEntry;
+  })
+  .filter((entry): entry is SitemapEntry => entry !== null);
 
 // County pages
 const COUNTY_PAGES: SitemapEntry[] = SEO_COUNTIES.map(county => ({

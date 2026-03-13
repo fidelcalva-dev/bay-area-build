@@ -9,6 +9,7 @@ import { DUMPSTER_SIZES_DATA } from './shared-data';
 import { SEO_BLOG_TOPICS } from './seo-blog-topics';
 import { SEO_COUNTIES } from './seo-counties';
 import { SEO_USE_CASES } from './seo-use-cases';
+import { isMarketIndexable, getMarketClassification } from './market-classification';
 
 export interface SitemapEntry {
   url: string;
@@ -45,12 +46,11 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/blog', changefreq: 'weekly', priority: 0.7 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
-  // Hub pages
-  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
+  // Hub pages — only Bay Area core hubs
+  { url: '/california-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
   { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
-  { url: '/southern-california-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
-  { url: '/central-valley-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
-  { url: '/north-bay-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
+  { url: '/north-bay-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
+  // Southern CA & Central Valley hubs excluded until partner launch
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.85 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.85 },
@@ -109,7 +109,11 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
   const today = new Date().toISOString().split('T')[0];
 
   for (const city of cities) {
-    const isPrimary = city.is_primary_market;
+    // Skip cities that are not indexable per market classification
+    if (!isMarketIndexable(city.city_slug)) continue;
+
+    const market = getMarketClassification(city.city_slug);
+    const isPrimary = market?.focus === 'CORE_DIRECT';
 
     // City page
     entries.push({

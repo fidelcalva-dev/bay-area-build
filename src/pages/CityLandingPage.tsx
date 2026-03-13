@@ -1,16 +1,25 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { getCityBySlug, generateCitySchema, SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES, MASTER_FAQS } from '@/lib/shared-data';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema } from '@/lib/seo';
+import { getMarketClassification, getMarketRedirectTarget } from '@/lib/market-classification';
 import { ArrowRight, MapPin, Phone, Truck, CheckCircle, AlertTriangle, Building, Clock, Shield } from 'lucide-react';
 import NotFound from './NotFound';
 
 export default function CityLandingPage() {
   const { citySlug } = useParams<{ citySlug: string }>();
+  const canonicalSlug = citySlug ? getCanonicalCitySlug(citySlug) : undefined;
   const city = citySlug ? getCityBySlug(citySlug) : undefined;
+  const marketInfo = canonicalSlug ? getMarketClassification(canonicalSlug) : undefined;
+
+  // Redirect paused markets to their regional target
+  const redirectTarget = canonicalSlug ? getMarketRedirectTarget(canonicalSlug) : undefined;
+  if (redirectTarget) {
+    return <Navigate to={redirectTarget} replace />;
+  }
 
   if (!city) return <NotFound />;
 
@@ -34,6 +43,9 @@ export default function CityLandingPage() {
     <Layout title={city.metaTitle} description={city.metaDescription}>
       <Helmet>
         <link rel="canonical" href={`${BUSINESS_INFO.url}/dumpster-rental/${getCanonicalCitySlug(city.slug)}`} />
+        {marketInfo && !marketInfo.indexable && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         <script type="application/ld+json">{JSON.stringify(citySchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
