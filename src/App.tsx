@@ -541,9 +541,7 @@ const App = () => {
               <Route path="/green-halo" element={
                 <Suspense fallback={<PageLoader />}><GreenHalo /></Suspense>
               } />
-              <Route path="/locations" element={
-                <Suspense fallback={<PageLoader />}><Locations /></Suspense>
-              } />
+              <Route path="/locations" element={<Navigate to="/areas" replace />} />
               <Route path="/terms" element={
                 <Suspense fallback={<PageLoader />}><Terms /></Suspense>
               } />
