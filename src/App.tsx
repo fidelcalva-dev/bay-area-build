@@ -421,6 +421,12 @@ const App = () => {
               <Route path="/contractor-application" element={
                 <Suspense fallback={<PageLoader />}><ContractorApplication /></Suspense>
               } />
+              <Route path="/schedule-delivery" element={
+                <Suspense fallback={<PageLoader />}><ScheduleDelivery /></Suspense>
+              } />
+              <Route path="/projects/:slug" element={
+                <Suspense fallback={<PageLoader />}><ProjectTypePage /></Suspense>
+              } />
               <Route path="/contractor-best-practices" element={
                 <Suspense fallback={<PageLoader />}><ContractorBestPractices /></Suspense>
               } />
