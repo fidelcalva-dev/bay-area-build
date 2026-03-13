@@ -1,4 +1,5 @@
 import { useParams, Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
 import { SEOHead } from '@/components/seo/SEOHead';
@@ -103,8 +104,13 @@ export default function SeoHubPage() {
     { question: `Do you serve contractors?`, answer: 'Yes. We offer contractor accounts with volume pricing, priority scheduling, and Net-30 terms for qualified businesses.' },
   ];
 
+  // Noindex paused regional hubs (Southern CA, Central Valley)
+  const pausedHubs = ['southern-california-dumpster-rental', 'central-valley-dumpster-rental'];
+  const isPaused = pausedHubs.includes(config.slug);
+
   return (
     <Layout title={config.h1} description={config.metaDescription}>
+      {isPaused && <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>}
       <SEOHead
         title={config.h1}
         description={config.metaDescription}

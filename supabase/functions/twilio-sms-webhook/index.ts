@@ -156,7 +156,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const t = templates[lang];
-    const newQuoteLink = `${BASE_URL}/#quote`;
+    const newQuoteLink = `${BASE_URL}/quote`;
     let replyMessage: string;
     let eventType = 'SMS_SCHEDULE_LINK_SENT';
 

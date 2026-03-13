@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
+import { getMarketClassification, getMarketRedirectTarget, isMarketIndexable } from '@/lib/market-classification';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
@@ -81,6 +82,14 @@ export default function SeoCityPage() {
     return <Navigate to={`/dumpster-rental/${normalized}`} replace />;
   }
 
+  // Handle paused/redirect markets
+  const marketClassification = getMarketClassification(citySlug || '');
+  const redirectTarget = getMarketRedirectTarget(citySlug || '');
+  if (marketClassification?.pageStatus === 'REDIRECT' && redirectTarget) {
+    return <Navigate to={redirectTarget} replace />;
+  }
+  const shouldNoindex = marketClassification ? !marketClassification.indexable : false;
+
   if (cityLoading) {
     return (
       <Layout>
@@ -96,6 +105,7 @@ export default function SeoCityPage() {
     const fallbackName = (citySlug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return (
       <Layout title={`Dumpster Rental in ${fallbackName}, CA`}>
+        {shouldNoindex && <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>}
         <section className="gradient-hero text-primary-foreground section-padding">
           <div className="container-wide"><div className="max-w-3xl">
             <h1 className="heading-xl mb-4">Dumpster Rental in {fallbackName}, CA</h1>
@@ -161,6 +171,7 @@ export default function SeoCityPage() {
   return (
     <Layout title={pageTitle} description={pageDescription}>
       <Helmet>
+        {shouldNoindex && <meta name="robots" content="noindex, nofollow" />}
         <link rel="canonical" href={`${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`} />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>

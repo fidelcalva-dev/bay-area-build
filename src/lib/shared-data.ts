@@ -796,7 +796,7 @@ export { BUSINESS_INFO, SERVICE_AREAS };
 
 // Standard CTA destinations
 export const CTA_LINKS = {
-  quote: '/#quote',
+  quote: '/quote',
   quotePage: '/quote',
   call: `tel:${BUSINESS_INFO.phone.sales}`,
   text: `sms:${BUSINESS_INFO.phone.sales}`,

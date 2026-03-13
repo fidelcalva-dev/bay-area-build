@@ -50,7 +50,7 @@ interface PhotoDumpsterCardProps {
 
 export function PhotoDumpsterCard({
   size,
-  ctaLink = '/#quote',
+  ctaLink = '/quote',
   ctaLabel = 'Get Quote',
   className,
   imageMode = 'photo',
