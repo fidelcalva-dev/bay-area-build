@@ -243,6 +243,28 @@ export function SalesPipelineCards() {
           <LeadRow key={lead.id} lead={lead} showLastContact />
         ))}
       </PipelineSection>
+
+      {/* Ready for Dispatch */}
+      <PipelineSection
+        title="Ready for Dispatch"
+        icon={<Truck className="w-4 h-4 text-green-600" />}
+        count={readyForDispatch.length}
+        borderColor="border-l-green-600"
+        emptyText="No orders ready"
+      >
+        {readyForDispatch.map(q => (
+          <Link key={q.id} to={`/sales/quotes/${q.id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">{q.customer_name || 'Unknown'}</p>
+              <p className="text-xs text-muted-foreground">{q.material_type || 'General'} &middot; {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {q.subtotal && <span className="text-sm font-semibold">${q.subtotal.toFixed(0)}</span>}
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+          </Link>
+        ))}
+      </PipelineSection>
     </div>
   );
 }
