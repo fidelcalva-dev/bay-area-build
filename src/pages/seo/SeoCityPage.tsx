@@ -105,6 +105,7 @@ export default function SeoCityPage() {
     const fallbackName = (citySlug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return (
       <Layout title={`Dumpster Rental in ${fallbackName}, CA`}>
+        {shouldNoindex && <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>}
         <section className="gradient-hero text-primary-foreground section-padding">
           <div className="container-wide"><div className="max-w-3xl">
             <h1 className="heading-xl mb-4">Dumpster Rental in {fallbackName}, CA</h1>
