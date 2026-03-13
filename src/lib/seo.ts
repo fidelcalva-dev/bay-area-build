@@ -408,7 +408,7 @@ export const GBP_QA_SEEDS = [
 // GBP Google Post Templates
 export const GBP_POST_TEMPLATES = [
   { title: "Dumpster Rental in Oakland", body: "Working on a renovation or cleanup project? Calsan Dumpsters Pro offers reliable dumpster rental across Oakland and the Bay Area. Same-day delivery available.", cta: "Get Instant Quote", url: "/quote" },
-  { title: "Same-Day Dumpster Delivery", body: "Need a dumpster today? We offer same-day delivery across the Bay Area from our Oakland and San Jose yards. 10-40 yard sizes available.", cta: "Get Instant Quote", url: "/quote" },
+  { title: "Same-Day Dumpster Delivery", body: "Need a dumpster today? We offer same-day delivery across the Bay Area from our Oakland and San Jose yards. 5-50 yard sizes available.", cta: "Get Instant Quote", url: "/quote" },
   { title: "Contractor Dumpster Service", body: "Calsan Dumpsters Pro serves Bay Area contractors with volume discounts, priority scheduling, and reliable service for construction and remodeling projects.", cta: "Get Contractor Quote", url: "/quote/contractor" },
   { title: "Concrete Dumpster Rental", body: "Flat-fee concrete dumpster rental in the Bay Area. No weight overage charges for clean concrete, dirt, or asphalt. Professional dispatch coordination.", cta: "Get Instant Quote", url: "/quote" },
 ] as const;
