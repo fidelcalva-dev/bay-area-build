@@ -62,6 +62,7 @@ export function SalesPipelineCards() {
   const [pendingContracts, setPendingContracts] = useState<PipelineContract[]>([]);
   const [pendingPayments, setPendingPayments] = useState<PipelinePayment[]>([]);
   const [followUps, setFollowUps] = useState<PipelineLead[]>([]);
+  const [readyForDispatch, setReadyForDispatch] = useState<PipelineQuote[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
