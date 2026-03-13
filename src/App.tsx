@@ -28,6 +28,8 @@ const Materials = lazy(() => import("./pages/Materials"));
 const CapacityGuide = lazy(() => import("./pages/CapacityGuide"));
 const Contractors = lazy(() => import("./pages/Contractors"));
 const ContractorApplication = lazy(() => import("./pages/ContractorApplication"));
+const ScheduleDelivery = lazy(() => import("./pages/ScheduleDelivery"));
+const ProjectTypePage = lazy(() => import("./pages/ProjectTypePage"));
 const ContractorBestPractices = lazy(() => import("./pages/ContractorBestPractices"));
 const ContractorResources = lazy(() => import("./pages/ContractorResources"));
 const About = lazy(() => import("./pages/About"));
