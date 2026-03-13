@@ -295,6 +295,33 @@ export default function CustomerForm() {
           </CardContent>
         </Card>
 
+        {/* Service / Property Address */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MapPin className="w-4 h-4" /> Service / Property Address
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <Label>Street Address</Label>
+              <Input value={serviceAddress} onChange={(e) => setServiceAddress(e.target.value)} placeholder="456 Job Site Rd" />
+            </div>
+            <div>
+              <Label>City</Label>
+              <Input value={serviceCity} onChange={(e) => setServiceCity(e.target.value)} placeholder="Oakland" />
+            </div>
+            <div>
+              <Label>ZIP Code</Label>
+              <Input value={serviceZip} onChange={(e) => setServiceZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="94601" inputMode="numeric" />
+            </div>
+            <div>
+              <Label>Assigned Rep</Label>
+              <Input value={assignedRep} onChange={(e) => setAssignedRep(e.target.value)} placeholder="Rep name" />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Notes */}
         <Card>
           <CardHeader>
