@@ -397,7 +397,7 @@ export const GBP_SEED_REVIEWS = [
 
 // GBP Q&A Seed Data (for website FAQ sections and GBP seeding)
 export const GBP_QA_SEEDS = [
-  { q: "What dumpster sizes do you offer?", a: "We offer 10, 15, 20, 30, and 40 yard dumpsters depending on your project. Our team can help you choose the right size." },
+  { q: "What dumpster sizes do you offer?", a: "We offer 5, 8, 10, 20, 30, 40, and 50 yard dumpsters depending on your project. Heavy material sizes (concrete, dirt) are available in 5, 8, and 10 yard only. Our team can help you choose the right size." },
   { q: "Do you deliver dumpsters same day?", a: "Yes, same-day delivery is available depending on inventory and location. Most Bay Area addresses qualify for same-day or next-day delivery." },
   { q: "Do you offer dumpsters for contractors?", a: "Yes, many of our customers are contractors and construction professionals. We offer volume programs, priority scheduling, and Net-30 terms for qualified contractors." },
   { q: "What areas do you serve?", a: "We serve the entire San Francisco Bay Area including Oakland, San Jose, San Francisco, Berkeley, Hayward, Fremont, and 30+ additional cities across 9 counties." },
