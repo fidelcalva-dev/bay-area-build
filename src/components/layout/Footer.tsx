@@ -349,45 +349,34 @@ export function Footer() {
             </div>
           </div>
           
-          {/* Social Icons */}
+          {/* Social Icons — driven by socialConfig.ts */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-secondary-foreground/50 mr-2">Follow us:</span>
-            <a 
-              href={BUSINESS_INFO.social.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
-              aria-label="Follow us on Instagram"
-            >
-              <Instagram className="w-5 h-5" />
-            </a>
-            <a 
-              href={BUSINESS_INFO.social.youtube}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
-              aria-label="Subscribe on YouTube"
-            >
-              <Youtube className="w-5 h-5" />
-            </a>
-            <a 
-              href={BUSINESS_INFO.social.facebook} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
-              aria-label="Like us on Facebook"
-            >
-              <Facebook className="w-5 h-5" />
-            </a>
-            <a 
-              href={BUSINESS_INFO.social.yelp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
-              aria-label="Review us on Yelp"
-            >
-              <Star className="w-5 h-5" />
-            </a>
+            {getFooterSocialLinks().map((link) => {
+              const iconMap: Record<string, React.ReactNode> = {
+                facebook: <Facebook className="w-5 h-5" />,
+                instagram: <Instagram className="w-5 h-5" />,
+                youtube: <Youtube className="w-5 h-5" />,
+                linkedin: <Linkedin className="w-5 h-5" />,
+                yelp: <Star className="w-5 h-5" />,
+                tiktok: <Globe className="w-5 h-5" />,
+                twitter: <Globe className="w-5 h-5" />,
+                pinterest: <Globe className="w-5 h-5" />,
+                google: <Globe className="w-5 h-5" />,
+              };
+              return (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
+                  aria-label={`Follow us on ${link.label}`}
+                >
+                  {iconMap[link.iconKey] || <Globe className="w-5 h-5" />}
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
