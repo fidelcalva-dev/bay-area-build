@@ -913,7 +913,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Albany pricing is competitive with delivery from our nearby Oakland yard.',
     permitInfo: 'Albany requires permits for dumpsters placed on public streets. Private property placement typically does not require a permit.',
     metaTitle: 'Dumpster Rental Albany CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Albany, CA. Fast delivery from our Oakland yard, 10-40 yard roll-off dumpsters for construction and cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Albany, CA. Fast delivery from our Oakland yard, 5-50 yard roll-off dumpsters for construction and cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'el-cerrito-ca', 'richmond-ca'],
   },
   {
@@ -930,7 +930,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Lorenzo pricing includes delivery from our Oakland operations.',
     permitInfo: 'San Lorenzo is an unincorporated community—Alameda County handles permit requirements for public right-of-way placement.',
     metaTitle: 'Dumpster Rental San Lorenzo CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in San Lorenzo, CA. Fast delivery, 10-40 yard roll-off dumpsters. Contractor-ready service. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in San Lorenzo, CA. Fast delivery, 5-50 yard roll-off dumpsters. Contractor-ready service. Call (510) 680-2150.',
     nearbyLinks: ['san-leandro-ca', 'hayward-ca', 'castro-valley-ca'],
   },
   {
@@ -947,7 +947,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Ashland pricing includes delivery from our Oakland operations at competitive rates.',
     permitInfo: 'Ashland is an unincorporated community—contact Alameda County for street placement permits.',
     metaTitle: 'Dumpster Rental Ashland CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Ashland, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Ashland, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-lorenzo-ca', 'san-leandro-ca', 'hayward-ca'],
   },
   {
@@ -964,7 +964,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Cherryland pricing reflects short delivery distances from our Oakland yard.',
     permitInfo: 'Cherryland is unincorporated—Alameda County handles permits for public placement.',
     metaTitle: 'Dumpster Rental Cherryland CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Cherryland, CA. Fast delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Cherryland, CA. Fast delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['hayward-ca', 'san-lorenzo-ca', 'castro-valley-ca'],
   },
   {
@@ -981,7 +981,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Pablo pricing is competitive with short delivery from our Oakland yard.',
     permitInfo: 'San Pablo requires permits for dumpsters placed on public streets.',
     metaTitle: 'Dumpster Rental San Pablo CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in San Pablo, CA. Fast delivery, 10-40 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in San Pablo, CA. Fast delivery, 5-50 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'el-cerrito-ca', 'pinole-ca'],
   },
   {
@@ -998,7 +998,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Hercules pricing includes delivery from our Oakland operations.',
     permitInfo: 'Hercules requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Hercules CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Hercules, CA. Reliable delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Hercules, CA. Reliable delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['pinole-ca', 'richmond-ca', 'martinez-ca'],
   },
   {
@@ -1015,7 +1015,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'El Sobrante pricing includes delivery from our Oakland yard.',
     permitInfo: 'El Sobrante is unincorporated—Contra Costa County handles permits.',
     metaTitle: 'Dumpster Rental El Sobrante CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in El Sobrante, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in El Sobrante, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'san-pablo-ca', 'pinole-ca'],
   },
   {
@@ -1032,7 +1032,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Clayton pricing reflects delivery logistics from our Oakland yard.',
     permitInfo: 'Clayton requires permits for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental Clayton CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Clayton, CA. 10-40 yard dumpsters, fast delivery. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Clayton, CA. 5-50 yard dumpsters, fast delivery. Call (510) 680-2150.',
     nearbyLinks: ['concord-ca', 'walnut-creek-ca', 'martinez-ca'],
   },
   {
@@ -1049,7 +1049,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pleasant Hill pricing is competitive with efficient delivery routes from Oakland.',
     permitInfo: 'Pleasant Hill requires permits for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Pleasant Hill CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Pleasant Hill, CA. Fast delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Pleasant Hill, CA. Fast delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['walnut-creek-ca', 'concord-ca', 'lafayette-ca'],
   },
   {
@@ -1066,7 +1066,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Oakley pricing reflects extended delivery from our Oakland yard.',
     permitInfo: 'Oakley requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Oakley CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Oakley, CA. Reliable delivery, 10-40 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Oakley, CA. Reliable delivery, 5-50 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['brentwood-ca', 'antioch-ca', 'pittsburg-ca'],
   },
   {
@@ -1083,7 +1083,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Discovery Bay pricing reflects extended delivery distance.',
     permitInfo: 'Discovery Bay is unincorporated—Contra Costa County handles permit requirements.',
     metaTitle: 'Dumpster Rental Discovery Bay CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Discovery Bay, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Discovery Bay, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['brentwood-ca', 'oakley-ca', 'tracy-ca'],
   },
   {
@@ -1100,7 +1100,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Bay Point pricing includes delivery from our Oakland operations.',
     permitInfo: 'Bay Point is unincorporated—Contra Costa County manages permits.',
     metaTitle: 'Dumpster Rental Bay Point CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Bay Point, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Bay Point, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['pittsburg-ca', 'concord-ca', 'antioch-ca'],
   },
   {
@@ -1117,7 +1117,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Kensington pricing is competitive with very short delivery distances.',
     permitInfo: 'Kensington is unincorporated—contact Contra Costa County for street placement permits.',
     metaTitle: 'Dumpster Rental Kensington CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Kensington, CA. Fast local delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Kensington, CA. Fast local delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'el-cerrito-ca', 'albany-ca'],
   },
   {
@@ -1134,7 +1134,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Piedmont pricing is competitive with minimal delivery distance from our Oakland yard.',
     permitInfo: 'Piedmont requires city permits for dumpsters placed on public streets. Driveway placement is generally allowed without a permit.',
     metaTitle: 'Dumpster Rental Piedmont CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Piedmont, CA. Fast delivery from our Oakland yard, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Piedmont, CA. Fast delivery from our Oakland yard, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'berkeley-ca', 'emeryville-ca'],
   },
   {
@@ -1151,7 +1151,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Saratoga pricing includes delivery from our nearby San Jose yard.',
     permitInfo: 'Saratoga requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Saratoga CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Saratoga, CA. Fast delivery from our San Jose yard. 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Saratoga, CA. Fast delivery from our San Jose yard. 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['cupertino-ca', 'los-gatos-ca', 'campbell-ca', 'san-jose-ca'],
   },
   {
@@ -1168,7 +1168,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Monte Sereno pricing includes delivery from our San Jose yard.',
     permitInfo: 'Monte Sereno requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Monte Sereno CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Monte Sereno, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Monte Sereno, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['los-gatos-ca', 'saratoga-ca', 'campbell-ca'],
   },
   {
@@ -1185,7 +1185,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Palo Alto pricing includes delivery from our San Jose operations.',
     permitInfo: 'Palo Alto requires encroachment permits for street-placed dumpsters. Contact the city for current processing times.',
     metaTitle: 'Dumpster Rental Palo Alto CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Palo Alto, CA. Fast delivery, 10-40 yard roll-off dumpsters for construction and renovation. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Palo Alto, CA. Fast delivery, 5-50 yard roll-off dumpsters for construction and renovation. Call (510) 680-2150.',
     nearbyLinks: ['mountain-view-ca', 'redwood-city-ca', 'sunnyvale-ca'],
   },
   {
@@ -1202,7 +1202,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Menlo Park pricing includes delivery from our San Jose yard.',
     permitInfo: 'Menlo Park requires permits for dumpsters placed on public streets.',
     metaTitle: 'Dumpster Rental Menlo Park CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Menlo Park, CA. Professional delivery, 10-40 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Menlo Park, CA. Professional delivery, 5-50 yard dumpsters for construction and cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['palo-alto-ca', 'redwood-city-ca', 'san-mateo-ca'],
   },
   {
@@ -1219,7 +1219,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Atherton pricing includes delivery from our San Jose operations.',
     permitInfo: 'Atherton has strict residential zoning—permits required for all street placement.',
     metaTitle: 'Dumpster Rental Atherton CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Atherton, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Atherton, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['menlo-park-ca', 'redwood-city-ca', 'palo-alto-ca'],
   },
   {
@@ -1236,7 +1236,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Woodside pricing includes delivery from our San Jose yard.',
     permitInfo: 'Woodside requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Woodside CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Woodside, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Woodside, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['redwood-city-ca', 'menlo-park-ca', 'palo-alto-ca'],
   },
   {
@@ -1253,7 +1253,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Portola Valley pricing reflects delivery logistics from our San Jose yard.',
     permitInfo: 'Portola Valley requires permits for dumpsters on public roads.',
     metaTitle: 'Dumpster Rental Portola Valley CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Portola Valley, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Portola Valley, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['woodside-ca', 'palo-alto-ca', 'menlo-park-ca'],
   },
   {
@@ -1270,7 +1270,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Foster City pricing includes delivery from our San Jose operations.',
     permitInfo: 'Foster City requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Foster City CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Foster City, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Foster City, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-mateo-ca', 'redwood-city-ca', 'san-bruno-ca'],
   },
   {
@@ -1287,7 +1287,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Belmont pricing includes delivery from our San Jose operations.',
     permitInfo: 'Belmont requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Belmont CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Belmont, CA. Professional delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Belmont, CA. Professional delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-mateo-ca', 'redwood-city-ca', 'foster-city-ca'],
   },
   {
@@ -1304,7 +1304,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Carlos pricing includes delivery from our San Jose yard.',
     permitInfo: 'San Carlos requires permits for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental San Carlos CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in San Carlos, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in San Carlos, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['redwood-city-ca', 'belmont-ca', 'san-mateo-ca'],
   },
   {
@@ -1321,7 +1321,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Burlingame pricing includes delivery from our San Jose operations.',
     permitInfo: 'Burlingame requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Burlingame CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Burlingame, CA. Professional delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Burlingame, CA. Professional delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-mateo-ca', 'san-bruno-ca', 'foster-city-ca'],
   },
   {
@@ -1338,7 +1338,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Millbrae pricing includes delivery from our San Jose operations.',
     permitInfo: 'Millbrae requires permits for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Millbrae CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Millbrae, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Millbrae, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-bruno-ca', 'burlingame-ca', 'south-san-francisco-ca'],
   },
   {
@@ -1355,7 +1355,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Daly City pricing includes delivery from our Oakland operations.',
     permitInfo: 'Daly City requires permits for dumpsters placed on public streets.',
     metaTitle: 'Dumpster Rental Daly City CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Daly City, CA. Fast delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Daly City, CA. Fast delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['south-san-francisco-ca', 'san-bruno-ca', 'pacifica-ca', 'san-francisco-ca'],
   },
   {
@@ -1372,7 +1372,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Colma pricing includes delivery from our Oakland yard.',
     permitInfo: 'Contact Colma Town Hall for dumpster placement permits.',
     metaTitle: 'Dumpster Rental Colma CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Colma, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Colma, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['daly-city-ca', 'south-san-francisco-ca', 'san-bruno-ca'],
   },
   {
@@ -1389,7 +1389,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Brisbane pricing includes delivery from our Oakland operations.',
     permitInfo: 'Brisbane requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Brisbane CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Brisbane, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Brisbane, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['south-san-francisco-ca', 'daly-city-ca', 'san-bruno-ca'],
   },
   {
@@ -1406,7 +1406,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'East Palo Alto pricing includes delivery from our San Jose yard.',
     permitInfo: 'East Palo Alto requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental East Palo Alto CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in East Palo Alto, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in East Palo Alto, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['palo-alto-ca', 'menlo-park-ca', 'redwood-city-ca'],
   },
   {
@@ -1423,7 +1423,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Corte Madera pricing reflects delivery from our Oakland yard.',
     permitInfo: 'Corte Madera requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Corte Madera CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Corte Madera, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Corte Madera, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-rafael-ca', 'mill-valley-ca', 'larkspur-ca'],
   },
   {
@@ -1440,7 +1440,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Mill Valley pricing reflects delivery from our Oakland yard.',
     permitInfo: 'Mill Valley requires permits for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Mill Valley CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Mill Valley, CA. 10-40 yard dumpsters, reliable delivery. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Mill Valley, CA. 5-50 yard dumpsters, reliable delivery. Call (510) 680-2150.',
     nearbyLinks: ['san-rafael-ca', 'corte-madera-ca', 'san-francisco-ca'],
   },
   {
@@ -1457,7 +1457,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Novato pricing reflects delivery distance from our Oakland yard.',
     permitInfo: 'Novato requires permits for dumpsters placed on public streets.',
     metaTitle: 'Dumpster Rental Novato CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Novato, CA. Reliable delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Novato, CA. Reliable delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-rafael-ca', 'vallejo-ca', 'napa-ca'],
   },
   {
@@ -1474,7 +1474,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Larkspur pricing reflects delivery from our Oakland yard.',
     permitInfo: 'Larkspur requires permits for public street placement.',
     metaTitle: 'Dumpster Rental Larkspur CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Larkspur, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Larkspur, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['corte-madera-ca', 'san-rafael-ca', 'mill-valley-ca'],
   },
   {
@@ -1491,7 +1491,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Anselmo pricing reflects delivery from our Oakland yard.',
     permitInfo: 'San Anselmo requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental San Anselmo CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in San Anselmo, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Anselmo, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-rafael-ca', 'larkspur-ca', 'mill-valley-ca'],
   },
   {
@@ -1508,7 +1508,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Fairfax pricing reflects delivery from our Oakland yard.',
     permitInfo: 'Fairfax requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Fairfax CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Fairfax, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Fairfax, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['san-anselmo-ca', 'san-rafael-ca', 'larkspur-ca'],
   },
   {
@@ -1525,7 +1525,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Tiburon pricing reflects delivery from our Oakland yard.',
     permitInfo: 'Tiburon requires permits for public right-of-way placement.',
     metaTitle: 'Dumpster Rental Tiburon CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Tiburon, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Tiburon, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['mill-valley-ca', 'san-rafael-ca', 'corte-madera-ca'],
   },
   {
@@ -1542,7 +1542,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Benicia pricing reflects delivery from our Oakland operations.',
     permitInfo: 'Benicia requires permits for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Benicia CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Benicia, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Benicia, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['vallejo-ca', 'martinez-ca', 'concord-ca'],
   },
   {
@@ -1559,7 +1559,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'American Canyon pricing reflects delivery from our Oakland yard.',
     permitInfo: 'American Canyon requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental American Canyon CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in American Canyon, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in American Canyon, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['napa-ca', 'vallejo-ca', 'benicia-ca'],
   },
   {
@@ -1576,7 +1576,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Suisun City pricing reflects delivery distance from our Oakland yard.',
     permitInfo: 'Suisun City requires permits for public right-of-way placement.',
     metaTitle: 'Dumpster Rental Suisun City CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Suisun City, CA. Fast delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Suisun City, CA. Fast delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['vallejo-ca', 'benicia-ca', 'concord-ca'],
   },
   {
@@ -1593,7 +1593,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Vacaville pricing reflects extended delivery from our Oakland yard.',
     permitInfo: 'Vacaville requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Vacaville CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Professional dumpster rental in Vacaville, CA. 10-40 yard dumpsters, reliable delivery. Call (510) 680-2150.',
+    metaDescription: 'Professional dumpster rental in Vacaville, CA. 5-50 yard dumpsters, reliable delivery. Call (510) 680-2150.',
     nearbyLinks: ['vallejo-ca', 'napa-ca', 'suisun-city-ca'],
   },
   {
@@ -1610,7 +1610,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Fairfield pricing reflects delivery distance from our Oakland yard.',
     permitInfo: 'Fairfield requires permits for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Fairfield CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Fairfield, CA. Fast delivery, 10-40 yard roll-off dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Fairfield, CA. Fast delivery, 5-50 yard roll-off dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['suisun-city-ca', 'vacaville-ca', 'vallejo-ca'],
   },
   {
@@ -1627,7 +1627,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Dixon pricing reflects extended delivery logistics.',
     permitInfo: 'Dixon requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Dixon CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Dixon, CA. Reliable delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Dixon, CA. Reliable delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['vacaville-ca', 'fairfield-ca', 'sacramento-ca'],
   },
   {
@@ -1644,7 +1644,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Rio Vista pricing reflects extended delivery distance.',
     permitInfo: 'Rio Vista requires permits for public street placement.',
     metaTitle: 'Dumpster Rental Rio Vista CA | Roll-Off Dumpsters | Calsan Dumpsters Pro',
-    metaDescription: 'Dumpster rental in Rio Vista, CA. Professional delivery, 10-40 yard dumpsters. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Rio Vista, CA. Professional delivery, 5-50 yard dumpsters. Call (510) 680-2150.',
     nearbyLinks: ['antioch-ca', 'brentwood-ca', 'fairfield-ca'],
   },
 ];

@@ -71,7 +71,7 @@ const SCRIPTS: Script[] = [
     title: 'Not Sure What Size',
     channel: 'CALL',
     shortVersion: 'No problem — most homeowners need a 10-yard for small cleanouts or a 20-yard for renovation projects. Can you tell me what you are working on? I can recommend the right size.',
-    fullVersion: 'That is a great question and very common.\n\nHere is a quick guide:\n- 10-yard: Small cleanout, garage, 1 room renovation\n- 15-yard: Medium renovation, deck removal\n- 20-yard: Full renovation, roofing, large cleanout\n- 30-yard: New construction, major demolition\n\nCan you tell me about your project? I can recommend the perfect size and if you need a bigger one later, we can always do a swap.\n\nWhat type of material will you be disposing of?',
+    fullVersion: 'That is a great question and very common.\n\nHere is a quick guide:\n- 5-yard: Small concrete or dirt job\n- 10-yard: Small cleanout, garage, 1 room renovation\n- 20-yard: Full renovation, roofing, large cleanout\n- 30-yard: New construction, major demolition\n- 40-50 yard: Commercial and large-scale projects\n\nCan you tell me about your project? I can recommend the perfect size and if you need a bigger one later, we can always do a swap.\n\nWhat type of material will you be disposing of?',
     bestUseCase: 'Customer unsure about dumpster size',
     cta: 'Recommend size and send quote',
   },

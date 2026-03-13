@@ -397,18 +397,18 @@ export const GBP_SEED_REVIEWS = [
 
 // GBP Q&A Seed Data (for website FAQ sections and GBP seeding)
 export const GBP_QA_SEEDS = [
-  { q: "What dumpster sizes do you offer?", a: "We offer 10, 15, 20, 30, and 40 yard dumpsters depending on your project. Our team can help you choose the right size." },
+  { q: "What dumpster sizes do you offer?", a: "We offer 5, 8, 10, 20, 30, 40, and 50 yard dumpsters depending on your project. Heavy material sizes (concrete, dirt) are available in 5, 8, and 10 yard only. Our team can help you choose the right size." },
   { q: "Do you deliver dumpsters same day?", a: "Yes, same-day delivery is available depending on inventory and location. Most Bay Area addresses qualify for same-day or next-day delivery." },
   { q: "Do you offer dumpsters for contractors?", a: "Yes, many of our customers are contractors and construction professionals. We offer volume programs, priority scheduling, and Net-30 terms for qualified contractors." },
   { q: "What areas do you serve?", a: "We serve the entire San Francisco Bay Area including Oakland, San Jose, San Francisco, Berkeley, Hayward, Fremont, and 30+ additional cities across 9 counties." },
   { q: "Can I put concrete in a dumpster?", a: "Yes, we offer dedicated concrete and heavy material dumpsters with flat-fee pricing. No weight overage charges for clean concrete, dirt, or asphalt." },
-  { q: "How long can I keep the dumpster?", a: "Standard rental periods are 7-14 days depending on the size and project type. Extensions are available at daily rates." },
+  { q: "How long can I keep the dumpster?", a: "Standard rental is 7 days. Extensions are available at $35 per day. Just let us know before your rental period ends." },
 ] as const;
 
 // GBP Google Post Templates
 export const GBP_POST_TEMPLATES = [
   { title: "Dumpster Rental in Oakland", body: "Working on a renovation or cleanup project? Calsan Dumpsters Pro offers reliable dumpster rental across Oakland and the Bay Area. Same-day delivery available.", cta: "Get Instant Quote", url: "/quote" },
-  { title: "Same-Day Dumpster Delivery", body: "Need a dumpster today? We offer same-day delivery across the Bay Area from our Oakland and San Jose yards. 10-40 yard sizes available.", cta: "Get Instant Quote", url: "/quote" },
+  { title: "Same-Day Dumpster Delivery", body: "Need a dumpster today? We offer same-day delivery across the Bay Area from our Oakland and San Jose yards. 5-50 yard sizes available.", cta: "Get Instant Quote", url: "/quote" },
   { title: "Contractor Dumpster Service", body: "Calsan Dumpsters Pro serves Bay Area contractors with volume discounts, priority scheduling, and reliable service for construction and remodeling projects.", cta: "Get Contractor Quote", url: "/quote/contractor" },
   { title: "Concrete Dumpster Rental", body: "Flat-fee concrete dumpster rental in the Bay Area. No weight overage charges for clean concrete, dirt, or asphalt. Professional dispatch coordination.", cta: "Get Instant Quote", url: "/quote" },
 ] as const;

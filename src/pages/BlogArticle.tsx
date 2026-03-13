@@ -294,9 +294,9 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     sections: [
       { heading: 'Storm Season in the Bay Area', body: 'Rainy season in the San Francisco Bay Area usually runs from November through April, bringing heavy rain, wind, and debris. When a storm hits, cleanup can get overwhelming -- that is when having the right dumpster makes all the difference.' },
       { heading: 'Why You Need a Dumpster After a Storm', body: 'Storms can leave behind fallen branches, soaked drywall, roof debris, and general trash. Renting a roll-off dumpster helps you keep everything in one place and get your property back to normal fast.' },
-      { heading: 'Choosing the Right Size', body: '10-15 yards -- Ideal for smaller cleanups (yard waste, branches, light debris).\n\n20-30 yards -- Best for larger jobs (roof repairs, water-damaged materials, full-property cleanouts).\n\nMake sure the drop-off spot is accessible and not in a flooded area. Cover the dumpster if more rain is expected -- it helps keep debris lighter and easier to manage.' },
+      { heading: 'Choosing the Right Size', body: '5-10 yards -- Ideal for smaller cleanups (yard waste, branches, light debris).\n\n20-30 yards -- Best for larger jobs (roof repairs, water-damaged materials, full-property cleanouts).\n\nMake sure the drop-off spot is accessible and not in a flooded area. Cover the dumpster if more rain is expected -- it helps keep debris lighter and easier to manage.' },
       { heading: 'Local Tip for the Bay Area', body: 'Book early during rainy season -- demand goes up fast when big storms hit. Flexible scheduling and weekend availability make cleanup easier when you are on a tight timeline.' },
-      { heading: 'Choose Calsan Dumpsters Pro', body: 'At Calsan Dumpsters Pro LLC, we provide:\nFast delivery across Oakland and the Bay Area\nDumpsters from 8 to 40 yards\nWeekend service and flexible pickup options' },
+      { heading: 'Choose Calsan Dumpsters Pro', body: 'At Calsan Dumpsters Pro LLC, we provide:\nFast delivery across Oakland and the Bay Area\nDumpsters from 5 to 50 yards\nWeekend service and flexible pickup options' },
     ],
     faqs: [],
     relatedArticles: ['same-day-dumpster-delivery-bay-area', 'dumpster-sizes-guide'],

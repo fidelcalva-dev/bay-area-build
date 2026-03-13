@@ -17,7 +17,7 @@ export const SEO_USE_CASES: SeoUseCase[] = [
     name: 'Home Remodel',
     h1: 'Dumpster Rental for Home Remodels in California',
     description: 'Whether you are renovating a single bathroom or gutting an entire house, having a dumpster on-site keeps the project moving. Drywall, flooring, cabinetry, fixtures, and trim — toss it all and keep your work area clear.',
-    metaDescription: 'Rent a dumpster for your home remodel in California. 10-40 yard sizes, same-day delivery, transparent pricing. Get an instant quote from Calsan Dumpsters Pro.',
+    metaDescription: 'Rent a dumpster for your home remodel in California. 5-50 yard sizes, same-day delivery, transparent pricing. Get an instant quote from Calsan Dumpsters Pro.',
     recommendedSizes: [10, 20, 30],
     benefits: ['Keep work areas clear and safe', 'No trips to the dump', 'Professional delivery and pickup', 'Available in 10, 20, and 30 yard sizes'],
     faqs: [
