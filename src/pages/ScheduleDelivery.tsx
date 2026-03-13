@@ -113,8 +113,22 @@ export default function ScheduleDelivery() {
 
       const { error } = await supabase.functions.invoke('lead-ingest', {
         body: {
-          ...leadPayload,
-          event_type: 'schedule_request',
+          source_channel: 'SCHEDULE_DELIVERY',
+          source_detail: 'schedule_delivery_form',
+          name: name,
+          phone: phone,
+          email: email || null,
+          zip: zip,
+          address: `${address}${city ? ', ' + city : ''}, CA ${zip}`,
+          project_type: projectType,
+          material_category: material === 'heavy' ? 'heavy' : 'general',
+          size_preference: size ? `${size}yd` : null,
+          message: notes || null,
+          consent_status: 'OPTED_IN',
+          raw_payload: {
+            ...leadPayload,
+            event_type: 'schedule_request',
+          },
         },
       });
 
