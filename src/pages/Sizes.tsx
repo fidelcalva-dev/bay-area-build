@@ -225,7 +225,7 @@ export default function Sizes() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <Button asChild variant="cta" size="lg">
-                <Link to="/pricing" className="gap-2">
+                <Link to="/quote" className="gap-2">
                   Get Instant Quote
                   <ArrowRight className="w-4 h-4" />
                 </Link>

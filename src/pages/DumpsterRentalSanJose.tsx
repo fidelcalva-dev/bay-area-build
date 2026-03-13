@@ -24,6 +24,18 @@ const NEIGHBORHOODS = [
 
 const SIZE_DETAILS: { yards: number; title: string; description: string; useCases: string[] }[] = [
   {
+    yards: 5,
+    title: '5 Yard Dumpster — San Jose',
+    description: 'Compact size for small concrete removal, dirt hauling, and minor cleanout jobs across San Jose.',
+    useCases: ['Small concrete slab', 'Dirt & soil removal', 'Yard debris', 'Minor cleanout'],
+  },
+  {
+    yards: 8,
+    title: '8 Yard Dumpster — San Jose',
+    description: 'Popular for driveway demolition, foundation work, and garage cleanouts in San Jose neighborhoods.',
+    useCases: ['Driveway demo', 'Foundation concrete', 'Garage cleanout', 'Bathroom remodel'],
+  },
+  {
     yards: 10,
     title: '10 Yard Dumpster — San Jose',
     description: 'Perfect for small home cleanouts, bathroom remodels, and concrete or dirt removal in San Jose. Our most popular size for heavy material jobs.',
@@ -47,6 +59,12 @@ const SIZE_DETAILS: { yards: number; title: string; description: string; useCase
     description: 'Commercial-grade capacity for large San Jose projects. Ideal for demolition, warehouse cleanouts, and industrial sites.',
     useCases: ['Commercial demolition', 'Warehouse cleanout', 'Large construction site', 'Industrial waste removal'],
   },
+  {
+    yards: 50,
+    title: '50 Yard Dumpster — San Jose',
+    description: 'Maximum capacity for high-volume commercial debris, new construction, and large-scale demolition in San Jose.',
+    useCases: ['New construction', 'Large demolition', 'High-volume commercial', 'Industrial projects'],
+  },
 ];
 
 const FAQS = [
@@ -68,7 +86,7 @@ const FAQS = [
   },
   {
     question: 'Can I put concrete in a dumpster?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced differently. The dumpster must not be loaded above the fill line.',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 5, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced differently. The dumpster must not be loaded above the fill line.',
   },
   {
     question: 'What weight is included in the rental price?',
@@ -89,7 +107,7 @@ const serviceSchema = generateServiceSchema({
   name: 'Dumpster Rental San Jose CA',
   description: META.description,
   areaServed: ['San Jose', 'Santa Clara County'],
-  price: '390',
+  price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 395),
 });
 
 const breadcrumbSchema = generateBreadcrumbSchema([

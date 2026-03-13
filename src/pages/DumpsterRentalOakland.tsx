@@ -18,28 +18,46 @@ const META = {
 
 const SIZE_DETAILS: { yards: number; title: string; description: string; includes: string[] }[] = [
   {
+    yards: 5,
+    title: '5 Yard Dumpster',
+    description: 'Compact size for small jobs, concrete removal, and yard debris.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
+  },
+  {
+    yards: 8,
+    title: '8 Yard Dumpster',
+    description: 'Popular for driveway and foundation work.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
+  },
+  {
     yards: 10,
     title: '10 Yard Dumpster',
     description: 'Best for cleanouts and small remodels.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '1 ton included'],
   },
   {
     yards: 20,
     title: '20 Yard Dumpster',
     description: 'Ideal for kitchen remodels and medium construction projects.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '2 tons included'],
   },
   {
     yards: 30,
     title: '30 Yard Dumpster',
     description: 'Great for large renovations and commercial cleanouts.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '3 tons included'],
   },
   {
     yards: 40,
     title: '40 Yard Dumpster',
     description: 'Designed for major construction and demolition.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '4 tons included'],
+  },
+  {
+    yards: 50,
+    title: '50 Yard Dumpster',
+    description: 'Maximum capacity for large-scale commercial and industrial projects.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '5 tons included'],
   },
 ];
 
@@ -78,7 +96,7 @@ const FAQS = [
   },
   {
     question: 'Can I dispose of concrete in a roll-off dumpster?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing and no weight overage. Clean concrete (no rebar, no mixed debris) qualifies for our lowest rate. If you mix concrete with general debris, the load may be reclassified and priced as general debris. The dumpster must not be loaded above the fill line for safe transport.',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 5, 8, and 10-yard sizes with flat-fee pricing and no weight overage. Clean concrete (no rebar, no mixed debris) qualifies for our lowest rate. If you mix concrete with general debris, the load may be reclassified and priced as general debris. The dumpster must not be loaded above the fill line for safe transport.',
   },
   {
     question: 'How fast can you deliver in Oakland?',
@@ -272,7 +290,7 @@ export default function DumpsterRentalOakland() {
 
           <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-5">
             {[
-              { icon: Weight, label: 'Clean Concrete Dumpsters', value: 'Dedicated dumpsters for clean concrete disposal. Fully recyclable material qualifies for our lowest heavy material rate. Available in 6, 8, and 10-yard sizes.' },
+              { icon: Weight, label: 'Clean Concrete Dumpsters', value: 'Dedicated dumpsters for clean concrete disposal. Fully recyclable material qualifies for our lowest heavy material rate. Available in 5, 8, and 10-yard sizes.' },
               { icon: Truck, label: 'Dirt and Soil Dumpsters', value: 'Separate hauling for dirt, soil, and fill material. Flat-fee pricing with no weight overage surprises.' },
               { icon: Shield, label: 'Fill-Line Enforcement', value: 'Heavy material dumpsters must not be loaded above the fill line. This is a non-negotiable safety requirement for transport on Oakland roads.' },
               { icon: FileCheck, label: 'Reclassification Policy', value: 'If a concrete dumpster is contaminated with general debris, the load will be reclassified and priced as general debris. Keep materials separated for the best rate.' },

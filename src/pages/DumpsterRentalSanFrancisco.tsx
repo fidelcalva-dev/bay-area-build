@@ -35,6 +35,18 @@ const TRANSFER_STATIONS = [
 
 const SIZE_DETAILS: { yards: number; title: string; description: string; useCases: string[] }[] = [
   {
+    yards: 5,
+    title: '5 Yard Dumpster — San Francisco',
+    description: 'Compact size for small concrete removal, dirt hauling, and minor cleanouts. Fits tight SF driveways and alleyways.',
+    useCases: ['Small concrete job', 'Dirt & soil removal', 'Yard debris', 'Minor bathroom demo'],
+  },
+  {
+    yards: 8,
+    title: '8 Yard Dumpster — San Francisco',
+    description: 'Great for driveway and foundation work in San Francisco. Fits most residential driveways.',
+    useCases: ['Driveway demo', 'Foundation concrete', 'Garage cleanout', 'Small remodel'],
+  },
+  {
     yards: 10,
     title: '10 Yard Dumpster — San Francisco',
     description: 'Perfect for tight San Francisco driveways and small renovation projects. Our most popular size for concrete and bathroom remodels in the city.',
@@ -58,6 +70,12 @@ const SIZE_DETAILS: { yards: number; title: string; description: string; useCase
     description: 'Commercial-grade capacity for large San Francisco construction and demolition projects. Requires adequate access for placement.',
     useCases: ['Commercial demolition', 'Warehouse cleanout', 'Large construction site', 'Tenant improvement debris'],
   },
+  {
+    yards: 50,
+    title: '50 Yard Dumpster — San Francisco',
+    description: 'Maximum capacity for high-volume commercial debris and large-scale construction in San Francisco.',
+    useCases: ['New construction', 'Large demolition', 'High-volume commercial', 'Industrial projects'],
+  },
 ];
 
 const FAQS = [
@@ -79,7 +97,7 @@ const FAQS = [
   },
   {
     question: 'Can I put concrete in a dumpster in San Francisco?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced at general debris rates. The dumpster must not be loaded above the fill line.',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 5, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced at general debris rates. The dumpster must not be loaded above the fill line.',
   },
   {
     question: 'Are you a broker?',

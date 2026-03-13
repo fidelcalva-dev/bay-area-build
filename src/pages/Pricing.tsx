@@ -96,14 +96,14 @@ const priceFactors = [
 const exampleInvoice = {
   projectDescription: '20 Yard Dumpster • General Debris • Oakland, CA (94612)',
   lineItems: [
-    { label: '20 Yard Dumpster Base Price', amount: 620, type: 'base' as const },
+    { label: '20 Yard Dumpster Base Price', amount: 650, type: 'base' as const },
     { label: '7-Day Rental Period', amount: 0, type: 'included' as const },
     { label: 'Delivery & Pickup', amount: 0, type: 'included' as const },
     { label: '2 Tons Included', amount: 0, type: 'included' as const },
     { label: '3 Extra Days', amount: PRICING_POLICIES.extraDayCost * 3, type: 'addition' as const },
     { label: 'Mattress Disposal (x2)', amount: PRICING_POLICIES.mattressDisposal, type: 'addition' as const },
   ],
-  subtotal: 620 + (PRICING_POLICIES.extraDayCost * 3) + PRICING_POLICIES.mattressDisposal,
+  subtotal: 650 + (PRICING_POLICIES.extraDayCost * 3) + PRICING_POLICIES.mattressDisposal,
   note: `${OVERAGE_NOTE} ($${PRICING_POLICIES.overagePerTonGeneral}/ton)`
 };
 
@@ -721,7 +721,7 @@ export default function Pricing() {
             <div>
               <h4 className="font-bold text-foreground mb-2">Heavy Material Pricing (Concrete, Dirt, Brick)</h4>
               <p className="text-muted-foreground mb-3">
-                Heavy material dumpsters (6, 8, 10 yard) are priced as a <strong>FLAT FEE</strong>. Disposal is included with no extra weight charges.
+                Heavy material dumpsters (5, 8, 10 yard) are priced as a <strong>FLAT FEE</strong>. Disposal is included with no extra weight charges.
               </p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• <span className="font-medium text-success">Flat fee pricing:</span> No overage charges for heavy materials</li>
