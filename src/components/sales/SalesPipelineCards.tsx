@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import {
   Zap, Clock, FileText, Send, DollarSign, Phone,
   MessageSquare, ArrowRight, Loader2, AlertTriangle,
-  ScrollText, CreditCard
+  ScrollText, CreditCard, Truck
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -62,6 +62,7 @@ export function SalesPipelineCards() {
   const [pendingContracts, setPendingContracts] = useState<PipelineContract[]>([]);
   const [pendingPayments, setPendingPayments] = useState<PipelinePayment[]>([]);
   const [followUps, setFollowUps] = useState<PipelineLead[]>([]);
+  const [readyForDispatch, setReadyForDispatch] = useState<PipelineQuote[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -118,6 +119,15 @@ export function SalesPipelineCards() {
     setFollowUps((followUpRes.data || []) as PipelineLead[]);
     setPendingContracts((contractsRes.data || []) as unknown as PipelineContract[]);
     setPendingPayments(((paymentsRes.data || []) as unknown as PipelinePayment[]));
+
+    // Fetch ready-for-dispatch quotes (converted status)
+    const { data: dispatchQuotes } = await supabase.from('quotes')
+      .select('id, customer_name, customer_phone, status, subtotal, created_at, material_type')
+      .eq('status', 'converted')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    setReadyForDispatch((dispatchQuotes || []) as PipelineQuote[]);
+
     setLoading(false);
   }
 
@@ -231,6 +241,28 @@ export function SalesPipelineCards() {
       >
         {followUps.map(lead => (
           <LeadRow key={lead.id} lead={lead} showLastContact />
+        ))}
+      </PipelineSection>
+
+      {/* Ready for Dispatch */}
+      <PipelineSection
+        title="Ready for Dispatch"
+        icon={<Truck className="w-4 h-4 text-green-600" />}
+        count={readyForDispatch.length}
+        borderColor="border-l-green-600"
+        emptyText="No orders ready"
+      >
+        {readyForDispatch.map(q => (
+          <Link key={q.id} to={`/sales/quotes/${q.id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">{q.customer_name || 'Unknown'}</p>
+              <p className="text-xs text-muted-foreground">{q.material_type || 'General'} &middot; {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {q.subtotal && <span className="text-sm font-semibold">${q.subtotal.toFixed(0)}</span>}
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+          </Link>
         ))}
       </PipelineSection>
     </div>

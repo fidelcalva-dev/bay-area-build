@@ -121,6 +121,20 @@ function CommercialStatusCard({ status }: { status: CommercialStatus }) {
     { label: "Order Created", done: status.orderCreated, icon: Package },
   ];
 
+  // Dispatch handoff state
+  const contractSigned = status.contractStatus === "signed";
+  const paymentDone = status.paymentStatus === "paid" || status.paymentStatus === "completed";
+  let handoffState: { label: string; color: string } = { label: "Missing Info", color: "bg-muted text-muted-foreground" };
+  if (contractSigned && paymentDone) {
+    handoffState = { label: "Ready for Dispatch", color: "bg-success/10 text-success border-success/30" };
+  } else if (!contractSigned && status.contractStatus) {
+    handoffState = { label: "Waiting on Contract", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" };
+  } else if (contractSigned && !paymentDone) {
+    handoffState = { label: "Waiting on Payment", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" };
+  } else if (!contractSigned && !status.contractStatus) {
+    handoffState = { label: "Missing Scheduling Info", color: "bg-muted text-muted-foreground" };
+  }
+
   const getStepBadge = (step: typeof steps[0]) => {
     if (step.done) return <Badge className="bg-success/10 text-success border-success/30 text-[10px]">Done</Badge>;
     if (step.status === "pending") return <Badge variant="outline" className="text-[10px]">Pending</Badge>;
@@ -134,8 +148,13 @@ function CommercialStatusCard({ status }: { status: CommercialStatus }) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <CircleDot className="w-4 h-4 text-primary" /> Commercial Status
+        <CardTitle className="text-base flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <CircleDot className="w-4 h-4 text-primary" /> Commercial Status
+          </span>
+          <Badge className={`text-[10px] ${handoffState.color}`}>
+            {handoffState.label}
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>

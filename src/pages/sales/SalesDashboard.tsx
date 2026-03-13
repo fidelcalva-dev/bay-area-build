@@ -4,12 +4,13 @@ import {
   Users, FileText, TrendingUp, DollarSign,
   Clock, Loader2, GitBranch, ScrollText, CreditCard, CheckCircle,
   Phone, MessageSquare, Zap, Target, Mail, Send, Truck,
-  StickyNote, Package,
+  StickyNote, Package, Filter, X,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
@@ -39,6 +40,34 @@ interface DashboardStats {
   }>;
 }
 
+// Filter options
+const STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "All Statuses" },
+  { value: "new", label: "New" },
+  { value: "contacted", label: "Contacted" },
+  { value: "qualified", label: "Qualified" },
+  { value: "quote_sent", label: "Quote Sent" },
+  { value: "converted", label: "Converted" },
+  { value: "attention_required", label: "Attention Required" },
+];
+
+const SOURCE_FILTER_OPTIONS = [
+  { value: "all", label: "All Sources" },
+  { value: "website", label: "Website" },
+  { value: "phone", label: "Phone" },
+  { value: "referral", label: "Referral" },
+  { value: "google_ads", label: "Google Ads" },
+  { value: "ai_chat", label: "AI Chat" },
+];
+
+const READINESS_FILTER_OPTIONS = [
+  { value: "all", label: "All Readiness" },
+  { value: "ready", label: "Ready to Dispatch" },
+  { value: "waiting_contract", label: "Waiting on Contract" },
+  { value: "waiting_payment", label: "Waiting on Payment" },
+  { value: "missing_info", label: "Missing Info" },
+];
+
 export default function SalesDashboard() {
   const { user } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +77,20 @@ export default function SalesDashboard() {
     contractsSent: 0, paymentsSent: 0, ordersCreated: 0, followUpsDue: 0,
     recentActivity: [],
   });
+
+  // Filters
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterSource, setFilterSource] = useState("all");
+  const [filterCity, setFilterCity] = useState("");
+  const [filterReadiness, setFilterReadiness] = useState("all");
+  const hasActiveFilters = filterStatus !== "all" || filterSource !== "all" || filterCity !== "" || filterReadiness !== "all";
+
+  function clearFilters() {
+    setFilterStatus("all");
+    setFilterSource("all");
+    setFilterCity("");
+    setFilterReadiness("all");
+  }
 
   useEffect(() => { fetchStats(); }, []);
 
@@ -168,6 +211,50 @@ export default function SalesDashboard() {
           </Card>
         ))}
       </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="py-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[150px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_FILTER_OPTIONS.map(o => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterSource} onValueChange={setFilterSource}>
+              <SelectTrigger className="w-[140px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SOURCE_FILTER_OPTIONS.map(o => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterReadiness} onValueChange={setFilterReadiness}>
+              <SelectTrigger className="w-[160px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {READINESS_FILTER_OPTIONS.map(o => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" className="h-8 text-xs gap-1" onClick={clearFilters}>
+                <X className="w-3 h-3" /> Clear
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Pipeline Cards */}
       <SalesPipelineCards />
