@@ -170,7 +170,7 @@ const MATERIAL_PAGES: Record<string, MaterialPageContent> = {
     title: 'Construction Debris Dumpster | All Sizes Available',
     h1: 'Construction Debris Dumpster Rental',
     description: 'Dumpsters for mixed construction and demolition waste.',
-    metaDescription: 'Construction debris dumpster rental in the Bay Area. 10-40 yard sizes for remodels, demolition, and build projects. Transparent pricing, same-day delivery. Call (510) 680-2150.',
+    metaDescription: 'Construction debris dumpster rental in the Bay Area. 5-50 yard sizes for remodels, demolition, and build projects. Transparent pricing, same-day delivery. Call (510) 680-2150.',
     intro: 'Renovation, demolition, and construction projects generate mixed debris—drywall, lumber, tile, metal, and more. Our general debris dumpsters handle it all with clear weight policies and transparent pricing.',
     icon: Hammer,
     sizes: [10, 20, 30, 40],
