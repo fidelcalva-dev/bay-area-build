@@ -40,6 +40,34 @@ interface DashboardStats {
   }>;
 }
 
+// Filter options
+const STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "All Statuses" },
+  { value: "new", label: "New" },
+  { value: "contacted", label: "Contacted" },
+  { value: "qualified", label: "Qualified" },
+  { value: "quote_sent", label: "Quote Sent" },
+  { value: "converted", label: "Converted" },
+  { value: "attention_required", label: "Attention Required" },
+];
+
+const SOURCE_FILTER_OPTIONS = [
+  { value: "all", label: "All Sources" },
+  { value: "website", label: "Website" },
+  { value: "phone", label: "Phone" },
+  { value: "referral", label: "Referral" },
+  { value: "google_ads", label: "Google Ads" },
+  { value: "ai_chat", label: "AI Chat" },
+];
+
+const READINESS_FILTER_OPTIONS = [
+  { value: "all", label: "All Readiness" },
+  { value: "ready", label: "Ready to Dispatch" },
+  { value: "waiting_contract", label: "Waiting on Contract" },
+  { value: "waiting_payment", label: "Waiting on Payment" },
+  { value: "missing_info", label: "Missing Info" },
+];
+
 export default function SalesDashboard() {
   const { user } = useAdminAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +77,20 @@ export default function SalesDashboard() {
     contractsSent: 0, paymentsSent: 0, ordersCreated: 0, followUpsDue: 0,
     recentActivity: [],
   });
+
+  // Filters
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterSource, setFilterSource] = useState("all");
+  const [filterCity, setFilterCity] = useState("");
+  const [filterReadiness, setFilterReadiness] = useState("all");
+  const hasActiveFilters = filterStatus !== "all" || filterSource !== "all" || filterCity !== "" || filterReadiness !== "all";
+
+  function clearFilters() {
+    setFilterStatus("all");
+    setFilterSource("all");
+    setFilterCity("");
+    setFilterReadiness("all");
+  }
 
   useEffect(() => { fetchStats(); }, []);
 
