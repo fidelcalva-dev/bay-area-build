@@ -173,7 +173,7 @@ export const YARD_HUBS: YardHubData[] = [
     faqs: [
       { question: 'How quickly can I get a dumpster in San Francisco?', answer: 'Most SF deliveries happen within 1–3 hours during business hours. For street placements, allow time for the SFMTA permit process.' },
       { question: 'Do I need a permit for a dumpster in San Francisco?', answer: 'Dumpsters on private property do not need a permit. Street placements require a Street Space permit from SFMTA, typically 3–5 business days.' },
-      { question: 'What sizes are available for San Francisco projects?', answer: 'We stock 6, 8, 10, 20, and 30 yard dumpsters at our SF yard. Our compact hook-lift trucks can navigate tight San Francisco streets.' },
+      { question: 'What sizes are available for San Francisco projects?', answer: 'We stock 5, 8, 10, 20, 30, 40, and 50 yard dumpsters. Our compact hook-lift trucks can navigate tight San Francisco streets.' },
       { question: 'Can you deliver to steep San Francisco hills?', answer: 'Yes, our drivers are experienced with SF terrain. We use stabilization techniques for hillside placements and compact trucks for narrow streets.' },
       { question: 'What areas does the San Francisco yard serve?', answer: 'We serve all San Francisco neighborhoods, Daly City, South San Francisco, Pacifica, and parts of San Mateo County.' },
       { question: 'How much does a dumpster cost in San Francisco?', answer: `Prices start at $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard dumpster. SF pricing may include a city surcharge. Get an exact price with our quote calculator.` },

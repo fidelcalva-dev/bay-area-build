@@ -71,7 +71,7 @@ const CATEGORY_CONTENT: Record<string, Record<string, (topic: SeoBlogTopic) => s
     'available sizes': () =>
       `All standard sizes are available for delivery:\n\n` + DUMPSTER_SIZES_DATA.map(s =>
         `${s.yards}-Yard: From $${s.priceFrom} — ${s.loads}. ${s.dimensions}.`
-      ).join('\n') + `\n\nHeavy material containers (6, 8, 10 yard) are also available for concrete, dirt, and rock at flat-fee pricing. Contact us for current flat-fee rates.`,
+      ).join('\n') + `\n\nHeavy material containers (5, 8, 10 yard) are also available for concrete, dirt, and rock at flat-fee pricing. Contact us for current flat-fee rates.`,
     'typical project types': (topic) =>
       `Common projects in ${topic.targetCity || 'this area'} that use our dumpster service:\n\nHome renovation: Kitchen and bathroom remodels, room additions, flooring replacement. The 10 and 20 yard sizes are most popular for residential renovation work.\n\nEstate and whole-house cleanouts: Properties changing hands often need full cleanout service. The 30 and 40 yard sizes handle entire households efficiently.\n\nLandscaping and yard work: Tree removal, deck demolition, fence replacement, and hardscape projects generate debris that is too bulky for curbside collection.\n\nConstruction: New builds, ADUs, and additions require ongoing waste management throughout the construction timeline. We offer swap service for multi-load projects.\n\nCommercial tenant improvements: Office buildouts, retail renovations, and warehouse cleanouts are common in the area. We serve contractors and property managers with priority scheduling and volume pricing.`,
     'permit info': (topic) =>

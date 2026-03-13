@@ -721,7 +721,7 @@ export default function Pricing() {
             <div>
               <h4 className="font-bold text-foreground mb-2">Heavy Material Pricing (Concrete, Dirt, Brick)</h4>
               <p className="text-muted-foreground mb-3">
-                Heavy material dumpsters (6, 8, 10 yard) are priced as a <strong>FLAT FEE</strong>. Disposal is included with no extra weight charges.
+                Heavy material dumpsters (5, 8, 10 yard) are priced as a <strong>FLAT FEE</strong>. Disposal is included with no extra weight charges.
               </p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• <span className="font-medium text-success">Flat fee pricing:</span> No overage charges for heavy materials</li>

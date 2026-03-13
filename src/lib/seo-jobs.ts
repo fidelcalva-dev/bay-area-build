@@ -73,7 +73,7 @@ export const SEO_JOB_TYPES: SeoJobType[] = [
     slug: 'garage-cleanout-dumpster',
     name: 'Garage Cleanout',
     category: 'residential',
-    recommendedSizes: [6, 8, 10, 20],
+    recommendedSizes: [5, 8, 10, 20],
     description: 'Clean out years of accumulated junk from your garage with the right-sized dumpster. Furniture, old equipment, boxes, and household items — toss it all and reclaim your space.',
     typicalProjects: 'Garage declutter, storage unit cleanout, attic cleanout, basement clearing, and pre-move cleanups',
     whyDumpster: 'A dumpster in your driveway means you can work at your own pace over a few days. No multiple trips to the dump, no renting a truck, no scheduling hassles.',
