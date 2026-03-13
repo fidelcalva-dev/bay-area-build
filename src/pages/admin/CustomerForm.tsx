@@ -153,7 +153,7 @@ export default function CustomerForm() {
       billing_phone: billingPhone || phone || null,
       billing_address: billingAddress || null,
       customer_type: customerType,
-      notes: notes || null,
+      notes: [notes, accessNotes && `ACCESS: ${accessNotes}`, permitNotes && `PERMIT: ${permitNotes}`].filter(Boolean).join('\n') || null,
     };
 
     if (isEdit && id) {
