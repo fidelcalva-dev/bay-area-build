@@ -275,6 +275,8 @@ const MaterialCatalogPage = lazy(() => import("./pages/admin/materials/MaterialC
 const ProjectCategoriesPage = lazy(() => import("./pages/admin/materials/ProjectCategoriesPage"));
 const MaterialOffersPage = lazy(() => import("./pages/admin/materials/MaterialOffersPage"));
 const CustomerTypeRulesPage = lazy(() => import("./pages/admin/CustomerTypeRulesPage"));
+const LocationsConfig = lazy(() => import("./pages/admin/config/LocationsConfig"));
+const SocialLinksConfig = lazy(() => import("./pages/admin/config/SocialLinksConfig"));
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
@@ -903,6 +905,12 @@ const App = () => {
                 } />
                 <Route path="customer-type-rules" element={
                   <Suspense fallback={<PageLoader />}><CustomerTypeRulesPage /></Suspense>
+                } />
+                <Route path="config/locations" element={
+                  <Suspense fallback={<PageLoader />}><LocationsConfig /></Suspense>
+                } />
+                <Route path="config/social" element={
+                  <Suspense fallback={<PageLoader />}><SocialLinksConfig /></Suspense>
                 } />
                 <Route path="activity" element={
                   <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
