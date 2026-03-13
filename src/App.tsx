@@ -656,13 +656,9 @@ const App = () => {
               <Route path="/:citySlug/:sizeSlug-yard-dumpster" element={<LegacySizeRedirect />} />
               <Route path="/:citySlug/:subSlug" element={<LegacySubpageRedirect />} />
 
-              {/* Preview Routes (v2 Uber-like experience) */}
-              <Route path="/preview/quote" element={
-                <Suspense fallback={<PageLoader />}><PreviewQuote /></Suspense>
-              } />
-              <Route path="/preview/home" element={
-                <Suspense fallback={<PageLoader />}><PreviewHome /></Suspense>
-              } />
+              {/* Preview Routes — archived, redirect to canonical */}
+              <Route path="/preview/quote" element={<Navigate to="/quote" replace />} />
+              <Route path="/preview/home" element={<Navigate to="/" replace />} />
               
               {/* Customer Portal (SMS OTP Auth) */}
               <Route path="/portal" element={
