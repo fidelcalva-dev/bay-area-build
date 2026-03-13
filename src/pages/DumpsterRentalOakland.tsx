@@ -18,28 +18,46 @@ const META = {
 
 const SIZE_DETAILS: { yards: number; title: string; description: string; includes: string[] }[] = [
   {
+    yards: 5,
+    title: '5 Yard Dumpster',
+    description: 'Compact size for small jobs, concrete removal, and yard debris.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
+  },
+  {
+    yards: 8,
+    title: '8 Yard Dumpster',
+    description: 'Popular for driveway and foundation work.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
+  },
+  {
     yards: 10,
     title: '10 Yard Dumpster',
     description: 'Best for cleanouts and small remodels.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '1 ton included'],
   },
   {
     yards: 20,
     title: '20 Yard Dumpster',
     description: 'Ideal for kitchen remodels and medium construction projects.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '2 tons included'],
   },
   {
     yards: 30,
     title: '30 Yard Dumpster',
     description: 'Great for large renovations and commercial cleanouts.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '3 tons included'],
   },
   {
     yards: 40,
     title: '40 Yard Dumpster',
     description: 'Designed for major construction and demolition.',
-    includes: ['Delivery included', 'Pickup included', '7-day rental included', 'Transparent weight policy'],
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '4 tons included'],
+  },
+  {
+    yards: 50,
+    title: '50 Yard Dumpster',
+    description: 'Maximum capacity for large-scale commercial and industrial projects.',
+    includes: ['Delivery included', 'Pickup included', '7-day rental included', '5 tons included'],
   },
 ];
 
