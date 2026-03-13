@@ -135,12 +135,12 @@ const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES
     // Skip non-indexable markets (paused, noindex, future partner)
     if (market && !market.indexable) return null;
     const priority = market?.sitemapPriority ?? 0.6;
-    const cf = market?.sitemapChangefreq ?? 'monthly';
+    const cf: SitemapEntry['changefreq'] = market?.sitemapChangefreq ?? 'monthly';
     return {
       url: `/dumpster-rental/${canonical}`,
       changefreq: cf,
       priority,
-    };
+    } as SitemapEntry;
   })
   .filter((entry): entry is SitemapEntry => entry !== null);
 
