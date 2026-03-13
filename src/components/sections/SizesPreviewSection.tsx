@@ -39,7 +39,7 @@ export function SizesPreviewSection() {
             <AnimatedItem key={size} variant="fadeUp">
               <PhotoDumpsterCard
                 size={size}
-                ctaLink="/#quote"
+                ctaLink="/quote"
                 ctaLabel="Get Quote"
                 imageMode="photo"
                 showPrice={true}
