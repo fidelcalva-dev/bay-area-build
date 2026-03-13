@@ -96,7 +96,7 @@ const FAQS = [
   },
   {
     question: 'Can I dispose of concrete in a roll-off dumpster?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing and no weight overage. Clean concrete (no rebar, no mixed debris) qualifies for our lowest rate. If you mix concrete with general debris, the load may be reclassified and priced as general debris. The dumpster must not be loaded above the fill line for safe transport.',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 5, 8, and 10-yard sizes with flat-fee pricing and no weight overage. Clean concrete (no rebar, no mixed debris) qualifies for our lowest rate. If you mix concrete with general debris, the load may be reclassified and priced as general debris. The dumpster must not be loaded above the fill line for safe transport.',
   },
   {
     question: 'How fast can you deliver in Oakland?',
