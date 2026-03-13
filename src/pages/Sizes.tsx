@@ -104,7 +104,7 @@ export default function Sizes() {
                     useCases={size.useCases}
                     isPopular={size.popular}
                     variant="general"
-                    ctaLink="/pricing"
+                    ctaLink="/quote"
                   />
                 ))}
               </div>
