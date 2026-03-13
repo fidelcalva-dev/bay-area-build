@@ -416,6 +416,9 @@ const App = () => {
               <Route path="/contractors" element={
                 <Suspense fallback={<PageLoader />}><Contractors /></Suspense>
               } />
+              <Route path="/contractor-application" element={
+                <Suspense fallback={<PageLoader />}><ContractorApplication /></Suspense>
+              } />
               <Route path="/contractor-best-practices" element={
                 <Suspense fallback={<PageLoader />}><ContractorBestPractices /></Suspense>
               } />
