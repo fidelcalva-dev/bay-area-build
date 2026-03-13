@@ -18,6 +18,7 @@ const navItems = [
   { path: '/cs/orders', label: 'Orders', icon: Package },
   { path: '/cs/requests', label: 'Requests Queue', icon: ClipboardList },
   { path: '/cs/leads', label: 'Leads', icon: ClipboardList },
+  { path: '/cs/lead-inbox', label: 'Lead Inbox', icon: MessageSquare },
   { path: '/admin/customers', label: 'Customers', icon: Search },
   { path: '/cs/calls', label: 'Calls', icon: Phone },
   { path: '/cs/messages', label: 'Messages', icon: MessageSquare },

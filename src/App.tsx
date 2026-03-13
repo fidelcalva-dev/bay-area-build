@@ -853,6 +853,7 @@ const App = () => {
                 <Route path="markets/new-location" element={
                   <Suspense fallback={<PageLoader />}><NewLocationWizard /></Suspense>
                 } />
+                <Route path="markets/new" element={<Navigate to="/admin/markets/new-location" replace />} />
                 <Route path="facilities" element={
                   <Suspense fallback={<PageLoader />}><FacilitiesManager /></Suspense>
                 } />

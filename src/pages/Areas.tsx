@@ -83,11 +83,11 @@ export default function Areas() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm mb-4">
               <MapPin className="w-4 h-4" />
-              100+ Cities Across California
+              Bay Area Direct Operations
             </div>
-            <h1 className="heading-xl mb-4">Dumpster Rental Service Areas</h1>
+            <h1 className="heading-xl mb-4">Bay Area Dumpster Rental Service Areas</h1>
             <p className="text-xl text-primary-foreground/85 mb-6">
-              Local yard operations in the Bay Area with coordinated service across California. Select your region below to find fast, reliable dumpster delivery near you.
+              Dispatched from our Oakland, San Jose, and San Francisco yards — serving 16+ Bay Area cities with same-day delivery and transparent pricing.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg">
@@ -155,27 +155,19 @@ export default function Areas() {
         </div>
       </section>
 
-      {/* Statewide Hub Link */}
+      {/* Expanding Coverage */}
       <section className="section-padding bg-background">
         <div className="container-narrow text-center">
-          <h2 className="heading-md text-foreground mb-4">Serving All of California</h2>
+          <h2 className="heading-md text-foreground mb-4">Expanding Across California</h2>
           <p className="text-muted-foreground mb-6">
-            From the Bay Area to Los Angeles, Sacramento to San Diego — Calsan Dumpsters Pro provides reliable roll-off dumpster service with transparent pricing and professional dispatch.
+            Our core operations are based in the Bay Area. We're growing into new regions through a coordinated partner network — same Calsan standards, local delivery.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/california-dumpster-rental">
-                View California Coverage
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/bay-area-dumpster-rental">
-                Bay Area Hub
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-          </div>
+          <Button asChild variant="outline" size="lg">
+            <Link to="/bay-area-dumpster-rental">
+              Explore Bay Area Coverage
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </div>
       </section>
 
