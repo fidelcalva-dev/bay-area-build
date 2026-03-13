@@ -329,13 +329,34 @@ export default function CustomerForm() {
               <StickyNote className="w-4 h-4" /> Notes
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Service notes, access instructions, permit details..."
-              rows={4}
-            />
+          <CardContent className="grid gap-4">
+            <div>
+              <Label>Service Notes</Label>
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="General service notes..."
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Access Notes</Label>
+              <Textarea
+                value={accessNotes}
+                onChange={(e) => setAccessNotes(e.target.value)}
+                placeholder="Gate codes, hillside access, narrow streets..."
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label>Permit Notes</Label>
+              <Textarea
+                value={permitNotes}
+                onChange={(e) => setPermitNotes(e.target.value)}
+                placeholder="Street placement permit required, HOA restrictions..."
+                rows={2}
+              />
+            </div>
           </CardContent>
         </Card>
 
