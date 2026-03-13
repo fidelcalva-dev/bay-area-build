@@ -52,11 +52,11 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   // Hub pages
-  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
+  { url: '/california-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
   { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
-  { url: '/southern-california-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
-  { url: '/central-valley-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
-  { url: '/north-bay-dumpster-rental', changefreq: 'weekly', priority: 0.85 },
+  { url: '/southern-california-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
+  { url: '/central-valley-dumpster-rental', changefreq: 'monthly', priority: 0.5 },
+  { url: '/north-bay-dumpster-rental', changefreq: 'weekly', priority: 0.8 },
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.9 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.9 },
