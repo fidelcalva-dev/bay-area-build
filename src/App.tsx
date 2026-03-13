@@ -44,7 +44,7 @@ const QuoteSchedule = lazy(() => import("./pages/QuoteSchedule"));
 const QuotePayment = lazy(() => import("./pages/QuotePayment"));
 const GreenImpactMap = lazy(() => import("./pages/GreenImpactMap"));
 const GreenHalo = lazy(() => import("./pages/GreenHalo"));
-const Locations = lazy(() => import("./pages/Locations"));
+// Locations merged into Areas — redirect only
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const WasteVision = lazy(() => import("./pages/WasteVision"));
