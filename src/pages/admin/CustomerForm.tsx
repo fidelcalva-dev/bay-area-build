@@ -55,9 +55,15 @@ export default function CustomerForm() {
   const [billingEmail, setBillingEmail] = useState('');
   const [billingPhone, setBillingPhone] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
+  const [serviceAddress, setServiceAddress] = useState('');
+  const [serviceCity, setServiceCity] = useState('');
+  const [serviceZip, setServiceZip] = useState('');
   const [customerType, setCustomerType] = useState('homeowner');
   const [preferredContact, setPreferredContact] = useState('phone');
+  const [assignedRep, setAssignedRep] = useState('');
   const [notes, setNotes] = useState('');
+  const [accessNotes, setAccessNotes] = useState('');
+  const [permitNotes, setPermitNotes] = useState('');
 
   // Load existing customer for edit mode
   useEffect(() => {
