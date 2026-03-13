@@ -123,15 +123,11 @@ export default function SalesNewQuote() {
           setFormData(prev => ({
             ...prev,
             name: data.customer_name || prev.name,
-            phone: data.phone || prev.phone,
-            email: data.email || prev.email,
-            zip: data.zip_code || prev.zip,
+            phone: data.customer_phone || prev.phone,
+            email: data.customer_email || prev.email,
+            zip: data.zip || prev.zip,
             address: data.address || prev.address,
           }));
-          if (data.customer_id) {
-            setLinkedCustomerId(data.customer_id);
-            setLinkedCustomerName(data.customer_name || 'Linked Customer');
-          }
         }
       });
     }
