@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle, ChevronRight, ChevronLeft, Mail, Loader2, MessageCircle,
-  MapPin, Package, Weight, Calendar, Users, Phone, Bookmark, Briefcase
+  MapPin, Package, Weight, Calendar, Users, Phone, Bookmark, Briefcase,
+  Truck, Search, UserPlus, Link2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +50,14 @@ const SALES_MATERIAL_OPTIONS = [
   },
 ];
 
-type Step = 'zip' | 'material' | 'size' | 'options' | 'contact' | 'success';
+const DELIVERY_PREFERENCES = [
+  { value: 'specific_date', label: 'Specific Date', desc: 'Customer has a preferred delivery date' },
+  { value: 'asap', label: 'ASAP / Earliest Available', desc: 'Needs delivery as soon as possible' },
+  { value: 'flexible', label: 'Flexible — Any Day This Week', desc: 'Flexible on timing' },
+  { value: 'call_to_confirm', label: 'Call to Confirm', desc: 'Wants a callback to decide' },
+];
+
+type Step = 'zip' | 'material' | 'size' | 'options' | 'delivery' | 'contact' | 'success';
 
 interface ZoneResult {
   zoneId: string;
@@ -57,8 +66,17 @@ interface ZoneResult {
   multiplier: number;
 }
 
+interface CustomerMatch {
+  id: string;
+  company_name: string | null;
+  contact_name: string | null;
+  phone: string | null;
+  billing_email: string | null;
+}
+
 export default function SalesNewQuote() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [step, setStep] = useState<Step>('zip');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,9 +85,21 @@ export default function SalesNewQuote() {
   const [vendorResult, setVendorResult] = useState<VendorSelectionResult | null>(null);
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
+  const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
+
+  // Customer linking
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerMatches, setCustomerMatches] = useState<CustomerMatch[]>([]);
+  const [linkedCustomerId, setLinkedCustomerId] = useState<string | null>(null);
+  const [linkedCustomerName, setLinkedCustomerName] = useState<string | null>(null);
+  const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
+
+  // Delivery preference
+  const [deliveryPref, setDeliveryPref] = useState('asap');
+  const [deliveryDate, setDeliveryDate] = useState('');
 
   const [formData, setFormData] = useState<QuoteFormData>({
-    userType: 'homeowner', // No discount
+    userType: 'homeowner',
     zip: '',
     material: 'general',
     size: 20,
@@ -80,6 +110,71 @@ export default function SalesNewQuote() {
     email: '',
     address: '',
   });
+
+  // Pre-fill from URL params (e.g., from lead)
+  useEffect(() => {
+    const leadId = searchParams.get('lead_id');
+    const zip = searchParams.get('zip');
+    if (zip) setFormData(prev => ({ ...prev, zip }));
+    if (leadId) {
+      // Fetch lead info to pre-fill
+      supabase.from('sales_leads').select('*').eq('id', leadId).maybeSingle().then(({ data }) => {
+        if (data) {
+          setFormData(prev => ({
+            ...prev,
+            name: data.customer_name || prev.name,
+            phone: data.phone || prev.phone,
+            email: data.email || prev.email,
+            zip: data.zip_code || prev.zip,
+            address: data.address || prev.address,
+          }));
+          if (data.customer_id) {
+            setLinkedCustomerId(data.customer_id);
+            setLinkedCustomerName(data.customer_name || 'Linked Customer');
+          }
+        }
+      });
+    }
+  }, [searchParams]);
+
+  // Customer search
+  const searchCustomers = useCallback(async (query: string) => {
+    if (query.length < 2) { setCustomerMatches([]); return; }
+    setIsSearchingCustomer(true);
+    try {
+      const { data } = await supabase
+        .from('customers')
+        .select('id, company_name, contact_name, phone, billing_email')
+        .or(`contact_name.ilike.%${query}%,company_name.ilike.%${query}%,phone.ilike.%${query}%,billing_email.ilike.%${query}%`)
+        .limit(5);
+      setCustomerMatches(data || []);
+    } catch { setCustomerMatches([]); }
+    finally { setIsSearchingCustomer(false); }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchCustomers(customerSearch), 300);
+    return () => clearTimeout(timer);
+  }, [customerSearch, searchCustomers]);
+
+  const linkCustomer = (customer: CustomerMatch) => {
+    setLinkedCustomerId(customer.id);
+    setLinkedCustomerName(customer.contact_name || customer.company_name || 'Customer');
+    setFormData(prev => ({
+      ...prev,
+      name: customer.contact_name || customer.company_name || prev.name,
+      phone: customer.phone || prev.phone,
+      email: customer.billing_email || prev.email,
+    }));
+    setCustomerSearch('');
+    setCustomerMatches([]);
+    toast({ title: 'Customer linked', description: `Linked to ${customer.contact_name || customer.company_name}` });
+  };
+
+  const unlinkCustomer = () => {
+    setLinkedCustomerId(null);
+    setLinkedCustomerName(null);
+  };
 
   // Zone lookup
   const lookupZone = useCallback(async (zip: string) => {
@@ -150,15 +245,13 @@ export default function SalesNewQuote() {
 
     const includedTons = INCLUDED_TONS[formData.size] || 1;
 
-    // Use official ZIP-based price list (includes material-specific pricing)
     const zipResult = getPriceByZip(formData.zip, formData.size, priceListMaterialCategory);
     const basePrice = zipResult.zipFound && zipResult.price > 0
       ? Math.round(zipResult.price)
-      : Math.round(sizeData.basePrice * zoneResult.multiplier); // fallback only if ZIP not in list
+      : Math.round(sizeData.basePrice * zoneResult.multiplier);
 
     lineItems.push({ label: `${sizeData.label} Dumpster`, subLabel: `${rental.label} rental • ${includedTons}T included`, amount: basePrice, type: 'base' });
 
-    // No separate material surcharge — already baked into ZIP-level pricing
     if (rental.extraCost > 0) {
       lineItems.push({ label: 'Extended Rental', subLabel: `+${rental.extraDays} extra days`, amount: rental.extraCost, type: 'addition' });
     }
@@ -169,7 +262,6 @@ export default function SalesNewQuote() {
       }
     }
 
-    // No discount applied
     const subtotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
     return { lineItems, subtotal, estimatedMin: subtotal, estimatedMax: subtotal + Math.round(subtotal * 0.08), includedTons, isValid: true };
   }, [formData, zoneResult, priceListMaterialCategory]);
@@ -187,16 +279,17 @@ export default function SalesNewQuote() {
     switch (step) {
       case 'zip': return zoneResult !== null;
       case 'contact': return formData.name && formData.phone && formData.email;
+      case 'delivery': return deliveryPref === 'asap' || deliveryPref === 'flexible' || deliveryPref === 'call_to_confirm' || (deliveryPref === 'specific_date' && deliveryDate);
       default: return true;
     }
-  }, [step, zoneResult, formData]);
+  }, [step, zoneResult, formData, deliveryPref, deliveryDate]);
 
   const goNext = () => {
-    const nextSteps: Record<Step, Step> = { zip: 'material', material: 'size', size: 'options', options: 'contact', contact: 'success', success: 'success' };
+    const nextSteps: Record<Step, Step> = { zip: 'material', material: 'size', size: 'options', options: 'delivery', delivery: 'contact', contact: 'success', success: 'success' };
     setStep(nextSteps[step]);
   };
   const goBack = () => {
-    const prevSteps: Record<Step, Step> = { zip: 'zip', material: 'zip', size: 'material', options: 'size', contact: 'options', success: 'contact' };
+    const prevSteps: Record<Step, Step> = { zip: 'zip', material: 'zip', size: 'material', options: 'size', delivery: 'options', contact: 'delivery', success: 'contact' };
     setStep(prevSteps[step]);
   };
 
@@ -213,14 +306,32 @@ export default function SalesNewQuote() {
         materialType: formData.material, rentalDays: formData.rentalDays,
         extras: formData.extras.map((e) => `${e.id}:${e.quantity}`),
         subtotal: quote.subtotal, estimatedMin: quote.estimatedMin, estimatedMax: quote.estimatedMax,
-        discountPercent: 0, // No discount
+        discountPercent: 0,
         selectedVendorId: vendorResult?.selectedVendor?.vendorId,
         vendorCost: vendorResult?.vendorCost || undefined, margin: vendorResult?.margin || undefined,
         isCalsanFulfillment: vendorResult?.isCalsanFulfillment ?? true,
       });
       if (result.success) {
+        const quoteId = result.quoteId;
+        setCreatedQuoteId(quoteId || null);
+
+        // Update quote with delivery preference & customer link
+        if (quoteId) {
+          const updatePayload: Record<string, any> = {
+            preferred_delivery_window: deliveryPref !== 'specific_date' ? deliveryPref : null,
+            delivery_address: formData.address || null,
+          };
+          if (deliveryPref === 'specific_date' && deliveryDate) {
+            updatePayload.delivery_date = deliveryDate;
+          }
+          if (linkedCustomerId) {
+            updatePayload.customer_id = linkedCustomerId;
+          }
+          await supabase.from('quotes').update(updatePayload).eq('id', quoteId);
+        }
+
         setStep('success');
-        toast({ title: bookNow ? 'Booking Submitted!' : 'Quote Saved!', description: bookNow ? "Quote created successfully" : "Quote saved to the system" });
+        toast({ title: bookNow ? 'Quote Created!' : 'Quote Saved!', description: bookNow ? "Quote created successfully" : "Quote saved to the system" });
       } else throw new Error(result.error);
     } catch {
       toast({ title: 'Submission Error', description: 'Please try again', variant: 'destructive' });
@@ -248,12 +359,13 @@ export default function SalesNewQuote() {
     { key: 'material', label: 'Material', icon: <Package className="w-4 h-4" /> },
     { key: 'size', label: 'Size', icon: <Weight className="w-4 h-4" /> },
     { key: 'options', label: 'Options', icon: <Calendar className="w-4 h-4" /> },
+    { key: 'delivery', label: 'Delivery', icon: <Truck className="w-4 h-4" /> },
     { key: 'contact', label: 'Contact', icon: <Users className="w-4 h-4" /> },
   ];
   const stepIndex = STEPS.findIndex((s) => s.key === step);
 
   return (
-    <div className="max-w-xl mx-auto py-6">
+    <div className="max-w-xl mx-auto py-6 px-4 sm:px-0">
       <div className="mb-6">
         <Button variant="ghost" size="sm" onClick={() => navigate('/sales/quotes')} className="mb-2">
           <ChevronLeft className="w-4 h-4 mr-1" /> Back to Quotes
@@ -388,7 +500,8 @@ export default function SalesNewQuote() {
                   {availableSizes.map((size) => {
                     const includedTons = formData.material === 'heavy' ? 10 : INCLUDED_TONS[size.value] || 1;
                     const image = DUMPSTER_IMAGES[size.value];
-                    const price = Math.round(size.basePrice * (zoneResult?.multiplier || 1));
+                    const zipResult = getPriceByZip(formData.zip, size.value, priceListMaterialCategory);
+                    const price = zipResult.zipFound && zipResult.price > 0 ? Math.round(zipResult.price) : Math.round(size.basePrice * (zoneResult?.multiplier || 1));
                     return (
                       <button key={size.id} type="button" onClick={() => setFormData((prev) => ({ ...prev, size: size.value }))}
                         className={cn("relative p-3 rounded-xl border-2 text-left transition-all", formData.size === size.value ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-input hover:border-primary/50")}>
@@ -475,12 +588,67 @@ export default function SalesNewQuote() {
                 </div>
               </div>
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext}>
-                Continue to Book <ChevronRight className="w-5 h-5" />
+                Continue <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
           )}
 
-          {/* Step 5: Contact */}
+          {/* Step 5: Delivery Preference */}
+          {step === 'delivery' && (
+            <div className="space-y-5">
+              <button type="button" onClick={goBack} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5"><ChevronLeft className="w-4 h-4" />Back</button>
+              <div>
+                <h4 className="text-lg font-bold text-foreground mb-4">Delivery Preference</h4>
+                <div className="grid gap-3">
+                  {DELIVERY_PREFERENCES.map((pref) => (
+                    <button key={pref.value} type="button" onClick={() => setDeliveryPref(pref.value)}
+                      className={cn("p-4 rounded-xl border-2 text-left transition-all", deliveryPref === pref.value ? "border-primary bg-primary/5" : "border-input hover:border-primary/50")}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="font-semibold text-foreground">{pref.label}</h5>
+                          <p className="text-sm text-muted-foreground">{pref.desc}</p>
+                        </div>
+                        {deliveryPref === pref.value && <CheckCircle className="w-5 h-5 text-primary shrink-0" />}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {deliveryPref === 'specific_date' && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Preferred Date</label>
+                  <Input
+                    type="date"
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="h-12"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  <MapPin className="w-4 h-4 inline mr-1.5" />
+                  Job Site Address (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Full delivery address..."
+                  value={formData.address || ''}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                  className="h-12"
+                />
+              </div>
+
+              <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
+                Continue <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
+          )}
+
+          {/* Step 6: Contact */}
           {step === 'contact' && (
             <div className="space-y-5">
               <button type="button" onClick={goBack} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5"><ChevronLeft className="w-4 h-4" />Back</button>
@@ -490,12 +658,52 @@ export default function SalesNewQuote() {
                   <div className="text-right"><div className="font-semibold text-foreground">{DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}</div><div className="text-sm text-muted-foreground">{formData.rentalDays} days</div></div>
                 </div>
               </div>
+
+              {/* Customer Search / Link */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-foreground flex items-center gap-2">
+                  <Search className="w-4 h-4" /> Link Existing Customer
+                </h4>
+                {linkedCustomerId ? (
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-success/10 border border-success/30">
+                    <div className="flex items-center gap-2">
+                      <Link2 className="w-4 h-4 text-success" />
+                      <span className="font-medium text-foreground">{linkedCustomerName}</span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={unlinkCustomer} className="text-xs h-7">Unlink</Button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by name, phone, or email..."
+                      value={customerSearch}
+                      onChange={(e) => setCustomerSearch(e.target.value)}
+                      className="pl-9 h-10"
+                    />
+                    {isSearchingCustomer && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />}
+                    {customerMatches.length > 0 && (
+                      <div className="absolute z-10 top-full mt-1 w-full bg-card border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {customerMatches.map((c) => (
+                          <button key={c.id} type="button" onClick={() => linkCustomer(c)}
+                            className="w-full text-left px-3 py-2 hover:bg-muted/50 transition-colors border-b border-border last:border-0">
+                            <p className="text-sm font-medium">{c.contact_name || c.company_name}</p>
+                            <p className="text-xs text-muted-foreground">{c.phone} · {c.billing_email}</p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">Customer Information</h4>
+                <h4 className="font-semibold text-foreground flex items-center gap-2">
+                  <UserPlus className="w-4 h-4" /> Customer Information
+                </h4>
                 <div className="relative"><Users className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" /><Input type="text" placeholder="Customer Name / Company" value={formData.name} onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))} className="pl-11 h-12 text-base" /></div>
                 <div className="relative"><Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" /><Input type="tel" placeholder="Phone Number" value={formData.phone} onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))} className="pl-11 h-12 text-base" /></div>
                 <div className="relative"><Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" /><Input type="email" placeholder="Email Address" value={formData.email} onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))} className="pl-11 h-12 text-base" /></div>
-                <div className="relative"><MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" /><Input type="text" placeholder="Job Site Address (optional)" value={formData.address || ''} onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))} className="pl-11 h-12 text-base" /></div>
               </div>
               <div className="space-y-3 pt-2">
                 <Button type="button" size="lg" className="w-full h-14 text-base gap-2" onClick={() => handleSaveQuote(true)} disabled={isSubmitting || !canGoNext}>
@@ -518,12 +726,19 @@ export default function SalesNewQuote() {
                 <div className="text-sm text-muted-foreground mb-1">Quote Summary</div>
                 <div className="flex justify-between items-center"><div className="font-semibold text-foreground">{DUMPSTER_SIZES.find((s) => s.value === formData.size)?.label}</div><div className="text-lg font-bold text-foreground">${quote.estimatedMin}–${quote.estimatedMax}</div></div>
                 <div className="text-sm text-muted-foreground mt-1">{formData.rentalDays} days • ZIP {formData.zip}</div>
+                <div className="text-sm text-muted-foreground">Delivery: {DELIVERY_PREFERENCES.find(p => p.value === deliveryPref)?.label}{deliveryPref === 'specific_date' && deliveryDate ? ` — ${deliveryDate}` : ''}</div>
+                {linkedCustomerName && <div className="text-sm text-primary mt-1 flex items-center gap-1"><Link2 className="w-3 h-3" /> Linked to {linkedCustomerName}</div>}
               </div>
               <div className="flex gap-3">
+                {createdQuoteId && (
+                  <Button className="flex-1 gap-2" onClick={() => navigate(`/sales/quotes/${createdQuoteId}`)}>
+                    Open Quote
+                  </Button>
+                )}
                 <Button variant="outline" className="flex-1 gap-2" onClick={() => navigate('/sales/quotes')}>
                   View All Quotes
                 </Button>
-                <Button className="flex-1 gap-2" onClick={() => { setStep('zip'); setFormData({ userType: 'homeowner', zip: '', material: 'general', size: 20, rentalDays: 7, extras: [], name: '', phone: '', email: '', address: '' }); setZoneResult(null); }}>
+                <Button variant="outline" className="flex-1 gap-2" onClick={() => { setStep('zip'); setFormData({ userType: 'homeowner', zip: '', material: 'general', size: 20, rentalDays: 7, extras: [], name: '', phone: '', email: '', address: '' }); setZoneResult(null); setCreatedQuoteId(null); setLinkedCustomerId(null); setLinkedCustomerName(null); setDeliveryPref('asap'); setDeliveryDate(''); }}>
                   New Quote
                 </Button>
               </div>
