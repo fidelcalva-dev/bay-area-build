@@ -290,7 +290,7 @@ export default function DumpsterRentalOakland() {
 
           <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-5">
             {[
-              { icon: Weight, label: 'Clean Concrete Dumpsters', value: 'Dedicated dumpsters for clean concrete disposal. Fully recyclable material qualifies for our lowest heavy material rate. Available in 6, 8, and 10-yard sizes.' },
+              { icon: Weight, label: 'Clean Concrete Dumpsters', value: 'Dedicated dumpsters for clean concrete disposal. Fully recyclable material qualifies for our lowest heavy material rate. Available in 5, 8, and 10-yard sizes.' },
               { icon: Truck, label: 'Dirt and Soil Dumpsters', value: 'Separate hauling for dirt, soil, and fill material. Flat-fee pricing with no weight overage surprises.' },
               { icon: Shield, label: 'Fill-Line Enforcement', value: 'Heavy material dumpsters must not be loaded above the fill line. This is a non-negotiable safety requirement for transport on Oakland roads.' },
               { icon: FileCheck, label: 'Reclassification Policy', value: 'If a concrete dumpster is contaminated with general debris, the load will be reclassified and priced as general debris. Keep materials separated for the best rate.' },

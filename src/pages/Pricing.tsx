@@ -103,7 +103,7 @@ const exampleInvoice = {
     { label: '3 Extra Days', amount: PRICING_POLICIES.extraDayCost * 3, type: 'addition' as const },
     { label: 'Mattress Disposal (x2)', amount: PRICING_POLICIES.mattressDisposal, type: 'addition' as const },
   ],
-  subtotal: 620 + (PRICING_POLICIES.extraDayCost * 3) + PRICING_POLICIES.mattressDisposal,
+  subtotal: 650 + (PRICING_POLICIES.extraDayCost * 3) + PRICING_POLICIES.mattressDisposal,
   note: `${OVERAGE_NOTE} ($${PRICING_POLICIES.overagePerTonGeneral}/ton)`
 };
 

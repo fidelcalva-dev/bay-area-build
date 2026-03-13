@@ -24,6 +24,18 @@ const NEIGHBORHOODS = [
 
 const SIZE_DETAILS: { yards: number; title: string; description: string; useCases: string[] }[] = [
   {
+    yards: 5,
+    title: '5 Yard Dumpster — San Jose',
+    description: 'Compact size for small concrete removal, dirt hauling, and minor cleanout jobs across San Jose.',
+    useCases: ['Small concrete slab', 'Dirt & soil removal', 'Yard debris', 'Minor cleanout'],
+  },
+  {
+    yards: 8,
+    title: '8 Yard Dumpster — San Jose',
+    description: 'Popular for driveway demolition, foundation work, and garage cleanouts in San Jose neighborhoods.',
+    useCases: ['Driveway demo', 'Foundation concrete', 'Garage cleanout', 'Bathroom remodel'],
+  },
+  {
     yards: 10,
     title: '10 Yard Dumpster — San Jose',
     description: 'Perfect for small home cleanouts, bathroom remodels, and concrete or dirt removal in San Jose. Our most popular size for heavy material jobs.',
@@ -46,6 +58,12 @@ const SIZE_DETAILS: { yards: number; title: string; description: string; useCase
     title: '40 Yard Dumpster — San Jose',
     description: 'Commercial-grade capacity for large San Jose projects. Ideal for demolition, warehouse cleanouts, and industrial sites.',
     useCases: ['Commercial demolition', 'Warehouse cleanout', 'Large construction site', 'Industrial waste removal'],
+  },
+  {
+    yards: 50,
+    title: '50 Yard Dumpster — San Jose',
+    description: 'Maximum capacity for high-volume commercial debris, new construction, and large-scale demolition in San Jose.',
+    useCases: ['New construction', 'Large demolition', 'High-volume commercial', 'Industrial projects'],
   },
 ];
 
