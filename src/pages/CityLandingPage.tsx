@@ -43,6 +43,9 @@ export default function CityLandingPage() {
     <Layout title={city.metaTitle} description={city.metaDescription}>
       <Helmet>
         <link rel="canonical" href={`${BUSINESS_INFO.url}/dumpster-rental/${getCanonicalCitySlug(city.slug)}`} />
+        {marketInfo && !marketInfo.indexable && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         <script type="application/ld+json">{JSON.stringify(citySchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
