@@ -78,10 +78,10 @@ const PROJECT_TYPES = [
 
 const ACTION_OPTIONS = [
   { label: 'Get Exact Price', icon: ArrowRight, to: '/quote?v3=1', primary: true },
-  { label: 'Upload Photo for Size Help', icon: Upload, to: '/quote?v3=1&tab=photo', primary: false },
+  { label: 'Upload Photo for Size Help', icon: Upload, to: '/waste-vision', primary: false },
   { label: 'Talk to a Specialist', icon: Phone, href: true, primary: false },
   { label: 'Schedule a Delivery', icon: Clock, to: '/quote?v3=1&schedule=1', primary: false },
-  { label: 'Contractor Pricing', icon: HardHat, to: '/quote?v3=1&type=contractor', primary: false },
+  { label: 'Contractor Account', icon: HardHat, to: '/contractor-application', primary: false },
 ];
 
 const SERVICE_AREAS_CITIES = [
@@ -191,7 +191,7 @@ const Index = () => {
           {/* Supporting CTAs */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[520px] mx-auto">
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
-              <Link to={quoteUrl({ tab: 'photo' })}>
+              <Link to="/waste-vision">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo for Size Help
               </Link>
@@ -258,7 +258,7 @@ const Index = () => {
               return (
                 <Link
                   key={opt.label}
-                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&tab=photo' ? quoteUrl({ tab: 'photo' }) : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to === '/quote?v3=1&type=contractor' ? quoteUrl({ type: 'contractor' }) : opt.to!}
+                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to!}
                   className={`flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-semibold transition-all ${
                     opt.primary
                       ? 'bg-primary text-primary-foreground shadow-cta hover:bg-primary/90'
@@ -502,8 +502,8 @@ const Index = () => {
                   ))}
                 </div>
                 <Button asChild size="lg" className="rounded-full font-semibold px-6">
-                  <Link to={quoteUrl({ type: 'contractor' })}>
-                    Request Contractor Pricing
+                  <Link to="/contractor-application">
+                    Apply for Contractor Account
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
@@ -537,7 +537,7 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
-              <Link to={quoteUrl({ tab: 'photo' })}>
+              <Link to="/waste-vision">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo
               </Link>

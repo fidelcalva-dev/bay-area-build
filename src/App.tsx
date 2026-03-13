@@ -27,6 +27,7 @@ const Areas = lazy(() => import("./pages/Areas"));
 const Materials = lazy(() => import("./pages/Materials"));
 const CapacityGuide = lazy(() => import("./pages/CapacityGuide"));
 const Contractors = lazy(() => import("./pages/Contractors"));
+const ContractorApplication = lazy(() => import("./pages/ContractorApplication"));
 const ContractorBestPractices = lazy(() => import("./pages/ContractorBestPractices"));
 const ContractorResources = lazy(() => import("./pages/ContractorResources"));
 const About = lazy(() => import("./pages/About"));
@@ -414,6 +415,9 @@ const App = () => {
               } />
               <Route path="/contractors" element={
                 <Suspense fallback={<PageLoader />}><Contractors /></Suspense>
+              } />
+              <Route path="/contractor-application" element={
+                <Suspense fallback={<PageLoader />}><ContractorApplication /></Suspense>
               } />
               <Route path="/contractor-best-practices" element={
                 <Suspense fallback={<PageLoader />}><ContractorBestPractices /></Suspense>

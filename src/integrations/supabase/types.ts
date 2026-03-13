@@ -3809,6 +3809,86 @@ export type Database = {
           },
         ]
       }
+      contractor_applications: {
+        Row: {
+          billing_preference: string | null
+          company_name: string
+          contact_name: string
+          created_at: string
+          credit_terms_requested: string | null
+          customer_id: string | null
+          email: string
+          estimated_monthly_volume: string | null
+          id: string
+          materials_handled: string[] | null
+          notes: string | null
+          phone: string
+          pricing_tier: string | null
+          project_types: string[] | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          service_cities: string[] | null
+          status: string
+          typical_sizes: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          billing_preference?: string | null
+          company_name: string
+          contact_name: string
+          created_at?: string
+          credit_terms_requested?: string | null
+          customer_id?: string | null
+          email: string
+          estimated_monthly_volume?: string | null
+          id?: string
+          materials_handled?: string[] | null
+          notes?: string | null
+          phone: string
+          pricing_tier?: string | null
+          project_types?: string[] | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          service_cities?: string[] | null
+          status?: string
+          typical_sizes?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          billing_preference?: string | null
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          credit_terms_requested?: string | null
+          customer_id?: string | null
+          email?: string
+          estimated_monthly_volume?: string | null
+          id?: string
+          materials_handled?: string[] | null
+          notes?: string | null
+          phone?: string
+          pricing_tier?: string | null
+          project_types?: string[] | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          service_cities?: string[] | null
+          status?: string
+          typical_sizes?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractor_applications_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           contract_type: Database["public"]["Enums"]["contract_type"]
