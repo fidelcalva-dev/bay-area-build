@@ -4,7 +4,7 @@ import {
   User, Phone, Mail, Building2, MapPin, FileText, DollarSign, 
   ArrowLeft, Loader2, Package, Receipt, CreditCard,
   Camera, StickyNote, Plus, Send, Truck, Star, Upload, 
-  ExternalLink, Image, FolderOpen
+  ExternalLink, Image, FolderOpen, Pencil
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
