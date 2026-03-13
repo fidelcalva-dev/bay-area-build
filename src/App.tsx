@@ -160,6 +160,8 @@ const SecurityHealthPage = lazy(() => import("./pages/admin/SecurityHealthPage")
 const InternalDocsPage = lazy(() => import("./pages/admin/InternalDocsPage"));
 const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDashboard"));
 const LocationPricingManager = lazy(() => import("./pages/admin/pricing/LocationPricingManager"));
+const YardHealthDashboard = lazy(() => import("./pages/admin/pricing/YardHealthDashboard"));
+const ZipHealthDashboard = lazy(() => import("./pages/admin/pricing/ZipHealthDashboard"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
@@ -916,6 +918,12 @@ const App = () => {
                 } />
                 <Route path="pricing/simulator" element={
                   <Suspense fallback={<PageLoader />}><PricingSimulator /></Suspense>
+                } />
+                <Route path="pricing/yard-health" element={
+                  <Suspense fallback={<PageLoader />}><YardHealthDashboard /></Suspense>
+                } />
+                <Route path="pricing/zip-health" element={
+                  <Suspense fallback={<PageLoader />}><ZipHealthDashboard /></Suspense>
                 } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>
