@@ -80,7 +80,7 @@ const ACTION_OPTIONS = [
   { label: 'Get Exact Price', icon: ArrowRight, to: '/quote?v3=1', primary: true },
   { label: 'Upload Photo for Size Help', icon: Upload, to: '/waste-vision', primary: false },
   { label: 'Talk to a Specialist', icon: Phone, href: true, primary: false },
-  { label: 'Schedule a Delivery', icon: Clock, to: '/quote?v3=1&schedule=1', primary: false },
+  { label: 'Schedule a Delivery', icon: Clock, to: '/schedule-delivery', primary: false },
   { label: 'Contractor Account', icon: HardHat, to: '/contractor-application', primary: false },
 ];
 
@@ -406,7 +406,7 @@ const Index = () => {
             {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
               <Link
                 key={slug}
-                to={quoteUrl({ project: slug })}
+                to={`/projects/${slug}`}
                 className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
               >
                 <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">

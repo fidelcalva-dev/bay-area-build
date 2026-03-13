@@ -55,9 +55,15 @@ export default function CustomerForm() {
   const [billingEmail, setBillingEmail] = useState('');
   const [billingPhone, setBillingPhone] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
+  const [serviceAddress, setServiceAddress] = useState('');
+  const [serviceCity, setServiceCity] = useState('');
+  const [serviceZip, setServiceZip] = useState('');
   const [customerType, setCustomerType] = useState('homeowner');
   const [preferredContact, setPreferredContact] = useState('phone');
+  const [assignedRep, setAssignedRep] = useState('');
   const [notes, setNotes] = useState('');
+  const [accessNotes, setAccessNotes] = useState('');
+  const [permitNotes, setPermitNotes] = useState('');
 
   // Load existing customer for edit mode
   useEffect(() => {
@@ -147,7 +153,7 @@ export default function CustomerForm() {
       billing_phone: billingPhone || phone || null,
       billing_address: billingAddress || null,
       customer_type: customerType,
-      notes: notes || null,
+      notes: [notes, accessNotes && `ACCESS: ${accessNotes}`, permitNotes && `PERMIT: ${permitNotes}`].filter(Boolean).join('\n') || null,
     };
 
     if (isEdit && id) {
@@ -163,6 +169,17 @@ export default function CustomerForm() {
       if (error) {
         toast({ title: 'Create failed', description: error.message, variant: 'destructive' });
       } else if (data) {
+        // Auto-create site if service address was provided
+        if (serviceAddress && serviceZip) {
+          await supabase.from('customer_sites').insert({
+            customer_id: data.id,
+            site_name: serviceCity ? `${serviceCity} Site` : 'Primary Site',
+            address: serviceAddress,
+            city: serviceCity || null,
+            zip: serviceZip || null,
+            is_primary: true,
+          });
+        }
         toast({ title: 'Customer created' });
         navigate(`/admin/customers/${data.id}`);
       }
@@ -289,6 +306,33 @@ export default function CustomerForm() {
           </CardContent>
         </Card>
 
+        {/* Service / Property Address */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MapPin className="w-4 h-4" /> Service / Property Address
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <Label>Street Address</Label>
+              <Input value={serviceAddress} onChange={(e) => setServiceAddress(e.target.value)} placeholder="456 Job Site Rd" />
+            </div>
+            <div>
+              <Label>City</Label>
+              <Input value={serviceCity} onChange={(e) => setServiceCity(e.target.value)} placeholder="Oakland" />
+            </div>
+            <div>
+              <Label>ZIP Code</Label>
+              <Input value={serviceZip} onChange={(e) => setServiceZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="94601" inputMode="numeric" />
+            </div>
+            <div>
+              <Label>Assigned Rep</Label>
+              <Input value={assignedRep} onChange={(e) => setAssignedRep(e.target.value)} placeholder="Rep name" />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Notes */}
         <Card>
           <CardHeader>
@@ -296,13 +340,34 @@ export default function CustomerForm() {
               <StickyNote className="w-4 h-4" /> Notes
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Service notes, access instructions, permit details..."
-              rows={4}
-            />
+          <CardContent className="grid gap-4">
+            <div>
+              <Label>Service Notes</Label>
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="General service notes..."
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Access Notes</Label>
+              <Textarea
+                value={accessNotes}
+                onChange={(e) => setAccessNotes(e.target.value)}
+                placeholder="Gate codes, hillside access, narrow streets..."
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label>Permit Notes</Label>
+              <Textarea
+                value={permitNotes}
+                onChange={(e) => setPermitNotes(e.target.value)}
+                placeholder="Street placement permit required, HOA restrictions..."
+                rows={2}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -334,7 +399,22 @@ export default function CustomerForm() {
               </Button>
               <Button variant="outline" size="sm" asChild>
                 <Link to={`/admin/customers/${id}?tab=overview`}>
-                  <StickyNote className="w-4 h-4 mr-1" /> Open Timeline
+                  <StickyNote className="w-4 h-4 mr-1" /> Add Note
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=contracts`}>
+                  <Send className="w-4 h-4 mr-1" /> Send Contract
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=payments`}>
+                  <CreditCard className="w-4 h-4 mr-1" /> Send Payment Link
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=overview`}>
+                  <FileText className="w-4 h-4 mr-1" /> Open Timeline
                 </Link>
               </Button>
             </CardContent>
