@@ -132,18 +132,21 @@ export default function Contractors() {
             <div className="bg-card rounded-2xl border border-border p-8">
               <h3 className="heading-sm text-foreground mb-4">Set Up a Contractor Account</h3>
               <p className="text-muted-foreground mb-6">
-                Get priority scheduling, volume discounts, and dedicated support. Call us to set up your account.
+                Get priority scheduling, volume pricing, and dedicated support. Apply online or call us to get started.
               </p>
               <div className="space-y-4">
                 <Button asChild variant="cta" size="lg" className="w-full">
+                  <Link to="/contractor-application">
+                    <ArrowRight className="w-4 h-4" />
+                    Apply for Contractor Account
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="w-full">
                   <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                     <Phone className="w-4 h-4" />
                     {BUSINESS_INFO.phone.salesFormatted}
                   </a>
                 </Button>
-                <p className="text-sm text-muted-foreground text-center">
-                  Or email <a href={`mailto:${BUSINESS_INFO.email}`} className="text-primary font-semibold">{BUSINESS_INFO.email}</a>
-                </p>
               </div>
             </div>
           </div>
