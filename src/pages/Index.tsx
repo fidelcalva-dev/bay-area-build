@@ -258,7 +258,7 @@ const Index = () => {
               return (
                 <Link
                   key={opt.label}
-                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&tab=photo' ? quoteUrl({ tab: 'photo' }) : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to === '/quote?v3=1&type=contractor' ? quoteUrl({ type: 'contractor' }) : opt.to!}
+                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to!}
                   className={`flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-semibold transition-all ${
                     opt.primary
                       ? 'bg-primary text-primary-foreground shadow-cta hover:bg-primary/90'
