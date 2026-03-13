@@ -399,7 +399,22 @@ export default function CustomerForm() {
               </Button>
               <Button variant="outline" size="sm" asChild>
                 <Link to={`/admin/customers/${id}?tab=overview`}>
-                  <StickyNote className="w-4 h-4 mr-1" /> Open Timeline
+                  <StickyNote className="w-4 h-4 mr-1" /> Add Note
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=contracts`}>
+                  <Send className="w-4 h-4 mr-1" /> Send Contract
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=payments`}>
+                  <CreditCard className="w-4 h-4 mr-1" /> Send Payment Link
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/admin/customers/${id}?tab=overview`}>
+                  <FileText className="w-4 h-4 mr-1" /> Open Timeline
                 </Link>
               </Button>
             </CardContent>
