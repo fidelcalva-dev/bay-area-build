@@ -35,7 +35,7 @@ export default function NotABroker() {
               That means better service, transparent pricing, and real accountability.
             </p>
             <Button asChild variant="cta" size="lg">
-              <Link to="/#quote">
+              <Link to="/quote">
                 Get Instant Quote
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -221,7 +221,7 @@ export default function NotABroker() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <Link to="/#quote">
+              <Link to="/quote">
                 Get Instant Quote
                 <ArrowRight className="w-5 h-5" />
               </Link>

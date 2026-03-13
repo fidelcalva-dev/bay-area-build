@@ -126,7 +126,7 @@ export default function Blog() {
             Get an instant quote for your project in 30 seconds.
           </p>
           <Button asChild variant="cta" size="xl">
-            <Link to="/#quote">
+            <Link to="/quote">
               Get Instant Quote
               <ArrowRight className="w-5 h-5" />
             </Link>

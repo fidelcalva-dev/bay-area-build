@@ -78,7 +78,7 @@ export function CityCard({ city, countySlug }: CityCardProps) {
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-2 pt-2">
               <Button asChild variant="default" size="sm" className="flex-1">
-                <Link to="/#quote">
+                <Link to="/quote">
                   Get Quote for {city.name}
                   <ArrowRight className="w-4 h-4" />
                 </Link>

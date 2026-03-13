@@ -55,7 +55,7 @@ export default function WhyLocalYards() {
               price more transparently, and provide better service than broker models.
             </p>
             <Button asChild variant="cta" size="lg">
-              <Link to="/#quote">
+              <Link to="/quote">
                 Get Instant Quote
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -218,7 +218,7 @@ export default function WhyLocalYards() {
                 make that promise because they don't control the equipment.
               </p>
               <Button asChild variant="cta" size="lg" className="w-full sm:w-auto">
-                <Link to="/#quote">
+                <Link to="/quote">
                   Check Availability
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -264,7 +264,7 @@ export default function WhyLocalYards() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
-              <Link to="/#quote">
+              <Link to="/quote">
                 Get Instant Quote
                 <ArrowRight className="w-5 h-5" />
               </Link>

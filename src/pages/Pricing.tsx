@@ -479,7 +479,7 @@ export default function Pricing() {
 
             <div className="text-center mt-6">
               <Button asChild variant="cta" size="lg">
-                <Link to="/#quote">
+                <Link to="/quote">
                   Get Your Personalized Quote
                   <ArrowRight className="w-5 h-5" />
                 </Link>
