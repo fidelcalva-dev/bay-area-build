@@ -155,27 +155,19 @@ export default function Areas() {
         </div>
       </section>
 
-      {/* Statewide Hub Link */}
+      {/* Expanding Coverage */}
       <section className="section-padding bg-background">
         <div className="container-narrow text-center">
-          <h2 className="heading-md text-foreground mb-4">Serving All of California</h2>
+          <h2 className="heading-md text-foreground mb-4">Expanding Across California</h2>
           <p className="text-muted-foreground mb-6">
-            From the Bay Area to Los Angeles, Sacramento to San Diego — Calsan Dumpsters Pro provides reliable roll-off dumpster service with transparent pricing and professional dispatch.
+            Our core operations are based in the Bay Area. We're growing into new regions through a coordinated partner network — same Calsan standards, local delivery.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/california-dumpster-rental">
-                View California Coverage
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/bay-area-dumpster-rental">
-                Bay Area Hub
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-          </div>
+          <Button asChild variant="outline" size="lg">
+            <Link to="/bay-area-dumpster-rental">
+              Explore Bay Area Coverage
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </div>
       </section>
 
