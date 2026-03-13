@@ -96,7 +96,7 @@ const priceFactors = [
 const exampleInvoice = {
   projectDescription: '20 Yard Dumpster • General Debris • Oakland, CA (94612)',
   lineItems: [
-    { label: '20 Yard Dumpster Base Price', amount: 620, type: 'base' as const },
+    { label: '20 Yard Dumpster Base Price', amount: 650, type: 'base' as const },
     { label: '7-Day Rental Period', amount: 0, type: 'included' as const },
     { label: 'Delivery & Pickup', amount: 0, type: 'included' as const },
     { label: '2 Tons Included', amount: 0, type: 'included' as const },
