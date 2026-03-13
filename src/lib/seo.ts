@@ -61,6 +61,10 @@ export const BUSINESS_INFO = {
     google: 'https://g.page/calsan-dumpsters-pro',
     bbb: 'https://www.bbb.org/us/ca/oakland/profile/dumpster-rental/calsan-dumpsters-pro-1116-123456',
     googleGuarantee: 'https://support.google.com/google-ads/answer/7549288',
+    linkedin: 'https://linkedin.com/company/calsan-dumpsters-pro',
+    tiktok: 'https://tiktok.com/@calsandumpsterspro',
+    twitter: 'https://x.com/calsandumpsters',
+    pinterest: 'https://pinterest.com/calsandumpsterspro',
   },
   url: 'https://calsandumpsterspro.com',
 } as const;
