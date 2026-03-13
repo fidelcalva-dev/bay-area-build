@@ -125,13 +125,19 @@ const GRID_SERVICE_PAGES: SitemapEntry[] = (() => {
   return pages;
 })();
 
-// City pages from hardcoded data
+// City pages from hardcoded data — prioritize direct-operation markets
+import { CITY_DIRECTORY } from './service-area-config';
+
 const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES.map(city => {
   const canonical = city.slug.endsWith('-ca') ? city.slug.slice(0, -3) : city.slug;
+  const cityConfig = CITY_DIRECTORY.find(c => c.slug === canonical);
+  const isDirectOp = cityConfig?.serviceModel === 'DIRECT_OPERATION';
+  const tier = cityConfig?.tier || 3;
+  const priority = tier === 1 ? 0.95 : tier === 2 ? 0.85 : isDirectOp ? 0.8 : 0.6;
   return {
     url: `/dumpster-rental/${canonical}`,
-    changefreq: 'weekly' as const,
-    priority: canonical === 'oakland' || canonical === 'san-jose' ? 0.9 : 0.8,
+    changefreq: (isDirectOp ? 'weekly' : 'monthly') as const,
+    priority,
   };
 });
 
