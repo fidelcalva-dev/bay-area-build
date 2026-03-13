@@ -89,6 +89,7 @@ const GreenHalo = () => {
       title="Green Halo™ – Recycling Support Program"
       description="Track recycling documentation for your projects. Weight tickets, diversion reports, and sustainability data available upon request."
     >
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white pt-24 pb-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
