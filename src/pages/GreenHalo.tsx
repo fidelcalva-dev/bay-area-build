@@ -629,7 +629,7 @@ const GreenHalo = () => {
             that demonstrates your commitment to environmental responsibility.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/pricing">
+            <Link to="/quote">
               <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50 shadow-lg">
                 Get a Quote with Green Halo
                 <ArrowRight className="w-5 h-5 ml-2" />

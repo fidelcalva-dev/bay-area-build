@@ -344,7 +344,7 @@ export const ServiceCoverageMapSection = () => {
 
                             {city.status === 'active' ? (
                               <Button variant="cta" className="w-full" size="sm" asChild>
-                                <Link to="/pricing">
+                                <Link to="/quote">
                                   Get a Quote
                                   <ChevronRight className="ml-1 h-4 w-4" />
                                 </Link>
