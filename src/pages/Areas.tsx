@@ -83,11 +83,11 @@ export default function Areas() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm mb-4">
               <MapPin className="w-4 h-4" />
-              100+ Cities Across California
+              Bay Area Direct Operations
             </div>
-            <h1 className="heading-xl mb-4">Dumpster Rental Service Areas</h1>
+            <h1 className="heading-xl mb-4">Bay Area Dumpster Rental Service Areas</h1>
             <p className="text-xl text-primary-foreground/85 mb-6">
-              Local yard operations in the Bay Area with coordinated service across California. Select your region below to find fast, reliable dumpster delivery near you.
+              Dispatched from our Oakland, San Jose, and San Francisco yards — serving 16+ Bay Area cities with same-day delivery and transparent pricing.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg">
