@@ -68,7 +68,7 @@ const FAQS = [
   },
   {
     question: 'Can I put concrete in a dumpster?',
-    answer: 'Yes. We offer dedicated concrete dumpsters in 6, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced differently. The dumpster must not be loaded above the fill line.',
+    answer: 'Yes. We offer dedicated concrete dumpsters in 5, 8, and 10-yard sizes with flat-fee pricing. Clean concrete is recyclable. Mixed loads (concrete + general debris) may be reclassified and priced differently. The dumpster must not be loaded above the fill line.',
   },
   {
     question: 'What weight is included in the rental price?',
