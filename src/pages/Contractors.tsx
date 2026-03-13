@@ -174,17 +174,50 @@ export default function Contractors() {
           </div>
         </div>
       </section>
+      {/* Internal Links */}
+      <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <h2 className="heading-md text-foreground mb-6 text-center">Helpful Resources</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <Link to="/sizes" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <Truck className="w-4 h-4 text-primary shrink-0" />
+              Dumpster Sizes Guide
+            </Link>
+            <Link to="/materials" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+              Accepted Materials
+            </Link>
+            <Link to="/pricing" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
+              Full Pricing
+            </Link>
+            <Link to="/dumpster-rental/oakland" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
+              Oakland Service
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="section-padding bg-secondary text-secondary-foreground">
         <div className="container-narrow text-center">
           <h2 className="heading-lg mb-4">Ready to Partner Up?</h2>
           <p className="text-lg text-secondary-foreground/80 mb-8">
             Join hundreds of Bay Area contractors who trust Calsan Dumpsters Pro for reliable waste removal.
           </p>
-          <Button asChild variant="cta" size="xl">
-            <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-              Call Now: {BUSINESS_INFO.phone.salesFormatted}
-            </a>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild variant="cta" size="xl">
+              <Link to="/quote">
+                Get Contractor Quote
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+            <Button asChild variant="heroOutline" size="xl">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                Call Now: {BUSINESS_INFO.phone.salesFormatted}
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
     </Layout>

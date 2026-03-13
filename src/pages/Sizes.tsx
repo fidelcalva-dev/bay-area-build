@@ -132,7 +132,7 @@ export default function Sizes() {
                     description={size.description}
                     useCases={size.useCases}
                     variant="heavy"
-                    ctaLink="/pricing"
+                    ctaLink="/quote"
                   />
                 ))}
               </div>
