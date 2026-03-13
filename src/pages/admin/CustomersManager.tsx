@@ -254,9 +254,13 @@ export default function CustomersManager() {
                     {format(new Date(customer.created_at), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                      <Eye className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/admin/customers/${customer.id}`}>
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

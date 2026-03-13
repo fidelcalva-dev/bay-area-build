@@ -902,8 +902,14 @@ const App = () => {
                 <Route path="activity" element={
                   <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
                 } />
+                <Route path="customers/new" element={
+                  <Suspense fallback={<PageLoader />}><CustomerForm /></Suspense>
+                } />
                 <Route path="customers/:id" element={
                   <Suspense fallback={<PageLoader />}><CustomerDetail /></Suspense>
+                } />
+                <Route path="customers/:id/edit" element={
+                  <Suspense fallback={<PageLoader />}><CustomerForm /></Suspense>
                 } />
                 <Route path="customer-health" element={
                   <Suspense fallback={<PageLoader />}><CustomerHealthDashboard /></Suspense>
