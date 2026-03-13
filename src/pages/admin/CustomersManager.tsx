@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Users, Search, Loader2, Building2, User, Mail, Phone,
-  Briefcase, Home, Building, Crown, Eye
+  Briefcase, Home, Building, Crown, Eye, Plus
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
