@@ -101,10 +101,15 @@ export default function CustomersManager() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Customer Management</h1>
-        <p className="text-muted-foreground mt-1">
-          View and manage customer profiles
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Customer Management</h1>
+            <p className="text-muted-foreground mt-1">View and manage customer profiles</p>
+          </div>
+          <Button asChild>
+            <Link to="/admin/customers/new"><Plus className="w-4 h-4 mr-2" /> New Customer</Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
