@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
+import { getMarketClassification, getMarketRedirectTarget, isMarketIndexable } from '@/lib/market-classification';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
