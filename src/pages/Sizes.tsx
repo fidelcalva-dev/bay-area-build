@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator } from 'lucide-react';
+import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
 import { BUSINESS_INFO } from '@/lib/seo';
