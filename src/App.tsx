@@ -181,6 +181,7 @@ const DomainHealth = lazy(() => import("./pages/admin/qa/DomainHealth"));
 const CalculatorLogsPage = lazy(() => import("./pages/admin/CalculatorLogsPage"));
 const AdminActivityFeed = lazy(() => import("./pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
+const CustomerForm = lazy(() => import("./pages/admin/CustomerForm"));
 const CustomerHealthDashboard = lazy(() => import("./pages/admin/CustomerHealthDashboard"));
 const SearchIndexManager = lazy(() => import("./pages/admin/SearchIndexManager"));
 const InternalAlertsPage = lazy(() => import("./pages/admin/InternalAlertsPage"));
