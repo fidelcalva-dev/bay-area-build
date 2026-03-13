@@ -95,7 +95,7 @@ interface TechnicalDumpsterCardProps {
  */
 export function TechnicalDumpsterCard({
   size,
-  ctaLink = '/#quote',
+  ctaLink = '/quote',
   ctaLabel = 'Get Quote',
   className,
 }: TechnicalDumpsterCardProps) {
