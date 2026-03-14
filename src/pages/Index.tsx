@@ -123,7 +123,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
       <img
         src={images[idx]}
         alt={`${alt} - ${idx + 1}`}
-        className="h-full w-full object-contain transition-opacity duration-300"
+        className="h-full w-full object-contain transition-opacity duration-300 rounded-xl"
       />
       {/* Left arrow */}
       {idx > 0 && (
@@ -392,7 +392,7 @@ const Index = () => {
                     <img
                       src={SIZE_IMAGES[s.size]}
                       alt={`${s.size} yard dumpster`}
-                      className="h-28 md:h-36 w-auto object-contain"
+                      className="h-28 md:h-36 w-auto object-contain rounded-xl"
                     />
                   )}
                 </div>
@@ -415,7 +415,7 @@ const Index = () => {
                 <img
                   src={SIZE_IMAGES[50]}
                   alt="50 yard dumpster"
-                  className="h-28 md:h-36 w-auto object-contain"
+                  className="h-28 md:h-36 w-auto object-contain rounded-xl"
                 />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
