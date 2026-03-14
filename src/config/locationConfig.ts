@@ -102,7 +102,7 @@ export const LOCATION_CONFIGS: LocationConfig[] = [
     lng: -121.4252,
     address: 'Tracy, CA 95376',
     isActiveForQuotes: false,
-    isActiveForDispatch: true,
+    isActiveForDispatch: false,
     isVisiblePublicly: false,
     nearestFallbackYardId: 'oakland-yard',
     serviceRadiusMiles: 25,
