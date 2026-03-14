@@ -40,6 +40,10 @@ import yd30Photo2 from '@/assets/30yd-photo-2.jpg';
 import yd30Photo3 from '@/assets/30yd-photo-3.jpg';
 import yd30Photo4 from '@/assets/30yd-photo-4.jpg';
 import yd40Img from '@/assets/40yd-dumpster.png';
+import yd40Photo1 from '@/assets/40yd-photo-1.jpg';
+import yd40Photo2 from '@/assets/40yd-photo-2.jpg';
+import yd40Photo3 from '@/assets/40yd-photo-3.jpg';
+import yd40Photo4 from '@/assets/40yd-photo-4.jpg';
 import yd50Img from '@/assets/50yd-dumpster.png';
 
 const SIZE_GALLERY: Record<number, string[]> = {
