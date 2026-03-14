@@ -992,7 +992,7 @@ export async function calculateSmartQuoteFromZip(
   if (vendorQuote) {
     // Build a synthetic SmartQuote from vendor data
     return {
-      yard: null as any, // No local yard
+      yard: null as any,
       dumpSite: null as any,
       materialRule: (await getMaterialRule(materialClass))!,
       internalCost: {
@@ -1009,6 +1009,13 @@ export async function calculateSmartQuoteFromZip(
       marginPct: vendorQuote.markupPct,
       surgeMultiplier: 1,
       capacityUtilization: 0,
+      zoneSurcharge: null,
+      zoneSurchargeAmount: 0,
+      rushState: 'STANDARD',
+      rushFee: 0,
+      rushConfig: null,
+      contractorDiscount: 0,
+      lowMarginWarning: false,
       isVendorFallback: true,
       vendorName: vendorQuote.vendorName,
       warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],
