@@ -852,22 +852,25 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   }
 
   // 9. Calculate public price
-  const marginPct = contractorDiscount > 0
-    ? DEFAULT_MARGIN_PCT - contractorDiscount
-    : DEFAULT_MARGIN_PCT;
-
+  // Contractor discounts apply ONLY to general debris base, NOT to heavy flat rates,
+  // surcharges, contamination, reroute, Green Halo, permits, or overage.
   let publicPrice: number;
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
+    // Heavy material flat rates — contractor discount does NOT apply unless base_override
     const baseFlat = contractorRule?.base_override 
       || materialRule.flat_rate_json[String(input.sizeYd)] 
-      || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+      || strategicRound(internalCost.totalInternal * (1 + DEFAULT_MARGIN_PCT / 100));
     publicPrice = baseFlat + zoneSurchargeAmount + rushFee;
   } else {
-    const basePrice = contractorRule?.base_override 
-      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + marginPct / 100));
-    publicPrice = basePrice + zoneSurchargeAmount + rushFee;
+    // General debris / included_tons — contractor discount applies to base only
+    const rawBase = contractorRule?.base_override 
+      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + DEFAULT_MARGIN_PCT / 100));
+    const discountedBase = contractorDiscount > 0
+      ? strategicRound(rawBase * (1 - contractorDiscount / 100))
+      : rawBase;
+    publicPrice = discountedBase + zoneSurchargeAmount + rushFee;
   }
 
   const publicPriceLow = publicPrice;
