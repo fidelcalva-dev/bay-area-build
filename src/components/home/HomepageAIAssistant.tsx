@@ -31,11 +31,11 @@ interface AssistantResponse {
 type CustomerStage = 'EXPLORING' | 'COMPARING' | 'READY' | 'NEEDS_HELP';
 
 const QUICK_CHIPS = [
-  { en: 'What size do I need?', es: '¿Qué tamaño necesito?', icon: '📏' },
-  { en: 'What can I put in the dumpster?', es: '¿Qué puedo poner?', icon: '📦' },
-  { en: 'I have dirt / concrete', es: 'Tengo tierra / concreto', icon: '🪨' },
-  { en: 'How fast can you deliver?', es: '¿Qué tan rápido entregan?', icon: '⚡' },
-  { en: "I'm not sure", es: 'No estoy seguro', icon: '🤔' },
+  { en: 'What size do I need?', es: '¿Qué tamaño necesito?' },
+  { en: 'What can I put in the dumpster?', es: '¿Qué puedo poner?' },
+  { en: 'I have dirt / concrete', es: 'Tengo tierra / concreto' },
+  { en: 'How fast can you deliver?', es: '¿Qué tan rápido entregan?' },
+  { en: "I'm not sure", es: 'No estoy seguro' },
 ];
 
 interface CtaItem {
