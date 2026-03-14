@@ -151,7 +151,145 @@ export interface SmartQuoteInput {
   greenHaloRequired?: boolean;
   isContractor?: boolean;
   contractorDiscountPct?: number;
+  contractorTier?: string;
   isSameDay?: boolean;
+  rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+}
+
+// =====================================================
+// ZONE SURCHARGE ENGINE
+// =====================================================
+
+export interface ZoneSurcharge {
+  zone_name: string;
+  quote_surcharge: number;
+  dispatch_cost_adjustment: number;
+  remote_area_flag: boolean;
+}
+
+async function getZoneSurcharge(yardId: string, distanceMiles: number): Promise<ZoneSurcharge | null> {
+  const { data } = await supabase
+    .from('zone_surcharges')
+    .select('*')
+    .eq('yard_id', yardId)
+    .eq('is_active', true)
+    .order('miles_from_yard_min');
+
+  if (!data?.length) return null;
+
+  for (const zone of data) {
+    const min = Number(zone.miles_from_yard_min);
+    const max = zone.miles_from_yard_max ? Number(zone.miles_from_yard_max) : Infinity;
+    if (distanceMiles >= min && distanceMiles < max) {
+      return {
+        zone_name: zone.zone_name,
+        quote_surcharge: Number(zone.quote_surcharge),
+        dispatch_cost_adjustment: Number(zone.dispatch_cost_adjustment),
+        remote_area_flag: zone.remote_area_flag,
+      };
+    }
+  }
+  // Beyond all zones — return last (remote)
+  const last = data[data.length - 1];
+  return {
+    zone_name: last.zone_name,
+    quote_surcharge: Number(last.quote_surcharge),
+    dispatch_cost_adjustment: Number(last.dispatch_cost_adjustment),
+    remote_area_flag: last.remote_area_flag,
+  };
+}
+
+// =====================================================
+// RUSH DELIVERY ENGINE
+// =====================================================
+
+export interface RushConfig {
+  allow_same_day: boolean;
+  same_day_cutoff_hour: number;
+  next_day_cutoff_hour: number;
+  daily_capacity: number;
+  rush_fee_same_day: number;
+  rush_fee_next_day: number;
+  rush_fee_priority: number;
+  rush_fee_after_hours: number;
+}
+
+async function getRushConfig(yardId: string): Promise<RushConfig | null> {
+  const { data } = await supabase
+    .from('rush_delivery_config')
+    .select('*')
+    .eq('yard_id', yardId)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  if (!data) return null;
+  return {
+    allow_same_day: data.allow_same_day,
+    same_day_cutoff_hour: data.same_day_cutoff_hour,
+    next_day_cutoff_hour: data.next_day_cutoff_hour,
+    daily_capacity: data.daily_capacity,
+    rush_fee_same_day: Number(data.rush_fee_same_day),
+    rush_fee_next_day: Number(data.rush_fee_next_day),
+    rush_fee_priority: Number(data.rush_fee_priority),
+    rush_fee_after_hours: Number(data.rush_fee_after_hours),
+  };
+}
+
+function calculateRushFee(rushState: string | undefined, config: RushConfig | null): number {
+  if (!rushState || rushState === 'STANDARD' || !config) return 0;
+  switch (rushState) {
+    case 'SAME_DAY': return config.rush_fee_same_day;
+    case 'NEXT_DAY': return config.rush_fee_next_day;
+    case 'PRIORITY': return config.rush_fee_priority;
+    case 'AFTER_HOURS': return config.rush_fee_after_hours;
+    default: return 0;
+  }
+}
+
+// =====================================================
+// CONTRACTOR PRICING ENGINE
+// =====================================================
+
+export interface ContractorRule {
+  tier_name: string;
+  discount_percent: number;
+  base_override: number | null;
+  included_tons_override: number | null;
+  zone_surcharge_behavior: string;
+  rush_fee_behavior: string;
+  minimum_margin_pct: number;
+}
+
+async function getContractorRule(
+  tier: string,
+  sizeYd?: number,
+  materialClass?: string,
+): Promise<ContractorRule | null> {
+  // Try specific size+material match first, then size only, then tier default
+  let query = supabase
+    .from('contractor_pricing_rules')
+    .select('*')
+    .eq('tier_name', tier)
+    .eq('is_active', true);
+
+  const { data } = await query;
+  if (!data?.length) return null;
+
+  // Find best match: specific > general
+  const specific = data.find(r => r.size_yd === sizeYd && r.material_class === materialClass);
+  const sizeMatch = data.find(r => r.size_yd === sizeYd && !r.material_class);
+  const general = data.find(r => !r.size_yd && !r.material_class);
+  const best = specific || sizeMatch || general || data[0];
+
+  return {
+    tier_name: best.tier_name,
+    discount_percent: Number(best.discount_percent),
+    base_override: best.base_override ? Number(best.base_override) : null,
+    included_tons_override: best.included_tons_override ? Number(best.included_tons_override) : null,
+    zone_surcharge_behavior: best.zone_surcharge_behavior,
+    rush_fee_behavior: best.rush_fee_behavior,
+    minimum_margin_pct: Number(best.minimum_margin_pct),
+  };
 }
 
 // =====================================================
