@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
+import { DumpsterSilhouettePlain } from '@/components/shared/DumpsterSilhouettePlain';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -307,17 +308,20 @@ const Index = () => {
           </div>
 
           {/* General debris sizes */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-w-3xl mx-auto mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-6">
             {GENERAL_DEBRIS_SIZES.map((s) => (
               <Link
                 key={s.size}
                 to={quoteUrl({ size: String(s.size) })}
-                className="bg-card rounded-2xl border border-border p-4 text-center hover:border-primary/30 transition-colors group"
+                className="bg-card rounded-2xl border border-border p-5 md:p-6 text-center hover:border-primary/30 hover:shadow-md transition-all group flex flex-col items-center"
               >
-                <div className="text-2xl font-bold text-foreground mb-0.5">
+                <div className="w-full flex justify-center mb-3">
+                  <DumpsterSilhouettePlain size={s.size as any} className="h-14 md:h-16 w-auto text-muted-foreground/60" />
+                </div>
+                <div className="text-2xl md:text-3xl font-bold text-foreground mb-0.5">
                   {s.size}<span className="text-sm font-medium text-muted-foreground ml-0.5">yd</span>
                 </div>
-                <div className="text-sm font-semibold text-primary">From ${s.price.toLocaleString()}</div>
+                <div className="text-sm font-semibold text-primary mt-1">From ${s.price.toLocaleString()}</div>
                 <div className="text-xs text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
               </Link>
             ))}
