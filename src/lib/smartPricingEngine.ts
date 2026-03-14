@@ -881,7 +881,10 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     ? (contractorRule?.included_tons_override ?? materialRule.included_tons_json[String(input.sizeYd)] ?? 0)
     : 0;
 
-  // Low margin warning
+  // Low margin warning — estimate effective margin
+  const marginPct = publicPriceLow > 0 
+    ? Math.round(((publicPriceLow - internalCost.totalInternal) / publicPriceLow) * 100) 
+    : DEFAULT_MARGIN_PCT;
   const minMargin = contractorRule?.minimum_margin_pct ?? DEFAULT_MARGIN_PCT;
   const lowMarginWarning = marginPct < minMargin;
   if (lowMarginWarning) {
