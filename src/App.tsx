@@ -163,6 +163,8 @@ const ProfitabilityDashboard = lazy(() => import("./pages/admin/ProfitabilityDas
 const LocationPricingManager = lazy(() => import("./pages/admin/pricing/LocationPricingManager"));
 const YardHealthDashboard = lazy(() => import("./pages/admin/pricing/YardHealthDashboard"));
 const ZipHealthDashboard = lazy(() => import("./pages/admin/pricing/ZipHealthDashboard"));
+const FacilityCostDashboard = lazy(() => import("./pages/admin/pricing/FacilityCostDashboard"));
+const MaterialRulesDashboard = lazy(() => import("./pages/admin/pricing/MaterialRulesDashboard"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
