@@ -275,14 +275,13 @@ export function HomepageAIAssistant() {
           {/* Quick Chips */}
           {!response && !loading && (
             <div className="flex flex-wrap gap-2">
-              {QUICK_CHIPS.map(({ en, es, icon }) => (
+              {QUICK_CHIPS.map(({ en, es }) => (
                 <button
                   key={en}
                   onClick={() => handleChipClick(isEs ? es : en)}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-full border border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors min-h-[36px]"
+                  className="px-3 py-2 text-xs font-medium rounded-full border border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors min-h-[36px]"
                 >
-                  <span>{icon}</span>
-                  <span>{isEs ? es : en}</span>
+                  {isEs ? es : en}
                 </button>
               ))}
             </div>
