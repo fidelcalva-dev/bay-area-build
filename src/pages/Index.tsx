@@ -14,8 +14,8 @@ import {
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
 
-const GuidedAssistant = lazy(() =>
-  import('@/components/home/GuidedAssistant').then(mod => ({ default: mod.GuidedAssistant }))
+const HomepageAIAssistant = lazy(() =>
+  import('@/components/home/HomepageAIAssistant').then(mod => ({ default: mod.HomepageAIAssistant }))
 );
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
