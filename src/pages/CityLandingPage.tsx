@@ -8,6 +8,7 @@ import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema } from '@/lib/seo';
 import { getMarketClassification, getMarketRedirectTarget } from '@/lib/market-classification';
 import { ArrowRight, MapPin, Phone, Truck, CheckCircle, AlertTriangle, Building, Clock, Shield } from 'lucide-react';
 import NotFound from './NotFound';
+import CityPricingBlock from '@/components/seo/CityPricingBlock';
 
 export default function CityLandingPage() {
   const { citySlug } = useParams<{ citySlug: string }>();
