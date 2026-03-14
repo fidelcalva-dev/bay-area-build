@@ -101,6 +101,37 @@ const PROJECT_TYPES = [
   { label: 'Concrete / Soil Removal', slug: 'concrete-soil', icon: Shovel },
 ];
 
+/* Mini gallery slider for size cards */
+function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
+  const [idx, setIdx] = useState(0);
+  const touchStartRef = { current: 0 };
+
+  return (
+    <div
+      className="relative w-full h-28 md:h-36 overflow-hidden rounded-lg"
+      onTouchStart={(e) => { touchStartRef.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        const diff = touchStartRef.current - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          setIdx((prev) => diff > 0 ? Math.min(prev + 1, images.length - 1) : Math.max(prev - 1, 0));
+        }
+      }}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIdx((prev) => (prev + 1) % images.length); }}
+    >
+      <img
+        src={images[idx]}
+        alt={`${alt} - ${idx + 1}`}
+        className="h-full w-full object-contain transition-opacity duration-300"
+      />
+      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1.5">
+        {images.map((_, i) => (
+          <span key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === idx ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const ACTION_OPTIONS = [
   { label: 'Get Exact Price', icon: ArrowRight, to: '/quote?v3=1', primary: true },
   { label: 'Upload Photo for Size Help', icon: Upload, to: '/waste-vision', primary: false },
