@@ -15,6 +15,7 @@ import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
 import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import { getYardCluster } from '@/lib/service-area-config';
+import CityPricingBlock from '@/components/seo/CityPricingBlock';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
