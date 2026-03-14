@@ -88,6 +88,14 @@ const configModules = [
     bgColor: 'bg-teal-100',
   },
   {
+    title: 'City Display ZIPs',
+    description: 'Principal ZIPs for city page pricing display',
+    icon: MapPin,
+    path: '/admin/pricing/city-display-zips',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+  },
+  {
     title: 'Warnings & Caps',
     description: 'Distance limits and ZIP warnings',
     icon: AlertTriangle,
