@@ -44,7 +44,7 @@ export default function PricingSimulator() {
   const [material, setMaterial] = useState('GENERAL_DEBRIS');
   const [size, setSize] = useState(20);
   const [greenHalo, setGreenHalo] = useState(false);
-  const [rushState, setRushState] = useState<'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS'>('STANDARD');
+  const [rushState, setRushState] = useState<'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS'>('STANDARD');
   const [contractorTier, setContractorTier] = useState('RETAIL');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SmartQuote | null>(null);
