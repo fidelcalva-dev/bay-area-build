@@ -325,28 +325,49 @@ const Index = () => {
             </h2>
           </div>
 
-          {/* General debris sizes */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 max-w-5xl mx-auto mb-6">
-            {GENERAL_DEBRIS_SIZES.map((s) => (
+          {/* First row: 3 dumpsters */}
+          <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto mb-6">
+            {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => (
               <Link
                 key={s.size}
                 to={quoteUrl({ size: String(s.size) })}
-                className="bg-card rounded-2xl border border-border p-6 md:p-8 text-center hover:border-primary/30 hover:shadow-lg transition-all group flex flex-col items-center"
+                className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
               >
-                <div className="w-full flex justify-center mb-4">
+                <div className="w-full flex justify-center mb-5">
                   <img
                     src={SIZE_IMAGES[s.size]}
                     alt={`${s.size} yard dumpster`}
-                    className="h-20 md:h-24 w-auto object-contain"
+                    className="h-28 md:h-36 w-auto object-contain"
                   />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold text-foreground mb-0.5">
-                  {s.size}<span className="text-base font-medium text-muted-foreground ml-0.5">yd</span>
+                <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
+                  {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
                 </div>
-                <div className="text-base font-semibold text-primary mt-2">From ${s.price.toLocaleString()}</div>
+                <div className="text-lg font-semibold text-primary mt-3">From ${s.price.toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
               </Link>
             ))}
+          </div>
+
+          {/* Second row: 50 yd centered */}
+          <div className="flex justify-center max-w-5xl mx-auto mb-6">
+            <Link
+              to={quoteUrl({ size: '50' })}
+              className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
+            >
+              <div className="w-full flex justify-center mb-5">
+                <img
+                  src={SIZE_IMAGES[50]}
+                  alt="50 yard dumpster"
+                  className="h-28 md:h-36 w-auto object-contain"
+                />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
+                50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
+              </div>
+              <div className="text-lg font-semibold text-primary mt-3">From ${GENERAL_DEBRIS_SIZES.find(s => s.size === 50)?.price.toLocaleString()}</div>
+              <div className="text-sm text-muted-foreground mt-1">{GENERAL_DEBRIS_SIZES.find(s => s.size === 50)?.includedTons} tons included</div>
+            </Link>
           </div>
 
           {/* Heavy material note */}
