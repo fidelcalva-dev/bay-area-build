@@ -3152,6 +3152,48 @@ export type Database = {
           },
         ]
       }
+      city_display_pricing: {
+        Row: {
+          assigned_market_id: string | null
+          city_name: string
+          city_slug: string
+          created_at: string
+          fallback_zip: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          preferred_yard_id: string | null
+          primary_zip: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_market_id?: string | null
+          city_name: string
+          city_slug: string
+          created_at?: string
+          fallback_zip?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          preferred_yard_id?: string | null
+          primary_zip: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_market_id?: string | null
+          city_name?: string
+          city_slug?: string
+          created_at?: string
+          fallback_zip?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          preferred_yard_id?: string | null
+          primary_zip?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       city_facility_rules: {
         Row: {
           city: string
