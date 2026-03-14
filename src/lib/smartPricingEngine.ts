@@ -815,7 +815,7 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   // 7. Rush delivery
   const rushState = input.rushState || (input.isSameDay ? 'SAME_DAY' : 'STANDARD');
   const rushConfig = await getRushConfig(yard.yard.id);
-  let rushFee = calculateRushFee(rushState, rushConfig);
+  let rushFee = calculateRushFee(rushState, rushConfig, input.sizeYd);
   if (rushFee > 0) {
     warnings.push(`${rushState.replace(/_/g, ' ')} delivery: +$${rushFee}.`);
   }
