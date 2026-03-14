@@ -339,12 +339,16 @@ const Index = () => {
                 to={quoteUrl({ size: String(s.size) })}
                 className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
               >
-                <div className="w-full flex justify-center mb-5">
-                  <img
-                    src={SIZE_IMAGES[s.size]}
-                    alt={`${s.size} yard dumpster`}
-                    className="h-28 md:h-36 w-auto object-contain"
-                  />
+                <div className="w-full flex justify-center mb-5 relative">
+                  {SIZE_GALLERY[s.size] ? (
+                    <DumpsterGallery images={SIZE_GALLERY[s.size]} alt={`${s.size} yard dumpster`} />
+                  ) : (
+                    <img
+                      src={SIZE_IMAGES[s.size]}
+                      alt={`${s.size} yard dumpster`}
+                      className="h-28 md:h-36 w-auto object-contain"
+                    />
+                  )}
                 </div>
                 <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                   {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
