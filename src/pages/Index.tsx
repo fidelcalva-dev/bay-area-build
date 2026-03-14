@@ -16,6 +16,9 @@ import {
 
 // Dumpster images
 import yd5Img from '@/assets/5yd-dumpster.png';
+import yd5Photo1 from '@/assets/5yd-photo-1.jpg';
+import yd5Photo2 from '@/assets/5yd-photo-2.jpg';
+import yd5Photo3 from '@/assets/5yd-photo-3.jpg';
 import yd8Img from '@/assets/8yd-dumpster.png';
 import yd10Img from '@/assets/10yd-dumpster.png';
 import yd20Img from '@/assets/20yd-dumpster.png';
@@ -23,6 +26,9 @@ import yd30Img from '@/assets/30yd-dumpster.png';
 import yd40Img from '@/assets/40yd-dumpster.png';
 import yd50Img from '@/assets/50yd-dumpster.png';
 
+const SIZE_GALLERY: Record<number, string[]> = {
+  5: [yd5Img, yd5Photo1, yd5Photo2, yd5Photo3],
+};
 const SIZE_IMAGES: Record<number, string> = {
   5: yd5Img,
   8: yd8Img,
@@ -94,6 +100,37 @@ const PROJECT_TYPES = [
   { label: 'Yard Cleanup', slug: 'yard-cleanup', icon: TreePine },
   { label: 'Concrete / Soil Removal', slug: 'concrete-soil', icon: Shovel },
 ];
+
+/* Mini gallery slider for size cards */
+function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
+  const [idx, setIdx] = useState(0);
+  const touchStartRef = { current: 0 };
+
+  return (
+    <div
+      className="relative w-full h-28 md:h-36 overflow-hidden rounded-lg"
+      onTouchStart={(e) => { touchStartRef.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        const diff = touchStartRef.current - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          setIdx((prev) => diff > 0 ? Math.min(prev + 1, images.length - 1) : Math.max(prev - 1, 0));
+        }
+      }}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIdx((prev) => (prev + 1) % images.length); }}
+    >
+      <img
+        src={images[idx]}
+        alt={`${alt} - ${idx + 1}`}
+        className="h-full w-full object-contain transition-opacity duration-300"
+      />
+      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1.5">
+        {images.map((_, i) => (
+          <span key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === idx ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const ACTION_OPTIONS = [
   { label: 'Get Exact Price', icon: ArrowRight, to: '/quote?v3=1', primary: true },
@@ -333,12 +370,16 @@ const Index = () => {
                 to={quoteUrl({ size: String(s.size) })}
                 className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
               >
-                <div className="w-full flex justify-center mb-5">
-                  <img
-                    src={SIZE_IMAGES[s.size]}
-                    alt={`${s.size} yard dumpster`}
-                    className="h-28 md:h-36 w-auto object-contain"
-                  />
+                <div className="w-full flex justify-center mb-5 relative">
+                  {SIZE_GALLERY[s.size] ? (
+                    <DumpsterGallery images={SIZE_GALLERY[s.size]} alt={`${s.size} yard dumpster`} />
+                  ) : (
+                    <img
+                      src={SIZE_IMAGES[s.size]}
+                      alt={`${s.size} yard dumpster`}
+                      className="h-28 md:h-36 w-auto object-contain"
+                    />
+                  )}
                 </div>
                 <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                   {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
