@@ -3809,6 +3809,77 @@ export type Database = {
           },
         ]
       }
+      contractor_accounts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          common_materials: string[] | null
+          company_name: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          is_active: boolean
+          is_approved: boolean
+          monthly_volume_estimate: number | null
+          notes: string | null
+          payment_terms: string | null
+          preferred_sizes: number[] | null
+          pricing_tier: Database["public"]["Enums"]["contractor_tier"]
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          common_materials?: string[] | null
+          company_name: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_approved?: boolean
+          monthly_volume_estimate?: number | null
+          notes?: string | null
+          payment_terms?: string | null
+          preferred_sizes?: number[] | null
+          pricing_tier?: Database["public"]["Enums"]["contractor_tier"]
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          common_materials?: string[] | null
+          company_name?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_approved?: boolean
+          monthly_volume_estimate?: number | null
+          notes?: string | null
+          payment_terms?: string | null
+          preferred_sizes?: number[] | null
+          pricing_tier?: Database["public"]["Enums"]["contractor_tier"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contractor_accounts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contractor_applications: {
         Row: {
           billing_preference: string | null
@@ -3888,6 +3959,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      contractor_pricing_rules: {
+        Row: {
+          base_override: number | null
+          created_at: string
+          discount_percent: number
+          id: string
+          included_tons_override: number | null
+          is_active: boolean
+          material_class: string | null
+          minimum_margin_pct: number
+          rush_fee_behavior: string
+          size_yd: number | null
+          tier_name: Database["public"]["Enums"]["contractor_tier"]
+          updated_at: string
+          zone_surcharge_behavior: string
+        }
+        Insert: {
+          base_override?: number | null
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          included_tons_override?: number | null
+          is_active?: boolean
+          material_class?: string | null
+          minimum_margin_pct?: number
+          rush_fee_behavior?: string
+          size_yd?: number | null
+          tier_name: Database["public"]["Enums"]["contractor_tier"]
+          updated_at?: string
+          zone_surcharge_behavior?: string
+        }
+        Update: {
+          base_override?: number | null
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          included_tons_override?: number | null
+          is_active?: boolean
+          material_class?: string | null
+          minimum_margin_pct?: number
+          rush_fee_behavior?: string
+          size_yd?: number | null
+          tier_name?: Database["public"]["Enums"]["contractor_tier"]
+          updated_at?: string
+          zone_surcharge_behavior?: string
+        }
+        Relationships: []
       }
       contracts: {
         Row: {
@@ -15548,6 +15667,76 @@ export type Database = {
         }
         Relationships: []
       }
+      rush_delivery_config: {
+        Row: {
+          allow_same_day: boolean
+          created_at: string
+          daily_capacity: number
+          id: string
+          is_active: boolean
+          next_day_cutoff_hour: number
+          rush_fee_after_hours: number
+          rush_fee_next_day: number
+          rush_fee_priority: number
+          rush_fee_same_day: number
+          same_day_cutoff_hour: number
+          updated_at: string
+          yard_id: string
+        }
+        Insert: {
+          allow_same_day?: boolean
+          created_at?: string
+          daily_capacity?: number
+          id?: string
+          is_active?: boolean
+          next_day_cutoff_hour?: number
+          rush_fee_after_hours?: number
+          rush_fee_next_day?: number
+          rush_fee_priority?: number
+          rush_fee_same_day?: number
+          same_day_cutoff_hour?: number
+          updated_at?: string
+          yard_id: string
+        }
+        Update: {
+          allow_same_day?: boolean
+          created_at?: string
+          daily_capacity?: number
+          id?: string
+          is_active?: boolean
+          next_day_cutoff_hour?: number
+          rush_fee_after_hours?: number
+          rush_fee_next_day?: number
+          rush_fee_priority?: number
+          rush_fee_same_day?: number
+          same_day_cutoff_hour?: number
+          updated_at?: string
+          yard_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rush_delivery_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "rush_delivery_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rush_delivery_config_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: true
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_ai_audit: {
         Row: {
           action_type: string
@@ -19477,6 +19666,73 @@ export type Database = {
         }
         Relationships: []
       }
+      zone_surcharges: {
+        Row: {
+          created_at: string
+          dispatch_cost_adjustment: number
+          display_order: number
+          id: string
+          is_active: boolean
+          miles_from_yard_max: number | null
+          miles_from_yard_min: number
+          quote_surcharge: number
+          remote_area_flag: boolean
+          updated_at: string
+          yard_id: string
+          zone_name: string
+        }
+        Insert: {
+          created_at?: string
+          dispatch_cost_adjustment?: number
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          miles_from_yard_max?: number | null
+          miles_from_yard_min?: number
+          quote_surcharge?: number
+          remote_area_flag?: boolean
+          updated_at?: string
+          yard_id: string
+          zone_name: string
+        }
+        Update: {
+          created_at?: string
+          dispatch_cost_adjustment?: number
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          miles_from_yard_max?: number | null
+          miles_from_yard_min?: number
+          quote_surcharge?: number
+          remote_area_flag?: boolean
+          updated_at?: string
+          yard_id?: string
+          zone_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zone_surcharges_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "asset_inventory_summary"
+            referencedColumns: ["yard_id"]
+          },
+          {
+            foreignKeyName: "zone_surcharges_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zone_surcharges_yard_id_fkey"
+            columns: ["yard_id"]
+            isOneToOne: false
+            referencedRelation: "yards_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       zone_zip_codes: {
         Row: {
           city_name: string | null
@@ -20398,6 +20654,12 @@ export type Database = {
         | "MANUAL"
       contract_status: "pending" | "signed" | "declined" | "expired"
       contract_type: "msa" | "addendum"
+      contractor_tier:
+        | "RETAIL"
+        | "CONTRACTOR_TIER_1"
+        | "CONTRACTOR_TIER_2"
+        | "COMMERCIAL_ACCOUNT"
+        | "MANUAL_RATE_CARD"
       doc_key_type:
         | "NON_NEGOTIABLE_RULES"
         | "CEO_WEEKLY_CHECKLIST"
@@ -20781,6 +21043,13 @@ export const Constants = {
       ],
       contract_status: ["pending", "signed", "declined", "expired"],
       contract_type: ["msa", "addendum"],
+      contractor_tier: [
+        "RETAIL",
+        "CONTRACTOR_TIER_1",
+        "CONTRACTOR_TIER_2",
+        "COMMERCIAL_ACCOUNT",
+        "MANUAL_RATE_CARD",
+      ],
       doc_key_type: [
         "NON_NEGOTIABLE_RULES",
         "CEO_WEEKLY_CHECKLIST",
