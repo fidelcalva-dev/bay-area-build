@@ -15678,7 +15678,10 @@ export type Database = {
           rush_fee_after_hours: number
           rush_fee_next_day: number
           rush_fee_priority: number
+          rush_fee_priority_next_day: number | null
           rush_fee_same_day: number
+          rush_fee_same_day_large: number | null
+          rush_fee_same_day_small_medium: number | null
           same_day_cutoff_hour: number
           updated_at: string
           yard_id: string
@@ -15693,7 +15696,10 @@ export type Database = {
           rush_fee_after_hours?: number
           rush_fee_next_day?: number
           rush_fee_priority?: number
+          rush_fee_priority_next_day?: number | null
           rush_fee_same_day?: number
+          rush_fee_same_day_large?: number | null
+          rush_fee_same_day_small_medium?: number | null
           same_day_cutoff_hour?: number
           updated_at?: string
           yard_id: string
@@ -15708,7 +15714,10 @@ export type Database = {
           rush_fee_after_hours?: number
           rush_fee_next_day?: number
           rush_fee_priority?: number
+          rush_fee_priority_next_day?: number | null
           rush_fee_same_day?: number
+          rush_fee_same_day_large?: number | null
+          rush_fee_same_day_small_medium?: number | null
           same_day_cutoff_hour?: number
           updated_at?: string
           yard_id?: string
