@@ -31,7 +31,7 @@ export function SEOHead({
   const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
   // Build LocalBusiness schema — override sameAs with DB-driven values
-  const localBusinessSchema = generateLocalBusinessSchema();
+  const localBusinessSchema = generateLocalBusinessSchema() as Record<string, any>;
   if (schemaSameAs && schemaSameAs.length > 0) {
     localBusinessSchema.sameAs = schemaSameAs;
   }
