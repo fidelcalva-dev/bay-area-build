@@ -970,6 +970,9 @@ const App = () => {
                 <Route path="pricing/extras-catalog" element={
                   <Suspense fallback={<PageLoader />}><ExtrasCatalogConfig /></Suspense>
                 } />
+                <Route path="pricing/city-display-zips" element={
+                  <Suspense fallback={<PageLoader />}><CityDisplayZips /></Suspense>
+                } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>
                 } />
