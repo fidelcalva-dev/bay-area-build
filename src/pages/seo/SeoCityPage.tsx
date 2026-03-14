@@ -265,6 +265,9 @@ export default function SeoCityPage() {
         </div>
       </section>
 
+      {/* Dynamic City Pricing Block */}
+      <CityPricingBlock citySlug={city.city_slug} cityName={city.city_name} />
+
       {/* Sizes */}
       <section className="section-padding bg-muted/30">
         <div className="container-wide">
