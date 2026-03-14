@@ -330,8 +330,28 @@ async function getContractorRule(
 }
 
 // =====================================================
-// HAVERSINE DISTANCE
+// EXTRAS ENGINE
 // =====================================================
+
+async function fetchExtraItems(codes: string[]): Promise<ExtraItemSummary[]> {
+  if (!codes?.length) return [];
+  const { data } = await supabase
+    .from('extra_items')
+    .select('code, label, category, default_amount, pricing_mode')
+    .in('code', codes)
+    .eq('is_active', true);
+  if (!data) return [];
+  return (data as any[]).map(d => ({
+    code: d.code,
+    label: d.label,
+    category: d.category,
+    amount: Number(d.default_amount),
+    pricing_mode: d.pricing_mode,
+    status: 'drafted',
+  }));
+}
+
+
 
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 3958.8; // Earth radius in miles
