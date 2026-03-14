@@ -947,6 +947,12 @@ const App = () => {
                 <Route path="pricing/zip-health" element={
                   <Suspense fallback={<PageLoader />}><ZipHealthDashboard /></Suspense>
                 } />
+                <Route path="pricing/facility-costs" element={
+                  <Suspense fallback={<PageLoader />}><FacilityCostDashboard /></Suspense>
+                } />
+                <Route path="pricing/material-rules" element={
+                  <Suspense fallback={<PageLoader />}><MaterialRulesDashboard /></Suspense>
+                } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>
                 } />
