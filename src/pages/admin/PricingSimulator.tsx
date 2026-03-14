@@ -1,15 +1,16 @@
 /**
  * Admin Pricing Simulator — Test smart pricing for any address/material/size
- * Includes zone surcharges, rush delivery, and contractor tier inputs
+ * Includes zone surcharges, rush delivery, contractor tiers, and extras
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { calculateSmartQuoteFromZip, type SmartQuote } from '@/lib/smartPricingEngine';
-import { MapPin, Truck, Warehouse, Scale, DollarSign, AlertTriangle, CheckCircle, Loader2, Zap, Users, Layers } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { MapPin, Truck, Warehouse, Scale, DollarSign, AlertTriangle, CheckCircle, Loader2, Zap, Users, Layers, ListChecks } from 'lucide-react';
 
 const MATERIAL_OPTIONS = [
   { value: 'GENERAL_DEBRIS', label: 'General Debris' },
@@ -39,6 +40,13 @@ const TIER_OPTIONS = [
   { value: 'MANUAL_RATE_CARD', label: 'Manual' },
 ];
 
+interface ExtraCatalogItem {
+  code: string;
+  label: string;
+  category: string;
+  default_amount: number;
+}
+
 export default function PricingSimulator() {
   const [zip, setZip] = useState('');
   const [material, setMaterial] = useState('GENERAL_DEBRIS');
@@ -49,6 +57,19 @@ export default function PricingSimulator() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SmartQuote | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Extras
+  const [extrasCatalog, setExtrasCatalog] = useState<ExtraCatalogItem[]>([]);
+  const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase.from('extra_items').select('code, label, category, default_amount').eq('is_active', true).order('display_order')
+      .then(({ data }) => setExtrasCatalog((data as any[]) || []));
+  }, []);
+
+  function toggleExtra(code: string) {
+    setSelectedExtras(prev => prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]);
+  }
 
   const runSimulation = async () => {
     if (zip.length !== 5) return;
@@ -63,6 +84,7 @@ export default function PricingSimulator() {
         contractorTier: contractorTier !== 'RETAIL' ? contractorTier : undefined,
         rushState,
         isSameDay: rushState === 'SAME_DAY',
+        extraCodes: selectedExtras,
       });
 
       if (!quote) {
@@ -82,7 +104,7 @@ export default function PricingSimulator() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Smart Pricing Simulator</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Test location-aware pricing: yard, zone, dump site, rush, contractor tier, and cost engine output.
+          Test location-aware pricing: yard, zone, dump site, rush, contractor tier, extras, and cost engine output.
         </p>
       </div>
 
@@ -128,6 +150,30 @@ export default function PricingSimulator() {
         </div>
       </div>
 
+      {/* Extras toggles */}
+      {extrasCatalog.length > 0 && (
+        <div className="p-4 rounded-xl border border-border bg-card">
+          <p className="text-xs font-bold text-foreground uppercase mb-2 flex items-center gap-1.5">
+            <ListChecks className="w-3.5 h-3.5" /> Extras & Exceptions
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {extrasCatalog.map(e => (
+              <button
+                key={e.code}
+                onClick={() => toggleExtra(e.code)}
+                className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
+                  selectedExtras.includes(e.code)
+                    ? 'bg-primary/10 border-primary text-primary font-medium'
+                    : 'bg-muted border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                {e.label} {Number(e.default_amount) > 0 ? `($${e.default_amount})` : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <Button onClick={runSimulation} disabled={zip.length !== 5 || loading} className="w-full h-12">
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <DollarSign className="w-4 h-4 mr-2" />}
         Run Simulation
@@ -157,6 +203,7 @@ export default function PricingSimulator() {
               {result.rushFee > 0 && <Badge variant="secondary">Rush: +${result.rushFee}</Badge>}
               {result.zoneSurchargeAmount > 0 && <Badge variant="secondary">Zone: +${result.zoneSurchargeAmount}</Badge>}
               {result.contractorDiscount > 0 && <Badge variant="default">Contractor: -{result.contractorDiscount}%</Badge>}
+              {result.extrasTotal > 0 && <Badge variant="secondary">Extras: +${result.extrasTotal}</Badge>}
               {result.lowMarginWarning && <Badge variant="destructive">Low Margin</Badge>}
               {result.isManualReview && <Badge variant="destructive">Manual Review</Badge>}
             </div>
@@ -185,11 +232,11 @@ export default function PricingSimulator() {
               )}
             </div>
 
-            {/* Zone Surcharge */}
+            {/* Zone & Rush & Contractor */}
             <div className="p-4 rounded-xl border border-border bg-card">
               <div className="flex items-center gap-2 mb-3">
                 <Layers className="w-4 h-4 text-primary" />
-                <p className="text-xs font-bold text-foreground uppercase">Zone & Rush</p>
+                <p className="text-xs font-bold text-foreground uppercase">Zone / Rush / Tier</p>
               </div>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between"><span className="text-muted-foreground">Zone</span><span className="font-medium">{result.zoneSurcharge?.zone_name || 'N/A'}</span></div>
@@ -261,6 +308,23 @@ export default function PricingSimulator() {
               </div>
             </div>
           </div>
+
+          {/* Extras applied */}
+          {result.extras.length > 0 && (
+            <div className="p-4 rounded-xl border border-border bg-card">
+              <p className="text-xs font-bold text-foreground uppercase mb-2 flex items-center gap-1.5">
+                <ListChecks className="w-3.5 h-3.5 text-primary" /> Extras Applied (${result.extrasTotal})
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {result.extras.map(e => (
+                  <div key={e.code} className="flex justify-between text-xs p-2 rounded bg-muted/50">
+                    <span>{e.label}</span>
+                    <span className="font-medium">{e.amount > 0 ? `$${e.amount}` : e.pricing_mode}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Warnings */}
           {result.warnings.length > 0 && (

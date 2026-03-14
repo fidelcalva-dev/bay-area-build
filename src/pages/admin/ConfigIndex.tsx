@@ -80,10 +80,10 @@ const configModules = [
     bgColor: 'bg-indigo-100',
   },
   {
-    title: 'Extras Catalog',
-    description: 'Add-ons and optional services',
+    title: 'Extras & Exceptions',
+    description: 'Operational extras, surcharges, and exception items',
     icon: Plus,
-    path: '/admin/extras',
+    path: '/admin/pricing/extras-catalog',
     color: 'text-teal-600',
     bgColor: 'bg-teal-100',
   },

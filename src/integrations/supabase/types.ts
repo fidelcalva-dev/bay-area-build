@@ -6119,6 +6119,69 @@ export type Database = {
         }
         Relationships: []
       }
+      extra_items: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          customer_visible: boolean
+          default_amount: number
+          description: string | null
+          display_order: number
+          driver_selectable: boolean
+          id: string
+          is_active: boolean
+          label: string
+          pricing_mode: string
+          requires_customer_notice: boolean
+          requires_dispatch_review: boolean
+          requires_note: boolean
+          requires_photo: boolean
+          taxable: boolean
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          code: string
+          created_at?: string
+          customer_visible?: boolean
+          default_amount?: number
+          description?: string | null
+          display_order?: number
+          driver_selectable?: boolean
+          id?: string
+          is_active?: boolean
+          label: string
+          pricing_mode?: string
+          requires_customer_notice?: boolean
+          requires_dispatch_review?: boolean
+          requires_note?: boolean
+          requires_photo?: boolean
+          taxable?: boolean
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          customer_visible?: boolean
+          default_amount?: number
+          description?: string | null
+          display_order?: number
+          driver_selectable?: boolean
+          id?: string
+          is_active?: boolean
+          label?: string
+          pricing_mode?: string
+          requires_customer_notice?: boolean
+          requires_dispatch_review?: boolean
+          requires_note?: boolean
+          requires_photo?: boolean
+          taxable?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       extra_pricing_rules: {
         Row: {
           created_at: string
@@ -11166,6 +11229,86 @@ export type Database = {
           },
           {
             foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+        ]
+      }
+      order_extras: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          extra_item_id: string
+          id: string
+          note: string | null
+          order_id: string
+          photo_urls: string[] | null
+          quantity: number
+          reported_at: string | null
+          reported_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          extra_item_id: string
+          id?: string
+          note?: string | null
+          order_id: string
+          photo_urls?: string[] | null
+          quantity?: number
+          reported_at?: string | null
+          reported_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          extra_item_id?: string
+          id?: string
+          note?: string | null
+          order_id?: string
+          photo_urls?: string[] | null
+          quantity?: number
+          reported_at?: string | null
+          reported_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_extras_extra_item_id_fkey"
+            columns: ["extra_item_id"]
+            isOneToOne: false
+            referencedRelation: "extra_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_extras_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "order_extras_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_extras_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "overdue_assets_billing_vw"

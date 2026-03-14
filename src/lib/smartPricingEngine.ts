@@ -106,6 +106,15 @@ export interface InternalCost {
   totalInternal: number;
 }
 
+export interface ExtraItemSummary {
+  code: string;
+  label: string;
+  category: string;
+  amount: number;
+  pricing_mode: string;
+  status: string;
+}
+
 export interface SmartQuote {
   // Location context
   yard: YardSelection;
@@ -143,6 +152,10 @@ export interface SmartQuote {
   contractorDiscount: number;
   lowMarginWarning: boolean;
   
+  // Extras & exceptions
+  extras: ExtraItemSummary[];
+  extrasTotal: number;
+  
   // Vendor fallback
   isVendorFallback: boolean;
   vendorName?: string;
@@ -168,7 +181,8 @@ export interface SmartQuoteInput {
   contractorDiscountPct?: number;
   contractorTier?: string;
   isSameDay?: boolean;
-    rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+  rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+  extraCodes?: string[];
 }
 
 // =====================================================
@@ -316,8 +330,28 @@ async function getContractorRule(
 }
 
 // =====================================================
-// HAVERSINE DISTANCE
+// EXTRAS ENGINE
 // =====================================================
+
+async function fetchExtraItems(codes: string[]): Promise<ExtraItemSummary[]> {
+  if (!codes?.length) return [];
+  const { data } = await supabase
+    .from('extra_items')
+    .select('code, label, category, default_amount, pricing_mode')
+    .in('code', codes)
+    .eq('is_active', true);
+  if (!data) return [];
+  return (data as any[]).map(d => ({
+    code: d.code,
+    label: d.label,
+    category: d.category,
+    amount: Number(d.default_amount),
+    pricing_mode: d.pricing_mode,
+    status: 'drafted',
+  }));
+}
+
+
 
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 3958.8; // Earth radius in miles
@@ -895,13 +929,21 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   if (materialRule.public_warning) warnings.push(materialRule.public_warning);
   if (greenHalo) warnings.push(`Green Halo compliance applied at $${GREEN_HALO_RATE}/ton.`);
 
+  // 10. Extras & exceptions
+  const extras = await fetchExtraItems(input.extraCodes || []);
+  const extrasTotal = extras.reduce((sum, e) => sum + e.amount, 0);
+
+  // Add extras to public price
+  const finalPublicLow = publicPriceLow + extrasTotal;
+  const finalPublicHigh = publicPriceHigh + extrasTotal;
+
   return {
     yard,
     dumpSite,
     materialRule,
     internalCost,
-    publicPriceLow,
-    publicPriceHigh,
+    publicPriceLow: finalPublicLow,
+    publicPriceHigh: finalPublicHigh,
     includedTons,
     overweightFeePerTon: materialRule.overweight_fee_per_ton,
     isFlatFee: materialRule.pricing_mode === 'flat_rate',
@@ -918,6 +960,8 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     contractorRule,
     contractorDiscount,
     lowMarginWarning,
+    extras,
+    extrasTotal,
     isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
@@ -943,6 +987,7 @@ export async function calculateSmartQuoteFromZip(
     lng?: number;
     isSameDay?: boolean;
     rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+    extraCodes?: string[];
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
@@ -1001,6 +1046,7 @@ export async function calculateSmartQuoteFromZip(
     contractorTier: options?.contractorTier,
     isSameDay: options?.isSameDay,
     rushState: options?.rushState,
+    extraCodes: options?.extraCodes,
   });
 
   if (smartResult) return smartResult;
@@ -1034,6 +1080,8 @@ export async function calculateSmartQuoteFromZip(
       rushConfig: null,
       contractorDiscount: 0,
       lowMarginWarning: false,
+      extras: [],
+      extrasTotal: 0,
       isVendorFallback: true,
       vendorName: vendorQuote.vendorName,
       warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],

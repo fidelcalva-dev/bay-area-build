@@ -168,6 +168,7 @@ const MaterialRulesDashboard = lazy(() => import("./pages/admin/pricing/Material
 const ZoneSurchargesConfig = lazy(() => import("./pages/admin/pricing/ZoneSurchargesConfig"));
 const RushDeliveryConfig = lazy(() => import("./pages/admin/pricing/RushDeliveryConfig"));
 const ContractorPricingConfig = lazy(() => import("./pages/admin/pricing/ContractorPricingConfig"));
+const ExtrasCatalogConfig = lazy(() => import("./pages/admin/pricing/ExtrasCatalogConfig"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
@@ -964,6 +965,9 @@ const App = () => {
                 } />
                 <Route path="pricing/contractor-pricing" element={
                   <Suspense fallback={<PageLoader />}><ContractorPricingConfig /></Suspense>
+                } />
+                <Route path="pricing/extras-catalog" element={
+                  <Suspense fallback={<PageLoader />}><ExtrasCatalogConfig /></Suspense>
                 } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>
