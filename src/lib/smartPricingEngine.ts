@@ -924,9 +924,11 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired?: boolean;
     isContractor?: boolean;
     contractorDiscountPct?: number;
+    contractorTier?: string;
     lat?: number;
     lng?: number;
     isSameDay?: boolean;
+    rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
