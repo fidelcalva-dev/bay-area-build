@@ -415,7 +415,7 @@ const Index = () => {
                 <img
                   src={SIZE_IMAGES[50]}
                   alt="50 yard dumpster"
-                  className="h-28 md:h-36 w-auto object-contain"
+                  className="h-28 md:h-36 w-auto object-contain rounded-xl"
                 />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
