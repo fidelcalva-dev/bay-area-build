@@ -256,11 +256,13 @@ async function getRushConfig(yardId: string): Promise<RushConfig | null> {
   };
 }
 
-function calculateRushFee(rushState: string | undefined, config: RushConfig | null): number {
+function calculateRushFee(rushState: string | undefined, config: RushConfig | null, sizeYd?: number): number {
   if (!rushState || rushState === 'STANDARD' || !config) return 0;
+  const isLarge = (sizeYd ?? 20) >= 30;
   switch (rushState) {
-    case 'SAME_DAY': return config.rush_fee_same_day;
+    case 'SAME_DAY': return isLarge ? config.rush_fee_same_day_large : config.rush_fee_same_day_small_medium;
     case 'NEXT_DAY': return config.rush_fee_next_day;
+    case 'PRIORITY_NEXT_DAY': return config.rush_fee_priority_next_day;
     case 'PRIORITY': return config.rush_fee_priority;
     case 'AFTER_HOURS': return config.rush_fee_after_hours;
     default: return 0;
