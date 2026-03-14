@@ -51,8 +51,11 @@ export default function RushDeliveryConfig() {
         next_day_cutoff_hour: c.next_day_cutoff_hour,
         daily_capacity: c.daily_capacity,
         rush_fee_same_day: Number(c.rush_fee_same_day),
+        rush_fee_same_day_small_medium: Number((c as any).rush_fee_same_day_small_medium ?? 95),
+        rush_fee_same_day_large: Number((c as any).rush_fee_same_day_large ?? 145),
         rush_fee_next_day: Number(c.rush_fee_next_day),
         rush_fee_priority: Number(c.rush_fee_priority),
+        rush_fee_priority_next_day: Number((c as any).rush_fee_priority_next_day ?? 45),
         rush_fee_after_hours: Number(c.rush_fee_after_hours),
         is_active: c.is_active,
       }))
