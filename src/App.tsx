@@ -165,6 +165,9 @@ const YardHealthDashboard = lazy(() => import("./pages/admin/pricing/YardHealthD
 const ZipHealthDashboard = lazy(() => import("./pages/admin/pricing/ZipHealthDashboard"));
 const FacilityCostDashboard = lazy(() => import("./pages/admin/pricing/FacilityCostDashboard"));
 const MaterialRulesDashboard = lazy(() => import("./pages/admin/pricing/MaterialRulesDashboard"));
+const ZoneSurchargesConfig = lazy(() => import("./pages/admin/pricing/ZoneSurchargesConfig"));
+const RushDeliveryConfig = lazy(() => import("./pages/admin/pricing/RushDeliveryConfig"));
+const ContractorPricingConfig = lazy(() => import("./pages/admin/pricing/ContractorPricingConfig"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
@@ -952,6 +955,15 @@ const App = () => {
                 } />
                 <Route path="pricing/material-rules" element={
                   <Suspense fallback={<PageLoader />}><MaterialRulesDashboard /></Suspense>
+                } />
+                <Route path="pricing/zone-surcharges" element={
+                  <Suspense fallback={<PageLoader />}><ZoneSurchargesConfig /></Suspense>
+                } />
+                <Route path="pricing/rush-delivery" element={
+                  <Suspense fallback={<PageLoader />}><RushDeliveryConfig /></Suspense>
+                } />
+                <Route path="pricing/contractor-pricing" element={
+                  <Suspense fallback={<PageLoader />}><ContractorPricingConfig /></Suspense>
                 } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>

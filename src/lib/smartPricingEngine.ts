@@ -128,6 +128,21 @@ export interface SmartQuote {
   surgeMultiplier: number;
   capacityUtilization: number;
   
+  // Zone surcharge
+  zoneSurcharge?: ZoneSurcharge | null;
+  zoneSurchargeAmount: number;
+  
+  // Rush delivery
+  rushState: string;
+  rushFee: number;
+  rushConfig?: RushConfig | null;
+  
+  // Contractor
+  contractorTier?: string;
+  contractorRule?: ContractorRule | null;
+  contractorDiscount: number;
+  lowMarginWarning: boolean;
+  
   // Vendor fallback
   isVendorFallback: boolean;
   vendorName?: string;
@@ -151,7 +166,145 @@ export interface SmartQuoteInput {
   greenHaloRequired?: boolean;
   isContractor?: boolean;
   contractorDiscountPct?: number;
+  contractorTier?: string;
   isSameDay?: boolean;
+  rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+}
+
+// =====================================================
+// ZONE SURCHARGE ENGINE
+// =====================================================
+
+export interface ZoneSurcharge {
+  zone_name: string;
+  quote_surcharge: number;
+  dispatch_cost_adjustment: number;
+  remote_area_flag: boolean;
+}
+
+async function getZoneSurcharge(yardId: string, distanceMiles: number): Promise<ZoneSurcharge | null> {
+  const { data } = await supabase
+    .from('zone_surcharges')
+    .select('*')
+    .eq('yard_id', yardId)
+    .eq('is_active', true)
+    .order('miles_from_yard_min');
+
+  if (!data?.length) return null;
+
+  for (const zone of data) {
+    const min = Number(zone.miles_from_yard_min);
+    const max = zone.miles_from_yard_max ? Number(zone.miles_from_yard_max) : Infinity;
+    if (distanceMiles >= min && distanceMiles < max) {
+      return {
+        zone_name: zone.zone_name,
+        quote_surcharge: Number(zone.quote_surcharge),
+        dispatch_cost_adjustment: Number(zone.dispatch_cost_adjustment),
+        remote_area_flag: zone.remote_area_flag,
+      };
+    }
+  }
+  // Beyond all zones — return last (remote)
+  const last = data[data.length - 1];
+  return {
+    zone_name: last.zone_name,
+    quote_surcharge: Number(last.quote_surcharge),
+    dispatch_cost_adjustment: Number(last.dispatch_cost_adjustment),
+    remote_area_flag: last.remote_area_flag,
+  };
+}
+
+// =====================================================
+// RUSH DELIVERY ENGINE
+// =====================================================
+
+export interface RushConfig {
+  allow_same_day: boolean;
+  same_day_cutoff_hour: number;
+  next_day_cutoff_hour: number;
+  daily_capacity: number;
+  rush_fee_same_day: number;
+  rush_fee_next_day: number;
+  rush_fee_priority: number;
+  rush_fee_after_hours: number;
+}
+
+async function getRushConfig(yardId: string): Promise<RushConfig | null> {
+  const { data } = await supabase
+    .from('rush_delivery_config')
+    .select('*')
+    .eq('yard_id', yardId)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  if (!data) return null;
+  return {
+    allow_same_day: data.allow_same_day,
+    same_day_cutoff_hour: data.same_day_cutoff_hour,
+    next_day_cutoff_hour: data.next_day_cutoff_hour,
+    daily_capacity: data.daily_capacity,
+    rush_fee_same_day: Number(data.rush_fee_same_day),
+    rush_fee_next_day: Number(data.rush_fee_next_day),
+    rush_fee_priority: Number(data.rush_fee_priority),
+    rush_fee_after_hours: Number(data.rush_fee_after_hours),
+  };
+}
+
+function calculateRushFee(rushState: string | undefined, config: RushConfig | null): number {
+  if (!rushState || rushState === 'STANDARD' || !config) return 0;
+  switch (rushState) {
+    case 'SAME_DAY': return config.rush_fee_same_day;
+    case 'NEXT_DAY': return config.rush_fee_next_day;
+    case 'PRIORITY': return config.rush_fee_priority;
+    case 'AFTER_HOURS': return config.rush_fee_after_hours;
+    default: return 0;
+  }
+}
+
+// =====================================================
+// CONTRACTOR PRICING ENGINE
+// =====================================================
+
+export interface ContractorRule {
+  tier_name: string;
+  discount_percent: number;
+  base_override: number | null;
+  included_tons_override: number | null;
+  zone_surcharge_behavior: string;
+  rush_fee_behavior: string;
+  minimum_margin_pct: number;
+}
+
+async function getContractorRule(
+  tier: string,
+  sizeYd?: number,
+  materialClass?: string,
+): Promise<ContractorRule | null> {
+  // Try specific size+material match first, then size only, then tier default
+  let query = supabase
+    .from('contractor_pricing_rules')
+    .select('*')
+    .eq('tier_name', tier as any)
+    .eq('is_active', true);
+
+  const { data } = await query;
+  if (!data?.length) return null;
+
+  // Find best match: specific > general
+  const specific = data.find(r => r.size_yd === sizeYd && r.material_class === materialClass);
+  const sizeMatch = data.find(r => r.size_yd === sizeYd && !r.material_class);
+  const general = data.find(r => !r.size_yd && !r.material_class);
+  const best = specific || sizeMatch || general || data[0];
+
+  return {
+    tier_name: best.tier_name,
+    discount_percent: Number(best.discount_percent),
+    base_override: best.base_override ? Number(best.base_override) : null,
+    included_tons_override: best.included_tons_override ? Number(best.included_tons_override) : null,
+    zone_surcharge_behavior: best.zone_surcharge_behavior,
+    rush_fee_behavior: best.rush_fee_behavior,
+    minimum_margin_pct: Number(best.minimum_margin_pct),
+  };
 }
 
 // =====================================================
@@ -640,25 +793,73 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     // Non-critical, continue without surge
   }
 
-  // 6. Same-day premium
-  let sameDayPremium = 0;
-  if (input.isSameDay) {
-    sameDayPremium = pricingRules.same_day_premium;
-    warnings.push(`Same-day delivery premium: $${sameDayPremium}`);
+  // 6. Zone surcharge
+  const zoneSurcharge = await getZoneSurcharge(yard.yard.id, yard.distanceMiles);
+  let zoneSurchargeAmount = zoneSurcharge?.quote_surcharge || 0;
+  if (zoneSurcharge) {
+    if (zoneSurcharge.remote_area_flag) {
+      warnings.push(`Remote area (${zoneSurcharge.zone_name}) — additional surcharge of $${zoneSurchargeAmount}.`);
+    } else if (zoneSurchargeAmount > 0) {
+      warnings.push(`Zone: ${zoneSurcharge.zone_name} (+$${zoneSurchargeAmount}).`);
+    }
   }
 
-  // 7. Calculate public price
-  const marginPct = input.contractorDiscountPct
-    ? DEFAULT_MARGIN_PCT - input.contractorDiscountPct
+  // 7. Rush delivery
+  const rushState = input.rushState || (input.isSameDay ? 'SAME_DAY' : 'STANDARD');
+  const rushConfig = await getRushConfig(yard.yard.id);
+  let rushFee = calculateRushFee(rushState, rushConfig);
+  if (rushFee > 0) {
+    warnings.push(`${rushState.replace(/_/g, ' ')} delivery: +$${rushFee}.`);
+  }
+  if (rushState === 'SAME_DAY' && rushConfig && !rushConfig.allow_same_day) {
+    warnings.push('Same-day delivery not available at this yard.');
+    rushFee = 0;
+  }
+
+  // 8. Contractor pricing
+  let contractorRule: ContractorRule | null = null;
+  let contractorDiscount = 0;
+  const contractorTier = input.contractorTier;
+  if (contractorTier && contractorTier !== 'RETAIL') {
+    contractorRule = await getContractorRule(contractorTier, input.sizeYd, input.materialClass);
+    if (contractorRule) {
+      contractorDiscount = contractorRule.discount_percent;
+      // Handle zone surcharge behavior
+      if (contractorRule.zone_surcharge_behavior === 'waive') {
+        zoneSurchargeAmount = 0;
+        warnings.push(`Zone surcharge waived for ${contractorTier}.`);
+      } else if (contractorRule.zone_surcharge_behavior === 'half') {
+        zoneSurchargeAmount = Math.round(zoneSurchargeAmount / 2);
+      }
+      // Handle rush fee behavior
+      if (contractorRule.rush_fee_behavior === 'waive') {
+        rushFee = 0;
+        warnings.push(`Rush fee waived for ${contractorTier}.`);
+      } else if (contractorRule.rush_fee_behavior === 'half') {
+        rushFee = Math.round(rushFee / 2);
+      }
+    }
+  } else if (input.contractorDiscountPct) {
+    contractorDiscount = input.contractorDiscountPct;
+  }
+
+  // 9. Calculate public price
+  const marginPct = contractorDiscount > 0
+    ? DEFAULT_MARGIN_PCT - contractorDiscount
     : DEFAULT_MARGIN_PCT;
 
   let publicPrice: number;
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
-    publicPrice = materialRule.flat_rate_json[String(input.sizeYd)] || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    const baseFlat = contractorRule?.base_override 
+      || materialRule.flat_rate_json[String(input.sizeYd)] 
+      || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    publicPrice = baseFlat + zoneSurchargeAmount + rushFee;
   } else {
-    publicPrice = strategicRound((internalCost.totalInternal + sameDayPremium) * surgeMultiplier * (1 + marginPct / 100));
+    const basePrice = contractorRule?.base_override 
+      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + marginPct / 100));
+    publicPrice = basePrice + zoneSurchargeAmount + rushFee;
   }
 
   const publicPriceLow = publicPrice;
@@ -666,8 +867,15 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
 
   // Included tons
   const includedTons = materialRule.pricing_mode === 'included_tons'
-    ? (materialRule.included_tons_json[String(input.sizeYd)] || 0)
+    ? (contractorRule?.included_tons_override ?? materialRule.included_tons_json[String(input.sizeYd)] ?? 0)
     : 0;
+
+  // Low margin warning
+  const minMargin = contractorRule?.minimum_margin_pct ?? DEFAULT_MARGIN_PCT;
+  const lowMarginWarning = marginPct < minMargin;
+  if (lowMarginWarning) {
+    warnings.push(`Low margin warning: ${marginPct}% < minimum ${minMargin}%. Manager approval recommended.`);
+  }
 
   // Add material warnings
   if (materialRule.public_warning) warnings.push(materialRule.public_warning);
@@ -687,6 +895,15 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     marginPct,
     surgeMultiplier,
     capacityUtilization,
+    zoneSurcharge,
+    zoneSurchargeAmount,
+    rushState,
+    rushFee,
+    rushConfig,
+    contractorTier,
+    contractorRule,
+    contractorDiscount,
+    lowMarginWarning,
     isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
@@ -707,9 +924,11 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired?: boolean;
     isContractor?: boolean;
     contractorDiscountPct?: number;
+    contractorTier?: string;
     lat?: number;
     lng?: number;
     isSameDay?: boolean;
+    rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
@@ -765,7 +984,9 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired: options?.greenHaloRequired,
     isContractor: options?.isContractor,
     contractorDiscountPct: options?.contractorDiscountPct,
+    contractorTier: options?.contractorTier,
     isSameDay: options?.isSameDay,
+    rushState: options?.rushState,
   });
 
   if (smartResult) return smartResult;
@@ -775,7 +996,7 @@ export async function calculateSmartQuoteFromZip(
   if (vendorQuote) {
     // Build a synthetic SmartQuote from vendor data
     return {
-      yard: null as any, // No local yard
+      yard: null as any,
       dumpSite: null as any,
       materialRule: (await getMaterialRule(materialClass))!,
       internalCost: {
@@ -792,6 +1013,13 @@ export async function calculateSmartQuoteFromZip(
       marginPct: vendorQuote.markupPct,
       surgeMultiplier: 1,
       capacityUtilization: 0,
+      zoneSurcharge: null,
+      zoneSurchargeAmount: 0,
+      rushState: 'STANDARD',
+      rushFee: 0,
+      rushConfig: null,
+      contractorDiscount: 0,
+      lowMarginWarning: false,
       isVendorFallback: true,
       vendorName: vendorQuote.vendorName,
       warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],
