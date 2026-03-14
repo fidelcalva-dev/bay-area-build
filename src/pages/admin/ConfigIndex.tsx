@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
-  ChevronRight, Settings, Banknote, Scale
+  ChevronRight, Settings, Banknote, Scale, Zap, Users, Map
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,14 @@ const configModules = [
     path: '/admin/zones',
     color: 'text-green-600',
     bgColor: 'bg-green-100',
+  },
+  {
+    title: 'Zone Surcharges',
+    description: 'Distance-based pricing zones per yard',
+    icon: Map,
+    path: '/admin/pricing/zone-surcharges',
+    color: 'text-cyan-600',
+    bgColor: 'bg-cyan-100',
   },
   {
     title: 'City Rates',
@@ -54,6 +62,22 @@ const configModules = [
     path: '/admin/mixed-rules',
     color: 'text-purple-600',
     bgColor: 'bg-purple-100',
+  },
+  {
+    title: 'Rush Delivery',
+    description: 'Same-day, next-day, and priority fees',
+    icon: Zap,
+    path: '/admin/pricing/rush-delivery',
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+  },
+  {
+    title: 'Contractor Pricing',
+    description: 'Tier-based discounts and account rules',
+    icon: Users,
+    path: '/admin/pricing/contractor-pricing',
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-100',
   },
   {
     title: 'Extras Catalog',
