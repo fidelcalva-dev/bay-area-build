@@ -181,7 +181,8 @@ export interface SmartQuoteInput {
   contractorDiscountPct?: number;
   contractorTier?: string;
   isSameDay?: boolean;
-    rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+  rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+  extraCodes?: string[];
 }
 
 // =====================================================
