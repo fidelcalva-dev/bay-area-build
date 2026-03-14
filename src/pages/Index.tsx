@@ -441,12 +441,16 @@ const Index = () => {
               to={quoteUrl({ size: '50' })}
               className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
             >
-              <div className="w-full flex justify-center mb-5">
-                <img
-                  src={SIZE_IMAGES[50]}
-                  alt="50 yard dumpster"
-                  className="h-28 md:h-36 w-auto object-contain rounded-xl"
-                />
+              <div className="w-full flex justify-center mb-5 relative">
+                {SIZE_GALLERY[50] ? (
+                  <DumpsterGallery images={SIZE_GALLERY[50]} alt="50 yard dumpster" />
+                ) : (
+                  <img
+                    src={SIZE_IMAGES[50]}
+                    alt="50 yard dumpster"
+                    className="h-28 md:h-36 w-auto object-contain rounded-xl"
+                  />
+                )}
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
