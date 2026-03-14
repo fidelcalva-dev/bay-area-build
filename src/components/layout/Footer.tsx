@@ -354,7 +354,7 @@ export function Footer() {
           {/* Social Icons — driven by socialConfig.ts */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-secondary-foreground/50 mr-2">Follow us:</span>
-            {footerSocialLinks.map((link) => {
+            {(footerSocialLinks ?? []).map((link) => {
               const iconMap: Record<string, React.ReactNode> = {
                 facebook: <Facebook className="w-5 h-5" />,
                 instagram: <Instagram className="w-5 h-5" />,
@@ -369,13 +369,13 @@ export function Footer() {
               return (
                 <a
                   key={link.platform}
-                  href={link.url}
+                  href={link.public_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 bg-secondary-foreground/5 rounded-lg text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-secondary-foreground/10 transition-colors"
                   aria-label={`Follow us on ${link.label}`}
                 >
-                  {iconMap[link.iconKey] || <Globe className="w-5 h-5" />}
+                  {iconMap[link.icon_key] || <Globe className="w-5 h-5" />}
                 </a>
               );
             })}
