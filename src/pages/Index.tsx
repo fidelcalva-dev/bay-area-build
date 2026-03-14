@@ -326,21 +326,25 @@ const Index = () => {
           </div>
 
           {/* General debris sizes */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 max-w-5xl mx-auto mb-6">
             {GENERAL_DEBRIS_SIZES.map((s) => (
               <Link
                 key={s.size}
                 to={quoteUrl({ size: String(s.size) })}
-                className="bg-card rounded-2xl border border-border p-5 md:p-6 text-center hover:border-primary/30 hover:shadow-md transition-all group flex flex-col items-center"
+                className="bg-card rounded-2xl border border-border p-6 md:p-8 text-center hover:border-primary/30 hover:shadow-lg transition-all group flex flex-col items-center"
               >
-                <div className="w-full flex justify-center mb-3">
-                  <DumpsterSilhouettePlain size={s.size as any} className="h-14 md:h-16 w-auto text-muted-foreground/60" />
+                <div className="w-full flex justify-center mb-4">
+                  <img
+                    src={SIZE_IMAGES[s.size]}
+                    alt={`${s.size} yard dumpster`}
+                    className="h-20 md:h-24 w-auto object-contain"
+                  />
                 </div>
-                <div className="text-2xl md:text-3xl font-bold text-foreground mb-0.5">
-                  {s.size}<span className="text-sm font-medium text-muted-foreground ml-0.5">yd</span>
+                <div className="text-3xl md:text-4xl font-bold text-foreground mb-0.5">
+                  {s.size}<span className="text-base font-medium text-muted-foreground ml-0.5">yd</span>
                 </div>
-                <div className="text-sm font-semibold text-primary mt-1">From ${s.price.toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
+                <div className="text-base font-semibold text-primary mt-2">From ${s.price.toLocaleString()}</div>
+                <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
               </Link>
             ))}
           </div>
