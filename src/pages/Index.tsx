@@ -35,6 +35,10 @@ import yd20Photo2 from '@/assets/20yd-photo-2.jpg';
 import yd20Photo3 from '@/assets/20yd-photo-3.jpg';
 import yd20Photo4 from '@/assets/20yd-photo-4.jpg';
 import yd30Img from '@/assets/30yd-dumpster.png';
+import yd30Photo1 from '@/assets/30yd-photo-1.jpg';
+import yd30Photo2 from '@/assets/30yd-photo-2.jpg';
+import yd30Photo3 from '@/assets/30yd-photo-3.jpg';
+import yd30Photo4 from '@/assets/30yd-photo-4.jpg';
 import yd40Img from '@/assets/40yd-dumpster.png';
 import yd50Img from '@/assets/50yd-dumpster.png';
 
@@ -43,6 +47,7 @@ const SIZE_GALLERY: Record<number, string[]> = {
   8: [yd8Img, yd8Photo1, yd8Photo2, yd8Photo3, yd8Photo4],
   10: [yd10Img, yd10Photo1, yd10Photo2, yd10Photo3, yd10Photo4],
   20: [yd20Img, yd20Photo1, yd20Photo2, yd20Photo3, yd20Photo4],
+  30: [yd30Img, yd30Photo1, yd30Photo2, yd30Photo3, yd30Photo4],
 };
 const SIZE_IMAGES: Record<number, string> = {
   5: yd5Img,
