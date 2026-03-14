@@ -111,7 +111,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
 
   return (
     <div
-      className="relative w-full h-28 md:h-36 overflow-hidden rounded-lg group/gallery"
+      className="relative w-full h-28 md:h-36 overflow-hidden rounded-2xl group/gallery"
       onTouchStart={(e) => { touchStartRef.current = e.touches[0].clientX; }}
       onTouchEnd={(e) => {
         const diff = touchStartRef.current - e.changedTouches[0].clientX;
@@ -123,7 +123,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
       <img
         src={images[idx]}
         alt={`${alt} - ${idx + 1}`}
-        className="h-full w-full object-contain transition-opacity duration-300 rounded-xl"
+        className="h-full w-full object-cover transition-opacity duration-300 rounded-2xl"
       />
       {/* Left arrow */}
       {idx > 0 && (
