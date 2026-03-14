@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
+import { DumpsterSilhouettePlain } from '@/components/shared/DumpsterSilhouettePlain';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
