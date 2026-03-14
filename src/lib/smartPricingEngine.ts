@@ -987,6 +987,7 @@ export async function calculateSmartQuoteFromZip(
     lng?: number;
     isSameDay?: boolean;
     rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+    extraCodes?: string[];
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;
