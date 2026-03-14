@@ -123,7 +123,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
       <img
         src={images[idx]}
         alt={`${alt} - ${idx + 1}`}
-        className="h-full w-full object-contain transition-opacity duration-300"
+        className="h-full w-full object-contain transition-opacity duration-300 rounded-xl"
       />
       {/* Left arrow */}
       {idx > 0 && (
