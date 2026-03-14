@@ -1046,6 +1046,7 @@ export async function calculateSmartQuoteFromZip(
     contractorTier: options?.contractorTier,
     isSameDay: options?.isSameDay,
     rushState: options?.rushState,
+    extraCodes: options?.extraCodes,
   });
 
   if (smartResult) return smartResult;
