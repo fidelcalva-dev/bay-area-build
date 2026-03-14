@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,18 +9,21 @@ const corsHeaders = {
 
 const SYSTEM_PROMPT = `You are a dumpster rental specialist for Calsan Dumpsters Pro, serving the San Francisco Bay Area.
 
+LANGUAGE RULE:
+- Detect whether the user writes in Spanish or English.
+- ALWAYS respond in the SAME language the user used.
+- If Spanish, use professional but friendly Latin-American Spanish.
+
 RULES:
-- Answer in 2-4 sentences max. Be helpful but concise.
-- NEVER quote exact pricing or dollar amounts. Always say "Pricing depends on your ZIP code and project details" and recommend getting an exact quote.
-- If the user asks about prohibited items (hazardous waste, tires, batteries, paint, appliances with refrigerant), list what IS allowed and suggest they call for specifics.
-- If the question is about scheduling or delivery urgency, confirm same-day delivery is available based on availability and recommend scheduling.
-- If the question is about sizing, give a general recommendation based on common projects but always recommend getting an exact quote for accuracy.
+- Answer in 2-3 sentences max. Be helpful, direct, and confidence-building.
+- Structure your answer as: recommendation → short reason → next step.
+- NEVER quote exact pricing or dollar amounts. Always say pricing depends on ZIP code.
+- If asked about prohibited items, list what IS allowed and suggest calling.
+- Keep a professional, confident, local-service tone.
 - Do NOT use emojis.
 - Do NOT reveal internal operations, margins, or yard locations.
-- Keep a professional, confident, local-service tone. You know the Bay Area well.
-- Address both homeowners and contractors naturally.
 
-SIZING GUIDELINES (general only — never tie to a price):
+SIZING GUIDELINES (general only):
 - Bathroom remodel: 10 yard
 - Kitchen remodel: 20 yard
 - Single room cleanout: 10 yard
@@ -29,29 +33,36 @@ SIZING GUIDELINES (general only — never tie to a price):
 - New construction: 30-40 yard
 - Concrete/dirt: 5-10 yard (flat-fee, no weight overage)
 - Yard waste/landscaping: 10-20 yard
+- Garage cleanout: 10-15 yard
 
 INTENT CLASSIFICATION:
-Classify the user's question into one of these categories and include the tag in your response:
-[INTENT:PRICE] - asking about cost, pricing, rates, fees
-[INTENT:SIZE] - asking about sizing or capacity
-[INTENT:MATERIALS_ALLOWED] - asking what can go in the dumpster
-[INTENT:DELIVERY_SPEED] - asking about delivery timing or urgency
-[INTENT:HEAVY_MATERIAL] - asking about concrete, dirt, soil, brick
-[INTENT:PERMIT] - asking about permits or regulations
-[INTENT:READY_TO_BOOK] - expressing readiness to order or book
+After your answer, on a new line, include exactly one intent tag:
+[INTENT:PRICE] - asking about cost
+[INTENT:SIZE] - asking about sizing
+[INTENT:MATERIALS_ALLOWED] - asking what goes in dumpster
+[INTENT:DELIVERY_SPEED] - asking about timing
+[INTENT:HEAVY_MATERIAL] - concrete, dirt, soil
+[INTENT:PERMIT] - permits or regulations
+[INTENT:READY_TO_BOOK] - ready to order
 [INTENT:OTHER] - anything else
 
-RESPONSE FORMAT:
-After your answer, on a new line write the intent tag (exactly one).
-Then on a new line write exactly one of these action tags:
-[ACTION:QUOTE] - if user should get a quote/pricing
-[ACTION:PHOTO] - if user should upload a photo for sizing help
-[ACTION:SCHEDULE] - if user is asking about delivery timing
-[ACTION:CALL] - if user needs to speak to someone
-Optionally add a size range tag:
-[SIZE_RANGE:XX-YY] - recommend a size range (e.g., [SIZE_RANGE:10-20])
-Or single size:
-[SIZE_RANGE:XX] - recommend a single size (e.g., [SIZE_RANGE:20])`;
+CUSTOMER STAGE (classify on new line):
+[STAGE:EXPLORING] - just learning, not ready yet
+[STAGE:COMPARING] - evaluating options
+[STAGE:READY] - ready to order or get pricing
+[STAGE:NEEDS_HELP] - confused or needs human
+
+ACTION TAG (on new line, exactly one):
+[ACTION:QUOTE] - should get a quote
+[ACTION:PHOTO] - should upload photo for sizing
+[ACTION:SCHEDULE] - asking about delivery timing
+[ACTION:CALL] - needs to speak to someone
+
+SIZE RANGE TAG (optional, on new line):
+[SIZE_RANGE:XX-YY] or [SIZE_RANGE:XX]
+
+LANGUAGE TAG (on new line):
+[LANG:EN] or [LANG:ES]`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -63,6 +74,8 @@ serve(async (req) => {
     const question = body?.question;
     const zip = body?.zip || null;
     const city = body?.city || null;
+    const enrich_lead = body?.enrich_lead || false;
+    const session_context = body?.session_context || {};
 
     if (!question || typeof question !== "string" || question.trim().length === 0) {
       return new Response(
@@ -79,7 +92,6 @@ serve(async (req) => {
       );
     }
 
-    // Build user message with optional context
     let userMessage = question.trim().slice(0, 500);
     if (zip) userMessage += ` (ZIP: ${zip})`;
     if (city) userMessage += ` (City: ${city})`;
@@ -127,6 +139,8 @@ serve(async (req) => {
     const intentMatch = rawContent.match(/\[INTENT:(\w+)\]/);
     const actionMatch = rawContent.match(/\[ACTION:(\w+)\]/);
     const sizeRangeMatch = rawContent.match(/\[SIZE_RANGE:([\d\-]+)\]/);
+    const stageMatch = rawContent.match(/\[STAGE:(\w+)\]/);
+    const langMatch = rawContent.match(/\[LANG:(\w+)\]/);
 
     // Clean answer text
     const answerText = rawContent
@@ -134,22 +148,68 @@ serve(async (req) => {
       .replace(/\[ACTION:\w+\]/g, "")
       .replace(/\[SIZE_RANGE:[\d\-]+\]/g, "")
       .replace(/\[SIZE:\d+\]/g, "")
+      .replace(/\[STAGE:\w+\]/g, "")
+      .replace(/\[LANG:\w+\]/g, "")
       .trim();
 
     const intent = intentMatch ? intentMatch[1] : "OTHER";
     const action = actionMatch ? actionMatch[1] : "QUOTE";
     const sizeRange = sizeRangeMatch ? sizeRangeMatch[1] : null;
+    const stage = stageMatch ? stageMatch[1] : "EXPLORING";
+    const lang = langMatch ? langMatch[1] : "EN";
 
-    // Determine lead capture
-    const shouldCaptureLead = ["READY_TO_BOOK", "PRICE"].includes(intent);
+    const shouldCaptureLead = ["READY_TO_BOOK", "PRICE"].includes(intent) || stage === "READY";
+
+    // Lead enrichment: fire-and-forget
+    if (enrich_lead && (zip || intent !== "OTHER")) {
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const sb = createClient(supabaseUrl, supabaseKey);
+
+        // Detect project/material from question
+        let projectType: string | null = null;
+        let materialType: string | null = null;
+        const q = question.toLowerCase();
+        if (/kitchen/i.test(q)) projectType = "Kitchen Remodel";
+        else if (/bathroom/i.test(q)) projectType = "Bathroom Remodel";
+        else if (/garage/i.test(q)) projectType = "Garage Cleanout";
+        else if (/roof/i.test(q)) projectType = "Roofing";
+        else if (/demo|demolition/i.test(q)) projectType = "Demolition";
+        else if (/cleanout|clean out/i.test(q)) projectType = "Home Cleanout";
+        else if (/yard|landscap/i.test(q)) projectType = "Yard Cleanup";
+        else if (/construction/i.test(q)) projectType = "Construction";
+
+        if (/concrete|brick|asphalt/i.test(q)) materialType = "concrete";
+        else if (/dirt|soil|rock/i.test(q)) materialType = "dirt";
+        else if (/green|vegetation/i.test(q)) materialType = "green_waste";
+
+        await sb.functions.invoke("lead-ingest", {
+          body: {
+            source_channel: "WEBSITE_ASSISTANT",
+            source_detail: "homepage_ai_assistant",
+            zip: zip || undefined,
+            notes: `AI Assistant Q: ${question.slice(0, 200)}\nRecommended: ${sizeRange ? sizeRange + ' yd' : 'N/A'}\nStage: ${stage}`,
+            project_type: projectType || session_context?.project_type || undefined,
+            material_type: materialType || session_context?.material_type || undefined,
+            probable_size: sizeRange ? parseInt(sizeRange) : undefined,
+            consent_status: "AI_INTERACTION",
+            ...session_context,
+          },
+        });
+      } catch (e) {
+        console.error("Lead enrichment error (non-blocking):", e);
+      }
+    }
 
     const result = {
       answer_text: answerText,
       recommended_action: action,
       suggested_size_range: sizeRange,
       should_capture_lead: shouldCaptureLead,
-      // Keep backward compat
       recommended_size: sizeRange ? parseInt(sizeRange) : null,
+      customer_stage: stage,
+      language: lang,
     };
 
     return new Response(JSON.stringify(result), {

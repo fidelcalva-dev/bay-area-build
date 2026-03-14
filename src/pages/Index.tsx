@@ -14,8 +14,8 @@ import {
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
 
-const GuidedAssistant = lazy(() =>
-  import('@/components/home/GuidedAssistant').then(mod => ({ default: mod.GuidedAssistant }))
+const HomepageAIAssistant = lazy(() =>
+  import('@/components/home/HomepageAIAssistant').then(mod => ({ default: mod.HomepageAIAssistant }))
 );
 const FAQSection = lazy(() =>
   import('@/components/sections/FAQSection').then(mod => ({ default: mod.FAQSection }))
@@ -367,7 +367,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== SECTION 7 — AI HELPER (reduced) ========== */}
+      {/* ========== SECTION 7 — AI ASSISTANT (compact) ========== */}
       <section className="py-10 md:py-14 bg-background">
         <div className="container-wide">
           <div className="text-center mb-5">
@@ -375,22 +375,12 @@ const Index = () => {
               Not Sure What Size You Need?
             </h2>
             <p className="text-muted-foreground mt-1.5 text-sm max-w-md mx-auto">
-              Ask a dumpster specialist and get quick answers before you book.
+              Ask our dumpster assistant for a quick recommendation, then get exact pricing by ZIP.
             </p>
           </div>
-          <div className="max-w-xl mx-auto">
-            <Suspense fallback={<SectionLoader />}>
-              <GuidedAssistant />
-            </Suspense>
-            <div className="text-center mt-4">
-              <Button asChild size="lg" className="rounded-full font-semibold px-8">
-                <Link to={quoteUrl()}>
-                  Get Exact Price
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <Suspense fallback={<SectionLoader />}>
+            <HomepageAIAssistant />
+          </Suspense>
         </div>
       </section>
 
