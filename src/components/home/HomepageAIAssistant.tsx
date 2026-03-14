@@ -31,11 +31,11 @@ interface AssistantResponse {
 type CustomerStage = 'EXPLORING' | 'COMPARING' | 'READY' | 'NEEDS_HELP';
 
 const QUICK_CHIPS = [
-  { en: 'What size do I need?', es: '¿Qué tamaño necesito?', icon: '📏' },
-  { en: 'What can I put in the dumpster?', es: '¿Qué puedo poner?', icon: '📦' },
-  { en: 'I have dirt / concrete', es: 'Tengo tierra / concreto', icon: '🪨' },
-  { en: 'How fast can you deliver?', es: '¿Qué tan rápido entregan?', icon: '⚡' },
-  { en: "I'm not sure", es: 'No estoy seguro', icon: '🤔' },
+  { en: 'What size do I need?', es: '¿Qué tamaño necesito?' },
+  { en: 'What can I put in the dumpster?', es: '¿Qué puedo poner?' },
+  { en: 'I have dirt / concrete', es: 'Tengo tierra / concreto' },
+  { en: 'How fast can you deliver?', es: '¿Qué tan rápido entregan?' },
+  { en: "I'm not sure", es: 'No estoy seguro' },
 ];
 
 interface CtaItem {
@@ -275,14 +275,13 @@ export function HomepageAIAssistant() {
           {/* Quick Chips */}
           {!response && !loading && (
             <div className="flex flex-wrap gap-2">
-              {QUICK_CHIPS.map(({ en, es, icon }) => (
+              {QUICK_CHIPS.map(({ en, es }) => (
                 <button
                   key={en}
                   onClick={() => handleChipClick(isEs ? es : en)}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-full border border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors min-h-[36px]"
+                  className="px-3 py-2 text-xs font-medium rounded-full border border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors min-h-[36px]"
                 >
-                  <span>{icon}</span>
-                  <span>{isEs ? es : en}</span>
+                  {isEs ? es : en}
                 </button>
               ))}
             </div>
