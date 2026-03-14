@@ -353,7 +353,7 @@ export function Footer() {
           {/* Social Icons — driven by socialConfig.ts */}
           <div className="flex items-center gap-3">
             <span className="text-xs text-secondary-foreground/50 mr-2">Follow us:</span>
-            {getFooterSocialLinks().map((link) => {
+            {footerSocialLinks.map((link) => {
               const iconMap: Record<string, React.ReactNode> = {
                 facebook: <Facebook className="w-5 h-5" />,
                 instagram: <Instagram className="w-5 h-5" />,
