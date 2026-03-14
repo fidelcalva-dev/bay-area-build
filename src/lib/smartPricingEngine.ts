@@ -128,6 +128,21 @@ export interface SmartQuote {
   surgeMultiplier: number;
   capacityUtilization: number;
   
+  // Zone surcharge
+  zoneSurcharge?: ZoneSurcharge | null;
+  zoneSurchargeAmount: number;
+  
+  // Rush delivery
+  rushState: string;
+  rushFee: number;
+  rushConfig?: RushConfig | null;
+  
+  // Contractor
+  contractorTier?: string;
+  contractorRule?: ContractorRule | null;
+  contractorDiscount: number;
+  lowMarginWarning: boolean;
+  
   // Vendor fallback
   isVendorFallback: boolean;
   vendorName?: string;
