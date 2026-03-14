@@ -77,12 +77,15 @@ export default function RushDeliveryConfig() {
         next_day_cutoff_hour: config.next_day_cutoff_hour,
         daily_capacity: config.daily_capacity,
         rush_fee_same_day: config.rush_fee_same_day,
+        rush_fee_same_day_small_medium: config.rush_fee_same_day_small_medium,
+        rush_fee_same_day_large: config.rush_fee_same_day_large,
         rush_fee_next_day: config.rush_fee_next_day,
         rush_fee_priority: config.rush_fee_priority,
+        rush_fee_priority_next_day: config.rush_fee_priority_next_day,
         rush_fee_after_hours: config.rush_fee_after_hours,
         is_active: config.is_active,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', config.id);
 
     if (error) {
