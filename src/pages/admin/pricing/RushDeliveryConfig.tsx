@@ -128,10 +128,18 @@ export default function RushDeliveryConfig() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div>
-                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Fee</label>
-                  <Input type="number" value={config.rush_fee_same_day} onChange={(e) => update(config.id, 'rush_fee_same_day', Number(e.target.value))} className="h-8 text-sm" />
+                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Small/Med (5-20yd)</label>
+                  <Input type="number" value={config.rush_fee_same_day_small_medium} onChange={(e) => update(config.id, 'rush_fee_same_day_small_medium', Number(e.target.value))} className="h-8 text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Large (30-50yd)</label>
+                  <Input type="number" value={config.rush_fee_same_day_large} onChange={(e) => update(config.id, 'rush_fee_same_day_large', Number(e.target.value))} className="h-8 text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase">Priority Next-Day</label>
+                  <Input type="number" value={config.rush_fee_priority_next_day} onChange={(e) => update(config.id, 'rush_fee_priority_next_day', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
                 <div>
                   <label className="text-[10px] text-muted-foreground uppercase">Next-Day Fee</label>
@@ -142,7 +150,7 @@ export default function RushDeliveryConfig() {
                   <Input type="number" value={config.rush_fee_priority} onChange={(e) => update(config.id, 'rush_fee_priority', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-muted-foreground uppercase">After-Hours Fee</label>
+                  <label className="text-[10px] text-muted-foreground uppercase">After-Hours / Holiday</label>
                   <Input type="number" value={config.rush_fee_after_hours} onChange={(e) => update(config.id, 'rush_fee_after_hours', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
               </div>
