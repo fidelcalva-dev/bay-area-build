@@ -5,7 +5,10 @@
 // ============================================================
 import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Upload, Phone, MessageSquare, Loader2, Send, Camera } from 'lucide-react';
+import {
+  ArrowRight, Upload, Phone, MessageSquare, Loader2, Send,
+  Camera, Calendar, Briefcase,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,61 +18,61 @@ import { cn } from '@/lib/utils';
 
 interface AssistantResponse {
   answer_text: string;
-  recommended_action: 'QUOTE' | 'PHOTO' | 'SCHEDULE' | 'CALL';
+  recommended_action: 'QUOTE' | 'PHOTO' | 'SCHEDULE' | 'CALL' | 'CONTRACTOR';
   recommended_size: number | null;
   suggested_size_range: string | null;
   should_capture_lead: boolean;
   customer_stage?: string;
   language?: string;
+  intent?: string;
+  material_class?: string;
 }
 
 type CustomerStage = 'EXPLORING' | 'COMPARING' | 'READY' | 'NEEDS_HELP';
 
-const QUICK_CHIPS_EN = [
-  { label: 'What size do I need?', icon: '📏' },
-  { label: 'What can I put in the dumpster?', icon: '📦' },
-  { label: 'I have dirt / concrete', icon: '🪨' },
-  { label: 'How fast can you deliver?', icon: '⚡' },
-  { label: "I'm not sure", icon: '🤔' },
+const QUICK_CHIPS = [
+  { en: 'What size do I need?', es: '¿Qué tamaño necesito?', icon: '📏' },
+  { en: 'What can I put in the dumpster?', es: '¿Qué puedo poner?', icon: '📦' },
+  { en: 'I have dirt / concrete', es: 'Tengo tierra / concreto', icon: '🪨' },
+  { en: 'How fast can you deliver?', es: '¿Qué tan rápido entregan?', icon: '⚡' },
+  { en: "I'm not sure", es: 'No estoy seguro', icon: '🤔' },
 ];
 
-function getCtasForStage(
+interface CtaItem {
+  label: string;
+  icon: React.ElementType;
+  variant: 'primary' | 'secondary';
+  to?: string;
+  href?: string;
+}
+
+function getCtasForResponse(
   stage: CustomerStage,
   action: string,
-  lang: string,
-): Array<{ label: string; icon: React.ElementType; variant: 'primary' | 'secondary'; to?: string; href?: string }> {
-  const isEs = lang === 'ES';
+  intent: string,
+  isEs: boolean,
+): CtaItem[] {
+  const ctas: CtaItem[] = [];
 
-  const ctas: Array<{ label: string; icon: React.ElementType; variant: 'primary' | 'secondary'; to?: string; href?: string }> = [];
-
-  // Primary CTA based on action/stage
-  if (action === 'PHOTO' || stage === 'EXPLORING') {
+  // Contractor interest
+  if (action === 'CONTRACTOR' || intent === 'CONTRACTOR_INTEREST') {
     ctas.push({
-      label: isEs ? 'Subir Foto para Ayuda' : 'Upload Photo for Size Help',
-      icon: Camera,
-      variant: 'secondary',
-      to: '/waste-vision',
+      label: isEs ? 'Solicitar Cuenta de Contratista' : 'Apply for Contractor Account',
+      icon: Briefcase,
+      variant: 'primary',
+      to: '/contractor-signup',
     });
     ctas.push({
       label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
       icon: ArrowRight,
-      variant: 'primary',
-      to: '/quote?v3=1',
-    });
-  } else if (stage === 'READY' || action === 'QUOTE') {
-    ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
-      icon: ArrowRight,
-      variant: 'primary',
-      to: '/quote?v3=1',
-    });
-    ctas.push({
-      label: isEs ? 'Ver Disponibilidad' : 'Check Availability',
-      icon: ArrowRight,
       variant: 'secondary',
       to: '/quote?v3=1',
     });
-  } else if (stage === 'NEEDS_HELP' || action === 'CALL') {
+    return ctas;
+  }
+
+  // Human handoff
+  if (action === 'CALL' || stage === 'NEEDS_HELP' || intent === 'HUMAN_HANDOFF') {
     ctas.push({
       label: isEs ? 'Hablar con Especialista' : 'Talk to a Specialist',
       icon: Phone,
@@ -82,7 +85,28 @@ function getCtasForStage(
       variant: 'secondary',
       href: `sms:${BUSINESS_INFO.phone.sales}`,
     });
-  } else {
+    return ctas;
+  }
+
+  // Schedule / delivery speed
+  if (action === 'SCHEDULE' || intent === 'DELIVERY_SPEED') {
+    ctas.push({
+      label: isEs ? 'Agendar Entrega' : 'Schedule Delivery',
+      icon: Calendar,
+      variant: 'primary',
+      to: '/schedule-delivery',
+    });
+    ctas.push({
+      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      icon: ArrowRight,
+      variant: 'secondary',
+      to: '/quote?v3=1',
+    });
+    return ctas;
+  }
+
+  // Photo / unsure / size help
+  if (action === 'PHOTO' || stage === 'EXPLORING' || intent === 'SIZE_HELP') {
     ctas.push({
       label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
       icon: ArrowRight,
@@ -90,13 +114,44 @@ function getCtasForStage(
       to: '/quote?v3=1',
     });
     ctas.push({
-      label: isEs ? 'Subir Foto' : 'Upload Photo',
-      icon: Upload,
+      label: isEs ? 'Subir Foto para Ayuda' : 'Upload Photo for Size Help',
+      icon: Camera,
       variant: 'secondary',
       to: '/waste-vision',
     });
+    return ctas;
   }
 
+  // Ready / pricing
+  if (stage === 'READY' || action === 'QUOTE' || intent === 'PRICING_HELP' || intent === 'READY_TO_BOOK') {
+    ctas.push({
+      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      icon: ArrowRight,
+      variant: 'primary',
+      to: '/quote?v3=1',
+    });
+    ctas.push({
+      label: isEs ? 'Ver Disponibilidad' : 'Check Availability',
+      icon: Calendar,
+      variant: 'secondary',
+      to: '/schedule-delivery',
+    });
+    return ctas;
+  }
+
+  // Default
+  ctas.push({
+    label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+    icon: ArrowRight,
+    variant: 'primary',
+    to: '/quote?v3=1',
+  });
+  ctas.push({
+    label: isEs ? 'Subir Foto' : 'Upload Photo',
+    icon: Upload,
+    variant: 'secondary',
+    to: '/waste-vision',
+  });
   return ctas;
 }
 
@@ -124,10 +179,7 @@ export function HomepageAIAssistant() {
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('website-assistant', {
-        body: {
-          question: q.trim(),
-          enrich_lead: true,
-        },
+        body: { question: q.trim(), enrich_lead: true },
       });
 
       if (fnError) throw fnError;
@@ -142,11 +194,12 @@ export function HomepageAIAssistant() {
       }
     } catch (err) {
       console.error('HomepageAIAssistant error:', err);
-      setError('Unable to answer right now. Try one of the options below.');
+      const isEs = detectedLang === 'ES';
+      setError(isEs ? 'No se pudo responder. Intente una opción abajo.' : 'Unable to answer right now. Try one of the options below.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [detectedLang]);
 
   const handleSubmit = useCallback((e?: React.FormEvent) => {
     e?.preventDefault();
@@ -187,16 +240,17 @@ export function HomepageAIAssistant() {
     inputRef.current?.focus();
   }, []);
 
+  const isEs = detectedLang === 'ES';
   const stage = (response?.customer_stage || 'EXPLORING') as CustomerStage;
   const action = response?.recommended_action || 'QUOTE';
-  const isEs = detectedLang === 'ES';
-  const ctas = response ? getCtasForStage(stage, action, detectedLang) : [];
+  const intent = response?.intent || 'UNKNOWN';
+  const ctas = response ? getCtasForResponse(stage, action, intent, isEs) : [];
 
   return (
     <div className="max-w-xl mx-auto">
       <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-        {/* Input area */}
         <div className="p-5 md:p-6">
+          {/* Input */}
           <form onSubmit={handleSubmit} className="flex gap-2 mb-3">
             <Input
               ref={inputRef}
@@ -218,23 +272,23 @@ export function HomepageAIAssistant() {
             </Button>
           </form>
 
-          {/* Quick Chips — only before response */}
+          {/* Quick Chips */}
           {!response && !loading && (
             <div className="flex flex-wrap gap-2">
-              {QUICK_CHIPS_EN.map(({ label, icon }) => (
+              {QUICK_CHIPS.map(({ en, es, icon }) => (
                 <button
-                  key={label}
-                  onClick={() => handleChipClick(label)}
+                  key={en}
+                  onClick={() => handleChipClick(isEs ? es : en)}
                   className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-full border border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors min-h-[36px]"
                 >
                   <span>{icon}</span>
-                  <span>{label}</span>
+                  <span>{isEs ? es : en}</span>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Loading state */}
+          {/* Loading */}
           {loading && (
             <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -247,7 +301,7 @@ export function HomepageAIAssistant() {
 
           {/* Response */}
           {response && (
-            <div className="space-y-4 mt-1">
+            <div className="space-y-3 mt-1">
               {/* Answer */}
               <div className="bg-muted/40 border border-border rounded-xl p-4">
                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
