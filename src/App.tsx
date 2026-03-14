@@ -168,6 +168,7 @@ const MaterialRulesDashboard = lazy(() => import("./pages/admin/pricing/Material
 const ZoneSurchargesConfig = lazy(() => import("./pages/admin/pricing/ZoneSurchargesConfig"));
 const RushDeliveryConfig = lazy(() => import("./pages/admin/pricing/RushDeliveryConfig"));
 const ContractorPricingConfig = lazy(() => import("./pages/admin/pricing/ContractorPricingConfig"));
+const ExtrasCatalogConfig = lazy(() => import("./pages/admin/pricing/ExtrasCatalogConfig"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
