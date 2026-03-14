@@ -106,6 +106,15 @@ export interface InternalCost {
   totalInternal: number;
 }
 
+export interface ExtraItemSummary {
+  code: string;
+  label: string;
+  category: string;
+  amount: number;
+  pricing_mode: string;
+  status: string;
+}
+
 export interface SmartQuote {
   // Location context
   yard: YardSelection;
@@ -142,6 +151,10 @@ export interface SmartQuote {
   contractorRule?: ContractorRule | null;
   contractorDiscount: number;
   lowMarginWarning: boolean;
+  
+  // Extras & exceptions
+  extras: ExtraItemSummary[];
+  extrasTotal: number;
   
   // Vendor fallback
   isVendorFallback: boolean;
