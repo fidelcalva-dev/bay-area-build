@@ -11,6 +11,7 @@ import { usePublicLocations } from '@/hooks/useLocationConfigs';
 
 export function Footer() {
   const { t } = useLanguage();
+  const { data: footerSocialLinks } = useFooterSocialLinks();
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
