@@ -984,7 +984,9 @@ export async function calculateSmartQuoteFromZip(
     greenHaloRequired: options?.greenHaloRequired,
     isContractor: options?.isContractor,
     contractorDiscountPct: options?.contractorDiscountPct,
+    contractorTier: options?.contractorTier,
     isSameDay: options?.isSameDay,
+    rushState: options?.rushState,
   });
 
   if (smartResult) return smartResult;
