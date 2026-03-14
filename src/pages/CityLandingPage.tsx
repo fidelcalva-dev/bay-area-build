@@ -105,6 +105,9 @@ export default function CityLandingPage() {
         </div>
       </section>
 
+      {/* Dynamic City Pricing Block */}
+      <CityPricingBlock citySlug={canonicalSlug || city.slug} cityName={city.name} />
+
       {/* Available Sizes */}
       <section className="section-padding bg-background">
         <div className="container-wide">
