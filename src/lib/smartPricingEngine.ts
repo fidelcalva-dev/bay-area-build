@@ -269,7 +269,7 @@ async function getContractorRule(
   let query = supabase
     .from('contractor_pricing_rules')
     .select('*')
-    .eq('tier_name', tier)
+    .eq('tier_name', tier as any)
     .eq('is_active', true);
 
   const { data } = await query;
