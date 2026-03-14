@@ -1078,6 +1078,8 @@ export async function calculateSmartQuoteFromZip(
       rushConfig: null,
       contractorDiscount: 0,
       lowMarginWarning: false,
+      extras: [],
+      extrasTotal: 0,
       isVendorFallback: true,
       vendorName: vendorQuote.vendorName,
       warnings: [`Vendor fulfillment via ${vendorQuote.vendorName}. Manual review required.`],
