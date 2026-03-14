@@ -15,6 +15,7 @@ import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
 import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import { getYardCluster } from '@/lib/service-area-config';
+import CityPricingBlock from '@/components/seo/CityPricingBlock';
 import NotFound from '../NotFound';
 
 export default function SeoCityPage() {
@@ -116,20 +117,7 @@ export default function SeoCityPage() {
             </div>
           </div></div>
         </section>
-        <section className="section-padding bg-muted/30">
-          <div className="container-wide">
-            <h2 className="heading-lg text-foreground mb-8 text-center">Available Dumpster Sizes</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
-              {DUMPSTER_SIZES_DATA.map(size => (
-                <div key={size.yards} className="bg-card border border-border rounded-xl p-4 text-center">
-                  <div className="text-3xl font-black text-foreground">{size.yards}</div>
-                  <div className="text-xs text-muted-foreground mb-2">YARD</div>
-                  <div className="text-sm font-semibold text-primary">From ${size.priceFrom}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <CityPricingBlock citySlug={citySlug || ''} cityName={fallbackName} />
         <section className="section-padding bg-primary text-primary-foreground">
           <div className="container-narrow text-center">
             <h2 className="heading-lg mb-4">Get Your {fallbackName} Dumpster Price</h2>
@@ -263,6 +251,9 @@ export default function SeoCityPage() {
           </div>
         </div>
       </section>
+
+      {/* Dynamic City Pricing Block */}
+      <CityPricingBlock citySlug={city.city_slug} cityName={city.city_name} />
 
       {/* Sizes */}
       <section className="section-padding bg-muted/30">
