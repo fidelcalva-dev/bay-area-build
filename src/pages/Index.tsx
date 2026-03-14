@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Shield, MapPin, ArrowRight, Phone, CheckCircle, Scale, MessageSquare,
+  Shield, MapPin, ArrowRight, ArrowLeft, Phone, CheckCircle, Scale, MessageSquare,
   Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
