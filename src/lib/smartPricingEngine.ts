@@ -793,25 +793,73 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     // Non-critical, continue without surge
   }
 
-  // 6. Same-day premium
-  let sameDayPremium = 0;
-  if (input.isSameDay) {
-    sameDayPremium = pricingRules.same_day_premium;
-    warnings.push(`Same-day delivery premium: $${sameDayPremium}`);
+  // 6. Zone surcharge
+  const zoneSurcharge = await getZoneSurcharge(yard.yard.id, yard.distanceMiles);
+  let zoneSurchargeAmount = zoneSurcharge?.quote_surcharge || 0;
+  if (zoneSurcharge) {
+    if (zoneSurcharge.remote_area_flag) {
+      warnings.push(`Remote area (${zoneSurcharge.zone_name}) — additional surcharge of $${zoneSurchargeAmount}.`);
+    } else if (zoneSurchargeAmount > 0) {
+      warnings.push(`Zone: ${zoneSurcharge.zone_name} (+$${zoneSurchargeAmount}).`);
+    }
   }
 
-  // 7. Calculate public price
-  const marginPct = input.contractorDiscountPct
-    ? DEFAULT_MARGIN_PCT - input.contractorDiscountPct
+  // 7. Rush delivery
+  const rushState = input.rushState || (input.isSameDay ? 'SAME_DAY' : 'STANDARD');
+  const rushConfig = await getRushConfig(yard.yard.id);
+  let rushFee = calculateRushFee(rushState, rushConfig);
+  if (rushFee > 0) {
+    warnings.push(`${rushState.replace(/_/g, ' ')} delivery: +$${rushFee}.`);
+  }
+  if (rushState === 'SAME_DAY' && rushConfig && !rushConfig.allow_same_day) {
+    warnings.push('Same-day delivery not available at this yard.');
+    rushFee = 0;
+  }
+
+  // 8. Contractor pricing
+  let contractorRule: ContractorRule | null = null;
+  let contractorDiscount = 0;
+  const contractorTier = input.contractorTier;
+  if (contractorTier && contractorTier !== 'RETAIL') {
+    contractorRule = await getContractorRule(contractorTier, input.sizeYd, input.materialClass);
+    if (contractorRule) {
+      contractorDiscount = contractorRule.discount_percent;
+      // Handle zone surcharge behavior
+      if (contractorRule.zone_surcharge_behavior === 'waive') {
+        zoneSurchargeAmount = 0;
+        warnings.push(`Zone surcharge waived for ${contractorTier}.`);
+      } else if (contractorRule.zone_surcharge_behavior === 'half') {
+        zoneSurchargeAmount = Math.round(zoneSurchargeAmount / 2);
+      }
+      // Handle rush fee behavior
+      if (contractorRule.rush_fee_behavior === 'waive') {
+        rushFee = 0;
+        warnings.push(`Rush fee waived for ${contractorTier}.`);
+      } else if (contractorRule.rush_fee_behavior === 'half') {
+        rushFee = Math.round(rushFee / 2);
+      }
+    }
+  } else if (input.contractorDiscountPct) {
+    contractorDiscount = input.contractorDiscountPct;
+  }
+
+  // 9. Calculate public price
+  const marginPct = contractorDiscount > 0
+    ? DEFAULT_MARGIN_PCT - contractorDiscount
     : DEFAULT_MARGIN_PCT;
 
   let publicPrice: number;
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
-    publicPrice = materialRule.flat_rate_json[String(input.sizeYd)] || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    const baseFlat = contractorRule?.base_override 
+      || materialRule.flat_rate_json[String(input.sizeYd)] 
+      || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+    publicPrice = baseFlat + zoneSurchargeAmount + rushFee;
   } else {
-    publicPrice = strategicRound((internalCost.totalInternal + sameDayPremium) * surgeMultiplier * (1 + marginPct / 100));
+    const basePrice = contractorRule?.base_override 
+      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + marginPct / 100));
+    publicPrice = basePrice + zoneSurchargeAmount + rushFee;
   }
 
   const publicPriceLow = publicPrice;
@@ -819,8 +867,15 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
 
   // Included tons
   const includedTons = materialRule.pricing_mode === 'included_tons'
-    ? (materialRule.included_tons_json[String(input.sizeYd)] || 0)
+    ? (contractorRule?.included_tons_override ?? materialRule.included_tons_json[String(input.sizeYd)] ?? 0)
     : 0;
+
+  // Low margin warning
+  const minMargin = contractorRule?.minimum_margin_pct ?? DEFAULT_MARGIN_PCT;
+  const lowMarginWarning = marginPct < minMargin;
+  if (lowMarginWarning) {
+    warnings.push(`Low margin warning: ${marginPct}% < minimum ${minMargin}%. Manager approval recommended.`);
+  }
 
   // Add material warnings
   if (materialRule.public_warning) warnings.push(materialRule.public_warning);
@@ -840,6 +895,15 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     marginPct,
     surgeMultiplier,
     capacityUtilization,
+    zoneSurcharge,
+    zoneSurchargeAmount,
+    rushState,
+    rushFee,
+    rushConfig,
+    contractorTier,
+    contractorRule,
+    contractorDiscount,
+    lowMarginWarning,
     isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
