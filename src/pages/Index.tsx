@@ -392,7 +392,7 @@ const Index = () => {
                     <img
                       src={SIZE_IMAGES[s.size]}
                       alt={`${s.size} yard dumpster`}
-                      className="h-28 md:h-36 w-auto object-contain"
+                      className="h-28 md:h-36 w-auto object-contain rounded-xl"
                     />
                   )}
                 </div>
