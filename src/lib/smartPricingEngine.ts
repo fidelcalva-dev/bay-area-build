@@ -168,7 +168,7 @@ export interface SmartQuoteInput {
   contractorDiscountPct?: number;
   contractorTier?: string;
   isSameDay?: boolean;
-  rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+    rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
 }
 
 // =====================================================
@@ -224,8 +224,11 @@ export interface RushConfig {
   next_day_cutoff_hour: number;
   daily_capacity: number;
   rush_fee_same_day: number;
+  rush_fee_same_day_small_medium: number;
+  rush_fee_same_day_large: number;
   rush_fee_next_day: number;
   rush_fee_priority: number;
+  rush_fee_priority_next_day: number;
   rush_fee_after_hours: number;
 }
 
@@ -244,17 +247,22 @@ async function getRushConfig(yardId: string): Promise<RushConfig | null> {
     next_day_cutoff_hour: data.next_day_cutoff_hour,
     daily_capacity: data.daily_capacity,
     rush_fee_same_day: Number(data.rush_fee_same_day),
+    rush_fee_same_day_small_medium: Number((data as any).rush_fee_same_day_small_medium ?? 95),
+    rush_fee_same_day_large: Number((data as any).rush_fee_same_day_large ?? 145),
     rush_fee_next_day: Number(data.rush_fee_next_day),
     rush_fee_priority: Number(data.rush_fee_priority),
+    rush_fee_priority_next_day: Number((data as any).rush_fee_priority_next_day ?? 45),
     rush_fee_after_hours: Number(data.rush_fee_after_hours),
   };
 }
 
-function calculateRushFee(rushState: string | undefined, config: RushConfig | null): number {
+function calculateRushFee(rushState: string | undefined, config: RushConfig | null, sizeYd?: number): number {
   if (!rushState || rushState === 'STANDARD' || !config) return 0;
+  const isLarge = (sizeYd ?? 20) >= 30;
   switch (rushState) {
-    case 'SAME_DAY': return config.rush_fee_same_day;
+    case 'SAME_DAY': return isLarge ? config.rush_fee_same_day_large : config.rush_fee_same_day_small_medium;
     case 'NEXT_DAY': return config.rush_fee_next_day;
+    case 'PRIORITY_NEXT_DAY': return config.rush_fee_priority_next_day;
     case 'PRIORITY': return config.rush_fee_priority;
     case 'AFTER_HOURS': return config.rush_fee_after_hours;
     default: return 0;
@@ -807,7 +815,7 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   // 7. Rush delivery
   const rushState = input.rushState || (input.isSameDay ? 'SAME_DAY' : 'STANDARD');
   const rushConfig = await getRushConfig(yard.yard.id);
-  let rushFee = calculateRushFee(rushState, rushConfig);
+  let rushFee = calculateRushFee(rushState, rushConfig, input.sizeYd);
   if (rushFee > 0) {
     warnings.push(`${rushState.replace(/_/g, ' ')} delivery: +$${rushFee}.`);
   }
@@ -844,22 +852,25 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   }
 
   // 9. Calculate public price
-  const marginPct = contractorDiscount > 0
-    ? DEFAULT_MARGIN_PCT - contractorDiscount
-    : DEFAULT_MARGIN_PCT;
-
+  // Contractor discounts apply ONLY to general debris base, NOT to heavy flat rates,
+  // surcharges, contamination, reroute, Green Halo, permits, or overage.
   let publicPrice: number;
   const isManualReview = materialRule.pricing_mode === 'manual_review';
 
   if (materialRule.pricing_mode === 'flat_rate') {
+    // Heavy material flat rates — contractor discount does NOT apply unless base_override
     const baseFlat = contractorRule?.base_override 
       || materialRule.flat_rate_json[String(input.sizeYd)] 
-      || strategicRound(internalCost.totalInternal * (1 + marginPct / 100));
+      || strategicRound(internalCost.totalInternal * (1 + DEFAULT_MARGIN_PCT / 100));
     publicPrice = baseFlat + zoneSurchargeAmount + rushFee;
   } else {
-    const basePrice = contractorRule?.base_override 
-      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + marginPct / 100));
-    publicPrice = basePrice + zoneSurchargeAmount + rushFee;
+    // General debris / included_tons — contractor discount applies to base only
+    const rawBase = contractorRule?.base_override 
+      || strategicRound((internalCost.totalInternal) * surgeMultiplier * (1 + DEFAULT_MARGIN_PCT / 100));
+    const discountedBase = contractorDiscount > 0
+      ? strategicRound(rawBase * (1 - contractorDiscount / 100))
+      : rawBase;
+    publicPrice = discountedBase + zoneSurchargeAmount + rushFee;
   }
 
   const publicPriceLow = publicPrice;
@@ -870,7 +881,10 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     ? (contractorRule?.included_tons_override ?? materialRule.included_tons_json[String(input.sizeYd)] ?? 0)
     : 0;
 
-  // Low margin warning
+  // Low margin warning — estimate effective margin
+  const marginPct = publicPriceLow > 0 
+    ? Math.round(((publicPriceLow - internalCost.totalInternal) / publicPriceLow) * 100) 
+    : DEFAULT_MARGIN_PCT;
   const minMargin = contractorRule?.minimum_margin_pct ?? DEFAULT_MARGIN_PCT;
   const lowMarginWarning = marginPct < minMargin;
   if (lowMarginWarning) {
@@ -928,7 +942,7 @@ export async function calculateSmartQuoteFromZip(
     lat?: number;
     lng?: number;
     isSameDay?: boolean;
-    rushState?: 'STANDARD' | 'NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
+    rushState?: 'STANDARD' | 'NEXT_DAY' | 'PRIORITY_NEXT_DAY' | 'SAME_DAY' | 'PRIORITY' | 'AFTER_HOURS';
   },
 ): Promise<SmartQuote | null> {
   let lat = options?.lat;

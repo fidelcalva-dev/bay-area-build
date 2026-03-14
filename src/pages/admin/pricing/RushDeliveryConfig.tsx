@@ -17,8 +17,11 @@ interface RushConfig {
   next_day_cutoff_hour: number;
   daily_capacity: number;
   rush_fee_same_day: number;
+  rush_fee_same_day_small_medium: number;
+  rush_fee_same_day_large: number;
   rush_fee_next_day: number;
   rush_fee_priority: number;
+  rush_fee_priority_next_day: number;
   rush_fee_after_hours: number;
   is_active: boolean;
 }
@@ -48,8 +51,11 @@ export default function RushDeliveryConfig() {
         next_day_cutoff_hour: c.next_day_cutoff_hour,
         daily_capacity: c.daily_capacity,
         rush_fee_same_day: Number(c.rush_fee_same_day),
+        rush_fee_same_day_small_medium: Number((c as any).rush_fee_same_day_small_medium ?? 95),
+        rush_fee_same_day_large: Number((c as any).rush_fee_same_day_large ?? 145),
         rush_fee_next_day: Number(c.rush_fee_next_day),
         rush_fee_priority: Number(c.rush_fee_priority),
+        rush_fee_priority_next_day: Number((c as any).rush_fee_priority_next_day ?? 45),
         rush_fee_after_hours: Number(c.rush_fee_after_hours),
         is_active: c.is_active,
       }))
@@ -71,12 +77,15 @@ export default function RushDeliveryConfig() {
         next_day_cutoff_hour: config.next_day_cutoff_hour,
         daily_capacity: config.daily_capacity,
         rush_fee_same_day: config.rush_fee_same_day,
+        rush_fee_same_day_small_medium: config.rush_fee_same_day_small_medium,
+        rush_fee_same_day_large: config.rush_fee_same_day_large,
         rush_fee_next_day: config.rush_fee_next_day,
         rush_fee_priority: config.rush_fee_priority,
+        rush_fee_priority_next_day: config.rush_fee_priority_next_day,
         rush_fee_after_hours: config.rush_fee_after_hours,
         is_active: config.is_active,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', config.id);
 
     if (error) {
@@ -119,10 +128,18 @@ export default function RushDeliveryConfig() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div>
-                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Fee</label>
-                  <Input type="number" value={config.rush_fee_same_day} onChange={(e) => update(config.id, 'rush_fee_same_day', Number(e.target.value))} className="h-8 text-sm" />
+                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Small/Med (5-20yd)</label>
+                  <Input type="number" value={config.rush_fee_same_day_small_medium} onChange={(e) => update(config.id, 'rush_fee_same_day_small_medium', Number(e.target.value))} className="h-8 text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase">Same-Day Large (30-50yd)</label>
+                  <Input type="number" value={config.rush_fee_same_day_large} onChange={(e) => update(config.id, 'rush_fee_same_day_large', Number(e.target.value))} className="h-8 text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-foreground uppercase">Priority Next-Day</label>
+                  <Input type="number" value={config.rush_fee_priority_next_day} onChange={(e) => update(config.id, 'rush_fee_priority_next_day', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
                 <div>
                   <label className="text-[10px] text-muted-foreground uppercase">Next-Day Fee</label>
@@ -133,7 +150,7 @@ export default function RushDeliveryConfig() {
                   <Input type="number" value={config.rush_fee_priority} onChange={(e) => update(config.id, 'rush_fee_priority', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-muted-foreground uppercase">After-Hours Fee</label>
+                  <label className="text-[10px] text-muted-foreground uppercase">After-Hours / Holiday</label>
                   <Input type="number" value={config.rush_fee_after_hours} onChange={(e) => update(config.id, 'rush_fee_after_hours', Number(e.target.value))} className="h-8 text-sm" />
                 </div>
               </div>
