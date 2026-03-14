@@ -13,17 +13,17 @@ LANGUAGE RULE:
 - Detect whether the user writes in Spanish or English.
 - ALWAYS respond in the SAME language the user used.
 - If Spanish, use professional but friendly Latin-American Spanish.
+- Do NOT mix languages within the same response.
 
 RULES:
 - Answer in 2-3 sentences max. Be helpful, direct, and confidence-building.
-- Structure your answer as: recommendation → short reason → next step.
-- NEVER quote exact pricing or dollar amounts. Always say pricing depends on ZIP code.
-- If asked about prohibited items, list what IS allowed and suggest calling.
+- Structure your answer as: recommendation, short reason, next step.
+- NEVER quote exact pricing or dollar amounts. Always say pricing depends on ZIP code and project details.
 - Keep a professional, confident, local-service tone.
 - Do NOT use emojis.
 - Do NOT reveal internal operations, margins, or yard locations.
 
-SIZING GUIDELINES (general only):
+SIZING GUIDELINES:
 - Bathroom remodel: 10 yard
 - Kitchen remodel: 20 yard
 - Single room cleanout: 10 yard
@@ -31,37 +31,58 @@ SIZING GUIDELINES (general only):
 - Roofing (single layer): 10-20 yard
 - Roofing (multiple layers): 20-30 yard
 - New construction: 30-40 yard
-- Concrete/dirt: 5-10 yard (flat-fee, no weight overage)
-- Yard waste/landscaping: 10-20 yard
 - Garage cleanout: 10-15 yard
+- Yard waste / landscaping: 10-20 yard
 
-INTENT CLASSIFICATION:
-After your answer, on a new line, include exactly one intent tag:
-[INTENT:PRICE] - asking about cost
-[INTENT:SIZE] - asking about sizing
-[INTENT:MATERIALS_ALLOWED] - asking what goes in dumpster
+HEAVY MATERIAL RULES (CRITICAL — enforce strictly):
+- Heavy materials include: clean soil, clean concrete, mixed soil, mixed heavy, brick, asphalt, rock, gravel.
+- Heavy materials are ONLY available in 5, 8, and 10 yard containers. Never recommend larger sizes for heavy materials.
+- Clean soil and clean concrete containers use flat-rate pricing with no weight overage. This is a benefit — mention it.
+- Clean containers must stay clean. If a different heavy material is added to a clean load, it becomes "mixed heavy" and pricing changes.
+- If trash or mixed debris is added to a heavy material container, it becomes general debris and may be charged by the ton for overage.
+- If the customer does not notify in advance and a reroute to a different disposal facility is required, actual extra disposal costs plus a $150 surcharge may apply.
+- Always recommend the customer call if unsure about material classification.
+- The "fill to the line" rule applies: heavy material containers must not be filled above the fill line.
+
+MATERIALS ACCEPTED (general debris):
+- Wood, drywall, carpet, furniture, appliances (no Freon), roofing shingles, yard waste, general household junk, construction debris.
+- NOT accepted: hazardous waste, tires, batteries, paint, chemicals, medical waste, asbestos.
+
+CONTRACTOR / COMMERCIAL:
+- For contractors needing regular service, multiple dumpsters, or job-site deliveries, recommend applying for a contractor account for volume pricing and priority scheduling.
+
+INTENT CLASSIFICATION — include exactly one tag on a new line:
+[INTENT:SIZE_HELP] - asking about sizing
+[INTENT:MATERIAL_RULES] - asking what goes in dumpster or material policies
+[INTENT:PRICING_HELP] - asking about cost
 [INTENT:DELIVERY_SPEED] - asking about timing
-[INTENT:HEAVY_MATERIAL] - concrete, dirt, soil
-[INTENT:PERMIT] - permits or regulations
+[INTENT:HEAVY_MATERIAL] - concrete, dirt, soil, rock, brick
+[INTENT:PERMIT_HELP] - permits or regulations
+[INTENT:CONTRACTOR_INTEREST] - contractor, commercial, multiple units, ongoing
 [INTENT:READY_TO_BOOK] - ready to order
-[INTENT:OTHER] - anything else
+[INTENT:HUMAN_HANDOFF] - wants to talk to someone, call me, text me
+[INTENT:UNKNOWN] - anything else
 
-CUSTOMER STAGE (classify on new line):
+CUSTOMER STAGE — include exactly one tag on a new line:
 [STAGE:EXPLORING] - just learning, not ready yet
 [STAGE:COMPARING] - evaluating options
 [STAGE:READY] - ready to order or get pricing
 [STAGE:NEEDS_HELP] - confused or needs human
 
-ACTION TAG (on new line, exactly one):
+ACTION TAG — include exactly one on a new line:
 [ACTION:QUOTE] - should get a quote
-[ACTION:PHOTO] - should upload photo for sizing
-[ACTION:SCHEDULE] - asking about delivery timing
+[ACTION:PHOTO] - should upload photo for sizing help
+[ACTION:SCHEDULE] - asking about delivery / scheduling
 [ACTION:CALL] - needs to speak to someone
+[ACTION:CONTRACTOR] - should apply for contractor account
 
 SIZE RANGE TAG (optional, on new line):
 [SIZE_RANGE:XX-YY] or [SIZE_RANGE:XX]
 
-LANGUAGE TAG (on new line):
+MATERIAL CLASS TAG (optional, on new line if heavy material detected):
+[MATERIAL_CLASS:CLEAN_SOIL] or [MATERIAL_CLASS:CLEAN_CONCRETE] or [MATERIAL_CLASS:MIXED_HEAVY] or [MATERIAL_CLASS:GENERAL_DEBRIS] or [MATERIAL_CLASS:ROOFING] or [MATERIAL_CLASS:YARD_WASTE]
+
+LANGUAGE TAG — include exactly one on a new line:
 [LANG:EN] or [LANG:ES]`;
 
 serve(async (req) => {
@@ -103,12 +124,12 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userMessage },
         ],
-        max_tokens: 400,
+        max_tokens: 350,
       }),
     });
 
@@ -141,6 +162,7 @@ serve(async (req) => {
     const sizeRangeMatch = rawContent.match(/\[SIZE_RANGE:([\d\-]+)\]/);
     const stageMatch = rawContent.match(/\[STAGE:(\w+)\]/);
     const langMatch = rawContent.match(/\[LANG:(\w+)\]/);
+    const materialClassMatch = rawContent.match(/\[MATERIAL_CLASS:(\w+)\]/);
 
     // Clean answer text
     const answerText = rawContent
@@ -150,24 +172,29 @@ serve(async (req) => {
       .replace(/\[SIZE:\d+\]/g, "")
       .replace(/\[STAGE:\w+\]/g, "")
       .replace(/\[LANG:\w+\]/g, "")
+      .replace(/\[MATERIAL_CLASS:\w+\]/g, "")
       .trim();
 
-    const intent = intentMatch ? intentMatch[1] : "OTHER";
+    const intent = intentMatch ? intentMatch[1] : "UNKNOWN";
     const action = actionMatch ? actionMatch[1] : "QUOTE";
     const sizeRange = sizeRangeMatch ? sizeRangeMatch[1] : null;
     const stage = stageMatch ? stageMatch[1] : "EXPLORING";
     const lang = langMatch ? langMatch[1] : "EN";
+    const materialClass = materialClassMatch ? materialClassMatch[1] : null;
 
-    const shouldCaptureLead = ["READY_TO_BOOK", "PRICE"].includes(intent) || stage === "READY";
+    const shouldCaptureLead =
+      ["READY_TO_BOOK", "PRICING_HELP", "HUMAN_HANDOFF", "CONTRACTOR_INTEREST"].includes(intent) ||
+      stage === "READY" ||
+      stage === "NEEDS_HELP";
 
     // Lead enrichment: fire-and-forget
-    if (enrich_lead && (zip || intent !== "OTHER")) {
+    if (enrich_lead && (zip || intent !== "UNKNOWN")) {
       try {
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
         const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
         const sb = createClient(supabaseUrl, supabaseKey);
 
-        // Detect project/material from question
+        // Detect project type from question
         let projectType: string | null = null;
         let materialType: string | null = null;
         const q = question.toLowerCase();
@@ -176,20 +203,36 @@ serve(async (req) => {
         else if (/garage/i.test(q)) projectType = "Garage Cleanout";
         else if (/roof/i.test(q)) projectType = "Roofing";
         else if (/demo|demolition/i.test(q)) projectType = "Demolition";
-        else if (/cleanout|clean out/i.test(q)) projectType = "Home Cleanout";
+        else if (/cleanout|clean\s?out/i.test(q)) projectType = "Home Cleanout";
         else if (/yard|landscap/i.test(q)) projectType = "Yard Cleanup";
         else if (/construction/i.test(q)) projectType = "Construction";
+        else if (/contractor/i.test(q)) projectType = "Contractor";
 
         if (/concrete|brick|asphalt/i.test(q)) materialType = "concrete";
-        else if (/dirt|soil|rock/i.test(q)) materialType = "dirt";
-        else if (/green|vegetation/i.test(q)) materialType = "green_waste";
+        else if (/dirt|soil|rock|gravel/i.test(q)) materialType = "dirt";
+        else if (/green|vegetation|yard waste/i.test(q)) materialType = "green_waste";
+        else if (/shingle|roof/i.test(q)) materialType = "roofing";
+
+        // Map AI stage to CRM stage
+        const crmStageMap: Record<string, string> = {
+          SIZE_HELP: "ai_size_recommended",
+          MATERIAL_RULES: "ai_material_help",
+          PRICING_HELP: "ai_price_intent",
+          HEAVY_MATERIAL: "ai_material_help",
+          READY_TO_BOOK: "ai_ready_to_book",
+          HUMAN_HANDOFF: "ai_human_handoff",
+          CONTRACTOR_INTEREST: "ai_price_intent",
+          UNKNOWN: "ai_started",
+          DELIVERY_SPEED: "ai_started",
+          PERMIT_HELP: "ai_started",
+        };
 
         await sb.functions.invoke("lead-ingest", {
           body: {
             source_channel: "WEBSITE_ASSISTANT",
-            source_detail: "homepage_ai_assistant",
+            source_detail: `homepage_ai_${(crmStageMap[intent] || "ai_started")}`,
             zip: zip || undefined,
-            notes: `AI Assistant Q: ${question.slice(0, 200)}\nRecommended: ${sizeRange ? sizeRange + ' yd' : 'N/A'}\nStage: ${stage}`,
+            notes: `AI Q: ${question.slice(0, 200)} | Size: ${sizeRange || "N/A"} | Stage: ${stage} | Material: ${materialClass || "N/A"} | Lang: ${lang}`,
             project_type: projectType || session_context?.project_type || undefined,
             material_type: materialType || session_context?.material_type || undefined,
             probable_size: sizeRange ? parseInt(sizeRange) : undefined,
@@ -210,6 +253,8 @@ serve(async (req) => {
       recommended_size: sizeRange ? parseInt(sizeRange) : null,
       customer_stage: stage,
       language: lang,
+      intent,
+      material_class: materialClass,
     };
 
     return new Response(JSON.stringify(result), {
