@@ -247,8 +247,11 @@ async function getRushConfig(yardId: string): Promise<RushConfig | null> {
     next_day_cutoff_hour: data.next_day_cutoff_hour,
     daily_capacity: data.daily_capacity,
     rush_fee_same_day: Number(data.rush_fee_same_day),
+    rush_fee_same_day_small_medium: Number((data as any).rush_fee_same_day_small_medium ?? 95),
+    rush_fee_same_day_large: Number((data as any).rush_fee_same_day_large ?? 145),
     rush_fee_next_day: Number(data.rush_fee_next_day),
     rush_fee_priority: Number(data.rush_fee_priority),
+    rush_fee_priority_next_day: Number((data as any).rush_fee_priority_next_day ?? 45),
     rush_fee_after_hours: Number(data.rush_fee_after_hours),
   };
 }
