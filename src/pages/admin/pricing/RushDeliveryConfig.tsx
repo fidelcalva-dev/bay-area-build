@@ -17,8 +17,11 @@ interface RushConfig {
   next_day_cutoff_hour: number;
   daily_capacity: number;
   rush_fee_same_day: number;
+  rush_fee_same_day_small_medium: number;
+  rush_fee_same_day_large: number;
   rush_fee_next_day: number;
   rush_fee_priority: number;
+  rush_fee_priority_next_day: number;
   rush_fee_after_hours: number;
   is_active: boolean;
 }
