@@ -4,7 +4,6 @@ import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { getFAQsForSchema } from '@/lib/shared-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
-import { DumpsterSilhouettePlain } from '@/components/shared/DumpsterSilhouettePlain';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,25 @@ import {
   Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
+
+// Dumpster images
+import yd5Img from '@/assets/5yd-dumpster.png';
+import yd8Img from '@/assets/8yd-dumpster.png';
+import yd10Img from '@/assets/10yd-dumpster.png';
+import yd20Img from '@/assets/20yd-dumpster.png';
+import yd30Img from '@/assets/30yd-dumpster.png';
+import yd40Img from '@/assets/40yd-dumpster.png';
+import yd50Img from '@/assets/50yd-dumpster.png';
+
+const SIZE_IMAGES: Record<number, string> = {
+  5: yd5Img,
+  8: yd8Img,
+  10: yd10Img,
+  20: yd20Img,
+  30: yd30Img,
+  40: yd40Img,
+  50: yd50Img,
+};
 
 const HomepageAIAssistant = lazy(() =>
   import('@/components/home/HomepageAIAssistant').then(mod => ({ default: mod.HomepageAIAssistant }))
