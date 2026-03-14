@@ -45,6 +45,10 @@ import yd40Photo2 from '@/assets/40yd-photo-2.jpg';
 import yd40Photo3 from '@/assets/40yd-photo-3.jpg';
 import yd40Photo4 from '@/assets/40yd-photo-4.jpg';
 import yd50Img from '@/assets/50yd-dumpster.png';
+import yd50Photo1 from '@/assets/50yd-photo-1.jpg';
+import yd50Photo2 from '@/assets/50yd-photo-2.jpg';
+import yd50Photo3 from '@/assets/50yd-photo-3.jpg';
+import yd50Photo4 from '@/assets/50yd-photo-4.jpg';
 
 const SIZE_GALLERY: Record<number, string[]> = {
   5: [yd5Img, yd5Photo1, yd5Photo2, yd5Photo3],
@@ -53,6 +57,7 @@ const SIZE_GALLERY: Record<number, string[]> = {
   20: [yd20Img, yd20Photo1, yd20Photo2, yd20Photo3, yd20Photo4],
   30: [yd30Img, yd30Photo1, yd30Photo2, yd30Photo3, yd30Photo4],
   40: [yd40Img, yd40Photo1, yd40Photo2, yd40Photo3, yd40Photo4],
+  50: [yd50Img, yd50Photo1, yd50Photo2, yd50Photo3, yd50Photo4],
 };
 const SIZE_IMAGES: Record<number, string> = {
   5: yd5Img,
@@ -436,12 +441,16 @@ const Index = () => {
               to={quoteUrl({ size: '50' })}
               className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
             >
-              <div className="w-full flex justify-center mb-5">
-                <img
-                  src={SIZE_IMAGES[50]}
-                  alt="50 yard dumpster"
-                  className="h-28 md:h-36 w-auto object-contain rounded-xl"
-                />
+              <div className="w-full flex justify-center mb-5 relative">
+                {SIZE_GALLERY[50] ? (
+                  <DumpsterGallery images={SIZE_GALLERY[50]} alt="50 yard dumpster" />
+                ) : (
+                  <img
+                    src={SIZE_IMAGES[50]}
+                    alt="50 yard dumpster"
+                    className="h-28 md:h-36 w-auto object-contain rounded-xl"
+                  />
+                )}
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
