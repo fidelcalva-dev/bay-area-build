@@ -929,13 +929,21 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
   if (materialRule.public_warning) warnings.push(materialRule.public_warning);
   if (greenHalo) warnings.push(`Green Halo compliance applied at $${GREEN_HALO_RATE}/ton.`);
 
+  // 10. Extras & exceptions
+  const extras = await fetchExtraItems(input.extraCodes || []);
+  const extrasTotal = extras.reduce((sum, e) => sum + e.amount, 0);
+
+  // Add extras to public price
+  const finalPublicLow = publicPriceLow + extrasTotal;
+  const finalPublicHigh = publicPriceHigh + extrasTotal;
+
   return {
     yard,
     dumpSite,
     materialRule,
     internalCost,
-    publicPriceLow,
-    publicPriceHigh,
+    publicPriceLow: finalPublicLow,
+    publicPriceHigh: finalPublicHigh,
     includedTons,
     overweightFeePerTon: materialRule.overweight_fee_per_ton,
     isFlatFee: materialRule.pricing_mode === 'flat_rate',
@@ -952,6 +960,8 @@ export async function calculateSmartQuote(input: SmartQuoteInput): Promise<Smart
     contractorRule,
     contractorDiscount,
     lowMarginWarning,
+    extras,
+    extrasTotal,
     isVendorFallback: false,
     warnings,
     greenHaloApplied: greenHalo,
