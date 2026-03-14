@@ -9113,6 +9113,72 @@ export type Database = {
         }
         Relationships: []
       }
+      location_configs: {
+        Row: {
+          address: string | null
+          city: string
+          created_at: string
+          id: string
+          is_active_for_dispatch: boolean
+          is_active_for_quotes: boolean
+          is_visible_publicly: boolean
+          lat: number
+          lng: number
+          location_id: string
+          location_type: string
+          market_type: string
+          name: string
+          nearest_fallback_yard_id: string | null
+          priority_rank: number
+          service_radius_miles: number
+          state: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          address?: string | null
+          city: string
+          created_at?: string
+          id?: string
+          is_active_for_dispatch?: boolean
+          is_active_for_quotes?: boolean
+          is_visible_publicly?: boolean
+          lat?: number
+          lng?: number
+          location_id: string
+          location_type?: string
+          market_type?: string
+          name: string
+          nearest_fallback_yard_id?: string | null
+          priority_rank?: number
+          service_radius_miles?: number
+          state?: string
+          updated_at?: string
+          zip: string
+        }
+        Update: {
+          address?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          is_active_for_dispatch?: boolean
+          is_active_for_quotes?: boolean
+          is_visible_publicly?: boolean
+          lat?: number
+          lng?: number
+          location_id?: string
+          location_type?: string
+          market_type?: string
+          name?: string
+          nearest_fallback_yard_id?: string | null
+          priority_rank?: number
+          service_radius_miles?: number
+          state?: string
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: []
+      }
       logistics_events: {
         Row: {
           actor_id: string | null
@@ -17228,6 +17294,48 @@ export type Database = {
           template_name?: string
           updated_at?: string
           variables?: string[] | null
+        }
+        Relationships: []
+      }
+      social_links: {
+        Row: {
+          created_at: string
+          icon_key: string
+          id: string
+          is_active: boolean
+          label: string
+          platform: string
+          public_url: string
+          show_in_footer: boolean
+          show_in_schema: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon_key?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          platform: string
+          public_url?: string
+          show_in_footer?: boolean
+          show_in_schema?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon_key?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          platform?: string
+          public_url?: string
+          show_in_footer?: boolean
+          show_in_schema?: boolean
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

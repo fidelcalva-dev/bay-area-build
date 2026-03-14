@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { BUSINESS_INFO, generateLocalBusinessSchema } from '@/lib/seo';
+import { useSchemaSocialUrls } from '@/hooks/useSocialLinks';
 
 interface SEOHeadProps {
   title?: string;
@@ -23,12 +24,18 @@ export function SEOHead({
   schema,
   ogImage = '/og-image.jpg'
 }: SEOHeadProps) {
+  const { data: schemaSameAs } = useSchemaSocialUrls();
+
   const fullTitle = title ? `${title} | ${BUSINESS_INFO.name}` : DEFAULT_TITLE;
   const canonicalUrl = canonical ? `${BUSINESS_INFO.url}${canonical}` : undefined;
   const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
-  // Always include LocalBusiness + Organization schemas
-  const localBusinessSchema = generateLocalBusinessSchema();
+  // Build LocalBusiness schema — override sameAs with DB-driven values
+  const localBusinessSchema = generateLocalBusinessSchema() as Record<string, any>;
+  if (schemaSameAs && schemaSameAs.length > 0) {
+    localBusinessSchema.sameAs = schemaSameAs;
+  }
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -36,7 +43,7 @@ export function SEOHead({
     "url": BUSINESS_INFO.url,
     "logo": `${BUSINESS_INFO.url}/logo.png`,
     "image": `${BUSINESS_INFO.url}/logo.png`,
-    "sameAs": Object.values(BUSINESS_INFO.social),
+    "sameAs": schemaSameAs ?? Object.values(BUSINESS_INFO.social),
   };
 
   const websiteSchema = {
@@ -54,7 +61,6 @@ export function SEOHead({
     }
   };
   
-  // Combine schemas
   const allSchemas = schema 
     ? Array.isArray(schema) 
       ? [localBusinessSchema, organizationSchema, websiteSchema, ...schema] 
@@ -63,15 +69,12 @@ export function SEOHead({
 
   return (
     <Helmet>
-      {/* Primary Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
       
-      {/* Canonical URL */}
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       
-      {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
@@ -80,24 +83,20 @@ export function SEOHead({
       <meta property="og:image" content={ogImageUrl} />
       <meta property="og:locale" content="en_US" />
       
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImageUrl} />
       
-      {/* Geo Tags */}
       <meta name="geo.region" content="US-CA" />
       <meta name="geo.placename" content={BUSINESS_INFO.address.city} />
       <meta name="geo.position" content={`${BUSINESS_INFO.geo.latitude};${BUSINESS_INFO.geo.longitude}`} />
       <meta name="ICBM" content={`${BUSINESS_INFO.geo.latitude}, ${BUSINESS_INFO.geo.longitude}`} />
       
-      {/* Additional SEO */}
       <meta name="author" content={BUSINESS_INFO.name} />
       <meta name="publisher" content={BUSINESS_INFO.name} />
       <meta name="copyright" content={BUSINESS_INFO.name} />
       
-      {/* Structured Data */}
       {allSchemas.map((schemaItem, index) => (
         <script key={index} type="application/ld+json">
           {JSON.stringify(schemaItem)}
