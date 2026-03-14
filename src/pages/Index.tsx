@@ -106,9 +106,12 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
   const [idx, setIdx] = useState(0);
   const touchStartRef = { current: 0 };
 
+  const goPrev = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx((p) => Math.max(p - 1, 0)); };
+  const goNext = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx((p) => Math.min(p + 1, images.length - 1)); };
+
   return (
     <div
-      className="relative w-full h-28 md:h-36 overflow-hidden rounded-lg"
+      className="relative w-full h-28 md:h-36 overflow-hidden rounded-lg group/gallery"
       onTouchStart={(e) => { touchStartRef.current = e.touches[0].clientX; }}
       onTouchEnd={(e) => {
         const diff = touchStartRef.current - e.changedTouches[0].clientX;
@@ -116,13 +119,25 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
           setIdx((prev) => diff > 0 ? Math.min(prev + 1, images.length - 1) : Math.max(prev - 1, 0));
         }
       }}
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIdx((prev) => (prev + 1) % images.length); }}
     >
       <img
         src={images[idx]}
         alt={`${alt} - ${idx + 1}`}
         className="h-full w-full object-contain transition-opacity duration-300"
       />
+      {/* Left arrow */}
+      {idx > 0 && (
+        <button onClick={goPrev} className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+      )}
+      {/* Right arrow */}
+      {idx < images.length - 1 && (
+        <button onClick={goNext} className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      )}
+      {/* Dots */}
       <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1.5">
         {images.map((_, i) => (
           <span key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === idx ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
