@@ -57,6 +57,7 @@ const SIZE_GALLERY: Record<number, string[]> = {
   20: [yd20Img, yd20Photo1, yd20Photo2, yd20Photo3, yd20Photo4],
   30: [yd30Img, yd30Photo1, yd30Photo2, yd30Photo3, yd30Photo4],
   40: [yd40Img, yd40Photo1, yd40Photo2, yd40Photo3, yd40Photo4],
+  50: [yd50Img, yd50Photo1, yd50Photo2, yd50Photo3, yd50Photo4],
 };
 const SIZE_IMAGES: Record<number, string> = {
   5: yd5Img,
