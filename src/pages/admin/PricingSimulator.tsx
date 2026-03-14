@@ -26,9 +26,9 @@ const SIZE_OPTIONS = [5, 8, 10, 20, 30, 40, 50];
 const RUSH_OPTIONS = [
   { value: 'STANDARD', label: 'Standard' },
   { value: 'NEXT_DAY', label: 'Next Day' },
-  { value: 'SAME_DAY', label: 'Same Day' },
-  { value: 'PRIORITY', label: 'Priority' },
-  { value: 'AFTER_HOURS', label: 'After Hours' },
+  { value: 'PRIORITY_NEXT_DAY', label: 'Priority Next Day ($45)' },
+  { value: 'SAME_DAY', label: 'Same Day (size-based)' },
+  { value: 'AFTER_HOURS', label: 'After Hours / Holiday ($195)' },
 ];
 
 const TIER_OPTIONS = [
