@@ -97,7 +97,7 @@ export default function SeoRepairPage() {
           { question: `What size for ${mat.name.toLowerCase()}?`, answer: `Recommended sizes: ${mat.sizes.join(', ')} yard.` },
         ];
         if (withExpansion) {
-          matSections.push({ heading: `${mat.name} Disposal Tips in ${city.city_name}`, body: `When disposing of ${mat.name.toLowerCase()} in ${city.city_name}, ensure materials are clean and free of contaminants. ${mat.category === 'heavy' ? 'Heavy materials require 6, 8, or 10-yard dumpsters only and include flat-fee disposal.' : `General debris rates apply with $${PRICING_POLICIES.overagePerTonGeneral}/ton overage.`} Contact us for specific guidance on your ${mat.name.toLowerCase()} disposal project.` });
+          matSections.push({ heading: `${mat.name} Disposal Tips in ${city.city_name}`, body: `When disposing of ${mat.name.toLowerCase()} in ${city.city_name}, ensure materials are clean and free of contaminants. ${mat.category === 'heavy' ? 'Heavy materials require 5, 8, or 10-yard dumpsters only and include flat-fee disposal.' : `General debris rates apply with $${PRICING_POLICIES.overagePerTonGeneral}/ton overage.`} Contact us for specific guidance on your ${mat.name.toLowerCase()} disposal project.` });
           if (matFaqs.length < 2) {
             matFaqs = [...matFaqs, ...generateFallbackFaqs(city.city_name, matFaqs.length).slice(0, 2)];
           }

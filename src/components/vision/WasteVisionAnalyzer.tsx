@@ -193,7 +193,7 @@ function ResultDisplay({
                 Heavy material detected
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 6, 8, or 10 yard.
+                Heavy materials require smaller dumpsters due to weight limits. Recommended sizes: 5, 8, or 10 yard.
               </p>
               <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
                 Fill-line rules may apply for safe transport.

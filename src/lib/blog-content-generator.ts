@@ -95,7 +95,7 @@ function expandOutlineSection(topic: SeoBlogTopic, outlineItem: string): string 
   // Cross-category matches
   if (normalizedItem.includes('pricing') || normalizedItem.includes('cost')) {
     return CATEGORY_CONTENT.guides?.['cost expectations']?.(topic) ||
-      `Pricing for this service starts from $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard container. Each dumpster includes delivery, pickup, and a ${PRICING_POLICIES.standardRentalDays}-day rental period with base tonnage allowance. Heavy material containers (6, 8, 10 yard) are available with flat-fee pricing — no weight overage charges. For exact pricing based on your address and project type, use our instant quote tool at ${BUSINESS_INFO.url}/quote.`;
+      `Pricing for this service starts from $${DUMPSTER_SIZES_DATA[0].priceFrom} for a ${DUMPSTER_SIZES_DATA[0].yards}-yard container. Each dumpster includes delivery, pickup, and a ${PRICING_POLICIES.standardRentalDays}-day rental period with base tonnage allowance. Heavy material containers (5, 8, 10 yard) are available with flat-fee pricing — no weight overage charges. For exact pricing based on your address and project type, use our instant quote tool at ${BUSINESS_INFO.url}/quote.`;
   }
   if (normalizedItem.includes('size') || normalizedItem.includes('dimension')) {
     return CATEGORY_CONTENT.sizing?.['size comparison']?.(topic) || '';

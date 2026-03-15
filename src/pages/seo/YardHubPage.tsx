@@ -15,7 +15,7 @@ export default function YardHubPage() {
   if (!yard) return <Navigate to="/areas" replace />;
 
   const title = `${yard.city} Dumpster Rental Yard | ${BUSINESS_INFO.name}`;
-  const description = `Rent dumpsters from our ${yard.city} yard. ${yard.deliverySpeed} Sizes 6–40 yards. Serving ${yard.coverageCities.map(c => c.name).join(', ')}.`;
+  const description = `Rent dumpsters from our ${yard.city} yard. ${yard.deliverySpeed} Sizes 5–50 yards. Serving ${yard.coverageCities.map(c => c.name).join(', ')}.`;
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },

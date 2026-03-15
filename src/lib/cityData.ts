@@ -73,7 +73,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Alameda benefits from proximity to our Oakland yard—minimal delivery distance means competitive pricing.',
     permitInfo: 'Alameda requires a temporary use permit for dumpsters on city streets. Contact Public Works for applications.',
     metaTitle: 'Dumpster Rental Alameda CA | Island Delivery | Local Yard',
-    metaDescription: 'Dumpster rental in Alameda, CA. Quick delivery from our Oakland yard. Sizes 6-50 yards, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Alameda, CA. Quick delivery from our Oakland yard. Sizes 5-50 yards, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'san-leandro-ca', 'berkeley-ca'],
   },
   {
