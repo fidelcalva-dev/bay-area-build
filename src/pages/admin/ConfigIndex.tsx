@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
-  ChevronRight, Settings, Banknote, Scale, Zap, Users, Map
+  ChevronRight, Settings, Banknote, Scale, Zap, Users, Map,
+  Activity, ListChecks, Shield
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -94,6 +95,30 @@ const configModules = [
     path: '/admin/pricing/city-display-zips',
     color: 'text-emerald-600',
     bgColor: 'bg-emerald-100',
+  },
+  {
+    title: 'Rush Health',
+    description: 'Audit rush delivery config across yards',
+    icon: Activity,
+    path: '/admin/pricing/rush-health',
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+  },
+  {
+    title: 'Contractor Rules',
+    description: 'Audit contractor tier discounts and margins',
+    icon: Shield,
+    path: '/admin/pricing/contractor-rules',
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-100',
+  },
+  {
+    title: 'Extras Health',
+    description: 'Audit extras catalog and workflow flags',
+    icon: ListChecks,
+    path: '/admin/pricing/extras-health',
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-100',
   },
   {
     title: 'Warnings & Caps',
