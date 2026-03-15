@@ -121,6 +121,14 @@ const configModules = [
     bgColor: 'bg-teal-100',
   },
   {
+    title: 'Pricing Readiness',
+    description: 'System-wide integrity audit and readiness score',
+    icon: Gauge,
+    path: '/admin/pricing/readiness',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+  },
+  {
     title: 'Warnings & Caps',
     description: 'Distance limits and ZIP warnings',
     icon: AlertTriangle,
