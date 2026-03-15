@@ -24,30 +24,56 @@ export default function ZipHealthDashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterMarket, setFilterMarket] = useState('all');
+  const [filterIssue, setFilterIssue] = useState('all');
+  const [fixing, setFixing] = useState(false);
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
+  async function load() {
+    const { data } = await supabase
+      .from('zone_zip_codes')
+      .select(`
+        zip_code, city_name, county, market_id,
+        zone:pricing_zones!inner(name, slug)
+      `)
+      .order('zip_code');
+
+    const records: ZipRecord[] = (data || []).map((d: any) => ({
+      zip_code: d.zip_code,
+      city_name: d.city_name,
+      county: d.county,
+      market_id: d.market_id,
+      zone_name: (d.zone as any)?.name || null,
+      zone_slug: (d.zone as any)?.slug || null,
+    }));
+    setZips(records);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  // Auto-fix: assign market_id based on county for ZIPs missing it
+  async function autoFixMarkets() {
+    setFixing(true);
+    const countyMarketMap: Record<string, string> = {
+      'Alameda': 'oakland_east_bay',
+      'Contra Costa': 'oakland_east_bay',
+      'Marin': 'oakland_east_bay',
+      'Napa': 'oakland_east_bay',
+      'Solano': 'oakland_east_bay',
+      'Sonoma': 'oakland_east_bay',
+      'San Francisco': 'san_francisco_peninsula',
+      'San Mateo': 'san_francisco_peninsula',
+      'Santa Clara': 'san_jose_south_bay',
+    };
+    const toFix = zips.filter(z => !z.market_id && z.county && countyMarketMap[z.county]);
+    for (const z of toFix) {
+      await supabase
         .from('zone_zip_codes')
-        .select(`
-          zip_code, city_name, county, market_id,
-          zone:pricing_zones!inner(name, slug)
-        `)
-        .order('zip_code');
-
-      const records: ZipRecord[] = (data || []).map((d: any) => ({
-        zip_code: d.zip_code,
-        city_name: d.city_name,
-        county: d.county,
-        market_id: d.market_id,
-        zone_name: (d.zone as any)?.name || null,
-        zone_slug: (d.zone as any)?.slug || null,
-      }));
-      setZips(records);
-      setLoading(false);
+        .update({ market_id: countyMarketMap[z.county!] })
+        .eq('zip_code', z.zip_code);
     }
-    load();
-  }, []);
+    await load();
+    setFixing(false);
+  }
 
   const markets = useMemo(() => {
     const m = new Set(zips.map(z => z.market_id || 'unassigned'));
