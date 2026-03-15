@@ -4056,6 +4056,7 @@ export type Database = {
           contract_version: string
           created_at: string
           customer_id: string
+          delivery_method: string | null
           esign_consent_at: string | null
           expires_at: string | null
           id: string
@@ -4070,6 +4071,7 @@ export type Database = {
           signer_email: string | null
           signer_name: string | null
           signer_phone: string | null
+          signer_title: string | null
           status: Database["public"]["Enums"]["contract_status"]
           terms_content: string | null
           terms_version: string | null
@@ -4081,6 +4083,7 @@ export type Database = {
           contract_version?: string
           created_at?: string
           customer_id: string
+          delivery_method?: string | null
           esign_consent_at?: string | null
           expires_at?: string | null
           id?: string
@@ -4095,6 +4098,7 @@ export type Database = {
           signer_email?: string | null
           signer_name?: string | null
           signer_phone?: string | null
+          signer_title?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           terms_content?: string | null
           terms_version?: string | null
@@ -4106,6 +4110,7 @@ export type Database = {
           contract_version?: string
           created_at?: string
           customer_id?: string
+          delivery_method?: string | null
           esign_consent_at?: string | null
           expires_at?: string | null
           id?: string
@@ -4120,6 +4125,7 @@ export type Database = {
           signer_email?: string | null
           signer_name?: string | null
           signer_phone?: string | null
+          signer_title?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           terms_content?: string | null
           terms_version?: string | null
@@ -5359,6 +5365,114 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_acceptances: {
+        Row: {
+          accepted_at: string
+          contract_id: string | null
+          customer_id: string
+          delivery_method: string | null
+          document_type: string
+          electronic_consent_at: string | null
+          electronic_consent_given: boolean | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          signer_email: string | null
+          signer_name: string | null
+          signer_phone: string | null
+          signer_title: string | null
+          user_agent: string | null
+          version_code: string
+        }
+        Insert: {
+          accepted_at?: string
+          contract_id?: string | null
+          customer_id: string
+          delivery_method?: string | null
+          document_type: string
+          electronic_consent_at?: string | null
+          electronic_consent_given?: boolean | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          signer_email?: string | null
+          signer_name?: string | null
+          signer_phone?: string | null
+          signer_title?: string | null
+          user_agent?: string | null
+          version_code: string
+        }
+        Update: {
+          accepted_at?: string
+          contract_id?: string | null
+          customer_id?: string
+          delivery_method?: string | null
+          document_type?: string
+          electronic_consent_at?: string | null
+          electronic_consent_given?: boolean | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          signer_email?: string | null
+          signer_name?: string | null
+          signer_phone?: string | null
+          signer_title?: string | null
+          user_agent?: string | null
+          version_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_acceptances_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_acceptances_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          content_hash: string | null
+          created_at: string
+          created_by: string | null
+          document_type: string
+          effective_date: string
+          id: string
+          is_active: boolean
+          summary: string | null
+          version_code: string
+        }
+        Insert: {
+          content_hash?: string | null
+          created_at?: string
+          created_by?: string | null
+          document_type: string
+          effective_date?: string
+          id?: string
+          is_active?: boolean
+          summary?: string | null
+          version_code: string
+        }
+        Update: {
+          content_hash?: string | null
+          created_at?: string
+          created_by?: string | null
+          document_type?: string
+          effective_date?: string
+          id?: string
+          is_active?: boolean
+          summary?: string | null
+          version_code?: string
+        }
+        Relationships: []
       }
       documents: {
         Row: {
