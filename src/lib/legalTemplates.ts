@@ -14,11 +14,8 @@ import {
 } from './policyLanguage';
 
 export const DISCLAIMERS = {
-  // Heavy Material Disclaimer
-  heavyMaterial: {
-    en: `Heavy materials must be clean and separated by type. If heavy materials are mixed together or mixed with debris, the load may be reclassified and billed accordingly. Recycling availability depends on facility acceptance and location.`,
-    es: `Los materiales pesados deben estar limpios y separados por tipo. Si los materiales pesados se mezclan entre sí o con escombros, la carga puede ser reclasificada y facturada en consecuencia. La disponibilidad de reciclaje depende de la aceptación y ubicación de la instalación.`,
-  },
+  // Heavy Material — canonical source
+  heavyMaterial: HEAVY_MATERIAL_NOTICE,
 
   // Additional Fees & Extras Disclaimer
   additionalFees: {
@@ -26,17 +23,11 @@ export const DISCLAIMERS = {
     es: `Pueden aplicarse tarifas adicionales por: madera tratada, llantas, colchones y muebles voluminosos, electrodomésticos (especialmente con refrigerantes), materiales mojados o contaminados, cargas sobrellenadas o inseguras, limpieza o clasificación manual. Las tarifas se determinan según las condiciones reales y la documentación de la instalación.`,
   },
 
-  // Payment & Non-Payment Disclaimer
-  payment: {
-    en: `Payment is required before or at the time of service unless approved. Post-service charges, including overages and reclassification, are billed after disposal based on scale tickets. Non-payment may result in service suspension and collections.`,
-    es: `El pago es requerido antes o al momento del servicio a menos que sea aprobado. Los cargos posteriores al servicio, incluyendo excedentes y reclasificación, se facturan después de la disposición según los tickets de báscula. El no pago puede resultar en suspensión del servicio y cobranza.`,
-  },
+  // Payment — canonical source
+  payment: PAYMENT_TERMS_NOTICE,
 
-  // Dry Run / Blocked Access Disclaimer
-  dryRun: {
-    en: `A dry run fee may apply if the truck cannot safely deliver or pick up due to blocked access, missing permits, or unsafe conditions.`,
-    es: `Puede aplicarse una tarifa por viaje fallido si el camión no puede entregar o recoger de manera segura debido a acceso bloqueado, permisos faltantes o condiciones inseguras.`,
-  },
+  // Dry Run — canonical source
+  dryRun: DRY_RUN_NOTICE,
 
   // Portal Records as Final Proof
   portalRecords: {
