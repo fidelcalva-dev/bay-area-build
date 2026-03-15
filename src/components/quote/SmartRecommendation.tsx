@@ -589,7 +589,7 @@ export function WhyThisSize({
       lines.push(`**${project.label}** projects typically generate a specific volume and weight of debris.`);
       
       if (materialType === 'heavy') {
-        lines.push(`Heavy materials like concrete, dirt, and brick are limited to **6, 8, or 10 yard** dumpsters due to weight restrictions.`);
+        lines.push(`Heavy materials like concrete, dirt, and brick are limited to **5, 8, or 10 yard** dumpsters due to weight restrictions.`);
         lines.push(`We recommend **${recommendedSize} yards** based on typical ${project.label.toLowerCase()} project scope.`);
       } else {
         // General debris explanations by project type
