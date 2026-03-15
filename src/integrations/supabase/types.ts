@@ -4056,51 +4056,75 @@ export type Database = {
           contract_version: string
           created_at: string
           customer_id: string
+          esign_consent_at: string | null
           expires_at: string | null
           id: string
+          parent_contract_id: string | null
           pdf_url: string | null
+          quote_id: string | null
           service_address: string | null
           service_address_normalized: string | null
           signature_method: string | null
           signed_at: string | null
           signed_ip: string | null
+          signer_email: string | null
+          signer_name: string | null
+          signer_phone: string | null
           status: Database["public"]["Enums"]["contract_status"]
           terms_content: string | null
+          terms_version: string | null
           updated_at: string
+          viewed_at: string | null
         }
         Insert: {
           contract_type: Database["public"]["Enums"]["contract_type"]
           contract_version?: string
           created_at?: string
           customer_id: string
+          esign_consent_at?: string | null
           expires_at?: string | null
           id?: string
+          parent_contract_id?: string | null
           pdf_url?: string | null
+          quote_id?: string | null
           service_address?: string | null
           service_address_normalized?: string | null
           signature_method?: string | null
           signed_at?: string | null
           signed_ip?: string | null
+          signer_email?: string | null
+          signer_name?: string | null
+          signer_phone?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           terms_content?: string | null
+          terms_version?: string | null
           updated_at?: string
+          viewed_at?: string | null
         }
         Update: {
           contract_type?: Database["public"]["Enums"]["contract_type"]
           contract_version?: string
           created_at?: string
           customer_id?: string
+          esign_consent_at?: string | null
           expires_at?: string | null
           id?: string
+          parent_contract_id?: string | null
           pdf_url?: string | null
+          quote_id?: string | null
           service_address?: string | null
           service_address_normalized?: string | null
           signature_method?: string | null
           signed_at?: string | null
           signed_ip?: string | null
+          signer_email?: string | null
+          signer_name?: string | null
+          signer_phone?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           terms_content?: string | null
+          terms_version?: string | null
           updated_at?: string
+          viewed_at?: string | null
         }
         Relationships: [
           {
@@ -4108,6 +4132,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_parent_contract_id_fkey"
+            columns: ["parent_contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
             referencedColumns: ["id"]
           },
         ]
