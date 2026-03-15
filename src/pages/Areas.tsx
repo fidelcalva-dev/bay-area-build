@@ -163,16 +163,16 @@ export default function Areas() {
         </section>
       )}
 
-      {/* Expanding Coverage */}
+      {/* Core Focus Statement */}
       <section className="section-padding bg-background">
         <div className="container-narrow text-center">
-          <h2 className="heading-md text-foreground mb-4">Expanding Across California</h2>
+          <h2 className="heading-md text-foreground mb-4">Bay Area-First Operations</h2>
           <p className="text-muted-foreground mb-6">
-            Our core operations are based in the Bay Area. We're growing into new regions through a coordinated partner network — same Calsan standards, local delivery.
+            Our core operations are concentrated across Oakland, San Jose, and San Francisco. Real yards, real fleet, direct dispatch — no brokers.
           </p>
-          <Button asChild variant="outline" size="lg">
-            <Link to="/bay-area-dumpster-rental">
-              Explore Bay Area Coverage
+          <Button asChild variant="cta" size="lg">
+            <Link to="/quote">
+              Get Your Exact Price
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
