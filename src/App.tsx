@@ -170,6 +170,9 @@ const RushDeliveryConfig = lazy(() => import("./pages/admin/pricing/RushDelivery
 const ContractorPricingConfig = lazy(() => import("./pages/admin/pricing/ContractorPricingConfig"));
 const ExtrasCatalogConfig = lazy(() => import("./pages/admin/pricing/ExtrasCatalogConfig"));
 const CityDisplayZips = lazy(() => import("./pages/admin/pricing/CityDisplayZips"));
+const RushHealthDashboard = lazy(() => import("./pages/admin/pricing/RushHealthDashboard"));
+const ContractorRulesHealth = lazy(() => import("./pages/admin/pricing/ContractorRulesHealth"));
+const ExtrasHealthDashboard = lazy(() => import("./pages/admin/pricing/ExtrasHealthDashboard"));
 const NewLocationWizard = lazy(() => import("./pages/admin/markets/NewLocationWizard"));
 const QaControlCenter = lazy(() => import("./pages/admin/qa/QaControlCenter"));
 const PricingSimulator = lazy(() => import("./pages/admin/PricingSimulator"));
