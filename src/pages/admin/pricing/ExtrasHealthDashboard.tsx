@@ -163,13 +163,13 @@ export default function ExtrasHealthDashboard() {
               <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground">Category</th>
               <th className="px-3 py-3 text-right text-xs font-medium text-muted-foreground">Amount</th>
               <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground">
-                <Truck className="w-3 h-3 inline" title="Driver" />
+                <span className="inline-flex items-center gap-1"><Truck className="w-3 h-3" /> Driver</span>
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground">
-                <Shield className="w-3 h-3 inline" title="Dispatch Review" />
+                <span className="inline-flex items-center gap-1"><Shield className="w-3 h-3" /> Review</span>
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground">
-                <Eye className="w-3 h-3 inline" title="Customer Visible" />
+                <span className="inline-flex items-center gap-1"><Eye className="w-3 h-3" /> Visible</span>
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground">Status</th>
               <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground">Issues</th>
