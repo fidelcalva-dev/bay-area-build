@@ -1,13 +1,13 @@
 /**
  * ContractsTab — Customer 360 tab showing contracts from both
  * `contracts` (MSA-style by customer) and `quote_contracts` (per-quote signing).
- * Shows version history, e-sign status, and full document actions.
+ * Shows version history, e-sign status, document actions, and acceptance log.
  */
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   FileText, Send, Eye, CheckCircle, Clock, RefreshCw,
-  MoreHorizontal, Copy, FileSignature, Upload, ShieldCheck,
+  MoreHorizontal, Copy, Upload, ShieldCheck, Plus, FileSignature,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,10 +15,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { CONTRACT_VERSION, ADDENDUM_VERSION, POLICY_VERSION } from '@/lib/policyLanguage';
+import { createContract } from '@/lib/contractService';
+import { buildMSATerms, buildAddendumTerms, getAddendumTemplateType } from '@/lib/contractTemplates';
 
 interface ContractRow {
   id: string;
@@ -37,6 +39,7 @@ interface ContractRow {
   terms_version: string | null;
   esign_consent_at: string | null;
   parent_contract_id: string | null;
+  delivery_method: string | null;
   created_at: string;
 }
 
@@ -52,11 +55,13 @@ interface Props {
   customerPhone?: string | null;
   customerEmail?: string | null;
   customerName?: string | null;
+  customerType?: string | null;
 }
 
-export function ContractsTab({ customerId, customerPhone, customerEmail, customerName }: Props) {
+export function ContractsTab({ customerId, customerPhone, customerEmail, customerName, customerType }: Props) {
   const [contracts, setContracts] = useState<ContractRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => { loadContracts(); }, [customerId]);
@@ -64,10 +69,9 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
   async function loadContracts() {
     setIsLoading(true);
     try {
-      // Fetch from both tables in parallel
       const [msaRes, quoteRes] = await Promise.all([
         supabase.from('contracts')
-          .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name, signer_email, esign_consent_at, parent_contract_id, viewed_at, quote_id')
+          .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name, signer_email, esign_consent_at, parent_contract_id, viewed_at, quote_id, delivery_method')
           .eq('customer_id', customerId)
           .order('created_at', { ascending: false }),
         supabase.from('quote_contracts')
@@ -92,6 +96,7 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
         terms_version: c.terms_version,
         esign_consent_at: c.esign_consent_at,
         parent_contract_id: c.parent_contract_id,
+        delivery_method: c.delivery_method,
         created_at: c.created_at,
       }));
 
@@ -112,6 +117,7 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
         terms_version: null,
         esign_consent_at: null,
         parent_contract_id: null,
+        delivery_method: null,
         created_at: c.created_at,
       }));
 
@@ -126,6 +132,84 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
 
   function getSigningLink(contractId: string) {
     return `${window.location.origin}/contract/${contractId}`;
+  }
+
+  async function handleCreateMSA() {
+    setIsCreating(true);
+    try {
+      const termsContent = buildMSATerms({
+        customerName: customerName || 'Customer',
+        customerPhone: customerPhone || '',
+        customerEmail: customerEmail || undefined,
+      });
+      const { contract, error } = await createContract({
+        customerId,
+        contractType: 'msa',
+        termsContent,
+      });
+      if (error) throw new Error(error);
+
+      // Timeline event
+      await supabase.from('timeline_events').insert({
+        entity_type: 'CUSTOMER' as const,
+        entity_id: customerId,
+        customer_id: customerId,
+        event_type: 'SYSTEM' as const,
+        event_action: 'CREATED' as const,
+        summary: 'Master Service Agreement created',
+        details_json: { contract_id: contract?.id, event: 'CONTRACT_CREATED' },
+      });
+
+      toast({ title: 'MSA created', description: 'Ready to send for signature' });
+      loadContracts();
+    } catch {
+      toast({ title: 'Error', description: 'Failed to create MSA', variant: 'destructive' });
+    }
+    setIsCreating(false);
+  }
+
+  async function handleCreateAddendum(serviceAddress: string) {
+    setIsCreating(true);
+    try {
+      const templateType = getAddendumTemplateType(customerType || 'residential');
+      const termsContent = buildAddendumTerms(templateType, {
+        customerName: customerName || 'Customer',
+        customerPhone: customerPhone || '',
+        customerEmail: customerEmail || undefined,
+        serviceAddress,
+        dumpsterSize: 'TBD',
+        materialType: 'TBD',
+        rentalDays: 7,
+      });
+
+      // Find MSA for parent reference
+      const msaContract = contracts.find(c => c.contract_type === 'msa' && c.status === 'signed');
+
+      const { contract, error } = await createContract({
+        customerId,
+        contractType: 'addendum',
+        serviceAddress,
+        termsContent,
+      });
+      if (error) throw new Error(error);
+
+      // Timeline event
+      await supabase.from('timeline_events').insert({
+        entity_type: 'CUSTOMER' as const,
+        entity_id: customerId,
+        customer_id: customerId,
+        event_type: 'SYSTEM' as const,
+        event_action: 'CREATED' as const,
+        summary: `Service Addendum created for ${serviceAddress}`,
+        details_json: { contract_id: contract?.id, parent_msa_id: msaContract?.id, event: 'ADDENDUM_CREATED' },
+      });
+
+      toast({ title: 'Addendum created', description: `For ${serviceAddress}` });
+      loadContracts();
+    } catch {
+      toast({ title: 'Error', description: 'Failed to create addendum', variant: 'destructive' });
+    }
+    setIsCreating(false);
   }
 
   async function handleSendContract(contractId: string, method: 'sms' | 'email') {
@@ -186,9 +270,10 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
     return <div className="p-4 text-muted-foreground">Loading contracts...</div>;
   }
 
-  // Separate MSA and addenda
   const msaContracts = contracts.filter(c => c.contract_type === 'msa');
   const addenda = contracts.filter(c => c.contract_type !== 'msa');
+  const hasMSA = msaContracts.some(c => c.status === 'signed');
+  const hasPendingMSA = msaContracts.some(c => c.status === 'pending');
 
   return (
     <div className="space-y-4">
@@ -199,12 +284,33 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
             <div>
               <CardTitle className="text-lg">Contracts & Agreements</CardTitle>
               <CardDescription>
-                {msaContracts.length} MSA · {addenda.length} Addenda · Version {POLICY_VERSION}
+                {msaContracts.length} MSA · {addenda.length} Addenda · Policy v{POLICY_VERSION}
               </CardDescription>
             </div>
-            <Button size="sm" variant="ghost" onClick={loadContracts}>
-              <RefreshCw className="w-3.5 h-3.5" />
-            </Button>
+            <div className="flex items-center gap-1.5">
+              {!hasMSA && !hasPendingMSA && (
+                <Button size="sm" variant="default" className="gap-1" onClick={handleCreateMSA} disabled={isCreating}>
+                  <Plus className="w-3.5 h-3.5" />Create MSA
+                </Button>
+              )}
+              {hasMSA && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  disabled={isCreating}
+                  onClick={() => {
+                    const address = prompt('Enter service address for the addendum:');
+                    if (address?.trim()) handleCreateAddendum(address.trim());
+                  }}
+                >
+                  <FileSignature className="w-3.5 h-3.5" />New Addendum
+                </Button>
+              )}
+              <Button size="sm" variant="ghost" onClick={loadContracts}>
+                <RefreshCw className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
       </Card>
@@ -216,7 +322,14 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
         </CardHeader>
         <CardContent>
           {msaContracts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No MSA on file</p>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>No MSA on file</p>
+              {!hasPendingMSA && (
+                <Button size="sm" variant="outline" className="gap-1" onClick={handleCreateMSA} disabled={isCreating}>
+                  <Plus className="w-3.5 h-3.5" />Create MSA
+                </Button>
+              )}
+            </div>
           ) : (
             <div className="space-y-3">
               {msaContracts.map(contract => (
@@ -238,7 +351,23 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
       {/* Addenda Section */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Service Addenda</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">Service Addenda</CardTitle>
+            {hasMSA && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="gap-1 text-xs"
+                disabled={isCreating}
+                onClick={() => {
+                  const address = prompt('Enter service address:');
+                  if (address?.trim()) handleCreateAddendum(address.trim());
+                }}
+              >
+                <Plus className="w-3 h-3" />Add
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {addenda.length === 0 ? (
@@ -310,6 +439,9 @@ function ContractCard({
           </div>
           {contract.signer_email && (
             <div>Email: {contract.signer_email}</div>
+          )}
+          {contract.delivery_method && (
+            <div>Delivered via: {contract.delivery_method}</div>
           )}
           {contract.esign_consent_at && (
             <div className="flex items-center gap-1 text-green-700 dark:text-green-400">
