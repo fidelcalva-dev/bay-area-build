@@ -106,9 +106,9 @@ export function useEstimatorCalculation(inputs: EstimatorInputs): EstimatorResul
     let multipleCount: number | undefined;
     
     if (isHeavy) {
-      // Heavy materials: 6/8/10 only
-      if (volumeCy <= 6) {
-        recommendedSize = 6;
+      // Heavy materials: 5/8/10 only (canonical sizes)
+      if (volumeCy <= 5) {
+        recommendedSize = 5;
         alternateSize = 8;
       } else if (volumeCy <= 8) {
         recommendedSize = 8;

@@ -48,10 +48,10 @@ interface SizeSelectorV2Props {
 
 // Size categories for standard debris
 const COMMON_DEBRIS_SIZES = [10, 20, 30, 40];
-const ADDITIONAL_DEBRIS_SIZES = [5, 6, 8, 50];
+const ADDITIONAL_DEBRIS_SIZES = [5, 8, 50];
 
-// Heavy material sizes (weight-restricted)
-const HEAVY_MATERIAL_SIZES = [5, 6, 8, 10];
+// Heavy material sizes (weight-restricted) — canonical: 5, 8, 10
+const HEAVY_MATERIAL_SIZES = [5, 8, 10];
 
 // Materials that trigger heavy size restrictions
 const HEAVY_MATERIAL_CODES = [
