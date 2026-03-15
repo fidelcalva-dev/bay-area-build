@@ -337,7 +337,7 @@ export default function Pricing() {
                       <th className="text-left py-2 text-muted-foreground font-medium">Material Type</th>
                       <th className="text-center py-2 text-muted-foreground font-medium">10 yd</th>
                       <th className="text-center py-2 text-muted-foreground font-medium">8 yd</th>
-                      <th className="text-center py-2 text-muted-foreground font-medium">6 yd</th>
+                      <th className="text-center py-2 text-muted-foreground font-medium">5 yd</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -348,7 +348,7 @@ export default function Pricing() {
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[8]}</td>
-                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[6]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[5]}</td>
                     </tr>
                     <tr className="border-b border-warning/10">
                       <td className="py-3">
@@ -360,7 +360,7 @@ export default function Pricing() {
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[8]}</td>
-                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[6]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[5]}</td>
                     </tr>
                     <tr>
                       <td className="py-3">
@@ -372,7 +372,7 @@ export default function Pricing() {
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[8]}</td>
-                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[6]}</td>
+                      <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[5]}</td>
                     </tr>
                   </tbody>
                 </table>
