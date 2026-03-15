@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
   ChevronRight, Settings, Banknote, Scale, Zap, Users, Map,
-  Activity, ListChecks, Shield
+  Activity, ListChecks, Shield, Gauge
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
