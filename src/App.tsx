@@ -976,6 +976,15 @@ const App = () => {
                 <Route path="pricing/city-display-zips" element={
                   <Suspense fallback={<PageLoader />}><CityDisplayZips /></Suspense>
                 } />
+                <Route path="pricing/rush-health" element={
+                  <Suspense fallback={<PageLoader />}><RushHealthDashboard /></Suspense>
+                } />
+                <Route path="pricing/contractor-rules" element={
+                  <Suspense fallback={<PageLoader />}><ContractorRulesHealth /></Suspense>
+                } />
+                <Route path="pricing/extras-health" element={
+                  <Suspense fallback={<PageLoader />}><ExtrasHealthDashboard /></Suspense>
+                } />
                 <Route path="pricing-engine" element={
                   <Suspense fallback={<PageLoader />}><PricingEngineDashboard /></Suspense>
                 } />
