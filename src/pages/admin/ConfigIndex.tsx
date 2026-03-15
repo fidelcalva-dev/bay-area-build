@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
   ChevronRight, Settings, Banknote, Scale, Zap, Users, Map,
-  Activity, ListChecks, Shield
+  Activity, ListChecks, Shield, Gauge
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -119,6 +119,14 @@ const configModules = [
     path: '/admin/pricing/extras-health',
     color: 'text-teal-600',
     bgColor: 'bg-teal-100',
+  },
+  {
+    title: 'Pricing Readiness',
+    description: 'System-wide integrity audit and readiness score',
+    icon: Gauge,
+    path: '/admin/pricing/readiness',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
   },
   {
     title: 'Warnings & Caps',

@@ -24,30 +24,56 @@ export default function ZipHealthDashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterMarket, setFilterMarket] = useState('all');
+  const [filterIssue, setFilterIssue] = useState('all');
+  const [fixing, setFixing] = useState(false);
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
+  async function load() {
+    const { data } = await supabase
+      .from('zone_zip_codes')
+      .select(`
+        zip_code, city_name, county, market_id,
+        zone:pricing_zones!inner(name, slug)
+      `)
+      .order('zip_code');
+
+    const records: ZipRecord[] = (data || []).map((d: any) => ({
+      zip_code: d.zip_code,
+      city_name: d.city_name,
+      county: d.county,
+      market_id: d.market_id,
+      zone_name: (d.zone as any)?.name || null,
+      zone_slug: (d.zone as any)?.slug || null,
+    }));
+    setZips(records);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  // Auto-fix: assign market_id based on county for ZIPs missing it
+  async function autoFixMarkets() {
+    setFixing(true);
+    const countyMarketMap: Record<string, string> = {
+      'Alameda': 'oakland_east_bay',
+      'Contra Costa': 'oakland_east_bay',
+      'Marin': 'oakland_east_bay',
+      'Napa': 'oakland_east_bay',
+      'Solano': 'oakland_east_bay',
+      'Sonoma': 'oakland_east_bay',
+      'San Francisco': 'san_francisco_peninsula',
+      'San Mateo': 'san_francisco_peninsula',
+      'Santa Clara': 'san_jose_south_bay',
+    };
+    const toFix = zips.filter(z => !z.market_id && z.county && countyMarketMap[z.county]);
+    for (const z of toFix) {
+      await supabase
         .from('zone_zip_codes')
-        .select(`
-          zip_code, city_name, county, market_id,
-          zone:pricing_zones!inner(name, slug)
-        `)
-        .order('zip_code');
-
-      const records: ZipRecord[] = (data || []).map((d: any) => ({
-        zip_code: d.zip_code,
-        city_name: d.city_name,
-        county: d.county,
-        market_id: d.market_id,
-        zone_name: (d.zone as any)?.name || null,
-        zone_slug: (d.zone as any)?.slug || null,
-      }));
-      setZips(records);
-      setLoading(false);
+        .update({ market_id: countyMarketMap[z.county!] })
+        .eq('zip_code', z.zip_code);
     }
-    load();
-  }, []);
+    await load();
+    setFixing(false);
+  }
 
   const markets = useMemo(() => {
     const m = new Set(zips.map(z => z.market_id || 'unassigned'));
@@ -66,9 +92,11 @@ export default function ZipHealthDashboard() {
     return zips.filter(z => {
       if (search && !z.zip_code.includes(search) && !(z.city_name || '').toLowerCase().includes(search.toLowerCase())) return false;
       if (filterMarket !== 'all' && (z.market_id || 'unassigned') !== filterMarket) return false;
+      if (filterIssue === 'no-market' && z.market_id) return false;
+      if (filterIssue === 'no-city' && z.city_name) return false;
       return true;
     });
-  }, [zips, search, filterMarket]);
+  }, [zips, search, filterMarket, filterIssue]);
 
   if (loading) return <div className="p-6 text-muted-foreground">Loading ZIP data...</div>;
 
@@ -107,6 +135,21 @@ export default function ZipHealthDashboard() {
         </Card>
       </div>
 
+      {/* Actions */}
+      {stats.noMarket > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+          <span className="text-sm text-amber-800 flex-1">{stats.noMarket} ZIPs missing market assignment</span>
+          <button
+            onClick={autoFixMarkets}
+            disabled={fixing}
+            className="px-3 py-1.5 text-sm font-medium rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50"
+          >
+            {fixing ? 'Fixing...' : 'Auto-Fix by County'}
+          </button>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
@@ -117,6 +160,14 @@ export default function ZipHealthDashboard() {
           <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             {markets.map(m => <SelectItem key={m} value={m}>{m === 'all' ? 'All Markets' : m}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterIssue} onValueChange={setFilterIssue}>
+          <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Issues</SelectItem>
+            <SelectItem value="no-market">No Market</SelectItem>
+            <SelectItem value="no-city">No City</SelectItem>
           </SelectContent>
         </Select>
       </div>
