@@ -147,6 +147,22 @@ export default function ContractSignPage() {
           },
         } as never);
 
+      // Record document acceptance for version tracking
+      await supabase
+        .from('document_acceptances' as 'orders')
+        .insert({
+          customer_id: contract.customer_id,
+          contract_id: contract.id,
+          document_type: contract.contract_type === 'msa' ? 'contract_msa' : 'contract_addendum',
+          version_code: termsVersion,
+          signer_name: signerName.trim(),
+          signer_email: signerEmail.trim() || null,
+          delivery_method: 'sms_link',
+          electronic_consent_given: true,
+          electronic_consent_at: now,
+          user_agent: navigator.userAgent,
+        } as never);
+
       // Create timeline event
       await supabase
         .from('timeline_events')

@@ -20,7 +20,9 @@ export interface Contract {
   signer_name: string | null;
   signer_email: string | null;
   signer_phone: string | null;
+  signer_title: string | null;
   esign_consent_at: string | null;
+  delivery_method: string | null;
   pdf_url: string | null;
   expires_at: string | null;
   quote_id: string | null;

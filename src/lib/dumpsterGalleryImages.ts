@@ -5,6 +5,7 @@
  */
 
 // Photos served from public/ to avoid bundling large images
+// Note: physical files may still be named 6yd — these are the same photos used for 5yd
 const photo5yd1 = '/images/dumpsters/6yd-photo-1.jpg';
 const photo5yd2 = '/images/dumpsters/6yd-photo-2.jpg';
 const photo5yd3 = '/images/dumpsters/6yd-photo-3.jpg';
