@@ -135,6 +135,21 @@ export default function ZipHealthDashboard() {
         </Card>
       </div>
 
+      {/* Actions */}
+      {stats.noMarket > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+          <span className="text-sm text-amber-800 flex-1">{stats.noMarket} ZIPs missing market assignment</span>
+          <button
+            onClick={autoFixMarkets}
+            disabled={fixing}
+            className="px-3 py-1.5 text-sm font-medium rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50"
+          >
+            {fixing ? 'Fixing...' : 'Auto-Fix by County'}
+          </button>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
@@ -145,6 +160,14 @@ export default function ZipHealthDashboard() {
           <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             {markets.map(m => <SelectItem key={m} value={m}>{m === 'all' ? 'All Markets' : m}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterIssue} onValueChange={setFilterIssue}>
+          <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Issues</SelectItem>
+            <SelectItem value="no-market">No Market</SelectItem>
+            <SelectItem value="no-city">No City</SelectItem>
           </SelectContent>
         </Select>
       </div>
