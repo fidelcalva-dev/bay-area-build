@@ -92,9 +92,11 @@ export default function ZipHealthDashboard() {
     return zips.filter(z => {
       if (search && !z.zip_code.includes(search) && !(z.city_name || '').toLowerCase().includes(search.toLowerCase())) return false;
       if (filterMarket !== 'all' && (z.market_id || 'unassigned') !== filterMarket) return false;
+      if (filterIssue === 'no-market' && z.market_id) return false;
+      if (filterIssue === 'no-city' && z.city_name) return false;
       return true;
     });
-  }, [zips, search, filterMarket]);
+  }, [zips, search, filterMarket, filterIssue]);
 
   if (loading) return <div className="p-6 text-muted-foreground">Loading ZIP data...</div>;
 
