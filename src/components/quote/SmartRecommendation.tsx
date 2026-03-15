@@ -255,7 +255,7 @@ export interface SmartRecommendationResult {
  * - 40/50 -> Safe for large demo/commercial; "Overkill for small jobs" note
  * 
  * HEAVY MATERIAL RULES:
- * - 6 -> Safe for small heavy; Might be tight for medium heavy
+ * - 5 -> Safe for small heavy; Might be tight for medium heavy
  * - 8 -> Safe default heavy
  * - 10 -> Safe for large heavy
  */
