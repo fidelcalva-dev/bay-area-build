@@ -1,6 +1,7 @@
 /**
  * Public contract signing page — /contract/:token
  * Customers open this link to review and sign their contract.
+ * Stores versioned e-sign consent per UETA/E-SIGN requirements.
  */
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -11,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ESIGN_CONSENT, POLICY_VERSION, CONTRACT_VERSION, ADDENDUM_VERSION } from '@/lib/policyLanguage';
 
 interface ContractData {
   id: string;
@@ -23,6 +25,8 @@ interface ContractData {
   signer_name: string | null;
   expires_at: string | null;
   quote_id: string | null;
+  contract_version: string | null;
+  terms_version: string | null;
 }
 
 interface QuoteData {
@@ -39,7 +43,9 @@ export default function ContractSignPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [signerName, setSignerName] = useState('');
+  const [signerEmail, setSignerEmail] = useState('');
   const [agreed, setAgreed] = useState(false);
+  const [esignConsent, setEsignConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
 
@@ -74,6 +80,15 @@ export default function ContractSignPage() {
           .from('contracts' as 'orders')
           .update({ viewed_at: new Date().toISOString() } as never)
           .eq('id' as 'id', c.id);
+
+        // Log view event
+        await supabase
+          .from('contract_events' as 'orders')
+          .insert({
+            contract_id: c.id,
+            event_type: 'viewed',
+            metadata: { timestamp: new Date().toISOString() },
+          } as never);
       }
 
       // Fetch linked quote data if available
@@ -93,29 +108,43 @@ export default function ContractSignPage() {
   }
 
   async function handleSign() {
-    if (!signerName.trim() || !agreed || !contract) return;
+    if (!signerName.trim() || !agreed || !esignConsent || !contract) return;
     setIsSubmitting(true);
 
     try {
+      const now = new Date().toISOString();
+      const termsVersion = contract.contract_type === 'msa' ? CONTRACT_VERSION : ADDENDUM_VERSION;
+
       const { error: err } = await supabase
         .from('contracts' as 'orders')
         .update({
           status: 'signed',
-          signed_at: new Date().toISOString(),
+          signed_at: now,
           signer_name: signerName.trim(),
+          signer_email: signerEmail.trim() || null,
           signature_method: 'web_link',
+          esign_consent_at: now,
+          terms_version: termsVersion,
+          contract_version: termsVersion,
         } as never)
         .eq('id' as 'id', contract.id);
 
       if (err) throw err;
 
-      // Log event
+      // Log signed event
       await supabase
         .from('contract_events' as 'orders')
         .insert({
           contract_id: contract.id,
           event_type: 'signed',
-          metadata: { method: 'web_link', signer_name: signerName.trim() },
+          metadata: {
+            method: 'web_link',
+            signer_name: signerName.trim(),
+            signer_email: signerEmail.trim() || null,
+            esign_consent: true,
+            terms_version: termsVersion,
+            policy_version: POLICY_VERSION,
+          },
         } as never);
 
       // Create timeline event
@@ -132,6 +161,7 @@ export default function ContractSignPage() {
             contract_id: contract.id,
             contract_type: contract.contract_type,
             signer_name: signerName.trim(),
+            terms_version: termsVersion,
             event: 'CONTRACT_SIGNED',
           },
         });
@@ -193,6 +223,11 @@ export default function ContractSignPage() {
           <p className="text-muted-foreground mt-1">
             {contract?.contract_type === 'msa' ? 'Master Service Agreement' : 'Service Addendum'}
           </p>
+          {contract?.contract_version && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Version {contract.contract_version}
+            </p>
+          )}
         </div>
 
         {/* Quote Summary */}
@@ -244,27 +279,57 @@ export default function ContractSignPage() {
           </Card>
         )}
 
-        {/* Signature */}
+        {/* E-Sign Consent & Signature */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Sign Below</CardTitle>
+            <CardTitle className="text-base">Electronic Signature</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Full Name (as signature)</label>
-              <Input
-                placeholder="Type your full legal name"
-                value={signerName}
-                onChange={(e) => setSignerName(e.target.value)}
-                className="text-lg"
-              />
-              {signerName && (
-                <div className="mt-3 p-4 border rounded-lg bg-muted/20 text-center">
-                  <p className="font-serif text-2xl italic text-foreground">{signerName}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Electronic Signature</p>
-                </div>
-              )}
+            {/* E-Sign Consent Block */}
+            <div className="rounded-lg border bg-muted/20 p-4 text-xs text-muted-foreground leading-relaxed">
+              <p className="font-medium text-foreground text-sm mb-2">Consent to Electronic Records & Signatures</p>
+              <p>{ESIGN_CONSENT.en}</p>
             </div>
+
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="esign-consent"
+                checked={esignConsent}
+                onCheckedChange={(c) => setEsignConsent(c === true)}
+              />
+              <label htmlFor="esign-consent" className="text-sm leading-relaxed cursor-pointer">
+                I consent to sign this agreement electronically and to receive records electronically.
+              </label>
+            </div>
+
+            {/* Signer Info */}
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Full Name (as signature)</label>
+                <Input
+                  placeholder="Type your full legal name"
+                  value={signerName}
+                  onChange={(e) => setSignerName(e.target.value)}
+                  className="text-lg"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Email (optional, for confirmation)</label>
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={signerEmail}
+                  onChange={(e) => setSignerEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {signerName && (
+              <div className="p-4 border rounded-lg bg-muted/20 text-center">
+                <p className="font-serif text-2xl italic text-foreground">{signerName}</p>
+                <p className="text-xs text-muted-foreground mt-1">Electronic Signature</p>
+              </div>
+            )}
 
             <div className="flex items-start gap-3">
               <Checkbox
@@ -281,7 +346,7 @@ export default function ContractSignPage() {
 
             <Button
               className="w-full h-12 text-base"
-              disabled={!signerName.trim() || !agreed || isSubmitting}
+              disabled={!signerName.trim() || !agreed || !esignConsent || isSubmitting}
               onClick={handleSign}
             >
               {isSubmitting ? (
@@ -292,7 +357,7 @@ export default function ContractSignPage() {
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              By signing, you agree to the service terms. A copy will be sent to you.
+              By signing, you agree to the service terms (v{POLICY_VERSION}). A copy will be sent to you.
             </p>
           </CardContent>
         </Card>

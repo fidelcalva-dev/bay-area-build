@@ -261,7 +261,7 @@ export default function DumpsterRentalSanJose() {
 
           <div className="text-center mt-8">
             <Link to="/sizes" className="text-primary font-medium hover:underline text-sm">
-              View all 7 dumpster sizes (6-50 yard) →
+              View all 7 dumpster sizes (5-50 yard) →
             </Link>
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function DumpsterRentalSanJose() {
 
           <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-4">
             {[
-              { label: 'Available Sizes', value: '5, 6, 8, and 10 yard dumpsters for heavy materials. 10-yard is most popular for San Jose concrete jobs.' },
+              { label: 'Available Sizes', value: '5, 8, and 10 yard dumpsters for heavy materials. 10-yard is most popular for San Jose concrete jobs.' },
               { label: 'Fill-Line Required', value: 'Heavy material dumpsters must not be loaded above the fill line for safe transport.' },
               { label: 'Flat-Rate Pricing', value: 'Concrete and dirt dumpsters use flat-fee pricing. No weight overage charges — the price you see is the price you pay.' },
               { label: 'Clean Concrete', value: 'Clean concrete (no rebar, no dirt mixed in) is fully recyclable and qualifies for our lowest heavy material rate.' },

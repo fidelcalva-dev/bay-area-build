@@ -301,7 +301,7 @@ export default function DumpsterRentalSanFrancisco() {
 
           <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-4">
             {[
-              { label: 'Available Sizes', value: '6, 8, and 10 yard dumpsters for heavy materials. Due to SF street constraints, 10-yard is most common.' },
+              { label: 'Available Sizes', value: '5, 8, and 10 yard dumpsters for heavy materials. Due to SF street constraints, 10-yard is most common.' },
               { label: 'Fill-Line Required', value: 'Heavy material dumpsters must not be loaded above the fill line for safe transport — especially critical on San Francisco hills.' },
               { label: 'Flat-Rate Pricing', value: 'Concrete and dirt dumpsters use flat-fee pricing. No weight overage charges — the price you see is the price you pay.' },
               { label: 'Clean Concrete', value: 'Clean concrete (no rebar, no dirt mixed in) is fully recyclable and qualifies for our lowest heavy material rate.' },

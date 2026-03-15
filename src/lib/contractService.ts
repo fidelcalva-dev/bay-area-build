@@ -12,12 +12,20 @@ export interface Contract {
   service_address: string | null;
   service_address_normalized: string | null;
   contract_version: string;
+  terms_version: string | null;
   terms_content: string | null;
   signed_at: string | null;
   signed_ip: string | null;
   signature_method: string | null;
+  signer_name: string | null;
+  signer_email: string | null;
+  signer_phone: string | null;
+  esign_consent_at: string | null;
   pdf_url: string | null;
   expires_at: string | null;
+  quote_id: string | null;
+  parent_contract_id: string | null;
+  viewed_at: string | null;
   created_at: string;
   updated_at: string;
 }
