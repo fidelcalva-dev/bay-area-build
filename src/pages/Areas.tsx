@@ -137,34 +137,42 @@ export default function Areas() {
         </div>
       </section>
 
-      {/* Partner Network Regions */}
-      <section className="section-padding bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="heading-lg text-foreground mb-3">Service Network — California</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Professional dumpster rental coordinated through our trusted logistics network, extending coverage across California.
-            </p>
+      {/* Extended Service Network — De-emphasized */}
+      {partnerRegions.length > 0 && (
+        <section className="py-8 bg-muted/30 border-t border-border">
+          <div className="container-wide">
+            <div className="text-center mb-6">
+              <h2 className="text-lg font-semibold text-muted-foreground">Extended Service Network</h2>
+              <p className="text-sm text-muted-foreground max-w-xl mx-auto mt-1">
+                Service may be available in these regions through our coordinated logistics network. Availability varies — call to confirm.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+              {partnerRegions.map(region => (
+                <Link
+                  key={region.slug}
+                  to={region.hubUrl}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-card border border-border rounded-full text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                >
+                  <Building className="w-3.5 h-3.5" />
+                  {region.name}
+                </Link>
+              ))}
+            </div>
           </div>
+        </section>
+      )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {partnerRegions.map(region => (
-              <RegionCard key={region.slug} region={region} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Expanding Coverage */}
+      {/* Core Focus Statement */}
       <section className="section-padding bg-background">
         <div className="container-narrow text-center">
-          <h2 className="heading-md text-foreground mb-4">Expanding Across California</h2>
+          <h2 className="heading-md text-foreground mb-4">Bay Area-First Operations</h2>
           <p className="text-muted-foreground mb-6">
-            Our core operations are based in the Bay Area. We're growing into new regions through a coordinated partner network — same Calsan standards, local delivery.
+            Our core operations are concentrated across Oakland, San Jose, and San Francisco. Real yards, real fleet, direct dispatch — no brokers.
           </p>
-          <Button asChild variant="outline" size="lg">
-            <Link to="/bay-area-dumpster-rental">
-              Explore Bay Area Coverage
+          <Button asChild variant="cta" size="lg">
+            <Link to="/quote">
+              Get Your Exact Price
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

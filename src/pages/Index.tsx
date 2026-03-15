@@ -407,8 +407,8 @@ const Index = () => {
             </h2>
           </div>
 
-          {/* First row: 3 dumpsters */}
-          <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto mb-6">
+          {/* Size grid — responsive: 1 col mobile, 2 col sm, 3 col lg */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-6">
             {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => (
               <Link
                 key={s.size}
