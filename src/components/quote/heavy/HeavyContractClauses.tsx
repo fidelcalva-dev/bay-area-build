@@ -1,10 +1,17 @@
 // Heavy Material Contract Clauses Component
-// Phase 4: Legal text inserts for heavy orders
+// Uses canonical policy language from policyLanguage.ts
 
 import { FileText, AlertCircle, Camera, Scale, Leaf } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { DEBRIS_INCLUDED_TONS, EXTRA_TON_RATE } from '@/lib/heavyMaterialService';
+import {
+  FILL_LINE_NOTICE,
+  CONTAMINATION_NOTICE,
+  MISDECLARED_REROUTE_NOTICE,
+  PHOTO_DOCUMENTATION_NOTICE,
+  GREEN_HALO_NOTICE,
+} from '@/lib/policyLanguage';
 
 interface HeavyContractClausesProps {
   sizeYd: number;
@@ -13,7 +20,7 @@ interface HeavyContractClausesProps {
   className?: string;
 }
 
-// Generate contract clause text for heavy orders
+// Generate contract clause text for heavy orders (uses canonical language)
 export function getHeavyContractClauses(
   sizeYd: number,
   materialName: string,
@@ -26,14 +33,14 @@ export function getHeavyContractClauses(
 } {
   const includedTons = DEBRIS_INCLUDED_TONS[sizeYd] || 1.0;
 
-  const fillLineClause = `FILL-LINE COMPLIANCE: Heavy material loads (${materialName}) may NOT be filled to the top of the dumpster. A visible fill line indicates the maximum safe fill level. If the dumpster exceeds this fill line upon pickup, the driver may: (a) refuse pickup until excess material is removed, (b) re-quote the order with overage fees, or (c) require a second container. Customer is responsible for any additional fees, delays, or charges resulting from overfilled containers.`;
+  const fillLineClause = `FILL-LINE COMPLIANCE: ${FILL_LINE_NOTICE.en}`;
 
-  const reclassificationClause = `MATERIAL RECLASSIFICATION: If contamination or mixing of materials is detected at the disposal facility, the order will be automatically reclassified from flat-rate heavy pricing to debris-by-ton pricing. Under reclassification: (a) included weight allowance is ${includedTons.toFixed(2)} tons for this ${sizeYd}-yard container; (b) all weight exceeding ${includedTons.toFixed(2)} tons will be charged at $${EXTRA_TON_RATE}/ton based on certified scale ticket; (c) Green Halo™ recycling receipt will NOT be issued for contaminated loads. Customer acknowledges that mixing trash, household debris, or non-approved materials with heavy materials voids flat-rate pricing.`;
+  const reclassificationClause = `MATERIAL RECLASSIFICATION: ${CONTAMINATION_NOTICE.en} ${MISDECLARED_REROUTE_NOTICE.en} Under reclassification for this ${sizeYd}-yard container: included weight allowance is ${includedTons.toFixed(2)} tons; all weight exceeding ${includedTons.toFixed(2)} tons will be charged at $${EXTRA_TON_RATE}/ton based on certified scale ticket.`;
 
-  const photoRequirementClause = `PHOTO DOCUMENTATION REQUIREMENT: Customer agrees to provide access for pre-pickup photo documentation. Driver will photograph the dumpster contents prior to pickup to verify material type and fill level. These photos serve as evidence for proper billing and disposal routing. If access is denied or photos cannot be taken, Customer authorizes the disposal facility's assessment for final billing.`;
+  const photoRequirementClause = `PHOTO DOCUMENTATION: ${PHOTO_DOCUMENTATION_NOTICE.en}`;
 
   const greenHaloClause = requestedGreenHalo
-    ? `GREEN HALO™ CERTIFICATION: To receive a Green Halo™ recycling receipt, the load must be: (a) 100% clean and separated ${materialName} with no contamination; (b) delivered to a certified recycling facility; (c) verified by facility staff as recyclable. If the load does not meet these requirements, it will be processed as standard disposal and no Green Halo™ receipt will be issued.`
+    ? `GREEN HALO CERTIFICATION: ${GREEN_HALO_NOTICE.en}`
     : undefined;
 
   return {
@@ -103,7 +110,7 @@ export function HeavyContractClauses({
       {requestedGreenHalo && clauses.greenHaloClause && (
         <ClauseCard
           icon={<Leaf className="w-4 h-4" />}
-          title="Green Halo™ Certification"
+          title="Green Halo Certification"
           iconColor="text-success"
           bgColor="bg-success/5"
         >

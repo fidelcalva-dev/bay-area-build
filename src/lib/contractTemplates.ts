@@ -1,7 +1,31 @@
 /**
- * Contract Templates - MSA and Service Addendum
- * Supports Residential, Contractor, and Commercial templates
+ * Contract Templates — MSA, Service Addendum, and Quote Contract
+ * Uses canonical policy language from policyLanguage.ts
+ * 
+ * Version tracking: templates reference POLICY_VERSION and CONTRACT_VERSION
+ * so older accepted contracts preserve their version.
  */
+
+import {
+  POLICY_VERSION,
+  CONTRACT_VERSION,
+  ADDENDUM_VERSION,
+  HEAVY_MATERIAL_NOTICE,
+  CONTAMINATION_NOTICE,
+  MISDECLARED_REROUTE_NOTICE,
+  OVERAGE_NOTICE,
+  FILL_LINE_NOTICE,
+  PLACEMENT_PERMIT_NOTICE,
+  DRY_RUN_NOTICE,
+  EXTRA_DAY_NOTICE,
+  PAYMENT_TERMS_NOTICE,
+  PROHIBITED_MATERIALS_NOTICE,
+  ESIGN_CONSENT,
+  LIABILITY_NOTICE,
+  INDEMNIFICATION_NOTICE,
+  GOVERNING_LAW_NOTICE,
+  PHOTO_DOCUMENTATION_NOTICE,
+} from './policyLanguage';
 
 export type AddendumTemplateType = 'residential' | 'contractor' | 'commercial';
 
@@ -45,14 +69,8 @@ export function getAddendumTemplateLabel(type: AddendumTemplateType): string {
   }
 }
 
-// Build addendum terms content based on template type
-export function buildAddendumTerms(
-  type: AddendumTemplateType,
-  data: AddendumTemplateData
-): string {
-  const baseTerms = `
-SERVICE ADDENDUM
-
+function buildServiceHeader(data: AddendumTemplateData): string {
+  return `
 Customer: ${data.customerName}
 ${data.companyName ? `Company: ${data.companyName}` : ''}
 Phone: ${data.customerPhone}
@@ -68,102 +86,85 @@ Rental Period: ${data.rentalDays} days
 ${data.deliveryDate ? `Delivery Date: ${data.deliveryDate}` : ''}
 ${data.deliveryWindow ? `Time Window: ${data.deliveryWindow}` : ''}
 `.trim();
+}
 
-  const residentialTerms = `
-${baseTerms}
+// Build addendum terms content based on template type
+export function buildAddendumTerms(
+  type: AddendumTemplateType,
+  data: AddendumTemplateData
+): string {
+  const header = buildServiceHeader(data);
 
-RESIDENTIAL SERVICE TERMS
+  const commonClauses = `
+TERMS INHERITED FROM MASTER SERVICE AGREEMENT
+This Service Addendum is subject to and governed by the Master Service Agreement ("MSA") between the parties. In the event of any conflict, the terms of this Addendum prevail for this specific service location.
 
-1. PLACEMENT & ACCESS
-The dumpster will be placed at the agreed location on your property. You are responsible for ensuring clear access for delivery and pickup. Driveway placement may be available upon request.
+PLACEMENT & ACCESS
+${PLACEMENT_PERMIT_NOTICE.en}
 
-2. PERMITTED MATERIALS
-General household debris, construction materials, yard waste, and furniture are accepted. Hazardous materials, electronics, tires, mattresses, and appliances with refrigerants may incur additional fees or be refused.
+PERMITTED & PROHIBITED MATERIALS
+${PROHIBITED_MATERIALS_NOTICE.en}
 
-3. WEIGHT & OVERAGE
-Your rental includes the specified tonnage allowance. Overages are billed at the prevailing rate based on official scale tickets. Final weight determines final billing.
+WEIGHT & OVERAGE
+${OVERAGE_NOTICE.en}
 
-4. RENTAL PERIOD
-The rental period begins at delivery. Extensions may be available at a daily rate. Contact us to extend before your scheduled pickup.
+HEAVY MATERIAL RULES
+${HEAVY_MATERIAL_NOTICE.en}
 
-5. CUSTOMER RESPONSIBILITY
-Do not overfill the dumpster above the fill line. Overfilled or hazardous loads may incur additional fees or require re-handling.
+CONTAMINATION & RECLASSIFICATION
+${CONTAMINATION_NOTICE.en}
 
-6. STREET PLACEMENT
-If the dumpster is placed on a public street, you are responsible for obtaining any required permits from your local municipality.
+MISDECLARED MATERIALS
+${MISDECLARED_REROUTE_NOTICE.en}
 
-By signing, you agree to these terms and authorize CalSan Dumpsters to provide service at this location.
-`;
+FILL LINE
+${FILL_LINE_NOTICE.en}
 
-  const contractorTerms = `
-${baseTerms}
+RENTAL PERIOD
+${EXTRA_DAY_NOTICE.en}
 
-CONTRACTOR SERVICE ADDENDUM
+DRY RUNS & BLOCKED ACCESS
+${DRY_RUN_NOTICE.en}
 
-1. SITE RESPONSIBILITY
-Contractor is responsible for safe and accessible placement on the job site. CalSan is not liable for damage caused by site conditions or third parties.
+PHOTO DOCUMENTATION
+${PHOTO_DOCUMENTATION_NOTICE.en}
+`.trim();
 
-2. MATERIAL COMPLIANCE
-All materials must comply with disposal facility requirements. Mixed loads containing hazardous or prohibited materials may be refused, reclassified, or incur surcharges.
+  const residentialFooter = `
+By signing, you agree to these terms and authorize Calsan Dumpsters Pro to provide service at this location.`;
 
-3. WEIGHT-BASED BILLING
-Final billing is based on official scale tickets. Overages beyond the included tonnage are billed at the agreed rate per ton.
+  const contractorFooter = `
+CONTRACTOR-SPECIFIC TERMS
+Contractor is responsible for safe and accessible placement on the job site. Calsan Dumpsters Pro is not liable for damage caused by site conditions or third parties. Contractor maintains their own liability insurance. For high-volume projects, swaps and multiple hauls are available — contact dispatch.
 
-4. JOB SITE SCHEDULING
-Delivery and pickup times are estimates. Contractor must ensure site access during scheduled windows. Dry run fees apply if the truck cannot access the site.
+By signing, contractor agrees to these terms for all service at this location.`;
 
-5. MULTIPLE HAULS
-For high-volume projects, swaps and multiple hauls are available. Contact dispatch to schedule additional service.
+  const commercialFooter = `
+COMMERCIAL-SPECIFIC TERMS
+This addendum governs dumpster rental services at the specified commercial location. Commercial accounts are billed per service or on an agreed schedule. Net 30 terms may be available for qualified accounts. Commercial site must maintain safe access for service vehicles. Customer is responsible for ensuring all disposed materials comply with environmental regulations. Customer agrees to indemnify Calsan Dumpsters Pro against claims arising from improper material disposal or site conditions.
 
-6. PERMIT RESPONSIBILITY
-Contractor is responsible for all permits required for dumpster placement, including street and ROW permits.
+By signing, the authorized representative agrees to these commercial service terms.`;
 
-7. INSURANCE & LIABILITY
-Contractor maintains their own liability insurance. CalSan is not responsible for site damage, theft, or injury arising from dumpster use.
-
-By signing, contractor agrees to these terms for all service at this location.
-`;
-
-  const commercialTerms = `
-${baseTerms}
-
-COMMERCIAL SERVICE ADDENDUM
-
-1. COMMERCIAL SERVICE AGREEMENT
-This addendum governs dumpster rental services at the specified commercial location and is subject to the Master Service Agreement.
-
-2. BILLING & PAYMENT
-Commercial accounts are billed per service or on an agreed schedule. Net 30 terms may be available for qualified accounts. Late payments may result in service suspension.
-
-3. SERVICE SCHEDULE
-Regular service schedules can be arranged. Contact your account manager for recurring service options.
-
-4. COMPLIANCE
-All materials must comply with local, state, and federal disposal regulations. Hazardous materials are prohibited without prior arrangement.
-
-5. ACCESS & SAFETY
-Commercial site must maintain safe access for service vehicles. Loading dock or designated staging area is required for efficient service.
-
-6. INSURANCE REQUIREMENTS
-Commercial customers must maintain adequate liability insurance. Proof of insurance may be required upon request.
-
-7. ENVIRONMENTAL COMPLIANCE
-Customer is responsible for ensuring all disposed materials comply with environmental regulations. Recycling and diversion options are available.
-
-8. INDEMNIFICATION
-Customer agrees to indemnify CalSan Dumpsters against claims arising from improper material disposal or site conditions.
-
-By signing, the authorized representative agrees to these commercial service terms.
-`;
-
+  let footer: string;
   switch (type) {
     case 'contractor':
-      return contractorTerms.trim();
+      footer = contractorFooter;
+      break;
     case 'commercial':
-      return commercialTerms.trim();
+      footer = commercialFooter;
+      break;
     default:
-      return residentialTerms.trim();
+      footer = residentialFooter;
   }
+
+  return `SERVICE ADDENDUM
+Addendum Version: ${ADDENDUM_VERSION}
+Policy Version: ${POLICY_VERSION}
+
+${header}
+
+${commonClauses}
+${footer}`.trim();
 }
 
 // Build MSA terms content
@@ -173,10 +174,11 @@ export function buildMSATerms(data: {
   customerPhone: string;
   customerEmail?: string;
 }): string {
-  return `
-MASTER SERVICE AGREEMENT
+  return `MASTER SERVICE AGREEMENT
+Contract Version: ${CONTRACT_VERSION}
+Policy Version: ${POLICY_VERSION}
 
-This Master Service Agreement ("Agreement") is entered into by CalSan Dumpsters ("Company") and the Customer identified below.
+This Master Service Agreement ("Agreement") is entered into by Calsan Dumpsters Pro ("Company") and the Customer identified below.
 
 CUSTOMER INFORMATION
 Name: ${data.customerName}
@@ -185,10 +187,10 @@ Phone: ${data.customerPhone}
 ${data.customerEmail ? `Email: ${data.customerEmail}` : ''}
 
 1. SCOPE OF SERVICES
-Company agrees to provide dumpster rental and waste hauling services as requested by Customer. Individual services are governed by this Agreement and any applicable Service Addendums.
+Company agrees to provide dumpster rental and waste hauling services as requested by Customer. Individual services are governed by this Agreement and any applicable Service Addendums for specific locations.
 
 2. PRICING & PAYMENT
-Pricing is quoted per service based on dumpster size, material type, location, and duration. Payment is due before or at time of service unless credit terms are established. Post-service charges, including tonnage overages, are billed after disposal.
+${PAYMENT_TERMS_NOTICE.en}
 
 3. CUSTOMER RESPONSIBILITIES
 Customer agrees to:
@@ -200,29 +202,51 @@ Customer agrees to:
 - Pay all invoices in accordance with agreed terms
 
 4. PROHIBITED MATERIALS
-Hazardous materials, chemicals, liquids, asbestos, medical waste, and other regulated materials are prohibited without prior written approval and special handling arrangements.
+${PROHIBITED_MATERIALS_NOTICE.en}
 
-5. WEIGHT & OVERAGE BILLING
-Final billing is based on official scale tickets. Overages beyond included tonnage are charged at the rate specified in the quote or addendum.
+5. HEAVY MATERIAL RULES
+${HEAVY_MATERIAL_NOTICE.en}
 
-6. LIABILITY & INDEMNIFICATION
-Customer agrees to indemnify and hold Company harmless from claims arising from:
-- Improper material disposal
-- Site conditions causing damage or injury
-- Failure to obtain required permits
-- Third-party claims related to Customer's use of services
+6. CONTAMINATION & RECLASSIFICATION
+${CONTAMINATION_NOTICE.en}
 
-7. SERVICE ADDENDUMS
-Individual services may require a Service Addendum specifying site-specific terms, especially for new service locations, street placement, or commercial compliance requirements.
+7. MISDECLARED MATERIALS & REROUTING
+${MISDECLARED_REROUTE_NOTICE.en}
 
-8. TERM & TERMINATION
+8. WEIGHT & OVERAGE BILLING
+${OVERAGE_NOTICE.en}
+
+9. FILL LINE COMPLIANCE
+${FILL_LINE_NOTICE.en}
+
+10. PLACEMENT & PERMITS
+${PLACEMENT_PERMIT_NOTICE.en}
+
+11. RENTAL PERIOD & EXTRA DAYS
+${EXTRA_DAY_NOTICE.en}
+
+12. DRY RUNS & BLOCKED ACCESS
+${DRY_RUN_NOTICE.en}
+
+13. PHOTO DOCUMENTATION
+${PHOTO_DOCUMENTATION_NOTICE.en}
+
+14. LIABILITY & INDEMNIFICATION
+${LIABILITY_NOTICE.en}
+
+${INDEMNIFICATION_NOTICE.en}
+
+15. ELECTRONIC RECORDS & SIGNATURES
+${ESIGN_CONSENT.en}
+
+16. SERVICE ADDENDUMS
+Individual services may require a Service Addendum specifying site-specific terms, especially for new service locations, street placement, or commercial compliance requirements. Addendums inherit all terms of this Agreement unless specifically modified.
+
+17. TERM & TERMINATION
 This Agreement remains in effect for one year from signing and automatically renews unless terminated by either party with 30 days written notice.
 
-9. DISPUTE RESOLUTION
-Any disputes shall be resolved through good faith negotiation. If unresolved, disputes shall be subject to binding arbitration in accordance with California law.
-
-10. GOVERNING LAW
-This Agreement is governed by the laws of the State of California.
+18. GOVERNING LAW & DISPUTES
+${GOVERNING_LAW_NOTICE.en}
 
 By signing, Customer acknowledges reading, understanding, and agreeing to these terms.
 
@@ -240,22 +264,18 @@ export function isAddendumRequired(params: {
 }): { required: boolean; reason: string } {
   const { isNewAddress, placementType, customerType, hasCustomService } = params;
 
-  // New address always requires addendum
   if (isNewAddress) {
     return { required: true, reason: 'New service address requires addendum' };
   }
 
-  // Street placement requires addendum
   if (placementType === 'street' || placementType === 'public_row') {
     return { required: true, reason: 'Street placement requires addendum' };
   }
 
-  // Commercial compliance requires addendum
   if (customerType === 'commercial') {
     return { required: true, reason: 'Commercial service requires addendum' };
   }
 
-  // Custom service requires addendum
   if (hasCustomService) {
     return { required: true, reason: 'Custom service terms require addendum' };
   }
