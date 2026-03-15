@@ -2,11 +2,16 @@
  * Legal & Operational Templates
  * Standardized customer-facing communications for receipts, confirmations, and disclaimers
  * Used across SMS, Email, and Portal
+ * 
+ * NOTE: For canonical policy language (warnings, notices, contract clauses),
+ * import from '@/lib/policyLanguage.ts' instead. This file handles
+ * operational message templates (SMS, email, etc.).
  */
-
-// =====================================================
-// DISCLAIMERS
-// =====================================================
+import {
+  HEAVY_MATERIAL_NOTICE,
+  PAYMENT_TERMS_NOTICE,
+  DRY_RUN_NOTICE,
+} from './policyLanguage';
 
 export const DISCLAIMERS = {
   // Heavy Material Disclaimer
