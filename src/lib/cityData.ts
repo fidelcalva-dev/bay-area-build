@@ -56,7 +56,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Berkeley pricing includes delivery from our nearby Oakland yard. Short haul distance keeps costs low.',
     permitInfo: 'Berkeley Public Works requires a street use permit for dumpsters on public right-of-way. Apply through the city\'s online portal.',
     metaTitle: 'Dumpster Rental Berkeley CA | Fast Delivery | Local Yard',
-    metaDescription: 'Dumpster rental in Berkeley, CA. Fast delivery from our Oakland yard. 6-50 yard sizes, flat-fee concrete disposal, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Berkeley, CA. Fast delivery from our Oakland yard. 5-50 yard sizes, flat-fee concrete disposal, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'emeryville-ca', 'albany-ca', 'richmond-ca'],
   },
   {
@@ -90,7 +90,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Competitive pricing for San Leandro with quick turnaround from our Oakland operations base.',
     permitInfo: 'San Leandro requires permits for street-placed dumpsters. Contact the Engineering & Transportation Department.',
     metaTitle: 'Dumpster Rental San Leandro CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in San Leandro, CA. Fast delivery from our Oakland yard. 6-50 yard sizes for renovations, cleanouts, concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Leandro, CA. Fast delivery from our Oakland yard. 5-50 yard sizes for renovations, cleanouts, concrete. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'hayward-ca', 'castro-valley-ca', 'alameda-ca'],
   },
   {
@@ -107,7 +107,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Hayward pricing reflects efficient routing from either our Oakland or San Jose yards.',
     permitInfo: 'Hayward requires a right-of-way permit for dumpsters on public streets. Apply through the Public Works Department.',
     metaTitle: 'Dumpster Rental Hayward CA | Affordable Local Service',
-    metaDescription: 'Dumpster rental in Hayward, CA. Affordable delivery, 6-50 yard sizes, flat-fee concrete disposal. Serving all Hayward neighborhoods. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Hayward, CA. Affordable delivery, 5-50 yard sizes, flat-fee concrete disposal. Serving all Hayward neighborhoods. Call (510) 680-2150.',
     nearbyLinks: ['san-leandro-ca', 'fremont-ca', 'union-city-ca', 'castro-valley-ca'],
   },
   {
@@ -124,7 +124,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Fremont pricing benefits from proximity to our San Jose yard operations.',
     permitInfo: 'Fremont requires an encroachment permit for street-placed dumpsters. Apply through the Engineering Division.',
     metaTitle: 'Dumpster Rental Fremont CA | Local Yard Delivery',
-    metaDescription: 'Dumpster rental in Fremont, CA. Local delivery from our San Jose yard. 6-50 yard sizes, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Fremont, CA. Local delivery from our San Jose yard. 5-50 yard sizes, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['hayward-ca', 'union-city-ca', 'milpitas-ca', 'newark-ca'],
   },
   {
@@ -141,7 +141,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Emeryville enjoys some of our fastest delivery times due to proximity to our Oakland yard.',
     permitInfo: 'Emeryville requires a permit for dumpsters on public streets. Contact Public Works.',
     metaTitle: 'Dumpster Rental Emeryville CA | Minutes From Our Yard',
-    metaDescription: 'Dumpster rental in Emeryville, CA. Minutes from our Oakland yard. Fast delivery, 6-50 yard sizes, competitive pricing. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Emeryville, CA. Minutes from our Oakland yard. Fast delivery, 5-50 yard sizes, competitive pricing. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'berkeley-ca', 'albany-ca'],
   },
   {
@@ -158,7 +158,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Richmond pricing includes delivery from our Oakland yard with competitive rates for all project types.',
     permitInfo: 'Richmond requires a street use permit for public right-of-way placement. Contact the Engineering Department.',
     metaTitle: 'Dumpster Rental Richmond CA | Reliable Local Service',
-    metaDescription: 'Dumpster rental in Richmond, CA. Reliable delivery from our Oakland yard. 6-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Richmond, CA. Reliable delivery from our Oakland yard. 5-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'san-pablo-ca', 'el-cerrito-ca', 'albany-ca'],
   },
   {
@@ -175,7 +175,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Concord pricing accounts for delivery distance with transparent flat-rate pricing.',
     permitInfo: 'Concord requires a permit for street placement. Contact the Building Division.',
     metaTitle: 'Dumpster Rental Concord CA | East Bay Service',
-    metaDescription: 'Dumpster rental in Concord, CA. Professional service from our Oakland yard. 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Concord, CA. Professional service from our Oakland yard. 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['walnut-creek-ca', 'pleasant-hill-ca', 'martinez-ca', 'pittsburg-ca'],
   },
   {
@@ -192,7 +192,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Walnut Creek pricing is competitive with transparent, all-inclusive rates.',
     permitInfo: 'Walnut Creek requires an encroachment permit for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Walnut Creek CA | Professional Service',
-    metaDescription: 'Dumpster rental in Walnut Creek, CA. Professional service, 6-50 yard sizes, concrete disposal, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Walnut Creek, CA. Professional service, 5-50 yard sizes, concrete disposal, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['concord-ca', 'pleasant-hill-ca', 'lafayette-ca', 'danville-ca'],
   },
 
@@ -228,7 +228,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Santa Clara enjoys competitive pricing due to proximity to our San Jose yard.',
     permitInfo: 'Santa Clara requires a street encroachment permit for public right-of-way placement.',
     metaTitle: 'Dumpster Rental Santa Clara CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in Santa Clara, CA. Fast delivery from our San Jose yard. 6-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Santa Clara, CA. Fast delivery from our San Jose yard. 5-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'sunnyvale-ca', 'milpitas-ca', 'cupertino-ca'],
   },
   {
@@ -245,7 +245,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Sunnyvale pricing reflects efficient delivery from our nearby San Jose yard.',
     permitInfo: 'Sunnyvale requires a temporary encroachment permit for street-placed dumpsters. Apply through the Department of Public Works.',
     metaTitle: 'Dumpster Rental Sunnyvale CA | Reliable South Bay Service',
-    metaDescription: 'Dumpster rental in Sunnyvale, CA. Reliable delivery from our San Jose yard. 6-50 yard sizes, flat-fee heavy materials. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Sunnyvale, CA. Reliable delivery from our San Jose yard. 5-50 yard sizes, flat-fee heavy materials. Call (510) 680-2150.',
     nearbyLinks: ['santa-clara-ca', 'mountain-view-ca', 'cupertino-ca', 'san-jose-ca'],
   },
   {
@@ -262,7 +262,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Milpitas benefits from short delivery distance from our San Jose yard.',
     permitInfo: 'Milpitas requires a permit for dumpsters placed on public streets or sidewalks.',
     metaTitle: 'Dumpster Rental Milpitas CA | Close to Our Yard',
-    metaDescription: 'Dumpster rental in Milpitas, CA. Quick delivery from our San Jose yard. 6-50 yard sizes, competitive pricing, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Milpitas, CA. Quick delivery from our San Jose yard. 5-50 yard sizes, competitive pricing, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'fremont-ca', 'santa-clara-ca'],
   },
   {
@@ -279,7 +279,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Palo Alto pricing includes delivery from our San Jose yard with transparent flat-rate pricing.',
     permitInfo: 'Palo Alto requires a street work permit for dumpsters placed on public right-of-way. Apply through Public Works.',
     metaTitle: 'Dumpster Rental Palo Alto CA | Professional Service',
-    metaDescription: 'Dumpster rental in Palo Alto, CA. Professional service, 6-50 yard sizes, concrete disposal, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Palo Alto, CA. Professional service, 5-50 yard sizes, concrete disposal, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['mountain-view-ca', 'menlo-park-ca', 'sunnyvale-ca', 'redwood-city-ca'],
   },
 
@@ -298,7 +298,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Competitive pricing with fast delivery from our Oakland yard.',
     permitInfo: 'As an unincorporated area, Castro Valley dumpster placement on county roads requires an Alameda County permit.',
     metaTitle: 'Dumpster Rental Castro Valley CA | Fast Delivery',
-    metaDescription: 'Dumpster rental in Castro Valley, CA. Fast delivery from our Oakland yard. 6-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Castro Valley, CA. Fast delivery from our Oakland yard. 5-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['hayward-ca', 'san-leandro-ca', 'dublin-ca'],
   },
   {
@@ -315,7 +315,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Union City pricing benefits from proximity to both of our operational yards.',
     permitInfo: 'Union City requires a permit for street-placed dumpsters. Contact the Engineering Division.',
     metaTitle: 'Dumpster Rental Union City CA | Affordable Service',
-    metaDescription: 'Dumpster rental in Union City, CA. Affordable delivery, 6-50 yard sizes, concrete disposal. Serving all neighborhoods. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Union City, CA. Affordable delivery, 5-50 yard sizes, concrete disposal. Serving all neighborhoods. Call (510) 680-2150.',
     nearbyLinks: ['fremont-ca', 'hayward-ca', 'newark-ca'],
   },
   {
@@ -332,7 +332,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Newark enjoys competitive pricing from our nearby San Jose operations.',
     permitInfo: 'Newark requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Newark CA | Local Professional Service',
-    metaDescription: 'Dumpster rental in Newark, CA. Professional delivery, 6-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Newark, CA. Professional delivery, 5-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
     nearbyLinks: ['fremont-ca', 'union-city-ca', 'milpitas-ca'],
   },
   {
@@ -349,7 +349,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Dublin pricing includes delivery with transparent, all-inclusive rates.',
     permitInfo: 'Dublin requires an encroachment permit for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Dublin CA | Tri-Valley Service',
-    metaDescription: 'Dumpster rental in Dublin, CA. Tri-Valley delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Dublin, CA. Tri-Valley delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pleasanton-ca', 'livermore-ca', 'castro-valley-ca'],
   },
   {
@@ -366,7 +366,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pleasanton pricing is transparent with all-inclusive flat rates.',
     permitInfo: 'Pleasanton requires permits for street-placed dumpsters. Contact the Operations Services Department.',
     metaTitle: 'Dumpster Rental Pleasanton CA | Professional Service',
-    metaDescription: 'Dumpster rental in Pleasanton, CA. Professional delivery, 6-50 yard sizes, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pleasanton, CA. Professional delivery, 5-50 yard sizes, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['dublin-ca', 'livermore-ca', 'hayward-ca'],
   },
   {
@@ -383,7 +383,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Livermore pricing reflects delivery distance with transparent rates.',
     permitInfo: 'Livermore requires a permit for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental Livermore CA | East Bay Delivery',
-    metaDescription: 'Dumpster rental in Livermore, CA. Reliable delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Livermore, CA. Reliable delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pleasanton-ca', 'dublin-ca', 'tracy-ca'],
   },
   {
@@ -400,7 +400,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Campbell enjoys competitive pricing due to proximity to our San Jose operations.',
     permitInfo: 'Campbell requires a permit for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Campbell CA | Quick Local Delivery',
-    metaDescription: 'Dumpster rental in Campbell, CA. Quick delivery from our San Jose yard. 6-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Campbell, CA. Quick delivery from our San Jose yard. 5-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'santa-clara-ca', 'cupertino-ca', 'los-gatos-ca'],
   },
   {
@@ -417,7 +417,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Mountain View pricing reflects efficient South Bay delivery routes.',
     permitInfo: 'Mountain View requires a temporary encroachment permit for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental Mountain View CA | South Bay Service',
-    metaDescription: 'Dumpster rental in Mountain View, CA. Professional delivery from our San Jose yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Mountain View, CA. Professional delivery from our San Jose yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['sunnyvale-ca', 'palo-alto-ca', 'los-altos-ca'],
   },
   {
@@ -434,7 +434,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Cupertino pricing is competitive with delivery from our nearby San Jose operations.',
     permitInfo: 'Cupertino requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Cupertino CA | Fast Delivery',
-    metaDescription: 'Dumpster rental in Cupertino, CA. Fast delivery from our San Jose yard. 6-50 yard sizes, cleanouts, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Cupertino, CA. Fast delivery from our San Jose yard. 5-50 yard sizes, cleanouts, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['sunnyvale-ca', 'santa-clara-ca', 'san-jose-ca', 'campbell-ca'],
   },
   {
@@ -451,7 +451,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Redwood City pricing includes delivery with transparent rates.',
     permitInfo: 'Redwood City requires a street encroachment permit for public placement.',
     metaTitle: 'Dumpster Rental Redwood City CA | Peninsula Service',
-    metaDescription: 'Dumpster rental in Redwood City, CA. Peninsula delivery, 6-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Redwood City, CA. Peninsula delivery, 5-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['palo-alto-ca', 'menlo-park-ca', 'san-carlos-ca'],
   },
 
@@ -470,7 +470,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Francisco pricing includes bridge toll and city access logistics. Steep-grade and tight-access locations may require coordination.',
     permitInfo: 'SFMTA issues street-space permits for dumpster placement on public right-of-way. Apply online with 5-10 business days lead time. Dumpsters on private property do not require permits.',
     metaTitle: 'Dumpster Rental San Francisco CA | Same-Day Delivery',
-    metaDescription: 'Local dumpster rental in San Francisco, CA. Same-day delivery, 6-50 yard sizes, flat-fee concrete disposal, tight-access capable. Call (510) 680-2150.',
+    metaDescription: 'Local dumpster rental in San Francisco, CA. Same-day delivery, 5-50 yard sizes, flat-fee concrete disposal, tight-access capable. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'berkeley-ca', 'south-san-francisco-ca', 'san-mateo-ca'],
   },
   {
@@ -487,7 +487,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Ramon pricing includes transparent delivery rates.',
     permitInfo: 'San Ramon requires an encroachment permit for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental San Ramon CA | Tri-Valley Service',
-    metaDescription: 'Dumpster rental in San Ramon, CA. Professional delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Ramon, CA. Professional delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['danville-ca', 'dublin-ca', 'pleasanton-ca', 'walnut-creek-ca'],
   },
   {
@@ -504,7 +504,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Danville pricing includes transparent delivery with no hidden fees.',
     permitInfo: 'As an unincorporated community, Danville follows Contra Costa County permit requirements for street placement.',
     metaTitle: 'Dumpster Rental Danville CA | Professional Service',
-    metaDescription: 'Dumpster rental in Danville, CA. Professional delivery, 6-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Danville, CA. Professional delivery, 5-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['san-ramon-ca', 'walnut-creek-ca', 'lafayette-ca', 'pleasanton-ca'],
   },
   {
@@ -521,7 +521,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Lafayette pricing reflects competitive delivery rates from our Oakland operations.',
     permitInfo: 'Lafayette requires a permit for dumpsters placed on city streets.',
     metaTitle: 'Dumpster Rental Lafayette CA | Local Delivery',
-    metaDescription: 'Dumpster rental in Lafayette, CA. Reliable delivery, 6-50 yard sizes, renovation debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Lafayette, CA. Reliable delivery, 5-50 yard sizes, renovation debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['walnut-creek-ca', 'orinda-ca', 'moraga-ca', 'oakland-ca'],
   },
   {
@@ -538,7 +538,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Orinda pricing includes delivery with transparent rates.',
     permitInfo: 'Orinda requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Orinda CA | East Bay Hills Service',
-    metaDescription: 'Dumpster rental in Orinda, CA. Professional service, 6-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Orinda, CA. Professional service, 5-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['lafayette-ca', 'moraga-ca', 'walnut-creek-ca', 'berkeley-ca'],
   },
   {
@@ -555,7 +555,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Moraga pricing includes delivery from our Oakland yard.',
     permitInfo: 'Moraga requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Moraga CA | Local Service',
-    metaDescription: 'Dumpster rental in Moraga, CA. Professional delivery, 6-50 yard sizes, renovations, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Moraga, CA. Professional delivery, 5-50 yard sizes, renovations, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['lafayette-ca', 'orinda-ca', 'walnut-creek-ca'],
   },
   {
@@ -572,7 +572,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Antioch pricing reflects delivery distance with transparent rates.',
     permitInfo: 'Antioch requires permits for street-placed dumpsters. Contact the Engineering Division.',
     metaTitle: 'Dumpster Rental Antioch CA | East County Service',
-    metaDescription: 'Dumpster rental in Antioch, CA. Professional delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Antioch, CA. Professional delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pittsburg-ca', 'brentwood-ca', 'concord-ca'],
   },
   {
@@ -589,7 +589,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pittsburg pricing includes transparent delivery rates.',
     permitInfo: 'Pittsburg requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Pittsburg CA | Bay Point Service',
-    metaDescription: 'Dumpster rental in Pittsburg, CA. Professional delivery, 6-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pittsburg, CA. Professional delivery, 5-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['antioch-ca', 'concord-ca', 'martinez-ca'],
   },
   {
@@ -606,7 +606,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Brentwood pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Brentwood requires permits for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental Brentwood CA | East County Delivery',
-    metaDescription: 'Dumpster rental in Brentwood, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Brentwood, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['antioch-ca', 'oakley-ca', 'concord-ca'],
   },
   {
@@ -623,7 +623,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'El Cerrito enjoys competitive pricing due to proximity to our Oakland yard.',
     permitInfo: 'El Cerrito requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental El Cerrito CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in El Cerrito, CA. Fast delivery from our Oakland yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in El Cerrito, CA. Fast delivery from our Oakland yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'albany-ca', 'berkeley-ca'],
   },
   {
@@ -640,7 +640,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pinole pricing includes delivery from our Oakland yard.',
     permitInfo: 'Pinole requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Pinole CA | West Contra Costa Service',
-    metaDescription: 'Dumpster rental in Pinole, CA. Reliable delivery, 6-50 yard sizes, cleanouts, debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pinole, CA. Reliable delivery, 5-50 yard sizes, cleanouts, debris. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'hercules-ca', 'martinez-ca'],
   },
   {
@@ -657,7 +657,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Martinez pricing includes transparent flat-rate delivery.',
     permitInfo: 'Martinez requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Martinez CA | County Seat Service',
-    metaDescription: 'Dumpster rental in Martinez, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Martinez, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['concord-ca', 'pleasant-hill-ca', 'pinole-ca'],
   },
   {
@@ -674,7 +674,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Mateo pricing includes delivery with transparent rates.',
     permitInfo: 'San Mateo requires street use permits for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental San Mateo CA | Peninsula Service',
-    metaDescription: 'Dumpster rental in San Mateo, CA. Peninsula delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Mateo, CA. Peninsula delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['redwood-city-ca', 'san-bruno-ca', 'burlingame-ca'],
   },
   {
@@ -691,7 +691,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Bruno pricing includes delivery from our nearby operations.',
     permitInfo: 'San Bruno requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental San Bruno CA | Local Service',
-    metaDescription: 'Dumpster rental in San Bruno, CA. Fast delivery, 6-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Bruno, CA. Fast delivery, 5-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['san-mateo-ca', 'south-san-francisco-ca', 'pacifica-ca'],
   },
   {
@@ -708,7 +708,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pacifica pricing includes delivery with transparent rates.',
     permitInfo: 'Pacifica requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Pacifica CA | Coastal Delivery',
-    metaDescription: 'Dumpster rental in Pacifica, CA. Reliable delivery, 6-50 yard sizes, renovation debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pacifica, CA. Reliable delivery, 5-50 yard sizes, renovation debris. Call (510) 680-2150.',
     nearbyLinks: ['san-bruno-ca', 'half-moon-bay-ca', 'san-mateo-ca'],
   },
   {
@@ -725,7 +725,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Half Moon Bay pricing accounts for coastal delivery logistics.',
     permitInfo: 'Half Moon Bay requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Half Moon Bay CA | Coastside Service',
-    metaDescription: 'Dumpster rental in Half Moon Bay, CA. Coastside delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Half Moon Bay, CA. Coastside delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['pacifica-ca', 'redwood-city-ca', 'san-mateo-ca'],
   },
   {
@@ -742,7 +742,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'South San Francisco pricing is competitive with fast delivery times.',
     permitInfo: 'South San Francisco requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental South San Francisco CA | Fast Service',
-    metaDescription: 'Dumpster rental in South San Francisco, CA. Fast delivery, 6-50 yard sizes, commercial and residential. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in South San Francisco, CA. Fast delivery, 5-50 yard sizes, commercial and residential. Call (510) 680-2150.',
     nearbyLinks: ['san-francisco-ca', 'san-bruno-ca', 'san-mateo-ca'],
   },
   {
@@ -759,7 +759,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Rafael pricing includes bridge toll and Marin delivery logistics.',
     permitInfo: 'San Rafael requires a street use permit for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental San Rafael CA | Marin County Service',
-    metaDescription: 'Dumpster rental in San Rafael, CA. Marin County delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Rafael, CA. Marin County delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'berkeley-ca', 'san-francisco-ca'],
   },
   {
@@ -776,7 +776,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Vallejo pricing includes delivery from our Oakland operations.',
     permitInfo: 'Vallejo requires permits for street-placed dumpsters. Contact Public Works.',
     metaTitle: 'Dumpster Rental Vallejo CA | Solano County Service',
-    metaDescription: 'Dumpster rental in Vallejo, CA. Reliable delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Vallejo, CA. Reliable delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'napa-ca', 'berkeley-ca'],
   },
   {
@@ -793,7 +793,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Napa pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Napa requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Napa CA | Wine Country Service',
-    metaDescription: 'Dumpster rental in Napa, CA. Napa Valley delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Napa, CA. Napa Valley delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['vallejo-ca', 'american-canyon-ca'],
   },
   {
@@ -810,7 +810,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Los Gatos pricing is competitive with delivery from our San Jose yard.',
     permitInfo: 'Los Gatos requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Los Gatos CA | Local Delivery',
-    metaDescription: 'Dumpster rental in Los Gatos, CA. Fast delivery from our San Jose yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Los Gatos, CA. Fast delivery from our San Jose yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['campbell-ca', 'san-jose-ca', 'cupertino-ca'],
   },
   {
@@ -827,7 +827,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Morgan Hill pricing includes delivery from our San Jose operations.',
     permitInfo: 'Morgan Hill requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Morgan Hill CA | South County Service',
-    metaDescription: 'Dumpster rental in Morgan Hill, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Morgan Hill, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'gilroy-ca', 'campbell-ca'],
   },
   {
@@ -844,7 +844,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Gilroy pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Gilroy requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Gilroy CA | South County Delivery',
-    metaDescription: 'Dumpster rental in Gilroy, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Gilroy, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['morgan-hill-ca', 'san-jose-ca'],
   },
   {
@@ -861,7 +861,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Tracy pricing reflects extended delivery distance.',
     permitInfo: 'Tracy requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Tracy CA | Central Valley Service',
-    metaDescription: 'Dumpster rental in Tracy, CA. Reliable delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Tracy, CA. Reliable delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['livermore-ca', 'stockton-ca'],
   },
   {
@@ -878,7 +878,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Stockton pricing reflects extended delivery distance. Large projects may qualify for volume pricing.',
     permitInfo: 'Stockton requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Stockton CA | Professional Service',
-    metaDescription: 'Dumpster rental in Stockton, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Stockton, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['tracy-ca', 'livermore-ca'],
   },
   {
@@ -895,7 +895,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Sacramento pricing reflects extended delivery logistics. Large projects welcome.',
     permitInfo: 'Sacramento requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Sacramento CA | Capital Region Service',
-    metaDescription: 'Dumpster rental in Sacramento, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Sacramento, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['stockton-ca', 'tracy-ca'],
   },
   // ===== EXPANDED COVERAGE — ADDITIONAL NorCal CITIES =====
