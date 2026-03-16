@@ -759,7 +759,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Rafael pricing includes bridge toll and Marin delivery logistics.',
     permitInfo: 'San Rafael requires a street use permit for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental San Rafael CA | Marin County Service',
-    metaDescription: 'Dumpster rental in San Rafael, CA. Marin County delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Rafael, CA. Marin County delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'berkeley-ca', 'san-francisco-ca'],
   },
   {
