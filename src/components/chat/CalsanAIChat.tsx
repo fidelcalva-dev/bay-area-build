@@ -328,18 +328,18 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
 const EXAMPLE_PROMPTS_EN = [
   'Demolish a 1,800 sq ft house',
   'Kitchen remodel',
-  'Dirt and concrete removal',
+  'Dirt and concrete',
   'Garage cleanout',
   'Roofing job',
-  'Office cleanout',
+  "I'm not sure",
 ];
 const EXAMPLE_PROMPTS_ES = [
   'Demoler una casa de 1,800 pies cuadrados',
   'Remodelación de cocina',
-  'Retiro de tierra y concreto',
+  'Tierra y concreto',
   'Limpieza de garaje',
   'Trabajo de techo',
-  'Limpieza de oficina',
+  'No estoy seguro',
 ];
 
 // ---- Estimation result for structured rendering ----
