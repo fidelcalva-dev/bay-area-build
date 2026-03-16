@@ -279,7 +279,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Palo Alto pricing includes delivery from our San Jose yard with transparent flat-rate pricing.',
     permitInfo: 'Palo Alto requires a street work permit for dumpsters placed on public right-of-way. Apply through Public Works.',
     metaTitle: 'Dumpster Rental Palo Alto CA | Professional Service',
-    metaDescription: 'Dumpster rental in Palo Alto, CA. Professional service, 6-50 yard sizes, concrete disposal, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Palo Alto, CA. Professional service, 5-50 yard sizes, concrete disposal, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['mountain-view-ca', 'menlo-park-ca', 'sunnyvale-ca', 'redwood-city-ca'],
   },
 
