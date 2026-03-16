@@ -793,7 +793,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Napa pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Napa requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Napa CA | Wine Country Service',
-    metaDescription: 'Dumpster rental in Napa, CA. Napa Valley delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Napa, CA. Napa Valley delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['vallejo-ca', 'american-canyon-ca'],
   },
   {
