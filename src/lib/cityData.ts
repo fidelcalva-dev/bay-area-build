@@ -776,7 +776,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Vallejo pricing includes delivery from our Oakland operations.',
     permitInfo: 'Vallejo requires permits for street-placed dumpsters. Contact Public Works.',
     metaTitle: 'Dumpster Rental Vallejo CA | Solano County Service',
-    metaDescription: 'Dumpster rental in Vallejo, CA. Reliable delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Vallejo, CA. Reliable delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'napa-ca', 'berkeley-ca'],
   },
   {
