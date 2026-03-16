@@ -494,7 +494,7 @@ export default function SalesNewQuote() {
                 <h4 className="text-lg font-bold text-foreground mb-4">Select dumpster size</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {availableSizes.map((size) => {
-                    const includedTons = formData.material === 'heavy' ? 10 : INCLUDED_TONS[size.value] || 1;
+                    const includedTons = formData.material === 'heavy' ? 0 : (INCLUDED_TONS[size.value] || 1);
                     const image = DUMPSTER_IMAGES[size.value];
                     const zipResult = getPriceByZip(formData.zip, size.value, priceListMaterialCategory);
                     const price = zipResult.zipFound && zipResult.price > 0 ? Math.round(zipResult.price) : Math.round(size.basePrice * (zoneResult?.multiplier || 1));

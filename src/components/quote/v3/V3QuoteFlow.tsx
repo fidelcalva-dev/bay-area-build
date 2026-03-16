@@ -471,10 +471,15 @@ export function V3QuoteFlow() {
           raw_payload: {
             milestone,
             size,
+            selected_size: size,
+            material_type: materialTypeForPricing,
+            material_class: isHeavy ? (selectedProject?.id || 'heavy') : 'general',
             customer_type: customerType,
             project_id: selectedProject?.id,
             is_heavy: isHeavy,
             quote_amount: quote.isValid ? quote.subtotal : null,
+            quote_amount_high: quote.isValid ? quote.subtotalHigh : null,
+            last_step_completed: step,
           },
         },
       });
