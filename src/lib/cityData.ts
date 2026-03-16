@@ -107,7 +107,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Hayward pricing reflects efficient routing from either our Oakland or San Jose yards.',
     permitInfo: 'Hayward requires a right-of-way permit for dumpsters on public streets. Apply through the Public Works Department.',
     metaTitle: 'Dumpster Rental Hayward CA | Affordable Local Service',
-    metaDescription: 'Dumpster rental in Hayward, CA. Affordable delivery, 6-50 yard sizes, flat-fee concrete disposal. Serving all Hayward neighborhoods. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Hayward, CA. Affordable delivery, 5-50 yard sizes, flat-fee concrete disposal. Serving all Hayward neighborhoods. Call (510) 680-2150.',
     nearbyLinks: ['san-leandro-ca', 'fremont-ca', 'union-city-ca', 'castro-valley-ca'],
   },
   {
