@@ -4806,12 +4806,20 @@ export type Database = {
           billing_address: string | null
           billing_email: string | null
           billing_phone: string | null
+          commercial_account_status: string | null
+          commercial_approved_at: string | null
+          commercial_approved_by: string | null
+          commercial_notes: string | null
           company_name: string | null
           contact_name: string | null
+          contractor_tier: string | null
           created_at: string
+          credit_terms_requested: string | null
           customer_type: string
+          discount_pct: number | null
           id: string
           is_active: boolean
+          monthly_volume_estimate: number | null
           notes: string | null
           phone: string | null
           sms_opt_out: boolean | null
@@ -4826,12 +4834,20 @@ export type Database = {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
+          commercial_account_status?: string | null
+          commercial_approved_at?: string | null
+          commercial_approved_by?: string | null
+          commercial_notes?: string | null
           company_name?: string | null
           contact_name?: string | null
+          contractor_tier?: string | null
           created_at?: string
+          credit_terms_requested?: string | null
           customer_type?: string
+          discount_pct?: number | null
           id?: string
           is_active?: boolean
+          monthly_volume_estimate?: number | null
           notes?: string | null
           phone?: string | null
           sms_opt_out?: boolean | null
@@ -4846,12 +4862,20 @@ export type Database = {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
+          commercial_account_status?: string | null
+          commercial_approved_at?: string | null
+          commercial_approved_by?: string | null
+          commercial_notes?: string | null
           company_name?: string | null
           contact_name?: string | null
+          contractor_tier?: string | null
           created_at?: string
+          credit_terms_requested?: string | null
           customer_type?: string
+          discount_pct?: number | null
           id?: string
           is_active?: boolean
+          monthly_volume_estimate?: number | null
           notes?: string | null
           phone?: string | null
           sms_opt_out?: boolean | null
@@ -14026,6 +14050,7 @@ export type Database = {
           customer_lng: number | null
           customer_name: string | null
           customer_phone: string | null
+          default_price: number | null
           delivery_address: string | null
           delivery_date: string | null
           delivery_instructions: string | null
@@ -14056,6 +14081,7 @@ export type Database = {
           heavy_material_class: string | null
           heavy_material_code: string | null
           heavy_material_increment: number | null
+          heavy_material_notes: string | null
           highlevel_contact_id: string | null
           highlevel_tags: string[] | null
           id: string
@@ -14068,6 +14094,7 @@ export type Database = {
           margin: number | null
           market_id: string | null
           material_type: string
+          negotiated_price: number | null
           order_id: string | null
           original_material_type: string | null
           placement_lat: number | null
@@ -14080,8 +14107,14 @@ export type Database = {
           prepurchase_city_rate: number | null
           prepurchase_discount_pct: number | null
           prepurchase_rate: number | null
+          price_approval_required: boolean | null
+          price_approved_by_user_id: string | null
+          price_override_reason: string | null
+          price_override_user_id: string | null
           project_type: string | null
           quick_link_id: string | null
+          range_max: number | null
+          range_min: number | null
           receipt_sent_at: string | null
           reclassified_to_mixed: boolean | null
           reclassify_on_contamination: boolean | null
@@ -14149,6 +14182,7 @@ export type Database = {
           customer_lng?: number | null
           customer_name?: string | null
           customer_phone?: string | null
+          default_price?: number | null
           delivery_address?: string | null
           delivery_date?: string | null
           delivery_instructions?: string | null
@@ -14179,6 +14213,7 @@ export type Database = {
           heavy_material_class?: string | null
           heavy_material_code?: string | null
           heavy_material_increment?: number | null
+          heavy_material_notes?: string | null
           highlevel_contact_id?: string | null
           highlevel_tags?: string[] | null
           id?: string
@@ -14191,6 +14226,7 @@ export type Database = {
           margin?: number | null
           market_id?: string | null
           material_type: string
+          negotiated_price?: number | null
           order_id?: string | null
           original_material_type?: string | null
           placement_lat?: number | null
@@ -14203,8 +14239,14 @@ export type Database = {
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
+          price_approval_required?: boolean | null
+          price_approved_by_user_id?: string | null
+          price_override_reason?: string | null
+          price_override_user_id?: string | null
           project_type?: string | null
           quick_link_id?: string | null
+          range_max?: number | null
+          range_min?: number | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
           reclassify_on_contamination?: boolean | null
@@ -14272,6 +14314,7 @@ export type Database = {
           customer_lng?: number | null
           customer_name?: string | null
           customer_phone?: string | null
+          default_price?: number | null
           delivery_address?: string | null
           delivery_date?: string | null
           delivery_instructions?: string | null
@@ -14302,6 +14345,7 @@ export type Database = {
           heavy_material_class?: string | null
           heavy_material_code?: string | null
           heavy_material_increment?: number | null
+          heavy_material_notes?: string | null
           highlevel_contact_id?: string | null
           highlevel_tags?: string[] | null
           id?: string
@@ -14314,6 +14358,7 @@ export type Database = {
           margin?: number | null
           market_id?: string | null
           material_type?: string
+          negotiated_price?: number | null
           order_id?: string | null
           original_material_type?: string | null
           placement_lat?: number | null
@@ -14326,8 +14371,14 @@ export type Database = {
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
+          price_approval_required?: boolean | null
+          price_approved_by_user_id?: string | null
+          price_override_reason?: string | null
+          price_override_user_id?: string | null
           project_type?: string | null
           quick_link_id?: string | null
+          range_max?: number | null
+          range_min?: number | null
           receipt_sent_at?: string | null
           reclassified_to_mixed?: boolean | null
           reclassify_on_contamination?: boolean | null

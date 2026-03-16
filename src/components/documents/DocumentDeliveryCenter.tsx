@@ -126,11 +126,42 @@ export function DocumentDeliveryCenter({
     toast({ title: 'Link copied to clipboard' });
   }
 
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
+  async function handleGeneratePdf() {
+    setGeneratingPdf(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-quote-pdf', {
+        body: {
+          documentId,
+          documentType,
+          quoteId,
+          customerId,
+        },
+      });
+      if (error) throw error;
+      if (data?.pdf_url) {
+        window.open(data.pdf_url, '_blank');
+        toast({ title: 'PDF generated and opened' });
+      } else {
+        // Fallback: open the preview link as printable page
+        window.open(link + '?print=true', '_blank');
+        toast({ title: 'Opening printable preview', description: 'Use browser Print → Save as PDF' });
+      }
+    } catch {
+      // Fallback: open preview in print mode
+      window.open(link + '?print=true', '_blank');
+      toast({ title: 'Opening printable preview', description: 'Use browser Print → Save as PDF' });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }
+
   function handleDownloadPDF() {
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
     } else {
-      toast({ title: 'PDF not available yet', description: 'Generate a PDF first' });
+      handleGeneratePdf();
     }
   }
 
@@ -207,8 +238,9 @@ export function DocumentDeliveryCenter({
               <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleCopyLink}>
                 <Link2 className="w-3.5 h-3.5" /> Copy Link
               </Button>
-              <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleDownloadPDF}>
-                <Download className="w-3.5 h-3.5" /> Download PDF
+              <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleDownloadPDF} disabled={generatingPdf}>
+                {generatingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                {pdfUrl ? 'Download PDF' : 'Generate PDF'}
               </Button>
               <Button variant="outline" size="sm" className="h-10 gap-1.5" disabled>
                 <Upload className="w-3.5 h-3.5" /> Upload Signed

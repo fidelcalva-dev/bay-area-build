@@ -30,6 +30,7 @@ import {
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
 import { ContractsTab } from '@/components/customer360/ContractsTab';
+import { CommercialAccountCard } from '@/components/customer360/CommercialAccountCard';
 import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
 
 export default function CustomerDetail() {
@@ -224,7 +225,19 @@ export default function CustomerDetail() {
 
         {/* ─── OVERVIEW ─── */}
         <TabsContent value="overview">
-          <OverviewTab data={data} timelineEvents={timelineEvents} isTimelineLoading={isTimelineLoading} />
+          <div className="space-y-4">
+            <OverviewTab data={data} timelineEvents={timelineEvents} isTimelineLoading={isTimelineLoading} />
+            <CommercialAccountCard
+              customerId={customer.id}
+              currentStatus={(customer as any).commercial_account_status || 'none'}
+              currentTier={(customer as any).contractor_tier || 'retail'}
+              discountPct={(customer as any).discount_pct || 0}
+              monthlyVolume={(customer as any).monthly_volume_estimate}
+              creditTerms={(customer as any).credit_terms_requested}
+              notes={(customer as any).commercial_notes}
+              onUpdated={loadData}
+            />
+          </div>
         </TabsContent>
 
         {/* ─── CONTACTS ─── */}

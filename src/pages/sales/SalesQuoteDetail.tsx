@@ -49,7 +49,8 @@ const TIME_WINDOWS = [
   "Any time",
 ];
 
-const DUMPSTER_SIZES = [5, 8, 10, 15, 20, 30, 40];
+const DUMPSTER_SIZES = [5, 8, 10, 20, 30, 40, 50];
+const HEAVY_ONLY_SIZES = [5, 8, 10];
 
 const DELIVERY_PREFERENCES = [
   { value: "specific_date", label: "Specific Date" },
@@ -537,6 +538,9 @@ export default function SalesQuoteDetail() {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [salesNotes, setSalesNotes] = useState("");
   const [customerIntent, setCustomerIntent] = useState("");
+  const [heavyMaterialNotes, setHeavyMaterialNotes] = useState("");
+  const [negotiatedPrice, setNegotiatedPrice] = useState<string>("");
+  const [priceOverrideReason, setPriceOverrideReason] = useState("");
 
   // Commercial status
   const [commercialStatus, setCommercialStatus] = useState<CommercialStatus>({
@@ -571,6 +575,9 @@ export default function SalesQuoteDetail() {
       setDeliveryPhotos(data.delivery_photos || []);
       setSelectedSize(String(data.user_selected_size_yards || data.recommended_size_yards || ""));
       setSalesNotes(data.scheduling_notes || "");
+      setHeavyMaterialNotes(data.heavy_material_notes || "");
+      setNegotiatedPrice(data.negotiated_price ? String(data.negotiated_price) : "");
+      setPriceOverrideReason(data.price_override_reason || "");
 
       if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
       else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
@@ -643,6 +650,9 @@ export default function SalesQuoteDetail() {
           user_selected_size_yards: selectedSize ? Number(selectedSize) : null,
           scheduling_notes: salesNotes || null,
           preferred_delivery_window: deliveryPref !== "specific_date" ? deliveryPref : null,
+          heavy_material_notes: heavyMaterialNotes || null,
+          negotiated_price: negotiatedPrice ? Number(negotiatedPrice) : null,
+          price_override_reason: priceOverrideReason || null,
         })
         .eq("id", id);
 
@@ -987,7 +997,7 @@ export default function SalesQuoteDetail() {
                   <SelectValue placeholder="Select size..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {DUMPSTER_SIZES.map(s => (
+                  {(quote.is_heavy_material ? HEAVY_ONLY_SIZES : DUMPSTER_SIZES).map(s => (
                     <SelectItem key={s} value={String(s)}>
                       {s} Yard {s === quote.recommended_size_yards ? "(Recommended)" : ""}
                     </SelectItem>
@@ -997,12 +1007,29 @@ export default function SalesQuoteDetail() {
               {!selectedSize && (
                 <p className="text-xs text-destructive font-medium">⚠ Size is required before scheduling</p>
               )}
+              {quote.is_heavy_material && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  ⚠ Heavy material — only 5, 8, 10 yard available
+                </p>
+              )}
               {quote.recommended_size_yards && selectedSize && Number(selectedSize) !== quote.recommended_size_yards && (
                 <p className="text-xs text-amber-600 dark:text-amber-400">
                   ⚠ AI recommended {quote.recommended_size_yards}yd
                 </p>
               )}
             </div>
+            {/* Heavy material notes */}
+            {quote.is_heavy_material && (
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Heavy Material Notes</Label>
+                <Textarea
+                  placeholder="Specific material details, mix notes, unusual disposal..."
+                  value={heavyMaterialNotes}
+                  onChange={e => setHeavyMaterialNotes(e.target.value)}
+                  rows={2}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -1099,6 +1126,67 @@ export default function SalesQuoteDetail() {
 
       {/* ─── D. PRICING SUMMARY (full width) ──────────── */}
       <PricingBreakdown quote={quote} />
+
+      {/* ─── NEGOTIATED PRICING ─────────────────────────── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <DollarSign className="w-4 h-4" /> Negotiated Pricing
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-muted-foreground text-xs">Range Min</p>
+              <p className="font-medium">{quote.range_min ? `$${quote.range_min}` : `$${quote.estimated_min?.toFixed(0) || '—'}`}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Default</p>
+              <p className="font-medium">{quote.default_price ? `$${quote.default_price}` : `$${quote.subtotal?.toFixed(0) || '—'}`}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Range Max</p>
+              <p className="font-medium">{quote.range_max ? `$${quote.range_max}` : `$${quote.estimated_max?.toFixed(0) || '—'}`}</p>
+            </div>
+          </div>
+          <Separator />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Negotiated Price ($)</Label>
+              <Input
+                type="number"
+                step="1"
+                min="0"
+                placeholder={quote.subtotal ? quote.subtotal.toFixed(0) : "0"}
+                value={negotiatedPrice}
+                onChange={e => setNegotiatedPrice(e.target.value)}
+              />
+              {negotiatedPrice && Number(negotiatedPrice) < (quote.range_min || quote.estimated_min || 0) && (
+                <p className="text-xs text-destructive font-medium">⚠ Below range minimum — requires manager approval</p>
+              )}
+              {negotiatedPrice && Number(negotiatedPrice) > (quote.range_max || quote.estimated_max || 99999) && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">⚠ Above range maximum</p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Override Reason</Label>
+              <Select value={priceOverrideReason} onValueChange={setPriceOverrideReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="competitive_match">Competitive Match</SelectItem>
+                  <SelectItem value="volume_commitment">Volume Commitment</SelectItem>
+                  <SelectItem value="repeat_customer">Repeat Customer</SelectItem>
+                  <SelectItem value="manager_approved">Manager Approved</SelectItem>
+                  <SelectItem value="promotional">Promotional Rate</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* ─── TRUST COPY ────────────────────────────────── */}
       <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-1.5">

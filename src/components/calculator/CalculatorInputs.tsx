@@ -30,7 +30,7 @@ const MATERIAL_CATEGORIES: { value: MaterialCategory; label: string }[] = [
   { value: 'CLEAN_RECYCLING', label: 'Clean Recycling' },
 ];
 
-const DUMPSTER_SIZES = [10, 15, 20, 30, 40];
+const DUMPSTER_SIZES = [5, 8, 10, 20, 30, 40, 50];
 
 const CUSTOMER_TYPES: { value: CustomerType; label: string }[] = [
   { value: 'homeowner', label: 'Homeowner' },
