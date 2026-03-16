@@ -572,7 +572,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Antioch pricing reflects delivery distance with transparent rates.',
     permitInfo: 'Antioch requires permits for street-placed dumpsters. Contact the Engineering Division.',
     metaTitle: 'Dumpster Rental Antioch CA | East County Service',
-    metaDescription: 'Dumpster rental in Antioch, CA. Professional delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Antioch, CA. Professional delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pittsburg-ca', 'brentwood-ca', 'concord-ca'],
   },
   {
