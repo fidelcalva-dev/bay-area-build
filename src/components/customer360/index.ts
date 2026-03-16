@@ -11,4 +11,6 @@ export { ServiceIntelligenceTab } from './ServiceIntelligenceTab';
 export { SendPaymentButton } from './PaymentRequestsSection';
 export { SalesIntelligencePanel } from './SalesIntelligencePanel';
 export { RecommendedScriptWidget } from './RecommendedScriptWidget';
+export { PaymentsTab } from './PaymentsTab';
+export { DocumentsTab } from './DocumentsTab';
 export type * from './types';

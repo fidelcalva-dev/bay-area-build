@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   OverviewTab, ContactsTab, SitesTab, RequestsTab, AnalyticsTab, QuotesTab,
-  OrdersTab, PhotosTab, ServiceIntelligenceTab,
+  OrdersTab, PhotosTab, ServiceIntelligenceTab, PaymentsTab, DocumentsTab,
   type Customer, type Order, type Invoice, type Payment, type Quote,
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
