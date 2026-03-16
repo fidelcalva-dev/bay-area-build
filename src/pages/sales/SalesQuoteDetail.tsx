@@ -538,6 +538,9 @@ export default function SalesQuoteDetail() {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [salesNotes, setSalesNotes] = useState("");
   const [customerIntent, setCustomerIntent] = useState("");
+  const [heavyMaterialNotes, setHeavyMaterialNotes] = useState("");
+  const [negotiatedPrice, setNegotiatedPrice] = useState<string>("");
+  const [priceOverrideReason, setPriceOverrideReason] = useState("");
 
   // Commercial status
   const [commercialStatus, setCommercialStatus] = useState<CommercialStatus>({
