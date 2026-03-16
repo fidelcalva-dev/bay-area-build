@@ -349,7 +349,7 @@ export default function CustomerDetail() {
             {
               icon: <FileText className="w-5 h-5" />,
               label: 'Create Quote',
-              onClick: () => navigate('/sales/quotes/new'),
+              onClick: () => navigate(`/sales/quotes/new?customerId=${customer.id}`),
             },
             {
               icon: <Package className="w-5 h-5" />,
