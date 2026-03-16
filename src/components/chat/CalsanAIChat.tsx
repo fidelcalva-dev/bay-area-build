@@ -122,8 +122,8 @@ const MATERIAL_TYPES = [
   { id: 'mixed_heavy', label: 'Mixed Heavy', heavy: true },
 ];
 
-const GENERAL_SIZES = [10, 15, 20, 25, 30, 40];
-const HEAVY_SIZES = [8, 10];
+const GENERAL_SIZES = [5, 8, 10, 20, 30, 40, 50];
+const HEAVY_SIZES = [5, 8, 10];
 
 const TIME_WINDOWS = [
   { id: 'morning', label: 'Morning', time: '8:00 AM – 10:00 AM' },
