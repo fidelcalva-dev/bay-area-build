@@ -30,6 +30,7 @@ import {
   type CustomerContact, type CustomerSite, type Customer360Data,
 } from '@/components/customer360';
 import { ContractsTab } from '@/components/customer360/ContractsTab';
+import { CommercialAccountCard } from '@/components/customer360/CommercialAccountCard';
 import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
 
 export default function CustomerDetail() {
