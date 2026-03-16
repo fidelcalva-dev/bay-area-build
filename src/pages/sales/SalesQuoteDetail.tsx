@@ -1146,6 +1146,16 @@ export default function SalesQuoteDetail() {
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleResend} disabled={isResending}>
               <Send className="w-3.5 h-3.5" /> Send Quote
             </Button>
+            <DocumentDeliveryCenter
+              documentId={id!}
+              documentType="quote"
+              customerId={quote.customer_id}
+              quoteId={id}
+              customerPhone={quote.customer_phone}
+              customerEmail={quote.customer_email}
+              customerName={quote.customer_name}
+              onSent={fetchCommercialStatus}
+            />
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleSendContract} disabled={isSendingContract}>
               <ScrollText className="w-3.5 h-3.5" /> Send Contract
             </Button>
