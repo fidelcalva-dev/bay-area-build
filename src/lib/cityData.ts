@@ -262,7 +262,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Milpitas benefits from short delivery distance from our San Jose yard.',
     permitInfo: 'Milpitas requires a permit for dumpsters placed on public streets or sidewalks.',
     metaTitle: 'Dumpster Rental Milpitas CA | Close to Our Yard',
-    metaDescription: 'Dumpster rental in Milpitas, CA. Quick delivery from our San Jose yard. 6-50 yard sizes, competitive pricing, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Milpitas, CA. Quick delivery from our San Jose yard. 5-50 yard sizes, competitive pricing, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'fremont-ca', 'santa-clara-ca'],
   },
   {
