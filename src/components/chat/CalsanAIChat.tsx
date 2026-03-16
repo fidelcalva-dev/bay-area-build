@@ -2134,7 +2134,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                       <div className="mt-3 p-3 rounded-lg bg-muted/50 border border-border space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-foreground">
-                            {detectedLang === 'ES' ? 'Estimación del Proyecto' : 'Project Estimate'}
+                            {detectedLang === 'ES' ? 'Estimacion del Proyecto' : 'Project Estimate'}
                           </span>
                           <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded-full bg-muted">
                             {detectedLang === 'ES' ? 'Estimado inicial' : 'Initial estimate'}
@@ -2153,11 +2153,13 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                           )}
                         </div>
                         {msg.estimation.heavy_mode && (
-                          <p className="text-[10px] text-amber-600 font-medium">
-                            {detectedLang === 'ES'
-                              ? 'Material pesado: solo contenedores de 5, 8 o 10 yardas. Tarifa fija sin excedentes de peso.'
-                              : 'Heavy material: 5, 8, or 10 yard containers only. Flat rate with no weight overage.'}
-                          </p>
+                          <div className="flex items-start gap-1.5 px-2 py-1.5 rounded bg-accent/50 border border-accent">
+                            <span className="text-[10px] font-medium text-accent-foreground">
+                              {detectedLang === 'ES'
+                                ? 'Material pesado: solo contenedores de 5, 8 o 10 yardas. Tarifa fija sin excedentes de peso.'
+                                : 'Heavy material: 5, 8, or 10 yard containers only. Flat rate with no weight overage.'}
+                            </span>
+                          </div>
                         )}
                         {msg.estimation.recyclable_materials && msg.estimation.recyclable_materials.length > 0 && (
                           <div>
@@ -2169,6 +2171,21 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                                 </span>
                               ))}
                             </div>
+                          </div>
+                        )}
+                        {msg.estimation.savings_tips && msg.estimation.savings_tips.length > 0 && (
+                          <div className="pt-1.5 border-t border-border">
+                            <span className="text-[10px] text-muted-foreground font-medium">
+                              {detectedLang === 'ES' ? 'Consejos para ahorrar' : 'How to save'}
+                            </span>
+                            <ul className="mt-1 space-y-0.5">
+                              {msg.estimation.savings_tips.slice(0, 3).map((tip, j) => (
+                                <li key={j} className="flex items-start gap-1.5 text-[10px] text-foreground leading-snug">
+                                  <Check className="w-3 h-3 text-primary flex-shrink-0 mt-0.5" />
+                                  {tip}
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         )}
                       </div>
