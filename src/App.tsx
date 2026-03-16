@@ -924,6 +924,9 @@ const App = () => {
                 <Route path="config/social" element={
                   <Suspense fallback={<PageLoader />}><SocialLinksConfig /></Suspense>
                 } />
+                <Route path="config/ai-estimator-templates" element={
+                  <Suspense fallback={<PageLoader />}><AIEstimatorTemplates /></Suspense>
+                } />
                 <Route path="activity" element={
                   <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
                 } />
