@@ -4803,6 +4803,7 @@ export type Database = {
           activated_at: string | null
           activation_attempts: number
           activation_status: string
+          alternate_names_json: Json | null
           billing_address: string | null
           billing_email: string | null
           billing_phone: string | null
@@ -4818,8 +4819,12 @@ export type Database = {
           customer_type: string
           discount_pct: number | null
           id: string
+          identity_group_id: string | null
           is_active: boolean
+          merge_status: string | null
           monthly_volume_estimate: number | null
+          normalized_email: string | null
+          normalized_phone: string | null
           notes: string | null
           phone: string | null
           sms_opt_out: boolean | null
@@ -4831,6 +4836,7 @@ export type Database = {
           activated_at?: string | null
           activation_attempts?: number
           activation_status?: string
+          alternate_names_json?: Json | null
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
@@ -4846,8 +4852,12 @@ export type Database = {
           customer_type?: string
           discount_pct?: number | null
           id?: string
+          identity_group_id?: string | null
           is_active?: boolean
+          merge_status?: string | null
           monthly_volume_estimate?: number | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
           sms_opt_out?: boolean | null
@@ -4859,6 +4869,7 @@ export type Database = {
           activated_at?: string | null
           activation_attempts?: number
           activation_status?: string
+          alternate_names_json?: Json | null
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
@@ -4874,8 +4885,12 @@ export type Database = {
           customer_type?: string
           discount_pct?: number | null
           id?: string
+          identity_group_id?: string | null
           is_active?: boolean
+          merge_status?: string | null
           monthly_volume_estimate?: number | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
           sms_opt_out?: boolean | null
@@ -7686,6 +7701,92 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      identity_groups: {
+        Row: {
+          created_at: string | null
+          id: string
+          merge_confidence: number | null
+          primary_customer_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          merge_confidence?: number | null
+          primary_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          merge_confidence?: number | null
+          primary_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_groups_primary_customer_id_fkey"
+            columns: ["primary_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      identity_merge_suggestions: {
+        Row: {
+          confidence: number | null
+          created_at: string | null
+          customer_id_a: string
+          customer_id_b: string
+          id: string
+          match_type: string
+          match_value: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string | null
+          customer_id_a: string
+          customer_id_b: string
+          id?: string
+          match_type: string
+          match_value?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string | null
+          customer_id_a?: string
+          customer_id_b?: string
+          id?: string
+          match_type?: string
+          match_value?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_merge_suggestions_customer_id_a_fkey"
+            columns: ["customer_id_a"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "identity_merge_suggestions_customer_id_b_fkey"
+            columns: ["customer_id_b"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inhouse_cost_rates: {
         Row: {
@@ -11678,8 +11779,15 @@ export type Database = {
           pickup_started_at: string | null
           placement_confirmed: boolean | null
           placement_locked: boolean | null
+          placement_notes: string | null
           placement_photo_url: string | null
+          placement_point_lat: number | null
+          placement_point_lng: number | null
           placement_type: string | null
+          placement_type_requested: string | null
+          placement_verification_status: string | null
+          placement_verified_at: string | null
+          placement_verified_by: string | null
           portal_link_id: string | null
           portal_link_sent_at: string | null
           portal_show_dump_ticket: boolean | null
@@ -11784,8 +11892,15 @@ export type Database = {
           pickup_started_at?: string | null
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
+          placement_notes?: string | null
           placement_photo_url?: string | null
+          placement_point_lat?: number | null
+          placement_point_lng?: number | null
           placement_type?: string | null
+          placement_type_requested?: string | null
+          placement_verification_status?: string | null
+          placement_verified_at?: string | null
+          placement_verified_by?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
           portal_show_dump_ticket?: boolean | null
@@ -11890,8 +12005,15 @@ export type Database = {
           pickup_started_at?: string | null
           placement_confirmed?: boolean | null
           placement_locked?: boolean | null
+          placement_notes?: string | null
           placement_photo_url?: string | null
+          placement_point_lat?: number | null
+          placement_point_lng?: number | null
           placement_type?: string | null
+          placement_type_requested?: string | null
+          placement_verification_status?: string | null
+          placement_verified_at?: string | null
+          placement_verified_by?: string | null
           portal_link_id?: string | null
           portal_link_sent_at?: string | null
           portal_show_dump_ticket?: boolean | null
@@ -14029,6 +14151,7 @@ export type Database = {
       quotes: {
         Row: {
           access_flags: Json | null
+          access_notes: string | null
           ai_analysis_id: string | null
           ai_confidence: string | null
           ai_hazards_json: Json | null
@@ -14064,6 +14187,7 @@ export type Database = {
           distance_bracket: string | null
           distance_miles: number | null
           driver_id: string | null
+          driver_notes: string | null
           estimated_fill_pct: number | null
           estimated_max: number
           estimated_min: number
@@ -14093,14 +14217,20 @@ export type Database = {
           last_synced_at: string | null
           margin: number | null
           market_id: string | null
+          material_class: string | null
           material_type: string
           negotiated_price: number | null
           order_id: string | null
           original_material_type: string | null
+          permit_required: boolean | null
           placement_lat: number | null
           placement_lng: number | null
           placement_notes: string | null
+          placement_point_lat: number | null
+          placement_point_lng: number | null
           placement_type: string | null
+          placement_type_requested: string | null
+          placement_verification_status: string | null
           pre_purchase_suggested: boolean | null
           preferred_delivery_date: string | null
           preferred_delivery_window: string | null
@@ -14135,6 +14265,7 @@ export type Database = {
           subtotal: number
           suggested_extra_tons: number | null
           suggested_pickup_date: string | null
+          time_window: string | null
           toll_surcharge: number | null
           truck_distance_miles: number | null
           truck_duration_max: number | null
@@ -14161,6 +14292,7 @@ export type Database = {
         }
         Insert: {
           access_flags?: Json | null
+          access_notes?: string | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -14196,6 +14328,7 @@ export type Database = {
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
+          driver_notes?: string | null
           estimated_fill_pct?: number | null
           estimated_max: number
           estimated_min: number
@@ -14225,14 +14358,20 @@ export type Database = {
           last_synced_at?: string | null
           margin?: number | null
           market_id?: string | null
+          material_class?: string | null
           material_type: string
           negotiated_price?: number | null
           order_id?: string | null
           original_material_type?: string | null
+          permit_required?: boolean | null
           placement_lat?: number | null
           placement_lng?: number | null
           placement_notes?: string | null
+          placement_point_lat?: number | null
+          placement_point_lng?: number | null
           placement_type?: string | null
+          placement_type_requested?: string | null
+          placement_verification_status?: string | null
           pre_purchase_suggested?: boolean | null
           preferred_delivery_date?: string | null
           preferred_delivery_window?: string | null
@@ -14267,6 +14406,7 @@ export type Database = {
           subtotal: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          time_window?: string | null
           toll_surcharge?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
@@ -14293,6 +14433,7 @@ export type Database = {
         }
         Update: {
           access_flags?: Json | null
+          access_notes?: string | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -14328,6 +14469,7 @@ export type Database = {
           distance_bracket?: string | null
           distance_miles?: number | null
           driver_id?: string | null
+          driver_notes?: string | null
           estimated_fill_pct?: number | null
           estimated_max?: number
           estimated_min?: number
@@ -14357,14 +14499,20 @@ export type Database = {
           last_synced_at?: string | null
           margin?: number | null
           market_id?: string | null
+          material_class?: string | null
           material_type?: string
           negotiated_price?: number | null
           order_id?: string | null
           original_material_type?: string | null
+          permit_required?: boolean | null
           placement_lat?: number | null
           placement_lng?: number | null
           placement_notes?: string | null
+          placement_point_lat?: number | null
+          placement_point_lng?: number | null
           placement_type?: string | null
+          placement_type_requested?: string | null
+          placement_verification_status?: string | null
           pre_purchase_suggested?: boolean | null
           preferred_delivery_date?: string | null
           preferred_delivery_window?: string | null
@@ -14399,6 +14547,7 @@ export type Database = {
           subtotal?: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          time_window?: string | null
           toll_surcharge?: number | null
           truck_distance_miles?: number | null
           truck_duration_max?: number | null
