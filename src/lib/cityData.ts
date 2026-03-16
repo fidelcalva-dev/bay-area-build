@@ -298,7 +298,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Competitive pricing with fast delivery from our Oakland yard.',
     permitInfo: 'As an unincorporated area, Castro Valley dumpster placement on county roads requires an Alameda County permit.',
     metaTitle: 'Dumpster Rental Castro Valley CA | Fast Delivery',
-    metaDescription: 'Dumpster rental in Castro Valley, CA. Fast delivery from our Oakland yard. 6-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Castro Valley, CA. Fast delivery from our Oakland yard. 5-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['hayward-ca', 'san-leandro-ca', 'dublin-ca'],
   },
   {
