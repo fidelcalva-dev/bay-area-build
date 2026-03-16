@@ -289,115 +289,12 @@ export default function CustomerDetail() {
 
         {/* ─── PAYMENTS ─── */}
         <TabsContent value="payments">
-          <div className="space-y-4 md:space-y-6">
-            {/* Invoices */}
-            <Card>
-              <CardHeader className="pb-3"><CardTitle className="text-lg">Invoices</CardTitle></CardHeader>
-              <CardContent>
-                {invoices.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">No invoices yet</p>
-                ) : (
-                  <div className="space-y-2">
-                    {invoices.map(inv => (
-                      <Link key={inv.id} to={`/finance/invoices/${inv.order_id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <Receipt className="w-5 h-5 text-muted-foreground shrink-0" />
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm truncate">{inv.invoice_number || `INV-${inv.id.slice(0, 8)}`}</p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {inv.issue_date ? new Date(inv.issue_date).toLocaleDateString() : new Date(inv.created_at).toLocaleDateString()}
-                              {inv.due_date && ` · Due ${new Date(inv.due_date).toLocaleDateString()}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Badge variant={inv.payment_status === 'paid' ? 'default' : inv.payment_status === 'overdue' ? 'destructive' : 'secondary'} className="text-xs">{inv.payment_status}</Badge>
-                          <div className="text-right">
-                            <p className="font-medium text-sm">${inv.amount_due.toFixed(2)}</p>
-                            {inv.balance_due > 0 && <p className="text-[10px] text-destructive">Bal: ${inv.balance_due.toFixed(2)}</p>}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Payments */}
-            <Card>
-              <CardHeader className="pb-3"><CardTitle className="text-lg">Payment History</CardTitle></CardHeader>
-              <CardContent>
-                {payments.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">No payments recorded</p>
-                ) : (
-                  <div className="space-y-2">
-                    {payments.map(pmt => (
-                      <div key={pmt.id} className="flex items-center justify-between p-3 rounded-lg border gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <CreditCard className="w-5 h-5 text-muted-foreground shrink-0" />
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm">{pmt.payment_type}</p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {new Date(pmt.created_at).toLocaleDateString()}
-                              {pmt.card_type && pmt.card_last_four && ` · ${pmt.card_type} ****${pmt.card_last_four}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Badge variant={pmt.status === 'approved' || pmt.status === 'completed' ? 'default' : pmt.status === 'failed' || pmt.status === 'declined' ? 'destructive' : 'secondary'} className="text-xs">{pmt.status}</Badge>
-                          <span className="font-medium text-sm">${pmt.amount.toFixed(2)}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <PaymentsTab customerId={customer.id} invoices={invoices} payments={payments} />
         </TabsContent>
 
         {/* ─── DOCUMENTS ─── */}
         <TabsContent value="documents">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg">Documents</CardTitle>
-                  {!isMobile && <CardDescription>Contracts, receipts, and uploaded files</CardDescription>}
-                </div>
-                <Button variant="outline" size="sm" disabled><Upload className="w-4 h-4 mr-1.5" />Upload</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {documentEvents.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p>No documents yet</p>
-                  <p className="text-xs mt-1">Contracts, dump tickets, and uploaded files will appear here</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {documentEvents.map(event => {
-                    const details = event.details_json as Record<string, unknown> | null;
-                    const url = (details?.document_url || details?.file_url) as string | undefined;
-                    return (
-                      <div key={event.id} className="flex items-center justify-between p-3 rounded-lg border gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium truncate">{event.summary}</p>
-                            <p className="text-xs text-muted-foreground">{new Date(event.created_at).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                        {url && <Button variant="ghost" size="sm" onClick={() => window.open(url, '_blank')}><ExternalLink className="w-4 h-4" /></Button>}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <DocumentsTab customerId={customer.id} timelineEvents={timelineEvents} />
         </TabsContent>
 
         {/* ─── COMMUNICATIONS ─── */}
