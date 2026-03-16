@@ -653,6 +653,23 @@ export default function SalesNewQuote() {
                 </div>
               )}
 
+              {/* Time Window */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  <Clock className="w-4 h-4 inline mr-1.5" />
+                  Preferred Time Window
+                </label>
+                <Select value={deliveryTimeWindow} onValueChange={setDeliveryTimeWindow}>
+                  <SelectTrigger className="h-12"><SelectValue placeholder="Select time window..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="morning">Morning (8am–10am)</SelectItem>
+                    <SelectItem value="midday">Midday (10am–12pm)</SelectItem>
+                    <SelectItem value="afternoon">Afternoon (12pm–4pm)</SelectItem>
+                    <SelectItem value="any">Any Time</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   <MapPin className="w-4 h-4 inline mr-1.5" />
@@ -666,6 +683,37 @@ export default function SalesNewQuote() {
                   className="h-12"
                 />
               </div>
+
+              {/* Driver Notes */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  <Truck className="w-4 h-4 inline mr-1.5" />
+                  Driver Notes (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Gate code, placement instructions, etc."
+                  value={driverNotes}
+                  onChange={(e) => setDriverNotes(e.target.value)}
+                  className="h-12"
+                />
+              </div>
+
+              {/* Heavy material notes */}
+              {formData.material === 'heavy' && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Heavy Material Notes (optional)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Special mix details, unusual disposal notes..."
+                    value={heavyMaterialNotes}
+                    onChange={(e) => setHeavyMaterialNotes(e.target.value)}
+                    className="h-12"
+                  />
+                </div>
+              )}
 
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
                 Continue <ChevronRight className="w-5 h-5" />
