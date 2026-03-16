@@ -25,7 +25,7 @@ const INCLUDED_TONS: Record<number, number> = {
   5: 0.5, 8: 0.5, 10: 1, 20: 2, 30: 3, 40: 4, 50: 5,
 };
 
-// Sales-specific material options (3 choices mapping to underlying 'general' | 'heavy')
+// Sales-specific material options (5 choices mapping to underlying 'general' | 'heavy')
 const SALES_MATERIAL_OPTIONS = [
   {
     key: 'general',
@@ -35,17 +35,31 @@ const SALES_MATERIAL_OPTIONS = [
     Icon: Trash2,
   },
   {
-    key: 'clean_heavy',
+    key: 'clean_soil',
     materialValue: 'heavy' as const,
-    label: 'Clean Dirt / Concrete',
-    description: 'Clean fill dirt, concrete only',
+    label: 'Clean Soil',
+    description: 'Clean fill dirt only — no debris',
     Icon: Mountain,
+  },
+  {
+    key: 'clean_concrete',
+    materialValue: 'heavy' as const,
+    label: 'Clean Concrete',
+    description: 'Clean concrete only — no rebar or debris',
+    Icon: HardHat,
   },
   {
     key: 'mix_heavy',
     materialValue: 'heavy' as const,
-    label: 'Mix Heavy Materials',
-    description: 'Concrete, dirt, brick, asphalt',
+    label: 'Mixed Heavy',
+    description: 'Mix of concrete, dirt, brick, asphalt',
+    Icon: HardHat,
+  },
+  {
+    key: 'concrete_rebar',
+    materialValue: 'heavy' as const,
+    label: 'Concrete with Rebar',
+    description: 'Concrete containing rebar — facility surcharge may apply',
     Icon: HardHat,
   },
 ];
