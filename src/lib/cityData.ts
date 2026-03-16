@@ -742,7 +742,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'South San Francisco pricing is competitive with fast delivery times.',
     permitInfo: 'South San Francisco requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental South San Francisco CA | Fast Service',
-    metaDescription: 'Dumpster rental in South San Francisco, CA. Fast delivery, 6-50 yard sizes, commercial and residential. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in South San Francisco, CA. Fast delivery, 5-50 yard sizes, commercial and residential. Call (510) 680-2150.',
     nearbyLinks: ['san-francisco-ca', 'san-bruno-ca', 'san-mateo-ca'],
   },
   {
