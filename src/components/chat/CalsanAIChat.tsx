@@ -328,18 +328,18 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
 const EXAMPLE_PROMPTS_EN = [
   'Demolish a 1,800 sq ft house',
   'Kitchen remodel',
-  'Dirt and concrete removal',
+  'Dirt and concrete',
   'Garage cleanout',
   'Roofing job',
-  'Office cleanout',
+  "I'm not sure",
 ];
 const EXAMPLE_PROMPTS_ES = [
   'Demoler una casa de 1,800 pies cuadrados',
   'Remodelación de cocina',
-  'Retiro de tierra y concreto',
+  'Tierra y concreto',
   'Limpieza de garaje',
   'Trabajo de techo',
-  'Limpieza de oficina',
+  'No estoy seguro',
 ];
 
 // ---- Estimation result for structured rendering ----
@@ -2016,7 +2016,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
               <div>
-                <span className="text-sm font-semibold text-foreground">Dumpster Rental Assistant</span>
+                <span className="text-sm font-semibold text-foreground">Project Estimator</span>
               </div>
             </div>
             {chatTab === 'guided' && state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
@@ -2238,7 +2238,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 value={askInput}
                 onChange={(e) => setAskInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
-                placeholder={detectedLang === 'ES' ? 'Describa su proyecto...' : 'Describe your project or ask a question...'}
+                placeholder={detectedLang === 'ES' ? 'Ej: Demoler una casa de 1,800 pies cuadrados en Oakland' : 'e.g. Demolish a 1,800 sq ft house in Oakland'}
                 className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
                 autoFocus
               />

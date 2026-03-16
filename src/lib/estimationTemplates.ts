@@ -257,6 +257,60 @@ export const ESTIMATION_TEMPLATES: EstimationTemplate[] = [
       'Los colchones tienen un cargo de reciclaje de $50 cada uno — planifique en consecuencia.',
     ],
   },
+  {
+    id: 'tenant_improvement',
+    label: 'Tenant Improvement',
+    labelEs: 'Mejora de Local Comercial',
+    unit: 'sqft',
+    yardPerUnit: [0.02, 0.05],
+    typicalRange: [10, 30],
+    heavyMaterial: false,
+    recyclableMaterials: ['drywall', 'metal', 'cardboard', 'carpet'],
+    savingsTips: [
+      'Phase your build-out — swap service keeps a fresh container on site.',
+      'Flatten cardboard packaging to maximize space.',
+    ],
+    savingsTipsEs: [
+      'Organice su remodelación en fases — el servicio de intercambio mantiene un contenedor limpio en el sitio.',
+      'Aplane el cartón de embalaje para maximizar espacio.',
+    ],
+  },
+  {
+    id: 'contractor_recurring',
+    label: 'Contractor Recurring Job',
+    labelEs: 'Trabajo Recurrente de Contratista',
+    unit: 'fixed',
+    yardPerUnit: [0, 0],
+    typicalRange: [20, 40],
+    heavyMaterial: false,
+    recyclableMaterials: ['wood', 'metal', 'cardboard', 'drywall'],
+    savingsTips: [
+      'Apply for a contractor account for volume pricing and priority scheduling.',
+      'Swap service works well for continuous debris generation.',
+    ],
+    savingsTipsEs: [
+      'Solicite una cuenta de contratista para precios por volumen y programación prioritaria.',
+      'El servicio de intercambio funciona bien para generación continua de escombro.',
+    ],
+  },
+  {
+    id: 'mixed_unknown',
+    label: 'Mixed / Not Sure',
+    labelEs: 'Mixto / No Estoy Seguro',
+    unit: 'fixed',
+    yardPerUnit: [0, 0],
+    typicalRange: [10, 20],
+    heavyMaterial: false,
+    recyclableMaterials: ['metal', 'cardboard'],
+    savingsTips: [
+      'Upload a photo for a more accurate size recommendation.',
+      'A 20-yard is the most popular all-purpose size.',
+    ],
+    savingsTipsEs: [
+      'Suba una foto para una recomendación de tamaño más precisa.',
+      'El contenedor de 20 yardas es el más popular para uso general.',
+    ],
+  },
 ];
 
 /** Compute estimated volume for a project */

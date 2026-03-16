@@ -42,10 +42,13 @@ ESTIMATION GUIDELINES (cubic yards per project):
 - Roofing tear-off: 0.008-0.015 yd3 per sq ft (single layer lower, multi-layer higher)
 - Construction debris: 20-40 yd (typical)
 - Office cleanout: 10-30 yd
+- Tenant improvement: 0.02-0.05 yd3 per sq ft
 - Yard cleanup: 5-20 yd
 - Concrete/soil: 5-10 yd (heavy material, 5/8/10 yd containers ONLY)
 - Deck/fence demo: 0.05-0.10 yd3 per linear ft
 - Estate/eviction cleanout: 20-40 yd
+- Contractor recurring job: 20-40 yd (mention swap service and contractor accounts)
+- Mixed/not sure: recommend 20 yd as most popular, suggest uploading a photo
 
 DUMPSTER SIZE OPTIONS:
 General Debris: 5, 8, 10, 20, 30, 40, 50 yard
@@ -95,7 +98,7 @@ STRUCTURED OUTPUT — include these tags on separate lines at the END of your re
 [LANG:XX] - EN or ES
 
 If you provided a volume estimate, also include:
-[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel, bathroom_remodel, garage_cleanout, roofing, construction_debris, office_cleanout, yard_cleanup, concrete_removal, soil_excavation, deck_fence_demo, estate_cleanout, interior_demo)
+[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel, bathroom_remodel, garage_cleanout, roofing, construction_debris, office_cleanout, yard_cleanup, concrete_removal, soil_excavation, deck_fence_demo, estate_cleanout, interior_demo, tenant_improvement, contractor_recurring, mixed_unknown)
 [VOLUME_MIN:XX] - minimum estimated cubic yards (integer)
 [VOLUME_MAX:XX] - maximum estimated cubic yards (integer)
 [HEAVY_MODE:true/false] - whether heavy material mode applies
