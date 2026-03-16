@@ -470,7 +470,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Francisco pricing includes bridge toll and city access logistics. Steep-grade and tight-access locations may require coordination.',
     permitInfo: 'SFMTA issues street-space permits for dumpster placement on public right-of-way. Apply online with 5-10 business days lead time. Dumpsters on private property do not require permits.',
     metaTitle: 'Dumpster Rental San Francisco CA | Same-Day Delivery',
-    metaDescription: 'Local dumpster rental in San Francisco, CA. Same-day delivery, 6-50 yard sizes, flat-fee concrete disposal, tight-access capable. Call (510) 680-2150.',
+    metaDescription: 'Local dumpster rental in San Francisco, CA. Same-day delivery, 5-50 yard sizes, flat-fee concrete disposal, tight-access capable. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'berkeley-ca', 'south-san-francisco-ca', 'san-mateo-ca'],
   },
   {
