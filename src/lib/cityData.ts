@@ -315,7 +315,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Union City pricing benefits from proximity to both of our operational yards.',
     permitInfo: 'Union City requires a permit for street-placed dumpsters. Contact the Engineering Division.',
     metaTitle: 'Dumpster Rental Union City CA | Affordable Service',
-    metaDescription: 'Dumpster rental in Union City, CA. Affordable delivery, 6-50 yard sizes, concrete disposal. Serving all neighborhoods. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Union City, CA. Affordable delivery, 5-50 yard sizes, concrete disposal. Serving all neighborhoods. Call (510) 680-2150.',
     nearbyLinks: ['fremont-ca', 'hayward-ca', 'newark-ca'],
   },
   {
