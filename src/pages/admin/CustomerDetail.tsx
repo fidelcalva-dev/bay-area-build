@@ -456,7 +456,7 @@ function QuickActionsMenu({ customerId, customerEmail }: { customerId: string; c
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate('/sales/quotes/new')}>
+        <DropdownMenuItem onClick={() => navigate(`/sales/quotes/new?customerId=${customerId}`)}>
           <FileText className="w-4 h-4 mr-2" />Create Quote
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate(`/admin/orders?action=new&customer=${customerId}`)}>
