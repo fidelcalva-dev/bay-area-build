@@ -674,7 +674,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Mateo pricing includes delivery with transparent rates.',
     permitInfo: 'San Mateo requires street use permits for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental San Mateo CA | Peninsula Service',
-    metaDescription: 'Dumpster rental in San Mateo, CA. Peninsula delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Mateo, CA. Peninsula delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['redwood-city-ca', 'san-bruno-ca', 'burlingame-ca'],
   },
   {
