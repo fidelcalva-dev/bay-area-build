@@ -383,7 +383,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Livermore pricing reflects delivery distance with transparent rates.',
     permitInfo: 'Livermore requires a permit for dumpsters on public right-of-way.',
     metaTitle: 'Dumpster Rental Livermore CA | East Bay Delivery',
-    metaDescription: 'Dumpster rental in Livermore, CA. Reliable delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Livermore, CA. Reliable delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pleasanton-ca', 'dublin-ca', 'tracy-ca'],
   },
   {
