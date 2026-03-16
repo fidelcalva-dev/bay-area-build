@@ -349,7 +349,9 @@ interface EstimationResult {
   recommended_plan: string | null;
   heavy_mode: boolean;
   recyclable_materials: string[];
+  savings_tips: string[];
   project_type: string | null;
+  material_class: string | null;
 }
 
 // ============================================================
