@@ -121,7 +121,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
   {
     slug: 'dumpster-rental-cost-san-francisco',
     title: 'Dumpster Rental Cost in San Francisco: 2025 Pricing',
-    metaDescription: 'SF dumpster rental pricing: 6-50 yard sizes, SFMTA permit costs, steep-grade surcharges, and tips to save on your San Francisco project.',
+    metaDescription: 'SF dumpster rental pricing: 5-50 yard sizes, SFMTA permit costs, steep-grade surcharges, and tips to save on your San Francisco project.',
     targetKeyword: 'dumpster rental cost san francisco',
     targetCity: 'San Francisco',
     category: 'cost',

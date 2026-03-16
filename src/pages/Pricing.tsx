@@ -377,10 +377,20 @@ export default function Pricing() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-muted-foreground mt-4 flex items-start gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                <span><strong>Important:</strong> If trash or C&D debris is mixed with heavy materials, the load is reclassified as general debris and billed by weight ($165/ton overage). Flat-fee pricing only applies to clean, uncontaminated heavy materials.</span>
-              </p>
+              <div className="space-y-2 mt-4">
+                <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>Clean Load Rule:</strong> Clean loads of a single heavy material qualify for flat-fee pricing with disposal included. Fill to the line — do not overfill.</span>
+                </p>
+                <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>Mixed / Debris:</strong> If more than 5% of another heavy material is present, the load is reclassified as Mixed Heavy (+$300). If more than 20% is trash or debris, it becomes General Debris and is billed by weight at $165/ton.</span>
+                </p>
+                <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <span><strong>No-Notice Reroute:</strong> If materials are misdeclared and our team is not notified before pickup, a reroute surcharge of $150–$300 applies. Advance notice avoids any penalty.</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
