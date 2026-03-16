@@ -451,7 +451,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Redwood City pricing includes delivery with transparent rates.',
     permitInfo: 'Redwood City requires a street encroachment permit for public placement.',
     metaTitle: 'Dumpster Rental Redwood City CA | Peninsula Service',
-    metaDescription: 'Dumpster rental in Redwood City, CA. Peninsula delivery, 6-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Redwood City, CA. Peninsula delivery, 5-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['palo-alto-ca', 'menlo-park-ca', 'san-carlos-ca'],
   },
 
