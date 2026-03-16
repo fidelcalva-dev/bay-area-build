@@ -256,7 +256,7 @@ export function QuotesTab({ quotes, customerId, customerPhone, customerEmail }: 
             <CardDescription>{quotes.length} total quotes</CardDescription>
           </div>
           <Button size="sm" asChild>
-            <Link to="/sales/quotes/new">
+            <Link to={`/sales/quotes/new?customerId=${customerId}`}>
               <FileText className="w-4 h-4 mr-1.5" />New Quote
             </Link>
           </Button>
