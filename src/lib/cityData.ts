@@ -504,7 +504,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Danville pricing includes transparent delivery with no hidden fees.',
     permitInfo: 'As an unincorporated community, Danville follows Contra Costa County permit requirements for street placement.',
     metaTitle: 'Dumpster Rental Danville CA | Professional Service',
-    metaDescription: 'Dumpster rental in Danville, CA. Professional delivery, 6-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Danville, CA. Professional delivery, 5-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['san-ramon-ca', 'walnut-creek-ca', 'lafayette-ca', 'pleasanton-ca'],
   },
   {
