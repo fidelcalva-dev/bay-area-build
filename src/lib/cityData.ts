@@ -844,7 +844,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Gilroy pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Gilroy requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Gilroy CA | South County Delivery',
-    metaDescription: 'Dumpster rental in Gilroy, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Gilroy, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['morgan-hill-ca', 'san-jose-ca'],
   },
   {
