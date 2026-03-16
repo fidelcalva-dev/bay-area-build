@@ -6288,6 +6288,78 @@ export type Database = {
         }
         Relationships: []
       }
+      estimation_templates: {
+        Row: {
+          confidence_behavior: string
+          created_at: string
+          default_size_recommendations: Json
+          display_label: string
+          display_label_es: string
+          estimation_unit: string
+          heavy_material_flag: boolean
+          id: string
+          is_active: boolean
+          likely_materials: Json
+          needs_photo_recommendation: boolean
+          project_type: string
+          recyclable_materials: Json
+          savings_tips: Json
+          savings_tips_es: Json
+          sort_order: number
+          typical_range_max: number
+          typical_range_min: number
+          updated_at: string
+          yd3_per_unit_max: number
+          yd3_per_unit_min: number
+        }
+        Insert: {
+          confidence_behavior?: string
+          created_at?: string
+          default_size_recommendations?: Json
+          display_label: string
+          display_label_es: string
+          estimation_unit?: string
+          heavy_material_flag?: boolean
+          id?: string
+          is_active?: boolean
+          likely_materials?: Json
+          needs_photo_recommendation?: boolean
+          project_type: string
+          recyclable_materials?: Json
+          savings_tips?: Json
+          savings_tips_es?: Json
+          sort_order?: number
+          typical_range_max?: number
+          typical_range_min?: number
+          updated_at?: string
+          yd3_per_unit_max?: number
+          yd3_per_unit_min?: number
+        }
+        Update: {
+          confidence_behavior?: string
+          created_at?: string
+          default_size_recommendations?: Json
+          display_label?: string
+          display_label_es?: string
+          estimation_unit?: string
+          heavy_material_flag?: boolean
+          id?: string
+          is_active?: boolean
+          likely_materials?: Json
+          needs_photo_recommendation?: boolean
+          project_type?: string
+          recyclable_materials?: Json
+          savings_tips?: Json
+          savings_tips_es?: Json
+          sort_order?: number
+          typical_range_max?: number
+          typical_range_min?: number
+          updated_at?: string
+          yd3_per_unit_max?: number
+          yd3_per_unit_min?: number
+        }
+        Relationships: []
+      }
       extra_catalog: {
         Row: {
           applies_to_material: string

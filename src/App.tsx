@@ -288,6 +288,7 @@ const MaterialOffersPage = lazy(() => import("./pages/admin/materials/MaterialOf
 const CustomerTypeRulesPage = lazy(() => import("./pages/admin/CustomerTypeRulesPage"));
 const LocationsConfig = lazy(() => import("./pages/admin/config/LocationsConfig"));
 const SocialLinksConfig = lazy(() => import("./pages/admin/config/SocialLinksConfig"));
+const AIEstimatorTemplates = lazy(() => import("./pages/admin/config/AIEstimatorTemplates"));
 // CS Portal
 const CSLayout = lazy(() => import("./pages/cs/CSLayout"));
 const CSDashboard = lazy(() => import("./pages/cs/CSDashboard"));
@@ -922,6 +923,9 @@ const App = () => {
                 } />
                 <Route path="config/social" element={
                   <Suspense fallback={<PageLoader />}><SocialLinksConfig /></Suspense>
+                } />
+                <Route path="config/ai-estimator-templates" element={
+                  <Suspense fallback={<PageLoader />}><AIEstimatorTemplates /></Suspense>
                 } />
                 <Route path="activity" element={
                   <Suspense fallback={<PageLoader />}><AdminActivityFeed /></Suspense>
