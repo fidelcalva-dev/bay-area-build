@@ -90,7 +90,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Competitive pricing for San Leandro with quick turnaround from our Oakland operations base.',
     permitInfo: 'San Leandro requires permits for street-placed dumpsters. Contact the Engineering & Transportation Department.',
     metaTitle: 'Dumpster Rental San Leandro CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in San Leandro, CA. Fast delivery from our Oakland yard. 6-50 yard sizes for renovations, cleanouts, concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Leandro, CA. Fast delivery from our Oakland yard. 5-50 yard sizes for renovations, cleanouts, concrete. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'hayward-ca', 'castro-valley-ca', 'alameda-ca'],
   },
   {
