@@ -192,7 +192,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Walnut Creek pricing is competitive with transparent, all-inclusive rates.',
     permitInfo: 'Walnut Creek requires an encroachment permit for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Walnut Creek CA | Professional Service',
-    metaDescription: 'Dumpster rental in Walnut Creek, CA. Professional service, 6-50 yard sizes, concrete disposal, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Walnut Creek, CA. Professional service, 5-50 yard sizes, concrete disposal, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['concord-ca', 'pleasant-hill-ca', 'lafayette-ca', 'danville-ca'],
   },
 
