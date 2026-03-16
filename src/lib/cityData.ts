@@ -487,7 +487,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Ramon pricing includes transparent delivery rates.',
     permitInfo: 'San Ramon requires an encroachment permit for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental San Ramon CA | Tri-Valley Service',
-    metaDescription: 'Dumpster rental in San Ramon, CA. Professional delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Ramon, CA. Professional delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['danville-ca', 'dublin-ca', 'pleasanton-ca', 'walnut-creek-ca'],
   },
   {
