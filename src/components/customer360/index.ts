@@ -13,4 +13,5 @@ export { SalesIntelligencePanel } from './SalesIntelligencePanel';
 export { RecommendedScriptWidget } from './RecommendedScriptWidget';
 export { PaymentsTab } from './PaymentsTab';
 export { DocumentsTab } from './DocumentsTab';
+export { CommercialAccountCard } from './CommercialAccountCard';
 export type * from './types';
