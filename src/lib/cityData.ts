@@ -538,7 +538,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Orinda pricing includes delivery with transparent rates.',
     permitInfo: 'Orinda requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Orinda CA | East Bay Hills Service',
-    metaDescription: 'Dumpster rental in Orinda, CA. Professional service, 6-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Orinda, CA. Professional service, 5-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['lafayette-ca', 'moraga-ca', 'walnut-creek-ca', 'berkeley-ca'],
   },
   {
