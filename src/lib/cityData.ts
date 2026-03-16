@@ -228,7 +228,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Santa Clara enjoys competitive pricing due to proximity to our San Jose yard.',
     permitInfo: 'Santa Clara requires a street encroachment permit for public right-of-way placement.',
     metaTitle: 'Dumpster Rental Santa Clara CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in Santa Clara, CA. Fast delivery from our San Jose yard. 6-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Santa Clara, CA. Fast delivery from our San Jose yard. 5-50 yard sizes, construction debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'sunnyvale-ca', 'milpitas-ca', 'cupertino-ca'],
   },
   {
