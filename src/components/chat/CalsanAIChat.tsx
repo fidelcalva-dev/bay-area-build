@@ -2016,7 +2016,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
               <div>
-                <span className="text-sm font-semibold text-foreground">Dumpster Rental Assistant</span>
+                <span className="text-sm font-semibold text-foreground">Project Estimator</span>
               </div>
             </div>
             {chatTab === 'guided' && state.step !== 'zip' && state.step !== 'booking-confirm' && state.step !== 'confirm' && state.step !== 'photo-analyzing' && state.step !== 'payment-processing' && (
