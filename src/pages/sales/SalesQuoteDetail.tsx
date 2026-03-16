@@ -1127,6 +1127,67 @@ export default function SalesQuoteDetail() {
       {/* ─── D. PRICING SUMMARY (full width) ──────────── */}
       <PricingBreakdown quote={quote} />
 
+      {/* ─── NEGOTIATED PRICING ─────────────────────────── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <DollarSign className="w-4 h-4" /> Negotiated Pricing
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-muted-foreground text-xs">Range Min</p>
+              <p className="font-medium">{quote.range_min ? `$${quote.range_min}` : `$${quote.estimated_min?.toFixed(0) || '—'}`}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Default</p>
+              <p className="font-medium">{quote.default_price ? `$${quote.default_price}` : `$${quote.subtotal?.toFixed(0) || '—'}`}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Range Max</p>
+              <p className="font-medium">{quote.range_max ? `$${quote.range_max}` : `$${quote.estimated_max?.toFixed(0) || '—'}`}</p>
+            </div>
+          </div>
+          <Separator />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Negotiated Price ($)</Label>
+              <Input
+                type="number"
+                step="1"
+                min="0"
+                placeholder={quote.subtotal ? quote.subtotal.toFixed(0) : "0"}
+                value={negotiatedPrice}
+                onChange={e => setNegotiatedPrice(e.target.value)}
+              />
+              {negotiatedPrice && Number(negotiatedPrice) < (quote.range_min || quote.estimated_min || 0) && (
+                <p className="text-xs text-destructive font-medium">⚠ Below range minimum — requires manager approval</p>
+              )}
+              {negotiatedPrice && Number(negotiatedPrice) > (quote.range_max || quote.estimated_max || 99999) && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">⚠ Above range maximum</p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Override Reason</Label>
+              <Select value={priceOverrideReason} onValueChange={setPriceOverrideReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="competitive_match">Competitive Match</SelectItem>
+                  <SelectItem value="volume_commitment">Volume Commitment</SelectItem>
+                  <SelectItem value="repeat_customer">Repeat Customer</SelectItem>
+                  <SelectItem value="manager_approved">Manager Approved</SelectItem>
+                  <SelectItem value="promotional">Promotional Rate</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ─── TRUST COPY ────────────────────────────────── */}
       <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-1.5">
         <div className="flex items-start gap-2">
