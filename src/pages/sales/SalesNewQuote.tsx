@@ -238,7 +238,9 @@ export default function SalesNewQuote() {
   // Map salesMaterialKey to price-list material category
   const priceListMaterialCategory = useMemo(() => {
     switch (salesMaterialKey) {
-      case 'clean_heavy': return 'CLEAN_SOIL';
+      case 'clean_soil': return 'CLEAN_SOIL';
+      case 'clean_concrete': return 'CLEAN_CONCRETE';
+      case 'concrete_rebar': return 'CLEAN_CONCRETE'; // Same base pricing, facility surcharge added separately
       case 'mix_heavy': return 'MIX';
       default: return 'GENERAL';
     }
