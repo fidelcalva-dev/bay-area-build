@@ -2047,7 +2047,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               )}
             >
               <MessageSquare className="w-3 h-3" />
-              Ask a Question
+              Project Estimator
             </button>
           </div>
         </div>
