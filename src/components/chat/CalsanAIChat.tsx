@@ -2097,30 +2097,103 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             </div>
           </>
         ) : (
-          /* Ask a Question Mode */
+          /* Ask a Question Mode — AI Project Estimator */
           <div className="px-5 py-5 space-y-3 overflow-y-auto" style={{ minHeight: '320px', maxHeight: 'calc(100vh - 420px)' }}>
             {askMessages.length === 0 && (
-              <SystemMessage animate={false}>
-                <p className="text-sm text-foreground leading-relaxed">
-                  Ask about dumpster sizes, materials, pricing, rental periods, or scheduling. We will answer concisely and professionally.
-                </p>
-              </SystemMessage>
+              <>
+                <SystemMessage animate={false}>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {detectedLang === 'ES'
+                      ? 'Describa su proyecto y le estimaré el volumen de escombro, los contenedores recomendados, y cómo ahorrar.'
+                      : 'Describe your project and I will estimate debris volume, recommend the right dumpster plan, and show you how to save.'}
+                  </p>
+                </SystemMessage>
+                {/* Example prompts */}
+                <div className="flex flex-wrap gap-2">
+                  {(detectedLang === 'ES' ? EXAMPLE_PROMPTS_ES : EXAMPLE_PROMPTS_EN).map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleAskSubmit(prompt)}
+                      className="px-3 py-1.5 text-xs rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
             {askMessages.map((msg, i) => (
               msg.role === 'user'
                 ? <UserBubble key={i} text={msg.text} />
                 : <SystemMessage key={i}>
                     <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{msg.text}</p>
+                    {/* Structured estimation card */}
+                    {msg.estimation && (
+                      <div className="mt-3 p-3 rounded-lg bg-muted/50 border border-border space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground">
+                            {detectedLang === 'ES' ? 'Estimación del Proyecto' : 'Project Estimate'}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded-full bg-muted">
+                            {detectedLang === 'ES' ? 'Estimado inicial' : 'Initial estimate'}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">{detectedLang === 'ES' ? 'Volumen' : 'Volume'}</span>
+                            <p className="font-semibold text-foreground">{msg.estimation.volume_min}–{msg.estimation.volume_max} yd³</p>
+                          </div>
+                          {msg.estimation.recommended_plan && (
+                            <div>
+                              <span className="text-muted-foreground">{detectedLang === 'ES' ? 'Plan' : 'Plan'}</span>
+                              <p className="font-semibold text-foreground">{msg.estimation.recommended_plan}</p>
+                            </div>
+                          )}
+                        </div>
+                        {msg.estimation.heavy_mode && (
+                          <p className="text-[10px] text-amber-600 font-medium">
+                            {detectedLang === 'ES'
+                              ? 'Material pesado: solo contenedores de 5, 8 o 10 yardas. Tarifa fija sin excedentes de peso.'
+                              : 'Heavy material: 5, 8, or 10 yard containers only. Flat rate with no weight overage.'}
+                          </p>
+                        )}
+                        {msg.estimation.recyclable_materials && msg.estimation.recyclable_materials.length > 0 && (
+                          <div>
+                            <span className="text-[10px] text-muted-foreground">{detectedLang === 'ES' ? 'Separar para ahorrar' : 'Separate to save'}</span>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {msg.estimation.recyclable_materials.map((m, j) => (
+                                <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize">
+                                  {m.replace(/_/g, ' ')}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* CTAs */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
                       <ActionButton
-                        label="Get Exact Price"
+                        label={detectedLang === 'ES' ? 'Precio Exacto' : 'Get Exact Price'}
                         onClick={() => { setChatTab('guided'); logEvent('ai_tool_clicked', { tool: 'instant_price_from_ask' }); }}
                         variant="primary"
                         icon={<Zap className="w-3.5 h-3.5" />}
                       />
+                      <ActionButton
+                        label={detectedLang === 'ES' ? 'Subir Foto' : 'Upload Photo'}
+                        onClick={() => {
+                          setChatTab('guided');
+                          if (state.zip && state.zipFound) {
+                            setState(prev => ({ ...prev, photoPath: true, step: 'photo-upload' }));
+                          }
+                          logEvent('ai_tool_clicked', { tool: 'upload_photo_from_ask' });
+                        }}
+                        variant="default"
+                        icon={<Camera className="w-3.5 h-3.5" />}
+                      />
                       <Button asChild variant="outline" className="rounded-xl h-11 text-sm border-[hsl(220_10%_90%)]">
                         <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                          <Phone className="w-3.5 h-3.5 mr-2" /> Speak to Our Team
+                          <Phone className="w-3.5 h-3.5 mr-2" /> {detectedLang === 'ES' ? 'Llamar' : 'Call Us'}
                         </a>
                       </Button>
                     </div>
@@ -2134,7 +2207,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
-                  <span className="text-xs text-muted-foreground">Preparing response</span>
+                  <span className="text-xs text-muted-foreground">
+                    {detectedLang === 'ES' ? 'Analizando proyecto' : 'Analyzing project'}
+                  </span>
                 </div>
               </SystemMessage>
             )}
@@ -2144,7 +2219,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 value={askInput}
                 onChange={(e) => setAskInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
-                placeholder="Ask about sizes, materials, pricing, or scheduling..."
+                placeholder={detectedLang === 'ES' ? 'Describa su proyecto...' : 'Describe your project or ask a question...'}
                 className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
                 autoFocus
               />
