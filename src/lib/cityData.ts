@@ -708,7 +708,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pacifica pricing includes delivery with transparent rates.',
     permitInfo: 'Pacifica requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Pacifica CA | Coastal Delivery',
-    metaDescription: 'Dumpster rental in Pacifica, CA. Reliable delivery, 6-50 yard sizes, renovation debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pacifica, CA. Reliable delivery, 5-50 yard sizes, renovation debris. Call (510) 680-2150.',
     nearbyLinks: ['san-bruno-ca', 'half-moon-bay-ca', 'san-mateo-ca'],
   },
   {
