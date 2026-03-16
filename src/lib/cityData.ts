@@ -623,7 +623,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'El Cerrito enjoys competitive pricing due to proximity to our Oakland yard.',
     permitInfo: 'El Cerrito requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental El Cerrito CA | Fast Local Delivery',
-    metaDescription: 'Dumpster rental in El Cerrito, CA. Fast delivery from our Oakland yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in El Cerrito, CA. Fast delivery from our Oakland yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'albany-ca', 'berkeley-ca'],
   },
   {
