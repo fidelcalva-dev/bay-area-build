@@ -606,7 +606,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Brentwood pricing reflects delivery distance with transparent flat rates.',
     permitInfo: 'Brentwood requires permits for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental Brentwood CA | East County Delivery',
-    metaDescription: 'Dumpster rental in Brentwood, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Brentwood, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['antioch-ca', 'oakley-ca', 'concord-ca'],
   },
   {
