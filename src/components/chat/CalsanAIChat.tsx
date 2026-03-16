@@ -193,7 +193,7 @@ function getSizeRecommendation(projectType: string | null, heavy: boolean): numb
   if (heavy) return 10;
   if (!projectType) return 20;
   const p = projectType.toLowerCase();
-  if (p.includes('cleanout') || p.includes('yard')) return 15;
+  if (p.includes('cleanout') || p.includes('yard')) return 10;
   if (p.includes('remodel') || p.includes('framing')) return 20;
   if (p.includes('roofing')) return 20;
   if (p.includes('demo') || p.includes('construction') || p.includes('warehouse') || p.includes('large')) return 30;
