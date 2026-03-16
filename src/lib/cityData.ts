@@ -434,7 +434,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Cupertino pricing is competitive with delivery from our nearby San Jose operations.',
     permitInfo: 'Cupertino requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Cupertino CA | Fast Delivery',
-    metaDescription: 'Dumpster rental in Cupertino, CA. Fast delivery from our San Jose yard. 6-50 yard sizes, cleanouts, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Cupertino, CA. Fast delivery from our San Jose yard. 5-50 yard sizes, cleanouts, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['sunnyvale-ca', 'santa-clara-ca', 'san-jose-ca', 'campbell-ca'],
   },
   {
