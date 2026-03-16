@@ -1,36 +1,48 @@
+# Calsan OS Implementation Plan
 
+## Current Phase: Sprint 1 — Revenue Protection & Quote Reliability
 
-## Plan: Update Homepage Copy in `src/pages/Index.tsx`
+### Completed
+- [x] Master System Audit (docs/MASTER_SYSTEM_AUDIT.md) — 350+ routes audited
+- [x] Off-strategy pages noindexed (Technology, GreenHalo, GreenImpact, SoCal/Central Valley hubs)
+- [x] Homepage CTAs verified (/quote, /waste-vision, /schedule-delivery, /contractor-application)
+- [x] AI Project Estimator deployed with DB-backed templates (16 project types)
+- [x] Heavy material constraint (5/8/10 yd) enforced in estimator
+- [x] Bilingual support (EN/ES) in AI assistant
 
-The build errors are **infrastructure timeouts** (output truncated at chunk listing, no syntax/type errors shown). The last diff was in `CalsanAIChat.tsx`, not `Index.tsx`. The build will retry successfully.
+### Sprint 1 Remaining
+- [ ] Verify quote flow end-to-end persistence (size, material, date, window, notes)
+- [ ] Verify lead-ingest fires at all 4 progressive milestones
+- [ ] Verify PDF generation has no dead states
+- [ ] Audit /quick-order for redundancy with /quote
 
-### Changes needed in `src/pages/Index.tsx` (copy-only edits):
+### Sprint 2: Sales & Document Workflow
+- [ ] Verify /sales/quotes/new opens full calculator by default
+- [ ] Verify quote preview/PDF/send
+- [ ] Verify contract sign → Customer 360 visibility
+- [ ] Verify negotiated price range controls
+- [ ] Verify commercial account tier → discount
 
-**1. HERO (lines 90-102)**
-- H1: `"Dumpster Rental in the Bay Area"` → `"Professional Dumpster Rental. Done Right."`
-- Remove Bay Area underline span styling
-- Subheadline: merge two `<p>` tags into one: `"Exact pricing by ZIP. Clear rental terms. Reliable delivery across the Bay Area."`
+### Sprint 3: Customer 360 & Identity
+- [ ] Verify all 12 tabs populated
+- [ ] Verify Documents tab completeness
+- [ ] Verify identity merge review UI
+- [ ] Verify Customer Health Score
 
-**2. GUIDED ASSISTANT section (line 137-141)**
-- Add helper text below `<GuidedAssistant />`: `"You'll see your total before you confirm. No surprises."`
+### Sprint 4: Dispatch & Driver Ops
+- [ ] Verify placement marking → logistics verification → driver
+- [ ] Verify driver checkpoint workflow
+- [ ] Verify extras reporting → billing
+- [ ] Mobile UX pass
 
-**3. EXPERTISE section (lines 149-170)**
-- Title: `"We Specialize in Dumpster Rental"` → `"Dumpster Rental Is All We Do."`
-- Body: Update to requested two-paragraph copy about 2009/2015 history + "Clear rules, reliable scheduling..."
+### Sprint 5: Finance & Collections
+- [ ] Invoice generation from orders
+- [ ] Payment link flow
+- [ ] AR aging accuracy
+- [ ] Mobile UX pass
 
-**4. SIZES section (line 181-183)**
-- Title: `"Dumpster Sizes Available"` → `"Dumpster Sizes"`
-
-**5. SERVICE AREAS section (lines 233-237)**
-- Title: `"Dumpster Rental Near You"` → `"Serving the Bay Area"`
-
-**6. FINAL CTA / FOOTER tagline (line 299-301)**
-- Change from `"Serving the Bay Area since 2009..."` → `"Calsan Dumpsters Pro — Dumpster Rental. Done Right."`
-
-**What stays unchanged:**
-- All imports, routing, Layout wrapper, GuidedAssistant component and its buttons/flows
-- Trust strip items (already match requirements)
-- FAQ section (already `limit={4}`)
-- Build fingerprint block
-- All navigation links and CTAs targets
-
+### Sprint 6: SEO & QA Consolidation
+- [ ] City pages with representative pricing
+- [ ] Full SEO health audit pass
+- [ ] Archive legacy routes
+- [ ] Final mobile UX pass for all roles
