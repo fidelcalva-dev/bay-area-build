@@ -640,7 +640,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pinole pricing includes delivery from our Oakland yard.',
     permitInfo: 'Pinole requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Pinole CA | West Contra Costa Service',
-    metaDescription: 'Dumpster rental in Pinole, CA. Reliable delivery, 6-50 yard sizes, cleanouts, debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pinole, CA. Reliable delivery, 5-50 yard sizes, cleanouts, debris. Call (510) 680-2150.',
     nearbyLinks: ['richmond-ca', 'hercules-ca', 'martinez-ca'],
   },
   {
