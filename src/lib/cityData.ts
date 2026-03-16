@@ -124,7 +124,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Fremont pricing benefits from proximity to our San Jose yard operations.',
     permitInfo: 'Fremont requires an encroachment permit for street-placed dumpsters. Apply through the Engineering Division.',
     metaTitle: 'Dumpster Rental Fremont CA | Local Yard Delivery',
-    metaDescription: 'Dumpster rental in Fremont, CA. Local delivery from our San Jose yard. 6-50 yard sizes, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Fremont, CA. Local delivery from our San Jose yard. 5-50 yard sizes, flat-fee heavy materials, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['hayward-ca', 'union-city-ca', 'milpitas-ca', 'newark-ca'],
   },
   {
