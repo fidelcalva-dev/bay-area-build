@@ -725,7 +725,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Half Moon Bay pricing accounts for coastal delivery logistics.',
     permitInfo: 'Half Moon Bay requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Half Moon Bay CA | Coastside Service',
-    metaDescription: 'Dumpster rental in Half Moon Bay, CA. Coastside delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Half Moon Bay, CA. Coastside delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['pacifica-ca', 'redwood-city-ca', 'san-mateo-ca'],
   },
   {
