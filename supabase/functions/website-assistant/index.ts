@@ -8,25 +8,6 @@ const corsHeaders = {
 };
 
 // ============================================================
-// PROJECT ESTIMATION TEMPLATES (mirrors client-side config)
-// ============================================================
-const TEMPLATES: Record<string, { label: string; unit: string; yardPerUnit: [number, number]; typicalRange: [number, number]; heavy: boolean; recyclables: string[]; }> = {
-  full_house_demo: { label: 'Full House Demolition', unit: 'sqft', yardPerUnit: [0.05, 0.08], typicalRange: [60, 160], heavy: false, recyclables: ['wood','metal','concrete','drywall','roofing'] },
-  interior_demo: { label: 'Interior Demolition', unit: 'sqft', yardPerUnit: [0.02, 0.04], typicalRange: [20, 60], heavy: false, recyclables: ['drywall','wood','metal','carpet'] },
-  kitchen_remodel: { label: 'Kitchen Remodel', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [10, 20], heavy: false, recyclables: ['wood','metal','appliances','drywall'] },
-  bathroom_remodel: { label: 'Bathroom Remodel', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [5, 10], heavy: false, recyclables: ['tile','drywall','fixtures'] },
-  garage_cleanout: { label: 'Garage Cleanout', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [10, 20], heavy: false, recyclables: ['metal','cardboard','wood'] },
-  roofing: { label: 'Roofing Tear-Off', unit: 'sqft', yardPerUnit: [0.008, 0.015], typicalRange: [10, 30], heavy: false, recyclables: ['shingles'] },
-  construction_debris: { label: 'Construction Debris', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [20, 40], heavy: false, recyclables: ['wood','metal','cardboard','drywall'] },
-  office_cleanout: { label: 'Office Cleanout', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [10, 30], heavy: false, recyclables: ['cardboard','metal'] },
-  yard_cleanup: { label: 'Yard Cleanup', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [5, 20], heavy: false, recyclables: ['green_waste','wood'] },
-  concrete_removal: { label: 'Concrete Removal', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [5, 10], heavy: true, recyclables: ['concrete'] },
-  soil_excavation: { label: 'Soil/Dirt Excavation', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [5, 10], heavy: true, recyclables: ['soil'] },
-  deck_fence_demo: { label: 'Deck/Fence Demo', unit: 'linear_ft', yardPerUnit: [0.05, 0.10], typicalRange: [10, 20], heavy: false, recyclables: ['wood','metal'] },
-  estate_cleanout: { label: 'Estate/Eviction Cleanout', unit: 'fixed', yardPerUnit: [0,0], typicalRange: [20, 40], heavy: false, recyclables: ['metal','cardboard','furniture'] },
-};
-
-// ============================================================
 // SYSTEM PROMPT — Project Estimator + Sales Assistant
 // ============================================================
 const SYSTEM_PROMPT = `You are a project estimator and dumpster rental specialist for Calsan Dumpsters Pro, serving the San Francisco Bay Area.
@@ -41,7 +22,7 @@ You are a "super quote estimator." When a customer describes a project, you:
 1. Estimate the likely debris volume in cubic yards (as a range).
 2. Recommend the best dumpster size(s) or container combination.
 3. Identify recyclable or separable materials that could save money.
-4. Explain how the customer can save money.
+4. Explain how the customer can save money (1-2 specific tips).
 5. Move the customer toward exact pricing, photo upload, or human support.
 
 RESPONSE RULES:
@@ -50,19 +31,20 @@ RESPONSE RULES:
 - Present estimates as RANGES, never guarantees. Use phrases like "based on typical projects" or "initial estimate."
 - NEVER quote exact dollar amounts. Say "pricing depends on your ZIP code and project details."
 - Always end with a clear next step.
+- Ask at MOST 1-2 clarifying questions before estimating. If the customer gives a project type, estimate immediately with the typical range.
 
 ESTIMATION GUIDELINES (cubic yards per project):
-- Full house demolition: 0.05-0.08 yd³ per sq ft (e.g. 1800 sq ft = 90-144 yd³)
-- Interior demolition: 0.02-0.04 yd³ per sq ft
+- Full house demolition: 0.05-0.08 yd3 per sq ft (e.g. 1800 sq ft = 90-144 yd3)
+- Interior demolition: 0.02-0.04 yd3 per sq ft
 - Kitchen remodel: 10-20 yd (typical)
 - Bathroom remodel: 5-10 yd (typical)
 - Garage cleanout: 10-20 yd (single 10, double 20)
-- Roofing tear-off: 0.008-0.015 yd³ per sq ft (single layer lower, multi-layer higher)
+- Roofing tear-off: 0.008-0.015 yd3 per sq ft (single layer lower, multi-layer higher)
 - Construction debris: 20-40 yd (typical)
 - Office cleanout: 10-30 yd
 - Yard cleanup: 5-20 yd
 - Concrete/soil: 5-10 yd (heavy material, 5/8/10 yd containers ONLY)
-- Deck/fence demo: 0.05-0.10 yd³ per linear ft
+- Deck/fence demo: 0.05-0.10 yd3 per linear ft
 - Estate/eviction cleanout: 20-40 yd
 
 DUMPSTER SIZE OPTIONS:
@@ -79,9 +61,20 @@ HEAVY MATERIAL RULES (CRITICAL):
 - Fill-line rule: heavy containers must not be filled above the marked line.
 
 MULTI-CONTAINER RECOMMENDATIONS:
-For large projects (>50 yd³), recommend container combinations:
+For large projects (>50 yd3), recommend container combinations:
 - Use swap service when possible (we pick up full, drop empty).
-- Example: 120 yd³ demolition = recommend 3x 40-yard or 2x 50-yard + 1x 20-yard.
+- Example: 120 yd3 demolition = recommend 3x 40-yard or 2x 50-yard + 1x 20-yard.
+
+SAVINGS ADVICE — include at least ONE relevant tip in every estimation response:
+- Separate concrete/soil from mixed debris for flat-rate pricing (no weight overage).
+- Keep clean loads clean — mixing trash into heavy containers triggers reclassification and higher rates.
+- Separate metal to reduce load weight and potential overage charges.
+- Notify Calsan in advance if material type changes to avoid surcharges.
+- Use same-day delivery only when truly needed (it carries a surcharge).
+- Right-size the container — uploading photos helps us recommend accurately.
+- For large projects, swap service (we pick up full, drop empty) can be more efficient than multiple separate deliveries.
+- Contractors: apply for a contractor account for volume pricing and priority scheduling.
+- Flatten cardboard and break down lumber to maximize container space.
 
 RECYCLABLE MATERIALS TO IDENTIFY:
 - Concrete (separate for flat-rate pricing)
@@ -89,21 +82,12 @@ RECYCLABLE MATERIALS TO IDENTIFY:
 - Clean soil/dirt (separate for flat-rate)
 - Wood (can be kept together with general debris)
 - Cardboard (flatten to maximize space)
+- Appliances without Freon (accepted at no extra charge)
 
-SAVINGS ADVICE (include when relevant):
-- Separate concrete/soil from mixed debris for flat-rate pricing.
-- Keep clean loads clean — mixing trash into heavy containers triggers reclassification.
-- Separate metal to reduce load weight and potential overage.
-- Notify Calsan in advance if material type changes.
-- Use same-day delivery only when truly needed ($100 surcharge).
-- Right-size the container — uploading photos helps us recommend accurately.
+MATERIALS NOT ACCEPTED:
+- Hazardous waste, tires, batteries, paint, chemicals, medical waste, asbestos, electronics (monitors, TVs).
 
-ASKING CLARIFYING QUESTIONS:
-- Ask at MOST 1-2 clarifying questions before estimating.
-- If the customer gives a project type, estimate immediately with the typical range.
-- If they provide square footage or dimensions, use the per-unit formulas for precision.
-
-STRUCTURED OUTPUT — include these tags on separate lines at the end:
+STRUCTURED OUTPUT — include these tags on separate lines at the END of your response:
 
 [INTENT:XX] - one of: PROJECT_ESTIMATE, SIZE_HELP, MATERIAL_RULES, PRICING_HELP, DELIVERY_SPEED, HEAVY_MATERIAL, PERMIT_HELP, CONTRACTOR_INTEREST, READY_TO_BOOK, HUMAN_HANDOFF, UNKNOWN
 [STAGE:XX] - one of: EXPLORING, COMPARING, READY, NEEDS_HELP
@@ -111,7 +95,7 @@ STRUCTURED OUTPUT — include these tags on separate lines at the end:
 [LANG:XX] - EN or ES
 
 If you provided a volume estimate, also include:
-[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel)
+[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel, bathroom_remodel, garage_cleanout, roofing, construction_debris, office_cleanout, yard_cleanup, concrete_removal, soil_excavation, deck_fence_demo, estate_cleanout, interior_demo)
 [VOLUME_MIN:XX] - minimum estimated cubic yards (integer)
 [VOLUME_MAX:XX] - maximum estimated cubic yards (integer)
 [HEAVY_MODE:true/false] - whether heavy material mode applies
@@ -119,13 +103,7 @@ If you provided a volume estimate, also include:
 [RECYCLABLES:material1,material2] - separable materials identified
 [SIZE_RANGE:XX-YY] or [SIZE_RANGE:XX] - single recommended size range
 [MATERIAL_CLASS:XX] - CLEAN_CONCRETE, CLEAN_SOIL, MIXED_HEAVY, GENERAL_DEBRIS, ROOFING, YARD_WASTE
-
-MATERIALS ACCEPTED (general debris):
-- Wood, drywall, carpet, furniture, appliances (no Freon), roofing shingles, yard waste, general household junk, construction debris.
-- NOT accepted: hazardous waste, tires, batteries, paint, chemicals, medical waste, asbestos.
-
-CONTRACTOR / COMMERCIAL:
-- For contractors needing regular service, recommend applying for a contractor account for volume pricing and priority scheduling.`;
+[SAVINGS_TIPS:tip1|tip2] - pipe-separated savings tips (1-3 tips, keep each under 20 words)`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -165,7 +143,6 @@ serve(async (req) => {
       { role: "system", content: SYSTEM_PROMPT },
     ];
     
-    // Add conversation history (last 10 messages max)
     const recentHistory = conversation_history.slice(-10);
     for (const msg of recentHistory) {
       if (msg.role === 'user' || msg.role === 'assistant') {
@@ -184,7 +161,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages,
-        max_tokens: 600,
+        max_tokens: 700,
       }),
     });
 
@@ -224,6 +201,7 @@ serve(async (req) => {
     const heavyModeMatch = rawContent.match(/\[HEAVY_MODE:(true|false)\]/);
     const planMatch = rawContent.match(/\[RECOMMENDED_PLAN:([^\]]+)\]/);
     const recyclablesMatch = rawContent.match(/\[RECYCLABLES:([^\]]+)\]/);
+    const savingsTipsMatch = rawContent.match(/\[SAVINGS_TIPS:([^\]]+)\]/);
 
     // Clean answer text — remove all tags
     const answerText = rawContent
@@ -240,6 +218,7 @@ serve(async (req) => {
       .replace(/\[HEAVY_MODE:\w+\]/g, "")
       .replace(/\[RECOMMENDED_PLAN:[^\]]+\]/g, "")
       .replace(/\[RECYCLABLES:[^\]]+\]/g, "")
+      .replace(/\[SAVINGS_TIPS:[^\]]+\]/g, "")
       .trim();
 
     const intent = intentMatch ? intentMatch[1] : "UNKNOWN";
@@ -254,6 +233,7 @@ serve(async (req) => {
     const heavyMode = heavyModeMatch ? heavyModeMatch[1] === 'true' : false;
     const recommendedPlan = planMatch ? planMatch[1] : null;
     const recyclables = recyclablesMatch ? recyclablesMatch[1].split(',').map((s: string) => s.trim()) : [];
+    const savingsTips = savingsTipsMatch ? savingsTipsMatch[1].split('|').map((s: string) => s.trim()).filter(Boolean) : [];
 
     const shouldCaptureLead =
       ["READY_TO_BOOK", "PRICING_HELP", "HUMAN_HANDOFF", "CONTRACTOR_INTEREST", "PROJECT_ESTIMATE"].includes(intent) ||
@@ -268,7 +248,9 @@ serve(async (req) => {
       recommended_plan: recommendedPlan,
       heavy_mode: heavyMode,
       recyclable_materials: recyclables,
+      savings_tips: savingsTips,
       project_type: projectType,
+      material_class: materialClass,
     } : null;
 
     // Lead enrichment: fire-and-forget
@@ -278,7 +260,6 @@ serve(async (req) => {
         const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
         const sb = createClient(supabaseUrl, supabaseKey);
 
-        // Map AI stage to CRM stage
         const crmStageMap: Record<string, string> = {
           PROJECT_ESTIMATE: "ai_project_estimated",
           SIZE_HELP: "ai_size_recommended",
@@ -298,14 +279,13 @@ serve(async (req) => {
           source_detail: `homepage_ai_estimator_${(crmStageMap[intent] || "ai_started")}`,
           zip: zip || undefined,
           notes: `AI Estimator: ${question.slice(0, 200)} | Vol: ${volumeMin ? `${volumeMin}-${volumeMax}yd` : 'N/A'} | Plan: ${recommendedPlan || 'N/A'} | Stage: ${stage} | Material: ${materialClass || 'N/A'} | Lang: ${lang}`,
-          project_type: projectType ? TEMPLATES[projectType]?.label : session_context?.project_type || undefined,
+          project_type: projectType || session_context?.project_type || undefined,
           material_type: materialClass ? materialClass.toLowerCase().replace(/_/g, ' ') : session_context?.material_type || undefined,
           probable_size: sizeRange ? parseInt(sizeRange) : undefined,
           consent_status: "AI_INTERACTION",
           ...session_context,
         };
 
-        // Add estimation-specific fields
         if (estimation) {
           enrichmentData.estimated_total_yards_min = estimation.volume_min;
           enrichmentData.estimated_total_yards_max = estimation.volume_max;
