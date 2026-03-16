@@ -2149,7 +2149,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 autoFocus
               />
               <Button
-                onClick={handleAskSubmit}
+                onClick={() => handleAskSubmit()}
                 disabled={!askInput.trim() || askLoading}
                 className="h-11 rounded-xl bg-primary hover:bg-primary/90 px-5"
               >
