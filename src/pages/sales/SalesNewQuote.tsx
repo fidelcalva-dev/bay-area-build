@@ -100,6 +100,7 @@ export default function SalesNewQuote() {
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
+  const [heavyMaterialNotes, setHeavyMaterialNotes] = useState('');
 
   // Customer linking
   const [customerSearch, setCustomerSearch] = useState('');
