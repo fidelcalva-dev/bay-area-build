@@ -878,7 +878,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Stockton pricing reflects extended delivery distance. Large projects may qualify for volume pricing.',
     permitInfo: 'Stockton requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Stockton CA | Professional Service',
-    metaDescription: 'Dumpster rental in Stockton, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Stockton, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['tracy-ca', 'livermore-ca'],
   },
   {
