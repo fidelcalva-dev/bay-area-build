@@ -172,7 +172,7 @@ export default function AdminAIChat() {
                     <Check className="w-4 h-4 mr-1" /> Mark Handled
                   </Button>
                 )}
-                <Button size="sm" variant="outline" onClick={() => window.open(`/quote?zip=${(selected?.context_json as Record<string, unknown>)?.zip || ''}`, '_blank')}>
+                <Button size="sm" variant="outline" onClick={() => window.open(`/sales/quotes/new?zip=${(selected?.context_json as Record<string, unknown>)?.zip || ''}`, '_blank')}>
                   <ExternalLink className="w-4 h-4 mr-1" /> Create Quote
                 </Button>
               </div>

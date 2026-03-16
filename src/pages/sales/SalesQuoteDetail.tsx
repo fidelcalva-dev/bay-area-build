@@ -48,7 +48,7 @@ const TIME_WINDOWS = [
   "Any time",
 ];
 
-const DUMPSTER_SIZES = [6, 10, 15, 20, 30, 40];
+const DUMPSTER_SIZES = [5, 8, 10, 15, 20, 30, 40];
 
 const DELIVERY_PREFERENCES = [
   { value: "specific_date", label: "Specific Date" },
