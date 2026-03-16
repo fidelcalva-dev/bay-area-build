@@ -691,7 +691,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'San Bruno pricing includes delivery from our nearby operations.',
     permitInfo: 'San Bruno requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental San Bruno CA | Local Service',
-    metaDescription: 'Dumpster rental in San Bruno, CA. Fast delivery, 6-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in San Bruno, CA. Fast delivery, 5-50 yard sizes, cleanouts, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['san-mateo-ca', 'south-san-francisco-ca', 'pacifica-ca'],
   },
   {
