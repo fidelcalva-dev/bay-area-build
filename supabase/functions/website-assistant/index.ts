@@ -98,7 +98,7 @@ STRUCTURED OUTPUT — include these tags on separate lines at the END of your re
 [LANG:XX] - EN or ES
 
 If you provided a volume estimate, also include:
-[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel, bathroom_remodel, garage_cleanout, roofing, construction_debris, office_cleanout, yard_cleanup, concrete_removal, soil_excavation, deck_fence_demo, estate_cleanout, interior_demo)
+[PROJECT_TYPE:xx] - the detected project template id (e.g. full_house_demo, kitchen_remodel, bathroom_remodel, garage_cleanout, roofing, construction_debris, office_cleanout, yard_cleanup, concrete_removal, soil_excavation, deck_fence_demo, estate_cleanout, interior_demo, tenant_improvement, contractor_recurring, mixed_unknown)
 [VOLUME_MIN:XX] - minimum estimated cubic yards (integer)
 [VOLUME_MAX:XX] - maximum estimated cubic yards (integer)
 [HEAVY_MODE:true/false] - whether heavy material mode applies
