@@ -1277,22 +1277,28 @@ export default function SalesQuoteDetail() {
         </Card>
       </div>
 
-      {/* ─── MOBILE STICKY SAVE BAR ─────────────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-background border-t border-border p-3 flex gap-2 z-50 safe-area-pb">
-        <Button className="flex-1 gap-1.5" onClick={handleSave} disabled={isSaving}>
-          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Save
-        </Button>
-        {quote.customer_phone && (
-          <Button variant="outline" size="icon" asChild>
-            <a href={`tel:${quote.customer_phone}`}><Phone className="w-4 h-4" /></a>
+      {/* ─── MOBILE STICKY ACTION BAR ─────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-background border-t border-border p-2.5 z-50 safe-area-pb">
+        <div className="flex gap-2">
+          <Button className="flex-1 gap-1.5 h-11" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save
           </Button>
-        )}
-        {quote.customer_phone && (
-          <Button variant="outline" size="icon" asChild>
-            <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-4 h-4" /></a>
+          <Button variant="outline" className="flex-1 gap-1.5 h-11" onClick={handleResend} disabled={isResending}>
+            {isResending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            Send
           </Button>
-        )}
+          {quote.customer_phone && (
+            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" asChild>
+              <a href={`tel:${quote.customer_phone}`}><Phone className="w-4 h-4" /></a>
+            </Button>
+          )}
+          {quote.customer_phone && (
+            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" asChild>
+              <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-4 h-4" /></a>
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
