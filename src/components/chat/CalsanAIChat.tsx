@@ -2188,7 +2188,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                           }
                           logEvent('ai_tool_clicked', { tool: 'upload_photo_from_ask' });
                         }}
-                        variant="default"
+                        variant="outline"
                         icon={<Camera className="w-3.5 h-3.5" />}
                       />
                       <Button asChild variant="outline" className="rounded-xl h-11 text-sm border-[hsl(220_10%_90%)]">
