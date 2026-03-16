@@ -56,7 +56,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Berkeley pricing includes delivery from our nearby Oakland yard. Short haul distance keeps costs low.',
     permitInfo: 'Berkeley Public Works requires a street use permit for dumpsters on public right-of-way. Apply through the city\'s online portal.',
     metaTitle: 'Dumpster Rental Berkeley CA | Fast Delivery | Local Yard',
-    metaDescription: 'Dumpster rental in Berkeley, CA. Fast delivery from our Oakland yard. 6-50 yard sizes, flat-fee concrete disposal, same-day available. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Berkeley, CA. Fast delivery from our Oakland yard. 5-50 yard sizes, flat-fee concrete disposal, same-day available. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'emeryville-ca', 'albany-ca', 'richmond-ca'],
   },
   {
