@@ -895,7 +895,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Sacramento pricing reflects extended delivery logistics. Large projects welcome.',
     permitInfo: 'Sacramento requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Sacramento CA | Capital Region Service',
-    metaDescription: 'Dumpster rental in Sacramento, CA. Professional delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Sacramento, CA. Professional delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['stockton-ca', 'tracy-ca'],
   },
   // ===== EXPANDED COVERAGE — ADDITIONAL NorCal CITIES =====
