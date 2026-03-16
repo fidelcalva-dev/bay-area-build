@@ -122,8 +122,8 @@ const MATERIAL_TYPES = [
   { id: 'mixed_heavy', label: 'Mixed Heavy', heavy: true },
 ];
 
-const GENERAL_SIZES = [10, 15, 20, 25, 30, 40];
-const HEAVY_SIZES = [8, 10];
+const GENERAL_SIZES = [5, 8, 10, 20, 30, 40, 50];
+const HEAVY_SIZES = [5, 8, 10];
 
 const TIME_WINDOWS = [
   { id: 'morning', label: 'Morning', time: '8:00 AM – 10:00 AM' },
@@ -193,7 +193,7 @@ function getSizeRecommendation(projectType: string | null, heavy: boolean): numb
   if (heavy) return 10;
   if (!projectType) return 20;
   const p = projectType.toLowerCase();
-  if (p.includes('cleanout') || p.includes('yard')) return 15;
+  if (p.includes('cleanout') || p.includes('yard')) return 10;
   if (p.includes('remodel') || p.includes('framing')) return 20;
   if (p.includes('roofing')) return 20;
   if (p.includes('demo') || p.includes('construction') || p.includes('warehouse') || p.includes('large')) return 30;
@@ -201,12 +201,12 @@ function getSizeRecommendation(projectType: string | null, heavy: boolean): numb
 }
 
 function getIncludedTons(size: number, heavy: boolean): number {
-  if (heavy) return size === 8 ? 4 : 5;
+  if (heavy) return 0; // Heavy materials use flat-rate, no included tons
+  if (size <= 8) return 0.5;
   if (size <= 10) return 1;
-  if (size <= 15) return 2;
-  if (size <= 20) return 3;
-  if (size <= 25) return 3;
-  if (size <= 30) return 4;
+  if (size <= 20) return 2;
+  if (size <= 30) return 3;
+  if (size <= 40) return 4;
   return 5;
 }
 
@@ -324,31 +324,32 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
   });
 }
 
-// ---- Safe Answer Generator (no secrets exposed) ----
-function generateSafeAnswer(question: string): string {
-  const q = question.toLowerCase();
-  if (q.includes('heavy') || q.includes('concrete') || q.includes('dirt') || q.includes('soil') || q.includes('rock') || q.includes('brick')) {
-    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 5, 8, and 10 yard containers. These are flat-fee — disposal is included with no extra weight charges. A mandatory fill-line applies for safe transport.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('ton') || q.includes('weight') || q.includes('included') || q.includes('overage')) {
-    return 'Each dumpster includes a set amount of disposal tonnage (typically 1-5 tons depending on size and material). If your debris exceeds the included weight, an overage charge of $165 per additional ton applies. The included tons are clearly shown during the quote process.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('day') || q.includes('rental') || q.includes('how long') || q.includes('keep')) {
-    return 'Standard rental period is 7 days. Extensions are available and priced per day. Contact dispatch for extended rental arrangements.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('price') || q.includes('cost') || q.includes('how much') || q.includes('rate')) {
-    return 'Pricing varies by ZIP code, dumpster size, and material type. We offer transparent, all-inclusive pricing with no hidden fees. Use the Guided Quote to see your exact price in seconds.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('size') || q.includes('yard') || q.includes('which dumpster') || q.includes('recommend')) {
-    return 'For most residential cleanouts, a 20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 5, 8, and 10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('deliver') || q.includes('schedule') || q.includes('when') || q.includes('pickup') || q.includes('next day')) {
-    return 'We deliver Monday through Friday. Next-business-day delivery is available in most service areas. You can choose your preferred delivery window during booking: Morning, Midday, or Afternoon.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('pay') || q.includes('payment') || q.includes('deposit') || q.includes('credit card')) {
-    return 'We accept all major credit cards. You can pay a 50% deposit to reserve, pay in full, or reserve now and pay before delivery. All payments are processed securely through Authorize.Net with 256-bit encryption.\n\nWould you like exact pricing for your ZIP?';
-  }
-  return 'I can help with dumpster sizes, material rules, pricing guidance, rental periods, and scheduling. For exact pricing, use the Guided Quote — it takes about 30 seconds and shows your all-inclusive price.\n\nWould you like exact pricing for your ZIP?';
+// ---- Example prompts for Ask tab ----
+const EXAMPLE_PROMPTS_EN = [
+  'Demolish a 1,800 sq ft house',
+  'Kitchen remodel',
+  'Dirt and concrete removal',
+  'Garage cleanout',
+  'Roofing job',
+  'Office cleanout',
+];
+const EXAMPLE_PROMPTS_ES = [
+  'Demoler una casa de 1,800 pies cuadrados',
+  'Remodelación de cocina',
+  'Retiro de tierra y concreto',
+  'Limpieza de garaje',
+  'Trabajo de techo',
+  'Limpieza de oficina',
+];
+
+// ---- Estimation result for structured rendering ----
+interface EstimationResult {
+  volume_min: number;
+  volume_max: number;
+  recommended_plan: string | null;
+  heavy_mode: boolean;
+  recyclable_materials: string[];
+  project_type: string | null;
 }
 
 // ============================================================
@@ -387,8 +388,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
   const [selectedWindow, setSelectedWindow] = useState<string | null>(null);
   const [chatTab, setChatTab] = useState<ChatTab>('guided');
   const [askInput, setAskInput] = useState('');
-  const [askMessages, setAskMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  const [askMessages, setAskMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; estimation?: EstimationResult | null }>>([]);
   const [askLoading, setAskLoading] = useState(false);
+  const [detectedLang, setDetectedLang] = useState<'EN' | 'ES'>('EN');
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const paymentFormRef = useRef<HTMLFormElement>(null);
@@ -444,20 +446,46 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  // ---- Ask a Question handler ----
-  const handleAskSubmit = async () => {
-    const q = askInput.trim();
+  // ---- Ask a Question handler (calls real AI) ----
+  const handleAskSubmit = async (overrideQuestion?: string) => {
+    const q = (overrideQuestion || askInput).trim();
     if (!q || askLoading) return;
     logEvent('ai_question_submitted', { question: q });
-    setAskMessages(prev => [...prev, { role: 'user', text: q }]);
+    const newUserMsg = { role: 'user' as const, text: q };
+    setAskMessages(prev => [...prev, newUserMsg]);
     setAskInput('');
     setAskLoading(true);
 
-    // Generate a professional answer about dumpster rental (no secrets)
-    const safeAnswer = generateSafeAnswer(q);
-    await new Promise(r => setTimeout(r, 600)); // simulate brief thinking
-    setAskMessages(prev => [...prev, { role: 'assistant', text: safeAnswer }]);
-    setAskLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('website-assistant', {
+        body: {
+          question: q,
+          zip: state.zip || null,
+          enrich_lead: true,
+          session_context: {
+            project_type: state.projectType,
+            material_type: state.materialType,
+          },
+          conversation_history: askMessages.slice(-8),
+        },
+      });
+
+      if (error) throw error;
+
+      const answerText = data?.answer_text || 'I can help with dumpster sizing, materials, and project estimates. Could you describe your project?';
+      const estimation = data?.estimation || null;
+      if (data?.language) setDetectedLang(data.language === 'ES' ? 'ES' : 'EN');
+
+      setAskMessages(prev => [...prev, { role: 'assistant', text: answerText, estimation }]);
+    } catch (err) {
+      console.error('AI assistant error:', err);
+      setAskMessages(prev => [...prev, {
+        role: 'assistant',
+        text: 'I am having trouble connecting right now. You can get exact pricing through the Guided Quote, or call our team directly.',
+      }]);
+    } finally {
+      setAskLoading(false);
+    }
   };
 
   const handleTabSwitch = (tab: ChatTab) => {
@@ -2019,7 +2047,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
               )}
             >
               <MessageSquare className="w-3 h-3" />
-              Ask a Question
+              Project Estimator
             </button>
           </div>
         </div>
@@ -2069,30 +2097,103 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             </div>
           </>
         ) : (
-          /* Ask a Question Mode */
+          /* Ask a Question Mode — AI Project Estimator */
           <div className="px-5 py-5 space-y-3 overflow-y-auto" style={{ minHeight: '320px', maxHeight: 'calc(100vh - 420px)' }}>
             {askMessages.length === 0 && (
-              <SystemMessage animate={false}>
-                <p className="text-sm text-foreground leading-relaxed">
-                  Ask about dumpster sizes, materials, pricing, rental periods, or scheduling. We will answer concisely and professionally.
-                </p>
-              </SystemMessage>
+              <>
+                <SystemMessage animate={false}>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {detectedLang === 'ES'
+                      ? 'Describa su proyecto y le estimaré el volumen de escombro, los contenedores recomendados, y cómo ahorrar.'
+                      : 'Describe your project and I will estimate debris volume, recommend the right dumpster plan, and show you how to save.'}
+                  </p>
+                </SystemMessage>
+                {/* Example prompts */}
+                <div className="flex flex-wrap gap-2">
+                  {(detectedLang === 'ES' ? EXAMPLE_PROMPTS_ES : EXAMPLE_PROMPTS_EN).map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleAskSubmit(prompt)}
+                      className="px-3 py-1.5 text-xs rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
             {askMessages.map((msg, i) => (
               msg.role === 'user'
                 ? <UserBubble key={i} text={msg.text} />
                 : <SystemMessage key={i}>
                     <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{msg.text}</p>
+                    {/* Structured estimation card */}
+                    {msg.estimation && (
+                      <div className="mt-3 p-3 rounded-lg bg-muted/50 border border-border space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground">
+                            {detectedLang === 'ES' ? 'Estimación del Proyecto' : 'Project Estimate'}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded-full bg-muted">
+                            {detectedLang === 'ES' ? 'Estimado inicial' : 'Initial estimate'}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">{detectedLang === 'ES' ? 'Volumen' : 'Volume'}</span>
+                            <p className="font-semibold text-foreground">{msg.estimation.volume_min}–{msg.estimation.volume_max} yd³</p>
+                          </div>
+                          {msg.estimation.recommended_plan && (
+                            <div>
+                              <span className="text-muted-foreground">{detectedLang === 'ES' ? 'Plan' : 'Plan'}</span>
+                              <p className="font-semibold text-foreground">{msg.estimation.recommended_plan}</p>
+                            </div>
+                          )}
+                        </div>
+                        {msg.estimation.heavy_mode && (
+                          <p className="text-[10px] text-amber-600 font-medium">
+                            {detectedLang === 'ES'
+                              ? 'Material pesado: solo contenedores de 5, 8 o 10 yardas. Tarifa fija sin excedentes de peso.'
+                              : 'Heavy material: 5, 8, or 10 yard containers only. Flat rate with no weight overage.'}
+                          </p>
+                        )}
+                        {msg.estimation.recyclable_materials && msg.estimation.recyclable_materials.length > 0 && (
+                          <div>
+                            <span className="text-[10px] text-muted-foreground">{detectedLang === 'ES' ? 'Separar para ahorrar' : 'Separate to save'}</span>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {msg.estimation.recyclable_materials.map((m, j) => (
+                                <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize">
+                                  {m.replace(/_/g, ' ')}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* CTAs */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
                       <ActionButton
-                        label="Get Exact Price"
+                        label={detectedLang === 'ES' ? 'Precio Exacto' : 'Get Exact Price'}
                         onClick={() => { setChatTab('guided'); logEvent('ai_tool_clicked', { tool: 'instant_price_from_ask' }); }}
                         variant="primary"
                         icon={<Zap className="w-3.5 h-3.5" />}
                       />
+                      <ActionButton
+                        label={detectedLang === 'ES' ? 'Subir Foto' : 'Upload Photo'}
+                        onClick={() => {
+                          setChatTab('guided');
+                          if (state.zip && state.zipFound) {
+                            setState(prev => ({ ...prev, photoPath: true, step: 'photo-upload' }));
+                          }
+                          logEvent('ai_tool_clicked', { tool: 'upload_photo_from_ask' });
+                        }}
+                        variant="outline"
+                        icon={<Camera className="w-3.5 h-3.5" />}
+                      />
                       <Button asChild variant="outline" className="rounded-xl h-11 text-sm border-[hsl(220_10%_90%)]">
                         <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                          <Phone className="w-3.5 h-3.5 mr-2" /> Speak to Our Team
+                          <Phone className="w-3.5 h-3.5 mr-2" /> {detectedLang === 'ES' ? 'Llamar' : 'Call Us'}
                         </a>
                       </Button>
                     </div>
@@ -2106,7 +2207,9 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
-                  <span className="text-xs text-muted-foreground">Preparing response</span>
+                  <span className="text-xs text-muted-foreground">
+                    {detectedLang === 'ES' ? 'Analizando proyecto' : 'Analyzing project'}
+                  </span>
                 </div>
               </SystemMessage>
             )}
@@ -2116,12 +2219,12 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 value={askInput}
                 onChange={(e) => setAskInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
-                placeholder="Ask about sizes, materials, pricing, or scheduling..."
+                placeholder={detectedLang === 'ES' ? 'Describa su proyecto...' : 'Describe your project or ask a question...'}
                 className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
                 autoFocus
               />
               <Button
-                onClick={handleAskSubmit}
+                onClick={() => handleAskSubmit()}
                 disabled={!askInput.trim() || askLoading}
                 className="h-11 rounded-xl bg-primary hover:bg-primary/90 px-5"
               >
