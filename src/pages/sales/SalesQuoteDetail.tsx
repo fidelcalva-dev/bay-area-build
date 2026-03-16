@@ -575,6 +575,9 @@ export default function SalesQuoteDetail() {
       setDeliveryPhotos(data.delivery_photos || []);
       setSelectedSize(String(data.user_selected_size_yards || data.recommended_size_yards || ""));
       setSalesNotes(data.scheduling_notes || "");
+      setHeavyMaterialNotes(data.heavy_material_notes || "");
+      setNegotiatedPrice(data.negotiated_price ? String(data.negotiated_price) : "");
+      setPriceOverrideReason(data.price_override_reason || "");
 
       if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
       else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
