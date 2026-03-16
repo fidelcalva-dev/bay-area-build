@@ -175,7 +175,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Concord pricing accounts for delivery distance with transparent flat-rate pricing.',
     permitInfo: 'Concord requires a permit for street placement. Contact the Building Division.',
     metaTitle: 'Dumpster Rental Concord CA | East Bay Service',
-    metaDescription: 'Dumpster rental in Concord, CA. Professional service from our Oakland yard. 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Concord, CA. Professional service from our Oakland yard. 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['walnut-creek-ca', 'pleasant-hill-ca', 'martinez-ca', 'pittsburg-ca'],
   },
   {
