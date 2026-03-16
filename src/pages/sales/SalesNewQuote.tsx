@@ -333,9 +333,19 @@ export default function SalesNewQuote() {
           const updatePayload: Record<string, any> = {
             preferred_delivery_window: deliveryPref !== 'specific_date' ? deliveryPref : null,
             delivery_address: formData.address || null,
+            material_class: salesMaterialKey,
           };
           if (deliveryPref === 'specific_date' && deliveryDate) {
             updatePayload.delivery_date = deliveryDate;
+          }
+          if (deliveryTimeWindow) {
+            updatePayload.time_window = deliveryTimeWindow;
+          }
+          if (heavyMaterialNotes) {
+            updatePayload.heavy_material_notes = heavyMaterialNotes;
+          }
+          if (driverNotes) {
+            updatePayload.driver_notes = driverNotes;
           }
           if (linkedCustomerId) {
             updatePayload.customer_id = linkedCustomerId;
