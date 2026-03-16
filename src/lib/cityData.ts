@@ -521,7 +521,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Lafayette pricing reflects competitive delivery rates from our Oakland operations.',
     permitInfo: 'Lafayette requires a permit for dumpsters placed on city streets.',
     metaTitle: 'Dumpster Rental Lafayette CA | Local Delivery',
-    metaDescription: 'Dumpster rental in Lafayette, CA. Reliable delivery, 6-50 yard sizes, renovation debris, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Lafayette, CA. Reliable delivery, 5-50 yard sizes, renovation debris, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['walnut-creek-ca', 'orinda-ca', 'moraga-ca', 'oakland-ca'],
   },
   {
