@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText } from "@/services/outboundQuoteService";
 import { addTimelineNote } from "@/lib/timelineService";
+import { DocumentDeliveryCenter } from "@/components/documents/DocumentDeliveryCenter";
 
 // ─── Constants ────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
@@ -48,7 +49,7 @@ const TIME_WINDOWS = [
   "Any time",
 ];
 
-const DUMPSTER_SIZES = [6, 10, 15, 20, 30, 40];
+const DUMPSTER_SIZES = [5, 8, 10, 15, 20, 30, 40];
 
 const DELIVERY_PREFERENCES = [
   { value: "specific_date", label: "Specific Date" },
@@ -1145,6 +1146,16 @@ export default function SalesQuoteDetail() {
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleResend} disabled={isResending}>
               <Send className="w-3.5 h-3.5" /> Send Quote
             </Button>
+            <DocumentDeliveryCenter
+              documentId={id!}
+              documentType="quote"
+              customerId={quote.customer_id}
+              quoteId={id}
+              customerPhone={quote.customer_phone}
+              customerEmail={quote.customer_email}
+              customerName={quote.customer_name}
+              onSent={fetchCommercialStatus}
+            />
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleSendContract} disabled={isSendingContract}>
               <ScrollText className="w-3.5 h-3.5" /> Send Contract
             </Button>
@@ -1266,22 +1277,28 @@ export default function SalesQuoteDetail() {
         </Card>
       </div>
 
-      {/* ─── MOBILE STICKY SAVE BAR ─────────────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-background border-t border-border p-3 flex gap-2 z-50 safe-area-pb">
-        <Button className="flex-1 gap-1.5" onClick={handleSave} disabled={isSaving}>
-          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Save
-        </Button>
-        {quote.customer_phone && (
-          <Button variant="outline" size="icon" asChild>
-            <a href={`tel:${quote.customer_phone}`}><Phone className="w-4 h-4" /></a>
+      {/* ─── MOBILE STICKY ACTION BAR ─────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-background border-t border-border p-2.5 z-50 safe-area-pb">
+        <div className="flex gap-2">
+          <Button className="flex-1 gap-1.5 h-11" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save
           </Button>
-        )}
-        {quote.customer_phone && (
-          <Button variant="outline" size="icon" asChild>
-            <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-4 h-4" /></a>
+          <Button variant="outline" className="flex-1 gap-1.5 h-11" onClick={handleResend} disabled={isResending}>
+            {isResending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            Send
           </Button>
-        )}
+          {quote.customer_phone && (
+            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" asChild>
+              <a href={`tel:${quote.customer_phone}`}><Phone className="w-4 h-4" /></a>
+            </Button>
+          )}
+          {quote.customer_phone && (
+            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" asChild>
+              <a href={`sms:${quote.customer_phone}`}><MessageSquare className="w-4 h-4" /></a>
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
