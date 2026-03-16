@@ -245,7 +245,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Sunnyvale pricing reflects efficient delivery from our nearby San Jose yard.',
     permitInfo: 'Sunnyvale requires a temporary encroachment permit for street-placed dumpsters. Apply through the Department of Public Works.',
     metaTitle: 'Dumpster Rental Sunnyvale CA | Reliable South Bay Service',
-    metaDescription: 'Dumpster rental in Sunnyvale, CA. Reliable delivery from our San Jose yard. 6-50 yard sizes, flat-fee heavy materials. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Sunnyvale, CA. Reliable delivery from our San Jose yard. 5-50 yard sizes, flat-fee heavy materials. Call (510) 680-2150.',
     nearbyLinks: ['santa-clara-ca', 'mountain-view-ca', 'cupertino-ca', 'san-jose-ca'],
   },
   {
