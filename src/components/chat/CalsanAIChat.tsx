@@ -201,12 +201,12 @@ function getSizeRecommendation(projectType: string | null, heavy: boolean): numb
 }
 
 function getIncludedTons(size: number, heavy: boolean): number {
-  if (heavy) return size === 8 ? 4 : 5;
+  if (heavy) return 0; // Heavy materials use flat-rate, no included tons
+  if (size <= 8) return 0.5;
   if (size <= 10) return 1;
-  if (size <= 15) return 2;
-  if (size <= 20) return 3;
-  if (size <= 25) return 3;
-  if (size <= 30) return 4;
+  if (size <= 20) return 2;
+  if (size <= 30) return 3;
+  if (size <= 40) return 4;
   return 5;
 }
 
