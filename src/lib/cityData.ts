@@ -861,7 +861,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Tracy pricing reflects extended delivery distance.',
     permitInfo: 'Tracy requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Tracy CA | Central Valley Service',
-    metaDescription: 'Dumpster rental in Tracy, CA. Reliable delivery, 6-50 yard sizes, construction debris. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Tracy, CA. Reliable delivery, 5-50 yard sizes, construction debris. Call (510) 680-2150.',
     nearbyLinks: ['livermore-ca', 'stockton-ca'],
   },
   {
