@@ -304,7 +304,7 @@ const BEST_PRACTICES_SECTIONS = [
           <h4 className="font-semibold text-foreground mb-1">Inert (Heavy Materials) — FLAT FEE</h4>
           <p className="text-xs text-success mb-3">Disposal included, no extra weight charges</p>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><strong>6 yd:</strong> Small pads, trenches, walkways</li>
+            <li><strong>5 yd:</strong> Small pads, trenches, walkways</li>
             <li><strong>8 yd:</strong> Driveway removal, foundation work</li>
             <li><strong>10 yd:</strong> Flatwork, masonry, tear-outs</li>
           </ul>

@@ -22,7 +22,7 @@ import { Trash2, Mountain, HardHat } from 'lucide-react';
 const DUMPSTER_IMAGES: Record<number, string> = DUMPSTER_PHOTO_MAP;
 
 const INCLUDED_TONS: Record<number, number> = {
-  6: 10, 8: 10, 10: 1, 20: 2, 30: 3, 40: 4,
+  5: 0.5, 8: 0.5, 10: 1, 20: 2, 30: 3, 40: 4, 50: 5,
 };
 
 // Sales-specific material options (3 choices mapping to underlying 'general' | 'heavy')
