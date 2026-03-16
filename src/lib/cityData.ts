@@ -810,7 +810,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Los Gatos pricing is competitive with delivery from our San Jose yard.',
     permitInfo: 'Los Gatos requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Los Gatos CA | Local Delivery',
-    metaDescription: 'Dumpster rental in Los Gatos, CA. Fast delivery from our San Jose yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Los Gatos, CA. Fast delivery from our San Jose yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['campbell-ca', 'san-jose-ca', 'cupertino-ca'],
   },
   {
