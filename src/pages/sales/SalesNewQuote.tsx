@@ -112,6 +112,8 @@ export default function SalesNewQuote() {
   // Delivery preference
   const [deliveryPref, setDeliveryPref] = useState('asap');
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryTimeWindow, setDeliveryTimeWindow] = useState('');
+  const [driverNotes, setDriverNotes] = useState('');
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
