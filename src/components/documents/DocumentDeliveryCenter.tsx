@@ -238,8 +238,9 @@ export function DocumentDeliveryCenter({
               <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleCopyLink}>
                 <Link2 className="w-3.5 h-3.5" /> Copy Link
               </Button>
-              <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleDownloadPDF}>
-                <Download className="w-3.5 h-3.5" /> Download PDF
+              <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleDownloadPDF} disabled={generatingPdf}>
+                {generatingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                {pdfUrl ? 'Download PDF' : 'Generate PDF'}
               </Button>
               <Button variant="outline" size="sm" className="h-10 gap-1.5" disabled>
                 <Upload className="w-3.5 h-3.5" /> Upload Signed
