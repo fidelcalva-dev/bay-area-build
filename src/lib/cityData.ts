@@ -332,7 +332,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Newark enjoys competitive pricing from our nearby San Jose operations.',
     permitInfo: 'Newark requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Newark CA | Local Professional Service',
-    metaDescription: 'Dumpster rental in Newark, CA. Professional delivery, 6-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Newark, CA. Professional delivery, 5-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
     nearbyLinks: ['fremont-ca', 'union-city-ca', 'milpitas-ca'],
   },
   {
