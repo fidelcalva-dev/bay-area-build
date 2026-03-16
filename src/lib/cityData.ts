@@ -555,7 +555,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Moraga pricing includes delivery from our Oakland yard.',
     permitInfo: 'Moraga requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Moraga CA | Local Service',
-    metaDescription: 'Dumpster rental in Moraga, CA. Professional delivery, 6-50 yard sizes, renovations, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Moraga, CA. Professional delivery, 5-50 yard sizes, renovations, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['lafayette-ca', 'orinda-ca', 'walnut-creek-ca'],
   },
   {
