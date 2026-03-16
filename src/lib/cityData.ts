@@ -589,7 +589,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pittsburg pricing includes transparent delivery rates.',
     permitInfo: 'Pittsburg requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Pittsburg CA | Bay Point Service',
-    metaDescription: 'Dumpster rental in Pittsburg, CA. Professional delivery, 6-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pittsburg, CA. Professional delivery, 5-50 yard sizes, concrete, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['antioch-ca', 'concord-ca', 'martinez-ca'],
   },
   {
