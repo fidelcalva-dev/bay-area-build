@@ -446,20 +446,46 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  // ---- Ask a Question handler ----
-  const handleAskSubmit = async () => {
-    const q = askInput.trim();
+  // ---- Ask a Question handler (calls real AI) ----
+  const handleAskSubmit = async (overrideQuestion?: string) => {
+    const q = (overrideQuestion || askInput).trim();
     if (!q || askLoading) return;
     logEvent('ai_question_submitted', { question: q });
-    setAskMessages(prev => [...prev, { role: 'user', text: q }]);
+    const newUserMsg = { role: 'user' as const, text: q };
+    setAskMessages(prev => [...prev, newUserMsg]);
     setAskInput('');
     setAskLoading(true);
 
-    // Generate a professional answer about dumpster rental (no secrets)
-    const safeAnswer = generateSafeAnswer(q);
-    await new Promise(r => setTimeout(r, 600)); // simulate brief thinking
-    setAskMessages(prev => [...prev, { role: 'assistant', text: safeAnswer }]);
-    setAskLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('website-assistant', {
+        body: {
+          question: q,
+          zip: state.zip || null,
+          enrich_lead: true,
+          session_context: {
+            project_type: state.projectType,
+            material_type: state.materialType,
+          },
+          conversation_history: askMessages.slice(-8),
+        },
+      });
+
+      if (error) throw error;
+
+      const answerText = data?.answer_text || 'I can help with dumpster sizing, materials, and project estimates. Could you describe your project?';
+      const estimation = data?.estimation || null;
+      if (data?.language) setDetectedLang(data.language === 'ES' ? 'ES' : 'EN');
+
+      setAskMessages(prev => [...prev, { role: 'assistant', text: answerText, estimation }]);
+    } catch (err) {
+      console.error('AI assistant error:', err);
+      setAskMessages(prev => [...prev, {
+        role: 'assistant',
+        text: 'I am having trouble connecting right now. You can get exact pricing through the Guided Quote, or call our team directly.',
+      }]);
+    } finally {
+      setAskLoading(false);
+    }
   };
 
   const handleTabSwitch = (tab: ChatTab) => {
