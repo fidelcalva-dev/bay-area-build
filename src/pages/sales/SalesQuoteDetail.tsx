@@ -988,7 +988,7 @@ export default function SalesQuoteDetail() {
                   <SelectValue placeholder="Select size..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {DUMPSTER_SIZES.map(s => (
+                  {(quote.is_heavy_material ? HEAVY_ONLY_SIZES : DUMPSTER_SIZES).map(s => (
                     <SelectItem key={s} value={String(s)}>
                       {s} Yard {s === quote.recommended_size_yards ? "(Recommended)" : ""}
                     </SelectItem>
@@ -998,12 +998,29 @@ export default function SalesQuoteDetail() {
               {!selectedSize && (
                 <p className="text-xs text-destructive font-medium">⚠ Size is required before scheduling</p>
               )}
+              {quote.is_heavy_material && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  ⚠ Heavy material — only 5, 8, 10 yard available
+                </p>
+              )}
               {quote.recommended_size_yards && selectedSize && Number(selectedSize) !== quote.recommended_size_yards && (
                 <p className="text-xs text-amber-600 dark:text-amber-400">
                   ⚠ AI recommended {quote.recommended_size_yards}yd
                 </p>
               )}
             </div>
+            {/* Heavy material notes */}
+            {quote.is_heavy_material && (
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Heavy Material Notes</Label>
+                <Textarea
+                  placeholder="Specific material details, mix notes, unusual disposal..."
+                  value={heavyMaterialNotes}
+                  onChange={e => setHeavyMaterialNotes(e.target.value)}
+                  rows={2}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 
