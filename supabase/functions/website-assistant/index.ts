@@ -42,10 +42,13 @@ ESTIMATION GUIDELINES (cubic yards per project):
 - Roofing tear-off: 0.008-0.015 yd3 per sq ft (single layer lower, multi-layer higher)
 - Construction debris: 20-40 yd (typical)
 - Office cleanout: 10-30 yd
+- Tenant improvement: 0.02-0.05 yd3 per sq ft
 - Yard cleanup: 5-20 yd
 - Concrete/soil: 5-10 yd (heavy material, 5/8/10 yd containers ONLY)
 - Deck/fence demo: 0.05-0.10 yd3 per linear ft
 - Estate/eviction cleanout: 20-40 yd
+- Contractor recurring job: 20-40 yd (mention swap service and contractor accounts)
+- Mixed/not sure: recommend 20 yd as most popular, suggest uploading a photo
 
 DUMPSTER SIZE OPTIONS:
 General Debris: 5, 8, 10, 20, 30, 40, 50 yard
