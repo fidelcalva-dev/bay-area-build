@@ -650,6 +650,9 @@ export default function SalesQuoteDetail() {
           user_selected_size_yards: selectedSize ? Number(selectedSize) : null,
           scheduling_notes: salesNotes || null,
           preferred_delivery_window: deliveryPref !== "specific_date" ? deliveryPref : null,
+          heavy_material_notes: heavyMaterialNotes || null,
+          negotiated_price: negotiatedPrice ? Number(negotiatedPrice) : null,
+          price_override_reason: priceOverrideReason || null,
         })
         .eq("id", id);
 
