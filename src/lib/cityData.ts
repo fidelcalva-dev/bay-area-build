@@ -657,7 +657,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Martinez pricing includes transparent flat-rate delivery.',
     permitInfo: 'Martinez requires permits for public street dumpster placement.',
     metaTitle: 'Dumpster Rental Martinez CA | County Seat Service',
-    metaDescription: 'Dumpster rental in Martinez, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Martinez, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['concord-ca', 'pleasant-hill-ca', 'pinole-ca'],
   },
   {
