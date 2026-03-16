@@ -366,7 +366,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Pleasanton pricing is transparent with all-inclusive flat rates.',
     permitInfo: 'Pleasanton requires permits for street-placed dumpsters. Contact the Operations Services Department.',
     metaTitle: 'Dumpster Rental Pleasanton CA | Professional Service',
-    metaDescription: 'Dumpster rental in Pleasanton, CA. Professional delivery, 6-50 yard sizes, concrete disposal. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Pleasanton, CA. Professional delivery, 5-50 yard sizes, concrete disposal. Call (510) 680-2150.',
     nearbyLinks: ['dublin-ca', 'livermore-ca', 'hayward-ca'],
   },
   {
