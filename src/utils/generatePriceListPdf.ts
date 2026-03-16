@@ -22,6 +22,9 @@ const OVERRIDES = [
   ['95056 (Santa Clara)', 701, 701, 912.75, 738.50, 738.50, 1029.20, 711.60, 759.50, 817, 874.50, 885, 1011],
 ];
 
+// Note: Column headers reflect the original price-list structure.
+// "15yd GD" and "25yd GD" are legacy tier labels from the META 2026 rate card.
+// Canonical public sizes are 5/8/10/20/30/40/50 — these labels are internal only.
 const HEADERS = [
   'Tier', '8yd CS', '8yd CC', '8yd Mix', '10yd CS', '10yd CC', '10yd Mix',
   '10yd GD', '15yd GD', '20yd GD', '25yd GD', '30yd GD', '40yd GD',

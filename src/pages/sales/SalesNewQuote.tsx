@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle, ChevronRight, ChevronLeft, Mail, Loader2, MessageCircle,
   MapPin, Package, Weight, Calendar, Users, Phone, Bookmark, Briefcase,
-  Truck, Search, UserPlus, Link2
+  Truck, Search, UserPlus, Link2, Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,7 @@ const INCLUDED_TONS: Record<number, number> = {
   5: 0.5, 8: 0.5, 10: 1, 20: 2, 30: 3, 40: 4, 50: 5,
 };
 
-// Sales-specific material options (3 choices mapping to underlying 'general' | 'heavy')
+// Sales-specific material options (5 choices mapping to underlying 'general' | 'heavy')
 const SALES_MATERIAL_OPTIONS = [
   {
     key: 'general',
@@ -35,17 +35,31 @@ const SALES_MATERIAL_OPTIONS = [
     Icon: Trash2,
   },
   {
-    key: 'clean_heavy',
+    key: 'clean_soil',
     materialValue: 'heavy' as const,
-    label: 'Clean Dirt / Concrete',
-    description: 'Clean fill dirt, concrete only',
+    label: 'Clean Soil',
+    description: 'Clean fill dirt only — no debris',
     Icon: Mountain,
+  },
+  {
+    key: 'clean_concrete',
+    materialValue: 'heavy' as const,
+    label: 'Clean Concrete',
+    description: 'Clean concrete only — no rebar or debris',
+    Icon: HardHat,
   },
   {
     key: 'mix_heavy',
     materialValue: 'heavy' as const,
-    label: 'Mix Heavy Materials',
-    description: 'Concrete, dirt, brick, asphalt',
+    label: 'Mixed Heavy',
+    description: 'Mix of concrete, dirt, brick, asphalt',
+    Icon: HardHat,
+  },
+  {
+    key: 'concrete_rebar',
+    materialValue: 'heavy' as const,
+    label: 'Concrete with Rebar',
+    description: 'Concrete containing rebar — facility surcharge may apply',
     Icon: HardHat,
   },
 ];
@@ -86,6 +100,7 @@ export default function SalesNewQuote() {
   const [sizeDbId, setSizeDbId] = useState<string | null>(null);
   const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
+  const [heavyMaterialNotes, setHeavyMaterialNotes] = useState('');
 
   // Customer linking
   const [customerSearch, setCustomerSearch] = useState('');
@@ -97,6 +112,8 @@ export default function SalesNewQuote() {
   // Delivery preference
   const [deliveryPref, setDeliveryPref] = useState('asap');
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryTimeWindow, setDeliveryTimeWindow] = useState('');
+  const [driverNotes, setDriverNotes] = useState('');
 
   const [formData, setFormData] = useState<QuoteFormData>({
     userType: 'homeowner',
@@ -224,7 +241,9 @@ export default function SalesNewQuote() {
   // Map salesMaterialKey to price-list material category
   const priceListMaterialCategory = useMemo(() => {
     switch (salesMaterialKey) {
-      case 'clean_heavy': return 'CLEAN_SOIL';
+      case 'clean_soil': return 'CLEAN_SOIL';
+      case 'clean_concrete': return 'CLEAN_CONCRETE';
+      case 'concrete_rebar': return 'CLEAN_CONCRETE'; // Same base pricing, facility surcharge added separately
       case 'mix_heavy': return 'MIX';
       default: return 'GENERAL';
     }
@@ -316,9 +335,19 @@ export default function SalesNewQuote() {
           const updatePayload: Record<string, any> = {
             preferred_delivery_window: deliveryPref !== 'specific_date' ? deliveryPref : null,
             delivery_address: formData.address || null,
+            material_class: salesMaterialKey,
           };
           if (deliveryPref === 'specific_date' && deliveryDate) {
             updatePayload.delivery_date = deliveryDate;
+          }
+          if (deliveryTimeWindow) {
+            updatePayload.time_window = deliveryTimeWindow;
+          }
+          if (heavyMaterialNotes) {
+            updatePayload.heavy_material_notes = heavyMaterialNotes;
+          }
+          if (driverNotes) {
+            updatePayload.driver_notes = driverNotes;
           }
           if (linkedCustomerId) {
             updatePayload.customer_id = linkedCustomerId;
@@ -624,6 +653,23 @@ export default function SalesNewQuote() {
                 </div>
               )}
 
+              {/* Time Window */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  <Clock className="w-4 h-4 inline mr-1.5" />
+                  Preferred Time Window
+                </label>
+                <Select value={deliveryTimeWindow} onValueChange={setDeliveryTimeWindow}>
+                  <SelectTrigger className="h-12"><SelectValue placeholder="Select time window..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="morning">Morning (8am–10am)</SelectItem>
+                    <SelectItem value="midday">Midday (10am–12pm)</SelectItem>
+                    <SelectItem value="afternoon">Afternoon (12pm–4pm)</SelectItem>
+                    <SelectItem value="any">Any Time</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   <MapPin className="w-4 h-4 inline mr-1.5" />
@@ -637,6 +683,37 @@ export default function SalesNewQuote() {
                   className="h-12"
                 />
               </div>
+
+              {/* Driver Notes */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  <Truck className="w-4 h-4 inline mr-1.5" />
+                  Driver Notes (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Gate code, placement instructions, etc."
+                  value={driverNotes}
+                  onChange={(e) => setDriverNotes(e.target.value)}
+                  className="h-12"
+                />
+              </div>
+
+              {/* Heavy material notes */}
+              {formData.material === 'heavy' && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Heavy Material Notes (optional)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Special mix details, unusual disposal notes..."
+                    value={heavyMaterialNotes}
+                    onChange={(e) => setHeavyMaterialNotes(e.target.value)}
+                    className="h-12"
+                  />
+                </div>
+              )}
 
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
                 Continue <ChevronRight className="w-5 h-5" />
