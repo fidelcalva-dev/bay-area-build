@@ -2238,7 +2238,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                 value={askInput}
                 onChange={(e) => setAskInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAskSubmit()}
-                placeholder={detectedLang === 'ES' ? 'Describa su proyecto...' : 'Describe your project or ask a question...'}
+                placeholder={detectedLang === 'ES' ? 'Ej: Demoler una casa de 1,800 pies cuadrados en Oakland' : 'e.g. Demolish a 1,800 sq ft house in Oakland'}
                 className="flex-1 bg-white border border-[hsl(220_10%_90%)] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
                 autoFocus
               />
