@@ -158,7 +158,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Richmond pricing includes delivery from our Oakland yard with competitive rates for all project types.',
     permitInfo: 'Richmond requires a street use permit for public right-of-way placement. Contact the Engineering Department.',
     metaTitle: 'Dumpster Rental Richmond CA | Reliable Local Service',
-    metaDescription: 'Dumpster rental in Richmond, CA. Reliable delivery from our Oakland yard. 6-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Richmond, CA. Reliable delivery from our Oakland yard. 5-50 yard sizes, concrete disposal, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['berkeley-ca', 'san-pablo-ca', 'el-cerrito-ca', 'albany-ca'],
   },
   {
