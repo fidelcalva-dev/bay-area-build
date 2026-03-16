@@ -324,31 +324,32 @@ function extractFrames(file: File, times: number[]): Promise<string[]> {
   });
 }
 
-// ---- Safe Answer Generator (no secrets exposed) ----
-function generateSafeAnswer(question: string): string {
-  const q = question.toLowerCase();
-  if (q.includes('heavy') || q.includes('concrete') || q.includes('dirt') || q.includes('soil') || q.includes('rock') || q.includes('brick')) {
-    return 'Heavy materials such as concrete, dirt, soil, and asphalt are restricted to 5, 8, and 10 yard containers. These are flat-fee — disposal is included with no extra weight charges. A mandatory fill-line applies for safe transport.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('ton') || q.includes('weight') || q.includes('included') || q.includes('overage')) {
-    return 'Each dumpster includes a set amount of disposal tonnage (typically 1-5 tons depending on size and material). If your debris exceeds the included weight, an overage charge of $165 per additional ton applies. The included tons are clearly shown during the quote process.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('day') || q.includes('rental') || q.includes('how long') || q.includes('keep')) {
-    return 'Standard rental period is 7 days. Extensions are available and priced per day. Contact dispatch for extended rental arrangements.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('price') || q.includes('cost') || q.includes('how much') || q.includes('rate')) {
-    return 'Pricing varies by ZIP code, dumpster size, and material type. We offer transparent, all-inclusive pricing with no hidden fees. Use the Guided Quote to see your exact price in seconds.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('size') || q.includes('yard') || q.includes('which dumpster') || q.includes('recommend')) {
-    return 'For most residential cleanouts, a 20 yard dumpster is sufficient. Remodels and construction typically need 20-30 yards. Heavy materials are limited to 5, 8, and 10 yard containers. Upload a photo for a personalized AI recommendation.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('deliver') || q.includes('schedule') || q.includes('when') || q.includes('pickup') || q.includes('next day')) {
-    return 'We deliver Monday through Friday. Next-business-day delivery is available in most service areas. You can choose your preferred delivery window during booking: Morning, Midday, or Afternoon.\n\nWould you like exact pricing for your ZIP?';
-  }
-  if (q.includes('pay') || q.includes('payment') || q.includes('deposit') || q.includes('credit card')) {
-    return 'We accept all major credit cards. You can pay a 50% deposit to reserve, pay in full, or reserve now and pay before delivery. All payments are processed securely through Authorize.Net with 256-bit encryption.\n\nWould you like exact pricing for your ZIP?';
-  }
-  return 'I can help with dumpster sizes, material rules, pricing guidance, rental periods, and scheduling. For exact pricing, use the Guided Quote — it takes about 30 seconds and shows your all-inclusive price.\n\nWould you like exact pricing for your ZIP?';
+// ---- Example prompts for Ask tab ----
+const EXAMPLE_PROMPTS_EN = [
+  'Demolish a 1,800 sq ft house',
+  'Kitchen remodel',
+  'Dirt and concrete removal',
+  'Garage cleanout',
+  'Roofing job',
+  'Office cleanout',
+];
+const EXAMPLE_PROMPTS_ES = [
+  'Demoler una casa de 1,800 pies cuadrados',
+  'Remodelación de cocina',
+  'Retiro de tierra y concreto',
+  'Limpieza de garaje',
+  'Trabajo de techo',
+  'Limpieza de oficina',
+];
+
+// ---- Estimation result for structured rendering ----
+interface EstimationResult {
+  volume_min: number;
+  volume_max: number;
+  recommended_plan: string | null;
+  heavy_mode: boolean;
+  recyclable_materials: string[];
+  project_type: string | null;
 }
 
 // ============================================================
