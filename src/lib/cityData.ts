@@ -141,7 +141,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Emeryville enjoys some of our fastest delivery times due to proximity to our Oakland yard.',
     permitInfo: 'Emeryville requires a permit for dumpsters on public streets. Contact Public Works.',
     metaTitle: 'Dumpster Rental Emeryville CA | Minutes From Our Yard',
-    metaDescription: 'Dumpster rental in Emeryville, CA. Minutes from our Oakland yard. Fast delivery, 6-50 yard sizes, competitive pricing. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Emeryville, CA. Minutes from our Oakland yard. Fast delivery, 5-50 yard sizes, competitive pricing. Call (510) 680-2150.',
     nearbyLinks: ['oakland-ca', 'berkeley-ca', 'albany-ca'],
   },
   {
