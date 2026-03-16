@@ -349,7 +349,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Dublin pricing includes delivery with transparent, all-inclusive rates.',
     permitInfo: 'Dublin requires an encroachment permit for dumpsters on public streets.',
     metaTitle: 'Dumpster Rental Dublin CA | Tri-Valley Service',
-    metaDescription: 'Dumpster rental in Dublin, CA. Tri-Valley delivery, 6-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Dublin, CA. Tri-Valley delivery, 5-50 yard sizes, construction debris, cleanouts. Call (510) 680-2150.',
     nearbyLinks: ['pleasanton-ca', 'livermore-ca', 'castro-valley-ca'],
   },
   {
