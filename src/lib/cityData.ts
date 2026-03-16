@@ -827,7 +827,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Morgan Hill pricing includes delivery from our San Jose operations.',
     permitInfo: 'Morgan Hill requires permits for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Morgan Hill CA | South County Service',
-    metaDescription: 'Dumpster rental in Morgan Hill, CA. Professional delivery, 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Morgan Hill, CA. Professional delivery, 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'gilroy-ca', 'campbell-ca'],
   },
   {
