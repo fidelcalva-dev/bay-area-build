@@ -417,7 +417,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Mountain View pricing reflects efficient South Bay delivery routes.',
     permitInfo: 'Mountain View requires a temporary encroachment permit for street-placed dumpsters.',
     metaTitle: 'Dumpster Rental Mountain View CA | South Bay Service',
-    metaDescription: 'Dumpster rental in Mountain View, CA. Professional delivery from our San Jose yard. 6-50 yard sizes. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Mountain View, CA. Professional delivery from our San Jose yard. 5-50 yard sizes. Call (510) 680-2150.',
     nearbyLinks: ['sunnyvale-ca', 'palo-alto-ca', 'los-altos-ca'],
   },
   {
