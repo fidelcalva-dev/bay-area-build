@@ -400,7 +400,7 @@ export const SERVICE_CITIES: CityPageData[] = [
     pricingNote: 'Campbell enjoys competitive pricing due to proximity to our San Jose operations.',
     permitInfo: 'Campbell requires a permit for public right-of-way dumpster placement.',
     metaTitle: 'Dumpster Rental Campbell CA | Quick Local Delivery',
-    metaDescription: 'Dumpster rental in Campbell, CA. Quick delivery from our San Jose yard. 6-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
+    metaDescription: 'Dumpster rental in Campbell, CA. Quick delivery from our San Jose yard. 5-50 yard sizes, flat-fee concrete. Call (510) 680-2150.',
     nearbyLinks: ['san-jose-ca', 'santa-clara-ca', 'cupertino-ca', 'los-gatos-ca'],
   },
   {
