@@ -127,6 +127,7 @@ export function DocumentDeliveryCenter({
   }
 
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   async function handleGeneratePdf() {
     setGeneratingPdf(true);
@@ -144,17 +145,77 @@ export function DocumentDeliveryCenter({
         window.open(data.pdf_url, '_blank');
         toast({ title: 'PDF generated and opened' });
       } else {
-        // Fallback: open the preview link as printable page
         window.open(link + '?print=true', '_blank');
         toast({ title: 'Opening printable preview', description: 'Use browser Print → Save as PDF' });
       }
     } catch {
-      // Fallback: open preview in print mode
       window.open(link + '?print=true', '_blank');
       toast({ title: 'Opening printable preview', description: 'Use browser Print → Save as PDF' });
     } finally {
       setGeneratingPdf(false);
     }
+  }
+
+  async function handleUploadSigned() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.png,.jpg,.jpeg';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      setUploadingFile(true);
+      try {
+        const filePath = `signed-documents/${documentType}/${documentId}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadError) {
+          // Storage bucket may not exist - log and show manual fallback
+          console.error('Upload error:', uploadError);
+          toast({ title: 'Upload not available yet', description: 'Please email the signed document to your sales rep.', variant: 'destructive' });
+          return;
+        }
+
+        const { data: urlData } = supabase.storage.from('documents').getPublicUrl(filePath);
+        const signedUrl = urlData?.publicUrl;
+
+        // Update the document record
+        if (documentType === 'contract' || documentType === 'addendum') {
+          await supabase.from('contracts').update({
+            pdf_url: signedUrl,
+            status: 'signed',
+            signed_at: new Date().toISOString(),
+          }).eq('id', documentId);
+        }
+
+        // Log timeline event
+        if (customerId) {
+          await supabase.from('timeline_events').insert({
+            entity_type: 'CUSTOMER' as const,
+            entity_id: customerId,
+            customer_id: customerId,
+            event_type: 'SYSTEM' as const,
+            event_action: 'UPDATED' as const,
+            summary: `Signed ${label} uploaded`,
+            details_json: {
+              document_id: documentId,
+              document_type: documentType,
+              signed_pdf_url: signedUrl,
+              event: `${documentType.toUpperCase()}_SIGNED_UPLOADED`,
+            },
+          });
+        }
+
+        toast({ title: 'Signed document uploaded', description: 'The document has been saved.' });
+        onSent?.();
+      } catch {
+        toast({ title: 'Upload failed', variant: 'destructive' });
+      } finally {
+        setUploadingFile(false);
+      }
+    };
+    input.click();
   }
 
   function handleDownloadPDF() {
