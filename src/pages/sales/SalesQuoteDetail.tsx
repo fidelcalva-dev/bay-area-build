@@ -638,26 +638,67 @@ export default function SalesQuoteDetail() {
     if (!id) return;
     setIsSaving(true);
     try {
+      const rangeMin = quote.range_min || quote.estimated_min || 0;
+      const negPrice = negotiatedPrice ? Number(negotiatedPrice) : null;
+      const needsApproval = negPrice !== null && negPrice > 0 && negPrice < rangeMin;
+
+      const updatePayload: Record<string, any> = {
+        delivery_date: deliveryPref === "specific_date" && deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
+        delivery_address: deliveryAddress || null,
+        delivery_instructions: deliveryInstructions || null,
+        delivery_time_window: deliveryTimeWindow || null,
+        billing_instructions: billingInstructions || null,
+        delivery_photos: deliveryPhotos,
+        user_selected_size_yards: selectedSize ? Number(selectedSize) : null,
+        scheduling_notes: salesNotes || null,
+        preferred_delivery_window: deliveryPref !== "specific_date" ? deliveryPref : null,
+        heavy_material_notes: heavyMaterialNotes || null,
+        negotiated_price: negPrice,
+        price_override_reason: priceOverrideReason || null,
+        approval_required: needsApproval,
+        pricing_status: negPrice ? (needsApproval ? 'approval_required' : 'negotiated') : 'standard',
+      };
+
+      // Set range values if not already set
+      if (!quote.range_min && quote.estimated_min) {
+        updatePayload.range_min = quote.estimated_min;
+      }
+      if (!quote.range_max && quote.estimated_max) {
+        updatePayload.range_max = quote.estimated_max;
+      }
+      if (!quote.default_price && quote.subtotal) {
+        updatePayload.default_price = quote.subtotal;
+      }
+
       const { error } = await supabase
         .from("quotes")
-        .update({
-          delivery_date: deliveryPref === "specific_date" && deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
-          delivery_address: deliveryAddress || null,
-          delivery_instructions: deliveryInstructions || null,
-          delivery_time_window: deliveryTimeWindow || null,
-          billing_instructions: billingInstructions || null,
-          delivery_photos: deliveryPhotos,
-          user_selected_size_yards: selectedSize ? Number(selectedSize) : null,
-          scheduling_notes: salesNotes || null,
-          preferred_delivery_window: deliveryPref !== "specific_date" ? deliveryPref : null,
-          heavy_material_notes: heavyMaterialNotes || null,
-          negotiated_price: negotiatedPrice ? Number(negotiatedPrice) : null,
-          price_override_reason: priceOverrideReason || null,
-        })
+        .update(updatePayload)
         .eq("id", id);
 
       if (error) throw error;
+
+      // Log pricing override in timeline if negotiated price changed
+      if (negPrice && negPrice !== quote.negotiated_price && quote.customer_id) {
+        await supabase.from("timeline_events").insert({
+          entity_type: "QUOTE" as const,
+          entity_id: id,
+          customer_id: quote.customer_id,
+          event_type: "BILLING" as const,
+          event_action: "UPDATED" as const,
+          summary: `Price ${needsApproval ? 'override requested' : 'negotiated'}: $${negPrice} (${priceOverrideReason || 'no reason'})`,
+          details_json: {
+            event: 'PRICE_OVERRIDE_APPLIED',
+            negotiated_price: negPrice,
+            default_price: quote.subtotal,
+            range_min: rangeMin,
+            override_reason: priceOverrideReason,
+            approval_required: needsApproval,
+          },
+        });
+      }
+
       toast({ title: "Quote updated" });
+      fetchQuote();
     } catch (err) {
       console.error(err);
       toast({ title: "Error saving quote", variant: "destructive" });
