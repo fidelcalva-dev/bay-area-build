@@ -14231,6 +14231,9 @@ export type Database = {
           ai_recommended_size: number | null
           ai_volume_range: Json | null
           ai_weight_range: Json | null
+          approval_required: boolean | null
+          approved_at: string | null
+          approved_by_user_id: string | null
           billing_instructions: string | null
           city_rate_id: string | null
           company_name: string | null
@@ -14313,6 +14316,7 @@ export type Database = {
           price_approved_by_user_id: string | null
           price_override_reason: string | null
           price_override_user_id: string | null
+          pricing_status: string | null
           project_type: string | null
           quick_link_id: string | null
           range_max: number | null
@@ -14372,6 +14376,9 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          approval_required?: boolean | null
+          approved_at?: string | null
+          approved_by_user_id?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
           company_name?: string | null
@@ -14454,6 +14461,7 @@ export type Database = {
           price_approved_by_user_id?: string | null
           price_override_reason?: string | null
           price_override_user_id?: string | null
+          pricing_status?: string | null
           project_type?: string | null
           quick_link_id?: string | null
           range_max?: number | null
@@ -14513,6 +14521,9 @@ export type Database = {
           ai_recommended_size?: number | null
           ai_volume_range?: Json | null
           ai_weight_range?: Json | null
+          approval_required?: boolean | null
+          approved_at?: string | null
+          approved_by_user_id?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
           company_name?: string | null
@@ -14595,6 +14606,7 @@ export type Database = {
           price_approved_by_user_id?: string | null
           price_override_reason?: string | null
           price_override_user_id?: string | null
+          pricing_status?: string | null
           project_type?: string | null
           quick_link_id?: string | null
           range_max?: number | null
