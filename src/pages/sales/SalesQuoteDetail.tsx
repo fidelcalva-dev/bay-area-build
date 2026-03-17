@@ -870,6 +870,11 @@ export default function SalesQuoteDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          {quote.customer_id && (
+            <Button variant="outline" size="sm" onClick={() => navigate(`/admin/customers/${quote.customer_id}`)}>
+              <User className="w-4 h-4 mr-1.5" />Customer 360
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={handleSendContract} disabled={isSendingContract}>
             {isSendingContract ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <ScrollText className="w-4 h-4 mr-1.5" />}
             Contract
