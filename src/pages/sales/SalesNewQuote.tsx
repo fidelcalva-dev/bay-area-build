@@ -507,11 +507,24 @@ export default function SalesNewQuote() {
                   </div>
                 )}
               </div>
+
+              {/* Customer Type */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Customer Type</label>
+                <div className="flex gap-2">
+                  {CUSTOMER_TYPE_OPTIONS.map((ct) => (
+                    <button key={ct.value} type="button" onClick={() => setFormData((prev) => ({ ...prev, userType: ct.value }))}
+                      className={cn("flex-1 py-2.5 rounded-xl border-2 text-center text-sm font-medium transition-all",
+                        formData.userType === ct.value ? "border-primary bg-primary/5" : "border-input hover:border-primary/50")}>
+                      {ct.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
                 Continue <ChevronRight className="w-5 h-5" />
               </Button>
-            </div>
-          )}
 
           {/* Step 2: Material */}
           {step === 'material' && (
