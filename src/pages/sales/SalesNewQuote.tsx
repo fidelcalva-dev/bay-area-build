@@ -115,6 +115,10 @@ export default function SalesNewQuote() {
   const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
   const [heavyMaterialNotes, setHeavyMaterialNotes] = useState('');
+  const [placementType, setPlacementType] = useState('');
+  const [placementNotes, setPlacementNotes] = useState('');
+  const [greenHalo, setGreenHalo] = useState(false);
+  const [contaminationRisk, setContaminationRisk] = useState(false);
 
   // Customer linking
   const [customerSearch, setCustomerSearch] = useState('');
