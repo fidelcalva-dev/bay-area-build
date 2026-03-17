@@ -71,6 +71,20 @@ const DELIVERY_PREFERENCES = [
   { value: 'call_to_confirm', label: 'Call to Confirm', desc: 'Wants a callback to decide' },
 ];
 
+const CUSTOMER_TYPE_OPTIONS = [
+  { value: 'homeowner', label: 'Homeowner', desc: 'Residential customer' },
+  { value: 'contractor', label: 'Contractor', desc: 'Licensed contractor' },
+  { value: 'commercial', label: 'Commercial', desc: 'Business / commercial account' },
+];
+
+const PLACEMENT_TYPES = [
+  { value: 'driveway', label: 'Driveway' },
+  { value: 'street', label: 'Street' },
+  { value: 'yard', label: 'Yard / Dirt' },
+  { value: 'alley', label: 'Alley' },
+  { value: 'other', label: 'Other' },
+];
+
 type Step = 'zip' | 'material' | 'size' | 'options' | 'delivery' | 'contact' | 'success';
 
 interface ZoneResult {
