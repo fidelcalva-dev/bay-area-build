@@ -448,7 +448,6 @@ export function V3QuoteFlow() {
     // before the user enters contact info; they'll be captured at contact_captured
     const hasContact = !!(customerPhone || customerEmail);
     if (!hasContact) {
-      // Don't mark as captured so it can retry once contact info is available
       return;
     }
 
@@ -466,11 +465,12 @@ export function V3QuoteFlow() {
           address: addressResult?.formattedAddress || null,
           project_type: selectedProject?.label || null,
           material_category: materialTypeForPricing || null,
+          size_preference: String(size),
+          customer_type: customerType || null,
           message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
             milestone,
-            size,
             selected_size: size,
             material_type: materialTypeForPricing,
             material_class: isHeavy ? (selectedProject?.id || 'heavy') : 'general',
@@ -480,13 +480,14 @@ export function V3QuoteFlow() {
             quote_amount: quote.isValid ? quote.subtotal : null,
             quote_amount_high: quote.isValid ? quote.subtotalHigh : null,
             last_step_completed: step,
+            readiness_state: milestone,
           },
         },
       });
     } catch (err) {
       console.warn('Partial lead capture failed:', err);
     }
-  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote]);
+  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote, step]);
 
   // Fire progressive captures on step transitions
   useEffect(() => {
@@ -497,6 +498,16 @@ export function V3QuoteFlow() {
       capturePartialLead('quote_priced');
     }
   }, [step, zip, selectedProject, quote.isValid]);
+
+  // Batch-capture all prior milestones when contact is first provided
+  const contactBatchFired = useRef(false);
+  useEffect(() => {
+    if (contactBatchFired.current) return;
+    if (!(customerPhone || customerEmail)) return;
+    contactBatchFired.current = true;
+    // Fire contact_captured which will also include all context
+    capturePartialLead('contact_captured');
+  }, [customerPhone, customerEmail, capturePartialLead]);
 
   const handleProjectSelect = (project: ProjectCard) => {
     setSelectedProject(project);
