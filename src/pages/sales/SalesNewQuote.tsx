@@ -732,6 +732,36 @@ export default function SalesNewQuote() {
                 />
               </div>
 
+              {/* Placement Type */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Placement Type
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {PLACEMENT_TYPES.map((pt) => (
+                    <button key={pt.value} type="button" onClick={() => setPlacementType(pt.value)}
+                      className={cn("px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                        placementType === pt.value ? "border-primary bg-primary/5 font-medium" : "border-input hover:border-primary/50")}>
+                      {pt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Placement Notes */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Placement / Access Notes (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Narrow driveway, slope, HOA rules..."
+                  value={placementNotes}
+                  onChange={(e) => setPlacementNotes(e.target.value)}
+                  className="h-12"
+                />
+              </div>
+
               {/* Driver Notes */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -740,7 +770,7 @@ export default function SalesNewQuote() {
                 </label>
                 <Input
                   type="text"
-                  placeholder="Gate code, placement instructions, etc."
+                  placeholder="Gate code, specific instructions..."
                   value={driverNotes}
                   onChange={(e) => setDriverNotes(e.target.value)}
                   className="h-12"
