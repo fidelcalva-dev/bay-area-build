@@ -525,6 +525,8 @@ export default function SalesNewQuote() {
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
                 Continue <ChevronRight className="w-5 h-5" />
               </Button>
+            </div>
+          )}
 
           {/* Step 2: Material */}
           {step === 'material' && (
