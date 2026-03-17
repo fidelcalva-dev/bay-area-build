@@ -4,15 +4,17 @@
  */
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText, ScrollText, CreditCard, Download, ExternalLink,
   Upload, FolderOpen, Eye, Loader2, RefreshCw, Truck,
-  ShieldCheck, FileSignature, CheckCircle,
+  ShieldCheck, FileSignature, CheckCircle, Send, Copy,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import type { TimelineEvent } from '@/lib/timelineService';
 
 interface DocumentEntry {
@@ -23,6 +25,7 @@ interface DocumentEntry {
   status: string | null;
   url: string | null;
   createdAt: string;
+  linkedId?: string; // quote_id or order_id for navigation
 }
 
 interface SignedDocument {
@@ -66,6 +69,8 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
   const [documents, setDocuments] = useState<DocumentEntry[]>([]);
   const [signedDocs, setSignedDocs] = useState<SignedDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => { loadDocuments(); }, [customerId]);
 
@@ -75,13 +80,27 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
     const signed: SignedDocument[] = [];
 
     try {
-      const { data: contracts } = await supabase
-        .from('contracts')
-        .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name')
-        .eq('customer_id', customerId)
-        .order('created_at', { ascending: false });
+      const [contractsRes, quotesRes, invoicesRes] = await Promise.all([
+        supabase
+          .from('contracts')
+          .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('quotes')
+          .select('id, customer_name, subtotal, status, material_type, created_at')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('invoices')
+          .select('id, invoice_number, amount_due, payment_status, created_at, order_id')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false })
+          .limit(20),
+      ]);
 
-      (contracts || []).forEach((c: any) => {
+      (contractsRes.data || []).forEach((c: any) => {
         docs.push({
           id: c.id,
           type: c.contract_type === 'msa' ? 'contract' : 'addendum',
@@ -109,6 +128,41 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
             pdfUrl: c.pdf_url,
           });
         }
+      });
+
+      // Quote documents
+      (quotesRes.data || []).forEach((q: any) => {
+        docs.push({
+          id: q.id,
+          type: 'quote',
+          title: `Quote — ${q.customer_name || 'Unnamed'}`,
+          subtitle: [
+            q.status,
+            q.material_type,
+            q.subtotal ? `$${q.subtotal.toFixed(0)}` : null,
+          ].filter(Boolean).join(' · '),
+          status: q.status,
+          url: null,
+          createdAt: q.created_at,
+          linkedId: q.id,
+        });
+      });
+
+      // Invoice documents
+      (invoicesRes.data || []).forEach((inv: any) => {
+        docs.push({
+          id: inv.id,
+          type: 'invoice',
+          title: `Invoice ${inv.invoice_number || inv.id.slice(0, 8)}`,
+          subtitle: [
+            inv.payment_status,
+            inv.amount_due ? `$${inv.amount_due.toFixed(0)}` : null,
+          ].filter(Boolean).join(' · '),
+          status: inv.payment_status,
+          url: null,
+          createdAt: inv.created_at,
+          linkedId: inv.order_id,
+        });
       });
 
       // Timeline document events
@@ -139,6 +193,11 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
     setIsLoading(false);
   }
 
+  function handleCopyLink(contractId: string) {
+    navigator.clipboard.writeText(`${window.location.origin}/contract/${contractId}`);
+    toast({ title: 'Signing link copied' });
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -149,6 +208,26 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Quick Document Actions */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Quick Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate(`/sales/quotes/new?customerId=${customerId}`)}>
+              <FileText className="w-3.5 h-3.5" />New Quote
+            </Button>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" disabled title="Create from Contracts tab">
+              <ScrollText className="w-3.5 h-3.5" />New Contract
+            </Button>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" disabled title="Coming soon">
+              <Send className="w-3.5 h-3.5" />Send Payment Link
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Signed Documents Section */}
       <Card>
         <CardHeader className="pb-3">
@@ -205,6 +284,9 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
                         <Eye className="w-3.5 h-3.5" />
                       </Button>
                     )}
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => handleCopyLink(doc.id)}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -248,21 +330,33 @@ export function DocumentsTab({ customerId, timelineEvents = [] }: Props) {
                       <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate">{doc.title}</p>
-                        <p className="text-xs text-muted-foreground truncate">{doc.subtitle}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {format(new Date(doc.createdAt), 'MMM d, yyyy')} · {doc.subtitle}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       {doc.status && (
-                        <Badge variant={doc.status === 'signed' ? 'default' : 'secondary'} className="text-[10px]">
+                        <Badge variant={doc.status === 'signed' || doc.status === 'paid' ? 'default' : 'secondary'} className="text-[10px]">
                           {doc.status}
                         </Badge>
                       )}
                       <Badge variant="outline" className="text-[10px]">
                         {TYPE_LABELS[doc.type]}
                       </Badge>
+                      {doc.type === 'quote' && doc.linkedId && (
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => navigate(`/sales/quotes/${doc.linkedId}`)}>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Button>
+                      )}
+                      {doc.type === 'contract' || doc.type === 'addendum' ? (
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => window.open(`/contract/${doc.id}`, '_blank')}>
+                          <Eye className="w-3.5 h-3.5" />
+                        </Button>
+                      ) : null}
                       {doc.url && (
                         <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => window.open(doc.url!, '_blank')}>
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <Download className="w-3.5 h-3.5" />
                         </Button>
                       )}
                     </div>

@@ -71,6 +71,20 @@ const DELIVERY_PREFERENCES = [
   { value: 'call_to_confirm', label: 'Call to Confirm', desc: 'Wants a callback to decide' },
 ];
 
+const CUSTOMER_TYPE_OPTIONS = [
+  { value: 'homeowner', label: 'Homeowner', desc: 'Residential customer' },
+  { value: 'contractor', label: 'Contractor', desc: 'Licensed contractor' },
+  { value: 'commercial', label: 'Commercial', desc: 'Business / commercial account' },
+];
+
+const PLACEMENT_TYPES = [
+  { value: 'driveway', label: 'Driveway' },
+  { value: 'street', label: 'Street' },
+  { value: 'yard', label: 'Yard / Dirt' },
+  { value: 'alley', label: 'Alley' },
+  { value: 'other', label: 'Other' },
+];
+
 type Step = 'zip' | 'material' | 'size' | 'options' | 'delivery' | 'contact' | 'success';
 
 interface ZoneResult {
@@ -101,6 +115,10 @@ export default function SalesNewQuote() {
   const [salesMaterialKey, setSalesMaterialKey] = useState<string>('general');
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
   const [heavyMaterialNotes, setHeavyMaterialNotes] = useState('');
+  const [placementType, setPlacementType] = useState('');
+  const [placementNotes, setPlacementNotes] = useState('');
+  const [greenHalo, setGreenHalo] = useState(false);
+  const [contaminationRisk, setContaminationRisk] = useState(false);
 
   // Customer linking
   const [customerSearch, setCustomerSearch] = useState('');
@@ -352,6 +370,19 @@ export default function SalesNewQuote() {
           if (linkedCustomerId) {
             updatePayload.customer_id = linkedCustomerId;
           }
+          if (placementType) {
+            updatePayload.placement_type = placementType;
+          }
+          if (placementNotes) {
+            updatePayload.placement_notes = placementNotes;
+          }
+          if (greenHalo) {
+            updatePayload.is_green_halo = true;
+          }
+          if (contaminationRisk) {
+            updatePayload.is_trash_contaminated = true;
+          }
+          updatePayload.user_type = formData.userType;
           await supabase.from('quotes').update(updatePayload).eq('id', quoteId);
         }
 
@@ -476,6 +507,21 @@ export default function SalesNewQuote() {
                   </div>
                 )}
               </div>
+
+              {/* Customer Type */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Customer Type</label>
+                <div className="flex gap-2">
+                  {CUSTOMER_TYPE_OPTIONS.map((ct) => (
+                    <button key={ct.value} type="button" onClick={() => setFormData((prev) => ({ ...prev, userType: ct.value }))}
+                      className={cn("flex-1 py-2.5 rounded-xl border-2 text-center text-sm font-medium transition-all",
+                        formData.userType === ct.value ? "border-primary bg-primary/5" : "border-input hover:border-primary/50")}>
+                      {ct.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext} disabled={!canGoNext}>
                 Continue <ChevronRight className="w-5 h-5" />
               </Button>
@@ -509,6 +555,36 @@ export default function SalesNewQuote() {
                   })}
                 </div>
               </div>
+              {/* Heavy material warnings */}
+              {formData.material === 'heavy' && (
+                <div className="rounded-xl border-2 border-amber-400/50 bg-amber-50 dark:bg-amber-900/10 p-3 space-y-1.5">
+                  <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">⚠ Heavy Material Selected</p>
+                  <p className="text-xs text-amber-700 dark:text-amber-400">Only 5, 8, and 10-yard sizes are available. Fill-line restrictions apply. Overweight surcharges will be enforced.</p>
+                  {salesMaterialKey === 'concrete_rebar' && (
+                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">🔩 Concrete with Rebar — facility surcharge may apply at disposal.</p>
+                  )}
+                </div>
+              )}
+              {/* Contamination risk toggle */}
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => setContaminationRisk(!contaminationRisk)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                    contaminationRisk ? "border-amber-400 bg-amber-50 dark:bg-amber-900/10" : "border-input")}>
+                  <span>{contaminationRisk ? '⚠️' : '🔲'}</span>
+                  <span>Contamination Risk</span>
+                </button>
+                <button type="button" onClick={() => setGreenHalo(!greenHalo)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                    greenHalo ? "border-green-400 bg-green-50 dark:bg-green-900/10" : "border-input")}>
+                  <span>{greenHalo ? '🌿' : '🔲'}</span>
+                  <span>Green Halo</span>
+                </button>
+              </div>
+              {greenHalo && (
+                <p className="text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/10 rounded-lg p-2">
+                  🌿 Green Halo premium applies — eco-friendly disposal routing.
+                </p>
+              )}
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext}>
                 Continue <ChevronRight className="w-5 h-5" />
               </Button>
@@ -684,6 +760,36 @@ export default function SalesNewQuote() {
                 />
               </div>
 
+              {/* Placement Type */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Placement Type
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {PLACEMENT_TYPES.map((pt) => (
+                    <button key={pt.value} type="button" onClick={() => setPlacementType(pt.value)}
+                      className={cn("px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                        placementType === pt.value ? "border-primary bg-primary/5 font-medium" : "border-input hover:border-primary/50")}>
+                      {pt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Placement Notes */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Placement / Access Notes (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Narrow driveway, slope, HOA rules..."
+                  value={placementNotes}
+                  onChange={(e) => setPlacementNotes(e.target.value)}
+                  className="h-12"
+                />
+              </div>
+
               {/* Driver Notes */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -692,7 +798,7 @@ export default function SalesNewQuote() {
                 </label>
                 <Input
                   type="text"
-                  placeholder="Gate code, placement instructions, etc."
+                  placeholder="Gate code, specific instructions..."
                   value={driverNotes}
                   onChange={(e) => setDriverNotes(e.target.value)}
                   className="h-12"
