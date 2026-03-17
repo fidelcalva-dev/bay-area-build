@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -109,6 +110,25 @@ export default function QuickOrder() {
   // Handle starting the order flow
   const handleStartOrder = () => {
     setShowOrderFlow(true);
+    // Fire lead-ingest for CRM tracking
+    try {
+      supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'QUICK_ORDER',
+          source_detail: 'quick_order_start',
+          zip: config.zip || null,
+          material_category: config.material || null,
+          size_preference: String(config.size),
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            milestone: 'quick_order_started',
+            selected_size: config.size,
+            material_type: config.material,
+            token: token || null,
+          },
+        },
+      }).catch(() => {});
+    } catch {}
   };
   
   // Handle order completion
@@ -190,6 +210,7 @@ export default function QuickOrder() {
     <Layout 
       title="Quick Order | CALSAN Dumpsters"
       description="Complete your dumpster rental order in seconds with your personalized quick link."
+      noindex={true}
     >
       <section className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-primary/5 via-background to-muted py-8 lg:py-12">
         <div className="container-wide max-w-3xl mx-auto">

@@ -123,7 +123,7 @@ const publicQuoteContact: RouteEntry[] = [
   { path: '/quote/contractor', name: 'Contractor Quote', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: true, mounted: true },
   { path: '/quote/schedule', name: 'Schedule Delivery', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: false, mounted: true },
   { path: '/quote/pay', name: 'Quote Payment', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: false, mounted: true },
-  { path: '/quick-order', name: 'Quick Order', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: true, mounted: true },
+  { path: '/quick-order', name: 'Quick Order', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: false, mounted: true },
   { path: '/thank-you', name: 'Thank You', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: false, mounted: true },
   { path: '/download-price-list', name: 'Download Price List', group: 'PUBLIC_WEBSITE', subcategory: 'Quote/Contact', isProtected: false, indexable: false, mounted: true },
 ];

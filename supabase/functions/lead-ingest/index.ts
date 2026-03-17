@@ -176,6 +176,20 @@ Deno.serve(async (req) => {
     if (payload.lat != null) extraUpdates.lat = payload.lat;
     if (payload.lng != null) extraUpdates.lng = payload.lng;
 
+    // Map size/heavy fields for Sales visibility
+    const rawPl = payload.raw_payload || {};
+    if (rawPl.selected_size) {
+      extraUpdates.latest_recommended_size = Number(rawPl.selected_size);
+    } else if (payload.size_preference) {
+      extraUpdates.latest_recommended_size = Number(payload.size_preference);
+    }
+    if (rawPl.is_heavy != null) {
+      extraUpdates.latest_heavy_flag = !!rawPl.is_heavy;
+    }
+    if (rawPl.last_step_completed) {
+      extraUpdates.ai_recommended_action = `Last step: ${rawPl.last_step_completed}`;
+    }
+
     // Score the lead
     const captureIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
     const captureUserAgent = req.headers.get('user-agent') || null;
