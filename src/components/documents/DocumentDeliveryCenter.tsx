@@ -303,8 +303,8 @@ export function DocumentDeliveryCenter({
                 {generatingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                 {pdfUrl ? 'Download PDF' : 'Generate PDF'}
               </Button>
-              <Button variant="outline" size="sm" className="h-10 gap-1.5" disabled>
-                <Upload className="w-3.5 h-3.5" /> Upload Signed
+              <Button variant="outline" size="sm" className="h-10 gap-1.5" onClick={handleUploadSigned} disabled={uploadingFile}>
+                {uploadingFile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />} Upload Signed
               </Button>
             </div>
           </div>
