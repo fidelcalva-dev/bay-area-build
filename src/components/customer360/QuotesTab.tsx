@@ -304,6 +304,14 @@ export function QuotesTab({ quotes, customerId, customerPhone, customerEmail }: 
                     </div>
                   </div>
 
+                  {/* Negotiated price indicator */}
+                  {(quote as any).negotiated_price && (quote as any).negotiated_price !== quote.subtotal && (
+                    <div className="text-xs bg-muted/40 rounded px-2 py-1 flex items-center justify-between">
+                      <span className="text-muted-foreground">Negotiated</span>
+                      <span className="font-semibold">${(quote as any).negotiated_price}</span>
+                    </div>
+                  )}
+
                   {/* Status badges row */}
                   {commercial && (
                     <div className="flex items-center gap-1.5 flex-wrap">
