@@ -109,6 +109,25 @@ export default function QuickOrder() {
   // Handle starting the order flow
   const handleStartOrder = () => {
     setShowOrderFlow(true);
+    // Fire lead-ingest for CRM tracking
+    try {
+      supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'QUICK_ORDER',
+          source_detail: 'quick_order_start',
+          zip: config.zip || null,
+          material_category: config.material || null,
+          size_preference: String(config.size),
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            milestone: 'quick_order_started',
+            selected_size: config.size,
+            material_type: config.material,
+            token: token || null,
+          },
+        },
+      }).catch(() => {});
+    } catch {}
   };
   
   // Handle order completion
