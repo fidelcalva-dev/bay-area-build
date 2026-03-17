@@ -351,38 +351,39 @@ export default function SalesNewQuote() {
         // Update quote with delivery preference & customer link
         if (quoteId) {
           const updatePayload: Record<string, any> = {
-337:             preferred_delivery_window: deliveryPref !== 'specific_date' ? deliveryPref : null,
-338:             delivery_address: formData.address || null,
-339:             material_class: salesMaterialKey,
-340:           };
-341:           if (deliveryPref === 'specific_date' && deliveryDate) {
-342:             updatePayload.delivery_date = deliveryDate;
-343:           }
-344:           if (deliveryTimeWindow) {
-345:             updatePayload.time_window = deliveryTimeWindow;
-346:           }
-347:           if (heavyMaterialNotes) {
-348:             updatePayload.heavy_material_notes = heavyMaterialNotes;
-349:           }
-350:           if (driverNotes) {
-351:             updatePayload.driver_notes = driverNotes;
-352:           }
-353:           if (linkedCustomerId) {
-354:             updatePayload.customer_id = linkedCustomerId;
-355:           }
-356:           if (placementType) {
-357:             updatePayload.placement_type = placementType;
-358:           }
-359:           if (placementNotes) {
-360:             updatePayload.placement_notes = placementNotes;
-361:           }
-362:           if (greenHalo) {
-363:             updatePayload.is_green_halo = true;
-364:           }
-365:           if (contaminationRisk) {
-366:             updatePayload.is_trash_contaminated = true;
-367:           }
-368:           updatePayload.user_type = formData.userType;
+            preferred_delivery_window: deliveryPref !== 'specific_date' ? deliveryPref : null,
+            delivery_address: formData.address || null,
+            material_class: salesMaterialKey,
+          };
+          if (deliveryPref === 'specific_date' && deliveryDate) {
+            updatePayload.delivery_date = deliveryDate;
+          }
+          if (deliveryTimeWindow) {
+            updatePayload.time_window = deliveryTimeWindow;
+          }
+          if (heavyMaterialNotes) {
+            updatePayload.heavy_material_notes = heavyMaterialNotes;
+          }
+          if (driverNotes) {
+            updatePayload.driver_notes = driverNotes;
+          }
+          if (linkedCustomerId) {
+            updatePayload.customer_id = linkedCustomerId;
+          }
+          if (placementType) {
+            updatePayload.placement_type = placementType;
+          }
+          if (placementNotes) {
+            updatePayload.placement_notes = placementNotes;
+          }
+          if (greenHalo) {
+            updatePayload.is_green_halo = true;
+          }
+          if (contaminationRisk) {
+            updatePayload.is_trash_contaminated = true;
+          }
+          updatePayload.user_type = formData.userType;
+          await supabase.from('quotes').update(updatePayload).eq('id', quoteId);
         }
 
         setStep('success');
