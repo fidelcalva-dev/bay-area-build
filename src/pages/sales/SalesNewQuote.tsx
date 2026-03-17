@@ -527,6 +527,36 @@ export default function SalesNewQuote() {
                   })}
                 </div>
               </div>
+              {/* Heavy material warnings */}
+              {formData.material === 'heavy' && (
+                <div className="rounded-xl border-2 border-amber-400/50 bg-amber-50 dark:bg-amber-900/10 p-3 space-y-1.5">
+                  <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">⚠ Heavy Material Selected</p>
+                  <p className="text-xs text-amber-700 dark:text-amber-400">Only 5, 8, and 10-yard sizes are available. Fill-line restrictions apply. Overweight surcharges will be enforced.</p>
+                  {salesMaterialKey === 'concrete_rebar' && (
+                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">🔩 Concrete with Rebar — facility surcharge may apply at disposal.</p>
+                  )}
+                </div>
+              )}
+              {/* Contamination risk toggle */}
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => setContaminationRisk(!contaminationRisk)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                    contaminationRisk ? "border-amber-400 bg-amber-50 dark:bg-amber-900/10" : "border-input")}>
+                  <span>{contaminationRisk ? '⚠️' : '🔲'}</span>
+                  <span>Contamination Risk</span>
+                </button>
+                <button type="button" onClick={() => setGreenHalo(!greenHalo)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm transition-all",
+                    greenHalo ? "border-green-400 bg-green-50 dark:bg-green-900/10" : "border-input")}>
+                  <span>{greenHalo ? '🌿' : '🔲'}</span>
+                  <span>Green Halo</span>
+                </button>
+              </div>
+              {greenHalo && (
+                <p className="text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/10 rounded-lg p-2">
+                  🌿 Green Halo premium applies — eco-friendly disposal routing.
+                </p>
+              )}
               <Button type="button" size="lg" className="w-full h-14 text-base" onClick={goNext}>
                 Continue <ChevronRight className="w-5 h-5" />
               </Button>
