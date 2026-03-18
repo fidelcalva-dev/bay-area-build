@@ -39,9 +39,9 @@ const EDGE_FUNCTIONS = [
   { name: 'send-otp', category: 'TELEPHONY', description: 'Send OTP for portal auth', external: ['Twilio'], tables: ['customer_sessions'] },
   { name: 'verify-otp', category: 'TELEPHONY', description: 'Verify OTP codes', external: [], tables: ['customer_sessions'] },
   { name: 'validate-session', category: 'TELEPHONY', description: 'Validate portal sessions', external: [], tables: ['customer_sessions'] },
-  { name: 'ghl-inbound-webhook', category: 'TELEPHONY', description: 'GHL inbound messages', external: ['GHL'], tables: ['message_history'] },
-  { name: 'ghl-send-message', category: 'TELEPHONY', description: 'Send via GHL', external: ['GHL'], tables: ['message_queue'] },
-  { name: 'highlevel-webhook', category: 'TELEPHONY', description: 'GHL webhooks', external: ['GHL'], tables: [] },
+  { name: 'ghl-webhook-inbound', category: 'MESSAGING', description: 'GHL inbound messages/calls', external: ['GHL'], tables: ['ghl_messages', 'ghl_call_logs'] },
+  { name: 'ghl-send-outbound', category: 'MESSAGING', description: 'Send SMS/Email via GHL', external: ['GHL'], tables: ['ghl_messages', 'message_logs'] },
+  { name: 'highlevel-webhook', category: 'MESSAGING', description: 'GHL contact sync (public quotes)', external: ['GHL'], tables: [] },
   
   // Leads
   { name: 'lead-capture', category: 'LEADS', description: 'Generic lead capture', external: [], tables: ['sales_leads', 'lead_events'] },

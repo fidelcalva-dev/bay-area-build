@@ -1202,12 +1202,13 @@ export async function notifyCustomerOnStatusChange(
   if (!body) return;
 
   try {
-    await supabase.functions.invoke('ghl-send-message', {
+    await supabase.functions.invoke('ghl-send-outbound', {
       body: {
-        phone: run.customer_phone,
-        message: body,
         channel: 'sms',
-        context: { run_id: run.id, event: `run_${newStatus.toLowerCase()}` },
+        phone: run.customer_phone,
+        body,
+        entity_type: 'order',
+        entity_id: run.id,
       },
     });
   } catch (err) {
