@@ -29,34 +29,41 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/pricing', changefreq: 'weekly', priority: 0.9 },
   { url: '/about', changefreq: 'monthly', priority: 0.6 },
   { url: '/contact', changefreq: 'monthly', priority: 0.7 },
-  { url: '/locations', changefreq: 'monthly', priority: 0.7 },
   { url: '/quote/contractor', changefreq: 'monthly', priority: 0.7 },
   { url: '/careers', changefreq: 'monthly', priority: 0.5 },
   { url: '/why-local-yards', changefreq: 'monthly', priority: 0.7 },
   { url: '/not-a-broker', changefreq: 'monthly', priority: 0.7 },
   { url: '/how-it-works', changefreq: 'monthly', priority: 0.7 },
   { url: '/why-calsan', changefreq: 'monthly', priority: 0.7 },
-  { url: '/green-halo', changefreq: 'monthly', priority: 0.6 },
   { url: '/capacity-guide', changefreq: 'monthly', priority: 0.6 },
-  { url: '/visualizer', changefreq: 'monthly', priority: 0.6 },
-  { url: '/technology', changefreq: 'monthly', priority: 0.6 },
-  { url: '/waste-vision', changefreq: 'monthly', priority: 0.5 },
   { url: '/contractor-best-practices', changefreq: 'monthly', priority: 0.6 },
   { url: '/contractor-resources', changefreq: 'monthly', priority: 0.7 },
   { url: '/blog', changefreq: 'weekly', priority: 0.7 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
-  // Hub pages — only Bay Area core hubs
-  { url: '/california-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
+  // Hub pages — Bay Area core only
   { url: '/bay-area-dumpster-rental', changefreq: 'weekly', priority: 0.9 },
-  { url: '/north-bay-dumpster-rental', changefreq: 'monthly', priority: 0.7 },
-  // Southern CA & Central Valley hubs excluded until partner launch
   // Regional pages
   { url: '/dumpster-rental-east-bay', changefreq: 'weekly', priority: 0.85 },
   { url: '/dumpster-rental-south-bay', changefreq: 'weekly', priority: 0.85 },
   // Commercial pages
   { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
+  // Standalone size intent pages
+  { url: '/10-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/20-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/30-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/40-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  // Standalone material intent pages
+  { url: '/concrete-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/dirt-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/roofing-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/construction-debris-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/residential-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  // Flagship city pages (domination pages)
+  { url: '/dumpster-rental-oakland-ca', changefreq: 'weekly', priority: 0.9 },
+  { url: '/dumpster-rental-san-jose-ca', changefreq: 'weekly', priority: 0.9 },
+  { url: '/dumpster-rental-san-francisco-ca', changefreq: 'weekly', priority: 0.9 },
 ];
 
 // Blog articles — generated from seo-blog-topics.ts + editorial articles
