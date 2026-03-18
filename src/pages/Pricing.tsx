@@ -280,7 +280,7 @@ export default function Pricing() {
               <span className="text-sm font-normal text-muted-foreground">(Concrete, Dirt, Brick, Asphalt, Tile)</span>
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
-              Proportional pricing: 10 yd is base rate; 8 yd saves ~15%; 5 yd saves ~29%. All sizes include disposal.
+              Service Cost + Dump Fee pricing. All sizes include delivery, pickup, and disposal. No weight overage charges.
             </p>
             
             {/* Size cards */}
