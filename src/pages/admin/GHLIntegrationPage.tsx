@@ -277,6 +277,7 @@ export default function GHLIntegrationPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="flex flex-wrap h-auto gap-1">
           <TabsTrigger value="health"><HeartPulse className="w-4 h-4 mr-1.5" />Health</TabsTrigger>
+          <TabsTrigger value="voice"><Mic className="w-4 h-4 mr-1.5" />Voice</TabsTrigger>
           <TabsTrigger value="providers"><Phone className="w-4 h-4 mr-1.5" />Providers</TabsTrigger>
           <TabsTrigger value="pipeline"><ArrowUpDown className="w-4 h-4 mr-1.5" />Pipeline</TabsTrigger>
           <TabsTrigger value="workflows"><Workflow className="w-4 h-4 mr-1.5" />Workflows</TabsTrigger>
