@@ -1549,6 +1549,14 @@ export function InstantQuoteCalculatorV3() {
               materialType={formData.material}
             />
 
+            {/* Size auto-correction message */}
+            {sizeAutoCorrectedMessage && (
+              <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                <p className="text-sm text-foreground">{sizeAutoCorrectedMessage}</p>
+              </div>
+            )}
+
             {/* Heavy Material Classification Summary */}
             {formData.material === 'heavy' && heavyClassification?.materialClass && (
               <div className="p-3 rounded-lg bg-success/10 border border-success/20">
@@ -1587,6 +1595,8 @@ export function InstantQuoteCalculatorV3() {
               onChange={(size) => {
                 setFormData((prev) => ({ ...prev, size }));
                 setSizeAutoCorrectedMessage(null);
+                // Progressive save: persist size selection immediately to session
+                saveQuoteSession({ formData: { ...formData, size } });
               }}
               materialType={formData.material}
               materialCode={debrisSelection?.categoryId || null}
