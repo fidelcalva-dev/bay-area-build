@@ -68,12 +68,15 @@ export default function SeoCountyPage() {
     { question: `Which cities in ${county.name} do you serve?`, answer: `We serve all cities in ${county.name} including ${county.majorCities.map(s => s.replace(/-/g, ' ')).join(', ')}.` },
   ];
 
+  const shouldNoindex = !BAY_AREA_COUNTY_SLUGS.has(county.slug);
+
   return (
     <Layout title={pageTitle} description={pageDescription}>
+      {shouldNoindex && <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>}
       <SEOHead
         title={pageTitle}
         description={pageDescription}
-        canonical={canonical}
+        canonical={!shouldNoindex ? canonical : undefined}
         schema={[breadcrumbSchema, generateFAQSchema(faqs)]}
       />
 
