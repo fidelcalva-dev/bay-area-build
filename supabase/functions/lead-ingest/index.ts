@@ -76,6 +76,8 @@ function scoreLead(input: Record<string, unknown>) {
 interface IngestPayload {
   source_channel: string;
   source_detail?: string;
+  source_page?: string;
+  source_module?: string;
   name?: string;
   phone?: string;
   email?: string;
@@ -88,6 +90,17 @@ interface IngestPayload {
   project_type?: string;
   material_category?: string;
   size_preference?: string;
+  selected_size?: number;
+  quote_amount?: number;
+  quote_amount_high?: number;
+  requested_delivery_date?: string;
+  delivery_preference?: string;
+  placement_type?: string;
+  last_step_completed?: string;
+  ai_conversation_id?: string;
+  ai_conversation_summary?: string;
+  ai_estimated_yards_min?: number;
+  ai_estimated_yards_max?: number;
   lat?: number;
   lng?: number;
   utm_source?: string;
