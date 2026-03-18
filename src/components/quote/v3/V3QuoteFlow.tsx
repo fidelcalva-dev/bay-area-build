@@ -81,7 +81,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 // ZONE RESULT
 // ============================================================
 interface ZoneResult {
-  zoneId: string;
+  zoneId: string | null;
   zoneName: string;
   cityName?: string;
   multiplier: number;
@@ -292,7 +292,7 @@ export function V3QuoteFlow() {
       }
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zipCode)) {
-          setZoneResult({ zoneId: zone.id, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
+          setZoneResult({ zoneId: null as any, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
           return;
         }
       }

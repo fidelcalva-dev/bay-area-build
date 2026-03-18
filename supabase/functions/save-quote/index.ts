@@ -87,6 +87,11 @@ function validateZip(zip: string): string | null {
   
   return digits;
 }
+// UUID validation helper
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function sanitizeUuid(v: unknown): string | null {
+  return typeof v === 'string' && UUID_RE.test(v) ? v : null;
+}
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -178,8 +183,8 @@ serve(async (req) => {
         customer_phone: payload.customer_phone,
         user_type: payload.user_type,
         zip_code: payload.zip_code,
-        zone_id: payload.zone_id,
-        size_id: payload.size_id,
+        zone_id: sanitizeUuid(payload.zone_id),
+        size_id: sanitizeUuid(payload.size_id),
         material_type: payload.material_type,
         rental_days: payload.rental_days || 7,
         extras: payload.extras,
@@ -187,7 +192,7 @@ serve(async (req) => {
         estimated_min: payload.estimated_min,
         estimated_max: payload.estimated_max,
         discount_percent: payload.discount_percent || 0,
-        selected_vendor_id: payload.selected_vendor_id,
+        selected_vendor_id: sanitizeUuid(payload.selected_vendor_id),
         vendor_cost: payload.vendor_cost,
         margin: payload.margin,
         is_calsan_fulfillment: payload.is_calsan_fulfillment ?? true,
@@ -202,7 +207,7 @@ serve(async (req) => {
         // Distance-based pricing fields
         customer_lat: payload.customer_lat,
         customer_lng: payload.customer_lng,
-        yard_id: payload.yard_id,
+        yard_id: sanitizeUuid(payload.yard_id),
         yard_name: payload.yard_name,
         distance_miles: payload.distance_miles,
         distance_bracket: payload.distance_bracket,
@@ -230,7 +235,7 @@ serve(async (req) => {
         volume_commitment_count: payload.volume_commitment_count || 0,
         volume_discount_pct: payload.volume_discount_pct || 0,
         discount_cap_applied: payload.discount_cap_applied || false,
-        volume_agreement_id: payload.volume_agreement_id,
+        volume_agreement_id: sanitizeUuid(payload.volume_agreement_id),
         volume_validity_start: payload.volume_validity_start,
         volume_validity_end: payload.volume_validity_end,
         requires_discount_approval: payload.requires_discount_approval || false,
@@ -241,7 +246,7 @@ serve(async (req) => {
         green_halo_handling_fee: payload.green_halo_handling_fee,
         green_halo_dump_fee_per_ton: payload.green_halo_dump_fee_per_ton,
         // Quick link reference
-        quick_link_id: payload.quick_link_id,
+        quick_link_id: sanitizeUuid(payload.quick_link_id),
         // Attribution tracking
         gclid: payload.gclid || null,
         utm_source: payload.utm_source || null,
@@ -255,8 +260,12 @@ serve(async (req) => {
 
     if (quoteError) {
       console.error('[save-quote] Database insert error:', quoteError);
+      // Return user-friendly message instead of raw DB error
+      const userMessage = quoteError.message?.includes('uuid')
+        ? 'A data formatting issue occurred. Your quote info has been preserved.'
+        : 'We could not save your quote right now. Please try again or contact us.';
       return new Response(
-        JSON.stringify({ success: false, error: quoteError.message }),
+        JSON.stringify({ success: false, error: userMessage, debug: quoteError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

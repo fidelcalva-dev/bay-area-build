@@ -1,5 +1,6 @@
 // Vendor Selection Logic for Quote System
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeUuid } from '@/lib/uuidValidation';
 
 export interface VendorCandidate {
   vendorId: string;
@@ -237,7 +238,7 @@ export async function saveQuote(params: {
       customer_phone: params.customerPhone,
       user_type: params.userType,
       zip_code: params.zipCode,
-      zone_id: params.zoneId,
+      zone_id: sanitizeUuid(params.zoneId),
       size_id: params.sizeId,
       material_type: params.materialType,
       rental_days: params.rentalDays,
@@ -246,7 +247,7 @@ export async function saveQuote(params: {
       estimated_min: params.estimatedMin,
       estimated_max: params.estimatedMax,
       discount_percent: params.discountPercent || 0,
-      selected_vendor_id: params.selectedVendorId,
+      selected_vendor_id: sanitizeUuid(params.selectedVendorId),
       vendor_cost: params.vendorCost,
       margin: params.margin,
       is_calsan_fulfillment: params.isCalsanFulfillment,
@@ -261,7 +262,7 @@ export async function saveQuote(params: {
       // Distance-based pricing fields
       customer_lat: params.customerLat,
       customer_lng: params.customerLng,
-      yard_id: params.yardId,
+      yard_id: sanitizeUuid(params.yardId),
       yard_name: params.yardName,
       distance_miles: params.distanceMiles,
       distance_bracket: params.distanceBracket,
@@ -288,7 +289,7 @@ export async function saveQuote(params: {
       volume_commitment_count: params.volumeCommitmentCount || 0,
       volume_discount_pct: params.volumeDiscountPct || 0,
       discount_cap_applied: params.discountCapApplied || false,
-      volume_agreement_id: params.volumeAgreementId,
+      volume_agreement_id: sanitizeUuid(params.volumeAgreementId),
       volume_validity_start: params.volumeValidityStart?.toISOString(),
       volume_validity_end: params.volumeValidityEnd?.toISOString(),
       requires_discount_approval: params.requiresDiscountApproval || false,
@@ -299,7 +300,7 @@ export async function saveQuote(params: {
       green_halo_handling_fee: params.greenHaloHandlingFee,
       green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
       // Quick link reference
-      quick_link_id: params.quickLinkId,
+      quick_link_id: sanitizeUuid(params.quickLinkId),
       // Address fields
       street_address: params.streetAddress,
       city: params.city,

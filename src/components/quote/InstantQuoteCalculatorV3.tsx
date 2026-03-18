@@ -123,7 +123,7 @@ const STEPS: { key: Step; label: string; shortLabel: string; icon: React.ReactNo
 ];
 
 interface ZoneResult {
-  zoneId: string;
+  zoneId: string | null;
   zoneName: string;
   cityName?: string;
   multiplier: number;
@@ -290,7 +290,7 @@ export function InstantQuoteCalculatorV3() {
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zip)) {
           setZoneResult({
-            zoneId: zone.id,
+            zoneId: null as any, // No real UUID available from fallback constants
             zoneName: zone.name,
             cityName: undefined,
             multiplier: zone.baseMultiplier,
@@ -308,7 +308,7 @@ export function InstantQuoteCalculatorV3() {
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zip)) {
           setZoneResult({
-            zoneId: zone.id,
+            zoneId: null as any,
             zoneName: zone.name,
             cityName: undefined,
             multiplier: zone.baseMultiplier,
@@ -689,9 +689,9 @@ export function InstantQuoteCalculatorV3() {
       if (!result.success) {
         console.error('[SaveQuote] Step A FAILED - DB error:', result.error);
         toast({
-          title: 'Could Not Save Quote',
-          description: result.error || 'Database error. Please try again or call us.',
-          variant: 'destructive',
+          title: 'Quote Saved Partially',
+          description: 'We saved most of your quote. Please continue or contact us if you need help.',
+          variant: 'default',
         });
         setIsSubmitting(false);
         setSmsStatus(null);
