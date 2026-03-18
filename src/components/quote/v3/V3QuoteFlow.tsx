@@ -292,7 +292,7 @@ export function V3QuoteFlow() {
       }
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zipCode)) {
-          setZoneResult({ zoneId: zone.id, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
+          setZoneResult({ zoneId: null as any, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
           return;
         }
       }

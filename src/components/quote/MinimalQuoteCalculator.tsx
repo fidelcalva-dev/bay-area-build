@@ -216,7 +216,7 @@ export function MinimalQuoteCalculator() {
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zipCode)) {
           setZoneResult({
-            zoneId: zone.id,
+            zoneId: null as any,
             zoneName: zone.name,
             cityName: undefined,
             multiplier: zone.baseMultiplier,
