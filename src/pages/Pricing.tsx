@@ -44,6 +44,8 @@ function getIdealFor(size: number, isHeavy: boolean): string {
     if (size === 8) return 'Driveway or patio demolition';
     return 'Large concrete or foundation removal';
   }
+  if (size === 5) return 'Small cleanouts, concrete/dirt removal';
+  if (size === 8) return 'Bathroom remodel, small debris loads';
   if (size === 10) return 'Small cleanouts, bathroom remodels';
   if (size === 20) return 'Single room renovation, garage cleanout';
   if (size === 30) return 'Whole-house cleanout, medium construction';
