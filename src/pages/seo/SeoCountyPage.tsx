@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import { Layout } from '@/components/layout/Layout';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,13 @@ import { cityUrl } from '@/lib/seo-urls';
 import type { SeoCity } from '@/lib/seo-engine';
 import { ArrowRight, MapPin, Phone, Truck } from 'lucide-react';
 import NotFound from '../NotFound';
+
+// Bay Area counties that should be indexed
+const BAY_AREA_COUNTY_SLUGS = new Set([
+  'alameda-county', 'santa-clara-county', 'contra-costa-county',
+  'san-francisco-county', 'san-mateo-county', 'solano-county',
+  'marin-county', 'sonoma-county', 'napa-county',
+]);
 
 export default function SeoCountyPage() {
   const { countySlug } = useParams<{ countySlug: string }>();
@@ -60,12 +68,15 @@ export default function SeoCountyPage() {
     { question: `Which cities in ${county.name} do you serve?`, answer: `We serve all cities in ${county.name} including ${county.majorCities.map(s => s.replace(/-/g, ' ')).join(', ')}.` },
   ];
 
+  const shouldNoindex = !BAY_AREA_COUNTY_SLUGS.has(county.slug);
+
   return (
     <Layout title={pageTitle} description={pageDescription}>
+      {shouldNoindex && <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>}
       <SEOHead
         title={pageTitle}
         description={pageDescription}
-        canonical={canonical}
+        canonical={!shouldNoindex ? canonical : undefined}
         schema={[breadcrumbSchema, generateFAQSchema(faqs)]}
       />
 
