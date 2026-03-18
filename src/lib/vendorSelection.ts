@@ -300,7 +300,7 @@ export async function saveQuote(params: {
       green_halo_handling_fee: params.greenHaloHandlingFee,
       green_halo_dump_fee_per_ton: params.greenHaloDumpFeePerTon,
       // Quick link reference
-      quick_link_id: params.quickLinkId,
+      quick_link_id: sanitizeUuid(params.quickLinkId),
       // Address fields
       street_address: params.streetAddress,
       city: params.city,
