@@ -599,33 +599,34 @@ export const getGeneralDebrisPricing = () =>
 export const getHeavyMaterialPricing = () => HEAVY_MATERIAL_PRICING;
 
 // Get detailed heavy pricing table for display
+// V2 canonical: ServiceCost + (size × dump_fee_per_yard)
 export function getHeavyPricingDisplay() {
   return {
     base: {
-      label: 'Base Materials',
-      description: 'Clean concrete, clean soil, sand, gravel',
+      label: 'Clean No. 1',
+      description: 'Clean concrete, soil, sand — $30/yd dump fee',
       prices: {
-        10: 695.50,
-        8: 595,
-        5: 495,
+        10: 690,  // 390 + (10×30)
+        8: 580,   // 340 + (8×30)
+        5: 440,   // 290 + (5×30)
       },
     },
     plus_200: {
-      label: '+$200 Materials',
-      description: 'Brick, asphalt, tile, roofing gravel, rock/stone',
+      label: 'Clean No. 2',
+      description: 'Tile, rocks, asphalt, granite, bricks — $40/yd dump fee',
       prices: {
-        10: 895.50,
-        8: 795,
-        5: 695,
+        10: 790,  // 390 + (10×40)
+        8: 660,   // 340 + (8×40)
+        5: 490,   // 290 + (5×40)
       },
     },
     mixed_heavy: {
-      label: '+$300 Mixed Heavy',
-      description: 'Mix of heavy materials (concrete + soil, etc.)',
+      label: 'All Mixed',
+      description: 'Any mix of heavy materials — $50/yd dump fee',
       prices: {
-        10: 995.50,
-        8: 895,
-        5: 795,
+        10: 890,  // 390 + (10×50)
+        8: 740,   // 340 + (8×50)
+        5: 540,   // 290 + (5×50)
       },
     },
   };

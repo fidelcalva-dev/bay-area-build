@@ -13,9 +13,8 @@ import {
   RECYCLING_SUPPORT_SERVICE
 } from '@/lib/shared-data';
 
-// Derived from v56 shared-data.ts (Plan A pricing)
+// All general debris sizes (5–50 yd)
 const pricingTiers = PLAN_A_PRICING
-  .filter(p => p.category === 'general' || p.size >= 20)  // Show 10+ for general
   .map(p => ({
     size: p.size,
     startingAt: p.basePrice,
@@ -25,9 +24,7 @@ const pricingTiers = PLAN_A_PRICING
     popular: p.size === 20,
   }));
 
-// Heavy material pricing from v56 - PROPORTIONAL PRICING (Flat Fee)
-// Base 10yd = $695.50, 8yd = $595, 5yd = $495
-// +$200 for specialty materials, +$300 for mixed heavy
+// Heavy material pricing — V2 Service Cost + Dump Fee model
 import { getHeavyPricingDisplay } from '@/lib/shared-data';
 
 const heavyPricingDisplay = getHeavyPricingDisplay();
@@ -38,7 +35,7 @@ const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
   weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
-  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 5 ? '40% less than 10 yd' : null,
+  savingsNote: null,
 }));
 
 function getIdealFor(size: number, isHeavy: boolean): string {
