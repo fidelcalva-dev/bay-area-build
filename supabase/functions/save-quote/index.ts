@@ -207,7 +207,7 @@ serve(async (req) => {
         // Distance-based pricing fields
         customer_lat: payload.customer_lat,
         customer_lng: payload.customer_lng,
-        yard_id: payload.yard_id,
+        yard_id: sanitizeUuid(payload.yard_id),
         yard_name: payload.yard_name,
         distance_miles: payload.distance_miles,
         distance_bracket: payload.distance_bracket,
