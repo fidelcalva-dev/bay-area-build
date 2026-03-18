@@ -21,6 +21,7 @@ const NOINDEX_PAGES = [
   '/technology', '/green-halo', '/green-impact', '/waste-vision',
   '/download-price-list', '/quick-order', '/thank-you',
   '/staff', '/app', '/request-access', '/set-password',
+  '/visualizer', '/green-halo/portal',
 ];
 
 // Pages that should be indexed

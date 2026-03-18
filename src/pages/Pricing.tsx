@@ -13,9 +13,8 @@ import {
   RECYCLING_SUPPORT_SERVICE
 } from '@/lib/shared-data';
 
-// Derived from v56 shared-data.ts (Plan A pricing)
+// All general debris sizes (5–50 yd)
 const pricingTiers = PLAN_A_PRICING
-  .filter(p => p.category === 'general' || p.size >= 20)  // Show 10+ for general
   .map(p => ({
     size: p.size,
     startingAt: p.basePrice,
@@ -25,9 +24,7 @@ const pricingTiers = PLAN_A_PRICING
     popular: p.size === 20,
   }));
 
-// Heavy material pricing from v56 - PROPORTIONAL PRICING (Flat Fee)
-// Base 10yd = $695.50, 8yd = $595, 5yd = $495
-// +$200 for specialty materials, +$300 for mixed heavy
+// Heavy material pricing — V2 Service Cost + Dump Fee model
 import { getHeavyPricingDisplay } from '@/lib/shared-data';
 
 const heavyPricingDisplay = getHeavyPricingDisplay();
@@ -38,7 +35,7 @@ const heavyMaterialTiers = HEAVY_MATERIAL_PRICING.map(p => ({
   priceRange: `$${p.priceRangeLow}–$${p.priceRangeHigh}`,
   weightLimit: 'Flat Fee', // No tonnage for heavy materials
   idealFor: getIdealFor(p.size, true),
-  savingsNote: p.size === 8 ? '20% less than 10 yd' : p.size === 5 ? '40% less than 10 yd' : null,
+  savingsNote: null,
 }));
 
 function getIdealFor(size: number, isHeavy: boolean): string {
@@ -47,6 +44,8 @@ function getIdealFor(size: number, isHeavy: boolean): string {
     if (size === 8) return 'Driveway or patio demolition';
     return 'Large concrete or foundation removal';
   }
+  if (size === 5) return 'Small cleanouts, concrete/dirt removal';
+  if (size === 8) return 'Bathroom remodel, small debris loads';
   if (size === 10) return 'Small cleanouts, bathroom remodels';
   if (size === 20) return 'Single room renovation, garage cleanout';
   if (size === 30) return 'Whole-house cleanout, medium construction';
@@ -236,7 +235,7 @@ export default function Pricing() {
               <Trash2 className="w-5 h-5 text-primary" />
               General Debris Dumpsters
             </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {pricingTiers.map((tier) => (
                 <div 
                   key={tier.size} 
@@ -283,7 +282,7 @@ export default function Pricing() {
               <span className="text-sm font-normal text-muted-foreground">(Concrete, Dirt, Brick, Asphalt, Tile)</span>
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
-              Proportional pricing: 10 yd is base rate; 8 yd saves ~15%; 5 yd saves ~29%. All sizes include disposal.
+              Service Cost + Dump Fee pricing. All sizes include delivery, pickup, and disposal. No weight overage charges.
             </p>
             
             {/* Size cards */}
@@ -343,8 +342,8 @@ export default function Pricing() {
                   <tbody>
                     <tr className="border-b border-warning/10">
                       <td className="py-3">
-                        <div className="font-medium text-foreground">Base Materials</div>
-                        <div className="text-xs text-muted-foreground">Clean concrete, soil, sand, gravel</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.base.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.base.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[8]}</td>
@@ -352,11 +351,8 @@ export default function Pricing() {
                     </tr>
                     <tr className="border-b border-warning/10">
                       <td className="py-3">
-                        <div className="font-medium text-foreground flex items-center gap-2">
-                          +$200 Materials
-                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$200</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">Brick, asphalt, tile, roofing gravel, rock/stone</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.plus_200.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.plus_200.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[8]}</td>
@@ -364,11 +360,8 @@ export default function Pricing() {
                     </tr>
                     <tr>
                       <td className="py-3">
-                        <div className="font-medium text-foreground flex items-center gap-2">
-                          Mixed Heavy
-                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$300</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">Any mix of heavy materials (concrete + soil, etc.)</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.mixed_heavy.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.mixed_heavy.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[8]}</td>

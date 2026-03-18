@@ -35,5 +35,8 @@ Disallow: /download-price-list
 Disallow: /waste-vision
 Disallow: /green-impact
 Disallow: /technology
+Disallow: /visualizer
+Disallow: /thank-you
+Disallow: /set-password
 
 Sitemap: https://calsandumpsterspro.com/sitemap.xml
