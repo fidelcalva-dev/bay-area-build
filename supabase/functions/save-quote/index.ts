@@ -192,7 +192,7 @@ serve(async (req) => {
         estimated_min: payload.estimated_min,
         estimated_max: payload.estimated_max,
         discount_percent: payload.discount_percent || 0,
-        selected_vendor_id: payload.selected_vendor_id,
+        selected_vendor_id: sanitizeUuid(payload.selected_vendor_id),
         vendor_cost: payload.vendor_cost,
         margin: payload.margin,
         is_calsan_fulfillment: payload.is_calsan_fulfillment ?? true,
