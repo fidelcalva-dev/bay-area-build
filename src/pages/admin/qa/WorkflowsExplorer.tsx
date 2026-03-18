@@ -39,9 +39,9 @@ const EDGE_FUNCTIONS = [
   { name: 'send-otp', category: 'TELEPHONY', description: 'Send OTP for portal auth', external: ['Twilio'], tables: ['customer_sessions'] },
   { name: 'verify-otp', category: 'TELEPHONY', description: 'Verify OTP codes', external: [], tables: ['customer_sessions'] },
   { name: 'validate-session', category: 'TELEPHONY', description: 'Validate portal sessions', external: [], tables: ['customer_sessions'] },
-  { name: 'ghl-inbound-webhook', category: 'TELEPHONY', description: 'GHL inbound messages', external: ['GHL'], tables: ['message_history'] },
-  { name: 'ghl-send-message', category: 'TELEPHONY', description: 'Send via GHL', external: ['GHL'], tables: ['message_queue'] },
-  { name: 'highlevel-webhook', category: 'TELEPHONY', description: 'GHL webhooks', external: ['GHL'], tables: [] },
+  { name: 'ghl-webhook-inbound', category: 'MESSAGING', description: 'GHL inbound messages/calls', external: ['GHL'], tables: ['ghl_messages', 'ghl_call_logs'] },
+  { name: 'ghl-send-outbound', category: 'MESSAGING', description: 'Send SMS/Email via GHL', external: ['GHL'], tables: ['ghl_messages', 'message_logs'] },
+  { name: 'highlevel-webhook', category: 'MESSAGING', description: 'GHL contact sync (public quotes)', external: ['GHL'], tables: [] },
   
   // Leads
   { name: 'lead-capture', category: 'LEADS', description: 'Generic lead capture', external: [], tables: ['sales_leads', 'lead_events'] },
@@ -107,7 +107,7 @@ const EDGE_FUNCTIONS = [
   { name: 'ads-generate-campaigns', category: 'ADS', description: 'Auto-generate campaigns', external: ['Google Ads API'], tables: ['ads_campaigns', 'ads_adgroups'] },
   
   // Other
-  { name: 'ghl-message-worker', category: 'MESSAGING', description: 'Process message queue', external: ['GHL'], tables: ['message_queue', 'message_logs'] },
+  { name: 'ghl-sync-poller', category: 'MESSAGING', description: 'Poll GHL for conversations/messages/calls', external: ['GHL'], tables: ['ghl_message_threads', 'ghl_messages', 'ghl_call_logs'] },
   { name: 'analyze-waste', category: 'OTHER', description: 'AI waste analysis', external: ['Lovable AI'], tables: [] },
   { name: 'qa-runner', category: 'QA', description: 'Run QA checks', external: [], tables: ['qa_results'] },
   { name: 'update-days-out', category: 'BILLING', description: 'Update asset days', external: [], tables: ['assets_dumpsters'] },
@@ -525,7 +525,7 @@ export default function WorkflowsExplorer() {
                     <div className="p-3 rounded-lg bg-muted">
                       <h4 className="font-medium">GoHighLevel</h4>
                       <div className="text-sm space-y-1 mt-2">
-                        <p><span className="text-muted-foreground">Inbound:</span> <code>/functions/v1/ghl-inbound-webhook</code></p>
+                        <p><span className="text-muted-foreground">Inbound:</span> <code>/functions/v1/ghl-webhook-inbound</code></p>
                       </div>
                     </div>
                   </div>

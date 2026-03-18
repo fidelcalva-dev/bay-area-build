@@ -60,10 +60,9 @@ const EDGE_FUNCTIONS = [
   { name: 'send-otp', category: 'TELEPHONY', description: 'Send OTP for portal auth' },
   { name: 'verify-otp', category: 'TELEPHONY', description: 'Verify OTP codes' },
   { name: 'validate-session', category: 'TELEPHONY', description: 'Validate portal sessions' },
-  { name: 'ghl-inbound-webhook', category: 'MESSAGING', description: 'GHL inbound messages' },
-  { name: 'ghl-send-message', category: 'MESSAGING', description: 'Send via GHL' },
-  { name: 'ghl-message-worker', category: 'MESSAGING', description: 'Process message queue' },
-  { name: 'highlevel-webhook', category: 'MESSAGING', description: 'GHL webhooks' },
+  { name: 'ghl-webhook-inbound', category: 'MESSAGING', description: 'GHL inbound messages/calls' },
+  { name: 'ghl-send-outbound', category: 'MESSAGING', description: 'Send SMS/Email via GHL' },
+  { name: 'highlevel-webhook', category: 'MESSAGING', description: 'GHL contact sync (public quotes)' },
   { name: 'lead-capture', category: 'LEADS', description: 'Generic lead capture' },
   { name: 'lead-omnichannel', category: 'LEADS', description: 'Unified lead ingestion' },
   { name: 'lead-from-quote', category: 'LEADS', description: 'Lead from quote' },
@@ -119,7 +118,7 @@ const WORKFLOWS = [
   { id: 'overdue-billing', name: 'Overdue Billing', functions: ['overdue-billing-daily'] },
   { id: 'master-ai', name: 'Master AI', functions: ['master-ai-scheduler', 'master-ai-worker', 'master-ai-notifier'] },
   { id: 'telephony', name: 'Telephony', functions: ['calls-inbound-handler', 'calls-outbound-handler', 'calls-status-callback'] },
-  { id: 'messaging', name: 'Messaging', functions: ['ghl-send-message', 'ghl-message-worker', 'send-quote-summary'] },
+  { id: 'messaging', name: 'Messaging', functions: ['ghl-send-outbound', 'ghl-webhook-inbound', 'send-quote-summary'] },
   { id: 'payments', name: 'Payments', functions: ['create-hosted-session', 'process-payment', 'authnet-webhook', 'send-payment-receipt'] },
 ];
 

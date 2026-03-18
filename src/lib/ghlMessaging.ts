@@ -104,11 +104,24 @@ export async function sendMessageDirect(params: {
   subject?: string;
   body: string;
   contact_id?: string;
+  customer_id?: string;
+  lead_id?: string;
   entity_type?: string;
   entity_id?: string;
 }): Promise<{ success: boolean; status: string; error?: string }> {
-  const response = await supabase.functions.invoke("ghl-send-message", {
-    body: params,
+  const response = await supabase.functions.invoke("ghl-send-outbound", {
+    body: {
+      channel: params.channel,
+      phone: params.channel === "sms" ? params.to_address : undefined,
+      email: params.channel === "email" ? params.to_address : undefined,
+      subject: params.subject,
+      body: params.body,
+      contact_id: params.contact_id,
+      customer_id: params.customer_id,
+      lead_id: params.lead_id,
+      entity_type: params.entity_type,
+      entity_id: params.entity_id,
+    },
   });
 
   if (response.error) {
