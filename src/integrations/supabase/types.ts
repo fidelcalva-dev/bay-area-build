@@ -16572,6 +16572,10 @@ export type Database = {
         Row: {
           address: string | null
           ai_classification_json: Json | null
+          ai_conversation_id: string | null
+          ai_conversation_summary: string | null
+          ai_estimated_yards_max: number | null
+          ai_estimated_yards_min: number | null
           ai_mode: string | null
           ai_recommended_action: string | null
           assigned_at: string | null
@@ -16591,13 +16595,16 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           customer_type_detected: string | null
+          delivery_preference: string | null
           escalation_level: number
           first_contact_at: string | null
           first_response_at: string | null
           first_response_sent_at: string | null
+          first_touch_at: string | null
           followup_count: number
           gclid: string | null
           id: string
+          identity_group_id: string | null
           is_existing_customer: boolean | null
           is_sla_breached: boolean
           landing_url: string | null
@@ -16605,10 +16612,12 @@ export type Database = {
           last_contacted_at: string | null
           last_contacted_by_user_id: string | null
           last_followup_at: string | null
+          last_step_completed: string | null
           lat: number | null
           latest_assessment_id: string | null
           latest_heavy_flag: boolean | null
           latest_recommended_size: number | null
+          latest_touch_at: string | null
           lead_quality_label: string | null
           lead_quality_score: number | null
           lead_risk_score: number | null
@@ -16620,21 +16629,32 @@ export type Database = {
           market_code: string | null
           material_category: string | null
           message_excerpt: string | null
+          next_best_action: string | null
           next_followup_at: string | null
+          normalized_email: string | null
+          normalized_phone: string | null
           notes: string | null
           owner_user_id: string | null
+          placement_type: string | null
           project_category: string | null
+          quote_amount: number | null
+          quote_amount_high: number | null
           quote_id: string | null
           raw_payload_json: Json | null
           referrer_url: string | null
+          requested_delivery_date: string | null
           requested_service: string | null
           routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
+          selected_size: number | null
           size_preference: string | null
           sla_due_at: string | null
           sla_minutes: number
+          source_channel: string | null
           source_key: string | null
+          source_module: string | null
+          source_page: string | null
           timeout_at: string | null
           updated_at: string
           urgency_score: number | null
@@ -16649,6 +16669,10 @@ export type Database = {
         Insert: {
           address?: string | null
           ai_classification_json?: Json | null
+          ai_conversation_id?: string | null
+          ai_conversation_summary?: string | null
+          ai_estimated_yards_max?: number | null
+          ai_estimated_yards_min?: number | null
           ai_mode?: string | null
           ai_recommended_action?: string | null
           assigned_at?: string | null
@@ -16668,13 +16692,16 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          delivery_preference?: string | null
           escalation_level?: number
           first_contact_at?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
+          first_touch_at?: string | null
           followup_count?: number
           gclid?: string | null
           id?: string
+          identity_group_id?: string | null
           is_existing_customer?: boolean | null
           is_sla_breached?: boolean
           landing_url?: string | null
@@ -16682,10 +16709,12 @@ export type Database = {
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
+          last_step_completed?: string | null
           lat?: number | null
           latest_assessment_id?: string | null
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
+          latest_touch_at?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -16697,21 +16726,32 @@ export type Database = {
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
+          next_best_action?: string | null
           next_followup_at?: string | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          placement_type?: string | null
           project_category?: string | null
+          quote_amount?: number | null
+          quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
           referrer_url?: string | null
+          requested_delivery_date?: string | null
           requested_service?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          selected_size?: number | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
+          source_channel?: string | null
           source_key?: string | null
+          source_module?: string | null
+          source_page?: string | null
           timeout_at?: string | null
           updated_at?: string
           urgency_score?: number | null
@@ -16726,6 +16766,10 @@ export type Database = {
         Update: {
           address?: string | null
           ai_classification_json?: Json | null
+          ai_conversation_id?: string | null
+          ai_conversation_summary?: string | null
+          ai_estimated_yards_max?: number | null
+          ai_estimated_yards_min?: number | null
           ai_mode?: string | null
           ai_recommended_action?: string | null
           assigned_at?: string | null
@@ -16745,13 +16789,16 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          delivery_preference?: string | null
           escalation_level?: number
           first_contact_at?: string | null
           first_response_at?: string | null
           first_response_sent_at?: string | null
+          first_touch_at?: string | null
           followup_count?: number
           gclid?: string | null
           id?: string
+          identity_group_id?: string | null
           is_existing_customer?: boolean | null
           is_sla_breached?: boolean
           landing_url?: string | null
@@ -16759,10 +16806,12 @@ export type Database = {
           last_contacted_at?: string | null
           last_contacted_by_user_id?: string | null
           last_followup_at?: string | null
+          last_step_completed?: string | null
           lat?: number | null
           latest_assessment_id?: string | null
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
+          latest_touch_at?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -16774,21 +16823,32 @@ export type Database = {
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
+          next_best_action?: string | null
           next_followup_at?: string | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          placement_type?: string | null
           project_category?: string | null
+          quote_amount?: number | null
+          quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
           referrer_url?: string | null
+          requested_delivery_date?: string | null
           requested_service?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          selected_size?: number | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
+          source_channel?: string | null
           source_key?: string | null
+          source_module?: string | null
+          source_page?: string | null
           timeout_at?: string | null
           updated_at?: string
           urgency_score?: number | null
@@ -21098,7 +21158,7 @@ export type Database = {
             Returns: boolean
           }
       normalize_address: { Args: { p_address: string }; Returns: string }
-      normalize_phone: { Args: { p_phone: string }; Returns: string }
+      normalize_phone: { Args: { raw: string }; Returns: string }
       recalculate_customer_health: {
         Args: { p_customer_id: string }
         Returns: number

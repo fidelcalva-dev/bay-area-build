@@ -122,6 +122,9 @@ export interface LeadHubLead {
   source_key: string | null;
   channel_key: string | null;
   lead_source: string | null;
+  source_channel: string | null;
+  source_page: string | null;
+  source_module: string | null;
   lead_status: string;
   lead_quality_score: number | null;
   lead_risk_score: number | null;
@@ -133,6 +136,7 @@ export interface LeadHubLead {
   zip: string | null;
   customer_type_detected: string | null;
   project_category: string | null;
+  material_category: string | null;
   urgency_score: number | null;
   message_excerpt: string | null;
   consent_status: string | null;
@@ -148,6 +152,16 @@ export interface LeadHubLead {
   sla_due_at: string | null;
   escalation_level: number | null;
   is_sla_breached: boolean | null;
+  // Enrichment fields
+  next_best_action: string | null;
+  last_step_completed: string | null;
+  selected_size: number | null;
+  quote_amount: number | null;
+  quote_amount_high: number | null;
+  delivery_preference: string | null;
+  ai_conversation_summary: string | null;
+  latest_recommended_size: number | null;
+  latest_heavy_flag: boolean | null;
 }
 
 export type LeadHubTab = 
@@ -179,7 +193,7 @@ export function useLeadHub(filters: LeadHubFilters) {
     try {
       let query = supabase
         .from('sales_leads')
-        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, owner_user_id, city, zip, customer_type_detected, project_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, first_contact_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes, sla_due_at, escalation_level, is_sla_breached', { count: 'exact' })
+        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, source_channel, source_page, source_module, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, owner_user_id, city, zip, customer_type_detected, project_category, material_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, first_contact_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes, sla_due_at, escalation_level, is_sla_breached, next_best_action, last_step_completed, selected_size, quote_amount, quote_amount_high, delivery_preference, ai_conversation_summary, latest_recommended_size, latest_heavy_flag', { count: 'exact' })
         .order('created_at', { ascending: false })
         .limit(500);
 

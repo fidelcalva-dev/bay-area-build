@@ -455,8 +455,10 @@ export function V3QuoteFlow() {
     try {
       await supabase.functions.invoke('lead-ingest', {
         body: {
-          source_channel: 'website_quote',
+          source_channel: 'QUOTE_FLOW',
           source_detail: `quote_${milestone}`,
+          source_page: '/quote',
+          source_module: 'v3_quote_flow',
           name: customerName || null,
           phone: customerPhone || null,
           email: customerEmail || null,
@@ -466,7 +468,11 @@ export function V3QuoteFlow() {
           project_type: selectedProject?.label || null,
           material_category: materialTypeForPricing || null,
           size_preference: String(size),
+          selected_size: size,
           customer_type: customerType || null,
+          quote_amount: quote.isValid ? quote.subtotal : null,
+          quote_amount_high: quote.isValid ? quote.subtotalHigh : null,
+          last_step_completed: milestone,
           message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
           consent_status: 'TRANSACTIONAL',
           raw_payload: {

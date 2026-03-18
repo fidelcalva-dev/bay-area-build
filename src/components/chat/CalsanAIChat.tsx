@@ -608,13 +608,21 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
     try {
       await supabase.functions.invoke('lead-ingest', {
         body: {
-          source_channel: 'AI_ASSISTANT',
+          source_channel: 'AI_CHAT',
           source_detail: state.photoPath ? 'photo_flow' : 'structured_flow',
-          customer_name: name,
+          source_page: window.location.pathname,
+          source_module: 'calsan_ai_chat',
+          name,
           phone: phoneInput,
           email: emailInput.trim() || null,
-          zip_code: state.zip,
-          notes: [
+          zip: state.zip,
+          project_type: state.projectType || null,
+          material_category: state.materialType || null,
+          customer_type: state.customerType || null,
+          selected_size: state.size || null,
+          quote_amount: state.price || null,
+          last_step_completed: 'contact_captured',
+          ai_conversation_summary: [
             state.customerType ? `Type: ${state.customerType}` : null,
             state.projectType ? `Project: ${state.projectType}` : null,
             `Material: ${MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || state.materialType || 'Not specified'}`,
@@ -622,7 +630,19 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
             `Price: $${state.price}`,
             state.photoAnalysis ? `Photo confidence: ${state.photoAnalysis.confidence}%` : null,
           ].filter(Boolean).join('. '),
-          priority: 'MEDIUM',
+          message: [
+            state.customerType ? `Type: ${state.customerType}` : null,
+            state.projectType ? `Project: ${state.projectType}` : null,
+            `Material: ${MATERIAL_TYPES.find(m => m.id === state.materialType)?.label || state.materialType || 'Not specified'}`,
+            `Size: ${state.size}yd`,
+            `Price: $${state.price}`,
+          ].filter(Boolean).join('. '),
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            photo_path: state.photoPath || null,
+            photo_confidence: state.photoAnalysis?.confidence || null,
+            booking_mode: state.bookingMode,
+          },
         },
       });
     } catch {}

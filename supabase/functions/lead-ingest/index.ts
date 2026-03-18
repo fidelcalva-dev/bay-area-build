@@ -76,6 +76,8 @@ function scoreLead(input: Record<string, unknown>) {
 interface IngestPayload {
   source_channel: string;
   source_detail?: string;
+  source_page?: string;
+  source_module?: string;
   name?: string;
   phone?: string;
   email?: string;
@@ -88,6 +90,17 @@ interface IngestPayload {
   project_type?: string;
   material_category?: string;
   size_preference?: string;
+  selected_size?: number;
+  quote_amount?: number;
+  quote_amount_high?: number;
+  requested_delivery_date?: string;
+  delivery_preference?: string;
+  placement_type?: string;
+  last_step_completed?: string;
+  ai_conversation_id?: string;
+  ai_conversation_summary?: string;
+  ai_estimated_yards_min?: number;
+  ai_estimated_yards_max?: number;
   lat?: number;
   lng?: number;
   utm_source?: string;
@@ -176,18 +189,56 @@ Deno.serve(async (req) => {
     if (payload.lat != null) extraUpdates.lat = payload.lat;
     if (payload.lng != null) extraUpdates.lng = payload.lng;
 
+    // === NEW: Source attribution ===
+    extraUpdates.source_channel = payload.source_channel;
+    if (payload.source_page) extraUpdates.source_page = payload.source_page;
+    if (payload.source_module) extraUpdates.source_module = payload.source_module;
+
+    // === NEW: Quote enrichment fields ===
+    if (payload.selected_size != null) extraUpdates.selected_size = payload.selected_size;
+    if (payload.quote_amount != null) extraUpdates.quote_amount = payload.quote_amount;
+    if (payload.quote_amount_high != null) extraUpdates.quote_amount_high = payload.quote_amount_high;
+    if (payload.requested_delivery_date) extraUpdates.requested_delivery_date = payload.requested_delivery_date;
+    if (payload.delivery_preference) extraUpdates.delivery_preference = payload.delivery_preference;
+    if (payload.placement_type) extraUpdates.placement_type = payload.placement_type;
+    if (payload.last_step_completed) extraUpdates.last_step_completed = payload.last_step_completed;
+
+    // === NEW: AI chat enrichment fields ===
+    if (payload.ai_conversation_id) extraUpdates.ai_conversation_id = payload.ai_conversation_id;
+    if (payload.ai_conversation_summary) extraUpdates.ai_conversation_summary = payload.ai_conversation_summary;
+    if (payload.ai_estimated_yards_min != null) extraUpdates.ai_estimated_yards_min = payload.ai_estimated_yards_min;
+    if (payload.ai_estimated_yards_max != null) extraUpdates.ai_estimated_yards_max = payload.ai_estimated_yards_max;
+
     // Map size/heavy fields for Sales visibility
     const rawPl = payload.raw_payload || {};
     if (rawPl.selected_size) {
       extraUpdates.latest_recommended_size = Number(rawPl.selected_size);
+    } else if (payload.selected_size) {
+      extraUpdates.latest_recommended_size = payload.selected_size;
     } else if (payload.size_preference) {
       extraUpdates.latest_recommended_size = Number(payload.size_preference);
     }
     if (rawPl.is_heavy != null) {
       extraUpdates.latest_heavy_flag = !!rawPl.is_heavy;
     }
-    if (rawPl.last_step_completed) {
-      extraUpdates.ai_recommended_action = `Last step: ${rawPl.last_step_completed}`;
+    // Auto-update lead status based on milestone
+    const milestone = payload.last_step_completed || (rawPl.last_step_completed as string);
+    if (milestone) {
+      extraUpdates.ai_recommended_action = `Last step: ${milestone}`;
+      const statusMap: Record<string, string> = {
+        'quote_started': 'quote_started',
+        'address_saved': 'quote_started',
+        'material_selected': 'quote_started',
+        'size_selected': 'quote_started',
+        'quote_priced': 'price_shown',
+        'price_shown': 'price_shown',
+        'contact_captured': 'contact_captured',
+        'delivery_preference_saved': 'quote_ready',
+        'quote_ready': 'quote_ready',
+      };
+      if (statusMap[milestone]) {
+        extraUpdates.lead_status = statusMap[milestone];
+      }
     }
 
     // Score the lead
