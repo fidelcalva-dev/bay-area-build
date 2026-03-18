@@ -498,43 +498,56 @@ export const PLAN_A_PRICING: V56PricingTier[] = [
 ];
 
 // ============================================================
-// HEAVY MATERIAL PRICING CANON (Approved flat-rate ladder)
-// Clean Soil / Clean Concrete: 5yd=$495, 8yd=$595, 10yd=$695.50
-// +$200 materials (brick, asphalt, tile): added directly to base
-// +$300 mixed heavy: added directly to base
+// HEAVY MATERIAL PRICING
+// ============================================================
+// CANONICAL MODEL: Service Cost + Dump Fee (V2)
+//   See src/config/heavyMaterialConfig.ts for the master source.
+//   Service Costs: 5yd=$290, 8yd=$340, 10yd=$390
+//   Dump Fee per yard: CLEAN_NO_1=$30, CLEAN_NO_2=$40, ALL_MIXED=$50
+//   Total = ServiceCost + (size × dump_fee_per_yard)
+//
+// LEGACY MODEL (below): Flat-rate ladder used by heavyPricing.ts
+//   and city_rates table. Kept for backward compatibility.
+//   Clean base: 5yd=$495, 8yd=$595, 10yd=$695.50
+//   +$200 (specialty), +$300 (mixed heavy) increments
 // ============================================================
 
-// Approved heavy material base prices by size (flat-rate, disposal included)
+// Legacy flat-rate base prices (used by heavyPricing.ts, CityRatesManager)
+// @deprecated — Prefer heavyMaterialConfig.ts V2 model for new code
 export const HEAVY_BASE_PRICES: Record<number, number> = {
   5: 495,
   8: 595,
   10: 695.50,
 };
 
-// Legacy alias for backward compatibility
+// Legacy alias for backward compatibility (used in city_rates table)
+// @deprecated — Use HEAVY_SERVICE_COSTS from heavyMaterialConfig.ts
 export const HEAVY_BASE_10YD = 695.50;
 
-// Legacy size factors (kept for any external callers, but not used internally)
+// Legacy size factors (kept for external callers)
+// @deprecated — Use heavyMaterialConfig.ts calculateHeavyTotalPrice()
 export const HEAVY_SIZE_FACTORS: Record<number, number> = {
   10: 1.0,
   8: 595 / 695.50,
   5: 495 / 695.50,
 };
 
-// Material class increments (added directly to base price)
+// Legacy material class increments
+// @deprecated — Use HEAVY_MATERIAL_GROUPS from heavyMaterialConfig.ts
 export const HEAVY_INCREMENTS = {
-  base: 0,       // Clean concrete, clean soil, sand, gravel
-  plus_200: 200, // Brick, asphalt, tile, roofing gravel, rock/stone
-  mixed_heavy: 300, // Mix of heavy materials (no trash)
+  base: 0,       // → CLEAN_NO_1 in V2
+  plus_200: 200, // → CLEAN_NO_2 in V2
+  mixed_heavy: 300, // → ALL_MIXED in V2
 } as const;
 
 export type HeavyMaterialClass = keyof typeof HEAVY_INCREMENTS;
 
-// Calculate heavy price: BASE_PRICE[size] + increment
+// Legacy calculator — kept for backward compatibility
+// @deprecated — Use calculateHeavyTotalPrice() from heavyMaterialConfig.ts
 export function calculateHeavyMaterialPrice(
   size: 5 | 8 | 10,
   materialClass: HeavyMaterialClass = 'base',
-  _baseRate?: number // ignored, kept for backward compatibility
+  _baseRate?: number
 ): number {
   const basePrice = HEAVY_BASE_PRICES[size] || 695.50;
   const increment = HEAVY_INCREMENTS[materialClass];

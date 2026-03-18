@@ -51,14 +51,19 @@ export const GENERAL_DEBRIS_SIZES: GeneralDebrisSize[] = [
 ];
 
 // ── Heavy Materials (Legacy flat-rate ladder) ────────────────
+// @deprecated — Use HEAVY_MATERIAL_GROUPS + HEAVY_SERVICE_COSTS from heavyMaterialConfig.ts
+// Canonical V2 model: ServiceCost + (size × dump_fee_per_yard)
+//   CLEAN_NO_1: 5yd=$440, 8yd=$580, 10yd=$690
+//   CLEAN_NO_2: 5yd=$490, 8yd=$660, 10yd=$790
+//   ALL_MIXED:  5yd=$540, 8yd=$740, 10yd=$890
 export const HEAVY_MATERIAL = {
   cleanSoil: {
     allowedSizes: [5, 8, 10] as number[],
-    prices: { 5: 495, 8: 595, 10: 695.50 } as Record<number, number>,
+    prices: { 5: 440, 8: 580, 10: 690 } as Record<number, number>, // V2 CLEAN_NO_1
   },
   cleanConcrete: {
     allowedSizes: [5, 8, 10] as number[],
-    prices: { 5: 495, 8: 595, 10: 695.50 } as Record<number, number>,
+    prices: { 5: 440, 8: 580, 10: 690 } as Record<number, number>, // V2 CLEAN_NO_1
   },
 } satisfies Record<string, HeavyMaterialPricing>;
 
