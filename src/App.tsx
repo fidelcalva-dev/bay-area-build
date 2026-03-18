@@ -815,6 +815,9 @@ const App = () => {
                 <Route path="messaging" element={
                   <Suspense fallback={<PageLoader />}><AdminMessaging /></Suspense>
                 } />
+                <Route path="notifications-config" element={
+                  <Suspense fallback={<PageLoader />}><NotificationConfigPage /></Suspense>
+                } />
                 <Route path="email-test" element={
                   <Suspense fallback={<PageLoader />}><AdminEmailTest /></Suspense>
                 } />
