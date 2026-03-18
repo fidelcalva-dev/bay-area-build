@@ -290,7 +290,7 @@ export function InstantQuoteCalculatorV3() {
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zip)) {
           setZoneResult({
-            zoneId: zone.id,
+            zoneId: null as any, // No real UUID available from fallback constants
             zoneName: zone.name,
             cityName: undefined,
             multiplier: zone.baseMultiplier,
