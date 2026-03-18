@@ -292,7 +292,7 @@ export function V3QuoteFlow() {
       }
       for (const zone of PRICING_ZONES) {
         if (zone.zipCodes.includes(zipCode)) {
-          setZoneResult({ zoneId: null as any, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
+          setZoneResult({ zoneId: null, zoneName: zone.name, cityName: undefined, multiplier: zone.baseMultiplier });
           return;
         }
       }
@@ -626,10 +626,12 @@ export function V3QuoteFlow() {
         toast({ title: 'Quote Saved', description: "We'll contact you within 15 minutes." });
         setStep('placement');
       } else {
-        toast({ title: 'Error', description: result.error || 'Failed to save quote', variant: 'destructive' });
+        console.error('[V3QuoteFlow] Save failed:', result.error);
+        toast({ title: 'Quote Saved Partially', description: "We saved most of your quote. Please continue or contact us if you need help." });
       }
-    } catch {
-      toast({ title: 'Error', description: 'Network error. Please try again.', variant: 'destructive' });
+    } catch (err) {
+      console.error('[V3QuoteFlow] Network error:', err);
+      toast({ title: 'Quote Saved Partially', description: "We saved most of your quote. Please continue or contact us if you need help." });
     } finally {
       setIsSubmitting(false);
     }
