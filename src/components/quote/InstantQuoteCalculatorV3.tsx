@@ -718,6 +718,7 @@ export function InstantQuoteCalculatorV3() {
     // PHASE 4: MARK AS SAVED (Success path - quote is in DB)
     // ============================================================
     setQuoteSaved(true);
+    clearQuoteSession(); // Clear session after successful save
 
     // ============================================================
     // PHASE 5: SEND NOTIFICATIONS (Best-effort - failures don't block save)
