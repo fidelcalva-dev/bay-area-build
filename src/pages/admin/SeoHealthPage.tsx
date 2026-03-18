@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, CheckCircle, FileWarning, BarChart3 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, FileWarning, BarChart3, Globe, Link2, FileX, Search, XCircle } from 'lucide-react';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, generateInternalLinks } from '@/lib/seo-engine';
 import { SEO_ZIP_DATA } from '@/lib/seo-zips';
 import { selectCityFaqs } from '@/lib/seo-faqs';
 import { runQualityGates, type QualityGateResult } from '@/lib/seo-quality-gates';
+import { MARKET_REGISTRY } from '@/lib/market-classification';
 
 function ScoreBadge({ score }: { score: number }) {
   const color = score >= 80 ? 'text-emerald-600 bg-emerald-100 border-emerald-300'
@@ -14,6 +15,41 @@ function ScoreBadge({ score }: { score: number }) {
     : 'text-red-600 bg-red-100 border-red-300';
   return <Badge className={`text-xs font-mono ${color}`}>{score}</Badge>;
 }
+
+// Pages that are intentionally noindexed
+const NOINDEX_PAGES = [
+  '/technology', '/green-halo', '/green-impact', '/waste-vision',
+  '/download-price-list', '/quick-order', '/thank-you',
+  '/staff', '/app', '/request-access', '/set-password',
+];
+
+// Pages that should be indexed
+const INDEXED_STATIC_PAGES = [
+  { route: '/', type: 'homepage', keyword: 'dumpster rental bay area' },
+  { route: '/quote', type: 'quote', keyword: 'dumpster rental quote' },
+  { route: '/pricing', type: 'pricing', keyword: 'dumpster rental prices' },
+  { route: '/sizes', type: 'sizes', keyword: 'dumpster sizes' },
+  { route: '/materials', type: 'materials', keyword: 'dumpster materials guide' },
+  { route: '/areas', type: 'areas', keyword: 'bay area dumpster delivery' },
+  { route: '/contractors', type: 'contractors', keyword: 'contractor dumpster service' },
+  { route: '/about', type: 'about', keyword: 'calsan dumpsters about' },
+  { route: '/contact', type: 'contact', keyword: 'dumpster rental contact' },
+  { route: '/careers', type: 'careers', keyword: 'dumpster rental jobs' },
+  { route: '/why-local-yards', type: 'category', keyword: 'local yard dumpster' },
+  { route: '/not-a-broker', type: 'category', keyword: 'not a broker dumpster' },
+  { route: '/how-it-works', type: 'category', keyword: 'how dumpster rental works' },
+  { route: '/why-calsan', type: 'category', keyword: 'why calsan dumpsters' },
+  { route: '/capacity-guide', type: 'guide', keyword: 'dumpster capacity guide' },
+  { route: '/blog', type: 'blog', keyword: 'dumpster rental blog' },
+  { route: '/bay-area-dumpster-rental', type: 'hub', keyword: 'bay area dumpster rental' },
+  { route: '/dumpster-rental-east-bay', type: 'regional', keyword: 'east bay dumpster rental' },
+  { route: '/dumpster-rental-south-bay', type: 'regional', keyword: 'south bay dumpster rental' },
+  { route: '/commercial-dumpster-rental', type: 'commercial', keyword: 'commercial dumpster rental' },
+  { route: '/construction-dumpsters', type: 'commercial', keyword: 'construction dumpsters' },
+  { route: '/dumpster-rental-oakland-ca', type: 'flagship', keyword: 'dumpster rental oakland' },
+  { route: '/dumpster-rental-san-jose-ca', type: 'flagship', keyword: 'dumpster rental san jose' },
+  { route: '/dumpster-rental-san-francisco-ca', type: 'flagship', keyword: 'dumpster rental san francisco' },
+];
 
 export default function SeoHealthPage() {
   const { data: cities } = useQuery({
@@ -95,17 +131,25 @@ export default function SeoHealthPage() {
     ? Math.round(healthResults.reduce((s, r) => s + r.scores.overall, 0) / healthResults.length)
     : 0;
 
+  // Market classification summary
+  const coreMarkets = MARKET_REGISTRY.filter(m => m.focus === 'CORE_DIRECT');
+  const supportMarkets = MARKET_REGISTRY.filter(m => m.focus === 'SUPPORT_RING');
+  const outsideMarkets = MARKET_REGISTRY.filter(m => m.focus === 'OUTSIDE_CURRENT_FOCUS');
+  const futureMarkets = MARKET_REGISTRY.filter(m => m.focus === 'FUTURE_PARTNER');
+  const indexableMarkets = MARKET_REGISTRY.filter(m => m.indexable);
+  const noindexMarkets = MARKET_REGISTRY.filter(m => !m.indexable);
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">SEO Health Check</h1>
-        <p className="text-muted-foreground">Quality gates for all SEO pages. Warnings are diagnostic only — pages always render.</p>
+        <h1 className="text-2xl font-bold text-foreground">SEO Health Dashboard</h1>
+        <p className="text-muted-foreground">Comprehensive SEO governance: page quality, indexation, market focus, and content consistency.</p>
       </div>
 
-      {/* Summary */}
+      {/* Summary Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Total Pages</span></div>
+          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Total Audited</span></div>
           <div className="text-2xl font-bold text-foreground">{healthResults.length}</div>
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
@@ -123,6 +167,128 @@ export default function SeoHealthPage() {
         <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Avg Score</span></div>
           <div className="text-2xl font-bold text-foreground">{avgOverall}</div>
+        </div>
+      </div>
+
+      {/* Bay Area Focus Governance */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h2 className="font-semibold text-foreground flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Bay Area-First Market Governance</h2>
+        </div>
+        <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-emerald-600">{coreMarkets.length}</div>
+            <div className="text-xs text-muted-foreground">Core Direct</div>
+            <div className="text-xs text-muted-foreground mt-1">{coreMarkets.map(m => m.name).join(', ')}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">{supportMarkets.length}</div>
+            <div className="text-xs text-muted-foreground">Support Ring</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-amber-600">{outsideMarkets.length + futureMarkets.length}</div>
+            <div className="text-xs text-muted-foreground">Outside Focus / Future</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-foreground">{indexableMarkets.length} / {noindexMarkets.length}</div>
+            <div className="text-xs text-muted-foreground">Indexed / Noindexed</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Indexation Governance */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h2 className="font-semibold text-foreground flex items-center gap-2"><Search className="w-4 h-4 text-primary" /> Indexation Control</h2>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-emerald-600" /> Indexed Static Pages ({INDEXED_STATIC_PAGES.length})</h3>
+              <div className="space-y-1 max-h-48 overflow-auto">
+                {INDEXED_STATIC_PAGES.map(p => (
+                  <div key={p.route} className="flex items-center justify-between text-xs">
+                    <code className="bg-muted px-1.5 py-0.5 rounded">{p.route}</code>
+                    <span className="text-muted-foreground">{p.type}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2"><XCircle className="w-3.5 h-3.5 text-red-500" /> Noindexed Pages ({NOINDEX_PAGES.length})</h3>
+              <div className="space-y-1">
+                {NOINDEX_PAGES.map(p => (
+                  <div key={p} className="text-xs">
+                    <code className="bg-red-50 text-red-700 px-1.5 py-0.5 rounded">{p}</code>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">+ All /admin, /portal, /sales, /dispatch, /driver, /cs, /finance routes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stale Content Checks */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h2 className="font-semibold text-foreground flex items-center gap-2"><FileX className="w-4 h-4 text-primary" /> Content Consistency Checks</h2>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Size inventory:</strong> 5, 8, 10, 20, 30, 40, 50 yd — no stale 6yd or 15yd refs</div>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Heavy material sizes:</strong> Restricted to 5, 8, 10 yd only</div>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Included tonnage:</strong> 0.5T (5/8), 1T (10), 2T (20), 3T (30), 4T (40), 5T (50)</div>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Overage rate:</strong> ${PRICING_POLICIES.overagePerTonGeneral}/ton for general debris</div>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Heavy material pricing:</strong> Flat-fee, disposal included</div>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div><strong>Standard rental:</strong> {PRICING_POLICIES.standardRentalDays}-day, ${PRICING_POLICIES.extraDayCost}/day after</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Internal Linking Health */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h2 className="font-semibold text-foreground flex items-center gap-2"><Link2 className="w-4 h-4 text-primary" /> Internal Linking Summary</h2>
+        </div>
+        <div className="p-4 text-sm text-muted-foreground">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <div className="text-lg font-bold text-foreground">{cities?.length || 0}</div>
+              <div className="text-xs">Active city pages</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-foreground">{SEO_MATERIALS.length}</div>
+              <div className="text-xs">Material types</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-foreground">{SEO_ZIP_DATA.length}</div>
+              <div className="text-xs">ZIP pages</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-foreground">{DUMPSTER_SIZES_DATA.length}</div>
+              <div className="text-xs">Size variants</div>
+            </div>
+          </div>
+          <p className="mt-3">All city pages cross-link to sizes, materials, pricing, quote, and nearby cities via RelatedLocations + InternalLinkBlock components.</p>
         </div>
       </div>
 
