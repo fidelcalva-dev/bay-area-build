@@ -331,14 +331,20 @@ export function InstantQuoteCalculatorV3() {
     }
   }, [formData.zip, lookupZone]);
 
-  // Auto-adjust size when material changes
+  // Auto-adjust size when material changes (with guardrail message)
   useEffect(() => {
     const material = MATERIAL_TYPES.find((m) => m.value === formData.material);
     if (material && !material.allowedSizes.includes(formData.size)) {
+      const newSize = formData.material === 'heavy' ? 10 : 20;
+      const oldSize = formData.size;
       setFormData((prev) => ({ 
         ...prev, 
-        size: formData.material === 'heavy' ? 10 : 20 
+        size: newSize,
       }));
+      setSizeAutoCorrectedMessage(
+        `${oldSize}-yard is not available for ${material.label}. Size updated to ${newSize}-yard.`
+      );
+      setTimeout(() => setSizeAutoCorrectedMessage(null), 6000);
     }
   }, [formData.material, formData.size]);
 
