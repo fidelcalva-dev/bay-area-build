@@ -211,9 +211,11 @@ Deno.serve(async (req) => {
 
     // Map size/heavy fields for Sales visibility
     const rawPl = payload.raw_payload || {};
-    if (rawPl.selected_size) {
+    if (rawPl.recommended_size_yd != null) {
+      extraUpdates.latest_recommended_size = Number(rawPl.recommended_size_yd);
+    } else if (rawPl.selected_size != null) {
       extraUpdates.latest_recommended_size = Number(rawPl.selected_size);
-    } else if (payload.selected_size) {
+    } else if (payload.selected_size != null) {
       extraUpdates.latest_recommended_size = payload.selected_size;
     } else if (payload.size_preference) {
       extraUpdates.latest_recommended_size = Number(payload.size_preference);

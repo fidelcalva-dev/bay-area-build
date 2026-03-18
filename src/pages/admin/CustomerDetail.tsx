@@ -72,7 +72,11 @@ export default function CustomerDetail() {
       supabase.from('customers').select('billing_email').eq('id', id).single().then(async (res) => {
         const email = res.data?.billing_email;
         if (!email) return { data: [], error: null };
-        return supabase.from('quotes').select('id, customer_name, customer_email, status, subtotal, created_at, zip_code, material_type').eq('customer_email', email).order('created_at', { ascending: false });
+        return supabase
+          .from('quotes')
+          .select('id, customer_name, customer_email, status, subtotal, created_at, updated_at, zip_code, material_type, project_type, heavy_material_class, recommended_size_yards, user_selected_size_yards')
+          .eq('customer_email', email)
+          .order('created_at', { ascending: false });
       }),
       supabase.from('customer_contacts').select('*').eq('customer_id', id).order('is_primary', { ascending: false }),
       supabase.from('customer_sites').select('*').eq('customer_id', id).order('is_primary', { ascending: false }),

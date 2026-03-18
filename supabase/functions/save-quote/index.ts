@@ -284,9 +284,14 @@ serve(async (req) => {
           city: payload.city ?? null,
           address: payload.delivery_address ?? null,
           customer_type: payload.user_type ?? null,
-          project_type: payload.material_type ?? null,
+          project_type: payload.project_type ?? null,
           material_category: payload.material_type ?? null,
-          size_preference: payload.user_selected_size_yards ? `${payload.user_selected_size_yards}yd` : null,
+          size_preference: payload.user_selected_size_yards
+            ? `${payload.user_selected_size_yards}yd`
+            : payload.recommended_size_yards
+              ? `${payload.recommended_size_yards}yd`
+              : null,
+          selected_size: payload.user_selected_size_yards ?? payload.recommended_size_yards ?? null,
           lat: payload.customer_lat ?? null,
           lng: payload.customer_lng ?? null,
           landing_url: payload.landing_url ?? null,
@@ -301,7 +306,19 @@ serve(async (req) => {
           raw_payload: {
             quote_id: quote.id,
             subtotal: payload.subtotal,
-            size_yards: payload.user_selected_size_yards,
+            size_yards: payload.user_selected_size_yards ?? payload.recommended_size_yards ?? null,
+            selected_size: payload.user_selected_size_yards ?? payload.recommended_size_yards ?? null,
+            recommended_size_yd: payload.recommended_size_yards ?? null,
+            selected_size_yd: payload.user_selected_size_yards ?? payload.recommended_size_yards ?? null,
+            selected_size_label: payload.user_selected_size_yards
+              ? `${payload.user_selected_size_yards} Yard`
+              : payload.recommended_size_yards
+                ? `${payload.recommended_size_yards} Yard`
+                : null,
+            selected_size_source: payload.user_selected_size_yards ? 'user_selected' : 'recommended',
+            size_selected_at: new Date().toISOString(),
+            project_type: payload.project_type ?? null,
+            material_type: payload.material_type ?? null,
             source: 'save-quote',
           },
         }),

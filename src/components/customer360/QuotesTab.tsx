@@ -306,16 +306,21 @@ export function QuotesTab({ quotes, customerId, customerPhone, customerEmail }: 
 
                   {/* Material / Size / Readiness row */}
                   <div className="flex items-center gap-1.5 flex-wrap text-xs">
-                    {(quote as any).material_type && (
-                      <Badge variant="outline" className="text-[10px] capitalize">{(quote as any).material_type}</Badge>
+                    {quote.material_type && (
+                      <Badge variant="outline" className="text-[10px] capitalize">{quote.material_type}</Badge>
                     )}
-                    {((quote as any).user_selected_size_yards || (quote as any).recommended_size_yards) && (
+                    {quote.heavy_material_class && (
+                      <Badge variant="outline" className="text-[10px]">{quote.heavy_material_class}</Badge>
+                    )}
+                    {quote.user_selected_size_yards && (
                       <Badge variant="outline" className="text-[10px]">
-                        {(quote as any).user_selected_size_yards || (quote as any).recommended_size_yards} yd
+                        Selected: {quote.user_selected_size_yards} yd
                       </Badge>
                     )}
-                    {(quote as any).is_heavy_material && (
-                      <Badge variant="outline" className="text-[10px] border-amber-400 text-amber-700 dark:text-amber-400">Heavy</Badge>
+                    {!quote.user_selected_size_yards && quote.recommended_size_yards && (
+                      <Badge variant="outline" className="text-[10px]">
+                        Recommended: {quote.recommended_size_yards} yd
+                      </Badge>
                     )}
                     {(quote as any).pricing_status && (quote as any).pricing_status !== 'standard' && (
                       <Badge variant="outline" className="text-[10px] border-primary/50 text-primary capitalize">
@@ -323,6 +328,19 @@ export function QuotesTab({ quotes, customerId, customerPhone, customerEmail }: 
                       </Badge>
                     )}
                   </div>
+
+                  <div className="grid gap-1 text-[11px] text-muted-foreground sm:grid-cols-2">
+                    <span>Project: {quote.project_type || '—'}</span>
+                    <span>Source: {quote.user_selected_size_yards ? 'customer selected' : quote.recommended_size_yards ? 'recommended' : 'missing'}</span>
+                    <span>Recommended size: {quote.recommended_size_yards ? `${quote.recommended_size_yards} yd` : '—'}</span>
+                    <span>Last saved: {quote.updated_at ? new Date(quote.updated_at).toLocaleString() : new Date(quote.created_at).toLocaleString()}</span>
+                  </div>
+
+                  {!quote.user_selected_size_yards && !quote.recommended_size_yards && (
+                    <div className="rounded-md border border-destructive/30 bg-destructive/5 px-2 py-1 text-[11px] font-medium text-destructive">
+                      Missing Size Selection
+                    </div>
+                  )}
 
                   {/* Negotiated price indicator */}
                   {(quote as any).negotiated_price && (quote as any).negotiated_price !== quote.subtotal && (
