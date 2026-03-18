@@ -289,7 +289,7 @@ export async function saveQuote(params: {
       volume_commitment_count: params.volumeCommitmentCount || 0,
       volume_discount_pct: params.volumeDiscountPct || 0,
       discount_cap_applied: params.discountCapApplied || false,
-      volume_agreement_id: params.volumeAgreementId,
+      volume_agreement_id: sanitizeUuid(params.volumeAgreementId),
       volume_validity_start: params.volumeValidityStart?.toISOString(),
       volume_validity_end: params.volumeValidityEnd?.toISOString(),
       requires_discount_approval: params.requiresDiscountApproval || false,
