@@ -238,7 +238,7 @@ export async function saveQuote(params: {
       customer_phone: params.customerPhone,
       user_type: params.userType,
       zip_code: params.zipCode,
-      zone_id: params.zoneId,
+      zone_id: sanitizeUuid(params.zoneId),
       size_id: params.sizeId,
       material_type: params.materialType,
       rental_days: params.rentalDays,
