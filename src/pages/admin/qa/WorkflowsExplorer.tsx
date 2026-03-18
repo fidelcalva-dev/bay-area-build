@@ -107,7 +107,7 @@ const EDGE_FUNCTIONS = [
   { name: 'ads-generate-campaigns', category: 'ADS', description: 'Auto-generate campaigns', external: ['Google Ads API'], tables: ['ads_campaigns', 'ads_adgroups'] },
   
   // Other
-  { name: 'ghl-message-worker', category: 'MESSAGING', description: 'Process message queue', external: ['GHL'], tables: ['message_queue', 'message_logs'] },
+  { name: 'ghl-sync-poller', category: 'MESSAGING', description: 'Poll GHL for conversations/messages/calls', external: ['GHL'], tables: ['ghl_message_threads', 'ghl_messages', 'ghl_call_logs'] },
   { name: 'analyze-waste', category: 'OTHER', description: 'AI waste analysis', external: ['Lovable AI'], tables: [] },
   { name: 'qa-runner', category: 'QA', description: 'Run QA checks', external: [], tables: ['qa_results'] },
   { name: 'update-days-out', category: 'BILLING', description: 'Update asset days', external: [], tables: ['assets_dumpsters'] },
