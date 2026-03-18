@@ -212,6 +212,7 @@ export default function QuickOrder() {
       title="Quick Order | CALSAN Dumpsters"
       description="Complete your dumpster rental order in seconds with your personalized quick link."
       noindex={true}
+      noindex={true}
     >
       <section className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-primary/5 via-background to-muted py-8 lg:py-12">
         <div className="container-wide max-w-3xl mx-auto">
