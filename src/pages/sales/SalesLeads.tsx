@@ -443,24 +443,23 @@ export default function SalesLeads() {
                   <TableHead className="w-[200px]">Contact</TableHead>
                   <TableHead>Addresses</TableHead>
                   <TableHead>Source</TableHead>
-                  <TableHead>Age</TableHead>
+                  <TableHead>Progress</TableHead>
                   <TableHead>Quality</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Last Follow-Up</TableHead>
+                  <TableHead>Next Action</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {leads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                       No leads found in this view
                     </TableCell>
                   </TableRow>
                 ) : (
                   leads
                     .filter(lead => {
-                      // Client-side filter for "My Leads" tab
                       if (activeTab === 'my_leads' && user?.id) {
                         return lead.owner_user_id === user.id || lead.assigned_to === user.id;
                       }
@@ -468,11 +467,15 @@ export default function SalesLeads() {
                     })
                     .map(lead => {
                     const ageMinutes = Math.floor((now.getTime() - new Date(lead.created_at).getTime()) / 60000);
-                    const lastContactMin = lead.last_contacted_at
-                      ? Math.floor((now.getTime() - new Date(lead.last_contacted_at).getTime()) / 60000)
-                      : null;
                     const statusConfig = STATUS_CONFIG[lead.lead_status] || STATUS_CONFIG.new;
                     const qualityColor = QUALITY_COLORS[lead.lead_quality_label || 'GREEN'];
+
+                    // Build progress summary
+                    const progressParts: string[] = [];
+                    if (lead.selected_size || lead.latest_recommended_size) progressParts.push(`${lead.selected_size || lead.latest_recommended_size}yd`);
+                    if (lead.material_category) progressParts.push(lead.material_category);
+                    if (lead.quote_amount) progressParts.push(`$${lead.quote_amount}`);
+                    if (lead.last_step_completed) progressParts.push(lead.last_step_completed.replace(/_/g, ' '));
 
                     return (
                       <TableRow
@@ -498,7 +501,20 @@ export default function SalesLeads() {
                             {getLeadSource(lead)}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm font-mono">{formatElapsed(ageMinutes)}</TableCell>
+                        <TableCell>
+                          {progressParts.length > 0 ? (
+                            <div className="text-xs text-muted-foreground space-y-0.5">
+                              {progressParts.map((p, i) => <span key={i} className="block">{p}</span>)}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">--</span>
+                          )}
+                          {lead.ai_conversation_summary && (
+                            <p className="text-xs text-primary/70 mt-0.5 truncate max-w-[120px]" title={lead.ai_conversation_summary}>
+                              🤖 {lead.ai_conversation_summary.slice(0, 40)}…
+                            </p>
+                          )}
+                        </TableCell>
                         <TableCell>
                           <Badge className={`${qualityColor} text-xs`}>
                             {lead.lead_quality_label || 'GREEN'} {lead.lead_quality_score ?? 0}
@@ -509,8 +525,14 @@ export default function SalesLeads() {
                             {statusConfig.label}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {lastContactMin !== null ? formatElapsed(lastContactMin) + ' ago' : '--'}
+                        <TableCell>
+                          {lead.next_best_action ? (
+                            <Badge variant="secondary" className="text-xs">
+                              {lead.next_best_action}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">{formatElapsed(ageMinutes)}</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex gap-1 justify-end" onClick={e => e.stopPropagation()}>
