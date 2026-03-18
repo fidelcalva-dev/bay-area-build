@@ -33,6 +33,9 @@ import { type MaterialSelectionData } from '@/lib/materialCategories';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 
+// Session persistence for quote state
+import { saveQuoteSession, loadQuoteSession, clearQuoteSession } from './hooks/useQuoteSession';
+
 // Distance-based pricing hook
 import { useDistanceCalculation } from './hooks/useDistanceCalculation';
 
