@@ -5,17 +5,19 @@ import { ArrowRight, Ruler, Weight, CheckCircle, Eye, EyeOff, Package } from 'lu
 import { cn } from '@/lib/utils';
 
 // Use canonical dumpster image registry (single source of truth)
-import { 
-  getCanonicalDumpsterImageSet,
+import {
   DUMPSTER_PHOTO_MAP,
   DUMPSTER_DIMS_MAP,
 } from '@/lib/canonicalDumpsterImages';
 
 // Re-export for backwards compatibility
 export const DUMPSTER_IMAGES: Record<number, { main: string; dims: string }> = Object.fromEntries(
-  [6, 8, 10, 20, 30, 40, 50].map((size) => [
+  [5, 6, 8, 10, 20, 30, 40, 50].map((size) => [
     size,
-    { main: DUMPSTER_PHOTO_MAP[size], dims: DUMPSTER_DIMS_MAP[size] },
+    {
+      main: DUMPSTER_PHOTO_MAP[size] || DUMPSTER_PHOTO_MAP[5],
+      dims: DUMPSTER_DIMS_MAP[size] || DUMPSTER_DIMS_MAP[5],
+    },
   ])
 );
 

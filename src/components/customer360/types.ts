@@ -54,8 +54,13 @@ export interface Quote {
   status: string;
   subtotal: number | null;
   created_at: string;
+  updated_at?: string;
   zip_code: string | null;
   material_type: string | null;
+  project_type?: string | null;
+  heavy_material_class?: string | null;
+  recommended_size_yards?: number | null;
+  user_selected_size_yards?: number | null;
 }
 
 export interface CustomerContact {
