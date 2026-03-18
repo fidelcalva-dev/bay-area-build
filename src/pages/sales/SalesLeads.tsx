@@ -253,7 +253,7 @@ export default function SalesLeads() {
   };
 
   function getLeadSource(lead: LeadHubLead) {
-    const key = lead.channel_key || lead.source_key || lead.lead_source || '';
+    const key = lead.source_channel || lead.channel_key || lead.source_key || lead.lead_source || '';
     return SOURCE_LABELS[key] || key || '--';
   }
 
