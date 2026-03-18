@@ -340,8 +340,8 @@ export default function Pricing() {
                   <tbody>
                     <tr className="border-b border-warning/10">
                       <td className="py-3">
-                        <div className="font-medium text-foreground">Base Materials</div>
-                        <div className="text-xs text-muted-foreground">Clean concrete, soil, sand, gravel</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.base.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.base.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.base.prices[8]}</td>
@@ -349,11 +349,8 @@ export default function Pricing() {
                     </tr>
                     <tr className="border-b border-warning/10">
                       <td className="py-3">
-                        <div className="font-medium text-foreground flex items-center gap-2">
-                          +$200 Materials
-                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$200</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">Brick, asphalt, tile, roofing gravel, rock/stone</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.plus_200.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.plus_200.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.plus_200.prices[8]}</td>
@@ -361,11 +358,8 @@ export default function Pricing() {
                     </tr>
                     <tr>
                       <td className="py-3">
-                        <div className="font-medium text-foreground flex items-center gap-2">
-                          Mixed Heavy
-                          <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] rounded font-bold">+$300</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">Any mix of heavy materials (concrete + soil, etc.)</div>
+                        <div className="font-medium text-foreground">{heavyPricingDisplay.mixed_heavy.label}</div>
+                        <div className="text-xs text-muted-foreground">{heavyPricingDisplay.mixed_heavy.description}</div>
                       </td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[10]}</td>
                       <td className="text-center py-3 font-bold text-foreground">${heavyPricingDisplay.mixed_heavy.prices[8]}</td>
