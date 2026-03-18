@@ -217,6 +217,7 @@ const SeoMetricsPage = lazy(() => import("./pages/admin/SeoMetricsPage"));
 const SeoGeneratePage = lazy(() => import("./pages/admin/SeoGeneratePage"));
 const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
 const SeoAuditDashboard = lazy(() => import("./pages/admin/SeoAuditDashboard"));
+const NotificationConfigPage = lazy(() => import("./pages/admin/NotificationConfigPage"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Local Search Admin Pages
