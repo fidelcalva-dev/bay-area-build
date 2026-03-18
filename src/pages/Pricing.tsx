@@ -233,7 +233,7 @@ export default function Pricing() {
               <Trash2 className="w-5 h-5 text-primary" />
               General Debris Dumpsters
             </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {pricingTiers.map((tier) => (
                 <div 
                   key={tier.size} 
