@@ -262,7 +262,7 @@ export async function saveQuote(params: {
       // Distance-based pricing fields
       customer_lat: params.customerLat,
       customer_lng: params.customerLng,
-      yard_id: params.yardId,
+      yard_id: sanitizeUuid(params.yardId),
       yard_name: params.yardName,
       distance_miles: params.distanceMiles,
       distance_bracket: params.distanceBracket,
