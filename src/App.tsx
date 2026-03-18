@@ -217,6 +217,7 @@ const SeoMetricsPage = lazy(() => import("./pages/admin/SeoMetricsPage"));
 const SeoGeneratePage = lazy(() => import("./pages/admin/SeoGeneratePage"));
 const SeoGridPage = lazy(() => import("./pages/admin/SeoGridPage"));
 const SeoAuditDashboard = lazy(() => import("./pages/admin/SeoAuditDashboard"));
+const NotificationConfigPage = lazy(() => import("./pages/admin/NotificationConfigPage"));
 const SitemapPage = lazy(() => import("./pages/SitemapPage"));
 
 // Local Search Admin Pages
@@ -813,6 +814,9 @@ const App = () => {
                 } />
                 <Route path="messaging" element={
                   <Suspense fallback={<PageLoader />}><AdminMessaging /></Suspense>
+                } />
+                <Route path="notifications-config" element={
+                  <Suspense fallback={<PageLoader />}><NotificationConfigPage /></Suspense>
                 } />
                 <Route path="email-test" element={
                   <Suspense fallback={<PageLoader />}><AdminEmailTest /></Suspense>
