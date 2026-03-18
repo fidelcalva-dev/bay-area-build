@@ -266,9 +266,8 @@ export function useTelephony(userId?: string) {
     } catch (error) {
       console.error('Error making call:', error);
       toast({
-        title: 'Call Failed',
-        description: 'Failed to initiate call',
-        variant: 'destructive',
+        title: 'Could not start call',
+        description: 'The telephony system is not ready. Use the Call button on the contact card to dial directly, or copy the number.',
       });
       throw error;
     }

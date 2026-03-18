@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MessageSquare, Phone, RefreshCw, Settings, CheckCircle, XCircle, Clock,
   Wifi, WifiOff, Play, Mail, Users, Shield, HeartPulse, AlertTriangle,
-  Globe, Link2, GitBranch, Workflow, ArrowUpDown, RotateCcw,
+  Globe, Link2, GitBranch, Workflow, ArrowUpDown, RotateCcw, Mic,
+  Smartphone, Monitor,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -276,6 +277,7 @@ export default function GHLIntegrationPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="flex flex-wrap h-auto gap-1">
           <TabsTrigger value="health"><HeartPulse className="w-4 h-4 mr-1.5" />Health</TabsTrigger>
+          <TabsTrigger value="voice"><Mic className="w-4 h-4 mr-1.5" />Voice</TabsTrigger>
           <TabsTrigger value="providers"><Phone className="w-4 h-4 mr-1.5" />Providers</TabsTrigger>
           <TabsTrigger value="pipeline"><ArrowUpDown className="w-4 h-4 mr-1.5" />Pipeline</TabsTrigger>
           <TabsTrigger value="workflows"><Workflow className="w-4 h-4 mr-1.5" />Workflows</TabsTrigger>
@@ -283,6 +285,11 @@ export default function GHLIntegrationPage() {
           <TabsTrigger value="webhooks"><Link2 className="w-4 h-4 mr-1.5" />Webhooks</TabsTrigger>
           <TabsTrigger value="settings"><Settings className="w-4 h-4 mr-1.5" />Settings</TabsTrigger>
         </TabsList>
+
+        {/* ─── VOICE / CALLING TAB ─── */}
+        <TabsContent value="voice">
+          <VoiceCallingTab config={config} configLoading={configLoading} updateConfigMutation={updateConfigMutation} />
+        </TabsContent>
 
         {/* ─── HEALTH TAB ─── */}
         <TabsContent value="health">
@@ -800,5 +807,134 @@ function WorkflowRoutingTab({ config, configLoading, updateJsonConfigMutation }:
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// ─── VOICE / CALLING TAB ───
+
+function VoiceCallingTab({ config, configLoading, updateConfigMutation }: {
+  config: GHLConfig | undefined;
+  configLoading: boolean;
+  updateConfigMutation: ReturnType<typeof useMutation<void, Error, { key: string; value: string }>>;
+}) {
+  return (
+    <div className="space-y-6">
+      {/* Call Strategy */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Phone className="w-4 h-4" /> CRM Call Strategy
+          </CardTitle>
+          <CardDescription>
+            How calls are initiated from the CRM. GHL handles the actual voice connection — the CRM triggers the call intent and logs activity.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 border rounded-lg space-y-3">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-5 h-5 text-primary" />
+                <h4 className="font-medium">Mobile Mode</h4>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Uses the device's native phone dialer via <code className="text-xs bg-muted px-1 rounded">tel:</code> link. Fast and reliable — the call is placed through the phone's cellular or VoIP app.
+              </p>
+              <Badge variant="default">Active — Native Dialer</Badge>
+            </div>
+
+            <div className="p-4 border rounded-lg space-y-3">
+              <div className="flex items-center gap-2">
+                <Monitor className="w-5 h-5 text-primary" />
+                <h4 className="font-medium">Desktop Mode</h4>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Opens the phone number via <code className="text-xs bg-muted px-1 rounded">tel:</code> link. If a softphone app (Skype, FaceTime, GHL desktop) is installed, it will handle the call. Otherwise the user can copy the number.
+              </p>
+              <Badge variant="default">Active — tel: + Copy Fallback</Badge>
+            </div>
+          </div>
+
+          <div className="p-3 border rounded-lg bg-muted/30 text-sm">
+            <strong>How it works:</strong> When a CRM user clicks "Call", the system:
+            <ol className="list-decimal list-inside mt-1 space-y-0.5 text-muted-foreground text-xs">
+              <li>Creates a <code className="bg-muted px-1 rounded">call_intent_started</code> timeline event</li>
+              <li>Opens the phone number via <code className="bg-muted px-1 rounded">tel:</code> protocol</li>
+              <li>GHL webhook/poller syncs the actual call log back to the timeline</li>
+              <li>If no dialer opens, user sees "Copy Number" and "Text Instead" fallbacks</li>
+            </ol>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Call Logging */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <HeartPulse className="w-4 h-4" /> Call Sync & Logging
+          </CardTitle>
+          <CardDescription>Call events from GHL sync into the Calsan timeline automatically.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {configLoading ? <Skeleton className="h-24 w-full" /> : (
+            <>
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <Label className="font-medium">Inbound Call Sync</Label>
+                  <p className="text-xs text-muted-foreground">Sync inbound calls from GHL into timeline</p>
+                </div>
+                <Switch
+                  checked={config?.inbound_sync_enabled}
+                  onCheckedChange={(checked) => updateConfigMutation.mutate({ key: "ghl.inbound_sync_enabled", value: checked ? "true" : "false" })}
+                />
+              </div>
+
+              <div className="p-3 border rounded-lg">
+                <Label className="font-medium">Timeline Events Tracked</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {[
+                    "call_intent_started",
+                    "outbound_call_started",
+                    "outbound_call_completed",
+                    "inbound_call_received",
+                    "missed_call",
+                    "voicemail_received",
+                    "callback_requested",
+                  ].map((evt) => (
+                    <Badge key={evt} variant="outline" className="text-xs font-mono">{evt}</Badge>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Users className="w-4 h-4" /> CRM Quick Actions
+          </CardTitle>
+          <CardDescription>Call buttons are available across the CRM in these locations.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[
+              { area: "Lead Hub", actions: "Call, SMS, Email, Copy Number" },
+              { area: "Quote Detail", actions: "Call, SMS, Email, Copy Number" },
+              { area: "Customer 360", actions: "Call, SMS, Email, Copy Number" },
+              { area: "Sales Dashboard", actions: "Call, SMS, Email, Copy Number" },
+              { area: "CS Dashboard", actions: "Call, SMS, Email" },
+              { area: "Order Detail", actions: "Call, SMS, Email, Copy Number" },
+            ].map((item) => (
+              <div key={item.area} className="flex items-center justify-between p-3 border rounded-lg">
+                <span className="text-sm font-medium">{item.area}</span>
+                <span className="text-xs text-muted-foreground">{item.actions}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
