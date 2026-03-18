@@ -30,5 +30,10 @@ Disallow: /request-access
 Disallow: /login
 Disallow: /preview/
 Disallow: /green-halo/portal/
+Disallow: /quick-order
+Disallow: /download-price-list
+Disallow: /waste-vision
+Disallow: /green-impact
+Disallow: /technology
 
 Sitemap: https://calsandumpsterspro.com/sitemap.xml
