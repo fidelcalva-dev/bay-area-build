@@ -81,7 +81,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 // ZONE RESULT
 // ============================================================
 interface ZoneResult {
-  zoneId: string;
+  zoneId: string | null;
   zoneName: string;
   cityName?: string;
   multiplier: number;

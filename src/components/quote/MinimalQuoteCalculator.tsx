@@ -68,7 +68,7 @@ interface SizeOption {
 }
 
 interface ZoneResult {
-  zoneId: string;
+  zoneId: string | null;
   zoneName: string;
   cityName?: string;
   multiplier: number;
