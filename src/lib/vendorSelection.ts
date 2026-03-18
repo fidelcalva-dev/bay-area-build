@@ -247,7 +247,7 @@ export async function saveQuote(params: {
       estimated_min: params.estimatedMin,
       estimated_max: params.estimatedMax,
       discount_percent: params.discountPercent || 0,
-      selected_vendor_id: params.selectedVendorId,
+      selected_vendor_id: sanitizeUuid(params.selectedVendorId),
       vendor_cost: params.vendorCost,
       margin: params.margin,
       is_calsan_fulfillment: params.isCalsanFulfillment,
