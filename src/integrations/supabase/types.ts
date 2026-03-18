@@ -21158,7 +21158,7 @@ export type Database = {
             Returns: boolean
           }
       normalize_address: { Args: { p_address: string }; Returns: string }
-      normalize_phone: { Args: { p_phone: string }; Returns: string }
+      normalize_phone: { Args: { raw: string }; Returns: string }
       recalculate_customer_health: {
         Args: { p_customer_id: string }
         Returns: number
