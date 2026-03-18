@@ -525,7 +525,7 @@ export default function WorkflowsExplorer() {
                     <div className="p-3 rounded-lg bg-muted">
                       <h4 className="font-medium">GoHighLevel</h4>
                       <div className="text-sm space-y-1 mt-2">
-                        <p><span className="text-muted-foreground">Inbound:</span> <code>/functions/v1/ghl-inbound-webhook</code></p>
+                        <p><span className="text-muted-foreground">Inbound:</span> <code>/functions/v1/ghl-webhook-inbound</code></p>
                       </div>
                     </div>
                   </div>
