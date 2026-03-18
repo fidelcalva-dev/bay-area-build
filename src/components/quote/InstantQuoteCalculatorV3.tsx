@@ -123,7 +123,7 @@ const STEPS: { key: Step; label: string; shortLabel: string; icon: React.ReactNo
 ];
 
 interface ZoneResult {
-  zoneId: string;
+  zoneId: string | null;
   zoneName: string;
   cityName?: string;
   multiplier: number;
