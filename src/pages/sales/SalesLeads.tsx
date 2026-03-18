@@ -65,17 +65,31 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
 type ViewMode = 'list' | 'pipeline';
 
 const SOURCE_LABELS: Record<string, string> = {
+  QUOTE_FLOW: "Quote Flow",
   WEBSITE_QUOTE: "Website Quote",
+  website_quote: "Website Quote",
   WEBSITE_ORDER_NOW: "Order Now",
   WEBSITE_CONTACT: "Contact Form",
   WEBSITE_FORM: "Website Form",
   WEBSITE_CHAT: "Website Chat",
   AI_CHAT: "AI Chat",
+  AI_ASSISTANT: "AI Assistant",
+  AI_EXPERT_REQUEST: "Expert Request",
+  WEBSITE_ASSISTANT: "AI Assistant",
+  WEBSITE_MEDIA: "Photo Upload",
+  WEBSITE_PHOTO: "Photo Upload",
+  WEBSITE_VIDEO: "Video Upload",
+  SCHEDULE_DELIVERY: "Schedule Delivery",
+  QUICK_ORDER: "Quick Order",
   PHONE_CALL: "Phone Call",
+  PHONE_INBOUND: "Phone Inbound",
   SMS_INBOUND: "SMS",
   EMAIL_INBOUND: "Email",
   PORTAL: "Portal",
   GOOGLE_ADS: "Google Ads",
+  GHL_SMS: "GHL SMS",
+  GHL_EMAIL: "GHL Email",
+  GHL_QUOTE: "GHL Quote",
   FB_MESSENGER: "Facebook",
   INSTAGRAM_DM: "Instagram",
   WHATSAPP: "WhatsApp",
@@ -88,6 +102,8 @@ const SOURCE_LABELS: Record<string, string> = {
   ANGI: "Angi",
   THUMBTACK: "Thumbtack",
   MANUAL_ENTRY: "Manual",
+  CALLBACK_REQUEST: "Callback",
+  CONTACT_FORM: "Contact Form",
 };
 
 export default function SalesLeads() {
