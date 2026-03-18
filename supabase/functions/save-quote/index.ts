@@ -260,8 +260,12 @@ serve(async (req) => {
 
     if (quoteError) {
       console.error('[save-quote] Database insert error:', quoteError);
+      // Return user-friendly message instead of raw DB error
+      const userMessage = quoteError.message?.includes('uuid')
+        ? 'A data formatting issue occurred. Your quote info has been preserved.'
+        : 'We could not save your quote right now. Please try again or contact us.';
       return new Response(
-        JSON.stringify({ success: false, error: quoteError.message }),
+        JSON.stringify({ success: false, error: userMessage, debug: quoteError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
