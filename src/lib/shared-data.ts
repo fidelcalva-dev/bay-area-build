@@ -555,28 +555,29 @@ export function calculateHeavyMaterialPrice(
 }
 
 // Heavy Material / Lowboy pricing (5, 8, 10 only) - FLAT FEE, disposal included
+// V2 canonical: CLEAN_NO_1 (lowest) to ALL_MIXED (highest)
 export const HEAVY_MATERIAL_PRICING: V56PricingTier[] = [
   { 
     size: 5, 
-    basePrice: 495,
-    priceRangeLow: 495, 
-    priceRangeHigh: calculateHeavyMaterialPrice(5, 'mixed_heavy'),
+    basePrice: 440,       // V2 CLEAN_NO_1: 290 + (5×30)
+    priceRangeLow: 440, 
+    priceRangeHigh: 540,  // V2 ALL_MIXED: 290 + (5×50)
     includedTons: 0, // FLAT FEE - no tons displayed
     category: 'heavy' 
   },
   { 
     size: 8, 
-    basePrice: 595,
-    priceRangeLow: 595, 
-    priceRangeHigh: calculateHeavyMaterialPrice(8, 'mixed_heavy'),
+    basePrice: 580,       // V2 CLEAN_NO_1: 340 + (8×30)
+    priceRangeLow: 580, 
+    priceRangeHigh: 740,  // V2 ALL_MIXED: 340 + (8×50)
     includedTons: 0, 
     category: 'heavy' 
   },
   { 
     size: 10, 
-    basePrice: 695.50,
-    priceRangeLow: 695.50, 
-    priceRangeHigh: calculateHeavyMaterialPrice(10, 'mixed_heavy'),
+    basePrice: 690,       // V2 CLEAN_NO_1: 390 + (10×30)
+    priceRangeLow: 690, 
+    priceRangeHigh: 890,  // V2 ALL_MIXED: 390 + (10×50)
     includedTons: 0, 
     category: 'heavy' 
   },
