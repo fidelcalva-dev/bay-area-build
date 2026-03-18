@@ -286,6 +286,11 @@ export default function GHLIntegrationPage() {
           <TabsTrigger value="settings"><Settings className="w-4 h-4 mr-1.5" />Settings</TabsTrigger>
         </TabsList>
 
+        {/* ─── VOICE / CALLING TAB ─── */}
+        <TabsContent value="voice">
+          <VoiceCallingTab config={config} configLoading={configLoading} updateConfigMutation={updateConfigMutation} />
+        </TabsContent>
+
         {/* ─── HEALTH TAB ─── */}
         <TabsContent value="health">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
