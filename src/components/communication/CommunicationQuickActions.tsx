@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { MessageSquare, Mail, Phone, Send, FileSignature, CreditCard, Calendar } from "lucide-react";
+import { MessageSquare, Mail, Phone, Send, FileSignature, CreditCard, Calendar, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { SendMessageDialog } from "@/components/messaging/SendMessageDialog";
+import { useCallAction } from "@/hooks/useCallAction";
 
 interface CommunicationQuickActionsProps {
   entityType: "customer" | "lead" | "order" | "quote";
@@ -39,15 +40,30 @@ export function CommunicationQuickActions({
 }: CommunicationQuickActionsProps) {
   const [smsDialogOpen, setSmsDialogOpen] = useState(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const { makeCall, copyNumber, isMobile } = useCallAction();
 
   const handleCall = () => {
     if (phone) {
-      window.open(`tel:${phone}`, "_self");
+      makeCall({
+        toNumber: phone,
+        contactId,
+        customerId,
+        leadId,
+        contactName: customerName,
+        entityType: entityType.toUpperCase() as 'CUSTOMER' | 'LEAD' | 'ORDER' | 'QUOTE',
+        entityId,
+      });
     }
+  };
+
+  const handleCopyNumber = () => {
+    if (phone) copyNumber(phone);
   };
 
   const presetVars: Record<string, string> = {};
   if (customerName) presetVars.customer_name = customerName;
+
+  const callLabel = isMobile ? "Call" : "Call";
 
   if (inline) {
     return (
@@ -80,10 +96,21 @@ export function CommunicationQuickActions({
               size={compact ? "icon" : "sm"}
               variant="outline"
               onClick={handleCall}
-              title="Call"
+              title={callLabel}
             >
               <Phone className="w-4 h-4" />
-              {!compact && <span className="ml-1.5">Call</span>}
+              {!compact && <span className="ml-1.5">{callLabel}</span>}
+            </Button>
+          )}
+          {actions.includes("call") && phone && !compact && (
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleCopyNumber}
+              title="Copy number"
+              className="h-8 w-8"
+            >
+              <Copy className="w-3.5 h-3.5" />
             </Button>
           )}
         </div>
@@ -128,6 +155,19 @@ export function CommunicationQuickActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
+          {actions.includes("call") && phone && (
+            <DropdownMenuItem onClick={handleCall}>
+              <Phone className="w-4 h-4 mr-2 text-green-600" />
+              {callLabel}
+              <span className="ml-auto text-xs text-muted-foreground">{phone}</span>
+            </DropdownMenuItem>
+          )}
+          {actions.includes("call") && phone && (
+            <DropdownMenuItem onClick={handleCopyNumber}>
+              <Copy className="w-4 h-4 mr-2 text-muted-foreground" />
+              Copy Number
+            </DropdownMenuItem>
+          )}
           {actions.includes("sms") && phone && (
             <DropdownMenuItem onClick={() => setSmsDialogOpen(true)}>
               <MessageSquare className="w-4 h-4 mr-2 text-blue-600" />
@@ -139,13 +179,6 @@ export function CommunicationQuickActions({
             <DropdownMenuItem onClick={() => setEmailDialogOpen(true)}>
               <Mail className="w-4 h-4 mr-2 text-purple-600" />
               Send Email
-            </DropdownMenuItem>
-          )}
-          {actions.includes("call") && phone && (
-            <DropdownMenuItem onClick={handleCall}>
-              <Phone className="w-4 h-4 mr-2 text-green-600" />
-              Call
-              <span className="ml-auto text-xs text-muted-foreground">{phone}</span>
             </DropdownMenuItem>
           )}
 
