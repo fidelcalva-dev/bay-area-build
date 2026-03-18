@@ -25,6 +25,13 @@ export const COMMERCIAL_MILESTONES = {
   driver_issue_reported:     { eventType: 'DISPATCH'  as TimelineEventType, eventAction: 'FLAGGED'   as TimelineEventAction, summary: 'Driver reported an issue',       visibility: 'INTERNAL' as TimelineVisibility },
   extra_approved:            { eventType: 'BILLING'   as TimelineEventType, eventAction: 'APPROVED'  as TimelineEventAction, summary: 'Extra charge approved',          visibility: 'INTERNAL' as TimelineVisibility },
   invoice_ready:             { eventType: 'BILLING'   as TimelineEventType, eventAction: 'COMPLETED' as TimelineEventAction, summary: 'Invoice ready',                  visibility: 'CUSTOMER' as TimelineVisibility },
+  // Heavy material events
+  heavy_material_selected:       { eventType: 'QUOTE'  as TimelineEventType, eventAction: 'UPDATED'   as TimelineEventAction, summary: 'Heavy material group selected',     visibility: 'INTERNAL' as TimelineVisibility },
+  heavy_material_group_selected: { eventType: 'QUOTE'  as TimelineEventType, eventAction: 'UPDATED'   as TimelineEventAction, summary: 'Heavy material classification set', visibility: 'INTERNAL' as TimelineVisibility },
+  heavy_material_quote_calculated: { eventType: 'QUOTE' as TimelineEventType, eventAction: 'COMPLETED' as TimelineEventAction, summary: 'Heavy material quote calculated', visibility: 'INTERNAL' as TimelineVisibility },
+  // Notification events
+  notification_sent:        { eventType: 'SYSTEM'   as TimelineEventType, eventAction: 'SENT'      as TimelineEventAction, summary: 'Notification sent',              visibility: 'INTERNAL' as TimelineVisibility },
+  notification_failed:      { eventType: 'SYSTEM'   as TimelineEventType, eventAction: 'FAILED'    as TimelineEventAction, summary: 'Notification delivery failed',    visibility: 'INTERNAL' as TimelineVisibility },
 } as const;
 
 export type CommercialMilestone = keyof typeof COMMERCIAL_MILESTONES;
