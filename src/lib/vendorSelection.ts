@@ -1,5 +1,6 @@
 // Vendor Selection Logic for Quote System
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeUuid } from '@/lib/uuidValidation';
 
 export interface VendorCandidate {
   vendorId: string;
