@@ -87,6 +87,11 @@ function validateZip(zip: string): string | null {
   
   return digits;
 }
+// UUID validation helper
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function sanitizeUuid(v: unknown): string | null {
+  return typeof v === 'string' && UUID_RE.test(v) ? v : null;
+}
 
 serve(async (req) => {
   // Handle CORS preflight
