@@ -50,7 +50,7 @@ export const GENERAL_DEBRIS_SIZES: GeneralDebrisSize[] = [
   { size: 50, price: 1095, includedTons: 5,   bestFor: 'high volume debris and commercial use' },
 ];
 
-// ── Heavy Materials ──────────────────────────────────────────
+// ── Heavy Materials (Legacy flat-rate ladder) ────────────────
 export const HEAVY_MATERIAL = {
   cleanSoil: {
     allowedSizes: [5, 8, 10] as number[],
@@ -61,6 +61,20 @@ export const HEAVY_MATERIAL = {
     prices: { 5: 495, 8: 595, 10: 695.50 } as Record<number, number>,
   },
 } satisfies Record<string, HeavyMaterialPricing>;
+
+// ── Heavy Materials V2 (Service Cost + Dump Fee model) ───────
+// Canonical source: src/config/heavyMaterialConfig.ts
+export { 
+  HEAVY_MATERIAL_GROUPS,
+  HEAVY_SERVICE_COSTS,
+  getHeavyPriceBreakdown,
+  calculateHeavyTotalPrice,
+  getAllPriceBreakdowns,
+  getFullPricingTable,
+  type HeavyMaterialGroup,
+  type HeavySize,
+  type HeavyPriceBreakdown,
+} from './heavyMaterialConfig';
 
 export const HEAVY_ALLOWED_SIZES = [5, 8, 10] as const;
 
