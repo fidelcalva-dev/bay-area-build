@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
 import { useAssessmentGate } from '@/hooks/useAssessmentGate';
 import { AssessmentGateModal } from './AssessmentGateModal';
 import { 
