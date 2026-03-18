@@ -122,6 +122,9 @@ export interface LeadHubLead {
   source_key: string | null;
   channel_key: string | null;
   lead_source: string | null;
+  source_channel: string | null;
+  source_page: string | null;
+  source_module: string | null;
   lead_status: string;
   lead_quality_score: number | null;
   lead_risk_score: number | null;
@@ -133,6 +136,7 @@ export interface LeadHubLead {
   zip: string | null;
   customer_type_detected: string | null;
   project_category: string | null;
+  material_category: string | null;
   urgency_score: number | null;
   message_excerpt: string | null;
   consent_status: string | null;
@@ -148,6 +152,16 @@ export interface LeadHubLead {
   sla_due_at: string | null;
   escalation_level: number | null;
   is_sla_breached: boolean | null;
+  // Enrichment fields
+  next_best_action: string | null;
+  last_step_completed: string | null;
+  selected_size: number | null;
+  quote_amount: number | null;
+  quote_amount_high: number | null;
+  delivery_preference: string | null;
+  ai_conversation_summary: string | null;
+  latest_recommended_size: number | null;
+  latest_heavy_flag: boolean | null;
 }
 
 export type LeadHubTab = 
