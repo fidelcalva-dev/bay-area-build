@@ -235,7 +235,7 @@ serve(async (req) => {
         volume_commitment_count: payload.volume_commitment_count || 0,
         volume_discount_pct: payload.volume_discount_pct || 0,
         discount_cap_applied: payload.discount_cap_applied || false,
-        volume_agreement_id: payload.volume_agreement_id,
+        volume_agreement_id: sanitizeUuid(payload.volume_agreement_id),
         volume_validity_start: payload.volume_validity_start,
         volume_validity_end: payload.volume_validity_end,
         requires_discount_approval: payload.requires_discount_approval || false,
