@@ -28,11 +28,12 @@ export function getCityUrl(slug: string, _pageExists?: boolean): string {
 export const SERVICE_CROSS_LINKS = [
   { url: '/quote', label: 'Get Instant Quote' },
   { url: '/sizes', label: 'Dumpster Sizes Guide' },
-  { url: '/green-halo', label: 'Green Halo Program' },
+  { url: '/materials', label: 'Materials Guide' },
   { url: '/concrete-dumpster-rental', label: 'Concrete Dumpsters' },
   { url: '/commercial-dumpster-rental', label: 'Commercial Dumpster Rental' },
   { url: '/contractors', label: 'Contractor Services' },
   { url: '/areas', label: 'All Service Areas' },
+  { url: '/pricing', label: 'Transparent Pricing' },
 ] as const;
 
 export const BLOG_CROSS_LINKS = [
