@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MessageSquare, Phone, RefreshCw, Settings, CheckCircle, XCircle, Clock,
   Wifi, WifiOff, Play, Mail, Users, Shield, HeartPulse, AlertTriangle,
-  Globe, Link2, GitBranch, Workflow, ArrowUpDown, RotateCcw,
+  Globe, Link2, GitBranch, Workflow, ArrowUpDown, RotateCcw, Mic,
+  Smartphone, Monitor,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
