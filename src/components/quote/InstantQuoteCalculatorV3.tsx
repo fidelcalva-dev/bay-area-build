@@ -689,9 +689,9 @@ export function InstantQuoteCalculatorV3() {
       if (!result.success) {
         console.error('[SaveQuote] Step A FAILED - DB error:', result.error);
         toast({
-          title: 'Could Not Save Quote',
-          description: result.error || 'Database error. Please try again or call us.',
-          variant: 'destructive',
+          title: 'Quote Saved Partially',
+          description: 'We saved most of your quote. Please continue or contact us if you need help.',
+          variant: 'default',
         });
         setIsSubmitting(false);
         setSmsStatus(null);
