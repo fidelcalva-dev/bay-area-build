@@ -118,7 +118,7 @@ const WORKFLOWS = [
   { id: 'overdue-billing', name: 'Overdue Billing', functions: ['overdue-billing-daily'] },
   { id: 'master-ai', name: 'Master AI', functions: ['master-ai-scheduler', 'master-ai-worker', 'master-ai-notifier'] },
   { id: 'telephony', name: 'Telephony', functions: ['calls-inbound-handler', 'calls-outbound-handler', 'calls-status-callback'] },
-  { id: 'messaging', name: 'Messaging', functions: ['ghl-send-message', 'ghl-message-worker', 'send-quote-summary'] },
+  { id: 'messaging', name: 'Messaging', functions: ['ghl-send-outbound', 'ghl-webhook-inbound', 'send-quote-summary'] },
   { id: 'payments', name: 'Payments', functions: ['create-hosted-session', 'process-payment', 'authnet-webhook', 'send-payment-receipt'] },
 ];
 
