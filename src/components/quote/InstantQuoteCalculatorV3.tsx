@@ -173,18 +173,51 @@ export function InstantQuoteCalculatorV3() {
   const [showAssessmentGate, setShowAssessmentGate] = useState(false);
   const [gateChecked, setGateChecked] = useState(false);
 
-  const [formData, setFormData] = useState<QuoteFormData>({
-    userType: 'homeowner',
-    zip: '',
-    material: 'general',
-    size: 20,
-    rentalDays: 7,
-    extras: [],
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
+  // Progressive lead capture ref
+  const progressiveCaptureRef = useRef<Record<string, boolean>>({});
+
+  const [formData, setFormData] = useState<QuoteFormData>(() => {
+    // Restore from session if available
+    const session = loadQuoteSession();
+    if (session?.formData) {
+      return session.formData;
+    }
+    return {
+      userType: 'homeowner',
+      zip: '',
+      material: 'general',
+      size: 20,
+      rentalDays: 7,
+      extras: [],
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+    };
   });
+
+  // Restore step and zone from session on mount
+  useEffect(() => {
+    const session = loadQuoteSession();
+    if (session) {
+      if (session.step && session.step !== 'success') {
+        setStep(session.step as Step);
+      }
+      if (session.zoneResult) {
+        setZoneResult(session.zoneResult);
+      }
+    }
+  }, []);
+
+  // Persist session on every meaningful state change
+  useEffect(() => {
+    saveQuoteSession({
+      formData,
+      step,
+      zoneResult,
+      heavyMaterialClass: heavyClassification?.materialClass || null,
+    });
+  }, [formData, step, zoneResult, heavyClassification]);
 
   // Auto-detect ZIP functionality
   const autoDetectZip = useAutoDetectZip();
