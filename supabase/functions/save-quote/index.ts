@@ -246,7 +246,7 @@ serve(async (req) => {
         green_halo_handling_fee: payload.green_halo_handling_fee,
         green_halo_dump_fee_per_ton: payload.green_halo_dump_fee_per_ton,
         // Quick link reference
-        quick_link_id: payload.quick_link_id,
+        quick_link_id: sanitizeUuid(payload.quick_link_id),
         // Attribution tracking
         gclid: payload.gclid || null,
         utm_source: payload.utm_source || null,
