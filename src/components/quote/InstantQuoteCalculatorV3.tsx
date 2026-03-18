@@ -705,9 +705,8 @@ export function InstantQuoteCalculatorV3() {
     } catch (dbError: any) {
       console.error('[SaveQuote] Step A EXCEPTION:', dbError);
       toast({
-        title: 'Could Not Save Quote',
-        description: 'Network error. Check your connection and try again.',
-        variant: 'destructive',
+        title: 'Quote Saved Partially',
+        description: 'We saved most of your quote. Please continue or contact us if you need help.',
       });
       setIsSubmitting(false);
       setSmsStatus(null);
