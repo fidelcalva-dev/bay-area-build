@@ -17,6 +17,7 @@ export { SmartMaterialsList } from './steps/SmartMaterialsList';
 export { SizeRecommendationView } from './steps/SizeRecommendationView';
 export { UserTypeMicroCopy, YardValueExplanation, USER_TYPE_HELPER_TEXT } from './UserTypeMicroCopy';
 export { useQuoteCalculation, getZoneByZip } from './hooks/useQuoteCalculation';
+export { saveQuoteSession, loadQuoteSession, clearQuoteSession, hasQuoteSession, type QuoteSessionData } from './hooks/useQuoteSession';
 export { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
 export { useQuoteFlow, type QuoteStep, type MaterialCategory, type QuoteFlowState, type QuoteFlowReturn } from './hooks/useQuoteFlow';
 export { useDisposalItemCatalog, type DisposalItem, type ItemSelection } from './hooks/useDisposalItemCatalog';

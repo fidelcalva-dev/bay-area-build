@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
 import { useAssessmentGate } from '@/hooks/useAssessmentGate';
 import { AssessmentGateModal } from './AssessmentGateModal';
 import { 
@@ -32,6 +32,9 @@ import { calculateHeavyPrice, type HeavyMaterialClass } from '@/lib/heavyPricing
 import { type MaterialSelectionData } from '@/lib/materialCategories';
 // Database-powered pricing data hook
 import { usePricingData, useZoneLookup, calculateIncludedTons, getSizeDbId } from './hooks/usePricingData';
+
+// Session persistence for quote state
+import { saveQuoteSession, loadQuoteSession, clearQuoteSession } from './hooks/useQuoteSession';
 
 // Distance-based pricing hook
 import { useDistanceCalculation } from './hooks/useDistanceCalculation';
@@ -170,18 +173,51 @@ export function InstantQuoteCalculatorV3() {
   const [showAssessmentGate, setShowAssessmentGate] = useState(false);
   const [gateChecked, setGateChecked] = useState(false);
 
-  const [formData, setFormData] = useState<QuoteFormData>({
-    userType: 'homeowner',
-    zip: '',
-    material: 'general',
-    size: 20,
-    rentalDays: 7,
-    extras: [],
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
+  // Progressive lead capture ref
+  const progressiveCaptureRef = useRef<Record<string, boolean>>({});
+
+  const [formData, setFormData] = useState<QuoteFormData>(() => {
+    // Restore from session if available
+    const session = loadQuoteSession();
+    if (session?.formData) {
+      return session.formData;
+    }
+    return {
+      userType: 'homeowner',
+      zip: '',
+      material: 'general',
+      size: 20,
+      rentalDays: 7,
+      extras: [],
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+    };
   });
+
+  // Restore step and zone from session on mount
+  useEffect(() => {
+    const session = loadQuoteSession();
+    if (session) {
+      if (session.step && session.step !== 'success') {
+        setStep(session.step as Step);
+      }
+      if (session.zoneResult) {
+        setZoneResult(session.zoneResult);
+      }
+    }
+  }, []);
+
+  // Persist session on every meaningful state change
+  useEffect(() => {
+    saveQuoteSession({
+      formData,
+      step,
+      zoneResult,
+      heavyMaterialClass: heavyClassification?.materialClass || null,
+    });
+  }, [formData, step, zoneResult, heavyClassification]);
 
   // Auto-detect ZIP functionality
   const autoDetectZip = useAutoDetectZip();
@@ -295,14 +331,20 @@ export function InstantQuoteCalculatorV3() {
     }
   }, [formData.zip, lookupZone]);
 
-  // Auto-adjust size when material changes
+  // Auto-adjust size when material changes (with guardrail message)
   useEffect(() => {
     const material = MATERIAL_TYPES.find((m) => m.value === formData.material);
     if (material && !material.allowedSizes.includes(formData.size)) {
+      const newSize = formData.material === 'heavy' ? 10 : 20;
+      const oldSize = formData.size;
       setFormData((prev) => ({ 
         ...prev, 
-        size: formData.material === 'heavy' ? 10 : 20 
+        size: newSize,
       }));
+      setSizeAutoCorrectedMessage(
+        `${oldSize}-yard is not available for ${material.label}. Size updated to ${newSize}-yard.`
+      );
+      setTimeout(() => setSizeAutoCorrectedMessage(null), 6000);
     }
   }, [formData.material, formData.size]);
 
@@ -676,6 +718,7 @@ export function InstantQuoteCalculatorV3() {
     // PHASE 4: MARK AS SAVED (Success path - quote is in DB)
     // ============================================================
     setQuoteSaved(true);
+    clearQuoteSession(); // Clear session after successful save
 
     // ============================================================
     // PHASE 5: SEND NOTIFICATIONS (Best-effort - failures don't block save)
@@ -1507,6 +1550,14 @@ export function InstantQuoteCalculatorV3() {
               materialType={formData.material}
             />
 
+            {/* Size auto-correction message */}
+            {sizeAutoCorrectedMessage && (
+              <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                <p className="text-sm text-foreground">{sizeAutoCorrectedMessage}</p>
+              </div>
+            )}
+
             {/* Heavy Material Classification Summary */}
             {formData.material === 'heavy' && heavyClassification?.materialClass && (
               <div className="p-3 rounded-lg bg-success/10 border border-success/20">
@@ -1545,6 +1596,8 @@ export function InstantQuoteCalculatorV3() {
               onChange={(size) => {
                 setFormData((prev) => ({ ...prev, size }));
                 setSizeAutoCorrectedMessage(null);
+                // Progressive save: persist size selection immediately to session
+                saveQuoteSession({ formData: { ...formData, size } });
               }}
               materialType={formData.material}
               materialCode={debrisSelection?.categoryId || null}
