@@ -289,11 +289,11 @@ export function getAdminRoutes() {
       <Route path="pricing/readiness" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
       <Route path="pricing-engine" element={<Navigate to="/admin/pricing" replace />} />
       {/* Scattered pricing pages → redirect to hub */}
-      <Route path="heavy-pricing" element={<Navigate to="/admin/pricing?tab=heavy" replace />} />
-      <Route path="mixed-rules" element={<Navigate to="/admin/pricing?tab=materials" replace />} />
-      <Route path="warnings-caps" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
-      <Route path="city-rates" element={<Navigate to="/admin/pricing?tab=cities" replace />} />
-      <Route path="toll-surcharges" element={<Navigate to="/admin/pricing?tab=zones" replace />} />
+      <Route path="heavy-pricing" element={<Navigate to="/admin/pricing?tab=heavy-rates" replace />} />
+      <Route path="mixed-rules" element={<Navigate to="/admin/pricing?tab=mixed-rules" replace />} />
+      <Route path="warnings-caps" element={<Navigate to="/admin/pricing?tab=warnings-caps" replace />} />
+      <Route path="city-rates" element={<Navigate to="/admin/pricing?tab=city-rates" replace />} />
+      <Route path="toll-surcharges" element={<Navigate to="/admin/pricing?tab=tolls" replace />} />
       {/* Telephony */}
       <Route path="telephony/calls" element={<SuspenseRoute><CallsManager /></SuspenseRoute>} />
       <Route path="telephony/numbers" element={<SuspenseRoute><PhoneNumbersManager /></SuspenseRoute>} />
