@@ -523,6 +523,20 @@ export default function SalesQuoteDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [quote, setQuote] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Editable core fields (edit mode)
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editCompany, setEditCompany] = useState("");
+  const [editUserType, setEditUserType] = useState("");
+  const [editZip, setEditZip] = useState("");
+  const [editMaterial, setEditMaterial] = useState("");
+  const [editProjectType, setEditProjectType] = useState("");
+  const [editPlacement, setEditPlacement] = useState("");
+  const [editGateCode, setEditGateCode] = useState("");
+  const [editRentalDays, setEditRentalDays] = useState("7");
 
   // Editable fields
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
