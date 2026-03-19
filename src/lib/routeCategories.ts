@@ -200,7 +200,7 @@ const crmControlCenter: RouteEntry[] = [
   { path: '/admin/executive', name: 'Executive Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: BarChart3, sidebarLabel: 'Executive View', sidebarOrder: 1 },
   { path: '/admin/modules', name: 'Module Registry', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Settings, sidebarOrder: 2 },
   { path: '/admin/activity', name: 'Activity Feed', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Activity, sidebarOrder: 3 },
-  { path: '/admin/legacy-dashboard', name: 'Legacy Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
+  // legacy-dashboard retired — redirects to /admin
 ];
 
 const crmAnalytics: RouteEntry[] = [
@@ -266,7 +266,7 @@ const crmDriver: RouteEntry[] = [
   { path: '/driver/truck-select', name: 'Truck Select', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
   { path: '/driver/inspect', name: 'Pre-Trip Inspection', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
   { path: '/driver/report-issue', name: 'Report Issue', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
-  { path: '/driver/legacy', name: 'Legacy Driver App', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
+  // legacy driver app retired — redirects to /driver
 ];
 
 const crmMaintenance: RouteEntry[] = [

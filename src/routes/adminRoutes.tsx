@@ -5,7 +5,6 @@ import { SuspenseRoute } from './shared';
 // Admin Layout & Core
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("@/pages/admin/AdminLayout"));
-const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const ControlCenter = lazy(() => import("@/pages/admin/ControlCenter"));
 const CalsanControlCenter = lazy(() => import("@/pages/admin/CalsanControlCenter"));
 
@@ -30,7 +29,6 @@ const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
 const VolumeCommitmentsManager = lazy(() => import("@/pages/admin/VolumeCommitmentsManager"));
 const YardsManager = lazy(() => import("@/pages/admin/YardsManager"));
 const ConfigManager = lazy(() => import("@/pages/admin/ConfigManager"));
-const ConfigIndex = lazy(() => import("@/pages/admin/ConfigIndex"));
 const ConfigurationHub = lazy(() => import("@/pages/admin/ConfigurationHub"));
 const HeavyPricingManager = lazy(() => import("@/pages/admin/HeavyPricingManager"));
 const MixedRulesManager = lazy(() => import("@/pages/admin/MixedRulesManager"));
@@ -107,7 +105,7 @@ const ContractorRulesHealth = lazy(() => import("@/pages/admin/pricing/Contracto
 const ExtrasHealthDashboard = lazy(() => import("@/pages/admin/pricing/ExtrasHealthDashboard"));
 const PricingReadinessDashboard = lazy(() => import("@/pages/admin/pricing/PricingReadinessDashboard"));
 const PricingSimulator = lazy(() => import("@/pages/admin/PricingSimulator"));
-const PricingEngineDashboard = lazy(() => import("@/pages/admin/PricingEngineDashboard"));
+
 
 // Markets
 const NewLocationWizard = lazy(() => import("@/pages/admin/markets/NewLocationWizard"));
@@ -120,7 +118,7 @@ const PhotoAITest = lazy(() => import("@/pages/admin/qa/PhotoAITest"));
 const BuildInfo = lazy(() => import("@/pages/admin/qa/BuildInfo"));
 const EnvHealth = lazy(() => import("@/pages/admin/qa/EnvHealth"));
 const BuildHealth = lazy(() => import("@/pages/admin/qa/BuildHealth"));
-const SeoHealthDashboard = lazy(() => import("@/pages/admin/qa/SeoHealthDashboard"));
+
 const RouteHealthPage = lazy(() => import("@/pages/admin/qa/RouteHealthPage"));
 const DuplicatePagesPage = lazy(() => import("@/pages/admin/qa/DuplicatePagesPage"));
 const PublicVsCrmPage = lazy(() => import("@/pages/admin/qa/PublicVsCrmPage"));
@@ -208,9 +206,9 @@ export function getAdminRoutes() {
     <Route key="admin-login" path="/admin/login" element={<SuspenseRoute><AdminLogin /></SuspenseRoute>} />,
     <Route key="admin" path="/admin" element={<SuspenseRoute><AdminLayout /></SuspenseRoute>}>
       <Route index element={<SuspenseRoute><CalsanControlCenter /></SuspenseRoute>} />
-      <Route path="control-center" element={<SuspenseRoute><CalsanControlCenter /></SuspenseRoute>} />
+      <Route path="control-center" element={<Navigate to="/admin" replace />} />
       <Route path="modules" element={<SuspenseRoute><ControlCenter /></SuspenseRoute>} />
-      <Route path="legacy-dashboard" element={<SuspenseRoute><AdminDashboard /></SuspenseRoute>} />
+      <Route path="legacy-dashboard" element={<Navigate to="/admin" replace />} />
       <Route path="orders" element={<SuspenseRoute><OrdersManager /></SuspenseRoute>} />
       <Route path="customers" element={<SuspenseRoute><CustomersManager /></SuspenseRoute>} />
       <Route path="yards" element={<SuspenseRoute><YardsManager /></SuspenseRoute>} />
@@ -289,7 +287,7 @@ export function getAdminRoutes() {
       <Route path="pricing/contractor-rules" element={<SuspenseRoute><ContractorRulesHealth /></SuspenseRoute>} />
       <Route path="pricing/extras-health" element={<SuspenseRoute><ExtrasHealthDashboard /></SuspenseRoute>} />
       <Route path="pricing/readiness" element={<SuspenseRoute><PricingReadinessDashboard /></SuspenseRoute>} />
-      <Route path="pricing-engine" element={<SuspenseRoute><PricingEngineDashboard /></SuspenseRoute>} />
+      <Route path="pricing-engine" element={<Navigate to="/admin/pricing" replace />} />
       {/* Telephony */}
       <Route path="telephony/calls" element={<SuspenseRoute><CallsManager /></SuspenseRoute>} />
       <Route path="telephony/numbers" element={<SuspenseRoute><PhoneNumbersManager /></SuspenseRoute>} />
@@ -324,7 +322,7 @@ export function getAdminRoutes() {
       <Route path="qa/build-info" element={<SuspenseRoute><BuildInfo /></SuspenseRoute>} />
       <Route path="qa/env-health" element={<SuspenseRoute><EnvHealth /></SuspenseRoute>} />
       <Route path="qa/build-health" element={<SuspenseRoute><BuildHealth /></SuspenseRoute>} />
-      <Route path="qa/seo-health" element={<SuspenseRoute><SeoHealthDashboard /></SuspenseRoute>} />
+      <Route path="qa/seo-health" element={<Navigate to="/admin/seo/health" replace />} />
       <Route path="qa/route-health" element={<SuspenseRoute><RouteHealthPage /></SuspenseRoute>} />
       <Route path="qa/duplicate-pages" element={<SuspenseRoute><DuplicatePagesPage /></SuspenseRoute>} />
       <Route path="qa/public-vs-crm" element={<SuspenseRoute><PublicVsCrmPage /></SuspenseRoute>} />
