@@ -1564,8 +1564,15 @@ export default function SalesQuoteDetail() {
             }}>
               <Copy className="w-3.5 h-3.5" /> Duplicate
             </Button>
-            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/quotes/${id}`)}>
-              <Pencil className="w-3.5 h-3.5" /> Edit Quote
+            <Button variant={isEditMode ? "default" : "outline"} size="sm" className="w-full gap-1.5" onClick={() => {
+              if (isEditMode) {
+                handleSave();
+              } else {
+                setIsEditMode(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}>
+              <Pencil className="w-3.5 h-3.5" /> {isEditMode ? "Save Changes" : "Edit Quote"}
             </Button>
             {quote.status !== "converted" && (
               <Button size="sm" className="w-full gap-1.5" onClick={handleMarkConverted}>
