@@ -75,7 +75,7 @@ const AdminActivityFeed = lazy(() => import("@/pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("@/pages/admin/CustomerDetail"));
 const CustomerForm = lazy(() => import("@/pages/admin/CustomerForm"));
 const CustomerHealthDashboard = lazy(() => import("@/pages/admin/CustomerHealthDashboard"));
-const CustomerTypeRulesPage = lazy(() => import("@/pages/admin/CustomerTypeRulesPage"));
+// CustomerTypeRulesPage now loaded inside MasterPricingHub
 const ActivationDashboard = lazy(() => import("@/pages/admin/ActivationDashboard"));
 const ExecutiveDashboard = lazy(() => import("@/pages/admin/ExecutiveDashboard"));
 const BusinessIntelligenceDashboard = lazy(() => import("@/pages/admin/BusinessIntelligenceDashboard"));
