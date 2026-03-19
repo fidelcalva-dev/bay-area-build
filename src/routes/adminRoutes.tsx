@@ -118,7 +118,7 @@ const PhotoAITest = lazy(() => import("@/pages/admin/qa/PhotoAITest"));
 const BuildInfo = lazy(() => import("@/pages/admin/qa/BuildInfo"));
 const EnvHealth = lazy(() => import("@/pages/admin/qa/EnvHealth"));
 const BuildHealth = lazy(() => import("@/pages/admin/qa/BuildHealth"));
-const SeoHealthDashboard = lazy(() => import("@/pages/admin/qa/SeoHealthDashboard"));
+
 const RouteHealthPage = lazy(() => import("@/pages/admin/qa/RouteHealthPage"));
 const DuplicatePagesPage = lazy(() => import("@/pages/admin/qa/DuplicatePagesPage"));
 const PublicVsCrmPage = lazy(() => import("@/pages/admin/qa/PublicVsCrmPage"));

@@ -266,7 +266,7 @@ const crmDriver: RouteEntry[] = [
   { path: '/driver/truck-select', name: 'Truck Select', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
   { path: '/driver/inspect', name: 'Pre-Trip Inspection', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
   { path: '/driver/report-issue', name: 'Report Issue', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
-  { path: '/driver/legacy', name: 'Legacy Driver App', group: 'CRM_INTERNAL', subcategory: 'Driver', isProtected: true, indexable: false, mounted: true },
+  // legacy driver app retired — redirects to /driver
 ];
 
 const crmMaintenance: RouteEntry[] = [
