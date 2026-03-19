@@ -101,7 +101,7 @@ const publicCore: RouteEntry[] = [
   { path: '/materials', name: 'Materials Guide', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/about', name: 'About Us', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/contact', name: 'Contact', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/locations', name: 'Locations', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
+  { path: '/locations', name: 'Locations Redirect', group: 'PUBLIC_WEBSITE', subcategory: 'Redirect', isProtected: false, indexable: false, mounted: true, canonicalAlias: '/areas' },
   { path: '/how-it-works', name: 'How It Works', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/why-calsan', name: 'Why Calsan', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/why-local-yards', name: 'Why Local Yards', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
