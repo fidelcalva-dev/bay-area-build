@@ -739,6 +739,7 @@ export default function SalesQuoteDetail() {
       }
 
       toast({ title: "Quote updated" });
+      setIsEditMode(false);
       fetchQuote();
     } catch (err) {
       console.error(err);
