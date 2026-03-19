@@ -663,13 +663,13 @@ const Index = () => {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
+            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
               <Link to="/waste-vision">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Photo
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
+            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                 <Phone className="w-4 h-4 mr-2" />
                 Call / Text Us
