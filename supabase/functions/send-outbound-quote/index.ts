@@ -140,10 +140,10 @@ Deno.serve(async (req: Request) => {
       const messageStatus = isLive ? "SENT" : "DRY_RUN";
       let providerMessageId: string | null = null;
 
-      // In LIVE mode, attempt to send via ghl-send-message
+      // In LIVE mode, attempt to send via ghl-send-outbound
       if (isLive) {
         try {
-          const sendRes = await supabase.functions.invoke("ghl-send-message", {
+          const sendRes = await supabase.functions.invoke("ghl-send-outbound", {
             body: {
               channel: ch.toLowerCase(),
               to_address: toAddress,

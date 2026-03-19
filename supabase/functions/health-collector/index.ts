@@ -22,7 +22,7 @@ const INTEGRATION_FUNCTIONS: Record<string, string[]> = {
   RESEND: ['send-quote-summary', 'send-contract', 'send-payment-receipt', 'send-service-receipt'],
   AUTHNET: ['create-hosted-session', 'process-payment', 'process-refund', 'authnet-webhook'],
   GOOGLE_MAPS: ['geocode-address', 'truck-route', 'nearest-facilities', 'calculate-operational-time'],
-  GHL: ['ghl-send-message', 'ghl-message-worker', 'ghl-inbound-webhook', 'highlevel-webhook'],
+  GHL: ['ghl-send-outbound', 'ghl-webhook-inbound', 'ghl-sync-poller', 'highlevel-webhook'],
   META: ['lead-from-meta'],
   GOOGLE_ADS: ['ads-capacity-guard', 'ads-generate-campaigns', 'lead-from-google-ads'],
 };
