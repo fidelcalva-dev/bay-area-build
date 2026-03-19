@@ -30,6 +30,7 @@ interface UseOrderContractsParams {
   customerId: string | null;
   serviceAddress?: string | null;
   customerType?: string;
+  quoteId?: string | null;
 }
 
 export function useOrderContracts({
