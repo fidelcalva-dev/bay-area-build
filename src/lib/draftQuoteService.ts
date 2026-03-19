@@ -192,20 +192,20 @@ export async function logQuoteMilestone(
   try {
     // Log to quote_events if we have a quote ID
     if (data.quoteId) {
-      await supabase.from('quote_events').insert({
+      await supabase.from('quote_events').insert([{
         quote_id: data.quoteId,
         event_type: milestone.toUpperCase(),
         event_data: data.metadata || {},
-      });
+      }]);
     }
 
     // Log to lead_events if we have a lead ID
     if (data.leadId) {
-      await supabase.from('lead_events').insert({
+      await supabase.from('lead_events').insert([{
         lead_id: data.leadId,
         event_type: milestone.toUpperCase(),
         payload_json: data.metadata || {},
-      });
+      }]);
     }
   } catch (err) {
     console.warn('[DraftQuote] Milestone log failed:', err);
