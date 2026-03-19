@@ -259,9 +259,37 @@ export default function SignQuoteContract() {
           </div>
         </div>
 
-        {/* Signature Section */}
+        {/* E-Sign Consent & Signature Section */}
         <div className="bg-white rounded-lg border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Sign Below</h2>
+          <h2 className="text-lg font-semibold">Electronic Signature</h2>
+
+          {/* UETA/E-SIGN Consent Block */}
+          <div className="rounded-lg border bg-gray-50 p-4 text-xs text-gray-600 leading-relaxed">
+            <p className="font-medium text-gray-900 text-sm mb-2">Consent to Electronic Records & Signatures</p>
+            <p>{ESIGN_CONSENT.en}</p>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="esign-consent"
+              checked={esignConsent}
+              onCheckedChange={(c) => setEsignConsent(c === true)}
+            />
+            <label htmlFor="esign-consent" className="text-sm leading-relaxed cursor-pointer">
+              I consent to sign this agreement electronically and to receive records electronically.
+            </label>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="agree-terms"
+              checked={agreedToTerms}
+              onCheckedChange={(c) => setAgreedToTerms(c === true)}
+            />
+            <label htmlFor="agree-terms" className="text-sm leading-relaxed cursor-pointer">
+              I agree to the terms and conditions above. I understand this is a legally binding electronic signature.
+            </label>
+          </div>
 
           {/* Mode Toggle */}
           <div className="flex gap-2">
