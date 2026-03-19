@@ -354,7 +354,7 @@ export default function SignQuoteContract() {
           {/* Approve Button */}
           <Button
             className="w-full h-12 text-lg"
-            disabled={!hasSignature || isSubmitting}
+            disabled={!canSubmit || isSubmitting}
             onClick={handleApprove}
           >
             {isSubmitting ? (
@@ -365,11 +365,17 @@ export default function SignQuoteContract() {
             {isSubmitting ? "Submitting..." : "Approve & Sign Contract"}
           </Button>
 
-          {!hasSignature && (
+          {!canSubmit && (
             <p className="text-sm text-red-500 text-center">
-              Please sign above before approving the contract.
+              {!esignConsent || !agreedToTerms
+                ? "Please accept the consent and terms above."
+                : "Please sign above before approving the contract."}
             </p>
           )}
+
+          <p className="text-xs text-center text-gray-500">
+            By signing, you agree to the service terms (v{POLICY_VERSION}). A copy will be sent to you.
+          </p>
         </div>
       </div>
     </div>

@@ -159,14 +159,24 @@ export async function createContract(params: {
   contractType: ContractType;
   serviceAddress?: string;
   termsContent?: string;
+  quoteId?: string;
+  parentContractId?: string;
 }): Promise<{ contract: Contract | null; error: string | null }> {
-  const { customerId, contractType, serviceAddress, termsContent } = params;
+  const { customerId, contractType, serviceAddress, termsContent, quoteId, parentContractId } = params;
+  
+  // Set canonical version stamps at creation time
+  const contractVersion = contractType === 'msa' ? CONTRACT_VERSION : ADDENDUM_VERSION;
+  const termsVersion = TERMS_VERSION;
   
   const insertData: Record<string, unknown> = {
     customer_id: customerId,
     contract_type: contractType,
     status: 'pending',
     terms_content: termsContent,
+    contract_version: contractVersion,
+    terms_version: termsVersion,
+    quote_id: quoteId || null,
+    parent_contract_id: parentContractId || null,
   };
   
   if (serviceAddress) {
