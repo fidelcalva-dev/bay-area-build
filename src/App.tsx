@@ -279,7 +279,6 @@ const AdminCustomersDashboard = lazy(() => import("./pages/admin/dashboards/Cust
 const KPIDashboard = lazy(() => import("./pages/admin/dashboards/KPIDashboard"));
 const LeadPerformanceDashboard = lazy(() => import("./pages/admin/dashboards/LeadPerformanceDashboard"));
 const LeadEngineSettings = lazy(() => import("./pages/admin/LeadEngineSettings"));
-const LeadInbox = lazy(() => import("./pages/sales/LeadInbox"));
 const CSLeads = lazy(() => import("./pages/cs/CSLeads"));
 
 // Material Catalog Admin Pages
