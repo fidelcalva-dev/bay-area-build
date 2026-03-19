@@ -21,6 +21,8 @@ export default function SignQuoteContract() {
   const [signatureMode, setSignatureMode] = useState<"draw" | "type">("draw");
   const [typedSignature, setTypedSignature] = useState("");
   const [hasDrawnSignature, setHasDrawnSignature] = useState(false);
+  const [esignConsent, setEsignConsent] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Canvas refs
   const canvasRef = useRef<HTMLCanvasElement>(null);
