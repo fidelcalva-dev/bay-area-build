@@ -201,24 +201,27 @@ const CONTRACTOR_BENEFITS = [
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
   const navigate = useNavigate();
-  const [heroZip, setHeroZip] = useState('');
+  const [heroInput, setHeroInput] = useState('');
   const [heroProject, setHeroProject] = useState('');
-  const isValidZip = heroZip.length === 5 && /^\d{5}$/.test(heroZip);
+  const isValidZip = /^\d{5}$/.test(heroInput.trim());
+  const isAddress = !isValidZip && heroInput.trim().length >= 3;
 
-  // Build quote URL with ZIP preserved
+  // Build quote URL with ZIP or address preserved
   const quoteUrl = useCallback((extra?: Record<string, string>) => {
     const params = new URLSearchParams({ v3: '1' });
-    if (isValidZip) params.set('zip', heroZip);
+    if (isValidZip) params.set('zip', heroInput.trim());
+    else if (isAddress) params.set('address', heroInput.trim());
     if (extra) Object.entries(extra).forEach(([k, v]) => params.set(k, v));
     return `/quote?${params.toString()}`;
-  }, [isValidZip, heroZip]);
+  }, [isValidZip, isAddress, heroInput]);
 
   const handleHeroQuote = useCallback(() => {
     const params = new URLSearchParams({ v3: '1' });
-    if (isValidZip) params.set('zip', heroZip);
+    if (isValidZip) params.set('zip', heroInput.trim());
+    else if (isAddress) params.set('address', heroInput.trim());
     if (heroProject) params.set('project', heroProject);
     navigate(`/quote?${params.toString()}`);
-  }, [isValidZip, heroZip, heroProject, navigate]);
+  }, [isValidZip, isAddress, heroInput, heroProject, navigate]);
 
   return (
     <Layout
@@ -254,11 +257,8 @@ const Index = () => {
               </div>
               <Input
                 type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={5}
-                value={heroZip}
-                onChange={(e) => setHeroZip(e.target.value.replace(/\D/g, ''))}
+                value={heroInput}
+                onChange={(e) => setHeroInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleHeroQuote(); }}
                 placeholder="Service address or ZIP"
                 className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"

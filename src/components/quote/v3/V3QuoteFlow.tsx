@@ -137,6 +137,7 @@ export function V3QuoteFlow() {
 
   // URL param prefill
   const urlZip = searchParams.get('zip') || '';
+  const urlAddress = searchParams.get('address') || '';
   const urlType = searchParams.get('type') as CustomerType | null;
   const urlProject = searchParams.get('project') || '';
   const urlSize = searchParams.get('size');
@@ -171,7 +172,7 @@ export function V3QuoteFlow() {
   const [accessData, setAccessData] = useState<AccessConstraintData | null>(null);
 
   // Address mode
-  const [useAddress, setUseAddress] = useState(false);
+  const [useAddress, setUseAddress] = useState(!!urlAddress);
   const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
 
   // Swap toggle (declared early for draft effects)
@@ -944,6 +945,7 @@ export function V3QuoteFlow() {
               ) : (
                 <>
                   <AddressAutocomplete
+                    initialValue={urlAddress}
                     onAddressSelect={(result) => {
                       setAddressResult(result);
                       if (result.zip) setZip(result.zip);
