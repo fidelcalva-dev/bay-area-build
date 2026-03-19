@@ -23,7 +23,7 @@ const AdminAIChat = lazy(() => import("@/pages/admin/AdminAIChat"));
 
 // Core Management
 const ZonesManager = lazy(() => import("@/pages/admin/ZonesManager"));
-const PricingManager = lazy(() => import("@/pages/admin/PricingManager"));
+// PricingManager now loaded inside MasterPricingHub
 const MasterPricingHub = lazy(() => import("@/pages/admin/MasterPricingHub"));
 const VendorsManager = lazy(() => import("@/pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
