@@ -23,17 +23,14 @@ const AdminAIChat = lazy(() => import("@/pages/admin/AdminAIChat"));
 
 // Core Management
 const ZonesManager = lazy(() => import("@/pages/admin/ZonesManager"));
-const PricingManager = lazy(() => import("@/pages/admin/PricingManager"));
+// PricingManager now loaded inside MasterPricingHub
 const MasterPricingHub = lazy(() => import("@/pages/admin/MasterPricingHub"));
 const VendorsManager = lazy(() => import("@/pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
-const VolumeCommitmentsManager = lazy(() => import("@/pages/admin/VolumeCommitmentsManager"));
+// VolumeCommitmentsManager, HeavyPricingManager, MixedRulesManager, WarningsCapsManager now loaded inside MasterPricingHub
 const YardsManager = lazy(() => import("@/pages/admin/YardsManager"));
 const ConfigManager = lazy(() => import("@/pages/admin/ConfigManager"));
 const ConfigurationHub = lazy(() => import("@/pages/admin/ConfigurationHub"));
-const HeavyPricingManager = lazy(() => import("@/pages/admin/HeavyPricingManager"));
-const MixedRulesManager = lazy(() => import("@/pages/admin/MixedRulesManager"));
-const WarningsCapsManager = lazy(() => import("@/pages/admin/WarningsCapsManager"));
 const OrdersManager = lazy(() => import("@/pages/admin/OrdersManager"));
 const CustomersManager = lazy(() => import("@/pages/admin/CustomersManager"));
 const AuditLogsPage = lazy(() => import("@/pages/admin/AuditLogsPage"));
@@ -42,8 +39,7 @@ const AdminGoogleSetup = lazy(() => import("@/pages/admin/AdminGoogleSetup"));
 const AdminGoogleLogs = lazy(() => import("@/pages/admin/AdminGoogleLogs"));
 const AdminMessaging = lazy(() => import("@/pages/admin/AdminMessaging"));
 const GHLIntegrationPage = lazy(() => import("@/pages/admin/GHLIntegrationPage"));
-const TollSurchargesManager = lazy(() => import("@/pages/admin/TollSurchargesManager"));
-const CityRatesManager = lazy(() => import("@/pages/admin/CityRatesManager"));
+// TollSurchargesManager, CityRatesManager now loaded inside MasterPricingHub
 const DriversManager = lazy(() => import("@/pages/admin/DriversManager"));
 const DispatchCalendar = lazy(() => import("@/pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("@/pages/admin/TicketsManager"));
@@ -79,7 +75,7 @@ const AdminActivityFeed = lazy(() => import("@/pages/admin/AdminActivityFeed"));
 const CustomerDetail = lazy(() => import("@/pages/admin/CustomerDetail"));
 const CustomerForm = lazy(() => import("@/pages/admin/CustomerForm"));
 const CustomerHealthDashboard = lazy(() => import("@/pages/admin/CustomerHealthDashboard"));
-const CustomerTypeRulesPage = lazy(() => import("@/pages/admin/CustomerTypeRulesPage"));
+// CustomerTypeRulesPage now loaded inside MasterPricingHub
 const ActivationDashboard = lazy(() => import("@/pages/admin/ActivationDashboard"));
 const ExecutiveDashboard = lazy(() => import("@/pages/admin/ExecutiveDashboard"));
 const BusinessIntelligenceDashboard = lazy(() => import("@/pages/admin/BusinessIntelligenceDashboard"));
@@ -91,21 +87,7 @@ const EmailConfigPanel = lazy(() => import("@/pages/admin/EmailConfigPanel"));
 const VehicleProfile = lazy(() => import("@/pages/admin/VehicleProfile"));
 
 // Pricing Sub-pages
-const LocationPricingManager = lazy(() => import("@/pages/admin/pricing/LocationPricingManager"));
-const YardHealthDashboard = lazy(() => import("@/pages/admin/pricing/YardHealthDashboard"));
-const ZipHealthDashboard = lazy(() => import("@/pages/admin/pricing/ZipHealthDashboard"));
-const FacilityCostDashboard = lazy(() => import("@/pages/admin/pricing/FacilityCostDashboard"));
-const MaterialRulesDashboard = lazy(() => import("@/pages/admin/pricing/MaterialRulesDashboard"));
-const ZoneSurchargesConfig = lazy(() => import("@/pages/admin/pricing/ZoneSurchargesConfig"));
-const RushDeliveryConfig = lazy(() => import("@/pages/admin/pricing/RushDeliveryConfig"));
-const ContractorPricingConfig = lazy(() => import("@/pages/admin/pricing/ContractorPricingConfig"));
-const ExtrasCatalogConfig = lazy(() => import("@/pages/admin/pricing/ExtrasCatalogConfig"));
-const CityDisplayZips = lazy(() => import("@/pages/admin/pricing/CityDisplayZips"));
-const RushHealthDashboard = lazy(() => import("@/pages/admin/pricing/RushHealthDashboard"));
-const ContractorRulesHealth = lazy(() => import("@/pages/admin/pricing/ContractorRulesHealth"));
-const ExtrasHealthDashboard = lazy(() => import("@/pages/admin/pricing/ExtrasHealthDashboard"));
-const PricingReadinessDashboard = lazy(() => import("@/pages/admin/pricing/PricingReadinessDashboard"));
-const PricingSimulator = lazy(() => import("@/pages/admin/PricingSimulator"));
+// Pricing sub-pages now loaded inside MasterPricingHub (lazy-loaded there)
 
 
 // Markets
@@ -219,7 +201,7 @@ export function getAdminRoutes() {
       <Route path="extras" element={<SuspenseRoute><ExtrasManager /></SuspenseRoute>} />
       <Route path="config" element={<SuspenseRoute><ConfigManager /></SuspenseRoute>} />
       <Route path="configuration" element={<SuspenseRoute><ConfigurationHub /></SuspenseRoute>} />
-      <Route path="volume-commitments" element={<SuspenseRoute><VolumeCommitmentsManager /></SuspenseRoute>} />
+      <Route path="volume-commitments" element={<Navigate to="/admin/pricing?tab=volume" replace />} />
       <Route path="audit-logs" element={<SuspenseRoute><AuditLogsPage /></SuspenseRoute>} />
       <Route path="google" element={<SuspenseRoute><AdminGoogleSettings /></SuspenseRoute>} />
       <Route path="google/setup" element={<SuspenseRoute><AdminGoogleSetup /></SuspenseRoute>} />
@@ -260,7 +242,7 @@ export function getAdminRoutes() {
       <Route path="materials/catalog" element={<SuspenseRoute><MaterialCatalogPage /></SuspenseRoute>} />
       <Route path="materials/categories" element={<SuspenseRoute><ProjectCategoriesPage /></SuspenseRoute>} />
       <Route path="materials/offers" element={<SuspenseRoute><MaterialOffersPage /></SuspenseRoute>} />
-      <Route path="customer-type-rules" element={<SuspenseRoute><CustomerTypeRulesPage /></SuspenseRoute>} />
+      <Route path="customer-type-rules" element={<Navigate to="/admin/pricing?tab=customer-rules" replace />} />
       <Route path="config/locations" element={<SuspenseRoute><LocationsConfig /></SuspenseRoute>} />
       <Route path="config/social" element={<SuspenseRoute><SocialLinksConfig /></SuspenseRoute>} />
       <Route path="config/ai-estimator-templates" element={<SuspenseRoute><AIEstimatorTemplates /></SuspenseRoute>} />
@@ -289,11 +271,11 @@ export function getAdminRoutes() {
       <Route path="pricing/readiness" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
       <Route path="pricing-engine" element={<Navigate to="/admin/pricing" replace />} />
       {/* Scattered pricing pages → redirect to hub */}
-      <Route path="heavy-pricing" element={<Navigate to="/admin/pricing?tab=heavy" replace />} />
-      <Route path="mixed-rules" element={<Navigate to="/admin/pricing?tab=materials" replace />} />
-      <Route path="warnings-caps" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
-      <Route path="city-rates" element={<Navigate to="/admin/pricing?tab=cities" replace />} />
-      <Route path="toll-surcharges" element={<Navigate to="/admin/pricing?tab=zones" replace />} />
+      <Route path="heavy-pricing" element={<Navigate to="/admin/pricing?tab=heavy-rates" replace />} />
+      <Route path="mixed-rules" element={<Navigate to="/admin/pricing?tab=mixed-rules" replace />} />
+      <Route path="warnings-caps" element={<Navigate to="/admin/pricing?tab=warnings-caps" replace />} />
+      <Route path="city-rates" element={<Navigate to="/admin/pricing?tab=city-rates" replace />} />
+      <Route path="toll-surcharges" element={<Navigate to="/admin/pricing?tab=tolls" replace />} />
       {/* Telephony */}
       <Route path="telephony/calls" element={<SuspenseRoute><CallsManager /></SuspenseRoute>} />
       <Route path="telephony/numbers" element={<SuspenseRoute><PhoneNumbersManager /></SuspenseRoute>} />
