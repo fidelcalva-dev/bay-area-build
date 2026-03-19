@@ -204,7 +204,7 @@ export async function logQuoteMilestone(
       await supabase.from('lead_events').insert([{
         lead_id: data.leadId,
         event_type: milestone.toUpperCase(),
-        payload_json: data.metadata || {},
+        payload_json: (data.metadata || {}) as Record<string, string>,
       }]);
     }
   } catch (err) {
