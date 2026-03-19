@@ -523,6 +523,20 @@ export default function SalesQuoteDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [quote, setQuote] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Editable core fields (edit mode)
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editCompany, setEditCompany] = useState("");
+  const [editUserType, setEditUserType] = useState("");
+  const [editZip, setEditZip] = useState("");
+  const [editMaterial, setEditMaterial] = useState("");
+  const [editProjectType, setEditProjectType] = useState("");
+  const [editPlacement, setEditPlacement] = useState("");
+  const [editGateCode, setEditGateCode] = useState("");
+  const [editRentalDays, setEditRentalDays] = useState("7");
 
   // Editable fields
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
@@ -578,6 +592,19 @@ export default function SalesQuoteDetail() {
       setHeavyMaterialNotes(data.heavy_material_notes || "");
       setNegotiatedPrice(data.negotiated_price ? String(data.negotiated_price) : "");
       setPriceOverrideReason(data.price_override_reason || "");
+
+      // Edit mode fields
+      setEditName(data.customer_name || "");
+      setEditPhone(data.customer_phone || "");
+      setEditEmail(data.customer_email || "");
+      setEditCompany(data.company_name || "");
+      setEditUserType(data.user_type || "homeowner");
+      setEditZip(data.zip_code || "");
+      setEditMaterial(data.material_type || "general");
+      setEditProjectType(data.project_type || "");
+      setEditPlacement(data.placement_type || "");
+      setEditGateCode(data.gate_code || "");
+      setEditRentalDays(String(data.rental_days || 7));
 
       if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
       else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
@@ -643,6 +670,20 @@ export default function SalesQuoteDetail() {
       const needsApproval = negPrice !== null && negPrice > 0 && negPrice < rangeMin;
 
       const updatePayload: Record<string, any> = {
+        // Core editable fields
+        customer_name: editName || null,
+        customer_phone: editPhone || null,
+        customer_email: editEmail || null,
+        company_name: editCompany || null,
+        user_type: editUserType || null,
+        zip_code: editZip || null,
+        material_type: editMaterial || null,
+        project_type: editProjectType || null,
+        placement_type: editPlacement || null,
+        gate_code: editGateCode || null,
+        rental_days: editRentalDays ? Number(editRentalDays) : 7,
+        is_heavy_material: editMaterial === 'heavy',
+        // Delivery / scheduling
         delivery_date: deliveryPref === "specific_date" && deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
         delivery_address: deliveryAddress || null,
         delivery_instructions: deliveryInstructions || null,
@@ -698,6 +739,7 @@ export default function SalesQuoteDetail() {
       }
 
       toast({ title: "Quote updated" });
+      setIsEditMode(false);
       fetchQuote();
     } catch (err) {
       console.error(err);
@@ -890,6 +932,26 @@ export default function SalesQuoteDetail() {
         </div>
       </div>
 
+      {/* ─── EDIT MODE BANNER ────────────────────────── */}
+      {isEditMode && (
+        <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Pencil className="w-5 h-5 text-primary" />
+            <div>
+              <p className="font-semibold text-foreground">Edit Mode Active</p>
+              <p className="text-xs text-muted-foreground">Customer info and job details are now editable. Click Save to apply changes.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => { setIsEditMode(false); fetchQuote(); }}>Cancel</Button>
+            <Button size="sm" onClick={handleSave} disabled={isSaving}>
+              {isSaving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+              Save
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* ─── READINESS BADGE ─────────────────────────────── */}
       <ReadinessBadge level={readiness.level} label={readiness.label} missing={readiness.missing} />
 
@@ -914,39 +976,83 @@ export default function SalesQuoteDetail() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {/* ─── A. CUSTOMER INFORMATION ─────────────────── */}
-        <Card>
+        <Card className={isEditMode ? "ring-2 ring-primary/30" : ""}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="w-4 h-4" /> Customer Information
+            <CardTitle className="text-base flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <User className="w-4 h-4" /> Customer Information
+              </span>
+              {!isEditMode && (
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => setIsEditMode(true)}>
+                  <Pencil className="w-3 h-3" /> Edit
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Name</p>
-                <p className="font-medium">{quote.customer_name || <span className="text-destructive">— Missing</span>}</p>
+            {isEditMode ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Name</Label>
+                  <Input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Customer name" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Company</Label>
+                  <Input value={editCompany} onChange={e => setEditCompany(e.target.value)} placeholder="Company name" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Phone</Label>
+                  <Input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="(555) 123-4567" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  <Input value={editEmail} onChange={e => setEditEmail(e.target.value)} placeholder="email@example.com" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Type</Label>
+                  <Select value={editUserType} onValueChange={setEditUserType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="homeowner">Homeowner</SelectItem>
+                      <SelectItem value="contractor">Contractor</SelectItem>
+                      <SelectItem value="business">Business</SelectItem>
+                      <SelectItem value="property_manager">Property Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Lead Source</Label>
+                  <p className="font-medium text-sm pt-1.5">{quote.utm_source || "Direct"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Company</p>
-                <p className="font-medium">{quote.company_name || "—"}</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Name</p>
+                  <p className="font-medium">{quote.customer_name || <span className="text-destructive">— Missing</span>}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Company</p>
+                  <p className="font-medium">{quote.company_name || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Phone</p>
+                  <p className="font-medium">{quote.customer_phone || <span className="text-destructive">— Missing</span>}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Email</p>
+                  <p className="font-medium truncate">{quote.customer_email || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Type</p>
+                  <p className="font-medium capitalize">{quote.user_type || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Lead Source</p>
+                  <p className="font-medium">{quote.utm_source || "Direct"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Phone</p>
-                <p className="font-medium">{quote.customer_phone || <span className="text-destructive">— Missing</span>}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Email</p>
-                <p className="font-medium truncate">{quote.customer_email || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Type</p>
-                <p className="font-medium capitalize">{quote.user_type || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Lead Source</p>
-                <p className="font-medium">{quote.utm_source || "Direct"}</p>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -998,43 +1104,106 @@ export default function SalesQuoteDetail() {
         </Card>
 
         {/* ─── C. JOB DETAILS ─────────────────────────── */}
-        <Card>
+        <Card className={isEditMode ? "ring-2 ring-primary/30" : ""}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Package className="w-4 h-4" /> Job Details
+            <CardTitle className="text-base flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Package className="w-4 h-4" /> Job Details
+              </span>
+              {!isEditMode && (
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => setIsEditMode(true)}>
+                  <Pencil className="w-3 h-3" /> Edit
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Project Type</p>
-                <p className="font-medium capitalize">{quote.project_type || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Material Type</p>
-                <p className="font-medium capitalize">{quote.material_type || <span className="text-destructive">— Missing</span>}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Material Class</p>
-                <p className="font-medium">{quote.heavy_material_class || (quote.is_heavy_material ? "Heavy" : "General")}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Rental Duration</p>
-                <p className="font-medium">{quote.rental_days} days</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Included Tons</p>
-                <p className="font-medium">{getIncludedTonsText(sizeYd || 10)}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Risk Flags</p>
-                <div className="flex items-center gap-1 flex-wrap">
-                  {quote.is_heavy_material && <Badge variant="outline" className="text-[10px]">Heavy</Badge>}
-                  {quote.is_trash_contaminated && <Badge variant="outline" className="text-[10px] text-amber-700">Contamination</Badge>}
-                  {!quote.is_heavy_material && !quote.is_trash_contaminated && <span className="font-medium">None</span>}
+            {isEditMode ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Project Type</Label>
+                  <Select value={editProjectType} onValueChange={setEditProjectType}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="home_renovation">Home Renovation</SelectItem>
+                      <SelectItem value="roofing">Roofing</SelectItem>
+                      <SelectItem value="construction">Construction</SelectItem>
+                      <SelectItem value="demolition">Demolition</SelectItem>
+                      <SelectItem value="cleanout">Cleanout</SelectItem>
+                      <SelectItem value="landscaping">Landscaping</SelectItem>
+                      <SelectItem value="moving">Moving</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Material Type</Label>
+                  <Select value={editMaterial} onValueChange={setEditMaterial}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General Debris</SelectItem>
+                      <SelectItem value="heavy">Heavy Material</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">ZIP Code</Label>
+                  <Input value={editZip} onChange={e => setEditZip(e.target.value)} placeholder="ZIP" maxLength={5} />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Rental Duration (days)</Label>
+                  <Input type="number" value={editRentalDays} onChange={e => setEditRentalDays(e.target.value)} min="1" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Placement</Label>
+                  <Select value={editPlacement} onValueChange={setEditPlacement}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="driveway">Driveway</SelectItem>
+                      <SelectItem value="street">Street</SelectItem>
+                      <SelectItem value="yard">Yard</SelectItem>
+                      <SelectItem value="alley">Alley</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Gate Code</Label>
+                  <Input value={editGateCode} onChange={e => setEditGateCode(e.target.value)} placeholder="Gate code" />
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Project Type</p>
+                  <p className="font-medium capitalize">{quote.project_type || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Material Type</p>
+                  <p className="font-medium capitalize">{quote.material_type || <span className="text-destructive">— Missing</span>}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Material Class</p>
+                  <p className="font-medium">{quote.heavy_material_class || (quote.is_heavy_material ? "Heavy" : "General")}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Rental Duration</p>
+                  <p className="font-medium">{quote.rental_days} days</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Included Tons</p>
+                  <p className="font-medium">{getIncludedTonsText(sizeYd || 10)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Risk Flags</p>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {quote.is_heavy_material && <Badge variant="outline" className="text-[10px]">Heavy</Badge>}
+                    {quote.is_trash_contaminated && <Badge variant="outline" className="text-[10px] text-amber-700">Contamination</Badge>}
+                    {!quote.is_heavy_material && !quote.is_trash_contaminated && <span className="font-medium">None</span>}
+                  </div>
+                </div>
+              </div>
+            )}
             <Separator />
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Dumpster Size (yards)</Label>
@@ -1415,8 +1584,15 @@ export default function SalesQuoteDetail() {
             }}>
               <Copy className="w-3.5 h-3.5" /> Duplicate
             </Button>
-            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/quotes/${id}`)}>
-              <Pencil className="w-3.5 h-3.5" /> Edit Quote
+            <Button variant={isEditMode ? "default" : "outline"} size="sm" className="w-full gap-1.5" onClick={() => {
+              if (isEditMode) {
+                handleSave();
+              } else {
+                setIsEditMode(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}>
+              <Pencil className="w-3.5 h-3.5" /> {isEditMode ? "Save Changes" : "Edit Quote"}
             </Button>
             {quote.status !== "converted" && (
               <Button size="sm" className="w-full gap-1.5" onClick={handleMarkConverted}>
