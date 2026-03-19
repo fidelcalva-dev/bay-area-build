@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } fro
 import { getPriceRangeForZip, type PriceRange } from '@/lib/masterPricingService';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
+import { upsertDraftQuote, logQuoteMilestone, getDraftQuoteId, clearDraftIds, meetsQuoteThreshold, type DraftQuoteData } from '@/lib/draftQuoteService';
 import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
 import {
   MapPin, ChevronRight, ChevronLeft, Phone, User, Mail, Loader2,
@@ -495,6 +496,64 @@ export function V3QuoteFlow() {
     }
   }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote, step]);
 
+  // ── Draft Quote Auto-Creation ──
+  // Creates/updates a draft quote record when threshold is met (ZIP + material + size)
+  const draftSynced = useRef<Record<string, boolean>>({});
+  const buildDraftData = useCallback((): DraftQuoteData => ({
+    zip,
+    materialType: materialTypeForPricing,
+    size,
+    customerType: customerType || undefined,
+    projectType: selectedProject?.label || undefined,
+    customerName: customerName || undefined,
+    customerPhone: customerPhone || undefined,
+    customerEmail: customerEmail || undefined,
+    zoneId: zoneResult?.zoneId || undefined,
+    zoneName: zoneResult?.zoneName || undefined,
+    cityName: zoneResult?.cityName || undefined,
+    yardId: distanceCalc.distance?.yard.id || undefined,
+    yardName: distanceCalc.distance?.yard.name || undefined,
+    distanceMiles: distanceCalc.distance?.distanceMiles || undefined,
+    distanceBracket: distanceCalc.distance?.bracket?.bracketName || undefined,
+    subtotal: quote.isValid ? quote.subtotal : undefined,
+    subtotalHigh: quote.isValid ? quote.subtotalHigh : undefined,
+    includedTons: quote.isValid ? quote.includedTons : undefined,
+    isFlatFee: quote.isFlatFee,
+    isHeavy,
+    materialClass: isHeavy ? (selectedProject?.id || 'heavy') : 'general',
+    recommendedSize: recommendedSize,
+    addressLine1: addressResult?.formattedAddress || undefined,
+    city: addressResult?.city || undefined,
+    state: addressResult?.state || undefined,
+    lat: addressResult?.lat || distanceCalc.geocoding?.lat || undefined,
+    lng: addressResult?.lng || distanceCalc.geocoding?.lng || undefined,
+    accessFlags: accessData?.flagsMap || undefined,
+    placementType: accessData?.placementType || undefined,
+    gateCode: accessData?.gateCode || undefined,
+    wantsSwap,
+  }), [zip, materialTypeForPricing, size, customerType, selectedProject, customerName, customerPhone, customerEmail, zoneResult, distanceCalc, quote, isHeavy, recommendedSize, addressResult, accessData, wantsSwap]);
+
+  // Sync draft quote on key step transitions
+  useEffect(() => {
+    const data = buildDraftData();
+    if (!meetsQuoteThreshold(data)) return;
+
+    const milestoneKey = `${step}_${size}_${materialTypeForPricing}`;
+    if (draftSynced.current[milestoneKey]) return;
+    draftSynced.current[milestoneKey] = true;
+
+    // Fire draft upsert (non-blocking)
+    upsertDraftQuote(data).then(result => {
+      if (result.quoteId) {
+        logQuoteMilestone(`quote_step_${step}`, {
+          quoteId: result.quoteId,
+          leadId: result.leadId,
+          metadata: { step, size, material: materialTypeForPricing },
+        });
+      }
+    });
+  }, [step, size, materialTypeForPricing, buildDraftData]);
+
   // Fire progressive captures on step transitions
   useEffect(() => {
     if (step === 'size' && zip && selectedProject) {
@@ -511,7 +570,6 @@ export function V3QuoteFlow() {
     if (contactBatchFired.current) return;
     if (!(customerPhone || customerEmail)) return;
     contactBatchFired.current = true;
-    // Fire contact_captured which will also include all context
     capturePartialLead('contact_captured');
   }, [customerPhone, customerEmail, capturePartialLead]);
 
