@@ -111,11 +111,14 @@ export function ReviewsSection() {
 
         {/* External Links */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
-          <Button asChild variant="outline" size="lg">
-            <a href="https://share.google/TnFPr0cSXhoW36Vso" target="_blank" rel="noopener noreferrer">
-              Read more on Google
-              <ExternalLink className="w-4 h-4 ml-2" />
-            </a>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={() => window.open('https://share.google/TnFPr0cSXhoW36Vso', '_blank', 'noopener,noreferrer')}
+          >
+            Read more on Google
+            <ExternalLink className="w-4 h-4 ml-2" />
           </Button>
           <Button asChild variant="outline" size="lg">
             <a href={REVIEW_LINKS.facebookPage} target="_blank" rel="noopener noreferrer">
