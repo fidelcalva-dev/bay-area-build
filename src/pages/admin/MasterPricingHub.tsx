@@ -5,17 +5,14 @@
 // ══════════════════════════════════════════════════════════════
 
 import { useState, lazy, Suspense } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
-  DollarSign, Scale, MapPin, Truck, Users, Plus, Gauge,
+  DollarSign, Scale, MapPin, Users, Plus, Gauge,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
-  ChevronRight, Loader2
+  Loader2, ShieldCheck, FileText, Truck
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 // Lazy-load each tab panel from existing pages
@@ -35,6 +32,14 @@ const PricingReadinessDashboard = lazy(() => import('@/pages/admin/pricing/Prici
 const RushHealthDashboard = lazy(() => import('@/pages/admin/pricing/RushHealthDashboard'));
 const ContractorRulesHealth = lazy(() => import('@/pages/admin/pricing/ContractorRulesHealth'));
 const ExtrasHealthDashboard = lazy(() => import('@/pages/admin/pricing/ExtrasHealthDashboard'));
+// New consolidated panels
+const HeavyPricingManager = lazy(() => import('@/pages/admin/HeavyPricingManager'));
+const MixedRulesManager = lazy(() => import('@/pages/admin/MixedRulesManager'));
+const WarningsCapsManager = lazy(() => import('@/pages/admin/WarningsCapsManager'));
+const CityRatesManager = lazy(() => import('@/pages/admin/CityRatesManager'));
+const TollSurchargesManager = lazy(() => import('@/pages/admin/TollSurchargesManager'));
+const VolumeCommitmentsManager = lazy(() => import('@/pages/admin/VolumeCommitmentsManager'));
+const CustomerTypeRulesPage = lazy(() => import('@/pages/admin/CustomerTypeRulesPage'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
@@ -51,20 +56,28 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  // ── Overview / Core ──
-  { value: 'overview', label: 'Overview', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, zones, materials, rental periods' },
-  { value: 'heavy', label: 'Heavy Materials', icon: Scale, group: 'Core', description: 'Service cost + dump fee model by material group' },
+  // ── Core Pricing ──
+  { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
+  { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
+  { value: 'heavy-rates', label: 'Heavy Rates', icon: Scale, group: 'Core', description: 'Heavy material flat rates by group and size' },
   { value: 'materials', label: 'Material Rules', icon: AlertTriangle, group: 'Core', description: 'Material classes, dump fees, review rules' },
   // ── Geography ──
   { value: 'zones', label: 'Zone Surcharges', icon: MapPin, group: 'Geography', description: 'Distance-based zone surcharges (A-E)' },
+  { value: 'tolls', label: 'Toll Surcharges', icon: Truck, group: 'Geography', description: 'Toll-based surcharges by zone and yard' },
   { value: 'zips', label: 'ZIP Health', icon: MapPin, group: 'Geography', description: 'ZIP → zone → market mapping and health' },
   { value: 'yards', label: 'Yard Health', icon: Building2, group: 'Geography', description: 'Yard coordinates, service radius, status' },
   { value: 'facilities', label: 'Facility Costs', icon: Building2, group: 'Geography', description: 'Disposal site costs and surcharge rules' },
   { value: 'cities', label: 'City Display', icon: Globe, group: 'Geography', description: 'City principal ZIPs for SEO pricing display' },
+  { value: 'city-rates', label: 'City Rates', icon: DollarSign, group: 'Geography', description: 'Per-city extra ton rates and heavy base pricing' },
   // ── Fees & Tiers ──
   { value: 'rush', label: 'Rush Delivery', icon: Zap, group: 'Fees', description: 'Same-day, next-day, and priority fees' },
-  { value: 'contractor', label: 'Contractor Pricing', icon: Users, group: 'Fees', description: 'Tier discounts and commercial rules' },
+  { value: 'contractor', label: 'Contractor Tiers', icon: Users, group: 'Fees', description: 'Tier discounts and commercial rules' },
   { value: 'extras', label: 'Extras Catalog', icon: Plus, group: 'Fees', description: 'Add-on fees, driver-selectable items' },
+  // ── Rules & Overrides ──
+  { value: 'mixed-rules', label: 'Mixed / Overage', icon: FileText, group: 'Rules', description: 'Mixed material rules, overage rates, included tons' },
+  { value: 'warnings-caps', label: 'Warnings & Caps', icon: ShieldCheck, group: 'Rules', description: 'Warning thresholds, price caps, overrides' },
+  { value: 'volume', label: 'Volume Commitments', icon: Users, group: 'Rules', description: 'Volume tier discounts and commitments' },
+  { value: 'customer-rules', label: 'Customer Type Rules', icon: Users, group: 'Rules', description: 'Auto-detection rules for customer type scoring' },
   // ── Analysis ──
   { value: 'simulator', label: 'Simulator', icon: Calculator, group: 'Analysis', description: 'Test pricing for any ZIP / material / size' },
   { value: 'readiness', label: 'Readiness', icon: Gauge, group: 'Analysis', description: 'System-wide pricing integrity score' },
@@ -82,7 +95,7 @@ export default function MasterPricingHub() {
   };
 
   // Group tabs
-  const groups = ['Core', 'Geography', 'Fees', 'Analysis'];
+  const groups = ['Core', 'Geography', 'Fees', 'Rules', 'Analysis'];
   const tabsByGroup = groups.map(g => ({
     group: g,
     tabs: TABS.filter(t => t.group === g),
@@ -175,15 +188,22 @@ export default function MasterPricingHub() {
             <Suspense fallback={<TabSpinner />}>
               {activeTab === 'overview' && <PricingManager />}
               {activeTab === 'heavy' && <LocationPricingManager />}
+              {activeTab === 'heavy-rates' && <HeavyPricingManager />}
               {activeTab === 'materials' && <MaterialRulesDashboard />}
               {activeTab === 'zones' && <ZoneSurchargesConfig />}
+              {activeTab === 'tolls' && <TollSurchargesManager />}
               {activeTab === 'zips' && <ZipHealthDashboard />}
               {activeTab === 'yards' && <YardHealthDashboard />}
               {activeTab === 'facilities' && <FacilityCostDashboard />}
               {activeTab === 'cities' && <CityDisplayZips />}
+              {activeTab === 'city-rates' && <CityRatesManager />}
               {activeTab === 'rush' && <RushDeliveryConfig />}
               {activeTab === 'contractor' && <ContractorPricingConfig />}
               {activeTab === 'extras' && <ExtrasCatalogConfig />}
+              {activeTab === 'mixed-rules' && <MixedRulesManager />}
+              {activeTab === 'warnings-caps' && <WarningsCapsManager />}
+              {activeTab === 'volume' && <VolumeCommitmentsManager />}
+              {activeTab === 'customer-rules' && <CustomerTypeRulesPage />}
               {activeTab === 'simulator' && <PricingSimulator />}
               {activeTab === 'readiness' && <PricingReadinessDashboard />}
               {activeTab === 'rush-health' && <RushHealthDashboard />}
