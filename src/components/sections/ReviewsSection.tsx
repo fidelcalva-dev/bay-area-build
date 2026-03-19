@@ -121,7 +121,7 @@ export function ReviewsSection() {
             <ExternalLink className="w-4 h-4 ml-2" />
           </Button>
           <Button asChild variant="outline" size="lg">
-            <a href={REVIEW_LINKS.facebookPage} target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/profile.php?id=100093328443887" target="_blank" rel="noopener noreferrer">
               View on Facebook
               <ExternalLink className="w-4 h-4 ml-2" />
             </a>
