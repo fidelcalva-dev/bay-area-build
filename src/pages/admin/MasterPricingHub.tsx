@@ -7,8 +7,9 @@
 import { useState, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import PricingOverviewPanel from '@/components/admin/pricing/PricingOverviewPanel';
 import {
-  DollarSign, Scale, MapPin, Users, Plus, Gauge,
+  DollarSign, Scale, MapPin, Users, Plus, Gauge, LayoutDashboard,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
   Loader2, ShieldCheck, FileText, Truck
 } from 'lucide-react';
@@ -57,6 +58,7 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   // ── Core Pricing ──
+  { value: 'dashboard', label: 'Overview', icon: LayoutDashboard, group: 'Core', description: 'Pricing summary, key metrics, quick navigation' },
   { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
   { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
   { value: 'heavy-rates', label: 'Heavy Rates', icon: Scale, group: 'Core', description: 'Heavy material flat rates by group and size' },
@@ -88,7 +90,7 @@ const TABS: TabDef[] = [
 
 export default function MasterPricingHub() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'overview';
+  const activeTab = searchParams.get('tab') || 'dashboard';
 
   const setTab = (tab: string) => {
     setSearchParams({ tab }, { replace: true });
@@ -186,6 +188,7 @@ export default function MasterPricingHub() {
           {/* ── Main Content ── */}
           <main className="flex-1 overflow-y-auto">
             <Suspense fallback={<TabSpinner />}>
+              {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
               {activeTab === 'overview' && <PricingManager />}
               {activeTab === 'heavy' && <LocationPricingManager />}
               {activeTab === 'heavy-rates' && <HeavyPricingManager />}
