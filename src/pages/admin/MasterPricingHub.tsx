@@ -188,6 +188,7 @@ export default function MasterPricingHub() {
           {/* ── Main Content ── */}
           <main className="flex-1 overflow-y-auto">
             <Suspense fallback={<TabSpinner />}>
+              {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
               {activeTab === 'overview' && <PricingManager />}
               {activeTab === 'heavy' && <LocationPricingManager />}
               {activeTab === 'heavy-rates' && <HeavyPricingManager />}
