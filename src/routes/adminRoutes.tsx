@@ -105,7 +105,7 @@ const ContractorRulesHealth = lazy(() => import("@/pages/admin/pricing/Contracto
 const ExtrasHealthDashboard = lazy(() => import("@/pages/admin/pricing/ExtrasHealthDashboard"));
 const PricingReadinessDashboard = lazy(() => import("@/pages/admin/pricing/PricingReadinessDashboard"));
 const PricingSimulator = lazy(() => import("@/pages/admin/PricingSimulator"));
-const PricingEngineDashboard = lazy(() => import("@/pages/admin/PricingEngineDashboard"));
+
 
 // Markets
 const NewLocationWizard = lazy(() => import("@/pages/admin/markets/NewLocationWizard"));
