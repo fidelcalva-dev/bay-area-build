@@ -90,7 +90,7 @@ const TABS: TabDef[] = [
 
 export default function MasterPricingHub() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'overview';
+  const activeTab = searchParams.get('tab') || 'dashboard';
 
   const setTab = (tab: string) => {
     setSearchParams({ tab }, { replace: true });
