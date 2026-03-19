@@ -8,7 +8,6 @@ const DriverHome = lazy(() => import("@/pages/driver/DriverHome"));
 const DriverRunDetail = lazy(() => import("@/pages/driver/DriverRunDetail"));
 const DriverRuns = lazy(() => import("@/pages/driver/DriverRuns"));
 const DriverProfile = lazy(() => import("@/pages/driver/DriverProfile"));
-const DriverApp = lazy(() => import("@/pages/driver/DriverApp"));
 const DriverTruckSelect = lazy(() => import("@/pages/driver/DriverTruckSelect"));
 const DriverPreTrip = lazy(() => import("@/pages/driver/DriverPreTrip"));
 const DriverReportIssue = lazy(() => import("@/pages/driver/DriverReportIssue"));
