@@ -87,21 +87,7 @@ const EmailConfigPanel = lazy(() => import("@/pages/admin/EmailConfigPanel"));
 const VehicleProfile = lazy(() => import("@/pages/admin/VehicleProfile"));
 
 // Pricing Sub-pages
-const LocationPricingManager = lazy(() => import("@/pages/admin/pricing/LocationPricingManager"));
-const YardHealthDashboard = lazy(() => import("@/pages/admin/pricing/YardHealthDashboard"));
-const ZipHealthDashboard = lazy(() => import("@/pages/admin/pricing/ZipHealthDashboard"));
-const FacilityCostDashboard = lazy(() => import("@/pages/admin/pricing/FacilityCostDashboard"));
-const MaterialRulesDashboard = lazy(() => import("@/pages/admin/pricing/MaterialRulesDashboard"));
-const ZoneSurchargesConfig = lazy(() => import("@/pages/admin/pricing/ZoneSurchargesConfig"));
-const RushDeliveryConfig = lazy(() => import("@/pages/admin/pricing/RushDeliveryConfig"));
-const ContractorPricingConfig = lazy(() => import("@/pages/admin/pricing/ContractorPricingConfig"));
-const ExtrasCatalogConfig = lazy(() => import("@/pages/admin/pricing/ExtrasCatalogConfig"));
-const CityDisplayZips = lazy(() => import("@/pages/admin/pricing/CityDisplayZips"));
-const RushHealthDashboard = lazy(() => import("@/pages/admin/pricing/RushHealthDashboard"));
-const ContractorRulesHealth = lazy(() => import("@/pages/admin/pricing/ContractorRulesHealth"));
-const ExtrasHealthDashboard = lazy(() => import("@/pages/admin/pricing/ExtrasHealthDashboard"));
-const PricingReadinessDashboard = lazy(() => import("@/pages/admin/pricing/PricingReadinessDashboard"));
-const PricingSimulator = lazy(() => import("@/pages/admin/PricingSimulator"));
+// Pricing sub-pages now loaded inside MasterPricingHub (lazy-loaded there)
 
 
 // Markets
