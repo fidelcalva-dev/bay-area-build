@@ -956,39 +956,83 @@ export default function SalesQuoteDetail() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {/* ─── A. CUSTOMER INFORMATION ─────────────────── */}
-        <Card>
+        <Card className={isEditMode ? "ring-2 ring-primary/30" : ""}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="w-4 h-4" /> Customer Information
+            <CardTitle className="text-base flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <User className="w-4 h-4" /> Customer Information
+              </span>
+              {!isEditMode && (
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => setIsEditMode(true)}>
+                  <Pencil className="w-3 h-3" /> Edit
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Name</p>
-                <p className="font-medium">{quote.customer_name || <span className="text-destructive">— Missing</span>}</p>
+            {isEditMode ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Name</Label>
+                  <Input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Customer name" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Company</Label>
+                  <Input value={editCompany} onChange={e => setEditCompany(e.target.value)} placeholder="Company name" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Phone</Label>
+                  <Input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="(555) 123-4567" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  <Input value={editEmail} onChange={e => setEditEmail(e.target.value)} placeholder="email@example.com" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Type</Label>
+                  <Select value={editUserType} onValueChange={setEditUserType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="homeowner">Homeowner</SelectItem>
+                      <SelectItem value="contractor">Contractor</SelectItem>
+                      <SelectItem value="business">Business</SelectItem>
+                      <SelectItem value="property_manager">Property Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Lead Source</Label>
+                  <p className="font-medium text-sm pt-1.5">{quote.utm_source || "Direct"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Company</p>
-                <p className="font-medium">{quote.company_name || "—"}</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Name</p>
+                  <p className="font-medium">{quote.customer_name || <span className="text-destructive">— Missing</span>}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Company</p>
+                  <p className="font-medium">{quote.company_name || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Phone</p>
+                  <p className="font-medium">{quote.customer_phone || <span className="text-destructive">— Missing</span>}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Email</p>
+                  <p className="font-medium truncate">{quote.customer_email || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Type</p>
+                  <p className="font-medium capitalize">{quote.user_type || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Lead Source</p>
+                  <p className="font-medium">{quote.utm_source || "Direct"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Phone</p>
-                <p className="font-medium">{quote.customer_phone || <span className="text-destructive">— Missing</span>}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Email</p>
-                <p className="font-medium truncate">{quote.customer_email || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Type</p>
-                <p className="font-medium capitalize">{quote.user_type || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Lead Source</p>
-                <p className="font-medium">{quote.utm_source || "Direct"}</p>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
