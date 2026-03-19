@@ -593,6 +593,19 @@ export default function SalesQuoteDetail() {
       setNegotiatedPrice(data.negotiated_price ? String(data.negotiated_price) : "");
       setPriceOverrideReason(data.price_override_reason || "");
 
+      // Edit mode fields
+      setEditName(data.customer_name || "");
+      setEditPhone(data.customer_phone || "");
+      setEditEmail(data.customer_email || "");
+      setEditCompany(data.company_name || "");
+      setEditUserType(data.user_type || "homeowner");
+      setEditZip(data.zip_code || "");
+      setEditMaterial(data.material_type || "general");
+      setEditProjectType(data.project_type || "");
+      setEditPlacement(data.placement_type || "");
+      setEditGateCode(data.gate_code || "");
+      setEditRentalDays(String(data.rental_days || 7));
+
       if (data.preferred_delivery_window === "asap") setDeliveryPref("asap");
       else if (data.preferred_delivery_window === "flexible") setDeliveryPref("flexible");
       else if (data.preferred_delivery_window === "call_to_confirm") setDeliveryPref("call_to_confirm");
