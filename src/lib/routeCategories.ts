@@ -417,7 +417,7 @@ const crmQA: RouteEntry[] = [
   { path: '/admin/qa/build-info', name: 'Build Info', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/env-health', name: 'Env Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/build-health', name: 'Build Health', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
-  { path: '/admin/qa/seo-health', name: 'SEO Health Check', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
+  { path: '/admin/qa/seo-health', name: 'SEO Health Redirect', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true, canonicalAlias: '/admin/seo/health' },
   { path: '/admin/qa/duplicate-pages', name: 'Duplicate Pages', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/qa/public-vs-crm', name: 'Public vs CRM', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
   { path: '/admin/calculator/logs', name: 'Calculator Logs', group: 'CRM_INTERNAL', subcategory: 'QA/Diagnostics', isProtected: true, indexable: false, mounted: true },
