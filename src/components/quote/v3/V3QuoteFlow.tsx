@@ -172,7 +172,7 @@ export function V3QuoteFlow() {
   const [accessData, setAccessData] = useState<AccessConstraintData | null>(null);
 
   // Address mode
-  const [useAddress, setUseAddress] = useState(false);
+  const [useAddress, setUseAddress] = useState(!!urlAddress);
   const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
 
   // Swap toggle (declared early for draft effects)
