@@ -36,8 +36,7 @@ const AdminGoogleSetup = lazy(() => import("@/pages/admin/AdminGoogleSetup"));
 const AdminGoogleLogs = lazy(() => import("@/pages/admin/AdminGoogleLogs"));
 const AdminMessaging = lazy(() => import("@/pages/admin/AdminMessaging"));
 const GHLIntegrationPage = lazy(() => import("@/pages/admin/GHLIntegrationPage"));
-const TollSurchargesManager = lazy(() => import("@/pages/admin/TollSurchargesManager"));
-const CityRatesManager = lazy(() => import("@/pages/admin/CityRatesManager"));
+// TollSurchargesManager, CityRatesManager now loaded inside MasterPricingHub
 const DriversManager = lazy(() => import("@/pages/admin/DriversManager"));
 const DispatchCalendar = lazy(() => import("@/pages/admin/DispatchCalendar"));
 const TicketsManager = lazy(() => import("@/pages/admin/TicketsManager"));
