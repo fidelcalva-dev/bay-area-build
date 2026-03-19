@@ -287,7 +287,7 @@ export function getAdminRoutes() {
       <Route path="pricing/contractor-rules" element={<SuspenseRoute><ContractorRulesHealth /></SuspenseRoute>} />
       <Route path="pricing/extras-health" element={<SuspenseRoute><ExtrasHealthDashboard /></SuspenseRoute>} />
       <Route path="pricing/readiness" element={<SuspenseRoute><PricingReadinessDashboard /></SuspenseRoute>} />
-      <Route path="pricing-engine" element={<SuspenseRoute><PricingEngineDashboard /></SuspenseRoute>} />
+      <Route path="pricing-engine" element={<Navigate to="/admin/pricing" replace />} />
       {/* Telephony */}
       <Route path="telephony/calls" element={<SuspenseRoute><CallsManager /></SuspenseRoute>} />
       <Route path="telephony/numbers" element={<SuspenseRoute><PhoneNumbersManager /></SuspenseRoute>} />
