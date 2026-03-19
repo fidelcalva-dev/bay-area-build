@@ -24,6 +24,7 @@ const AdminAIChat = lazy(() => import("@/pages/admin/AdminAIChat"));
 // Core Management
 const ZonesManager = lazy(() => import("@/pages/admin/ZonesManager"));
 const PricingManager = lazy(() => import("@/pages/admin/PricingManager"));
+const MasterPricingHub = lazy(() => import("@/pages/admin/MasterPricingHub"));
 const VendorsManager = lazy(() => import("@/pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
 const VolumeCommitmentsManager = lazy(() => import("@/pages/admin/VolumeCommitmentsManager"));
@@ -213,7 +214,7 @@ export function getAdminRoutes() {
       <Route path="customers" element={<SuspenseRoute><CustomersManager /></SuspenseRoute>} />
       <Route path="yards" element={<SuspenseRoute><YardsManager /></SuspenseRoute>} />
       <Route path="zones" element={<SuspenseRoute><ZonesManager /></SuspenseRoute>} />
-      <Route path="pricing" element={<SuspenseRoute><PricingManager /></SuspenseRoute>} />
+      <Route path="pricing" element={<SuspenseRoute><MasterPricingHub /></SuspenseRoute>} />
       <Route path="vendors" element={<SuspenseRoute><VendorsManager /></SuspenseRoute>} />
       <Route path="extras" element={<SuspenseRoute><ExtrasManager /></SuspenseRoute>} />
       <Route path="config" element={<SuspenseRoute><ConfigManager /></SuspenseRoute>} />
@@ -227,8 +228,7 @@ export function getAdminRoutes() {
       <Route path="notifications-config" element={<SuspenseRoute><NotificationConfigPage /></SuspenseRoute>} />
       <Route path="email-test" element={<SuspenseRoute><AdminEmailTest /></SuspenseRoute>} />
       <Route path="ghl" element={<SuspenseRoute><GHLIntegrationPage /></SuspenseRoute>} />
-      <Route path="toll-surcharges" element={<SuspenseRoute><TollSurchargesManager /></SuspenseRoute>} />
-      <Route path="city-rates" element={<SuspenseRoute><CityRatesManager /></SuspenseRoute>} />
+      {/* toll-surcharges and city-rates now redirect via pricing hub routes below */}
       <Route path="drivers" element={<SuspenseRoute><DriversManager /></SuspenseRoute>} />
       <Route path="dispatch" element={<SuspenseRoute><DispatchCalendar /></SuspenseRoute>} />
       <Route path="tickets" element={<SuspenseRoute><TicketsManager /></SuspenseRoute>} />
@@ -271,23 +271,29 @@ export function getAdminRoutes() {
       <Route path="customer-health" element={<SuspenseRoute><CustomerHealthDashboard /></SuspenseRoute>} />
       <Route path="heavy-risk" element={<SuspenseRoute><HeavyRiskDashboard /></SuspenseRoute>} />
       <Route path="profitability" element={<SuspenseRoute><ProfitabilityDashboard /></SuspenseRoute>} />
-      {/* Pricing Sub-pages */}
-      <Route path="pricing/locations" element={<SuspenseRoute><LocationPricingManager /></SuspenseRoute>} />
-      <Route path="pricing/simulator" element={<SuspenseRoute><PricingSimulator /></SuspenseRoute>} />
-      <Route path="pricing/yard-health" element={<SuspenseRoute><YardHealthDashboard /></SuspenseRoute>} />
-      <Route path="pricing/zip-health" element={<SuspenseRoute><ZipHealthDashboard /></SuspenseRoute>} />
-      <Route path="pricing/facility-costs" element={<SuspenseRoute><FacilityCostDashboard /></SuspenseRoute>} />
-      <Route path="pricing/material-rules" element={<SuspenseRoute><MaterialRulesDashboard /></SuspenseRoute>} />
-      <Route path="pricing/zone-surcharges" element={<SuspenseRoute><ZoneSurchargesConfig /></SuspenseRoute>} />
-      <Route path="pricing/rush-delivery" element={<SuspenseRoute><RushDeliveryConfig /></SuspenseRoute>} />
-      <Route path="pricing/contractor-pricing" element={<SuspenseRoute><ContractorPricingConfig /></SuspenseRoute>} />
-      <Route path="pricing/extras-catalog" element={<SuspenseRoute><ExtrasCatalogConfig /></SuspenseRoute>} />
-      <Route path="pricing/city-display-zips" element={<SuspenseRoute><CityDisplayZips /></SuspenseRoute>} />
-      <Route path="pricing/rush-health" element={<SuspenseRoute><RushHealthDashboard /></SuspenseRoute>} />
-      <Route path="pricing/contractor-rules" element={<SuspenseRoute><ContractorRulesHealth /></SuspenseRoute>} />
-      <Route path="pricing/extras-health" element={<SuspenseRoute><ExtrasHealthDashboard /></SuspenseRoute>} />
-      <Route path="pricing/readiness" element={<SuspenseRoute><PricingReadinessDashboard /></SuspenseRoute>} />
+      {/* Pricing Sub-pages — redirect to canonical hub tabs */}
+      <Route path="pricing/locations" element={<Navigate to="/admin/pricing?tab=heavy" replace />} />
+      <Route path="pricing/simulator" element={<Navigate to="/admin/pricing?tab=simulator" replace />} />
+      <Route path="pricing/yard-health" element={<Navigate to="/admin/pricing?tab=yards" replace />} />
+      <Route path="pricing/zip-health" element={<Navigate to="/admin/pricing?tab=zips" replace />} />
+      <Route path="pricing/facility-costs" element={<Navigate to="/admin/pricing?tab=facilities" replace />} />
+      <Route path="pricing/material-rules" element={<Navigate to="/admin/pricing?tab=materials" replace />} />
+      <Route path="pricing/zone-surcharges" element={<Navigate to="/admin/pricing?tab=zones" replace />} />
+      <Route path="pricing/rush-delivery" element={<Navigate to="/admin/pricing?tab=rush" replace />} />
+      <Route path="pricing/contractor-pricing" element={<Navigate to="/admin/pricing?tab=contractor" replace />} />
+      <Route path="pricing/extras-catalog" element={<Navigate to="/admin/pricing?tab=extras" replace />} />
+      <Route path="pricing/city-display-zips" element={<Navigate to="/admin/pricing?tab=cities" replace />} />
+      <Route path="pricing/rush-health" element={<Navigate to="/admin/pricing?tab=rush-health" replace />} />
+      <Route path="pricing/contractor-rules" element={<Navigate to="/admin/pricing?tab=contractor-health" replace />} />
+      <Route path="pricing/extras-health" element={<Navigate to="/admin/pricing?tab=extras-health" replace />} />
+      <Route path="pricing/readiness" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
       <Route path="pricing-engine" element={<Navigate to="/admin/pricing" replace />} />
+      {/* Scattered pricing pages → redirect to hub */}
+      <Route path="heavy-pricing" element={<Navigate to="/admin/pricing?tab=heavy" replace />} />
+      <Route path="mixed-rules" element={<Navigate to="/admin/pricing?tab=materials" replace />} />
+      <Route path="warnings-caps" element={<Navigate to="/admin/pricing?tab=readiness" replace />} />
+      <Route path="city-rates" element={<Navigate to="/admin/pricing?tab=cities" replace />} />
+      <Route path="toll-surcharges" element={<Navigate to="/admin/pricing?tab=zones" replace />} />
       {/* Telephony */}
       <Route path="telephony/calls" element={<SuspenseRoute><CallsManager /></SuspenseRoute>} />
       <Route path="telephony/numbers" element={<SuspenseRoute><PhoneNumbersManager /></SuspenseRoute>} />
