@@ -932,6 +932,26 @@ export default function SalesQuoteDetail() {
         </div>
       </div>
 
+      {/* ─── EDIT MODE BANNER ────────────────────────── */}
+      {isEditMode && (
+        <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Pencil className="w-5 h-5 text-primary" />
+            <div>
+              <p className="font-semibold text-foreground">Edit Mode Active</p>
+              <p className="text-xs text-muted-foreground">Customer info and job details are now editable. Click Save to apply changes.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => { setIsEditMode(false); fetchQuote(); }}>Cancel</Button>
+            <Button size="sm" onClick={handleSave} disabled={isSaving}>
+              {isSaving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+              Save
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* ─── READINESS BADGE ─────────────────────────────── */}
       <ReadinessBadge level={readiness.level} label={readiness.label} missing={readiness.missing} />
 
