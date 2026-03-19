@@ -27,13 +27,7 @@ const ZonesManager = lazy(() => import("@/pages/admin/ZonesManager"));
 const MasterPricingHub = lazy(() => import("@/pages/admin/MasterPricingHub"));
 const VendorsManager = lazy(() => import("@/pages/admin/VendorsManager"));
 const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
-const VolumeCommitmentsManager = lazy(() => import("@/pages/admin/VolumeCommitmentsManager"));
-const YardsManager = lazy(() => import("@/pages/admin/YardsManager"));
-const ConfigManager = lazy(() => import("@/pages/admin/ConfigManager"));
-const ConfigurationHub = lazy(() => import("@/pages/admin/ConfigurationHub"));
-const HeavyPricingManager = lazy(() => import("@/pages/admin/HeavyPricingManager"));
-const MixedRulesManager = lazy(() => import("@/pages/admin/MixedRulesManager"));
-const WarningsCapsManager = lazy(() => import("@/pages/admin/WarningsCapsManager"));
+// VolumeCommitmentsManager, HeavyPricingManager, MixedRulesManager, WarningsCapsManager now loaded inside MasterPricingHub
 const OrdersManager = lazy(() => import("@/pages/admin/OrdersManager"));
 const CustomersManager = lazy(() => import("@/pages/admin/CustomersManager"));
 const AuditLogsPage = lazy(() => import("@/pages/admin/AuditLogsPage"));
