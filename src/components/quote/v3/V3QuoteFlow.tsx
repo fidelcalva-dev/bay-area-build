@@ -557,13 +557,30 @@ export function V3QuoteFlow() {
 
   // Fire progressive captures on step transitions
   useEffect(() => {
+    if (step === 'customer-type' && zip) {
+      capturePartialLead('address_saved');
+    }
+    if (step === 'project' && customerType) {
+      // material_selected fires when project is picked (project determines material)
+    }
     if (step === 'size' && zip && selectedProject) {
       capturePartialLead('quote_started');
+      capturePartialLead('material_selected');
+    }
+    if (step === 'contact' && size > 0) {
+      capturePartialLead('size_selected');
     }
     if (step === 'price' && quote.isValid) {
       capturePartialLead('quote_priced');
+      capturePartialLead('price_shown');
     }
-  }, [step, zip, selectedProject, quote.isValid]);
+    if (step === 'access') {
+      capturePartialLead('delivery_preference_saved');
+    }
+    if (step === 'confirm' && accessData) {
+      capturePartialLead('placement_marked');
+    }
+  }, [step, zip, customerType, selectedProject, size, quote.isValid, accessData]);
 
   // Batch-capture all prior milestones when contact is first provided
   const contactBatchFired = useRef(false);

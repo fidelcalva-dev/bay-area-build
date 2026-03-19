@@ -90,6 +90,32 @@ export default function ContractorApplication() {
 
       if (error) throw error;
 
+      // Lead ingest — capture contractor application as a lead (non-blocking)
+      supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'CONTRACTOR_APPLICATION',
+          source_detail: 'contractor_application_form',
+          source_page: '/contractor-application',
+          source_module: 'contractor_application',
+          name: contactName,
+          phone,
+          email,
+          company_name: companyName,
+          customer_type: 'contractor',
+          message: `Contractor application: ${companyName} | Volume: ${monthlyVolume} | Cities: ${serviceCities.join(', ')} | Sizes: ${typicalSizes.join(', ')}`,
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            service_cities: serviceCities,
+            project_types: projectTypes,
+            monthly_volume: monthlyVolume,
+            typical_sizes: typicalSizes,
+            materials: materials,
+            billing_preference: billingPreference,
+            credit_terms: creditTerms,
+          },
+        },
+      }).catch(err => console.warn('lead-ingest failed for contractor app (non-blocking):', err));
+
       setIsSubmitted(true);
       toast({ title: 'Application submitted successfully!' });
     } catch (err) {
