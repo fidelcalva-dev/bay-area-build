@@ -670,6 +670,20 @@ export default function SalesQuoteDetail() {
       const needsApproval = negPrice !== null && negPrice > 0 && negPrice < rangeMin;
 
       const updatePayload: Record<string, any> = {
+        // Core editable fields
+        customer_name: editName || null,
+        customer_phone: editPhone || null,
+        customer_email: editEmail || null,
+        company_name: editCompany || null,
+        user_type: editUserType || null,
+        zip_code: editZip || null,
+        material_type: editMaterial || null,
+        project_type: editProjectType || null,
+        placement_type: editPlacement || null,
+        gate_code: editGateCode || null,
+        rental_days: editRentalDays ? Number(editRentalDays) : 7,
+        is_heavy_material: editMaterial === 'heavy',
+        // Delivery / scheduling
         delivery_date: deliveryPref === "specific_date" && deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : null,
         delivery_address: deliveryAddress || null,
         delivery_instructions: deliveryInstructions || null,
