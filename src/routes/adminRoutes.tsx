@@ -29,7 +29,6 @@ const ExtrasManager = lazy(() => import("@/pages/admin/ExtrasManager"));
 const VolumeCommitmentsManager = lazy(() => import("@/pages/admin/VolumeCommitmentsManager"));
 const YardsManager = lazy(() => import("@/pages/admin/YardsManager"));
 const ConfigManager = lazy(() => import("@/pages/admin/ConfigManager"));
-const ConfigIndex = lazy(() => import("@/pages/admin/ConfigIndex"));
 const ConfigurationHub = lazy(() => import("@/pages/admin/ConfigurationHub"));
 const HeavyPricingManager = lazy(() => import("@/pages/admin/HeavyPricingManager"));
 const MixedRulesManager = lazy(() => import("@/pages/admin/MixedRulesManager"));
