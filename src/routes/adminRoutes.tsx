@@ -219,7 +219,7 @@ export function getAdminRoutes() {
       <Route path="extras" element={<SuspenseRoute><ExtrasManager /></SuspenseRoute>} />
       <Route path="config" element={<SuspenseRoute><ConfigManager /></SuspenseRoute>} />
       <Route path="configuration" element={<SuspenseRoute><ConfigurationHub /></SuspenseRoute>} />
-      <Route path="volume-commitments" element={<SuspenseRoute><VolumeCommitmentsManager /></SuspenseRoute>} />
+      <Route path="volume-commitments" element={<Navigate to="/admin/pricing?tab=volume" replace />} />
       <Route path="audit-logs" element={<SuspenseRoute><AuditLogsPage /></SuspenseRoute>} />
       <Route path="google" element={<SuspenseRoute><AdminGoogleSettings /></SuspenseRoute>} />
       <Route path="google/setup" element={<SuspenseRoute><AdminGoogleSetup /></SuspenseRoute>} />
