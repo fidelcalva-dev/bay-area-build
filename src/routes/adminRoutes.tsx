@@ -214,7 +214,7 @@ export function getAdminRoutes() {
       <Route path="customers" element={<SuspenseRoute><CustomersManager /></SuspenseRoute>} />
       <Route path="yards" element={<SuspenseRoute><YardsManager /></SuspenseRoute>} />
       <Route path="zones" element={<SuspenseRoute><ZonesManager /></SuspenseRoute>} />
-      <Route path="pricing" element={<SuspenseRoute><PricingManager /></SuspenseRoute>} />
+      <Route path="pricing" element={<SuspenseRoute><MasterPricingHub /></SuspenseRoute>} />
       <Route path="vendors" element={<SuspenseRoute><VendorsManager /></SuspenseRoute>} />
       <Route path="extras" element={<SuspenseRoute><ExtrasManager /></SuspenseRoute>} />
       <Route path="config" element={<SuspenseRoute><ConfigManager /></SuspenseRoute>} />
