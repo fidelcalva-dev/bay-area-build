@@ -66,30 +66,50 @@ App.tsx reduced from **1475 lines → ~100 lines** by extracting route definitio
 
 ---
 
-## REMAINING ITEMS (Not yet actioned)
+## PHASE 2 CLEANUP COMPLETED (Canonicalization)
 
-### Route Overlaps (Low Risk, Under Review)
-| Pair | Status |
-|------|--------|
-| `/admin/config` vs `/admin/configuration` | Kept both — different components (ConfigManager vs ConfigurationHub) |
-| `/admin/seo/health` vs `/admin/qa/seo-health` | Kept both — different components (SeoHealthPage vs SeoHealthDashboard) |
-| `/admin/pricing` vs `/admin/pricing-engine` | Kept both — PricingManager (table editor) vs PricingEngineDashboard (overview) |
+### Dead Files Deleted (4 more files + 3 edge functions)
+19. ✅ `src/pages/admin/AdminDashboard.tsx` — Legacy dashboard, replaced by CalsanControlCenter
+20. ✅ `src/pages/admin/ConfigIndex.tsx` — Dead import, never mounted
+21. ✅ `src/pages/admin/PricingEngineDashboard.tsx` — Duplicate of PricingManager
+22. ✅ `src/pages/driver/DriverApp.tsx` — Legacy standalone driver app
 
-### Legacy Routes (Retained)
+### Deprecated Edge Functions Deleted (3)
+- ✅ `supabase/functions/ghl-send-message/` — Merged into ghl-send-outbound
+- ✅ `supabase/functions/ghl-message-worker/` — Queue processor retired
+- ✅ `supabase/functions/ghl-inbound-webhook/` — Duplicate of ghl-webhook-inbound
+
+### Routes Consolidated (5 redirects)
+| Route | → Redirects To |
+|-------|---------------|
+| `/admin/control-center` | `/admin` |
+| `/admin/legacy-dashboard` | `/admin` |
+| `/admin/pricing-engine` | `/admin/pricing` |
+| `/admin/qa/seo-health` | `/admin/seo/health` |
+| `/driver/legacy` | `/driver` |
+
+### Dead Imports Removed (5)
+- AdminDashboard, ConfigIndex, PricingEngineDashboard, SeoHealthDashboard (adminRoutes.tsx)
+- DriverApp (departmentRoutes.tsx)
+
+---
+
+## REMAINING ITEMS
+
+### Intentionally Kept
 | Route | Reason |
 |-------|--------|
-| `/admin/legacy-dashboard` | Backward compatibility — remove when ready |
-| `/driver/legacy` | Standalone driver app — remove when ready |
-| `/admin/control-center` | Duplicates admin index — review later |
+| `/admin/config` + `/admin/configuration` | Different purposes (business rules vs config hub) |
+| `/portal/order/:orderId` | Legacy alias for portal backward compatibility |
+| Green Halo portal routes | Strategic demo feature |
 
 ---
 
 ## RECOMMENDED NEXT STEPS
 
-1. **Merge overlapping config/health routes** when ready
-2. **Remove legacy dashboard routes** after team confirmation
-3. **Runtime smoke test** integration-dependent pages (AI copilots, telephony, Google Ads)
-4. **Add router-level auth guard** to `/internal/calculator` routes
+1. **Runtime smoke test** integration-dependent pages (AI copilots, telephony, Google Ads)
+2. **Add router-level auth guard** to `/internal/calculator` routes
+3. **Review** remaining QA dashboards for further consolidation
 
 ---
 
