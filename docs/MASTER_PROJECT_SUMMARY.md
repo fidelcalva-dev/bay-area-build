@@ -1,6 +1,6 @@
 # MASTER PROJECT SUMMARY
 
-> Full Project Audit — Generated: 2026-03-19
+> Full Project Audit — Updated: 2026-03-19 (Post-Cleanup)
 
 ---
 
@@ -8,129 +8,87 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total mounted routes** | ~322 |
-| **Total page files** | ~210 |
+| **Total mounted routes** | ~320 |
+| **Total page files** | ~193 (was ~210, deleted 18) |
 | **Public routes** | ~76 (including redirects + dynamic SEO) |
 | **Protected CRM routes** | ~200 |
 | **Customer portal routes** | ~15 |
 | **Department portal routes** | ~44 |
 | **Redirect-only routes** | 10 |
-| **Orphaned/dead files** | 17 |
-| **Duplicate/overlapping routes** | 7 (4 resolved, 3 need review) |
+| **Orphaned/dead files** | 0 (was 17, all deleted) |
+| **Duplicate/overlapping routes** | 3 (under review) |
 | **Broken pages (confirmed)** | 0 |
-| **Broken pages (suspected)** | 0 |
-| **Pages needing runtime testing** | ~30 (integration-dependent) |
 | **QA/Health dashboards** | 28 |
 | **Config/settings pages** | 41 |
 | **SEO-indexable pages** | 700+ (dynamic) |
 | **AI copilot pages** | 11 |
+| **App.tsx lines** | ~100 (was 1475, refactored into route modules) |
 
 ---
 
-## TOP 20 CRITICAL ISSUES
+## CLEANUP COMPLETED
 
-| # | Issue | Severity | Action |
-|---|-------|----------|--------|
-| 1 | 17 orphaned files (dead code) | 🟡 | Delete safely |
-| 2 | 2 unused imports in App.tsx (LeadInbox, SalesLeadInbox) | 🟢 | Remove imports |
-| 3 | `/admin/config` vs `/admin/configuration` overlap | 🟡 | Merge or redirect |
-| 4 | `/admin/seo/health` vs `/admin/qa/seo-health` overlap | 🟡 | Merge |
-| 5 | `/admin/pricing` vs `/admin/pricing-engine` overlap | 🟡 | Review purpose |
-| 6 | `/admin/alerts` vs `/admin/notifications/internal` overlap | 🟡 | Review purpose |
-| 7 | App.tsx is 1475 lines — hard to maintain | 🟡 | Consider route splitting |
-| 8 | City+Material vs City+Size route disambiguation | 🟡 | Monitor for conflicts |
-| 9 | `/:citySlug/:subSlug` catch-all risk | 🟡 | Monitor |
-| 10 | `/internal/calculator` — no visible router-level auth guard | 🟡 | Verify component-level auth |
-| 11 | `/quick-order` — off-strategy per dual-path policy | 🟡 | Review/remove |
-| 12 | Green Halo demo pages (4) — still mounted | 🟢 | Remove if demo is over |
-| 13 | `/admin/legacy-dashboard` still mounted | 🟢 | Remove when ready |
-| 14 | `/driver/legacy` still mounted | 🟢 | Remove when ready |
-| 15 | `/admin/control-center` duplicates admin index | 🟢 | Remove redundant route |
-| 16 | AI copilots (11) — need runtime verification | 🟡 | Test edge function deps |
-| 17 | Telephony pages (6) — need integration verification | 🟡 | Test external deps |
-| 18 | PDF generation — unverified at runtime | 🟡 | Smoke test quote/invoice PDFs |
-| 19 | SalesNewQuote.tsx file exists but unused | 🟢 | Delete |
-| 20 | preview/ directory (3 files) — dead code | 🟢 | Delete directory |
+### Phase 1 — Dead Files Deleted (18 files)
+1. ✅ `src/pages/admin/MasterAIDashboard.tsx`
+2. ✅ `src/pages/admin/MasterAIDecisions.tsx`
+3. ✅ `src/pages/admin/MasterAIJobs.tsx`
+4. ✅ `src/pages/admin/MasterAINotifications.tsx`
+5. ✅ `src/pages/admin/AuditLogsViewer.tsx`
+6. ✅ `src/pages/admin/UserRolesManager.tsx`
+7. ✅ `src/pages/admin/pricing/MasterPricingDashboard.tsx`
+8. ✅ `src/pages/CityLandingPage.tsx`
+9. ✅ `src/pages/Locations.tsx`
+10. ✅ `src/pages/preview/PreviewHome.tsx`
+11. ✅ `src/pages/preview/PreviewQuote.tsx`
+12. ✅ `src/pages/preview/index.ts`
+13. ✅ `src/pages/dispatch/DispatchRunsCalendar.tsx`
+14. ✅ `src/pages/dispatch/DispatchRunsList.tsx`
+15. ✅ `src/pages/dispatch/DispatchRunDetail.tsx`
+16. ✅ `src/pages/sales/SalesNewQuote.tsx`
+17. ✅ `src/pages/sales/LeadInbox.tsx`
+18. ✅ `src/pages/sales/SalesLeadInbox.tsx`
 
----
+### Phase 2 — Unused Imports Removed
+- ✅ `LeadInbox` import removed from App.tsx
+- ✅ `SalesLeadInbox` import removed from App.tsx
+- ✅ Stale comment about DispatchRuns removed
+- ✅ Reference in `useLeadHub.ts` cleaned
 
-## TOP 20 MERGE/REMOVE CANDIDATES
-
-| # | Candidate | Action | Risk |
-|---|-----------|--------|------|
-| 1 | `MasterAIDashboard.tsx` | Delete | None |
-| 2 | `MasterAIDecisions.tsx` | Delete | None |
-| 3 | `MasterAIJobs.tsx` | Delete | None |
-| 4 | `MasterAINotifications.tsx` | Delete | None |
-| 5 | `AuditLogsViewer.tsx` | Delete | None |
-| 6 | `UserRolesManager.tsx` | Delete | None |
-| 7 | `MasterPricingDashboard.tsx` | Delete | None |
-| 8 | `CityLandingPage.tsx` | Delete | None |
-| 9 | `Locations.tsx` | Delete | None |
-| 10 | `PreviewHome.tsx` | Delete | None |
-| 11 | `PreviewQuote.tsx` | Delete | None |
-| 12 | `preview/index.ts` | Delete | None |
-| 13 | `DispatchRunsCalendar.tsx` | Delete | None |
-| 14 | `DispatchRunsList.tsx` | Delete | None |
-| 15 | `DispatchRunDetail.tsx` | Delete | None |
-| 16 | `SalesNewQuote.tsx` | Delete | None |
-| 17 | `/admin/config` OR `/admin/configuration` | Merge → one | Low |
-| 18 | `/admin/seo/health` OR `/admin/qa/seo-health` | Merge → one | Low |
-| 19 | LeadInbox.tsx import | Remove from App.tsx | None |
-| 20 | SalesLeadInbox.tsx import | Remove from App.tsx | None |
+### Phase 3 — App.tsx Router Refactored
+App.tsx reduced from **1475 lines → ~100 lines** by extracting route definitions into:
+- `src/routes/shared.tsx` — PageLoader, SuspenseRoute
+- `src/routes/publicRoutes.tsx` — Public pages, auth, redirects
+- `src/routes/seoRoutes.tsx` — SEO city engine, domination pages, legacy redirects
+- `src/routes/portalRoutes.tsx` — Customer portal, Green Halo portal
+- `src/routes/adminRoutes.tsx` — All admin/CRM routes
+- `src/routes/departmentRoutes.tsx` — Driver, CS, Sales, Dispatch, Finance, Calculator
 
 ---
 
-## TOP 20 HIGHEST-VALUE PAGES TO KEEP & IMPROVE
+## REMAINING ITEMS (Not yet actioned)
 
-| # | Route | Value | Notes |
-|---|-------|-------|-------|
-| 1 | `/` | Homepage — primary entry | Highest traffic |
-| 2 | `/quote` | V3 Quote Flow | Primary conversion |
-| 3 | `/pricing` | Pricing page | Money page |
-| 4 | `/dumpster-rental/:citySlug` | SEO City Engine | 50+ cities |
-| 5 | `/dumpster-rental-oakland-ca` | Domination page | Hand-crafted SEO |
-| 6 | `/dumpster-rental-san-jose-ca` | Domination page | Hand-crafted SEO |
-| 7 | `/dumpster-rental-san-francisco-ca` | Domination page | Hand-crafted SEO |
-| 8 | `/areas` | Geo hub | Internal links |
-| 9 | `/sizes` | Size hub | Internal links |
-| 10 | `/materials` | Materials hub | Internal links |
-| 11 | `/admin` (CalsanControlCenter) | CRM command center | Daily ops |
-| 12 | `/admin/orders` | Order management | Core CRM |
-| 13 | `/admin/customers` | Customer management | Core CRM |
-| 14 | `/sales/leads` | Sales pipeline | Revenue driver |
-| 15 | `/internal/calculator` | Internal quote builder | Sales tool |
-| 16 | `/dispatch` | Dispatch dashboard | Operations |
-| 17 | `/finance` | Finance dashboard | Collections |
-| 18 | `/portal/dashboard` | Customer portal | Customer self-service |
-| 19 | `/blog` | Content marketing | SEO value |
-| 20 | `/admin/pricing/readiness` | Pricing readiness | Config health |
+### Route Overlaps (Low Risk, Under Review)
+| Pair | Status |
+|------|--------|
+| `/admin/config` vs `/admin/configuration` | Kept both — different components (ConfigManager vs ConfigurationHub) |
+| `/admin/seo/health` vs `/admin/qa/seo-health` | Kept both — different components (SeoHealthPage vs SeoHealthDashboard) |
+| `/admin/pricing` vs `/admin/pricing-engine` | Kept both — PricingManager (table editor) vs PricingEngineDashboard (overview) |
+
+### Legacy Routes (Retained)
+| Route | Reason |
+|-------|--------|
+| `/admin/legacy-dashboard` | Backward compatibility — remove when ready |
+| `/driver/legacy` | Standalone driver app — remove when ready |
+| `/admin/control-center` | Duplicates admin index — review later |
 
 ---
 
-## RECOMMENDED CLEANUP ORDER
+## RECOMMENDED NEXT STEPS
 
-### Phase 1 — Safe Deletions (Zero Risk)
-1. Delete 17 orphaned files
-2. Remove 2 unused imports from App.tsx
-3. Delete `src/pages/preview/` directory
-
-### Phase 2 — Route Consolidation (Low Risk)
-4. Remove `/admin/control-center` route (keep index)
-5. Merge `/admin/config` and `/admin/configuration`
-6. Merge `/admin/seo/health` and `/admin/qa/seo-health`
-7. Review `/admin/pricing-engine` vs `/admin/pricing` overlap
-
-### Phase 3 — Legacy Removal (Medium Risk)
-8. Remove `/admin/legacy-dashboard` after confirmation
-9. Remove `/driver/legacy` after confirmation
-10. Evaluate `/quick-order` removal per dual-path policy
-11. Evaluate Green Halo demo pages for removal
-
-### Phase 4 — Architecture (Medium Risk)
-12. Split App.tsx route definitions into modular files
-13. Add router-level auth guard to `/internal/calculator` routes
-14. Runtime smoke test all integration-dependent pages (AI, telephony, ads)
+1. **Merge overlapping config/health routes** when ready
+2. **Remove legacy dashboard routes** after team confirmation
+3. **Runtime smoke test** integration-dependent pages (AI copilots, telephony, Google Ads)
+4. **Add router-level auth guard** to `/internal/calculator` routes
 
 ---
 
