@@ -73,7 +73,7 @@ export function getDriverRoutes() {
       <Route path="inspect" element={<SuspenseRoute><DriverPreTrip /></SuspenseRoute>} />
       <Route path="report-issue" element={<SuspenseRoute><DriverReportIssue /></SuspenseRoute>} />
     </Route>,
-    <Route key="driver-legacy" path="/driver/legacy" element={<SuspenseRoute><DriverApp /></SuspenseRoute>} />,
+    <Route key="driver-legacy" path="/driver/legacy" element={<Navigate to="/driver" replace />} />,
   ];
 }
 
