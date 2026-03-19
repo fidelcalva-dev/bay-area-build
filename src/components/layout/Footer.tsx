@@ -284,7 +284,7 @@ export function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
             {/* BBB Badge */}
             <a
-              href={BUSINESS_INFO.social.bbb}
+              href="https://www.bbb.org/us/ca/oakland/profile/dumpster-service/calsan-dumpsters-pro-1116-895042"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-foreground/5 rounded-lg border border-secondary-foreground/10 hover:bg-secondary-foreground/10 transition-colors"
