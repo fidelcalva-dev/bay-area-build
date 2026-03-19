@@ -3,7 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import { Loader2, CheckCircle, PenTool, Keyboard, Eraser } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
+import { ESIGN_CONSENT, POLICY_VERSION } from "@/lib/policyLanguage";
 
 export default function SignQuoteContract() {
   const [searchParams] = useSearchParams();
