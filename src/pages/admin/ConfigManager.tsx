@@ -106,7 +106,8 @@ export default function ConfigManager() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Business Configuration</h1>
           <p className="text-muted-foreground mt-1">
-            Manage pricing rules, office hours, and system settings
+            Raw key-value settings from the database. For module navigation and visual config, use{' '}
+            <a href="/admin/configuration" className="text-primary underline underline-offset-2 hover:text-primary/80">Configuration Center</a>.
           </p>
         </div>
         <Button variant="outline" onClick={fetchSettings}>

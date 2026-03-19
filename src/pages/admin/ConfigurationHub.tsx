@@ -221,7 +221,8 @@ export default function ConfigurationHub() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Configuration Center</h1>
           <p className="text-muted-foreground mt-1">
-            Manage pricing rules, zones, and operational settings (v58 source of truth)
+            Navigate to pricing, zones, yards, and operational modules. For raw key-value business rules, use{' '}
+            <a href="/admin/config" className="text-primary underline underline-offset-2 hover:text-primary/80">Business Config</a>.
           </p>
         </div>
 
