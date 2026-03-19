@@ -5,7 +5,6 @@ import { SuspenseRoute } from './shared';
 // Admin Layout & Core
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("@/pages/admin/AdminLayout"));
-const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const ControlCenter = lazy(() => import("@/pages/admin/ControlCenter"));
 const CalsanControlCenter = lazy(() => import("@/pages/admin/CalsanControlCenter"));
 
