@@ -38,6 +38,7 @@ export function useOrderContracts({
   customerId,
   serviceAddress,
   customerType = 'homeowner',
+  quoteId,
 }: UseOrderContractsParams) {
   const [state, setState] = useState<OrderContractState>({
     msaContract: null,
