@@ -1340,7 +1340,26 @@ export default function SalesQuoteDetail() {
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/orders/new?quoteId=${id}`)}>
               <FileText className="w-3.5 h-3.5" /> Create Order
             </Button>
-            <Button variant="outline" size="sm" className="w-full gap-1.5" disabled title="Coming soon">
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={async () => {
+              try {
+                const { data: schedData, error: schedErr } = await supabase.functions.invoke('schedule-delivery', {
+                  body: {
+                    quoteId: id,
+                    deliveryDate: deliveryDate ? format(deliveryDate, 'yyyy-MM-dd') : null,
+                    deliveryWindow: deliveryTimeWindow || null,
+                    deliveryPreference: deliveryPref,
+                    driverNotes: salesNotes || null,
+                  },
+                });
+                if (schedErr) throw schedErr;
+                toast({ title: schedData?.success ? 'Delivery scheduled' : (schedData?.error || 'Scheduling issue') });
+                fetchQuote();
+                fetchCommercialStatus();
+              } catch (err: any) {
+                console.error(err);
+                toast({ title: err.message || 'Failed to schedule', variant: 'destructive' });
+              }
+            }}>
               <Truck className="w-3.5 h-3.5" /> Schedule Delivery
             </Button>
             <AddNoteDialog
@@ -1348,6 +1367,54 @@ export default function SalesQuoteDetail() {
               customerId={quote.customer_id}
               onAdded={() => toast({ title: "Note saved to timeline" })}
             />
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={async () => {
+              try {
+                // Duplicate quote by copying all fields into a new quote
+                const { data: newQuote, error: dupErr } = await supabase
+                  .from('quotes')
+                  .insert({
+                    customer_name: quote.customer_name,
+                    customer_phone: quote.customer_phone,
+                    customer_email: quote.customer_email,
+                    company_name: quote.company_name,
+                    user_type: quote.user_type,
+                    zip_code: quote.zip_code,
+                    material_type: quote.material_type,
+                    is_heavy_material: quote.is_heavy_material,
+                    heavy_material_class: quote.heavy_material_class,
+                    project_type: quote.project_type,
+                    rental_days: quote.rental_days,
+                    subtotal: quote.subtotal,
+                    estimated_min: quote.estimated_min,
+                    estimated_max: quote.estimated_max,
+                    range_min: quote.range_min,
+                    range_max: quote.range_max,
+                    default_price: quote.default_price,
+                    recommended_size_yards: quote.recommended_size_yards,
+                    user_selected_size_yards: quote.user_selected_size_yards,
+                    delivery_address: quote.delivery_address,
+                    delivery_instructions: quote.delivery_instructions,
+                    customer_id: quote.customer_id,
+                    zone_id: quote.zone_id,
+                    yard_id: quote.yard_id,
+                    yard_name: quote.yard_name,
+                    placement_type: quote.placement_type,
+                    gate_code: quote.gate_code,
+                    source: 'internal_duplicate',
+                    status: 'pending',
+                  } as never)
+                  .select('id')
+                  .single();
+                if (dupErr) throw dupErr;
+                toast({ title: 'Quote duplicated' });
+                navigate(`/sales/quotes/${(newQuote as any).id}`);
+              } catch (err: any) {
+                console.error(err);
+                toast({ title: 'Failed to duplicate', variant: 'destructive' });
+              }
+            }}>
+              <Copy className="w-3.5 h-3.5" /> Duplicate
+            </Button>
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={() => navigate(`/sales/quotes/${id}`)}>
               <Pencil className="w-3.5 h-3.5" /> Edit Quote
             </Button>
