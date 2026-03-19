@@ -228,8 +228,7 @@ export function getAdminRoutes() {
       <Route path="notifications-config" element={<SuspenseRoute><NotificationConfigPage /></SuspenseRoute>} />
       <Route path="email-test" element={<SuspenseRoute><AdminEmailTest /></SuspenseRoute>} />
       <Route path="ghl" element={<SuspenseRoute><GHLIntegrationPage /></SuspenseRoute>} />
-      <Route path="toll-surcharges" element={<SuspenseRoute><TollSurchargesManager /></SuspenseRoute>} />
-      <Route path="city-rates" element={<SuspenseRoute><CityRatesManager /></SuspenseRoute>} />
+      {/* toll-surcharges and city-rates now redirect via pricing hub routes below */}
       <Route path="drivers" element={<SuspenseRoute><DriversManager /></SuspenseRoute>} />
       <Route path="dispatch" element={<SuspenseRoute><DispatchCalendar /></SuspenseRoute>} />
       <Route path="tickets" element={<SuspenseRoute><TicketsManager /></SuspenseRoute>} />
