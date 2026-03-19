@@ -195,7 +195,7 @@ export async function logQuoteMilestone(
       await supabase.from('quote_events').insert([{
         quote_id: data.quoteId,
         event_type: milestone.toUpperCase(),
-        event_data: data.metadata || {},
+        event_data: (data.metadata || {}) as Record<string, string>,
       }]);
     }
 
