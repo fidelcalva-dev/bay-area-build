@@ -246,6 +246,8 @@ export function useOrderContracts({
           status: 'pending' as const,
           terms_content: termsContent,
           expires_at: expiresAt.toISOString(),
+          contract_version: CONTRACT_VERSION,
+          terms_version: TERMS_VERSION,
         })
         .select()
         .single();
