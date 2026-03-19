@@ -4,7 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   Contract, 
   ContractType,
-  normalizeAddress 
+  normalizeAddress,
+  getCustomerMSA,
 } from '@/lib/contractService';
 import { 
   buildAddendumTerms, 
@@ -12,6 +13,7 @@ import {
   getAddendumTemplateType,
   AddendumTemplateData 
 } from '@/lib/contractTemplates';
+import { CONTRACT_VERSION, ADDENDUM_VERSION, TERMS_VERSION } from '@/lib/policyLanguage';
 
 interface OrderContractState {
   msaContract: Contract | null;
