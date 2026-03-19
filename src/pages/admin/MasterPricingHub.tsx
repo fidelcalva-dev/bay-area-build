@@ -7,8 +7,9 @@
 import { useState, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import PricingOverviewPanel from '@/components/admin/pricing/PricingOverviewPanel';
 import {
-  DollarSign, Scale, MapPin, Users, Plus, Gauge,
+  DollarSign, Scale, MapPin, Users, Plus, Gauge, LayoutDashboard,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
   Loader2, ShieldCheck, FileText, Truck
 } from 'lucide-react';
