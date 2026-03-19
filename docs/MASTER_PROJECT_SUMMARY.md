@@ -8,20 +8,21 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total mounted routes** | ~320 |
-| **Total page files** | ~193 (was ~210, deleted 18) |
+| **Total mounted routes** | ~315 (was ~320, 5 converted to redirects) |
+| **Total page files** | ~189 (was ~193, deleted 4 more) |
 | **Public routes** | ~76 (including redirects + dynamic SEO) |
-| **Protected CRM routes** | ~200 |
+| **Protected CRM routes** | ~195 |
 | **Customer portal routes** | ~15 |
-| **Department portal routes** | ~44 |
-| **Redirect-only routes** | 10 |
-| **Orphaned/dead files** | 0 (was 17, all deleted) |
-| **Duplicate/overlapping routes** | 3 (under review) |
+| **Department portal routes** | ~43 |
+| **Redirect-only routes** | 15 (was 10, added 5 consolidation redirects) |
+| **Orphaned/dead files** | 0 |
+| **Duplicate/overlapping routes** | 0 (resolved) |
 | **Broken pages (confirmed)** | 0 |
 | **QA/Health dashboards** | 28 |
-| **Config/settings pages** | 41 |
+| **Config/settings pages** | 40 |
 | **SEO-indexable pages** | 700+ (dynamic) |
 | **AI copilot pages** | 11 |
+| **Edge functions** | 109 (was 112, deleted 3 deprecated GHL) |
 | **App.tsx lines** | ~100 (was 1475, refactored into route modules) |
 
 ---
