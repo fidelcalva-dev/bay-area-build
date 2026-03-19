@@ -18,6 +18,7 @@ interface AddressAutocompleteProps {
   onAddressSelect: (result: AddressResult) => void;
   onClear: () => void;
   className?: string;
+  initialValue?: string;
 }
 
 export function AddressAutocomplete({ onAddressSelect, onClear, className }: AddressAutocompleteProps) {
