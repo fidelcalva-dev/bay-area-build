@@ -186,6 +186,9 @@ export function useOrderContracts({
           service_address: serviceAddress,
           service_address_normalized: normalizedAddress,
           terms_content: termsContent,
+          contract_version: ADDENDUM_VERSION,
+          terms_version: TERMS_VERSION,
+          quote_id: quoteId || null,
         })
         .select()
         .single();
