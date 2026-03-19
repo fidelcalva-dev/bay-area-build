@@ -322,7 +322,7 @@ export function getAdminRoutes() {
       <Route path="qa/build-info" element={<SuspenseRoute><BuildInfo /></SuspenseRoute>} />
       <Route path="qa/env-health" element={<SuspenseRoute><EnvHealth /></SuspenseRoute>} />
       <Route path="qa/build-health" element={<SuspenseRoute><BuildHealth /></SuspenseRoute>} />
-      <Route path="qa/seo-health" element={<SuspenseRoute><SeoHealthDashboard /></SuspenseRoute>} />
+      <Route path="qa/seo-health" element={<Navigate to="/admin/seo/health" replace />} />
       <Route path="qa/route-health" element={<SuspenseRoute><RouteHealthPage /></SuspenseRoute>} />
       <Route path="qa/duplicate-pages" element={<SuspenseRoute><DuplicatePagesPage /></SuspenseRoute>} />
       <Route path="qa/public-vs-crm" element={<SuspenseRoute><PublicVsCrmPage /></SuspenseRoute>} />
