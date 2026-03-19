@@ -260,7 +260,7 @@ export function getAdminRoutes() {
       <Route path="materials/catalog" element={<SuspenseRoute><MaterialCatalogPage /></SuspenseRoute>} />
       <Route path="materials/categories" element={<SuspenseRoute><ProjectCategoriesPage /></SuspenseRoute>} />
       <Route path="materials/offers" element={<SuspenseRoute><MaterialOffersPage /></SuspenseRoute>} />
-      <Route path="customer-type-rules" element={<SuspenseRoute><CustomerTypeRulesPage /></SuspenseRoute>} />
+      <Route path="customer-type-rules" element={<Navigate to="/admin/pricing?tab=customer-rules" replace />} />
       <Route path="config/locations" element={<SuspenseRoute><LocationsConfig /></SuspenseRoute>} />
       <Route path="config/social" element={<SuspenseRoute><SocialLinksConfig /></SuspenseRoute>} />
       <Route path="config/ai-estimator-templates" element={<SuspenseRoute><AIEstimatorTemplates /></SuspenseRoute>} />
