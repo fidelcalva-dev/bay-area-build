@@ -4,7 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   Contract, 
   ContractType,
-  normalizeAddress 
+  normalizeAddress,
+  getCustomerMSA,
 } from '@/lib/contractService';
 import { 
   buildAddendumTerms, 
@@ -12,6 +13,7 @@ import {
   getAddendumTemplateType,
   AddendumTemplateData 
 } from '@/lib/contractTemplates';
+import { CONTRACT_VERSION, ADDENDUM_VERSION, TERMS_VERSION } from '@/lib/policyLanguage';
 
 interface OrderContractState {
   msaContract: Contract | null;
@@ -28,6 +30,7 @@ interface UseOrderContractsParams {
   customerId: string | null;
   serviceAddress?: string | null;
   customerType?: string;
+  quoteId?: string | null;
 }
 
 export function useOrderContracts({
@@ -35,6 +38,7 @@ export function useOrderContracts({
   customerId,
   serviceAddress,
   customerType = 'homeowner',
+  quoteId,
 }: UseOrderContractsParams) {
   const [state, setState] = useState<OrderContractState>({
     msaContract: null,
@@ -182,6 +186,9 @@ export function useOrderContracts({
           service_address: serviceAddress,
           service_address_normalized: normalizedAddress,
           terms_content: termsContent,
+          contract_version: ADDENDUM_VERSION,
+          terms_version: TERMS_VERSION,
+          quote_id: quoteId || null,
         })
         .select()
         .single();
@@ -212,7 +219,7 @@ export function useOrderContracts({
     } finally {
       setIsGenerating(false);
     }
-  }, [customerId, serviceAddress, customerType, orderId, toast, checkContracts]);
+  }, [customerId, serviceAddress, customerType, orderId, quoteId, toast, checkContracts]);
 
   // Generate MSA if not exists
   const generateMSA = useCallback(async (data: { 
@@ -239,6 +246,8 @@ export function useOrderContracts({
           status: 'pending' as const,
           terms_content: termsContent,
           expires_at: expiresAt.toISOString(),
+          contract_version: CONTRACT_VERSION,
+          terms_version: TERMS_VERSION,
         })
         .select()
         .single();

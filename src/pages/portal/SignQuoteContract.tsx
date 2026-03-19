@@ -3,7 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import { Loader2, CheckCircle, PenTool, Keyboard, Eraser } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
+import { ESIGN_CONSENT, POLICY_VERSION } from "@/lib/policyLanguage";
 
 export default function SignQuoteContract() {
   const [searchParams] = useSearchParams();
@@ -19,6 +21,8 @@ export default function SignQuoteContract() {
   const [signatureMode, setSignatureMode] = useState<"draw" | "type">("draw");
   const [typedSignature, setTypedSignature] = useState("");
   const [hasDrawnSignature, setHasDrawnSignature] = useState(false);
+  const [esignConsent, setEsignConsent] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Canvas refs
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -95,9 +99,10 @@ export default function SignQuoteContract() {
   }
 
   const hasSignature = signatureMode === "draw" ? hasDrawnSignature : typedSignature.trim().length > 0;
+  const canSubmit = hasSignature && esignConsent && agreedToTerms;
 
   async function handleApprove() {
-    if (!hasSignature || !contractId) return;
+    if (!canSubmit || !contractId) return;
     setIsSubmitting(true);
 
     try {
@@ -112,17 +117,55 @@ export default function SignQuoteContract() {
         signatureType = "typed";
       }
 
+      const now = new Date().toISOString();
+
       const { error: err } = await supabase
         .from("quote_contracts")
         .update({
           status: "signed",
           signature_data: signatureData,
           signature_type: signatureType,
-          signed_at: new Date().toISOString(),
+          signed_at: now,
         })
         .eq("id", contractId);
 
       if (err) throw err;
+
+      // Record document acceptance for version tracking
+      if (contract?.customer_id) {
+        await supabase
+          .from('document_acceptances' as 'orders')
+          .insert({
+            customer_id: contract.customer_id,
+            contract_id: contractId,
+            document_type: 'quote_contract',
+            version_code: POLICY_VERSION,
+            signer_name: signatureType === 'typed' ? signatureData : contract.customer_name,
+            delivery_method: 'web_link',
+            electronic_consent_given: true,
+            electronic_consent_at: now,
+            user_agent: navigator.userAgent,
+          } as never);
+      }
+
+      // Log timeline event
+      if (contract?.customer_id) {
+        await supabase.from('timeline_events').insert({
+          entity_type: 'CUSTOMER' as const,
+          entity_id: contract.customer_id,
+          customer_id: contract.customer_id,
+          event_type: 'SYSTEM' as const,
+          event_action: 'COMPLETED' as const,
+          summary: `Quote contract signed by ${contract.customer_name}`,
+          details_json: {
+            contract_id: contractId,
+            quote_id: contract.quote_id,
+            policy_version: POLICY_VERSION,
+            event: 'QUOTE_CONTRACT_SIGNED',
+          },
+        });
+      }
+
       setIsSigned(true);
     } catch {
       alert("Failed to submit signature. Please try again.");
@@ -216,9 +259,37 @@ export default function SignQuoteContract() {
           </div>
         </div>
 
-        {/* Signature Section */}
+        {/* E-Sign Consent & Signature Section */}
         <div className="bg-white rounded-lg border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Sign Below</h2>
+          <h2 className="text-lg font-semibold">Electronic Signature</h2>
+
+          {/* UETA/E-SIGN Consent Block */}
+          <div className="rounded-lg border bg-gray-50 p-4 text-xs text-gray-600 leading-relaxed">
+            <p className="font-medium text-gray-900 text-sm mb-2">Consent to Electronic Records & Signatures</p>
+            <p>{ESIGN_CONSENT.en}</p>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="esign-consent"
+              checked={esignConsent}
+              onCheckedChange={(c) => setEsignConsent(c === true)}
+            />
+            <label htmlFor="esign-consent" className="text-sm leading-relaxed cursor-pointer">
+              I consent to sign this agreement electronically and to receive records electronically.
+            </label>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="agree-terms"
+              checked={agreedToTerms}
+              onCheckedChange={(c) => setAgreedToTerms(c === true)}
+            />
+            <label htmlFor="agree-terms" className="text-sm leading-relaxed cursor-pointer">
+              I agree to the terms and conditions above. I understand this is a legally binding electronic signature.
+            </label>
+          </div>
 
           {/* Mode Toggle */}
           <div className="flex gap-2">
@@ -283,7 +354,7 @@ export default function SignQuoteContract() {
           {/* Approve Button */}
           <Button
             className="w-full h-12 text-lg"
-            disabled={!hasSignature || isSubmitting}
+            disabled={!canSubmit || isSubmitting}
             onClick={handleApprove}
           >
             {isSubmitting ? (
@@ -294,11 +365,17 @@ export default function SignQuoteContract() {
             {isSubmitting ? "Submitting..." : "Approve & Sign Contract"}
           </Button>
 
-          {!hasSignature && (
+          {!canSubmit && (
             <p className="text-sm text-red-500 text-center">
-              Please sign above before approving the contract.
+              {!esignConsent || !agreedToTerms
+                ? "Please accept the consent and terms above."
+                : "Please sign above before approving the contract."}
             </p>
           )}
+
+          <p className="text-xs text-center text-gray-500">
+            By signing, you agree to the service terms (v{POLICY_VERSION}). A copy will be sent to you.
+          </p>
         </div>
       </div>
     </div>

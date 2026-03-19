@@ -69,15 +69,26 @@ export function ContractsTab({ customerId, customerPhone, customerEmail, custome
   async function loadContracts() {
     setIsLoading(true);
     try {
-      const [msaRes, quoteRes] = await Promise.all([
-        supabase.from('contracts')
-          .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name, signer_email, esign_consent_at, parent_contract_id, viewed_at, quote_id, delivery_method')
-          .eq('customer_id', customerId)
-          .order('created_at', { ascending: false }),
-        supabase.from('quote_contracts')
+      // Fetch MSA-style contracts directly by customer
+      const msaRes = await supabase.from('contracts')
+        .select('id, contract_type, status, service_address, signed_at, pdf_url, created_at, contract_version, terms_version, signer_name, signer_email, esign_consent_at, parent_contract_id, viewed_at, quote_id, delivery_method')
+        .eq('customer_id', customerId)
+        .order('created_at', { ascending: false });
+
+      // Fetch quote_contracts linked to this customer's quotes
+      const { data: customerQuotes } = await supabase.from('quotes')
+        .select('id')
+        .eq('customer_id', customerId);
+      
+      const quoteIds = (customerQuotes || []).map(q => q.id);
+      
+      let quoteRes: { data: any[] | null } = { data: [] };
+      if (quoteIds.length > 0) {
+        quoteRes = await supabase.from('quote_contracts')
           .select('id, status, service_address, signed_at, sent_at, customer_name, quote_id, created_at')
-          .order('created_at', { ascending: false }),
-      ]);
+          .in('quote_id', quoteIds)
+          .order('created_at', { ascending: false });
+      }
 
       const msaContracts: ContractRow[] = (msaRes.data || []).map((c: any) => ({
         id: c.id,
