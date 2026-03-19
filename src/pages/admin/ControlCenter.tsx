@@ -169,7 +169,7 @@ const SECTIONS: Section[] = [
       { name: 'Indexing Status', description: 'Page indexing and crawl monitoring', status: 'LIVE', openRoute: '/admin/seo/indexing', configRoute: null },
       { name: 'SEO Rules', description: 'Automated SEO generation rules', status: 'LIVE', openRoute: '/admin/seo/rules', configRoute: null },
       { name: 'Visitor Intelligence', description: 'First-party visitor tracking', status: 'LIVE', openRoute: '/admin/marketing/visitors', configRoute: null },
-      { name: 'Google Ads', description: 'Campaign management and optimization', status: 'LIVE', openRoute: '/admin/ads', configRoute: '/admin/ads/markets' },
+      { name: 'Google Ads', description: 'Campaign management and optimization', status: 'NEEDS_SETUP', openRoute: '/admin/ads', configRoute: '/admin/ads/markets' },
       { name: 'Marketing Dashboard', description: 'Unified marketing analytics', status: 'LIVE', openRoute: '/admin/marketing/dashboard', configRoute: null },
     ],
   },
