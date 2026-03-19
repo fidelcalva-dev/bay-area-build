@@ -137,6 +137,7 @@ export function V3QuoteFlow() {
 
   // URL param prefill
   const urlZip = searchParams.get('zip') || '';
+  const urlAddress = searchParams.get('address') || '';
   const urlType = searchParams.get('type') as CustomerType | null;
   const urlProject = searchParams.get('project') || '';
   const urlSize = searchParams.get('size');
