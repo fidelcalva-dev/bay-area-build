@@ -200,7 +200,7 @@ const crmControlCenter: RouteEntry[] = [
   { path: '/admin/executive', name: 'Executive Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: BarChart3, sidebarLabel: 'Executive View', sidebarOrder: 1 },
   { path: '/admin/modules', name: 'Module Registry', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Settings, sidebarOrder: 2 },
   { path: '/admin/activity', name: 'Activity Feed', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'control-center', sidebarIcon: Activity, sidebarOrder: 3 },
-  { path: '/admin/legacy-dashboard', name: 'Legacy Dashboard', group: 'CRM_INTERNAL', subcategory: 'Control Center', isProtected: true, indexable: false, mounted: true },
+  // legacy-dashboard retired — redirects to /admin
 ];
 
 const crmAnalytics: RouteEntry[] = [
