@@ -4,6 +4,16 @@ import { supabase } from '@/integrations/supabase/client';
 const today = () => new Date().toISOString().split('T')[0];
 const countOpts = { count: 'exact' as const, head: true };
 
+// Safe query wrapper — catches errors from tables that may not exist
+async function safeCount(queryFn: () => PromiseLike<{ count: number | null }>): Promise<{ count: number }> {
+  try {
+    const result = await queryFn();
+    return { count: result.count ?? 0 };
+  } catch {
+    return { count: 0 };
+  }
+}
+
 export interface ControlCenterKPI {
   newLeadsToday: number;
   hotLeads: number;
@@ -49,13 +59,13 @@ export function useControlCenterKPIs() {
           (supabase.from('invoices').select('id', countOpts) as any).eq('payment_status', 'overdue'),
           (supabase.from('approval_requests').select('id', countOpts) as any).eq('status', 'pending'),
           (supabase.from('alerts').select('id', countOpts) as any).eq('is_resolved', false),
-          ((supabase as any).from('seo_city_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
-          ((supabase as any).from('seo_zip_pages').select('id', countOpts)).eq('is_active', true).catch(() => ({ count: 0 })),
-          ((supabase as any).from('lead_fallback_queue').select('id', countOpts)).eq('status', 'pending').catch(() => ({ count: 0 })),
+          safeCount(() => (supabase as any).from('seo_city_pages').select('id', countOpts).eq('is_active', true)),
+          safeCount(() => (supabase as any).from('seo_zip_pages').select('id', countOpts).eq('is_active', true)),
+          safeCount(() => (supabase as any).from('lead_fallback_queue').select('id', countOpts).eq('status', 'pending')),
           (supabase.from('customers').select('id', countOpts) as any).eq('status', 'active'),
-          (supabase.from('service_requests').select('id', countOpts) as any).eq('scheduled_date', d).eq('request_type', 'delivery').catch(() => ({ count: 0 })),
-          (supabase.from('service_requests').select('id', countOpts) as any).eq('scheduled_date', d).eq('request_type', 'pickup').catch(() => ({ count: 0 })),
-          (supabase.from('orders').select('id', countOpts) as any).eq('status', 'confirmed').catch(() => ({ count: 0 })),
+          safeCount(() => (supabase.from('service_requests').select('id', countOpts) as any).eq('scheduled_date', d).eq('request_type', 'delivery')),
+          safeCount(() => (supabase.from('service_requests').select('id', countOpts) as any).eq('scheduled_date', d).eq('request_type', 'pickup')),
+          safeCount(() => (supabase.from('orders').select('id', countOpts) as any).eq('status', 'confirmed')),
         ]);
 
         setData({
