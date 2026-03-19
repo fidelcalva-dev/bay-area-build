@@ -325,7 +325,6 @@ const SalesQuotes = lazy(() => import("./pages/sales/SalesQuotes"));
 const SalesQuoteDetail = lazy(() => import("./pages/sales/SalesQuoteDetail"));
 const SalesNewQuote = lazy(() => import("./pages/internal/InternalCalculator"));
 const SalesCalls = lazy(() => import("./pages/sales/SalesCalls"));
-const SalesLeadInbox = lazy(() => import("./pages/sales/SalesLeadInbox"));
 const OrderBuilder = lazy(() => import("./pages/sales/OrderBuilder"));
 
 // CS Lead Inbox
