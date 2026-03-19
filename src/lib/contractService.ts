@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createAuditLog } from './auditLog';
+import { CONTRACT_VERSION, ADDENDUM_VERSION, TERMS_VERSION, POLICY_VERSION } from './policyLanguage';
 
 export type ContractType = 'msa' | 'addendum';
 export type ContractStatus = 'pending' | 'signed' | 'declined' | 'expired';
