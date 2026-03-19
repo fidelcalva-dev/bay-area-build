@@ -58,6 +58,7 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   // ── Core Pricing ──
+  { value: 'dashboard', label: 'Overview', icon: LayoutDashboard, group: 'Core', description: 'Pricing summary, key metrics, quick navigation' },
   { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
   { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
   { value: 'heavy-rates', label: 'Heavy Rates', icon: Scale, group: 'Core', description: 'Heavy material flat rates by group and size' },
