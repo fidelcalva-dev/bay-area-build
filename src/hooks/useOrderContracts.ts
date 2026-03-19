@@ -219,7 +219,7 @@ export function useOrderContracts({
     } finally {
       setIsGenerating(false);
     }
-  }, [customerId, serviceAddress, customerType, orderId, toast, checkContracts]);
+  }, [customerId, serviceAddress, customerType, orderId, quoteId, toast, checkContracts]);
 
   // Generate MSA if not exists
   const generateMSA = useCallback(async (data: { 
