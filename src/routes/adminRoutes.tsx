@@ -206,9 +206,9 @@ export function getAdminRoutes() {
     <Route key="admin-login" path="/admin/login" element={<SuspenseRoute><AdminLogin /></SuspenseRoute>} />,
     <Route key="admin" path="/admin" element={<SuspenseRoute><AdminLayout /></SuspenseRoute>}>
       <Route index element={<SuspenseRoute><CalsanControlCenter /></SuspenseRoute>} />
-      <Route path="control-center" element={<SuspenseRoute><CalsanControlCenter /></SuspenseRoute>} />
+      <Route path="control-center" element={<Navigate to="/admin" replace />} />
       <Route path="modules" element={<SuspenseRoute><ControlCenter /></SuspenseRoute>} />
-      <Route path="legacy-dashboard" element={<SuspenseRoute><AdminDashboard /></SuspenseRoute>} />
+      <Route path="legacy-dashboard" element={<Navigate to="/admin" replace />} />
       <Route path="orders" element={<SuspenseRoute><OrdersManager /></SuspenseRoute>} />
       <Route path="customers" element={<SuspenseRoute><CustomersManager /></SuspenseRoute>} />
       <Route path="yards" element={<SuspenseRoute><YardsManager /></SuspenseRoute>} />
