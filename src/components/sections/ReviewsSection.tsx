@@ -112,7 +112,7 @@ export function ReviewsSection() {
         {/* External Links */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
           <Button asChild variant="outline" size="lg">
-            <a href={REVIEW_LINKS.googleProfile} target="_blank" rel="noopener noreferrer">
+            <a href="https://share.google/TnFPr0cSXhoW36Vso" target="_blank" rel="noopener noreferrer">
               Read more on Google
               <ExternalLink className="w-4 h-4 ml-2" />
             </a>
