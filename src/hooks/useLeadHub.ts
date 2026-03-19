@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 
 // ============================================================
 // BACKWARD-COMPATIBLE EXPORTS for legacy consumers
-// (AdminLeadsHub, CSLeadInbox, SalesLeadInbox)
+// (AdminLeadsHub, CSLeadInbox)
 // ============================================================
 
 export interface LeadChannel {
