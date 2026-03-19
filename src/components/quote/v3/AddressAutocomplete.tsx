@@ -21,11 +21,11 @@ interface AddressAutocompleteProps {
   initialValue?: string;
 }
 
-export function AddressAutocomplete({ onAddressSelect, onClear, className }: AddressAutocompleteProps) {
+export function AddressAutocomplete({ onAddressSelect, onClear, className, initialValue }: AddressAutocompleteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const { isLoaded, isLoading, error: mapsError, load } = useGoogleMaps();
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(initialValue || '');
   const [selected, setSelected] = useState<AddressResult | null>(null);
   const [useManual, setUseManual] = useState(false);
 
