@@ -99,9 +99,10 @@ export default function SignQuoteContract() {
   }
 
   const hasSignature = signatureMode === "draw" ? hasDrawnSignature : typedSignature.trim().length > 0;
+  const canSubmit = hasSignature && esignConsent && agreedToTerms;
 
   async function handleApprove() {
-    if (!hasSignature || !contractId) return;
+    if (!canSubmit || !contractId) return;
     setIsSubmitting(true);
 
     try {
@@ -116,17 +117,55 @@ export default function SignQuoteContract() {
         signatureType = "typed";
       }
 
+      const now = new Date().toISOString();
+
       const { error: err } = await supabase
         .from("quote_contracts")
         .update({
           status: "signed",
           signature_data: signatureData,
           signature_type: signatureType,
-          signed_at: new Date().toISOString(),
+          signed_at: now,
         })
         .eq("id", contractId);
 
       if (err) throw err;
+
+      // Record document acceptance for version tracking
+      if (contract?.customer_id) {
+        await supabase
+          .from('document_acceptances' as 'orders')
+          .insert({
+            customer_id: contract.customer_id,
+            contract_id: contractId,
+            document_type: 'quote_contract',
+            version_code: POLICY_VERSION,
+            signer_name: signatureType === 'typed' ? signatureData : contract.customer_name,
+            delivery_method: 'web_link',
+            electronic_consent_given: true,
+            electronic_consent_at: now,
+            user_agent: navigator.userAgent,
+          } as never);
+      }
+
+      // Log timeline event
+      if (contract?.customer_id) {
+        await supabase.from('timeline_events').insert({
+          entity_type: 'CUSTOMER' as const,
+          entity_id: contract.customer_id,
+          customer_id: contract.customer_id,
+          event_type: 'SYSTEM' as const,
+          event_action: 'COMPLETED' as const,
+          summary: `Quote contract signed by ${contract.customer_name}`,
+          details_json: {
+            contract_id: contractId,
+            quote_id: contract.quote_id,
+            policy_version: POLICY_VERSION,
+            event: 'QUOTE_CONTRACT_SIGNED',
+          },
+        });
+      }
+
       setIsSigned(true);
     } catch {
       alert("Failed to submit signature. Please try again.");
