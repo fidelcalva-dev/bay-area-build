@@ -257,11 +257,8 @@ const Index = () => {
               </div>
               <Input
                 type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={5}
-                value={heroZip}
-                onChange={(e) => setHeroZip(e.target.value.replace(/\D/g, ''))}
+                value={heroInput}
+                onChange={(e) => setHeroInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleHeroQuote(); }}
                 placeholder="Service address or ZIP"
                 className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
