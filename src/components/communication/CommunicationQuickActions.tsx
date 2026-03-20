@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MessageSquare, Mail, Phone, Send, FileSignature, CreditCard, Calendar, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { SendMessageDialog } from "@/components/messaging/SendMessageDialog";
+import { SendMessageDialog } from "@/components/communication/SendMessageDialog";
 import { useCallAction } from "@/hooks/useCallAction";
 
 interface CommunicationQuickActionsProps {
