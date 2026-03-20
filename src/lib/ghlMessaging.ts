@@ -98,6 +98,10 @@ export async function enqueueMessage(params: {
   return data as string;
 }
 
+/**
+ * @deprecated Use sendOutboundMessage from ghlCommunication.ts for new code.
+ * Kept for backward compatibility — delegates to the canonical implementation.
+ */
 export async function sendMessageDirect(params: {
   channel: "sms" | "email";
   to_address: string;
@@ -109,26 +113,19 @@ export async function sendMessageDirect(params: {
   entity_type?: string;
   entity_id?: string;
 }): Promise<{ success: boolean; status: string; error?: string }> {
-  const response = await supabase.functions.invoke("ghl-send-outbound", {
-    body: {
-      channel: params.channel,
-      phone: params.channel === "sms" ? params.to_address : undefined,
-      email: params.channel === "email" ? params.to_address : undefined,
-      subject: params.subject,
-      body: params.body,
-      contact_id: params.contact_id,
-      customer_id: params.customer_id,
-      lead_id: params.lead_id,
-      entity_type: params.entity_type,
-      entity_id: params.entity_id,
-    },
+  const { sendOutboundMessage } = await import('./ghlCommunication');
+  return sendOutboundMessage({
+    channel: params.channel,
+    phone: params.channel === "sms" ? params.to_address : undefined,
+    email: params.channel === "email" ? params.to_address : undefined,
+    subject: params.subject,
+    body: params.body,
+    contact_id: params.contact_id,
+    customer_id: params.customer_id,
+    lead_id: params.lead_id,
+    entity_type: params.entity_type,
+    entity_id: params.entity_id,
   });
-
-  if (response.error) {
-    return { success: false, status: "ERROR", error: response.error.message };
-  }
-
-  return response.data;
 }
 
 export async function getMessageQueue(
@@ -153,22 +150,11 @@ export async function getMessageQueue(
   return data || [];
 }
 
-export async function getMessagingMode(): Promise<"DRY_RUN" | "LIVE"> {
-  const { data } = await supabase
-    .from("config_settings")
-    .select("value")
-    .eq("key", "ghl.messaging_mode")
-    .single();
-
-  if (!data?.value) return "DRY_RUN";
-  try {
-    const rawValue = data.value;
-    const val = typeof rawValue === "string" ? JSON.parse(rawValue) : rawValue;
-    return val === "LIVE" ? "LIVE" : "DRY_RUN";
-  } catch {
-    return "DRY_RUN";
-  }
-}
+/**
+ * @deprecated Use getGHLMessagingMode from ghlCommunication.ts instead.
+ * This re-export maintains backward compatibility.
+ */
+export { getGHLMessagingMode as getMessagingMode } from './ghlCommunication';
 
 export async function setMessagingMode(mode: "DRY_RUN" | "LIVE"): Promise<void> {
   const { error } = await supabase
