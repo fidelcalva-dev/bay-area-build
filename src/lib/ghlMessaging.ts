@@ -162,7 +162,7 @@ export { getGHLMessagingMode as getMessagingMode } from './ghlCommunication';
 export async function setMessagingMode(mode: "DRY_RUN" | "LIVE"): Promise<void> {
   const { error } = await supabase
     .from("config_settings")
-    .update({ value: JSON.stringify(mode) as unknown as Json })
+    .update({ value: JSON.stringify(mode) })
     .eq("key", "ghl.messaging_mode");
 
   if (error) throw error;
