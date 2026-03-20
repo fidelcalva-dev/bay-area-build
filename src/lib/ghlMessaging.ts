@@ -153,22 +153,11 @@ export async function getMessageQueue(
   return data || [];
 }
 
-export async function getMessagingMode(): Promise<"DRY_RUN" | "LIVE"> {
-  const { data } = await supabase
-    .from("config_settings")
-    .select("value")
-    .eq("key", "ghl.messaging_mode")
-    .single();
-
-  if (!data?.value) return "DRY_RUN";
-  try {
-    const rawValue = data.value;
-    const val = typeof rawValue === "string" ? JSON.parse(rawValue) : rawValue;
-    return val === "LIVE" ? "LIVE" : "DRY_RUN";
-  } catch {
-    return "DRY_RUN";
-  }
-}
+/**
+ * @deprecated Use getGHLMessagingMode from ghlCommunication.ts instead.
+ * This re-export maintains backward compatibility.
+ */
+export { getGHLMessagingMode as getMessagingMode } from './ghlCommunication';
 
 export async function setMessagingMode(mode: "DRY_RUN" | "LIVE"): Promise<void> {
   const { error } = await supabase
