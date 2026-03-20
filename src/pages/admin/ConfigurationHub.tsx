@@ -130,7 +130,7 @@ const configModules: ModuleInfo[] = [
     title: 'Programs & Discounts',
     description: 'Volume commitments and approval rules',
     icon: Users,
-    path: '/admin/volume-commitments',
+    path: '/admin/pricing?tab=volume',
     module: 'programs',
     color: 'text-cyan-600',
     bgColor: 'bg-cyan-100',
