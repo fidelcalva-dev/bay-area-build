@@ -118,7 +118,7 @@ After comprehensive audit of all 26 public routes, the Quick Quote calculator (6
 |------|------|-------|-------|--------|
 | 10yd | $638 | $838 | $938 | ✅ |
 | 8yd | $510 | $710 | $810 | ✅ |
-| 6yd | $383 | $583 | $683 | ✅ |
+| 5yd | $383 | $583 | $683 | ✅ |
 
 ---
 

@@ -49,7 +49,7 @@
 
 ### Heavy Material Reclassification Tonnage
 Separate from general debris - used when heavy loads are contaminated:
-- 5yd: 0.5T, 6yd: 0.6T, 8yd: 0.8T, 10yd: 1.0T ✅
+- 5yd: 0.5T, 8yd: 0.8T, 10yd: 1.0T ✅
 
 ---
 
