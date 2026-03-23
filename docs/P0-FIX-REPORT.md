@@ -104,7 +104,7 @@ After comprehensive audit of all 26 public routes, the Quick Quote calculator (6
 
 | Page | Size | Display | BASE Tier | Match |
 |------|------|---------|-----------|-------|
-| Homepage | General | "From $390" | $390 (6yd) | ✅ |
+| Homepage | General | "From $390" | $390 (5yd) | ✅ |
 | `/pricing` | 10yd | "Starting at $580" | $580 | ✅ |
 | `/pricing` | 20yd | "Starting at $620" | $620 | ✅ |
 | `/pricing` | 30yd | "Starting at $770" | $770 | ✅ |
