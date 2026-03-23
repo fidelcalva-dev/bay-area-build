@@ -61,22 +61,6 @@ export const REGIONS: RegionConfig[] = [
     counties: ['Marin County', 'Sonoma County', 'Napa County', 'Solano County'],
     serviceModel: 'PARTNER_NETWORK',
   },
-  {
-    slug: 'central-valley',
-    name: 'Central Valley',
-    hubUrl: '/central-valley-dumpster-rental',
-    description: 'Professional dumpster rental serving Sacramento, Stockton, Modesto, Fresno, and Bakersfield through coordinated local service.',
-    counties: ['Sacramento County', 'San Joaquin County', 'Stanislaus County', 'Fresno County', 'Kern County'],
-    serviceModel: 'PARTNER_NETWORK',
-  },
-  {
-    slug: 'southern-california',
-    name: 'Southern California',
-    hubUrl: '/southern-california-dumpster-rental',
-    description: 'Dumpster rental in Los Angeles, San Diego, Orange County, and Riverside through our trusted service network.',
-    counties: ['Los Angeles County', 'San Diego County', 'Orange County', 'Riverside County'],
-    serviceModel: 'PARTNER_NETWORK',
-  },
 ];
 
 // ============================================================
