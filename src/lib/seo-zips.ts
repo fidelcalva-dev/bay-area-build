@@ -290,25 +290,6 @@ export const SEO_ZIP_DATA: SeoZipData[] = [
   { zip: '94038', city: 'Moss Beach', citySlug: 'half-moon-bay', neighborhoods: ['Moss Beach', 'Princeton'], tier: 'C', yardId: 'oakland' },
   { zip: '94037', city: 'Montara', citySlug: 'half-moon-bay', neighborhoods: ['Montara', 'Devils Slide'], tier: 'C', yardId: 'oakland' },
 
-  // ══════════════════════════════════════════════════
-  // Tier C — Tracy / Stockton / Sacramento (Expansion Markets)
-  // ══════════════════════════════════════════════════
-  { zip: '95376', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['Downtown Tracy', 'Tracy Hills'], tier: 'C', yardId: 'oakland' },
-  { zip: '95377', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['South Tracy', 'Ellis'], tier: 'C', yardId: 'oakland' },
-  { zip: '95304', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['West Tracy', 'Mountain House'], tier: 'C', yardId: 'oakland' },
-  { zip: '95202', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Downtown Stockton', 'Midtown'], tier: 'C', yardId: 'oakland' },
-  { zip: '95204', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Miracle Mile', 'Pacific'], tier: 'C', yardId: 'oakland' },
-  { zip: '95207', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['North Stockton', 'Brookside'], tier: 'C', yardId: 'oakland' },
-  { zip: '95209', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Lincoln Village', 'Quail Lakes'], tier: 'C', yardId: 'oakland' },
-  { zip: '95210', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['East Stockton', 'Morada'], tier: 'C', yardId: 'oakland' },
-  { zip: '95811', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Downtown Sacramento', 'Midtown'], tier: 'C', yardId: 'oakland' },
-  { zip: '95814', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Old Sacramento', 'Capitol Mall'], tier: 'C', yardId: 'oakland' },
-  { zip: '95816', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['East Sacramento', 'McKinley Park'], tier: 'C', yardId: 'oakland' },
-  { zip: '95818', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Land Park', 'Curtis Park'], tier: 'C', yardId: 'oakland' },
-  { zip: '95819', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['East Sacramento', 'Fab 40s'], tier: 'C', yardId: 'oakland' },
-  { zip: '95822', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Fruitridge', 'Meadowview'], tier: 'C', yardId: 'oakland' },
-  { zip: '95825', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Arden', 'Howe'], tier: 'C', yardId: 'oakland' },
-  { zip: '95826', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['College Greens', 'Rosemont'], tier: 'C', yardId: 'oakland' },
 
   // ══════════════════════════════════════════════════
   // Tier C — Extended Marin / Napa
