@@ -166,6 +166,8 @@ export function V3QuoteFlow() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [consentSms, setConsentSms] = useState(false);
+  const [consentTerms, setConsentTerms] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   // Access constraint data
