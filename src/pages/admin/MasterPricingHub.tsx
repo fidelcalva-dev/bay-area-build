@@ -64,9 +64,11 @@ const TABS: TabDef[] = [
   // ── Core Pricing ──
   { value: 'dashboard', label: 'Overview', icon: LayoutDashboard, group: 'Core', description: 'Pricing summary, key metrics, quick navigation' },
   { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
+  { value: 'general-edit', label: 'Edit General Prices', icon: DollarSign, group: 'Core', description: 'DB-backed editable general debris pricing' },
   { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
-  { value: 'heavy-rates', label: 'Heavy Rates', icon: Scale, group: 'Core', description: 'Heavy material flat rates by group and size' },
+  { value: 'heavy-rates', label: 'Edit Heavy Rates', icon: Scale, group: 'Core', description: 'Editable heavy material service costs and dump fees' },
   { value: 'materials', label: 'Material Rules', icon: AlertTriangle, group: 'Core', description: 'Material classes, dump fees, review rules' },
+  { value: 'policies', label: 'Fees & Policies', icon: ShieldCheck, group: 'Core', description: 'Editable operational fees and surcharges' },
   // ── Geography ──
   { value: 'zones', label: 'Zone Surcharges', icon: MapPin, group: 'Geography', description: 'Distance-based zone surcharges (A-E)' },
   { value: 'tolls', label: 'Toll Surcharges', icon: Truck, group: 'Geography', description: 'Toll-based surcharges by zone and yard' },
@@ -90,6 +92,7 @@ const TABS: TabDef[] = [
   { value: 'rush-health', label: 'Rush Health', icon: Activity, group: 'Analysis', description: 'Rush fee configuration health' },
   { value: 'contractor-health', label: 'Contractor Health', icon: Activity, group: 'Analysis', description: 'Contractor rules health checks' },
   { value: 'extras-health', label: 'Extras Health', icon: Activity, group: 'Analysis', description: 'Extras catalog completeness' },
+  { value: 'audit-log', label: 'Audit Log', icon: Activity, group: 'Analysis', description: 'Pricing change history and version control' },
 ];
 
 export default function MasterPricingHub() {
