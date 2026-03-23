@@ -143,20 +143,20 @@ export interface RetirementPlanEntry {
 }
 
 export const OUTSIDE_AREA_RETIREMENT_PLAN: RetirementPlanEntry[] = [
-  // Partner hub pages — keep as thin regional landing with redirect value
-  { route: '/southern-california-dumpster-rental', pageType: 'regional_hub', market: 'southern-california', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'No active vendor operations — noindex until partner launch' },
-  { route: '/central-valley-dumpster-rental', pageType: 'regional_hub', market: 'central-valley', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'No active vendor operations — noindex until partner launch' },
+  // Out-of-area hub pages redirected to Bay Area hub
+  { route: '/southern-california-dumpster-rental', pageType: 'regional_hub', market: 'southern-california', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area focus — redirected' },
+  { route: '/central-valley-dumpster-rental', pageType: 'regional_hub', market: 'central-valley', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area focus — redirected' },
   // Outside-area city pages
   { route: '/dumpster-rental/hollister', pageType: 'city', market: 'hollister', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/dumpster-rental-south-bay', reason: 'Minimal traffic, outside core radius' },
-  { route: '/dumpster-rental/modesto', pageType: 'city', market: 'modesto', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/stockton', pageType: 'city', market: 'stockton', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/sacramento', pageType: 'city', market: 'sacramento', currentValue: 'MEDIUM', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — preserve page but noindex until launch' },
-  { route: '/dumpster-rental/santa-rosa', pageType: 'city', market: 'santa-rosa', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/bakersfield', pageType: 'city', market: 'bakersfield', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/fresno', pageType: 'city', market: 'fresno', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/los-angeles', pageType: 'city', market: 'los-angeles', currentValue: 'MEDIUM', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — preserve page but noindex until launch' },
-  { route: '/dumpster-rental/san-diego', pageType: 'city', market: 'san-diego', currentValue: 'MEDIUM', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — preserve page but noindex until launch' },
-  { route: '/dumpster-rental/riverside', pageType: 'city', market: 'riverside', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
-  { route: '/dumpster-rental/anaheim', pageType: 'city', market: 'anaheim', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'Future partner market — not yet active' },
+  { route: '/dumpster-rental/modesto', pageType: 'city', market: 'modesto', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/stockton', pageType: 'city', market: 'stockton', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/sacramento', pageType: 'city', market: 'sacramento', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/santa-rosa', pageType: 'city', market: 'santa-rosa', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'North Bay partner market — not yet active' },
+  { route: '/dumpster-rental/bakersfield', pageType: 'city', market: 'bakersfield', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/fresno', pageType: 'city', market: 'fresno', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/los-angeles', pageType: 'city', market: 'los-angeles', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/san-diego', pageType: 'city', market: 'san-diego', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/riverside', pageType: 'city', market: 'riverside', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/anaheim', pageType: 'city', market: 'anaheim', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/vallejo', pageType: 'city', market: 'vallejo', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'North Bay partner — not yet active' },
 ];
