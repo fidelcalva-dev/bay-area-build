@@ -597,9 +597,9 @@ const Index = () => {
                     Need service outside the Bay Area? We also coordinate dumpster rental in selected California markets through our service network.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <Link to="/dumpster-rental/oakland" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">Oakland</Link>
-                    <Link to="/dumpster-rental/san-jose" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Jose</Link>
-                    <Link to="/dumpster-rental/san-francisco" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Francisco</Link>
+                    <Link to="/dumpster-rental-oakland-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">Oakland</Link>
+                    <Link to="/dumpster-rental-san-jose-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Jose</Link>
+                    <Link to="/dumpster-rental-san-francisco-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Francisco</Link>
                     <Link to="/areas" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">Bay Area</Link>
                     <Link to="/areas/california" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">California</Link>
                   </div>

@@ -194,7 +194,7 @@ export default function Contractors() {
               <ArrowRight className="w-4 h-4 text-primary shrink-0" />
               Full Pricing
             </Link>
-            <Link to="/dumpster-rental/oakland" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
+            <Link to="/dumpster-rental-oakland-ca" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
               <ArrowRight className="w-4 h-4 text-primary shrink-0" />
               Oakland Service
             </Link>
