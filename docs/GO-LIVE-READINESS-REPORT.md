@@ -27,7 +27,7 @@
 
 | Size | DB base_price | shared-data.ts | Status |
 |------|--------------|----------------|--------|
-| 6yd | $390 | $390 | ✅ Match |
+| 5yd | $390 | $390 | ✅ Match |
 | 8yd | $460 | $460 | ✅ Match |
 | 10yd | $580 | $580 | ✅ Match |
 | 20yd | $620 | $620 | ✅ Match |
