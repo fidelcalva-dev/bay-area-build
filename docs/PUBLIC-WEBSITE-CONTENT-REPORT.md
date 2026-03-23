@@ -212,7 +212,7 @@ Source: `supabase/functions/ads-generate-campaigns/index.ts:195`
 
 | Size | Base Price | Included Tons | Category |
 |------|------------|---------------|----------|
-| 6 yd | $390 | 0.5T | Both |
+| 5 yd | $390 | 0.5T | Both |
 | 8 yd | $460 | 0.5T | Both |
 | 10 yd | $580 | 1T | Both |
 | 20 yd | $620 | 2T | General |
@@ -226,7 +226,7 @@ Source: `supabase/functions/ads-generate-campaigns/index.ts:195`
 |------|------|-------|-------|
 | 10 yd | $638 | $838 | $938 |
 | 8 yd | $510 | $710 | $810 |
-| 6 yd | $383 | $583 | $683 |
+| 5 yd | $383 | $583 | $683 |
 
 ### Public Display Policy
 

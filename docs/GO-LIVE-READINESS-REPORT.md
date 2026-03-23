@@ -27,7 +27,7 @@
 
 | Size | DB base_price | shared-data.ts | Status |
 |------|--------------|----------------|--------|
-| 6yd | $390 | $390 | ✅ Match |
+| 5yd | $390 | $390 | ✅ Match |
 | 8yd | $460 | $460 | ✅ Match |
 | 10yd | $580 | $580 | ✅ Match |
 | 20yd | $620 | $620 | ✅ Match |
@@ -39,7 +39,7 @@
 
 | Size | DB included_tons | INCLUDED_TONS_BY_SIZE | Status |
 |------|-----------------|----------------------|--------|
-| 6yd | 0.5T | 0.5T | ✅ Match |
+| 5yd | 0.5T | 0.5T | ✅ Match |
 | 8yd | 0.5T | 0.5T | ✅ Match |
 | 10yd | 1.0T | 1.0T | ✅ Match |
 | 20yd | 2.0T | 2.0T | ✅ Match |
@@ -49,7 +49,7 @@
 
 ### Heavy Material Reclassification Tonnage
 Separate from general debris - used when heavy loads are contaminated:
-- 5yd: 0.5T, 6yd: 0.6T, 8yd: 0.8T, 10yd: 1.0T ✅
+- 5yd: 0.5T, 8yd: 0.8T, 10yd: 1.0T ✅
 
 ---
 

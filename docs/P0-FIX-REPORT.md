@@ -104,12 +104,12 @@ After comprehensive audit of all 26 public routes, the Quick Quote calculator (6
 
 | Page | Size | Display | BASE Tier | Match |
 |------|------|---------|-----------|-------|
-| Homepage | General | "From $390" | $390 (6yd) | ✅ |
+| Homepage | General | "From $390" | $390 (5yd) | ✅ |
 | `/pricing` | 10yd | "Starting at $580" | $580 | ✅ |
 | `/pricing` | 20yd | "Starting at $620" | $620 | ✅ |
 | `/pricing` | 30yd | "Starting at $770" | $770 | ✅ |
 | `/pricing` | 40yd | "Starting at $895" | $895 | ✅ |
-| `/sizes` | 6yd | "From $390" | $390 | ✅ |
+| `/sizes` | 5yd | "From $390" | $390 | ✅ |
 | Calculator | Any | Exact ZIP-based | Calculated | ✅ |
 
 ### Heavy Pricing Verified
@@ -118,7 +118,7 @@ After comprehensive audit of all 26 public routes, the Quick Quote calculator (6
 |------|------|-------|-------|--------|
 | 10yd | $638 | $838 | $938 | ✅ |
 | 8yd | $510 | $710 | $810 | ✅ |
-| 6yd | $383 | $583 | $683 | ✅ |
+| 5yd | $383 | $583 | $683 | ✅ |
 
 ---
 
