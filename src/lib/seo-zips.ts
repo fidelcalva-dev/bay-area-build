@@ -391,26 +391,6 @@ export const SEO_ZIP_DATA: SeoZipData[] = [
   { zip: '94580', city: 'San Lorenzo', citySlug: 'san-lorenzo', neighborhoods: ['San Lorenzo Village', 'Ashland'], tier: 'A', yardId: 'oakland' },
   { zip: '94806', city: 'San Pablo', citySlug: 'san-pablo', neighborhoods: ['San Pablo', 'Rumrill'], tier: 'A', yardId: 'oakland' },
 
-  // ══════════════════════════════════════════════════
-  // Expanded — San Joaquin / Central Valley
-  // ══════════════════════════════════════════════════
-  { zip: '95376', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['Tracy', 'Mountain House'], tier: 'C', yardId: 'oakland' },
-  { zip: '95377', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['South Tracy', 'Ellis'], tier: 'C', yardId: 'oakland' },
-  { zip: '95391', city: 'Tracy', citySlug: 'tracy', neighborhoods: ['Mountain House', 'Delta'], tier: 'C', yardId: 'oakland' },
-  { zip: '95201', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Downtown Stockton', 'Magnolia'], tier: 'C', yardId: 'oakland' },
-  { zip: '95202', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Victory Park', 'Midtown'], tier: 'C', yardId: 'oakland' },
-  { zip: '95205', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['East Stockton', 'Boggs Tract'], tier: 'C', yardId: 'oakland' },
-  { zip: '95206', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['South Stockton', 'Weston Ranch'], tier: 'C', yardId: 'oakland' },
-  { zip: '95212', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Lodi', 'Bear Creek'], tier: 'C', yardId: 'oakland' },
-  { zip: '95219', city: 'Stockton', citySlug: 'stockton', neighborhoods: ['Brookside', 'Park West'], tier: 'C', yardId: 'oakland' },
-  { zip: '95820', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Colonial Heights', 'Oak Park'], tier: 'C', yardId: 'oakland' },
-  { zip: '95823', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['South Sacramento', 'Valley Hi'], tier: 'C', yardId: 'oakland' },
-  { zip: '95824', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Fruitridge Pocket', 'Colonial Manor'], tier: 'C', yardId: 'oakland' },
-  { zip: '95828', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Vineyard', 'Florin'], tier: 'C', yardId: 'oakland' },
-  { zip: '95831', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Pocket', 'Greenhaven'], tier: 'C', yardId: 'oakland' },
-  { zip: '95833', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Natomas', 'Gateway West'], tier: 'C', yardId: 'oakland' },
-  { zip: '95834', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['North Natomas', 'Natomas Park'], tier: 'C', yardId: 'oakland' },
-  { zip: '95835', city: 'Sacramento', citySlug: 'sacramento', neighborhoods: ['Natomas', 'South Natomas'], tier: 'C', yardId: 'oakland' },
 ];
 
 export function getZipData(zip: string): SeoZipData | undefined {
