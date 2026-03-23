@@ -33,14 +33,18 @@ const PricingReadinessDashboard = lazy(() => import('@/pages/admin/pricing/Prici
 const RushHealthDashboard = lazy(() => import('@/pages/admin/pricing/RushHealthDashboard'));
 const ContractorRulesHealth = lazy(() => import('@/pages/admin/pricing/ContractorRulesHealth'));
 const ExtrasHealthDashboard = lazy(() => import('@/pages/admin/pricing/ExtrasHealthDashboard'));
-// New consolidated panels
-const HeavyPricingManager = lazy(() => import('@/pages/admin/HeavyPricingManager'));
+// Consolidated panels
 const MixedRulesManager = lazy(() => import('@/pages/admin/MixedRulesManager'));
 const WarningsCapsManager = lazy(() => import('@/pages/admin/WarningsCapsManager'));
 const CityRatesManager = lazy(() => import('@/pages/admin/CityRatesManager'));
 const TollSurchargesManager = lazy(() => import('@/pages/admin/TollSurchargesManager'));
 const VolumeCommitmentsManager = lazy(() => import('@/pages/admin/VolumeCommitmentsManager'));
 const CustomerTypeRulesPage = lazy(() => import('@/pages/admin/CustomerTypeRulesPage'));
+// New editable DB-backed panels
+const EditableGeneralDebrisPanel = lazy(() => import('@/components/admin/pricing/EditableGeneralDebrisPanel'));
+const EditableHeavyPricingPanel = lazy(() => import('@/components/admin/pricing/EditableHeavyPricingPanel'));
+const EditablePoliciesPanel = lazy(() => import('@/components/admin/pricing/EditablePoliciesPanel'));
+const PricingAuditLogPanel = lazy(() => import('@/components/admin/pricing/PricingAuditLogPanel'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
@@ -60,9 +64,11 @@ const TABS: TabDef[] = [
   // ── Core Pricing ──
   { value: 'dashboard', label: 'Overview', icon: LayoutDashboard, group: 'Core', description: 'Pricing summary, key metrics, quick navigation' },
   { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
+  { value: 'general-edit', label: 'Edit General Prices', icon: DollarSign, group: 'Core', description: 'DB-backed editable general debris pricing' },
   { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
-  { value: 'heavy-rates', label: 'Heavy Rates', icon: Scale, group: 'Core', description: 'Heavy material flat rates by group and size' },
+  { value: 'heavy-rates', label: 'Edit Heavy Rates', icon: Scale, group: 'Core', description: 'Editable heavy material service costs and dump fees' },
   { value: 'materials', label: 'Material Rules', icon: AlertTriangle, group: 'Core', description: 'Material classes, dump fees, review rules' },
+  { value: 'policies', label: 'Fees & Policies', icon: ShieldCheck, group: 'Core', description: 'Editable operational fees and surcharges' },
   // ── Geography ──
   { value: 'zones', label: 'Zone Surcharges', icon: MapPin, group: 'Geography', description: 'Distance-based zone surcharges (A-E)' },
   { value: 'tolls', label: 'Toll Surcharges', icon: Truck, group: 'Geography', description: 'Toll-based surcharges by zone and yard' },
@@ -86,6 +92,7 @@ const TABS: TabDef[] = [
   { value: 'rush-health', label: 'Rush Health', icon: Activity, group: 'Analysis', description: 'Rush fee configuration health' },
   { value: 'contractor-health', label: 'Contractor Health', icon: Activity, group: 'Analysis', description: 'Contractor rules health checks' },
   { value: 'extras-health', label: 'Extras Health', icon: Activity, group: 'Analysis', description: 'Extras catalog completeness' },
+  { value: 'audit-log', label: 'Audit Log', icon: Activity, group: 'Analysis', description: 'Pricing change history and version control' },
 ];
 
 export default function MasterPricingHub() {
@@ -187,12 +194,14 @@ export default function MasterPricingHub() {
 
           {/* ── Main Content ── */}
           <main className="flex-1 overflow-y-auto">
-            <Suspense fallback={<TabSpinner />}>
+             <Suspense fallback={<TabSpinner />}>
               {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
               {activeTab === 'overview' && <PricingManager />}
+              {activeTab === 'general-edit' && <EditableGeneralDebrisPanel />}
               {activeTab === 'heavy' && <LocationPricingManager />}
-              {activeTab === 'heavy-rates' && <HeavyPricingManager />}
+              {activeTab === 'heavy-rates' && <EditableHeavyPricingPanel />}
               {activeTab === 'materials' && <MaterialRulesDashboard />}
+              {activeTab === 'policies' && <EditablePoliciesPanel />}
               {activeTab === 'zones' && <ZoneSurchargesConfig />}
               {activeTab === 'tolls' && <TollSurchargesManager />}
               {activeTab === 'zips' && <ZipHealthDashboard />}
@@ -212,6 +221,7 @@ export default function MasterPricingHub() {
               {activeTab === 'rush-health' && <RushHealthDashboard />}
               {activeTab === 'contractor-health' && <ContractorRulesHealth />}
               {activeTab === 'extras-health' && <ExtrasHealthDashboard />}
+              {activeTab === 'audit-log' && <PricingAuditLogPanel />}
             </Suspense>
           </main>
         </div>

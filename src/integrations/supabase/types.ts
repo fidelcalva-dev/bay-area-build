@@ -13393,42 +13393,261 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_audit_log: {
+        Row: {
+          change_reason: string | null
+          changed_at: string
+          changed_by_email: string | null
+          changed_by_user_id: string | null
+          config_area: string
+          entity_id: string | null
+          entity_type: string
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          version_code: string | null
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_at?: string
+          changed_by_email?: string | null
+          changed_by_user_id?: string | null
+          config_area: string
+          entity_id?: string | null
+          entity_type: string
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          version_code?: string | null
+        }
+        Update: {
+          change_reason?: string | null
+          changed_at?: string
+          changed_by_email?: string | null
+          changed_by_user_id?: string | null
+          config_area?: string
+          entity_id?: string | null
+          entity_type?: string
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          version_code?: string | null
+        }
+        Relationships: []
+      }
       pricing_extras: {
         Row: {
+          amount: number | null
           created_at: string
+          customer_visible: boolean | null
           description: string | null
           display_order: number
+          driver_selectable: boolean | null
+          extra_code: string | null
           icon: string | null
           id: string
           is_active: boolean
           label: string
+          notes: string | null
           price: number
+          pricing_mode: string | null
+          requires_review: boolean | null
+          sort_order: number | null
+          unit_type: string | null
           updated_at: string
           value: string
+          version_id: string | null
         }
         Insert: {
+          amount?: number | null
           created_at?: string
+          customer_visible?: boolean | null
           description?: string | null
           display_order?: number
+          driver_selectable?: boolean | null
+          extra_code?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
           label: string
+          notes?: string | null
           price: number
+          pricing_mode?: string | null
+          requires_review?: boolean | null
+          sort_order?: number | null
+          unit_type?: string | null
           updated_at?: string
           value: string
+          version_id?: string | null
         }
         Update: {
+          amount?: number | null
           created_at?: string
+          customer_visible?: boolean | null
           description?: string | null
           display_order?: number
+          driver_selectable?: boolean | null
+          extra_code?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
           label?: string
+          notes?: string | null
           price?: number
+          pricing_mode?: string | null
+          requires_review?: boolean | null
+          sort_order?: number | null
+          unit_type?: string | null
           updated_at?: string
           value?: string
+          version_id?: string | null
+        }
+        Relationships: []
+      }
+      pricing_general_debris: {
+        Row: {
+          active: boolean
+          base_price: number
+          best_for: string | null
+          created_at: string
+          id: string
+          included_tons: number
+          market_code: string
+          notes: string | null
+          overage_rate: number
+          public_visible: boolean
+          rental_days: number
+          size_yd: number
+          updated_at: string
+          version_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          base_price: number
+          best_for?: string | null
+          created_at?: string
+          id?: string
+          included_tons?: number
+          market_code?: string
+          notes?: string | null
+          overage_rate?: number
+          public_visible?: boolean
+          rental_days?: number
+          size_yd: number
+          updated_at?: string
+          version_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          best_for?: string | null
+          created_at?: string
+          id?: string
+          included_tons?: number
+          market_code?: string
+          notes?: string | null
+          overage_rate?: number
+          public_visible?: boolean
+          rental_days?: number
+          size_yd?: number
+          updated_at?: string
+          version_id?: string | null
+        }
+        Relationships: []
+      }
+      pricing_heavy_groups: {
+        Row: {
+          active: boolean
+          created_at: string
+          customer_label: string | null
+          description: string | null
+          display_order: number
+          dump_fee_per_yard: number
+          green_halo_premium: number
+          heavy_group_code: string
+          icon: string | null
+          id: string
+          label: string
+          label_es: string | null
+          materials_json: Json
+          notes: string | null
+          rebar_premium: number
+          updated_at: string
+          version_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          customer_label?: string | null
+          description?: string | null
+          display_order?: number
+          dump_fee_per_yard: number
+          green_halo_premium?: number
+          heavy_group_code: string
+          icon?: string | null
+          id?: string
+          label: string
+          label_es?: string | null
+          materials_json?: Json
+          notes?: string | null
+          rebar_premium?: number
+          updated_at?: string
+          version_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          customer_label?: string | null
+          description?: string | null
+          display_order?: number
+          dump_fee_per_yard?: number
+          green_halo_premium?: number
+          heavy_group_code?: string
+          icon?: string | null
+          id?: string
+          label?: string
+          label_es?: string | null
+          materials_json?: Json
+          notes?: string | null
+          rebar_premium?: number
+          updated_at?: string
+          version_id?: string | null
+        }
+        Relationships: []
+      }
+      pricing_heavy_service_costs: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          notes: string | null
+          service_cost: number
+          size_yd: number
+          updated_at: string
+          version_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          service_cost: number
+          size_yd: number
+          updated_at?: string
+          version_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          service_cost?: number
+          size_yd?: number
+          updated_at?: string
+          version_id?: string | null
         }
         Relationships: []
       }
@@ -13530,6 +13749,42 @@ export type Database = {
           },
         ]
       }
+      pricing_policies: {
+        Row: {
+          active: boolean
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          label: string
+          policy_code: string
+          updated_at: string
+          version_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          label: string
+          policy_code: string
+          updated_at?: string
+          version_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          policy_code?: string
+          updated_at?: string
+          version_id?: string | null
+        }
+        Relationships: []
+      }
       pricing_rules: {
         Row: {
           base_delivery_cost: number
@@ -13596,6 +13851,51 @@ export type Database = {
           surge_multiplier?: number
           surge_threshold_pct?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      pricing_versions: {
+        Row: {
+          approved_by: string | null
+          archived_at: string | null
+          created_at: string
+          created_by: string | null
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          notes: string | null
+          published_at: string | null
+          status: string
+          updated_at: string
+          version_code: string
+        }
+        Insert: {
+          approved_by?: string | null
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          notes?: string | null
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+          version_code: string
+        }
+        Update: {
+          approved_by?: string | null
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          notes?: string | null
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+          version_code?: string
         }
         Relationships: []
       }
