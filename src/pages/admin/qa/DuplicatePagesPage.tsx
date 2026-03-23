@@ -24,25 +24,25 @@ const DUPLICATES: DuplicateEntry[] = [
   },
   // ── PUBLIC SEO — DOMINATION PAGES ──
   {
-    duplicatePath: '/dumpster-rental-oakland-ca',
-    canonicalPath: '/dumpster-rental/oakland',
+    duplicatePath: '/dumpster-rental/oakland',
+    canonicalPath: '/dumpster-rental-oakland-ca',
     category: 'public-seo',
-    decision: 'KEEP_BOTH_WITH_UNIQUE_CANONICAL',
-    reason: 'Hand-crafted 450+ line domination page targeting "dumpster rental oakland ca". 12 unique neighborhoods, yard-specific content, unique FAQs. Self-canonical confirmed. Different keyword cluster than programmatic city page.',
+    decision: 'REDIRECT_TO_CANONICAL',
+    reason: 'Programmatic page redirects to hand-crafted domination page. 301 redirect active.',
   },
   {
-    duplicatePath: '/dumpster-rental-san-jose-ca',
-    canonicalPath: '/dumpster-rental/san-jose',
+    duplicatePath: '/dumpster-rental/san-jose',
+    canonicalPath: '/dumpster-rental-san-jose-ca',
     category: 'public-seo',
-    decision: 'KEEP_BOTH_WITH_UNIQUE_CANONICAL',
-    reason: 'Hand-crafted 440+ line domination page targeting "dumpster rental san jose ca". 12 unique neighborhoods, size use-cases, unique CTAs. Self-canonical confirmed.',
+    decision: 'REDIRECT_TO_CANONICAL',
+    reason: 'Programmatic page redirects to hand-crafted domination page. 301 redirect active.',
   },
   {
-    duplicatePath: '/dumpster-rental-san-francisco-ca',
-    canonicalPath: '/dumpster-rental/san-francisco',
+    duplicatePath: '/dumpster-rental/san-francisco',
+    canonicalPath: '/dumpster-rental-san-francisco-ca',
     category: 'public-seo',
-    decision: 'KEEP_BOTH_WITH_UNIQUE_CANONICAL',
-    reason: 'Hand-crafted 540+ line domination page targeting "dumpster rental san francisco ca". 16 neighborhoods, 25 ZIP codes, SF permit info. Self-canonical confirmed.',
+    decision: 'REDIRECT_TO_CANONICAL',
+    reason: 'Programmatic page redirects to hand-crafted domination page. 301 redirect active.',
   },
   // ── LEGACY REDIRECTS (already active) ──
   {

@@ -5,31 +5,45 @@ Last updated: 2026-03-23
 ## Changes Made
 
 ### 1. Counties Pruned (`seo-counties.ts`)
-Removed 9 out-of-area counties: Sacramento, San Joaquin, Los Angeles, San Diego, Orange, Riverside, Fresno, Kern, Stanislaus. Only 9 Bay Area counties remain.
+Removed 9 out-of-area counties. Only 9 Bay Area counties remain.
 
 ### 2. Regions Pruned (`service-area-config.ts`)
-Removed Central Valley and Southern California regions. Removed all Tier 3 partner cities outside Bay Area (Hollister, Modesto, Stockton, Sacramento, Bakersfield, LA, SD, Fresno, Riverside, Anaheim). Kept Santa Rosa and Vallejo as Bay Area Tier 3.
+Removed Central Valley and Southern California regions. SF hubUrl updated to canonical `/dumpster-rental-san-francisco-ca`.
 
 ### 3. ZIP Codes Pruned (`seo-zips.ts`)
-Removed all Tracy, Stockton, and Sacramento ZIP codes (~35 entries). All remaining ZIPs are within the 9 Bay Area counties.
+Removed ~35 Tracy/Stockton/Sacramento ZIP codes. All remaining ZIPs are Bay Area.
 
 ### 4. Hub Pages Consolidated (`SeoHubPage.tsx`, `seoRoutes.tsx`)
-- Removed SoCal and Central Valley hub configs
 - `/southern-california-dumpster-rental` → redirects to `/bay-area-dumpster-rental`
 - `/central-valley-dumpster-rental` → redirects to `/bay-area-dumpster-rental`
 
-### 5. Top City Redirects Added (`seoRoutes.tsx`)
+### 5. Top City Redirects (`seoRoutes.tsx`)
 - `/dumpster-rental/oakland` → `/dumpster-rental-oakland-ca`
 - `/dumpster-rental/san-jose` → `/dumpster-rental-san-jose-ca`
 - `/dumpster-rental/san-francisco` → `/dumpster-rental-san-francisco-ca`
 
-### 6. Market Classification Updated (`market-classification.ts`)
-All out-of-area future partner markets changed from `NOINDEX` to `REDIRECT` with target `/bay-area-dumpster-rental`.
+### 6. Internal Links Canonicalized
+- `Header.tsx` → canonical domination URLs
+- `Index.tsx` → canonical domination URLs
+- `BlogArticle.tsx` → canonical domination URLs
+- `Contractors.tsx` → canonical domination URLs
 
-### 7. Sitemap Filtered (`sitemap.ts`, `SitemapPage.tsx`)
-County pages now filtered to Bay Area only in both sitemap generators (matching `sitemap-generator.ts` which already had this filter).
+### 7. Route Categories Updated (`routeCategories.ts`)
+SoCal and Central Valley hubs marked `indexable: false`.
 
-### 8. Market Zones Cleaned (`shared-data.ts`)
+### 8. Local Presence Config (`localPresenceConfig.ts`)
+Removed Central Valley / SoCal references from business description.
+
+### 9. Expansion Roadmap (`ExpansionRoadmapSection.tsx`)
+Replaced Central Valley / SoCal milestones with North Bay and Peninsula Bay Area expansion.
+
+### 10. Duplicate Pages Audit (`DuplicatePagesPage.tsx`)
+Updated top 3 city entries from `KEEP_BOTH` to `REDIRECT_TO_CANONICAL`.
+
+### 11. Market Classification (`market-classification.ts`)
+Out-of-area markets changed from `NOINDEX` to `REDIRECT` → `/bay-area-dumpster-rental`.
+
+### 12. Market Zones (`shared-data.ts`)
 Removed TRACY, CENTRAL, SAC market zones. Only OAK and SJ remain.
 
 ## Public Pages Kept
@@ -59,14 +73,13 @@ Removed TRACY, CENTRAL, SAC market zones. Only OAK and SJ remain.
 | `/dumpster-rental/:citySlug` | Dynamic city (Bay Area only) |
 | `/service-area/:zip/dumpster-rental` | ZIP pages (Bay Area only) |
 | `/county/:countySlug/dumpster-rental` | County pages (9 Bay Area only) |
-| Size/material/use-case intent pages | Bay Area focused |
 
 ## CRM/Admin Pages Preserved
 All CRM, admin, portal, sales, dispatch, finance, CS, and driver pages remain unchanged.
 
 ## Remaining Manual Review Items
-1. `src/lib/cityData.ts` — Still contains Tracy entry; used internally for operations, not public SEO
+1. `src/lib/cityData.ts` — Tracy entry retained for internal operations
 2. `src/config/locationConfig.ts` — Tracy yard config retained for operational use
-3. `src/components/sections/ServiceCoverageMapSection.tsx` — Still shows Stockton/Tracy as "coming-soon" markers; cosmetic only
-4. Blog posts mentioning out-of-area cities — Content review recommended
-5. `seo_cities` DB table — May contain out-of-area city rows; should be deactivated via `is_active = false`
+3. `src/components/sections/ServiceCoverageMapSection.tsx` — Stockton/Tracy "coming-soon" markers (cosmetic)
+4. Blog posts mentioning out-of-area cities — content review recommended
+5. `seo_cities` DB table — deactivate out-of-area rows via `is_active = false`

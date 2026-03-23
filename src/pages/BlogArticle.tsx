@@ -487,7 +487,7 @@ export default function BlogArticle() {
             <span className="text-muted-foreground">|</span>
             <Link to="/sizes" className="text-primary hover:underline">All Sizes</Link>
             <span className="text-muted-foreground">|</span>
-            <Link to="/dumpster-rental/oakland" className="text-primary hover:underline">Oakland</Link>
+            <Link to="/dumpster-rental-oakland-ca" className="text-primary hover:underline">Oakland</Link>
             <span className="text-muted-foreground">|</span>
             <Link to="/dumpster-rental/berkeley" className="text-primary hover:underline">Berkeley</Link>
             <span className="text-muted-foreground">|</span>

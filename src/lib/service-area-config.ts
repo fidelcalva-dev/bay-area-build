@@ -47,7 +47,7 @@ export const REGIONS: RegionConfig[] = [
   {
     slug: 'san-francisco',
     name: 'San Francisco',
-    hubUrl: '/dumpster-rental/san-francisco',
+    hubUrl: '/dumpster-rental-san-francisco-ca',
     description: 'Direct service across all San Francisco neighborhoods — expert placement for tight streets and permitted locations.',
     yardId: 'sf',
     counties: ['San Francisco County'],
