@@ -1454,10 +1454,13 @@ export function V3QuoteFlow() {
               {/* SMS Consent */}
               <div className="space-y-2.5">
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  By clicking, I consent to receive transactional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+                  By checking, you are allowing to receive promotional/marketing SMS communications from Calsan Dumpsters Pro. Frequency may vary. Message and data rates may apply, reply HELP for help or STOP to opt-out.
                 </p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  I consent to receive marketing and promotional messages from Calsan Dumpsters Pro at the phone number provided. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+                  By checking, I accept{' '}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Terms Of Service</a>
+                  {' & '}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Privacy Policy</a>
                 </p>
               </div>
 
