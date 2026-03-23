@@ -39,7 +39,7 @@
 
 | Size | DB included_tons | INCLUDED_TONS_BY_SIZE | Status |
 |------|-----------------|----------------------|--------|
-| 6yd | 0.5T | 0.5T | ✅ Match |
+| 5yd | 0.5T | 0.5T | ✅ Match |
 | 8yd | 0.5T | 0.5T | ✅ Match |
 | 10yd | 1.0T | 1.0T | ✅ Match |
 | 20yd | 2.0T | 2.0T | ✅ Match |
