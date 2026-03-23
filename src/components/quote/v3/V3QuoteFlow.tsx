@@ -1454,16 +1454,30 @@ export function V3QuoteFlow() {
               </div>
 
               {/* SMS Consent */}
-              <div className="space-y-2.5">
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  By checking, you are allowing to receive promotional/marketing SMS communications from Calsan Dumpsters Pro. Frequency may vary. Message and data rates may apply, reply HELP for help or STOP to opt-out.
-                </p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  By checking, I accept{' '}
-                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Terms Of Service</a>
-                  {' & '}
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Privacy Policy</a>
-                </p>
+              <div className="space-y-3">
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <Checkbox
+                    checked={consentSms}
+                    onCheckedChange={(v) => setConsentSms(v === true)}
+                    className="mt-0.5"
+                  />
+                  <span className="text-[11px] text-muted-foreground leading-relaxed">
+                    By checking, you are allowing to receive promotional/marketing SMS communications from Calsan Dumpsters Pro. Frequency may vary. Message and data rates may apply, reply HELP for help or STOP to opt-out.
+                  </span>
+                </label>
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <Checkbox
+                    checked={consentTerms}
+                    onCheckedChange={(v) => setConsentTerms(v === true)}
+                    className="mt-0.5"
+                  />
+                  <span className="text-[11px] text-muted-foreground leading-relaxed">
+                    By checking, I accept{' '}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Terms Of Service</a>
+                    {' & '}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                  </span>
+                </label>
               </div>
 
               {/* Trust */}
