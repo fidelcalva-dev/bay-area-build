@@ -1393,6 +1393,7 @@ export function V3QuoteFlow() {
               <BackButton />
 
               <div>
+                <img src={logoCalsan} alt="Calsan Dumpsters Pro" className="h-10 w-auto rounded-md mb-3" />
                 <h4 className="text-xl font-bold text-foreground tracking-tight mb-1">
                   Almost there — who should we contact?
                 </h4>
