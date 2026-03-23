@@ -31,7 +31,7 @@ export default function EditableGeneralDebrisPanel() {
 
       // Log each changed field
       for (const [key, val] of Object.entries(updates)) {
-        const oldVal = (original as Record<string, unknown>)[key];
+        const oldVal = (original as unknown as Record<string, unknown>)[key];
         if (oldVal !== val) {
           await logPricingChange({
             config_area: 'general_debris',
