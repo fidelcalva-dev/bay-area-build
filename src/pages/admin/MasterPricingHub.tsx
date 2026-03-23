@@ -33,14 +33,18 @@ const PricingReadinessDashboard = lazy(() => import('@/pages/admin/pricing/Prici
 const RushHealthDashboard = lazy(() => import('@/pages/admin/pricing/RushHealthDashboard'));
 const ContractorRulesHealth = lazy(() => import('@/pages/admin/pricing/ContractorRulesHealth'));
 const ExtrasHealthDashboard = lazy(() => import('@/pages/admin/pricing/ExtrasHealthDashboard'));
-// New consolidated panels
-const HeavyPricingManager = lazy(() => import('@/pages/admin/HeavyPricingManager'));
+// Consolidated panels
 const MixedRulesManager = lazy(() => import('@/pages/admin/MixedRulesManager'));
 const WarningsCapsManager = lazy(() => import('@/pages/admin/WarningsCapsManager'));
 const CityRatesManager = lazy(() => import('@/pages/admin/CityRatesManager'));
 const TollSurchargesManager = lazy(() => import('@/pages/admin/TollSurchargesManager'));
 const VolumeCommitmentsManager = lazy(() => import('@/pages/admin/VolumeCommitmentsManager'));
 const CustomerTypeRulesPage = lazy(() => import('@/pages/admin/CustomerTypeRulesPage'));
+// New editable DB-backed panels
+const EditableGeneralDebrisPanel = lazy(() => import('@/components/admin/pricing/EditableGeneralDebrisPanel'));
+const EditableHeavyPricingPanel = lazy(() => import('@/components/admin/pricing/EditableHeavyPricingPanel'));
+const EditablePoliciesPanel = lazy(() => import('@/components/admin/pricing/EditablePoliciesPanel'));
+const PricingAuditLogPanel = lazy(() => import('@/components/admin/pricing/PricingAuditLogPanel'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
