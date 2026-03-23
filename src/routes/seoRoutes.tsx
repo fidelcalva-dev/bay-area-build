@@ -78,9 +78,16 @@ export function getSeoRoutes() {
     // Hub pages
     <Route key="california" path="/california-dumpster-rental" element={<SuspenseRoute><SeoHubPage /></SuspenseRoute>} />,
     <Route key="bay-area" path="/bay-area-dumpster-rental" element={<SuspenseRoute><SeoHubPage /></SuspenseRoute>} />,
-    <Route key="socal" path="/southern-california-dumpster-rental" element={<SuspenseRoute><SeoHubPage /></SuspenseRoute>} />,
-    <Route key="central-valley" path="/central-valley-dumpster-rental" element={<SuspenseRoute><SeoHubPage /></SuspenseRoute>} />,
     <Route key="north-bay" path="/north-bay-dumpster-rental" element={<SuspenseRoute><SeoHubPage /></SuspenseRoute>} />,
+    
+    {/* Out-of-area hubs → redirect to Bay Area hub */}
+    <Route key="socal-redirect" path="/southern-california-dumpster-rental" element={<Navigate to="/bay-area-dumpster-rental" replace />} />,
+    <Route key="central-valley-redirect" path="/central-valley-dumpster-rental" element={<Navigate to="/bay-area-dumpster-rental" replace />} />,
+    
+    {/* Top 3 city programmatic → domination page redirects */}
+    <Route key="oakland-redirect" path="/dumpster-rental/oakland" element={<Navigate to="/dumpster-rental-oakland-ca" replace />} />,
+    <Route key="san-jose-redirect" path="/dumpster-rental/san-jose" element={<Navigate to="/dumpster-rental-san-jose-ca" replace />} />,
+    <Route key="san-francisco-redirect" path="/dumpster-rental/san-francisco" element={<Navigate to="/dumpster-rental-san-francisco-ca" replace />} />,
     
     // Legacy URL redirects
     <Route key="legacy-size" path="/:citySlug/:sizeSlug-yard-dumpster" element={<LegacySizeRedirect />} />,
