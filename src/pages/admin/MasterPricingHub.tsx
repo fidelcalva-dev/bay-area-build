@@ -194,12 +194,14 @@ export default function MasterPricingHub() {
 
           {/* ── Main Content ── */}
           <main className="flex-1 overflow-y-auto">
-            <Suspense fallback={<TabSpinner />}>
+             <Suspense fallback={<TabSpinner />}>
               {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
               {activeTab === 'overview' && <PricingManager />}
+              {activeTab === 'general-edit' && <EditableGeneralDebrisPanel />}
               {activeTab === 'heavy' && <LocationPricingManager />}
-              {activeTab === 'heavy-rates' && <HeavyPricingManager />}
+              {activeTab === 'heavy-rates' && <EditableHeavyPricingPanel />}
               {activeTab === 'materials' && <MaterialRulesDashboard />}
+              {activeTab === 'policies' && <EditablePoliciesPanel />}
               {activeTab === 'zones' && <ZoneSurchargesConfig />}
               {activeTab === 'tolls' && <TollSurchargesManager />}
               {activeTab === 'zips' && <ZipHealthDashboard />}
@@ -219,6 +221,7 @@ export default function MasterPricingHub() {
               {activeTab === 'rush-health' && <RushHealthDashboard />}
               {activeTab === 'contractor-health' && <ContractorRulesHealth />}
               {activeTab === 'extras-health' && <ExtrasHealthDashboard />}
+              {activeTab === 'audit-log' && <PricingAuditLogPanel />}
             </Suspense>
           </main>
         </div>
