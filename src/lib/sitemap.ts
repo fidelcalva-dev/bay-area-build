@@ -144,8 +144,15 @@ const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES
   })
   .filter((entry): entry is SitemapEntry => entry !== null);
 
-// County pages
-const COUNTY_PAGES: SitemapEntry[] = SEO_COUNTIES.map(county => ({
+// County pages — Bay Area only
+const BAY_AREA_COUNTY_SLUGS = new Set([
+  'alameda-county', 'santa-clara-county', 'contra-costa-county',
+  'san-francisco-county', 'san-mateo-county', 'solano-county',
+  'marin-county', 'sonoma-county', 'napa-county',
+]);
+const COUNTY_PAGES: SitemapEntry[] = SEO_COUNTIES
+  .filter(county => BAY_AREA_COUNTY_SLUGS.has(county.slug))
+  .map(county => ({
   url: `/county/${county.slug}/dumpster-rental`,
   changefreq: 'monthly' as const,
   priority: 0.8,

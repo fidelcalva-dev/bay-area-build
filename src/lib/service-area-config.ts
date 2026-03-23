@@ -61,22 +61,6 @@ export const REGIONS: RegionConfig[] = [
     counties: ['Marin County', 'Sonoma County', 'Napa County', 'Solano County'],
     serviceModel: 'PARTNER_NETWORK',
   },
-  {
-    slug: 'central-valley',
-    name: 'Central Valley',
-    hubUrl: '/central-valley-dumpster-rental',
-    description: 'Professional dumpster rental serving Sacramento, Stockton, Modesto, Fresno, and Bakersfield through coordinated local service.',
-    counties: ['Sacramento County', 'San Joaquin County', 'Stanislaus County', 'Fresno County', 'Kern County'],
-    serviceModel: 'PARTNER_NETWORK',
-  },
-  {
-    slug: 'southern-california',
-    name: 'Southern California',
-    hubUrl: '/southern-california-dumpster-rental',
-    description: 'Dumpster rental in Los Angeles, San Diego, Orange County, and Riverside through our trusted service network.',
-    counties: ['Los Angeles County', 'San Diego County', 'Orange County', 'Riverside County'],
-    serviceModel: 'PARTNER_NETWORK',
-  },
 ];
 
 // ============================================================
@@ -110,19 +94,9 @@ export const CITY_DIRECTORY: CityConfig[] = [
   { slug: 'richmond', name: 'Richmond', region: 'east-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
   { slug: 'emeryville', name: 'Emeryville', region: 'east-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
 
-  // Tier 3 — Partner network markets
-  { slug: 'hollister', name: 'Hollister', region: 'south-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'modesto', name: 'Modesto', region: 'central-valley', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'stockton', name: 'Stockton', region: 'central-valley', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'sacramento', name: 'Sacramento', region: 'central-valley', serviceModel: 'PARTNER_NETWORK', tier: 3 },
+  // Tier 3 — North Bay partner markets (within Bay Area scope)
   { slug: 'santa-rosa', name: 'Santa Rosa', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'bakersfield', name: 'Bakersfield', region: 'central-valley', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'los-angeles', name: 'Los Angeles', region: 'southern-california', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'san-diego', name: 'San Diego', region: 'southern-california', serviceModel: 'PARTNER_NETWORK', tier: 3 },
   { slug: 'vallejo', name: 'Vallejo', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'fresno', name: 'Fresno', region: 'central-valley', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'riverside', name: 'Riverside', region: 'southern-california', serviceModel: 'PARTNER_NETWORK', tier: 3 },
-  { slug: 'anaheim', name: 'Anaheim', region: 'southern-california', serviceModel: 'PARTNER_NETWORK', tier: 3 },
 ];
 
 // ============================================================

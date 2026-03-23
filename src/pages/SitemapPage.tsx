@@ -70,8 +70,13 @@ export default function SitemapPage() {
           }
         } catch { /* silent */ }
 
-        // County pages
-        for (const county of SEO_COUNTIES) {
+        // County pages — Bay Area only
+        const bayAreaCountySlugs = new Set([
+          'alameda-county', 'santa-clara-county', 'contra-costa-county',
+          'san-francisco-county', 'san-mateo-county', 'solano-county',
+          'marin-county', 'sonoma-county', 'napa-county',
+        ]);
+        for (const county of SEO_COUNTIES.filter(c => bayAreaCountySlugs.has(c.slug))) {
           const url = `${BUSINESS_INFO.url}/county/${county.slug}/dumpster-rental`;
           if (!existingUrls.has(url)) {
             additionalEntries.push(`  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`);

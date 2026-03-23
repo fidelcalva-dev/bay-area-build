@@ -39,22 +39,6 @@ const HUB_CONFIGS: Record<string, HubConfig> = {
     metaDescription: 'Bay Area dumpster rental from local yards in Oakland and San Jose. 5-50 yard sizes, same-day delivery. Serving Alameda, Contra Costa, Santa Clara, San Francisco, and San Mateo counties.',
     countyFilter: ['alameda-county', 'contra-costa-county', 'santa-clara-county', 'san-francisco-county', 'san-mateo-county', 'solano-county'],
   },
-  'southern-california-dumpster-rental': {
-    slug: 'southern-california-dumpster-rental',
-    title: 'Southern California Dumpster Rental',
-    h1: 'Southern California Dumpster Rental',
-    description: 'Professional dumpster rental serving Southern California including Los Angeles, San Diego, Orange County, Riverside, and San Bernardino.',
-    metaDescription: 'Southern California dumpster rental. Serving LA, San Diego, Orange County, Riverside, and San Bernardino. Same-day delivery, transparent pricing.',
-    countyFilter: ['los-angeles-county', 'san-diego-county', 'orange-county', 'riverside-county'],
-  },
-  'central-valley-dumpster-rental': {
-    slug: 'central-valley-dumpster-rental',
-    title: 'Central Valley Dumpster Rental',
-    h1: 'Central Valley Dumpster Rental',
-    description: 'Dumpster rental for California Central Valley communities including Sacramento, Stockton, Fresno, Bakersfield, and Modesto.',
-    metaDescription: 'Central Valley dumpster rental serving Sacramento, Stockton, Fresno, Bakersfield, and Modesto. Transparent pricing, same-day delivery available.',
-    countyFilter: ['sacramento-county', 'san-joaquin-county', 'fresno-county', 'kern-county', 'stanislaus-county'],
-  },
   'north-bay-dumpster-rental': {
     slug: 'north-bay-dumpster-rental',
     title: 'North Bay Dumpster Rental',
