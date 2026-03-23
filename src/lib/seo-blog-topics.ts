@@ -88,7 +88,7 @@ export const SEO_BLOG_TOPICS: SeoBlogTopic[] = [
   {
     slug: 'dumpster-sizes-guide',
     title: 'What Size Dumpster Do I Need? Complete Sizing Guide',
-    metaDescription: 'Dumpster size guide: 6 to 50 yard containers compared. Dimensions, capacity, weight limits, and best uses for each size. Find your perfect fit.',
+    metaDescription: 'Dumpster size guide: 5 to 50 yard containers compared. Dimensions, capacity, weight limits, and best uses for each size. Find your perfect fit.',
     targetKeyword: 'what size dumpster do i need',
     category: 'sizing',
     outline: ['Size comparison chart', 'Dimensions and capacity', 'Best size by project type', 'Heavy vs general sizing', 'When to size up'],
