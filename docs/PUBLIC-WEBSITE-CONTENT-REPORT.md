@@ -226,7 +226,7 @@ Source: `supabase/functions/ads-generate-campaigns/index.ts:195`
 |------|------|-------|-------|
 | 10 yd | $638 | $838 | $938 |
 | 8 yd | $510 | $710 | $810 |
-| 6 yd | $383 | $583 | $683 |
+| 5 yd | $383 | $583 | $683 |
 
 ### Public Display Policy
 
