@@ -4,60 +4,55 @@ Last updated: 2026-03-23
 
 ## Architecture
 
-All pricing is now DB-backed and editable from `/admin/pricing`. Config files (`pricingConfig.ts`, `heavyMaterialConfig.ts`) serve as fallbacks when DB rows are not populated.
+All pricing is DB-backed and editable from `/admin/pricing`. Config files (`pricingConfig.ts`, `heavyMaterialConfig.ts`) serve as fallbacks when DB rows are not yet populated.
 
 ## Canonical Route
 
-`/admin/pricing` — 28 tabs across 5 groups (Core, Geography, Fees, Rules, Analysis)
+`/admin/pricing` — 26 tabs across 5 groups (Core, Geography, Fees, Rules, Analysis)
 
-## New Editable Tabs
+## DB Tables (Seeded & Active)
 
-| Tab | Key | Component | DB Table |
-|-----|-----|-----------|----------|
-| Edit General Prices | `general-edit` | EditableGeneralDebrisPanel | `pricing_general_debris` |
-| Edit Heavy Rates | `heavy-rates` | EditableHeavyPricingPanel | `pricing_heavy_service_costs` + `pricing_heavy_groups` |
-| Fees & Policies | `policies` | EditablePoliciesPanel | `pricing_policies` |
-| Audit Log | `audit-log` | PricingAuditLogPanel | `pricing_audit_log` + `pricing_versions` |
-
-## New DB Tables
-
-| Table | Purpose |
-|-------|---------|
-| `pricing_general_debris` | Editable base prices by size/market |
-| `pricing_heavy_service_costs` | Editable service costs (5/8/10 yd) |
-| `pricing_heavy_groups` | Editable heavy group dump fees, premiums |
-| `pricing_extras` | Extended with `extra_code`, `pricing_mode`, etc. |
-| `pricing_policies` | Editable operational fees (contamination, overage, etc.) |
-| `pricing_versions` | Draft/publish version control |
-| `pricing_audit_log` | Field-level change tracking |
+| Table | Rows | Purpose |
+|-------|------|---------|
+| `pricing_general_debris` | 7 | Base prices by size (5–50 yd) |
+| `pricing_heavy_service_costs` | 3 | Service costs for 5/8/10 yd |
+| `pricing_heavy_groups` | 4 | Heavy group dump fees & premiums |
+| `pricing_policies` | 13 | Operational fees & surcharges |
+| `pricing_extras` | 7 | Add-on items catalog |
+| `pricing_versions` | 1 | Draft/publish version control |
+| `pricing_audit_log` | — | Field-level change tracking |
+| `pricing_zones` | — | Zone surcharges (A–E) |
 
 ## Editable Cost Families
 
-| Family | Source | Editable |
-|--------|--------|----------|
-| General Debris base prices | `pricing_general_debris` | ✅ |
-| Heavy service costs | `pricing_heavy_service_costs` | ✅ |
-| Heavy dump fee per yard | `pricing_heavy_groups` | ✅ |
-| Premiums (rebar, Green Halo) | `pricing_heavy_groups` | ✅ |
-| Operational fees/policies | `pricing_policies` | ✅ |
-| Extras catalog | `pricing_extras` | ✅ |
-| Zone surcharges | `pricing_zones` | ✅ (existing) |
-| Rush delivery | Config-managed | Existing tab |
-| Contractor tiers | Config-managed | Existing tab |
-| City/ZIP/Yard | Existing tables | Existing tabs |
+| Family | Table | Editable | Tab |
+|--------|-------|----------|-----|
+| General Debris base prices | `pricing_general_debris` | ✅ | `general-edit` |
+| Heavy service costs | `pricing_heavy_service_costs` | ✅ | `heavy-rates` |
+| Heavy dump fee per yard | `pricing_heavy_groups` | ✅ | `heavy-rates` |
+| Premiums (rebar, Green Halo) | `pricing_heavy_groups` | ✅ | `heavy-rates` |
+| Operational fees/policies | `pricing_policies` | ✅ | `policies` |
+| Extras catalog | `pricing_extras` | ✅ | `extras` |
+| Zone surcharges | `pricing_zones` | ✅ | `zones` |
+| Rush delivery | Config-managed | ✅ | `rush` |
+| Contractor tiers | Config-managed | ✅ | `contractor` |
+| City/ZIP/Yard | Existing tables | ✅ | `cities`/`zips`/`yards` |
+| Mixed/overage rules | Config-managed | ✅ | `mixed-rules` |
+| Warnings & caps | Config-managed | ✅ | `warnings-caps` |
+| Volume commitments | Config-managed | ✅ | `volume` |
+| Toll surcharges | Config-managed | ✅ | `tolls` |
 
 ## Versioning Model
 
-- `pricing_versions` table tracks draft → pending_approval → published → archived
-- Each editable row has optional `version_id` foreign key
-- Published version is the active source for all consumers
-- Draft changes are isolated until published
+- `pricing_versions`: draft → pending_approval → published → archived
+- Only one version can be `published` at a time
+- Production reads from published version
 
 ## Audit Trail
 
-- `pricing_audit_log` captures every field-level change
-- Fields: changed_by, changed_at, config_area, entity_type, field_name, old_value, new_value, change_reason
-- Viewable in `/admin/pricing?tab=audit-log`
+- `pricing_audit_log`: field-level change tracking
+- Every edit via admin panels calls `logPricingChange()`
+- Viewable at `/admin/pricing?tab=audit-log`
 
 ## Permissions
 
@@ -69,20 +64,19 @@ All pricing is now DB-backed and editable from `/admin/pricing`. Config files (`
 | CS | View, limited edits |
 | Dispatch/Driver | Read-only |
 
-## Pricing Consumer Service
+## Service Layer
 
-`src/lib/pricingCatalogService.ts` provides:
+`src/lib/pricingCatalogService.ts`:
 - `fetchGeneralDebrisPricing()` — DB-first with config fallback
 - `fetchHeavyServiceCosts()` — DB-first with config fallback
 - `fetchHeavyGroups()` — DB-first with config fallback
 - `fetchPolicies()` — DB-first with config fallback
-- Update functions with audit logging
-- All consumers can progressively migrate to this service
+- Update + audit logging functions
 
 ## Remaining Manual Review
 
-1. Progressively migrate website quote and CRM calculator to use `pricingCatalogService` instead of static config imports
-2. Add import/export (CSV/JSON) functionality for bulk catalog updates
+1. Progressively migrate consumers (website quote, CRM, SEO) to use `pricingCatalogService` instead of static config imports
+2. Add CSV/JSON import/export for bulk catalog updates
 3. Add draft comparison view (side-by-side draft vs live)
-4. Wire pricing_versions.version_id into each catalog row for strict version binding
+4. Wire `pricing_versions.version_id` into each catalog row for strict version binding
 5. Add pricing health check for DB vs config drift detection
