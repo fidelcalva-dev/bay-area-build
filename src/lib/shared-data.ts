@@ -647,14 +647,11 @@ export const TRUCKING_RATES = {
 // MARKET/ZONE DEFINITIONS (v56 Pages 17-18)
 // ============================================================
 
-export type MarketZone = 'OAK' | 'SJ' | 'TRACY' | 'CENTRAL' | 'SAC';
+export type MarketZone = 'OAK' | 'SJ';
 
 export const MARKET_ZONES: Record<MarketZone, { name: string; baseMultiplier: number }> = {
   OAK: { name: 'Oakland / East Bay', baseMultiplier: 1.0 },
   SJ: { name: 'San Jose / South Bay', baseMultiplier: 1.05 },
-  TRACY: { name: 'Tracy / Stockton', baseMultiplier: 0.95 },
-  CENTRAL: { name: 'Central Valley', baseMultiplier: 1.1 },
-  SAC: { name: 'Sacramento Region', baseMultiplier: 1.15 },
 };
 
 // ============================================================
