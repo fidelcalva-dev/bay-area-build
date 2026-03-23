@@ -48,3 +48,22 @@ Berkeley, Alameda, San Leandro, Hayward, Fremont, Walnut Creek, Concord, Pleasan
 - `/dumpster-rental/san-jose` → `/dumpster-rental-san-jose-ca`
 - `/dumpster-rental/san-francisco` → `/dumpster-rental-san-francisco-ca`
 - Out-of-area city pages → redirect via `market-classification.ts` REDIRECT status
+
+## Internal Link Canonicalization (Completed)
+
+All internal `<Link>` components now point to canonical URLs:
+- Header nav → `-oakland-ca` / `-san-jose-ca` / `-san-francisco-ca`
+- Homepage city links → canonical domination pages
+- Blog footer links → canonical domination pages
+- Contractors page → canonical domination pages
+- SF region hubUrl → `/dumpster-rental-san-francisco-ca`
+
+## Route Categories Update
+
+- `/southern-california-dumpster-rental` marked `indexable: false`
+- `/central-valley-dumpster-rental` marked `indexable: false`
+
+## Expansion Roadmap (Public Content)
+
+Updated to reflect Bay Area-only focus:
+- Central Valley / SoCal milestones replaced with North Bay and Peninsula expansion
