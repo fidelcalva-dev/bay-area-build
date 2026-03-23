@@ -29,6 +29,7 @@ import { analytics } from '@/lib/analytics';
 import { ga4, zipPrefix } from '@/lib/analytics/ga4';
 import { PRICING_POLICIES, INCLUDED_TONS_BY_SIZE } from '@/lib/shared-data';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
+import logoCalsan from '@/assets/logo-calsan.jpeg';
 
 import { usePricingData, calculateIncludedTons } from '../hooks/usePricingData';
 import { useDistanceCalculation } from '../hooks/useDistanceCalculation';
@@ -1393,6 +1394,7 @@ export function V3QuoteFlow() {
               <BackButton />
 
               <div>
+                <img src={logoCalsan} alt="Calsan Dumpsters Pro" className="h-10 w-auto rounded-md mb-3" />
                 <h4 className="text-xl font-bold text-foreground tracking-tight mb-1">
                   Almost there — who should we contact?
                 </h4>
