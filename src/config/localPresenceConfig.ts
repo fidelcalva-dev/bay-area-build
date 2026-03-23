@@ -27,7 +27,7 @@ export const BUSINESS_INFO = {
   descriptionShort:
     'Professional dumpster rental serving the San Francisco Bay Area with direct yard operations in Oakland, San Jose, and San Francisco.',
   descriptionLong:
-    'Calsan Dumpsters Pro provides fast, reliable dumpster rental for residential, commercial, and construction projects across the Bay Area. With local yard operations in Oakland and San Jose, we offer same-day delivery, transparent pricing, and a full range of container sizes from 5 to 50 yards. Our service extends statewide through a trusted logistics network covering the Central Valley, North Bay, and Southern California.',
+    'Calsan Dumpsters Pro provides fast, reliable dumpster rental for residential, commercial, and construction projects across the Bay Area. With local yard operations in Oakland, San Jose, and San Francisco, we offer same-day delivery, transparent pricing, and a full range of container sizes from 5 to 50 yards. Serving all nine Bay Area counties with direct dispatch from our local yards.',
   hours: {
     label: 'Mon–Sun 6:00 AM – 9:00 PM PT',
     structured: [
