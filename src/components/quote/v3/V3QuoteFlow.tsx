@@ -1,6 +1,6 @@
 // ============================================================
-// V3 QUOTE FLOW — Refactored with Step Components
-// ZIP → Customer Type → Project → Size → Contact → Price → Access → Confirm → Placement
+// V3 QUOTE FLOW — Redesigned Self-Selling Quote System
+// Project → ZIP → Material → Size → Service → Contact → Price → Access → Confirm → Placement
 // ============================================================
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
@@ -47,9 +47,15 @@ import {
   ORDER_CONFIRMED_TITLE, ORDER_CONFIRMED_SUBTITLE,
 } from './copy';
 
+// New models
+import type { UniversalProject } from './projectTypes';
+import type { MaterialGroup, MaterialOption } from './materialTypes';
+import type { ServiceOptions } from './steps/ServiceCustomizationStep';
+
 // Step Components
 import {
-  ZipStep, CustomerTypeStep, ProjectStep, SizeStep,
+  ProjectTypeStep, ZipStep, MaterialStep, SizeStep,
+  ServiceCustomizationStep,
   ContactStep, PriceStep, AccessStep, ConfirmStep,
   StepTransition,
 } from './steps';
@@ -58,6 +64,11 @@ import {
 const PlacementMap = lazy(() =>
   import('../steps/PlacementMap').then((m) => ({ default: m.PlacementMap }))
 );
+
+// ============================================================
+// EXTENDED STEP TYPE
+// ============================================================
+type QuoteStep = 'project-type' | 'zip' | 'material' | 'size' | 'service' | 'contact' | 'price' | 'access' | 'confirm' | 'placement';
 
 // ============================================================
 // ZONE RESULT
@@ -94,19 +105,24 @@ export function V3QuoteFlow() {
   const draftApplied = useRef(false);
   const quoteStartedFired = useRef(false);
 
-  // Step state
-  const [step, setStep] = useState<V3Step>('zip');
+  // Step state — new flow
+  const [step, setStep] = useState<QuoteStep>('project-type');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [stepStartTime, setStepStartTime] = useState(Date.now());
 
-  // Form state
+  // ---- Core form state ----
   const [zip, setZip] = useState(urlZip.length === 5 && /^\d{5}$/.test(urlZip) ? urlZip : '');
   const [customerType, setCustomerType] = useState<CustomerType | null>(
     urlType && ['homeowner', 'contractor', 'commercial'].includes(urlType) ? urlType : null
   );
+
+  // New: Universal project (replaces old per-type project)
+  const [selectedUniversalProject, setSelectedUniversalProject] = useState<UniversalProject | null>(null);
+  // Legacy compat bridge
   const [selectedProject, setSelectedProject] = useState<ProjectCard | null>(null);
+
   const [size, setSize] = useState(urlSize ? parseInt(urlSize, 10) || 20 : 20);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -114,11 +130,23 @@ export function V3QuoteFlow() {
   const [consentSms, setConsentSms] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-
-  // Phase A new fields
-  const [customerNotes, setCustomerNotes] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [rentalDays, setRentalDays] = useState(7);
+
+  // Material selection
+  const [selectedMaterialGroup, setSelectedMaterialGroup] = useState<MaterialGroup | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption | null>(null);
+
+  // Service customization
+  const [serviceOptions, setServiceOptions] = useState<ServiceOptions>({
+    wantsSwap: false,
+    wantsDumpAndReturn: false,
+    wantsSameDay: false,
+    specialPlacement: false,
+    accessLimitation: false,
+    requiredDumpSite: '',
+    customerNotes: '',
+  });
 
   // Access constraint data
   const [accessData, setAccessData] = useState<AccessConstraintData | null>(null);
@@ -127,8 +155,17 @@ export function V3QuoteFlow() {
   const [useAddress, setUseAddress] = useState(!!urlAddress);
   const [addressResult, setAddressResult] = useState<AddressResult | null>(null);
 
-  // Swap toggle
-  const [wantsSwap, setWantsSwap] = useState(false);
+  // Swap toggle (derived from serviceOptions for backward compat)
+  const wantsSwap = serviceOptions.wantsSwap;
+  const setWantsSwap = (v: boolean) => setServiceOptions(prev => ({ ...prev, wantsSwap: v }));
+
+  // Customer notes (derived from serviceOptions)
+  const customerNotes = serviceOptions.customerNotes;
+  const setCustomerNotes = (v: string) => setServiceOptions(prev => ({ ...prev, customerNotes: v }));
+
+  // ---- Derive isHeavy from material or project ----
+  const isHeavy = selectedMaterial?.group === 'heavy' || selectedUniversalProject?.isHeavy || false;
+  const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
   // Restore draft state
   useEffect(() => {
@@ -149,16 +186,28 @@ export function V3QuoteFlow() {
       if (d.customerEmail) setCustomerEmail(d.customerEmail);
       if (d.termsAccepted) setTermsAccepted(d.termsAccepted);
       if (d.useAddress) setUseAddress(true);
-      setStep(d.step);
+      // Map old step to new step
+      const stepMap: Record<string, QuoteStep> = {
+        'zip': 'zip', 'customer-type': 'project-type', 'project': 'project-type',
+        'size': 'size', 'contact': 'contact', 'price': 'price',
+        'access': 'access', 'confirm': 'confirm', 'placement': 'placement',
+      };
+      setStep(stepMap[d.step] || 'project-type');
     }
   }, [draft.loadedDraft, draft.showResumeBanner]);
 
   // Autosave on meaningful changes
   useEffect(() => {
     if (step === 'placement') return;
+    // Map new step back to legacy step for draft compat
+    const legacyStepMap: Record<QuoteStep, V3Step> = {
+      'project-type': 'project', 'zip': 'zip', 'material': 'project',
+      'size': 'size', 'service': 'size', 'contact': 'contact', 'price': 'price',
+      'access': 'access', 'confirm': 'confirm', 'placement': 'placement',
+    };
     draft.saveDraft({
-      step, zip, customerType,
-      selectedProjectId: selectedProject?.id || null,
+      step: legacyStepMap[step], zip, customerType,
+      selectedProjectId: selectedUniversalProject?.id || selectedProject?.id || null,
       size, wantsSwap,
       customerName: customerName || undefined,
       customerPhone: customerPhone || undefined,
@@ -167,27 +216,32 @@ export function V3QuoteFlow() {
       formattedAddress: addressResult?.formattedAddress,
       lat: addressResult?.lat, lng: addressResult?.lng,
     });
-  }, [step, zip, customerType, selectedProject, size, customerName, customerPhone, customerEmail, termsAccepted, useAddress, addressResult]);
+  }, [step, zip, customerType, selectedUniversalProject, selectedProject, size, customerName, customerPhone, customerEmail, termsAccepted, useAddress, addressResult]);
 
   // Handle "Start Over"
   const handleStartOver = useCallback(() => {
     draft.resetDraft();
-    setStep('zip');
+    setStep('project-type');
     setZip('');
     setCustomerType(null);
     setSelectedProject(null);
+    setSelectedUniversalProject(null);
+    setSelectedMaterialGroup(null);
+    setSelectedMaterial(null);
     setSize(20);
     setCustomerName('');
     setCustomerPhone('');
     setCustomerEmail('');
-    setCustomerNotes('');
     setCompanyName('');
     setRentalDays(7);
+    setServiceOptions({
+      wantsSwap: false, wantsDumpAndReturn: false, wantsSameDay: false,
+      specialPlacement: false, accessLimitation: false, requiredDumpSite: '', customerNotes: '',
+    });
     setTermsAccepted(false);
     setUseAddress(false);
     setAddressResult(null);
     setZoneResult(null);
-    setWantsSwap(false);
     setConsentSms(false);
     setConsentTerms(false);
     draftApplied.current = false;
@@ -196,24 +250,20 @@ export function V3QuoteFlow() {
 
   // Auto-detect ZIP
   const autoDetectZip = useAutoDetectZip();
-
   useEffect(() => {
-    if (!zip && autoDetectZip.status === 'idle') {
-      autoDetectZip.detectZip();
-    }
+    if (!zip && autoDetectZip.status === 'idle') autoDetectZip.detectZip();
   }, []);
-
   useEffect(() => {
-    if (autoDetectZip.zip && autoDetectZip.zip.length === 5 && !zip) {
-      setZip(autoDetectZip.zip);
-    }
+    if (autoDetectZip.zip && autoDetectZip.zip.length === 5 && !zip) setZip(autoDetectZip.zip);
   }, [autoDetectZip.zip]);
 
   // Distance calculation
   const distanceCalc = useDistanceCalculation(zip, addressResult?.lat, addressResult?.lng);
 
   // Track step timing + GA4
-  const stepIndexMap: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
+  const stepIndexMap: Record<QuoteStep, number> = {
+    'project-type': 1, zip: 2, material: 3, size: 4, service: 5, contact: 6, price: 7, access: 8, confirm: 9, placement: 10,
+  };
   useEffect(() => {
     setStepStartTime(Date.now());
     ga4.quoteStepViewed({ flow_version: 'v3', step_name: step, step_index: stepIndexMap[step] });
@@ -232,15 +282,8 @@ export function V3QuoteFlow() {
         .select(`zone_id, city_name, market_id, zone:pricing_zones!inner(id, name, base_multiplier, is_active)`)
         .eq('zip_code', zipCode)
         .maybeSingle();
-
       if (!error && data && (data.zone as any)?.is_active) {
-        setZoneResult({
-          zoneId: data.zone_id,
-          zoneName: (data.zone as any).name,
-          cityName: data.city_name || undefined,
-          multiplier: Number((data.zone as any).base_multiplier),
-          marketCode: data.market_id || undefined,
-        });
+        setZoneResult({ zoneId: data.zone_id, zoneName: (data.zone as any).name, cityName: data.city_name || undefined, multiplier: Number((data.zone as any).base_multiplier), marketCode: data.market_id || undefined });
         return;
       }
       for (const zone of PRICING_ZONES) {
@@ -258,23 +301,6 @@ export function V3QuoteFlow() {
     else setZoneResult(null);
   }, [zip, lookupZone]);
 
-  // Auto-advance past ZIP step when prefilled
-  useEffect(() => {
-    if (prefillApplied.current) return;
-    if (!zoneResult) return;
-    if (urlZip.length === 5 && step === 'zip') {
-      prefillApplied.current = true;
-      if (customerType) {
-        setStep('project');
-      } else {
-        setStep('customer-type');
-      }
-    }
-  }, [zoneResult, step, urlZip, customerType]);
-
-  const isHeavy = selectedProject?.isHeavy ?? false;
-  const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
-
   // Auto-adjust size for heavy materials
   useEffect(() => {
     if (isHeavy && size > 10) setSize(10);
@@ -287,7 +313,7 @@ export function V3QuoteFlow() {
   }, [isHeavy]);
 
   // Recommended + alternatives
-  const recommendedSize = selectedProject?.suggestedSize ?? 20;
+  const recommendedSize = selectedUniversalProject?.suggestedSize || selectedProject?.suggestedSize || 20;
   const alternativeSizes = useMemo(() => {
     const rec = recommendedSize;
     const smaller = availableSizes.filter(s => s < rec).slice(-1)[0];
@@ -298,10 +324,7 @@ export function V3QuoteFlow() {
   // City-specific master pricing
   const [masterPriceRange, setMasterPriceRange] = useState<PriceRange | null>(null);
   useEffect(() => {
-    if (!zip || zip.length !== 5 || !zoneResult) {
-      setMasterPriceRange(null);
-      return;
-    }
+    if (!zip || zip.length !== 5 || !zoneResult) { setMasterPriceRange(null); return; }
     let cancelled = false;
     getPriceRangeForZip(zip, size, materialTypeForPricing as 'general' | 'heavy').then((range) => {
       if (!cancelled) setMasterPriceRange(range);
@@ -312,55 +335,30 @@ export function V3QuoteFlow() {
   // Calculate quote
   const quote = useMemo(() => {
     if (!zoneResult) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
-
     if (masterPriceRange) {
       let low = masterPriceRange.low;
       let high = masterPriceRange.high;
-      if (distanceCalc.distance?.priceAdjustment) {
-        low += distanceCalc.distance.priceAdjustment;
-        high += distanceCalc.distance.priceAdjustment;
-      }
-      // Add rental day extra cost
-      if (rentalDays > 7) {
-        const extraDays = rentalDays - 7;
-        const extraDayCost = 15 * extraDays; // $15/extra day
-        low += extraDayCost;
-        high += extraDayCost;
-      }
-      return {
-        subtotal: low,
-        subtotalHigh: high,
-        includedTons: masterPriceRange.includedTons,
-        isValid: true,
-        isFlatFee: masterPriceRange.isFlatFee,
-      };
+      if (distanceCalc.distance?.priceAdjustment) { low += distanceCalc.distance.priceAdjustment; high += distanceCalc.distance.priceAdjustment; }
+      if (rentalDays > 7) { const extra = 15 * (rentalDays - 7); low += extra; high += extra; }
+      return { subtotal: low, subtotalHigh: high, includedTons: masterPriceRange.includedTons, isValid: true, isFlatFee: masterPriceRange.isFlatFee };
     }
-
     // Legacy fallback
     const sizeData = DUMPSTER_SIZES.find(s => s.value === size);
     if (!sizeData) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
-
     const isFlatFee = isHeavy;
     const includedTons = isFlatFee ? 0 : calculateIncludedTons(size, materialTypeForPricing);
     let subtotal = Math.round(sizeData.basePrice * zoneResult.multiplier);
     if (isHeavy) subtotal += 200;
     if (distanceCalc.distance?.priceAdjustment) subtotal += distanceCalc.distance.priceAdjustment;
-    // Add rental day extra cost
-    if (rentalDays > 7) {
-      const extraDays = rentalDays - 7;
-      subtotal += 15 * extraDays;
-    }
-
+    if (rentalDays > 7) subtotal += 15 * (rentalDays - 7);
     return { subtotal, subtotalHigh: subtotal + 70, includedTons, isValid: true, isFlatFee };
   }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange, rentalDays]);
 
   // Step index for progress
-  const stepIndex = useMemo(() => {
-    const map: Record<V3Step, number> = { zip: 1, 'customer-type': 2, project: 3, size: 4, contact: 5, price: 6, access: 7, confirm: 8, placement: 9 };
-    return Math.min(map[step], 8);
-  }, [step]);
+  const totalSteps = 9;
+  const stepIndex = useMemo(() => Math.min(stepIndexMap[step], totalSteps), [step]);
 
-  // Navigation
+  // Navigation — new flow
   const goNext = () => {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
@@ -369,11 +367,12 @@ export function V3QuoteFlow() {
       quoteStartedFired.current = true;
       ga4.quoteStarted({ flow_version: 'v3', entry_point: 'quote_page', city: zoneResult?.cityName, zip });
     }
-    const next: Record<V3Step, V3Step> = {
-      zip: 'customer-type',
-      'customer-type': 'project',
-      project: 'size',
-      size: 'contact',
+    const next: Record<QuoteStep, QuoteStep> = {
+      'project-type': 'zip',
+      zip: 'material',
+      material: 'size',
+      size: 'service',
+      service: 'contact',
       contact: 'price',
       price: 'access',
       access: 'confirm',
@@ -384,12 +383,13 @@ export function V3QuoteFlow() {
   };
 
   const goBack = () => {
-    const prev: Record<V3Step, V3Step> = {
-      zip: 'zip',
-      'customer-type': 'zip',
-      project: 'customer-type',
-      size: 'project',
-      contact: 'size',
+    const prev: Record<QuoteStep, QuoteStep> = {
+      'project-type': 'project-type',
+      zip: 'project-type',
+      material: 'zip',
+      size: 'material',
+      service: 'size',
+      contact: 'service',
       price: 'contact',
       access: 'price',
       confirm: 'access',
@@ -403,7 +403,6 @@ export function V3QuoteFlow() {
   const capturePartialLead = useCallback(async (milestone: string) => {
     const hasContact = !!(customerPhone || customerEmail);
     if (!hasContact) return;
-
     if (leadCaptured.current[milestone]) return;
     leadCaptured.current[milestone] = true;
     try {
@@ -419,7 +418,7 @@ export function V3QuoteFlow() {
           zip: zip || null,
           city: addressResult?.city || zoneResult?.cityName || null,
           address: addressResult?.formattedAddress || null,
-          project_type: selectedProject?.label || null,
+          project_type: selectedUniversalProject?.label || selectedProject?.label || null,
           material_category: materialTypeForPricing || null,
           size_preference: String(size),
           selected_size: size,
@@ -433,9 +432,10 @@ export function V3QuoteFlow() {
             milestone,
             selected_size: size,
             material_type: materialTypeForPricing,
-            material_class: isHeavy ? (selectedProject?.id || 'heavy') : 'general',
+            material_class: isHeavy ? (selectedMaterial?.internalClass || 'heavy') : 'general',
+            material_detail: selectedMaterial?.label || null,
             customer_type: customerType,
-            project_id: selectedProject?.id,
+            project_id: selectedUniversalProject?.id || selectedProject?.id,
             is_heavy: isHeavy,
             quote_amount: quote.isValid ? quote.subtotal : null,
             quote_amount_high: quote.isValid ? quote.subtotalHigh : null,
@@ -444,13 +444,19 @@ export function V3QuoteFlow() {
             customer_notes: customerNotes || null,
             company_name: companyName || null,
             rental_days: rentalDays,
+            service_options: {
+              wants_swap: serviceOptions.wantsSwap,
+              wants_same_day: serviceOptions.wantsSameDay,
+              special_placement: serviceOptions.specialPlacement,
+              required_dump_site: serviceOptions.requiredDumpSite || null,
+            },
           },
         },
       });
     } catch (err) {
       console.warn('Partial lead capture failed:', err);
     }
-  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedProject, materialTypeForPricing, size, customerType, isHeavy, quote, step, customerNotes, companyName, rentalDays]);
+  }, [zip, customerName, customerPhone, customerEmail, addressResult, zoneResult, selectedUniversalProject, selectedProject, materialTypeForPricing, selectedMaterial, size, customerType, isHeavy, quote, step, customerNotes, companyName, rentalDays, serviceOptions]);
 
   // Draft Quote Auto-Creation
   const draftSynced = useRef<Record<string, boolean>>({});
@@ -459,7 +465,7 @@ export function V3QuoteFlow() {
     materialType: materialTypeForPricing,
     size,
     customerType: customerType || undefined,
-    projectType: selectedProject?.label || undefined,
+    projectType: selectedUniversalProject?.label || selectedProject?.label || undefined,
     customerName: customerName || undefined,
     customerPhone: customerPhone || undefined,
     customerEmail: customerEmail || undefined,
@@ -475,8 +481,8 @@ export function V3QuoteFlow() {
     includedTons: quote.isValid ? quote.includedTons : undefined,
     isFlatFee: quote.isFlatFee,
     isHeavy,
-    materialClass: isHeavy ? (selectedProject?.id || 'heavy') : 'general',
-    recommendedSize: recommendedSize,
+    materialClass: isHeavy ? (selectedMaterial?.internalClass || 'heavy') : 'general',
+    recommendedSize,
     addressLine1: addressResult?.formattedAddress || undefined,
     city: addressResult?.city || undefined,
     state: addressResult?.state || undefined,
@@ -486,22 +492,20 @@ export function V3QuoteFlow() {
     placementType: accessData?.placementType || undefined,
     gateCode: accessData?.gateCode || undefined,
     wantsSwap,
-  }), [zip, materialTypeForPricing, size, customerType, selectedProject, customerName, customerPhone, customerEmail, zoneResult, distanceCalc, quote, isHeavy, recommendedSize, addressResult, accessData, wantsSwap]);
+    driverNotes: customerNotes || undefined,
+  }), [zip, materialTypeForPricing, size, customerType, selectedUniversalProject, selectedProject, customerName, customerPhone, customerEmail, zoneResult, distanceCalc, quote, isHeavy, selectedMaterial, recommendedSize, addressResult, accessData, wantsSwap, customerNotes]);
 
   // Sync draft quote on key step transitions
   useEffect(() => {
     const data = buildDraftData();
     if (!meetsQuoteThreshold(data)) return;
-
     const milestoneKey = `${step}_${size}_${materialTypeForPricing}`;
     if (draftSynced.current[milestoneKey]) return;
     draftSynced.current[milestoneKey] = true;
-
     upsertDraftQuote(data).then(result => {
       if (result.quoteId) {
         logQuoteMilestone(`quote_step_${step}`, {
-          quoteId: result.quoteId,
-          leadId: result.leadId,
+          quoteId: result.quoteId, leadId: result.leadId,
           metadata: { step, size, material: materialTypeForPricing },
         });
       }
@@ -510,19 +514,14 @@ export function V3QuoteFlow() {
 
   // Fire progressive captures on step transitions
   useEffect(() => {
-    if (step === 'customer-type' && zip) capturePartialLead('address_saved');
-    if (step === 'size' && zip && selectedProject) {
-      capturePartialLead('quote_started');
-      capturePartialLead('material_selected');
-    }
-    if (step === 'contact' && size > 0) capturePartialLead('size_selected');
-    if (step === 'price' && quote.isValid) {
-      capturePartialLead('quote_priced');
-      capturePartialLead('price_shown');
-    }
+    if (step === 'zip' && zip) capturePartialLead('address_saved');
+    if (step === 'material' && zip && selectedUniversalProject) capturePartialLead('quote_started');
+    if (step === 'size' && selectedMaterial) capturePartialLead('material_selected');
+    if (step === 'service' && size > 0) capturePartialLead('size_selected');
+    if (step === 'price' && quote.isValid) { capturePartialLead('quote_priced'); capturePartialLead('price_shown'); }
     if (step === 'access') capturePartialLead('delivery_preference_saved');
     if (step === 'confirm' && accessData) capturePartialLead('placement_marked');
-  }, [step, zip, customerType, selectedProject, size, quote.isValid, accessData]);
+  }, [step, zip, customerType, selectedUniversalProject, selectedMaterial, size, quote.isValid, accessData]);
 
   // Batch-capture when contact is first provided
   const contactBatchFired = useRef(false);
@@ -533,11 +532,46 @@ export function V3QuoteFlow() {
     capturePartialLead('contact_captured');
   }, [customerPhone, customerEmail, capturePartialLead]);
 
-  const handleProjectSelect = (project: ProjectCard) => {
-    setSelectedProject(project);
+  // ---- Project selection handler ----
+  const handleProjectTypeSelect = (project: UniversalProject) => {
+    setSelectedUniversalProject(project);
+    // Set defaults from project
     setSize(project.suggestedSize);
-    ga4.quoteRecommendedSizeShown({ size_yd: project.suggestedSize, material_category: project.isHeavy ? 'heavy' : 'general', customer_type: customerType || 'unknown' });
-    setTimeout(() => setStep('size'), 200);
+    if (project.isHeavy) {
+      setSelectedMaterialGroup('heavy');
+    } else {
+      setSelectedMaterialGroup('general');
+    }
+    // Bridge to legacy ProjectCard for downstream compat
+    const legacyProject: ProjectCard = {
+      id: project.id,
+      label: project.label,
+      description: project.description,
+      icon: project.icon,
+      materialCategory: project.materialCategory === 'MIXED' ? 'GENERAL_DEBRIS' : project.materialCategory,
+      isHeavy: project.isHeavy,
+      suggestedSize: project.suggestedSize,
+      customerTypes: project.segments as any,
+    };
+    setSelectedProject(legacyProject);
+    ga4.quoteRecommendedSizeShown({
+      size_yd: project.suggestedSize,
+      material_category: project.isHeavy ? 'heavy' : 'general',
+      customer_type: customerType || 'unknown',
+    });
+    setTimeout(() => setStep('zip'), 200);
+  };
+
+  // Material selection
+  const handleMaterialGroupSelect = (group: MaterialGroup) => {
+    setSelectedMaterialGroup(group);
+    setSelectedMaterial(null);
+  };
+
+  const handleMaterialSelect = (material: MaterialOption) => {
+    setSelectedMaterial(material);
+    if (material.group === 'heavy' && size > 10) setSize(10);
+    setTimeout(() => goNext(), 200);
   };
 
   // Upsell nudge
@@ -551,19 +585,19 @@ export function V3QuoteFlow() {
       return;
     }
     setShowUpsellNudge(false);
-    setTimeout(() => setStep('contact'), 200);
+    setTimeout(() => setStep('service'), 200);
   };
 
   const handleAcceptUpsell = () => {
     setSize(20);
     setShowUpsellNudge(false);
     ga4.quoteSizeSelected({ size_yd: 20, was_recommended: false });
-    setTimeout(() => setStep('contact'), 200);
+    setTimeout(() => setStep('service'), 200);
   };
 
   const handleDeclineUpsell = () => {
     setShowUpsellNudge(false);
-    setTimeout(() => setStep('contact'), 200);
+    setTimeout(() => setStep('service'), 200);
   };
 
   // Save quote
@@ -592,7 +626,7 @@ export function V3QuoteFlow() {
         isCalsanFulfillment: true,
         recommendedSizeYards: recommendedSize,
         userSelectedSizeYards: size,
-        projectType: selectedProject?.label || undefined,
+        projectType: selectedUniversalProject?.label || selectedProject?.label || undefined,
         customerLat: addressResult?.lat ?? distanceCalc.geocoding?.lat,
         customerLng: addressResult?.lng ?? distanceCalc.geocoding?.lng,
         yardId: distanceCalc.distance?.yard.id,
@@ -625,6 +659,13 @@ export function V3QuoteFlow() {
             includedTons: quote.includedTons,
             customerNotes: customerNotes || undefined,
             companyName: companyName || undefined,
+            materialDetail: selectedMaterial?.label || undefined,
+            serviceOptions: {
+              wantsSwap: serviceOptions.wantsSwap,
+              wantsSameDay: serviceOptions.wantsSameDay,
+              specialPlacement: serviceOptions.specialPlacement,
+              requiredDumpSite: serviceOptions.requiredDumpSite || undefined,
+            },
           },
         }).catch(() => {});
 
@@ -681,10 +722,7 @@ export function V3QuoteFlow() {
   }, [distanceCalc.distance, wantsSwap]);
 
   // Availability confidence
-  const availability = useAvailabilityConfidence(
-    distanceCalc.distance?.yard?.id,
-    size,
-  );
+  const availability = useAvailabilityConfidence(distanceCalc.distance?.yard?.id, size);
 
   // Saved quote ID for placement
   const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null);
@@ -692,16 +730,21 @@ export function V3QuoteFlow() {
 
   // Staff-only internal breakdown toggle
   const showInternalBreakdown = useMemo(() => {
-    try {
-      return new URLSearchParams(window.location.search).get('internal') === '1';
-    } catch { return false; }
+    try { return new URLSearchParams(window.location.search).get('internal') === '1'; } catch { return false; }
   }, []);
 
-  // Customer type selection handler
-  const handleCustomerTypeSelect = (type: CustomerType) => {
-    setCustomerType(type);
-    setSelectedProject(null);
-    setTimeout(() => setStep('project'), 200);
+  // Step label for progress bar
+  const stepLabels: Record<QuoteStep, string> = {
+    'project-type': 'Project',
+    zip: 'Location',
+    material: 'Material',
+    size: 'Size',
+    service: 'Options',
+    contact: 'Contact',
+    price: 'Price',
+    access: 'Access',
+    confirm: 'Confirm',
+    placement: 'Complete',
   };
 
   // ============================================================
@@ -722,7 +765,7 @@ export function V3QuoteFlow() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {step !== 'zip' && step !== 'placement' && (
+            {step !== 'project-type' && step !== 'placement' && (
               <button
                 onClick={handleStartOver}
                 className="text-[10px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5"
@@ -744,22 +787,12 @@ export function V3QuoteFlow() {
           <div className="relative h-1 bg-muted rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(stepIndex / 8) * 100}%` }}
+              style={{ width: `${(stepIndex / totalSteps) * 100}%` }}
             />
           </div>
           <div className="flex justify-between mt-1.5">
-            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of 8</span>
-            <span className="text-[10px] font-medium text-foreground">
-              {step === 'zip' && 'Location'}
-              {step === 'customer-type' && 'Profile'}
-              {step === 'project' && 'Project'}
-              {step === 'size' && 'Size'}
-              {step === 'contact' && 'Contact'}
-              {step === 'price' && 'Price'}
-              {step === 'access' && 'Access'}
-              {step === 'confirm' && 'Confirm'}
-              {step === 'placement' && 'Complete'}
-            </span>
+            <span className="text-[10px] text-muted-foreground">Step {stepIndex} of {totalSteps}</span>
+            <span className="text-[10px] font-medium text-foreground">{stepLabels[step]}</span>
           </div>
         </div>
       </div>
@@ -773,9 +806,7 @@ export function V3QuoteFlow() {
               <span className="text-xs font-semibold text-foreground truncate">Resume your quote?</span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Button size="sm" variant="cta" className="rounded-lg text-xs h-7 px-3" onClick={draft.acceptResume}>
-                Resume
-              </Button>
+              <Button size="sm" variant="cta" className="rounded-lg text-xs h-7 px-3" onClick={draft.acceptResume}>Resume</Button>
               <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7 px-2" onClick={draft.declineResume}>
                 <SkipForward className="w-3 h-3" />
               </Button>
@@ -787,7 +818,7 @@ export function V3QuoteFlow() {
       {/* Content */}
       <div className="p-5 md:p-6">
         {/* Compact service area banner */}
-        {step !== 'zip' && step !== 'placement' && zoneResult && zip && (
+        {step !== 'project-type' && step !== 'zip' && step !== 'placement' && zoneResult && zip && (
           <div className="mb-4 flex items-center justify-between px-3 py-2.5 rounded-xl bg-muted/40 border border-border/50">
             <div className="flex items-center gap-2 min-w-0">
               <MapPin className="w-4 h-4 text-primary shrink-0" />
@@ -804,7 +835,15 @@ export function V3QuoteFlow() {
           </div>
         )}
 
-        {/* Step 1: ZIP */}
+        {/* Step 1: Project Type */}
+        {step === 'project-type' && (
+          <ProjectTypeStep
+            selectedProject={selectedUniversalProject}
+            onSelect={handleProjectTypeSelect}
+          />
+        )}
+
+        {/* Step 2: ZIP */}
         {step === 'zip' && (
           <ZipStep
             zip={zip} setZip={setZip}
@@ -821,22 +860,15 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 2: Customer Type */}
-        {step === 'customer-type' && (
-          <CustomerTypeStep
-            customerType={customerType}
-            onSelect={handleCustomerTypeSelect}
-            goNext={goNext} goBack={goBack}
-          />
-        )}
-
-        {/* Step 3: Project */}
-        {step === 'project' && customerType && (
-          <ProjectStep
-            customerType={customerType}
-            selectedProject={selectedProject}
-            onSelect={handleProjectSelect}
-            goNext={goNext} goBack={goBack}
+        {/* Step 3: Material */}
+        {step === 'material' && (
+          <MaterialStep
+            selectedMaterialGroup={selectedMaterialGroup}
+            selectedMaterial={selectedMaterial}
+            isProjectHeavy={selectedUniversalProject?.isHeavy || false}
+            onSelectGroup={handleMaterialGroupSelect}
+            onSelectMaterial={handleMaterialSelect}
+            goBack={goBack}
           />
         )}
 
@@ -856,7 +888,20 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 5: Contact */}
+        {/* Step 5: Service Customization */}
+        {step === 'service' && (
+          <ServiceCustomizationStep
+            serviceOptions={serviceOptions}
+            onUpdate={(partial) => setServiceOptions(prev => ({ ...prev, ...partial }))}
+            rentalDays={rentalDays}
+            setRentalDays={setRentalDays}
+            isHeavy={isHeavy}
+            goNext={goNext}
+            goBack={goBack}
+          />
+        )}
+
+        {/* Step 6: Contact */}
         {step === 'contact' && (
           <ContactStep
             customerName={customerName} setCustomerName={setCustomerName}
@@ -871,7 +916,7 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 6: Price */}
+        {/* Step 7: Price */}
         {step === 'price' && (
           <PriceStep
             quote={quote} size={size} getSizeLabel={getSizeLabel}
@@ -886,7 +931,7 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 7: Access */}
+        {/* Step 8: Access */}
         {step === 'access' && (
           <AccessStep
             zip={zip} addressResult={addressResult} zoneResult={zoneResult}
@@ -896,7 +941,7 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 8: Confirm */}
+        {/* Step 9: Confirm */}
         {step === 'confirm' && (
           <ConfirmStep
             quote={quote} size={size} getSizeLabel={getSizeLabel}
@@ -913,7 +958,7 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 9: Placement */}
+        {/* Step 10: Placement */}
         {step === 'placement' && (
           <StepTransition stepKey="placement">
             <div className="space-y-5">
@@ -926,7 +971,7 @@ export function V3QuoteFlow() {
                   <div>
                     <p className="font-bold text-foreground text-sm">Order Confirmed</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {getSizeLabel()} — ${quote.subtotal.toLocaleString()} — {selectedProject?.label || 'General'}
+                      {getSizeLabel()} — ${quote.subtotal.toLocaleString()} — {selectedUniversalProject?.label || selectedProject?.label || 'General'}
                     </p>
                   </div>
                 </div>
@@ -995,27 +1040,16 @@ export function V3QuoteFlow() {
                             const fileName = `quotes/${savedQuoteId}/${Date.now()}_placement.png`;
                             const { data: uploadData } = await supabase.storage
                               .from('placements-private')
-                              .upload(fileName, placement.screenshotBlob, {
-                                contentType: 'image/png',
-                                upsert: true,
-                              });
+                              .upload(fileName, placement.screenshotBlob, { contentType: 'image/png', upsert: true });
                             if (uploadData?.path) screenshotUrl = uploadData.path;
                           }
-                          const geometryJson = {
-                            dumpsterRect: placement.dumpsterRect,
-                            truckRect: placement.truckRect,
-                            entry: placement.entry,
-                          };
+                          const geometryJson = { dumpsterRect: placement.dumpsterRect, truckRect: placement.truckRect, entry: placement.entry };
                           await supabase.from('quote_site_placement').insert({
-                            quote_id: savedQuoteId,
-                            geometry_json: geometryJson as never,
-                            screenshot_url: screenshotUrl,
-                            notes: placement.notes || null,
+                            quote_id: savedQuoteId, geometry_json: geometryJson as never,
+                            screenshot_url: screenshotUrl, notes: placement.notes || null,
                           } as never);
                           await supabase.from('timeline_events').insert({
-                            entity_type: 'quote',
-                            entity_id: savedQuoteId,
-                            event_type: 'PLACEMENT_SAVED',
+                            entity_type: 'quote', entity_id: savedQuoteId, event_type: 'PLACEMENT_SAVED',
                             description: `Placement saved: ${placement.dumpsterRect.widthFt}x${placement.dumpsterRect.lengthFt}ft dumpster at (${placement.dumpsterRect.centerLat.toFixed(6)}, ${placement.dumpsterRect.centerLng.toFixed(6)})`,
                             metadata: geometryJson as any,
                           } as any);
@@ -1036,11 +1070,7 @@ export function V3QuoteFlow() {
                   </div>
                   <p className="font-bold text-foreground text-lg">{ORDER_CONFIRMED_TITLE}</p>
                   <p className="text-sm text-muted-foreground mt-1.5">{ORDER_CONFIRMED_SUBTITLE}</p>
-                  <Button
-                    variant="outline" size="sm"
-                    className="mt-4 rounded-xl"
-                    onClick={() => navigate('/')}
-                  >
+                  <Button variant="outline" size="sm" className="mt-4 rounded-xl" onClick={() => navigate('/')}>
                     Back to Home
                   </Button>
                 </div>

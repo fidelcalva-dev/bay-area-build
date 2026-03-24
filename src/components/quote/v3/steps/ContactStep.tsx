@@ -1,9 +1,8 @@
-// V3 Step 5 — Contact / Lead Capture (with Phase A: notes + company name)
-import { User, Phone, Mail, Shield, Clock, ChevronRight, Building2, MessageSquare } from 'lucide-react';
+// V3 Step 6 — Contact / Lead Capture
+import { User, Phone, Mail, Shield, Clock, ChevronRight, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
 import logoCalsan from '@/assets/logo-calsan.jpeg';
 import { StepTransition, BackButton } from './shared';
 import type { ContactStepProps } from './types';
@@ -57,22 +56,20 @@ export function ContactStep({
             />
           </div>
 
-          {/* Company name — contractors & commercial */}
-          {(customerType === 'contractor' || customerType === 'commercial') && (
-            <div>
-              <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-muted-foreground" /> Company Name
-                <span className="text-muted-foreground font-normal">(optional)</span>
-              </label>
-              <Input
-                type="text"
-                placeholder="Your company name"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                className="h-12 rounded-xl border-border/60"
-              />
-            </div>
-          )}
+          {/* Company name — always visible, optional */}
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-muted-foreground" /> Company Name
+              <span className="text-muted-foreground font-normal">(optional)</span>
+            </label>
+            <Input
+              type="text"
+              placeholder="Your company name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              className="h-12 rounded-xl border-border/60"
+            />
+          </div>
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
@@ -99,24 +96,6 @@ export function ContactStep({
               onChange={(e) => setCustomerEmail(e.target.value)}
               className="h-12 rounded-xl border-border/60"
             />
-          </div>
-
-          {/* Customer notes — Phase A */}
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" /> Notes
-              <span className="text-muted-foreground font-normal">(optional)</span>
-            </label>
-            <Textarea
-              placeholder="Tell us anything that helps: difficult access, mixed materials, preferred timing, or special job details."
-              value={customerNotes}
-              onChange={(e) => setCustomerNotes(e.target.value)}
-              className="rounded-xl border-border/60 min-h-[80px] text-sm resize-none"
-              maxLength={500}
-            />
-            {customerNotes.length > 0 && (
-              <p className="text-[10px] text-muted-foreground text-right mt-1">{customerNotes.length}/500</p>
-            )}
           </div>
         </div>
 
