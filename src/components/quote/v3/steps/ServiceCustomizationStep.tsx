@@ -1,7 +1,7 @@
-// V3 Step 5 — Service Customization
+// V3 Step 5 — Service Customization (extras, notes, dump site)
 import {
-  Plus, RotateCcw, Calendar, Scale, MapPin, Camera,
-  MessageSquare, Zap, Building, ChevronRight,
+  Plus, RotateCcw, Scale, MapPin, Camera,
+  MessageSquare, Zap, Building, ChevronRight, Upload,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -31,13 +31,6 @@ interface ServiceCustomizationStepProps {
   goBack: () => void;
 }
 
-const RENTAL_OPTIONS = [
-  { days: 3, label: '1–3 Days', note: 'Short project' },
-  { days: 7, label: '7 Days', note: 'Standard', popular: true },
-  { days: 10, label: '10 Days', note: '+3 extra days' },
-  { days: 14, label: '14 Days', note: '+7 extra days' },
-];
-
 export function ServiceCustomizationStep({
   serviceOptions, onUpdate, rentalDays, setRentalDays, isHeavy, goNext, goBack,
 }: ServiceCustomizationStepProps) {
@@ -57,41 +50,6 @@ export function ServiceCustomizationStep({
           </p>
         </div>
 
-        {/* Rental Duration */}
-        <div>
-          <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-primary" />
-            Rental Period
-          </p>
-          <div className="grid grid-cols-4 gap-2">
-            {RENTAL_OPTIONS.map((opt) => (
-              <button
-                key={opt.days}
-                onClick={() => setRentalDays(opt.days)}
-                className={cn(
-                  'p-2.5 rounded-xl border text-center transition-all duration-150 relative',
-                  rentalDays === opt.days
-                    ? 'border-primary bg-primary/5 shadow-sm'
-                    : 'border-border/60 hover:border-primary/40'
-                )}
-              >
-                {opt.popular && (
-                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                    Standard
-                  </span>
-                )}
-                <p className="text-xs font-bold text-foreground">{opt.label}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{opt.note}</p>
-              </button>
-            ))}
-          </div>
-          {rentalDays > 7 && (
-            <p className="text-[10px] text-muted-foreground mt-2">
-              Extra days at $15/day beyond 7-day standard.
-            </p>
-          )}
-        </div>
-
         {/* Service toggles */}
         <div className="space-y-2.5">
           <p className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -99,76 +57,40 @@ export function ServiceCustomizationStep({
             Additional Services
           </p>
 
-          <label className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-border/60 hover:border-primary/40 transition-colors cursor-pointer">
-            <Checkbox
-              checked={serviceOptions.wantsSwap}
-              onCheckedChange={(v) => onUpdate({ wantsSwap: v === true })}
-              className="mt-0.5"
-            />
-            <div>
-              <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <RotateCcw className="w-3.5 h-3.5 text-primary" />
-                Swap — Dump & Return
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                We pick up full dumpster, dump it, and bring it back same day.
-              </p>
-            </div>
-          </label>
+          <ServiceToggle
+            checked={serviceOptions.wantsSwap}
+            onChange={(v) => onUpdate({ wantsSwap: v })}
+            icon={RotateCcw}
+            title="Swap — Dump & Return"
+            desc="We pick up full dumpster, dump it, and bring it back same day."
+          />
 
-          <label className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-border/60 hover:border-primary/40 transition-colors cursor-pointer">
-            <Checkbox
-              checked={serviceOptions.wantsSameDay}
-              onCheckedChange={(v) => onUpdate({ wantsSameDay: v === true })}
-              className="mt-0.5"
-            />
-            <div>
-              <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-primary" />
-                Same-Day Delivery
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Subject to availability. Rush fees may apply.
-              </p>
-            </div>
-          </label>
+          <ServiceToggle
+            checked={serviceOptions.wantsSameDay}
+            onChange={(v) => onUpdate({ wantsSameDay: v })}
+            icon={Zap}
+            title="Same-Day Delivery"
+            desc="Subject to availability. Rush fees may apply."
+          />
 
-          <label className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-border/60 hover:border-primary/40 transition-colors cursor-pointer">
-            <Checkbox
-              checked={serviceOptions.specialPlacement}
-              onCheckedChange={(v) => onUpdate({ specialPlacement: v === true })}
-              className="mt-0.5"
-            />
-            <div>
-              <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-primary" />
-                Special Placement Needed
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Tight access, backyard, alley, or specific location.
-              </p>
-            </div>
-          </label>
+          <ServiceToggle
+            checked={serviceOptions.specialPlacement}
+            onChange={(v) => onUpdate({ specialPlacement: v })}
+            icon={MapPin}
+            title="Special Placement Needed"
+            desc="Tight access, backyard, alley, or specific location."
+          />
 
-          <label className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-border/60 hover:border-primary/40 transition-colors cursor-pointer">
-            <Checkbox
-              checked={showDumpSite}
-              onCheckedChange={(v) => {
-                setShowDumpSite(v === true);
-                if (!v) onUpdate({ requiredDumpSite: '' });
-              }}
-              className="mt-0.5"
-            />
-            <div>
-              <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Building className="w-3.5 h-3.5 text-primary" />
-                Required Disposal Site
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                You need waste taken to a specific facility.
-              </p>
-            </div>
-          </label>
+          <ServiceToggle
+            checked={showDumpSite}
+            onChange={(v) => {
+              setShowDumpSite(v);
+              if (!v) onUpdate({ requiredDumpSite: '' });
+            }}
+            icon={Building}
+            title="Required Disposal Site"
+            desc="You need waste taken to a specific facility."
+          />
 
           {showDumpSite && (
             <div className="pl-9">
@@ -185,14 +107,28 @@ export function ServiceCustomizationStep({
           )}
         </div>
 
+        {/* Photo upload hint */}
+        <div className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-dashed border-border/60 hover:border-primary/40 transition-colors cursor-pointer bg-muted/10">
+          <Upload className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-foreground">Have a photo of the job site?</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              Text it to (510) 680-2150 after submitting. It helps us recommend the right size and plan delivery.
+            </p>
+          </div>
+        </div>
+
         {/* Notes */}
         <div>
           <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
             <MessageSquare className="w-3.5 h-3.5 text-primary" />
             Tell Us Anything That Helps
           </p>
+          <p className="text-[11px] text-muted-foreground mb-2">
+            Examples: difficult access, mixed materials, second dumpster, exact timing, special disposal site, or anything unusual about the job.
+          </p>
           <Textarea
-            placeholder="Examples: difficult access, mixed materials, second dumpster, exact timing, special disposal site, or anything unusual about the job."
+            placeholder="Your notes help us give you a better price..."
             value={serviceOptions.customerNotes}
             onChange={(e) => onUpdate({ customerNotes: e.target.value })}
             className="rounded-xl border-border/60 min-h-[80px] text-sm resize-none"
@@ -223,5 +159,33 @@ export function ServiceCustomizationStep({
         </button>
       </div>
     </StepTransition>
+  );
+}
+
+// Reusable toggle row
+function ServiceToggle({
+  checked, onChange, icon: Icon, title, desc,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <label className="flex items-start gap-3 px-3.5 py-3 rounded-xl border border-border/60 hover:border-primary/40 transition-colors cursor-pointer">
+      <Checkbox
+        checked={checked}
+        onCheckedChange={(v) => onChange(v === true)}
+        className="mt-0.5"
+      />
+      <div>
+        <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
+          <Icon className="w-3.5 h-3.5 text-primary" />
+          {title}
+        </p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">{desc}</p>
+      </div>
+    </label>
   );
 }
