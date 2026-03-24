@@ -1,12 +1,18 @@
-// V3 Step 8 — Confirm / Order Summary (with Phase A: notes + rental days display)
+// V3 Step 9 — Proposal Summary / Confirm
 import {
-  CheckCircle, Shield, Clock, Loader2,
+  CheckCircle, Shield, Clock, Loader2, RotateCcw, Zap, MapPin, Building, MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { getStepTitles, getButtons } from '../copy';
 import { StepTransition, BackButton } from './shared';
 import type { ConfirmStepProps } from './types';
+import type { ServiceOptions } from './ServiceCustomizationStep';
+
+interface ExtendedConfirmStepProps extends ConfirmStepProps {
+  serviceOptions?: ServiceOptions;
+  selectedMaterialLabel?: string;
+}
 
 export function ConfirmStep({
   quote, size, getSizeLabel, selectedProject, isHeavy,
@@ -14,7 +20,10 @@ export function ConfirmStep({
   zip, addressResult, distanceCalc, accessData,
   termsAccepted, setTermsAccepted, isSubmitting, onConfirm,
   rentalDays, wantsSwap, goBack,
-}: ConfirmStepProps) {
+  serviceOptions, selectedMaterialLabel,
+}: ExtendedConfirmStepProps) {
+  const hasExtras = wantsSwap || serviceOptions?.wantsSameDay || serviceOptions?.specialPlacement || serviceOptions?.requiredDumpSite;
+
   return (
     <StepTransition stepKey="confirm">
       <div className="space-y-5">
@@ -22,16 +31,16 @@ export function ConfirmStep({
 
         <div>
           <h4 className="text-xl font-bold text-foreground tracking-tight mb-1">
-            {getStepTitles().CONFIRM_STEP_TITLE}
+            Your Proposal Summary
           </h4>
-          <p className="text-sm text-muted-foreground">{getButtons().CONFIRM_HELP}</p>
+          <p className="text-sm text-muted-foreground">Review everything before confirming. No hidden fees.</p>
         </div>
 
-        {/* Quote Summary */}
+        {/* Quote Summary Card */}
         <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
-          {/* Dumpster Details */}
+          {/* Line Item: Dumpster */}
           <div className="p-4 border-b border-border/50">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Dumpster Details</p>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Service Details</p>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Dumpster Size</span>
@@ -43,7 +52,7 @@ export function ConfirmStep({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Material</span>
-                <span className="font-semibold text-foreground">{isHeavy ? 'Heavy Material' : 'General Debris'}</span>
+                <span className="font-semibold text-foreground">{selectedMaterialLabel || (isHeavy ? 'Heavy Material' : 'General Debris')}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Rental Period</span>
@@ -55,14 +64,41 @@ export function ConfirmStep({
                   <span className="font-semibold text-foreground">{quote.includedTons} tons</span>
                 </div>
               )}
-              {wantsSwap && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Swap Requested</span>
-                  <span className="font-semibold text-primary">Yes</span>
-                </div>
-              )}
             </div>
           </div>
+
+          {/* Extras / Service Options */}
+          {hasExtras && (
+            <div className="p-4 border-b border-border/50">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">Additional Services</p>
+              <div className="space-y-2">
+                {wantsSwap && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <RotateCcw className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-foreground">Swap — Dump & Return</span>
+                  </div>
+                )}
+                {serviceOptions?.wantsSameDay && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Zap className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-foreground">Same-Day Delivery Requested</span>
+                  </div>
+                )}
+                {serviceOptions?.specialPlacement && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-foreground">Special Placement Needed</span>
+                  </div>
+                )}
+                {serviceOptions?.requiredDumpSite && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Building className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-foreground">Required Dump Site: {serviceOptions.requiredDumpSite}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Location */}
           <div className="p-4 border-b border-border/50">
@@ -167,10 +203,23 @@ export function ConfirmStep({
           {/* Customer notes display */}
           {customerNotes && (
             <div className="px-4 py-3 border-t border-border/50 bg-muted/20">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Customer Notes</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <MessageSquare className="w-3 h-3" /> Customer Notes
+              </p>
               <p className="text-xs text-foreground leading-relaxed">{customerNotes}</p>
             </div>
           )}
+        </div>
+
+        {/* Key Policies */}
+        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-2">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Key Policies</p>
+          <p className="text-[11px] text-muted-foreground">• Standard {rentalDays}-day rental. Extra days at $15/day.</p>
+          {!quote.isFlatFee && (
+            <p className="text-[11px] text-muted-foreground">• Overage: $165/ton beyond included {quote.includedTons}T.</p>
+          )}
+          <p className="text-[11px] text-muted-foreground">• Do not exceed fill line. No hazardous materials.</p>
+          <p className="text-[11px] text-muted-foreground">• Final price confirmed after location and material review.</p>
         </div>
 
         {/* Terms */}

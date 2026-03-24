@@ -954,6 +954,8 @@ export function V3QuoteFlow() {
             termsAccepted={termsAccepted} setTermsAccepted={setTermsAccepted}
             isSubmitting={isSubmitting} onConfirm={handleSaveQuote}
             rentalDays={rentalDays} wantsSwap={wantsSwap}
+            serviceOptions={serviceOptions}
+            selectedMaterialLabel={selectedMaterial?.label}
             goNext={goNext} goBack={goBack}
           />
         )}
