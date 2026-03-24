@@ -155,7 +155,7 @@ export interface DistanceCalcResult {
   distance: {
     yard: { id: string; name: string };
     distanceMiles: number;
-    distanceMinutes: number;
+    distanceMinutes?: number;
     priceAdjustment?: number;
     bracket?: { bracketName: string };
     durationTrafficMin?: number;

@@ -776,7 +776,7 @@ export function V3QuoteFlow() {
               <Button size="sm" variant="cta" className="rounded-lg text-xs h-7 px-3" onClick={draft.acceptResume}>
                 Resume
               </Button>
-              <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7 px-2" onClick={draft.dismissResume}>
+              <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7 px-2" onClick={draft.declineResume}>
                 <SkipForward className="w-3 h-3" />
               </Button>
             </div>
