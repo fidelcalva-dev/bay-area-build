@@ -72,12 +72,16 @@ interface TabDef {
 const TABS: TabDef[] = [
   // ── Core Pricing ──
   { value: 'dashboard', label: 'Overview', icon: LayoutDashboard, group: 'Core', description: 'Pricing summary, key metrics, quick navigation' },
+  { value: 'sizes', label: 'Dumpster Sizes', icon: Package, group: 'Core', description: 'Canonical size catalog — General + Heavy' },
+  { value: 'waste-catalog', label: 'Waste / Materials', icon: Layers, group: 'Core', description: 'Full material catalog with groups and pricing models' },
+  { value: 'waste-profiles', label: 'Waste Profiles', icon: Weight, group: 'Core', description: 'Weight-behavior profiles — density, included tons, overage' },
   { value: 'overview', label: 'General Debris', icon: DollarSign, group: 'Core', description: 'Sizes, base prices, included tons, rental periods' },
   { value: 'general-edit', label: 'Edit General Prices', icon: DollarSign, group: 'Core', description: 'DB-backed editable general debris pricing' },
   { value: 'heavy', label: 'Heavy (Location)', icon: MapPin, group: 'Core', description: 'Market-based dump fees, size pricing by tier' },
   { value: 'heavy-rates', label: 'Edit Heavy Rates', icon: Scale, group: 'Core', description: 'Editable heavy material service costs and dump fees' },
   { value: 'materials', label: 'Material Rules', icon: AlertTriangle, group: 'Core', description: 'Material classes, dump fees, review rules' },
   { value: 'policies', label: 'Fees & Policies', icon: ShieldCheck, group: 'Core', description: 'Editable operational fees and surcharges' },
+  { value: 'rental-terms', label: 'Rental Days', icon: Calendar, group: 'Core', description: 'Rental period options and extra day fees' },
   // ── Geography ──
   { value: 'zones', label: 'Zone Surcharges', icon: MapPin, group: 'Geography', description: 'Distance-based zone surcharges (A-E)' },
   { value: 'tolls', label: 'Toll Surcharges', icon: Truck, group: 'Geography', description: 'Toll-based surcharges by zone and yard' },
@@ -86,6 +90,7 @@ const TABS: TabDef[] = [
   { value: 'facilities', label: 'Facility Costs', icon: Building2, group: 'Geography', description: 'Disposal site costs and surcharge rules' },
   { value: 'cities', label: 'City Display', icon: Globe, group: 'Geography', description: 'City principal ZIPs for SEO pricing display' },
   { value: 'city-rates', label: 'City Rates', icon: DollarSign, group: 'Geography', description: 'Per-city extra ton rates and heavy base pricing' },
+  { value: 'dump-site', label: 'Dump Site Rules', icon: Navigation, group: 'Geography', description: 'Customer-required disposal site pricing rules' },
   // ── Fees & Tiers ──
   { value: 'rush', label: 'Rush Delivery', icon: Zap, group: 'Fees', description: 'Same-day, next-day, and priority fees' },
   { value: 'contractor', label: 'Contractor Tiers', icon: Users, group: 'Fees', description: 'Tier discounts and commercial rules' },
@@ -95,6 +100,8 @@ const TABS: TabDef[] = [
   { value: 'warnings-caps', label: 'Warnings & Caps', icon: ShieldCheck, group: 'Rules', description: 'Warning thresholds, price caps, overrides' },
   { value: 'volume', label: 'Volume Commitments', icon: Users, group: 'Rules', description: 'Volume tier discounts and commitments' },
   { value: 'customer-rules', label: 'Customer Type Rules', icon: Users, group: 'Rules', description: 'Auto-detection rules for customer type scoring' },
+  { value: 'public-display', label: 'Public Quote Config', icon: Globe, group: 'Rules', description: 'Controls what the website quote shows publicly' },
+  { value: 'crm-rules', label: 'CRM Calculator', icon: Calculator, group: 'Rules', description: 'Internal calculator rules and capabilities' },
   // ── Analysis ──
   { value: 'simulator', label: 'Simulator', icon: Calculator, group: 'Analysis', description: 'Test pricing for any ZIP / material / size' },
   { value: 'readiness', label: 'Readiness', icon: Gauge, group: 'Analysis', description: 'System-wide pricing integrity score' },
