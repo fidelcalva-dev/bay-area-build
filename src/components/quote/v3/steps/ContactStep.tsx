@@ -1,4 +1,5 @@
 // V3 Step 6 — Contact / Lead Capture
+import React from 'react';
 import { User, Phone, Mail, Shield, Clock, ChevronRight, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +15,11 @@ export function ContactStep({
   consentSms, setConsentSms, consentTerms, setConsentTerms,
   customerType, goNext, goBack,
 }: ContactStepProps) {
+  const [phoneTouched, setPhoneTouched] = React.useState(false);
+
+  const phoneDigits = customerPhone.replace(/\D/g, '');
+  const phoneValid = phoneDigits.length === 10;
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
     if (raw.length >= 7) {
@@ -81,8 +87,12 @@ export function ContactStep({
               placeholder="(510) 555-1234"
               value={customerPhone}
               onChange={handlePhoneChange}
-              className="h-12 rounded-xl border-border/60"
+              onBlur={() => setPhoneTouched(true)}
+              className={`h-12 rounded-xl border-border/60 ${phoneTouched && !phoneValid ? 'border-destructive focus-visible:ring-destructive' : ''}`}
             />
+            {phoneTouched && !phoneValid && (
+              <p className="text-xs text-destructive mt-1">Phone must be exactly 10 digits</p>
+            )}
           </div>
           <div>
             <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
@@ -143,7 +153,7 @@ export function ContactStep({
           size="lg"
           className="w-full h-14 rounded-xl text-base font-semibold"
           onClick={goNext}
-          disabled={!customerName || !customerPhone || !consentSms || !consentTerms}
+          disabled={!customerName || !phoneValid || !consentSms || !consentTerms}
         >
           See My Exact Price
           <ChevronRight className="w-5 h-5 ml-1" />
