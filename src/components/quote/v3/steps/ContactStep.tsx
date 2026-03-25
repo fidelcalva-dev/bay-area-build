@@ -14,6 +14,11 @@ export function ContactStep({
   consentSms, setConsentSms, consentTerms, setConsentTerms,
   customerType, goNext, goBack,
 }: ContactStepProps) {
+  const [phoneTouched, setPhoneTouched] = React.useState(false);
+
+  const phoneDigits = customerPhone.replace(/\D/g, '');
+  const phoneValid = phoneDigits.length === 10;
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
     if (raw.length >= 7) {
