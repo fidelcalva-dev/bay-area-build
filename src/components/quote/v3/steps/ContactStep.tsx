@@ -1,4 +1,5 @@
 // V3 Step 6 — Contact / Lead Capture
+import React from 'react';
 import { User, Phone, Mail, Shield, Clock, ChevronRight, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
