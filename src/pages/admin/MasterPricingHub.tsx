@@ -11,7 +11,8 @@ import PricingOverviewPanel from '@/components/admin/pricing/PricingOverviewPane
 import {
   DollarSign, Scale, MapPin, Users, Plus, Gauge, LayoutDashboard,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
-  Loader2, ShieldCheck, FileText, Truck
+  Loader2, ShieldCheck, FileText, Truck, Package, Layers, Weight,
+  Calendar, Navigation
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
