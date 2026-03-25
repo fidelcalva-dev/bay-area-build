@@ -45,6 +45,14 @@ const EditableGeneralDebrisPanel = lazy(() => import('@/components/admin/pricing
 const EditableHeavyPricingPanel = lazy(() => import('@/components/admin/pricing/EditableHeavyPricingPanel'));
 const EditablePoliciesPanel = lazy(() => import('@/components/admin/pricing/EditablePoliciesPanel'));
 const PricingAuditLogPanel = lazy(() => import('@/components/admin/pricing/PricingAuditLogPanel'));
+// New catalog panels
+const SizeCatalogPanel = lazy(() => import('@/pages/admin/pricing/SizeCatalogPanel'));
+const WasteMaterialCatalogPanel = lazy(() => import('@/pages/admin/pricing/WasteMaterialCatalogPanel'));
+const WasteProfilesPanel = lazy(() => import('@/pages/admin/pricing/WasteProfilesPanel'));
+const RentalTermsPanel = lazy(() => import('@/pages/admin/pricing/RentalTermsPanel'));
+const CustomerDumpSitePanel = lazy(() => import('@/pages/admin/pricing/CustomerDumpSitePanel'));
+const PublicQuoteDisplayPanel = lazy(() => import('@/pages/admin/pricing/PublicQuoteDisplayPanel'));
+const CrmCalculatorRulesPanel = lazy(() => import('@/pages/admin/pricing/CrmCalculatorRulesPanel'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
