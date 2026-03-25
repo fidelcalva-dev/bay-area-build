@@ -4656,6 +4656,63 @@ export type Database = {
           },
         ]
       }
+      customer_required_dump_rules: {
+        Row: {
+          active: boolean
+          admin_fee: number
+          created_at: string
+          customer_visible: boolean
+          dump_requirement_code: string
+          facility_name: string | null
+          facility_type: string | null
+          flat_premium: number
+          id: string
+          notes: string | null
+          per_mile_delta: number
+          per_ton_delta: number
+          per_yard_delta: number
+          pricing_mode: string
+          requires_approval: boolean
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          admin_fee?: number
+          created_at?: string
+          customer_visible?: boolean
+          dump_requirement_code: string
+          facility_name?: string | null
+          facility_type?: string | null
+          flat_premium?: number
+          id?: string
+          notes?: string | null
+          per_mile_delta?: number
+          per_ton_delta?: number
+          per_yard_delta?: number
+          pricing_mode?: string
+          requires_approval?: boolean
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          admin_fee?: number
+          created_at?: string
+          customer_visible?: boolean
+          dump_requirement_code?: string
+          facility_name?: string | null
+          facility_type?: string | null
+          flat_premium?: number
+          id?: string
+          notes?: string | null
+          per_mile_delta?: number
+          per_ton_delta?: number
+          per_yard_delta?: number
+          pricing_mode?: string
+          requires_approval?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customer_sessions: {
         Row: {
           created_at: string
@@ -20207,6 +20264,60 @@ export type Database = {
           validity_end_date?: string
           validity_start_date?: string
           volume_tier?: Database["public"]["Enums"]["volume_tier"]
+        }
+        Relationships: []
+      }
+      waste_profiles: {
+        Row: {
+          active: boolean
+          allowed_sizes_json: Json
+          created_at: string
+          description: string | null
+          estimated_density: string | null
+          id: string
+          included_tons_by_size_json: Json
+          label: string
+          notes: string | null
+          overage_rate: number
+          public_visible: boolean
+          requires_manual_review: boolean
+          sort_order: number
+          updated_at: string
+          waste_profile_code: string
+        }
+        Insert: {
+          active?: boolean
+          allowed_sizes_json?: Json
+          created_at?: string
+          description?: string | null
+          estimated_density?: string | null
+          id?: string
+          included_tons_by_size_json?: Json
+          label: string
+          notes?: string | null
+          overage_rate?: number
+          public_visible?: boolean
+          requires_manual_review?: boolean
+          sort_order?: number
+          updated_at?: string
+          waste_profile_code: string
+        }
+        Update: {
+          active?: boolean
+          allowed_sizes_json?: Json
+          created_at?: string
+          description?: string | null
+          estimated_density?: string | null
+          id?: string
+          included_tons_by_size_json?: Json
+          label?: string
+          notes?: string | null
+          overage_rate?: number
+          public_visible?: boolean
+          requires_manual_review?: boolean
+          sort_order?: number
+          updated_at?: string
+          waste_profile_code?: string
         }
         Relationships: []
       }
