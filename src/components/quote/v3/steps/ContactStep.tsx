@@ -87,8 +87,12 @@ export function ContactStep({
               placeholder="(510) 555-1234"
               value={customerPhone}
               onChange={handlePhoneChange}
-              className="h-12 rounded-xl border-border/60"
+              onBlur={() => setPhoneTouched(true)}
+              className={`h-12 rounded-xl border-border/60 ${phoneTouched && !phoneValid ? 'border-destructive focus-visible:ring-destructive' : ''}`}
             />
+            {phoneTouched && !phoneValid && (
+              <p className="text-xs text-destructive mt-1">Phone must be exactly 10 digits</p>
+            )}
           </div>
           <div>
             <label className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
