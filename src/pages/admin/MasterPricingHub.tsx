@@ -212,12 +212,16 @@ export default function MasterPricingHub() {
           <main className="flex-1 overflow-y-auto">
              <Suspense fallback={<TabSpinner />}>
               {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
+              {activeTab === 'sizes' && <SizeCatalogPanel />}
+              {activeTab === 'waste-catalog' && <WasteMaterialCatalogPanel />}
+              {activeTab === 'waste-profiles' && <WasteProfilesPanel />}
               {activeTab === 'overview' && <PricingManager />}
               {activeTab === 'general-edit' && <EditableGeneralDebrisPanel />}
               {activeTab === 'heavy' && <LocationPricingManager />}
               {activeTab === 'heavy-rates' && <EditableHeavyPricingPanel />}
               {activeTab === 'materials' && <MaterialRulesDashboard />}
               {activeTab === 'policies' && <EditablePoliciesPanel />}
+              {activeTab === 'rental-terms' && <RentalTermsPanel />}
               {activeTab === 'zones' && <ZoneSurchargesConfig />}
               {activeTab === 'tolls' && <TollSurchargesManager />}
               {activeTab === 'zips' && <ZipHealthDashboard />}
@@ -225,6 +229,7 @@ export default function MasterPricingHub() {
               {activeTab === 'facilities' && <FacilityCostDashboard />}
               {activeTab === 'cities' && <CityDisplayZips />}
               {activeTab === 'city-rates' && <CityRatesManager />}
+              {activeTab === 'dump-site' && <CustomerDumpSitePanel />}
               {activeTab === 'rush' && <RushDeliveryConfig />}
               {activeTab === 'contractor' && <ContractorPricingConfig />}
               {activeTab === 'extras' && <ExtrasCatalogConfig />}
@@ -232,6 +237,8 @@ export default function MasterPricingHub() {
               {activeTab === 'warnings-caps' && <WarningsCapsManager />}
               {activeTab === 'volume' && <VolumeCommitmentsManager />}
               {activeTab === 'customer-rules' && <CustomerTypeRulesPage />}
+              {activeTab === 'public-display' && <PublicQuoteDisplayPanel />}
+              {activeTab === 'crm-rules' && <CrmCalculatorRulesPanel />}
               {activeTab === 'simulator' && <PricingSimulator />}
               {activeTab === 'readiness' && <PricingReadinessDashboard />}
               {activeTab === 'rush-health' && <RushHealthDashboard />}
