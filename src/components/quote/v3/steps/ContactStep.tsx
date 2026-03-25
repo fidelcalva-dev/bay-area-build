@@ -153,7 +153,7 @@ export function ContactStep({
           size="lg"
           className="w-full h-14 rounded-xl text-base font-semibold"
           onClick={goNext}
-          disabled={!customerName || !customerPhone || !consentSms || !consentTerms}
+          disabled={!customerName || !phoneValid || !consentSms || !consentTerms}
         >
           See My Exact Price
           <ChevronRight className="w-5 h-5 ml-1" />
