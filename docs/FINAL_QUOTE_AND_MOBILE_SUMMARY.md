@@ -2,14 +2,14 @@
 
 ## Website Quote Redesign ✅
 
-The V3 quote flow has been redesigned as a 10-step guided proposal:
+The V3 quote flow is a 10-step guided proposal:
 
 1. **Project Type** — 11 universal project types with suggested sizes
 2. **ZIP / Address** — Yard matching, ETA display, availability meter
 3. **Material** — General Debris / Heavy Materials / Not Sure groups with 25+ sub-types
 4. **Size** — Selling cards with Recommended/Budget/More Capacity badges
-5. **Service Customization** — Swap, same-day, special placement, required dump site, notes, photo upload hint
-6. **Contact** — Name, phone, email, company, SMS consent, terms consent
+5. **Service Customization** — Rental days (3/7/10/14), swap, same-day, special placement, required dump site, notes, photo upload hint
+6. **Contact** — Name, phone (10-digit enforced), email, company, SMS consent, terms consent, Calsan logo
 7. **Price** — Price range, rental day selector, inclusions, availability, trust elements
 8. **Access** — Placement constraints, gate code
 9. **Confirm** — Full proposal summary with service options, key policies, pricing breakdown
@@ -24,7 +24,7 @@ The V3 quote flow has been redesigned as a 10-step guided proposal:
 
 ## New Customer Options ✅
 
-- **Rental Days**: 3, 7, 10, 14 days with $15/day extra
+- **Rental Days**: 3, 7, 10, 14 days with $15/day extra (visual selector)
 - **Swap / Dump & Return**: Toggle in Service step
 - **Same-Day Delivery**: Request with rush fee awareness
 - **Special Placement**: Flag for tight access, backyard, alley

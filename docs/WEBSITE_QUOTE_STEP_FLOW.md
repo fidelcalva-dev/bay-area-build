@@ -7,7 +7,7 @@ Step 1: Project Type → What's your project? (11 universal types)
 Step 2: ZIP / Address → Where do you need service? (yard match, ETA)
 Step 3: Material → What type of waste? (General / Heavy / Not Sure)
 Step 4: Size → Choose Your Dumpster Size (selling cards with badges)
-Step 5: Service → Customize Your Service (swap, same-day, dump site, notes)
+Step 5: Service → Customize Your Service (rental days, swap, same-day, dump site, notes)
 Step 6: Contact → Who should we contact? (name, phone, email, company)
 Step 7: Price → Your Price Range (rental days, inclusions, availability)
 Step 8: Access → Placement & Access (constraints, gate code)
@@ -32,14 +32,14 @@ Data is saved at each transition via:
 | material_group | 3 | Yes |
 | material_detail | 3 | Yes |
 | size | 4 | Yes |
-| rental_days | 5/7 | Yes (default 7) |
+| rental_days | 5 | Yes (default 7) |
 | wants_swap | 5 | No |
 | wants_same_day | 5 | No |
 | special_placement | 5 | No |
 | required_dump_site | 5 | No |
 | customer_notes | 5 | No |
 | customer_name | 6 | Yes |
-| customer_phone | 6 | Yes |
+| customer_phone | 6 | Yes (10 digits) |
 | customer_email | 6 | No |
 | company_name | 6 | No |
 | consent_sms | 6 | Yes |
@@ -53,6 +53,25 @@ Data is saved at each transition via:
 
 - Step 2: Licensed & Insured, Real Local Yard, Transparent Pricing, Same-Day Available
 - Step 4: No hidden fees, Need help? Call us
-- Step 6: Secure & private, 15-min response
+- Step 5: Photo upload hint (text to 510-680-2150)
+- Step 6: Secure & private, 15-min response, Calsan logo
 - Step 7: Real local yard, Transparent pricing, Bay Area since 2009
 - Step 9: Licensed & Insured, 15-min response
+
+## Rental Days Options (Step 5)
+
+| Option | Extra Cost |
+|--------|-----------|
+| 3 days | Short-term |
+| 7 days | Standard (included) |
+| 10 days | +$45 |
+| 14 days | +$105 |
+
+## Service Customization (Step 5)
+
+- Swap — Dump & Return
+- Same-Day Delivery
+- Special Placement
+- Required Disposal Site (with facility name capture)
+- Customer Notes (500 char)
+- Photo Upload Hint
