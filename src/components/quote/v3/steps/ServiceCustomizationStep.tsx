@@ -103,7 +103,43 @@ export function ServiceCustomizationStep({
               <p className="text-[10px] text-muted-foreground mt-1">
                 Pricing may be adjusted after review for custom dump sites.
               </p>
-            </div>
+          </div>
+          )}
+        </div>
+
+        {/* Rental Days Selector */}
+        <div>
+          <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Scale className="w-3.5 h-3.5 text-primary" />
+            Rental Duration
+          </p>
+          <p className="text-[11px] text-muted-foreground mb-2.5">
+            Standard is 7 days. Extra days are $15/day.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {[3, 7, 10, 14].map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setRentalDays(d)}
+                className={cn(
+                  'px-3 py-3 rounded-xl border text-center transition-all',
+                  rentalDays === d
+                    ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm'
+                    : 'border-border/60 text-muted-foreground hover:border-primary/40'
+                )}
+              >
+                <span className="text-base font-semibold block">{d}</span>
+                <span className="text-[10px]">days</span>
+              </button>
+            ))}
+          </div>
+          {rentalDays !== 7 && (
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              {rentalDays < 7
+                ? `Short-term rental (${rentalDays} days)`
+                : `+$${(rentalDays - 7) * 15} for ${rentalDays - 7} extra days`}
+            </p>
           )}
         </div>
 
