@@ -106,16 +106,16 @@ const publicCore: RouteEntry[] = [
   { path: '/why-calsan', name: 'Why Calsan', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/why-local-yards', name: 'Why Local Yards', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/not-a-broker', name: 'Not A Broker', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/technology', name: 'Technology', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
+  { path: '/technology', name: 'Technology', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
   { path: '/capacity-guide', name: 'Capacity Guide', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/visualizer', name: 'Dumpster Visualizer', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
+  { path: '/visualizer', name: 'Dumpster Visualizer', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
   { path: '/contractors', name: 'Contractors', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/contractor-best-practices', name: 'Contractor Best Practices', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/contractor-resources', name: 'Contractor Resources', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/careers', name: 'Careers', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/waste-vision', name: 'WasteVision AI', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/green-impact', name: 'Green Impact Map', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/green-halo', name: 'Green Halo', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
+  { path: '/waste-vision', name: 'WasteVision AI', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
+  { path: '/green-impact', name: 'Green Impact Map', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
+  { path: '/green-halo', name: 'Green Halo', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
 ];
 
 const publicQuoteContact: RouteEntry[] = [

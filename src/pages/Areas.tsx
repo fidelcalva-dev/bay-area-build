@@ -249,7 +249,7 @@ export default function Areas() {
             <span className="text-muted-foreground">•</span>
             <Link to="/dumpster-rental-south-bay" className="text-primary hover:underline">South Bay</Link>
             <span className="text-muted-foreground">•</span>
-            <Link to="/dumpster-rental/san-francisco" className="text-primary hover:underline">San Francisco</Link>
+            <Link to="/dumpster-rental-san-francisco-ca" className="text-primary hover:underline">San Francisco</Link>
             <span className="text-muted-foreground">•</span>
             <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
           </div>

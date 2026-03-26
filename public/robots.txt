@@ -34,9 +34,11 @@ Disallow: /quick-order
 Disallow: /download-price-list
 Disallow: /waste-vision
 Disallow: /green-impact
+Disallow: /green-halo
 Disallow: /technology
 Disallow: /visualizer
 Disallow: /thank-you
 Disallow: /set-password
+Disallow: /schedule-delivery
 
 Sitemap: https://calsandumpsterspro.com/sitemap.xml
