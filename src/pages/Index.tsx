@@ -679,6 +679,21 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ========== SECTION 15 — CONTACT US CTA ========== */}
+      <section className="py-10 md:py-14 bg-muted">
+        <div className="container-narrow text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Have Questions?</h2>
+          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+            Reach out to our team — we're here to help you pick the right dumpster and get it delivered fast.
+          </p>
+          <Button asChild size="lg" className="rounded-full font-semibold px-10 text-base shadow-cta">
+            <Link to="/contact-us">
+              Contact Us
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       {/* Build fingerprint */}
       {import.meta.env.DEV ? (
         <div className="fixed bottom-2 right-2 z-[9999] bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded pointer-events-none">

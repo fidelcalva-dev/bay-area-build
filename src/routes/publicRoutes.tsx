@@ -38,6 +38,7 @@ const Technology = lazy(() => import("@/pages/Technology"));
 const WhyCalsan = lazy(() => import("@/pages/WhyCalsan"));
 const BlogArticle = lazy(() => import("@/pages/BlogArticle"));
 const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
+const ContactUs = lazy(() => import("@/pages/ContactUs"));
 
 // Auth pages
 const StaffLogin = lazy(() => import("@/pages/StaffLogin"));
