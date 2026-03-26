@@ -108,7 +108,7 @@ const publicCore: RouteEntry[] = [
   { path: '/not-a-broker', name: 'Not A Broker', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/technology', name: 'Technology', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
   { path: '/capacity-guide', name: 'Capacity Guide', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
-  { path: '/visualizer', name: 'Dumpster Visualizer', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
+  { path: '/visualizer', name: 'Dumpster Visualizer', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: false, mounted: true },
   { path: '/contractors', name: 'Contractors', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/contractor-best-practices', name: 'Contractor Best Practices', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
   { path: '/contractor-resources', name: 'Contractor Resources', group: 'PUBLIC_WEBSITE', subcategory: 'Core', isProtected: false, indexable: true, mounted: true },
