@@ -41,6 +41,10 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/quote/contractor', changefreq: 'monthly', priority: 0.8 },
   // Utility/demo pages excluded from sitemap: green-halo, green-impact, waste-vision, visualizer, technology
   // /locations excluded — redirects to /areas
+  { url: '/why-local-yards', changefreq: 'monthly', priority: 0.7 },
+  { url: '/not-a-broker', changefreq: 'monthly', priority: 0.7 },
+  { url: '/how-it-works', changefreq: 'monthly', priority: 0.7 },
+  { url: '/why-calsan', changefreq: 'monthly', priority: 0.7 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   // Hub pages — only active regions in sitemap
