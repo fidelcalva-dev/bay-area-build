@@ -65,6 +65,7 @@ export function getPublicRoutes() {
     <Route key="blog" path="/blog" element={<SuspenseRoute><Blog /></SuspenseRoute>} />,
     <Route key="blog-article" path="/blog/:articleSlug" element={<SuspenseRoute><BlogArticle /></SuspenseRoute>} />,
     <Route key="sitemap" path="/sitemap.xml" element={<SuspenseRoute><SitemapPage /></SuspenseRoute>} />,
+    <Route key="contact-us" path="/contact-us" element={<SuspenseRoute><ContactUs /></SuspenseRoute>} />,
     <Route key="careers" path="/careers" element={<SuspenseRoute><Careers /></SuspenseRoute>} />,
     <Route key="download-price-list" path="/download-price-list" element={<SuspenseRoute><DownloadPriceList /></SuspenseRoute>} />,
     <Route key="thank-you" path="/thank-you" element={<SuspenseRoute><ThankYou /></SuspenseRoute>} />,
