@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,7 +74,26 @@ export default function ContactUs() {
 
     setSubmitting(true);
     try {
-      // Future: send to lead-ingest edge function
+      const sizeNum = form.size.match(/(\d+)/)?.[1];
+      const { error } = await supabase.functions.invoke('lead-ingest', {
+        body: {
+          source_channel: 'CONTACT_FORM',
+          source_page: '/contact-us',
+          name: form.name.trim(),
+          phone: phoneValidation?.formatted || form.phone.trim(),
+          email: form.email.trim(),
+          city: form.city.trim(),
+          zip: form.postalCode.trim(),
+          material_category: form.wasteType,
+          size_preference: form.size,
+          selected_size: sizeNum ? Number(sizeNum) : undefined,
+          consent_status: 'OPTED_IN',
+          last_step_completed: 'contact_captured',
+        },
+      });
+
+      if (error) throw error;
+
       toast({
         title: 'Quote request sent!',
         description: "We'll get back to you shortly.",
