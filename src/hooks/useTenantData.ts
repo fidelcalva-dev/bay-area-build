@@ -33,11 +33,10 @@ export function useTenantQuery(
     queryKey: [table, tenantId, options?.filters],
     queryFn: async () => {
       if (!tenantId) return [];
-      let query = supabase
-        .from(table)
-        .select(options?.select ?? '*')
-        .eq('tenant_id', tenantId);
+      // Use any to avoid deep type instantiation with dynamic table names
+      const baseQuery = (supabase.from as any)(table).select(options?.select ?? '*').eq('tenant_id', tenantId);
 
+      let query = baseQuery;
       if (options?.filters) {
         for (const [key, value] of Object.entries(options.filters)) {
           query = query.eq(key, value);
