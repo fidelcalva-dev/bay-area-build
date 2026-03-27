@@ -3290,6 +3290,182 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {
+          address: string | null
+          analytics_ids: Json | null
+          brand_name: string | null
+          company_name: string
+          created_at: string
+          domain: string | null
+          email: string | null
+          footer_config: Json | null
+          ghl_subaccount_id: string | null
+          header_config: Json | null
+          id: string
+          legacy_brand_name: string | null
+          legal_entity_name: string | null
+          license_classification: string | null
+          license_number: string | null
+          logo_url: string | null
+          operating_locations: string[] | null
+          payment_account_id: string | null
+          phone: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          seo_config: Json | null
+          settings: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          analytics_ids?: Json | null
+          brand_name?: string | null
+          company_name: string
+          created_at?: string
+          domain?: string | null
+          email?: string | null
+          footer_config?: Json | null
+          ghl_subaccount_id?: string | null
+          header_config?: Json | null
+          id?: string
+          legacy_brand_name?: string | null
+          legal_entity_name?: string | null
+          license_classification?: string | null
+          license_number?: string | null
+          logo_url?: string | null
+          operating_locations?: string[] | null
+          payment_account_id?: string | null
+          phone?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          seo_config?: Json | null
+          settings?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          analytics_ids?: Json | null
+          brand_name?: string | null
+          company_name?: string
+          created_at?: string
+          domain?: string | null
+          email?: string | null
+          footer_config?: Json | null
+          ghl_subaccount_id?: string | null
+          header_config?: Json | null
+          id?: string
+          legacy_brand_name?: string | null
+          legal_entity_name?: string | null
+          license_classification?: string | null
+          license_number?: string | null
+          logo_url?: string | null
+          operating_locations?: string[] | null
+          payment_account_id?: string | null
+          phone?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          seo_config?: Json | null
+          settings?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_services: {
+        Row: {
+          active: boolean
+          brand_scope: string | null
+          company_id: string
+          created_at: string
+          custom_pricing: Json | null
+          custom_quote_fields: Json | null
+          id: string
+          launch_price: string | null
+          public_visible: boolean
+          quote_enabled: boolean
+          service_code: string
+        }
+        Insert: {
+          active?: boolean
+          brand_scope?: string | null
+          company_id: string
+          created_at?: string
+          custom_pricing?: Json | null
+          custom_quote_fields?: Json | null
+          id?: string
+          launch_price?: string | null
+          public_visible?: boolean
+          quote_enabled?: boolean
+          service_code: string
+        }
+        Update: {
+          active?: boolean
+          brand_scope?: string | null
+          company_id?: string
+          created_at?: string
+          custom_pricing?: Json | null
+          custom_quote_fields?: Json | null
+          id?: string
+          launch_price?: string | null
+          public_visible?: boolean
+          quote_enabled?: boolean
+          service_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_services_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_services_service_code_fkey"
+            columns: ["service_code"]
+            isOneToOne: false
+            referencedRelation: "service_verticals"
+            referencedColumns: ["service_code"]
+          },
+        ]
+      }
+      company_user_assignments: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          role: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          role?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_user_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compensation_adjustments: {
         Row: {
           adjustment_type: Database["public"]["Enums"]["adjustment_type"]
@@ -5531,6 +5707,60 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_templates_mt: {
+        Row: {
+          active: boolean
+          company_id: string | null
+          created_at: string
+          id: string
+          merge_tags: Json | null
+          service_code: string | null
+          template_body: string | null
+          template_code: string
+          template_name: string
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          merge_tags?: Json | null
+          service_code?: string | null
+          template_body?: string | null
+          template_code: string
+          template_name: string
+          version?: number
+        }
+        Update: {
+          active?: boolean
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          merge_tags?: Json | null
+          service_code?: string | null
+          template_body?: string | null
+          template_code?: string
+          template_name?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_templates_mt_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_mt_service_code_fkey"
+            columns: ["service_code"]
+            isOneToOne: false
+            referencedRelation: "service_verticals"
+            referencedColumns: ["service_code"]
           },
         ]
       }
@@ -9272,15 +9502,19 @@ export type Database = {
         Row: {
           assign_team: string
           assign_user_id: string | null
+          company_id: string | null
           created_at: string
           customer_type: string | null
           id: string
           intent: string | null
           is_active: boolean
+          is_exclusive: boolean
           is_existing_customer: boolean | null
           market_zip_pattern: string | null
           priority: number
+          routing_mode: string
           rule_name: string
+          service_code_mt: string | null
           sla_minutes: number
           source_channel: string | null
           updated_at: string
@@ -9288,15 +9522,19 @@ export type Database = {
         Insert: {
           assign_team?: string
           assign_user_id?: string | null
+          company_id?: string | null
           created_at?: string
           customer_type?: string | null
           id?: string
           intent?: string | null
           is_active?: boolean
+          is_exclusive?: boolean
           is_existing_customer?: boolean | null
           market_zip_pattern?: string | null
           priority?: number
+          routing_mode?: string
           rule_name: string
+          service_code_mt?: string | null
           sla_minutes?: number
           source_channel?: string | null
           updated_at?: string
@@ -9304,20 +9542,39 @@ export type Database = {
         Update: {
           assign_team?: string
           assign_user_id?: string | null
+          company_id?: string | null
           created_at?: string
           customer_type?: string | null
           id?: string
           intent?: string | null
           is_active?: boolean
+          is_exclusive?: boolean
           is_existing_customer?: boolean | null
           market_zip_pattern?: string | null
           priority?: number
+          routing_mode?: string
           rule_name?: string
+          service_code_mt?: string | null
           sla_minutes?: number
           source_channel?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lead_routing_rules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_routing_rules_service_code_mt_fkey"
+            columns: ["service_code_mt"]
+            isOneToOne: false
+            referencedRelation: "service_verticals"
+            referencedColumns: ["service_code"]
+          },
+        ]
       }
       lead_sla_rules: {
         Row: {
@@ -13564,6 +13821,54 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_families: {
+        Row: {
+          active: boolean
+          company_id: string
+          created_at: string
+          family_code: string
+          family_name: string
+          id: string
+          rates: Json
+          service_code: string | null
+        }
+        Insert: {
+          active?: boolean
+          company_id: string
+          created_at?: string
+          family_code: string
+          family_name: string
+          id?: string
+          rates?: Json
+          service_code?: string | null
+        }
+        Update: {
+          active?: boolean
+          company_id?: string
+          created_at?: string
+          family_code?: string
+          family_name?: string
+          id?: string
+          rates?: Json
+          service_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_families_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pricing_families_service_code_fkey"
+            columns: ["service_code"]
+            isOneToOne: false
+            referencedRelation: "service_verticals"
+            referencedColumns: ["service_code"]
+          },
+        ]
+      }
       pricing_general_debris: {
         Row: {
           active: boolean
@@ -14118,6 +14423,68 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      provider_profiles: {
+        Row: {
+          company_id: string
+          counties: string[] | null
+          created_at: string
+          id: string
+          insurance_url: string | null
+          insurance_verified_at: string | null
+          lead_cap: number | null
+          payment_method: string | null
+          plan_tier: string
+          rating: number | null
+          response_hours: number
+          service_codes: string[] | null
+          status: string
+          updated_at: string
+          zip_codes: string[] | null
+        }
+        Insert: {
+          company_id: string
+          counties?: string[] | null
+          created_at?: string
+          id?: string
+          insurance_url?: string | null
+          insurance_verified_at?: string | null
+          lead_cap?: number | null
+          payment_method?: string | null
+          plan_tier?: string
+          rating?: number | null
+          response_hours?: number
+          service_codes?: string[] | null
+          status?: string
+          updated_at?: string
+          zip_codes?: string[] | null
+        }
+        Update: {
+          company_id?: string
+          counties?: string[] | null
+          created_at?: string
+          id?: string
+          insurance_url?: string | null
+          insurance_verified_at?: string | null
+          lead_cap?: number | null
+          payment_method?: string | null
+          plan_tier?: string
+          rating?: number | null
+          response_hours?: number
+          service_codes?: string[] | null
+          status?: string
+          updated_at?: string
+          zip_codes?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_devices: {
         Row: {
@@ -18433,6 +18800,66 @@ export type Database = {
           },
         ]
       }
+      service_verticals: {
+        Row: {
+          active: boolean
+          contract_template_code: string | null
+          created_at: string
+          default_surcharges: Json | null
+          id: string
+          line_item_types: string[] | null
+          pricing_model: string
+          quote_fields: Json | null
+          requires_dispatch: boolean
+          requires_driver: boolean
+          requires_labor: boolean
+          requires_material_review: boolean
+          requires_photo: boolean
+          requires_scope_notes: boolean
+          service_category: string | null
+          service_code: string
+          service_name: string
+        }
+        Insert: {
+          active?: boolean
+          contract_template_code?: string | null
+          created_at?: string
+          default_surcharges?: Json | null
+          id?: string
+          line_item_types?: string[] | null
+          pricing_model: string
+          quote_fields?: Json | null
+          requires_dispatch?: boolean
+          requires_driver?: boolean
+          requires_labor?: boolean
+          requires_material_review?: boolean
+          requires_photo?: boolean
+          requires_scope_notes?: boolean
+          service_category?: string | null
+          service_code: string
+          service_name: string
+        }
+        Update: {
+          active?: boolean
+          contract_template_code?: string | null
+          created_at?: string
+          default_surcharges?: Json | null
+          id?: string
+          line_item_types?: string[] | null
+          pricing_model?: string
+          quote_fields?: Json | null
+          requires_dispatch?: boolean
+          requires_driver?: boolean
+          requires_labor?: boolean
+          requires_material_review?: boolean
+          requires_photo?: boolean
+          requires_scope_notes?: boolean
+          service_category?: string | null
+          service_code?: string
+          service_name?: string
+        }
+        Relationships: []
+      }
       size_pricing_defaults: {
         Row: {
           base_service_fee: number
@@ -18702,6 +19129,42 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          features: Json | null
+          id: string
+          lead_cap: number | null
+          monthly_price_cents: number
+          plan_code: string
+          plan_name: string
+          priority_weight: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          features?: Json | null
+          id?: string
+          lead_cap?: number | null
+          monthly_price_cents: number
+          plan_code: string
+          plan_name: string
+          priority_weight?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          features?: Json | null
+          id?: string
+          lead_cap?: number | null
+          monthly_price_cents?: number
+          plan_code?: string
+          plan_name?: string
+          priority_weight?: number
         }
         Relationships: []
       }
