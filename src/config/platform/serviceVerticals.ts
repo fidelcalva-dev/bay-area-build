@@ -1,0 +1,186 @@
+// =====================================================
+// Service Vertical Definitions (Platform Catalog)
+// =====================================================
+
+import type { ServiceVertical, QuoteFieldConfig, SurchargeConfig } from './types';
+
+// Shared quote fields for cleanup services
+const CLEANUP_QUOTE_FIELDS: QuoteFieldConfig[] = [
+  { field_key: 'project_type', label: 'Project Type', type: 'select', required: true, options: ['new_construction', 'renovation', 'demolition', 'tenant_improvement', 'residential_remodel'] },
+  { field_key: 'site_type', label: 'Site Type', type: 'select', required: true, options: ['commercial', 'residential', 'industrial', 'mixed_use'] },
+  { field_key: 'sqft', label: 'Approximate Square Footage', type: 'number', required: false, placeholder: 'e.g. 2500' },
+  { field_key: 'labor_hours_est', label: 'Estimated Labor Hours', type: 'number', required: false },
+  { field_key: 'crew_size', label: 'Crew Size', type: 'select', required: false, options: ['2', '3', '4', '5', '6+'] },
+  { field_key: 'debris_type', label: 'Debris Type', type: 'select', required: true, options: ['general_construction', 'concrete_masonry', 'wood_framing', 'drywall', 'roofing', 'mixed', 'hazardous_review'] },
+  { field_key: 'material_handling', label: 'Material Handling Required', type: 'select', required: false, options: ['none', 'sort_recycle', 'hazmat_segregation', 'salvage'] },
+  { field_key: 'haul_off_required', label: 'Haul-Off Required', type: 'boolean', required: true, default_value: true },
+  { field_key: 'disposal_required', label: 'Disposal Required', type: 'boolean', required: true, default_value: true },
+  { field_key: 'access_conditions', label: 'Access Conditions', type: 'select', required: false, options: ['easy_ground', 'stairs', 'elevator', 'tight_access', 'long_carry'] },
+  { field_key: 'stairs', label: 'Number of Flights', type: 'number', required: false },
+  { field_key: 'parking_distance', label: 'Parking Distance (ft)', type: 'number', required: false },
+  { field_key: 'rush_requested', label: 'Rush Service Requested', type: 'boolean', required: false, default_value: false },
+  { field_key: 'recurring_schedule', label: 'Recurring Schedule', type: 'select', required: false, options: ['none', 'weekly', 'biweekly', 'monthly', 'custom'] },
+  { field_key: 'notes', label: 'Additional Notes', type: 'textarea', required: false },
+  { field_key: 'photos', label: 'Site Photos', type: 'photo', required: false },
+];
+
+const DEFAULT_CLEANUP_SURCHARGES: SurchargeConfig = {
+  rush_pct: 20,
+  after_hours_pct: 25,
+  stairs_no_elevator_pct: 15,
+  long_carry_pct: 10,
+  mixed_heavy_debris_pct: 15,
+  re_trip_fee: 95,
+  change_order_minimum: 125,
+};
+
+export const SERVICE_VERTICALS: ServiceVertical[] = [
+  {
+    service_code: 'CONSTRUCTION_CLEANUP',
+    service_name: 'Construction Cleanup',
+    service_category: 'cleanup',
+    pricing_model: 'LABOR_PLUS_DISPOSAL',
+    contract_template_code: 'MSA_CLEANUP_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: true,
+    requires_photo: true,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS,
+    line_item_types: ['LABOR', 'DISPOSAL', 'TRUCK', 'MATERIAL_HANDLING', 'CLEANUP', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'POST_CONSTRUCTION_CLEANUP',
+    service_name: 'Post-Construction Cleanup',
+    service_category: 'cleanup',
+    pricing_model: 'SIZE_BASED',
+    contract_template_code: 'MSA_CLEANUP_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: false,
+    requires_photo: true,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS.filter(f => !['debris_type', 'material_handling'].includes(f.field_key)),
+    line_item_types: ['LABOR', 'CLEANUP', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'DEMOLITION_SUPPORT',
+    service_name: 'Demolition Debris Cleanup',
+    service_category: 'cleanup',
+    pricing_model: 'LABOR_PLUS_DISPOSAL',
+    contract_template_code: 'MSA_CLEANUP_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: true,
+    requires_photo: true,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS,
+    line_item_types: ['LABOR', 'DISPOSAL', 'TRUCK', 'MATERIAL_HANDLING', 'CLEANUP', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'SITE_CLEANUP',
+    service_name: 'Jobsite Cleanup',
+    service_category: 'cleanup',
+    pricing_model: 'FLAT_PACKAGE',
+    contract_template_code: 'SERVICE_ADDENDUM_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: false,
+    requires_photo: false,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS.filter(f => ['project_type', 'site_type', 'sqft', 'access_conditions', 'rush_requested', 'notes'].includes(f.field_key)),
+    line_item_types: ['LABOR', 'CLEANUP', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'RECURRING_SITE_SERVICE',
+    service_name: 'Recurring Site Cleanup',
+    service_category: 'cleanup',
+    pricing_model: 'RECURRING_SERVICE',
+    contract_template_code: 'RECURRING_SERVICE_AGREEMENT_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: false,
+    requires_photo: false,
+    requires_scope_notes: true,
+    quote_fields: [...CLEANUP_QUOTE_FIELDS.filter(f => ['site_type', 'sqft', 'recurring_schedule', 'notes'].includes(f.field_key))],
+    line_item_types: ['LABOR', 'CLEANUP', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'MATERIAL_PICKUP',
+    service_name: 'Material Pickup & Removal',
+    service_category: 'hauling',
+    pricing_model: 'LINE_ITEM_BASED',
+    contract_template_code: 'SERVICE_ADDENDUM_STD',
+    requires_dispatch: true,
+    requires_driver: true,
+    requires_labor: true,
+    requires_material_review: true,
+    requires_photo: true,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS.filter(f => ['debris_type', 'material_handling', 'haul_off_required', 'disposal_required', 'access_conditions', 'rush_requested', 'notes', 'photos'].includes(f.field_key)),
+    line_item_types: ['LABOR', 'DISPOSAL', 'TRUCK', 'MATERIAL_HANDLING', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'LABOR_ASSISTED_CLEANUP',
+    service_name: 'Labor-Assisted Cleanup',
+    service_category: 'labor',
+    pricing_model: 'LINE_ITEM_BASED',
+    contract_template_code: 'SERVICE_ADDENDUM_STD',
+    requires_dispatch: true,
+    requires_driver: false,
+    requires_labor: true,
+    requires_material_review: false,
+    requires_photo: false,
+    requires_scope_notes: true,
+    quote_fields: CLEANUP_QUOTE_FIELDS.filter(f => ['site_type', 'labor_hours_est', 'crew_size', 'access_conditions', 'rush_requested', 'notes'].includes(f.field_key)),
+    line_item_types: ['LABOR', 'SURCHARGE'],
+    default_surcharges: DEFAULT_CLEANUP_SURCHARGES,
+    active: true,
+  },
+  {
+    service_code: 'DUMPSTER_RENTAL_LEGACY',
+    service_name: 'Dumpster Rental',
+    service_category: 'dumpster',
+    pricing_model: 'SMART_ENGINE',
+    contract_template_code: 'MSA_DUMPSTER_STD',
+    requires_dispatch: true,
+    requires_driver: true,
+    requires_labor: false,
+    requires_material_review: true,
+    requires_photo: false,
+    requires_scope_notes: false,
+    quote_fields: [], // Uses existing V3 quote flow
+    line_item_types: ['DUMPSTER', 'SWAP', 'SURCHARGE', 'OTHER'],
+    default_surcharges: {},
+    active: true,
+  },
+];
+
+export function getServiceByCode(code: string): ServiceVertical | undefined {
+  return SERVICE_VERTICALS.find(s => s.service_code === code);
+}
+
+export function getServicesByCategory(category: string): ServiceVertical[] {
+  return SERVICE_VERTICALS.filter(s => s.service_category === category && s.active);
+}
+
+export function getQuotableServices(): ServiceVertical[] {
+  return SERVICE_VERTICALS.filter(s => s.active && s.pricing_model !== 'MANUAL_REVIEW');
+}
