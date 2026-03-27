@@ -93,9 +93,15 @@ export const CITY_DIRECTORY: CityConfig[] = [
   { slug: 'redwood-city', name: 'Redwood City', region: 'south-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
   { slug: 'richmond', name: 'Richmond', region: 'east-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
   { slug: 'emeryville', name: 'Emeryville', region: 'east-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
+  { slug: 'san-mateo', name: 'San Mateo', region: 'south-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
+  { slug: 'south-san-francisco', name: 'South San Francisco', region: 'south-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
+  { slug: 'daly-city', name: 'Daly City', region: 'south-bay', serviceModel: 'DIRECT_OPERATION', tier: 2 },
 
   // Tier 3 — North Bay partner markets (within Bay Area scope)
+  { slug: 'san-rafael', name: 'San Rafael', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
   { slug: 'santa-rosa', name: 'Santa Rosa', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
+  { slug: 'petaluma', name: 'Petaluma', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
+  { slug: 'napa', name: 'Napa', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
   { slug: 'vallejo', name: 'Vallejo', region: 'north-bay', serviceModel: 'PARTNER_NETWORK', tier: 3 },
 ];
 
