@@ -31,16 +31,45 @@ export default function Quote() {
       <section className="min-h-[calc(100vh-4rem)] bg-[hsl(150_10%_98%)]">
         <div className="container-wide py-8 lg:py-12">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {/* Left - Value Proposition */}
-            <div className="lg:sticky lg:top-24">
-              {/* Trust Badges */}
+            {/* Calculator — shows first on mobile */}
+            <div className="order-first lg:order-last lg:pt-0">
+              <V3QuoteFlow />
+              
+              {/* Reassurance below calculator */}
+              <div className="mt-6 text-center">
+                <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
+                  <Shield className="w-4 h-4" />
+                  Your information is secure and never shared
+                </p>
+                <PriceTransparencyNote className="text-xs text-muted-foreground mt-2" />
+                <p className="text-xs text-muted-foreground mt-1">
+                  We'll contact you within 15 minutes during business hours (6AM–9PM daily)
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  After-hours messages answered next business window
+                </p>
+                <div className="flex flex-wrap justify-center gap-3 mt-4 pt-3 border-t border-border">
+                  <Link to="/how-it-works" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    How it works <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <Link to="/why-local-yards" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    Why local yards <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <Link to="/not-a-broker" className="text-xs text-primary hover:underline flex items-center gap-1">
+                    We're not a broker <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Value Proposition — below calculator on mobile, left side on desktop */}
+            <div className="order-last lg:order-first lg:sticky lg:top-24">
               <TrustStrip 
                 badges={['licensedInsured', 'fiveStarReviews', 'sameDayAvailable']}
                 variant="light"
                 className="mb-6"
               />
 
-              {/* Headline */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">
                 Get Your Dumpster Quote
                 <span className="block text-primary mt-1">In 60 Seconds</span>
@@ -51,7 +80,6 @@ export default function Quote() {
                 No surprises, no hidden fees.
               </p>
 
-              {/* Benefits List */}
               <div className="bg-card rounded-2xl border border-border p-6 mb-6">
                 <h2 className="font-bold text-foreground mb-4">What's Included</h2>
                 <ul className="space-y-3">
@@ -64,7 +92,6 @@ export default function Quote() {
                 </ul>
               </div>
 
-              {/* How It Works — Mini */}
               <div className="bg-card rounded-2xl border border-border p-6 mb-6">
                 <h2 className="font-bold text-foreground mb-4">How It Works</h2>
                 <div className="space-y-3">
@@ -82,47 +109,12 @@ export default function Quote() {
                 </div>
               </div>
 
-              {/* Phone CTA */}
               <PhoneCTA variant="block" />
 
-              {/* Spanish Support */}
               <p className="mt-6 text-sm text-muted-foreground flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-primary" />
                 <span>Hablamos español — llámenos para ayuda en español</span>
               </p>
-            </div>
-
-            {/* Right - Calculator */}
-            <div className="lg:pt-0">
-              <V3QuoteFlow />
-              
-              {/* Reassurance below calculator */}
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
-                  <Shield className="w-4 h-4" />
-                  Your information is secure and never shared
-                </p>
-                {/* Price Transparency Note */}
-                <PriceTransparencyNote className="text-xs text-muted-foreground mt-2" />
-                <p className="text-xs text-muted-foreground mt-1">
-                  We'll contact you within 15 minutes during business hours (6AM–9PM daily)
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  After-hours messages answered next business window
-                </p>
-                {/* Internal links for SEO */}
-                <div className="flex flex-wrap justify-center gap-3 mt-4 pt-3 border-t border-border">
-                  <Link to="/how-it-works" className="text-xs text-primary hover:underline flex items-center gap-1">
-                    How it works <ArrowRight className="w-3 h-3" />
-                  </Link>
-                  <Link to="/why-local-yards" className="text-xs text-primary hover:underline flex items-center gap-1">
-                    Why local yards <ArrowRight className="w-3 h-3" />
-                  </Link>
-                  <Link to="/not-a-broker" className="text-xs text-primary hover:underline flex items-center gap-1">
-                    We're not a broker <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-              </div>
             </div>
           </div>
         </div>
