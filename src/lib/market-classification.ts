@@ -55,9 +55,26 @@ const SUPPORT_RING_MARKETS: MarketClassification[] = [
 // ============================================================
 // OUTSIDE CURRENT FOCUS — Paused/deprioritized, redirect to regional
 // ============================================================
+const SUPPORT_RING_PENINSULA: MarketClassification[] = [
+  { slug: 'san-mateo', name: 'San Mateo', focus: 'SUPPORT_RING', region: 'south-bay', county: 'San Mateo County', nearestYard: 'sanjose', sitemapPriority: 0.85, sitemapChangefreq: 'weekly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'south-san-francisco', name: 'South San Francisco', focus: 'SUPPORT_RING', region: 'south-bay', county: 'San Mateo County', nearestYard: 'oakland', sitemapPriority: 0.85, sitemapChangefreq: 'weekly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'daly-city', name: 'Daly City', focus: 'SUPPORT_RING', region: 'south-bay', county: 'San Mateo County', nearestYard: 'oakland', sitemapPriority: 0.85, sitemapChangefreq: 'weekly', indexable: true, pageStatus: 'ACTIVE' },
+];
+
+// North Bay — Tier 3 partner markets now active for SEO
+const NORTH_BAY_MARKETS: MarketClassification[] = [
+  { slug: 'san-rafael', name: 'San Rafael', focus: 'SUPPORT_RING', region: 'north-bay', county: 'Marin County', nearestYard: 'oakland', sitemapPriority: 0.75, sitemapChangefreq: 'monthly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'santa-rosa', name: 'Santa Rosa', focus: 'SUPPORT_RING', region: 'north-bay', county: 'Sonoma County', nearestYard: 'oakland', sitemapPriority: 0.75, sitemapChangefreq: 'monthly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'petaluma', name: 'Petaluma', focus: 'SUPPORT_RING', region: 'north-bay', county: 'Sonoma County', nearestYard: 'oakland', sitemapPriority: 0.75, sitemapChangefreq: 'monthly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'napa', name: 'Napa', focus: 'SUPPORT_RING', region: 'north-bay', county: 'Napa County', nearestYard: 'oakland', sitemapPriority: 0.75, sitemapChangefreq: 'monthly', indexable: true, pageStatus: 'ACTIVE' },
+  { slug: 'vallejo', name: 'Vallejo', focus: 'SUPPORT_RING', region: 'north-bay', county: 'Solano County', nearestYard: 'oakland', sitemapPriority: 0.75, sitemapChangefreq: 'monthly', indexable: true, pageStatus: 'ACTIVE' },
+];
+
+// ============================================================
+// OUTSIDE CURRENT FOCUS — Paused/deprioritized, redirect to regional
+// ============================================================
 const OUTSIDE_FOCUS_MARKETS: MarketClassification[] = [
-  { slug: 'hollister', name: 'Hollister', focus: 'OUTSIDE_CURRENT_FOCUS', region: 'south-bay', county: 'San Benito County', nearestYard: 'sanjose', sitemapPriority: 0.4, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/dumpster-rental-south-bay', retirementReason: 'Outside 100-mile core radius, low search volume' },
-  { slug: 'vallejo', name: 'Vallejo', focus: 'OUTSIDE_CURRENT_FOCUS', region: 'north-bay', county: 'Solano County', nearestYard: 'oakland', sitemapPriority: 0.4, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'NOINDEX', retirementReason: 'North Bay partner market, not yet active' },
+  { slug: 'hollister', name: 'Hollister', focus: 'OUTSIDE_CURRENT_FOCUS', region: 'south-bay', county: 'San Benito County', nearestYard: 'sanjose', sitemapPriority: 0.4, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area scope' },
 ];
 
 // ============================================================
@@ -67,13 +84,14 @@ const FUTURE_PARTNER_MARKETS: MarketClassification[] = [
   { slug: 'modesto', name: 'Modesto', focus: 'FUTURE_PARTNER', region: 'central-valley', county: 'Stanislaus County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'stockton', name: 'Stockton', focus: 'FUTURE_PARTNER', region: 'central-valley', county: 'San Joaquin County', nearestYard: 'oakland', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'sacramento', name: 'Sacramento', focus: 'FUTURE_PARTNER', region: 'central-valley', county: 'Sacramento County', nearestYard: 'oakland', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
-  { slug: 'santa-rosa', name: 'Santa Rosa', focus: 'FUTURE_PARTNER', region: 'north-bay', county: 'Sonoma County', nearestYard: 'oakland', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'NOINDEX', retirementReason: 'North Bay future partner — noindex until launch' },
   { slug: 'bakersfield', name: 'Bakersfield', focus: 'FUTURE_PARTNER', region: 'central-valley', county: 'Kern County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'fresno', name: 'Fresno', focus: 'FUTURE_PARTNER', region: 'central-valley', county: 'Fresno County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'los-angeles', name: 'Los Angeles', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'Los Angeles County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'san-diego', name: 'San Diego', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'San Diego County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'riverside', name: 'Riverside', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'Riverside County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
   { slug: 'anaheim', name: 'Anaheim', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'Orange County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
+  { slug: 'long-beach', name: 'Long Beach', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'Los Angeles County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
+  { slug: 'san-bernardino', name: 'San Bernardino', focus: 'FUTURE_PARTNER', region: 'southern-california', county: 'San Bernardino County', nearestYard: 'sanjose', sitemapPriority: 0.3, sitemapChangefreq: 'monthly', indexable: false, pageStatus: 'REDIRECT', redirectTarget: '/bay-area-dumpster-rental', retirementReason: 'Outside Bay Area — redirected' },
 ];
 
 // ============================================================
@@ -82,6 +100,8 @@ const FUTURE_PARTNER_MARKETS: MarketClassification[] = [
 export const MARKET_REGISTRY: MarketClassification[] = [
   ...CORE_DIRECT_MARKETS,
   ...SUPPORT_RING_MARKETS,
+  ...SUPPORT_RING_PENINSULA,
+  ...NORTH_BAY_MARKETS,
   ...OUTSIDE_FOCUS_MARKETS,
   ...FUTURE_PARTNER_MARKETS,
 ];
@@ -147,16 +167,16 @@ export const OUTSIDE_AREA_RETIREMENT_PLAN: RetirementPlanEntry[] = [
   { route: '/southern-california-dumpster-rental', pageType: 'regional_hub', market: 'southern-california', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area focus — redirected' },
   { route: '/central-valley-dumpster-rental', pageType: 'regional_hub', market: 'central-valley', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area focus — redirected' },
   // Outside-area city pages
-  { route: '/dumpster-rental/hollister', pageType: 'city', market: 'hollister', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/dumpster-rental-south-bay', reason: 'Minimal traffic, outside core radius' },
+  { route: '/dumpster-rental/hollister', pageType: 'city', market: 'hollister', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area scope' },
   { route: '/dumpster-rental/modesto', pageType: 'city', market: 'modesto', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/stockton', pageType: 'city', market: 'stockton', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/sacramento', pageType: 'city', market: 'sacramento', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
-  { route: '/dumpster-rental/santa-rosa', pageType: 'city', market: 'santa-rosa', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'North Bay partner market — not yet active' },
   { route: '/dumpster-rental/bakersfield', pageType: 'city', market: 'bakersfield', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/fresno', pageType: 'city', market: 'fresno', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/los-angeles', pageType: 'city', market: 'los-angeles', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/san-diego', pageType: 'city', market: 'san-diego', currentValue: 'MEDIUM', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/riverside', pageType: 'city', market: 'riverside', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
   { route: '/dumpster-rental/anaheim', pageType: 'city', market: 'anaheim', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
-  { route: '/dumpster-rental/vallejo', pageType: 'city', market: 'vallejo', currentValue: 'LOW', action: 'NOINDEX_TEMPORARY', reason: 'North Bay partner — not yet active' },
+  { route: '/dumpster-rental/long-beach', pageType: 'city', market: 'long-beach', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
+  { route: '/dumpster-rental/san-bernardino', pageType: 'city', market: 'san-bernardino', currentValue: 'LOW', action: 'REDIRECT_TO_REGIONAL', redirectTarget: '/bay-area-dumpster-rental', reason: 'Outside Bay Area — redirected' },
 ];

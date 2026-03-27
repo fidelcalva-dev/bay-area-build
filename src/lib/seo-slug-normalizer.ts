@@ -11,6 +11,10 @@ const SLUG_ALIASES: Record<string, string> = {
   'ssf': 'south-san-francisco',
   'rwd': 'redwood-city',
   'wc': 'walnut-creek',
+  'mv': 'mountain-view',
+  'pa': 'palo-alto',
+  'dc': 'daly-city',
+  'sr': 'san-rafael',
 };
 
 /**

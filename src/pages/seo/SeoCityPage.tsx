@@ -490,11 +490,15 @@ export default function SeoCityPage() {
           <p className="text-lg text-primary-foreground/80 mb-8">Get an instant quote or call us now. Same-day delivery available for {city.city_name} addresses.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl" onClick={trackQuoteClick}>
-              <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
             <Button asChild variant="heroOutline" size="xl" onClick={trackCallClick}>
-              <a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}</a>
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" />Talk to a Specialist</a>
             </Button>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-4 justify-center text-sm text-primary-foreground/70">
+            <Link to="/quote?step=photo" className="hover:text-primary-foreground underline underline-offset-2">Upload Photo for Size Help</Link>
+            <Link to="/contractors" className="hover:text-primary-foreground underline underline-offset-2">Apply for Contractor Account</Link>
           </div>
         </div>
       </section>
