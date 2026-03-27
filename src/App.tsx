@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { TenantProvider } from "@/contexts/TenantContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { captureAttribution } from "@/lib/attributionTracker";
 import { initTracking } from "@/lib/trackingService";
@@ -24,6 +25,9 @@ import { getPublicRoutes } from './routes/publicRoutes';
 import { getSeoRoutes } from './routes/seoRoutes';
 import { getPortalRoutes } from './routes/portalRoutes';
 import { getAdminRoutes } from './routes/adminRoutes';
+import { getPlatformRoutes } from './routes/platformRoutes';
+import { getProviderRoutes } from './routes/providerRoutes';
+import { getCrewRoutes } from './routes/crewRoutes';
 import {
   getDriverRoutes,
   getCsRoutes,
@@ -56,45 +60,56 @@ const App = () => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
-          <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <PageTracker />
-            <InstallPrompt />
-            <OfflineSyncBadge />
-            <SWUpdatePrompt />
-            <Routes>
-              {/* Home page */}
-              <Route path="/" element={<Index />} />
-              
-              {/* Public pages */}
-              {getPublicRoutes()}
-              
-              {/* SEO pages */}
-              {getSeoRoutes()}
-              
-              {/* Portal pages */}
-              {getPortalRoutes()}
-              
-              {/* Admin panel */}
-              {getAdminRoutes()}
-              
-              {/* Department portals */}
-              {getDriverRoutes()}
-              {getCsRoutes()}
-              {getSalesRoutes()}
-              {getDispatchRoutes()}
-              {getFinanceRoutes()}
-              
-              {/* Internal calculator aliases */}
-              {getCalculatorRoutes()}
-              
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+          <TenantProvider>
+            <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <PageTracker />
+              <InstallPrompt />
+              <OfflineSyncBadge />
+              <SWUpdatePrompt />
+              <Routes>
+                {/* Home page */}
+                <Route path="/" element={<Index />} />
+                
+                {/* Public pages */}
+                {getPublicRoutes()}
+                
+                {/* SEO pages */}
+                {getSeoRoutes()}
+                
+                {/* Portal pages */}
+                {getPortalRoutes()}
+                
+                {/* Admin panel */}
+                {getAdminRoutes()}
+                
+                {/* Platform admin */}
+                {getPlatformRoutes()}
+                
+                {/* Provider marketplace */}
+                {getProviderRoutes()}
+                
+                {/* Crew portal */}
+                {getCrewRoutes()}
+                
+                {/* Department portals */}
+                {getDriverRoutes()}
+                {getCsRoutes()}
+                {getSalesRoutes()}
+                {getDispatchRoutes()}
+                {getFinanceRoutes()}
+                
+                {/* Internal calculator aliases */}
+                {getCalculatorRoutes()}
+                
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </TenantProvider>
       </LanguageProvider>
     </QueryClientProvider>
   </HelmetProvider>

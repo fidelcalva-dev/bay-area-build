@@ -5,20 +5,31 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTenant } from '@/contexts/TenantContext';
 
-type TenantTable = 'tenant_customers' | 'tenant_quotes' | 'tenant_jobs' | 'tenant_invoices' | 'tenant_payments' | 'tenant_tasks' | 'tenant_documents' | 'tenant_timeline_events';
+const TENANT_TABLES = [
+  'tenant_customers',
+  'tenant_quotes',
+  'tenant_jobs',
+  'tenant_invoices',
+  'tenant_payments',
+  'tenant_tasks',
+  'tenant_documents',
+  'tenant_timeline_events',
+] as const;
 
-export function useTenantQuery<T = unknown>(
+type TenantTable = (typeof TENANT_TABLES)[number];
+
+export function useTenantQuery(
   table: TenantTable,
   options?: {
     select?: string;
-    filters?: Record<string, unknown>;
+    filters?: Record<string, string>;
     orderBy?: { column: string; ascending?: boolean };
     limit?: number;
   }
 ) {
   const { tenantId } = useTenant();
 
-  return useQuery<T[]>({
+  return useQuery({
     queryKey: [table, tenantId, options?.filters],
     queryFn: async () => {
       if (!tenantId) return [];
@@ -29,7 +40,7 @@ export function useTenantQuery<T = unknown>(
 
       if (options?.filters) {
         for (const [key, value] of Object.entries(options.filters)) {
-          query = query.eq(key, value as string);
+          query = query.eq(key, value);
         }
       }
 
@@ -43,7 +54,7 @@ export function useTenantQuery<T = unknown>(
 
       const { data, error } = await query;
       if (error) throw error;
-      return (data ?? []) as T[];
+      return data ?? [];
     },
     enabled: !!tenantId,
   });
@@ -58,7 +69,7 @@ export function useTenantInsert(table: TenantTable) {
       if (!tenantId) throw new Error('No active tenant');
       const { data, error } = await supabase
         .from(table)
-        .insert({ ...row, tenant_id: tenantId })
+        .insert({ ...row, tenant_id: tenantId } as never)
         .select()
         .single();
       if (error) throw error;
