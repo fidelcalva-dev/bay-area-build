@@ -15,7 +15,7 @@ export default function ProviderJoin() {
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="max-w-md w-full text-center">
           <CardContent className="pt-6 space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
+            <CheckCircle2 className="w-12 h-12 text-primary mx-auto" />
             <h2 className="text-xl font-bold text-foreground">Application Received</h2>
             <p className="text-muted-foreground">We'll review your application and contact you within 2 business days.</p>
           </CardContent>

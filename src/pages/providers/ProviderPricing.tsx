@@ -36,7 +36,7 @@ export default function ProviderPricing() {
                   <ul className="space-y-2">
                     {plan.features.map(f => (
                       <li key={f} className="flex items-center gap-2 text-sm text-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />{f}
+                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />{f}
                       </li>
                     ))}
                   </ul>
