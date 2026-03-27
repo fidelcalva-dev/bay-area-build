@@ -66,9 +66,8 @@ export function useTenantInsert(table: TenantTable) {
   return useMutation({
     mutationFn: async (row: Record<string, unknown>) => {
       if (!tenantId) throw new Error('No active tenant');
-      const { data, error } = await supabase
-        .from(table)
-        .insert({ ...row, tenant_id: tenantId } as never)
+      const { data, error } = await (supabase.from as any)(table)
+        .insert({ ...row, tenant_id: tenantId })
         .select()
         .single();
       if (error) throw error;
