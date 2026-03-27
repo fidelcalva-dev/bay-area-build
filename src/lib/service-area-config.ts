@@ -167,8 +167,17 @@ export const YARD_CLUSTER_MAP: Record<string, YardCluster> = {
   'milpitas': 'sanjose',
   'cupertino': 'sanjose',
   'redwood-city': 'sanjose',
+  'san-mateo': 'sanjose',
   // SF cluster
   'san-francisco': 'sf',
+  'south-san-francisco': 'sf',
+  'daly-city': 'sf',
+  // North Bay — mapped to Oakland (closest yard)
+  'san-rafael': 'oakland',
+  'santa-rosa': 'oakland',
+  'petaluma': 'oakland',
+  'napa': 'oakland',
+  'vallejo': 'oakland',
 };
 
 export const YARD_CLUSTER_LABELS: Record<YardCluster, { yardCity: string; regionLabel: string }> = {
