@@ -117,7 +117,6 @@ export default function Quote() {
               </p>
             </div>
           </div>
-          </div>
         </div>
       </section>
 
