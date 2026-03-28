@@ -11,6 +11,7 @@ import { getMarketClassification, getMarketRedirectTarget, isMarketIndexable } f
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
+import { getCityCluster, getClusterNearbyCities } from '@/config/cityClusterLinks';
 import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
 import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
@@ -436,22 +437,50 @@ export default function SeoCityPage() {
         </div>
       </section>
 
-      {/* Nearby Cities */}
-      {(nearbyCities?.length || 0) > 0 && (
-        <section className="section-padding bg-background">
-          <div className="container-wide">
-            <h2 className="heading-md text-foreground mb-6 text-center">Dumpster Rental Near {city.city_name}</h2>
-            <div className="flex flex-wrap justify-center gap-3">
-              {nearbyCities?.map(c => (
-                <Link key={c.city_slug} to={cityUrl(c.city_slug)}
-                  className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
-                  Dumpster Rental {c.city_name}, CA
-                </Link>
-              ))}
+      {/* Nearby Cities — DB nearby + cluster fallback */}
+      {(() => {
+        const cluster = getCityCluster(city.city_slug);
+        const clusterFallbackSlugs = getClusterNearbyCities(city.city_slug, 5);
+        const hasDbNearby = (nearbyCities?.length || 0) > 0;
+        const showClusterFallback = !hasDbNearby && clusterFallbackSlugs.length > 0;
+        
+        if (!hasDbNearby && !showClusterFallback) return null;
+        
+        return (
+          <section className="section-padding bg-background">
+            <div className="container-wide">
+              <h2 className="heading-md text-foreground mb-6 text-center">Dumpster Rental Near {city.city_name}</h2>
+              <div className="flex flex-wrap justify-center gap-3">
+                {hasDbNearby ? (
+                  nearbyCities?.map(c => (
+                    <Link key={c.city_slug} to={cityUrl(c.city_slug)}
+                      className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                      Dumpster Rental {c.city_name}, CA
+                    </Link>
+                  ))
+                ) : (
+                  clusterFallbackSlugs.map(slug => {
+                    const name = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                    return (
+                      <Link key={slug} to={cityUrl(slug)}
+                        className="px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                        Dumpster Rental {name}, CA
+                      </Link>
+                    );
+                  })
+                )}
+              </div>
+              {cluster && (
+                <div className="text-center mt-4">
+                  <Link to={cluster.hubUrl} className="text-sm text-primary hover:underline">
+                    View all {cluster.label} service areas →
+                  </Link>
+                </div>
+              )}
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
       {/* Related Guides */}
       {(() => {
