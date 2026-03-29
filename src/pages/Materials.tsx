@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler } from 'lucide-react';
-import { BUSINESS_INFO } from '@/lib/seo';
+import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler, Phone } from 'lucide-react';
+import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const MATERIALS_FAQS: FAQItem[] = [
+  { question: 'Can I mix concrete with regular trash?', answer: 'No. Concrete, dirt, brick, and asphalt must go in a dedicated heavy material dumpster (5, 8, or 10 yard). Mixing with general debris will result in reclassification and additional charges.' },
+  { question: 'What happens if I put prohibited items in the dumpster?', answer: 'Prohibited items (hazardous waste, batteries, electronics) will be identified during disposal. You may be charged additional fees for special handling and your load may be rejected by the facility.' },
+  { question: 'Do I need to separate materials before loading?', answer: 'For general debris dumpsters, no separation is needed — you can mix household items, construction debris, and yard waste. For heavy material dumpsters, only one material type is allowed per load.' },
+  { question: 'What should I do if I am unsure about a material?', answer: 'Call us before loading at (510) 680-2150. Our team will advise you on the right dumpster type and any special handling requirements. It is always better to ask first.' },
+];
 
 const allowed = [
   { category: 'Household Junk', items: ['Furniture', 'Appliances (without freon)', 'Clothing & textiles', 'Books & paper', 'Toys', 'General household items'] },
