@@ -455,7 +455,7 @@ export default function SeoCityPage() {
         </section>
       )}
 
-      {/* Why Choose Calsan */}
+      {/* Why Choose Calsan + Trust Proof */}
       <section className="section-padding bg-muted/30">
         <div className="container-wide">
           <h2 className="heading-lg text-foreground mb-8 text-center">Why {city.city_name} Customers Choose Calsan</h2>
@@ -466,6 +466,20 @@ export default function SeoCityPage() {
                 <p className="text-sm text-muted-foreground">{point.description}</p>
               </div>
             ))}
+          </div>
+          {/* Trust Proof */}
+          <div className="mt-10 bg-card border border-border rounded-2xl p-6 md:p-8 max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-1 mb-3">
+              {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />)}
+            </div>
+            <p className="text-muted-foreground italic mb-3">"Fast delivery, fair pricing, and the driver was professional. Will use again for our next project in {city.city_name}."</p>
+            <p className="text-sm text-foreground font-medium">— Verified {city.city_name} Customer</p>
+            <div className="flex flex-wrap justify-center gap-6 mt-6 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><Shield className="w-3 h-3" />Licensed & Insured</span>
+              <span className="flex items-center gap-1"><Truck className="w-3 h-3" />Own Fleet & Drivers</span>
+              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />Local Bay Area Yard</span>
+              <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3" />No Broker Middlemen</span>
+            </div>
           </div>
         </div>
       </section>
