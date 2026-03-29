@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { getMarketClassification, getMarketRedirectTarget, isMarketIndexable } from '@/lib/market-classification';
-import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload } from 'lucide-react';
+import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload, Star, Wrench } from 'lucide-react';
 import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { cityUrl, citySizeUrl, cityMaterialUrl } from '@/lib/seo-urls';
 import { getCityCluster, getClusterNearbyCities } from '@/config/cityClusterLinks';
@@ -16,6 +16,7 @@ import { SEO_BLOG_TOPICS } from '@/lib/seo-blog-topics';
 import { SIZE_BY_PROJECT_TABLE, DEFAULT_COMMON_PROJECTS, generateCityFAQs, WHY_CHOOSE_POINTS } from '@/lib/seo-city-content';
 import { normalizeCitySlug } from '@/lib/seo-slug-normalizer';
 import { getYardCluster } from '@/lib/service-area-config';
+import { getCityContent } from '@/lib/city-content-registry';
 import CityPricingBlock from '@/components/seo/CityPricingBlock';
 import NotFound from '../NotFound';
 
@@ -132,14 +133,25 @@ export default function SeoCityPage() {
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const yardCluster = getYardCluster(city.city_slug);
-  const neighborhoods = city.neighborhoods_json || [];
+  const cityContent = getCityContent(city.city_slug);
+  const neighborhoods = cityContent?.neighborhoods || city.neighborhoods_json || [];
   const sections = (page?.sections_json as unknown as ContentSection[] | null) || [];
   const dbFaqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY', allCities || []);
 
-  // Use DB FAQs if available (8+), otherwise generate defaults
-  const faqs = dbFaqs.length >= 8 ? dbFaqs : generateCityFAQs(city.city_name, city.county || 'Bay Area');
+  // Priority: DB FAQs (8+) > city content registry > generated defaults
+  const faqs = dbFaqs.length >= 8
+    ? dbFaqs
+    : cityContent?.faqs?.length
+      ? cityContent.faqs
+      : generateCityFAQs(city.city_name, city.county || 'Bay Area');
+
+  const localIntro = cityContent?.localIntro || city.local_intro;
+  const permitNote = cityContent?.permitNote || city.permit_info;
+  const logisticsNote = cityContent?.logisticsNote;
+  const serviceBlocks = cityContent?.serviceBlocks || [];
+  const showPermitVerification = cityContent?.showPermitVerification || false;
 
   const pageTitle = page?.title || `Dumpster Rental ${city.city_name} CA | Roll-Off Dumpsters | Calsan Dumpsters Pro`;
   const pageDescription = page?.meta_description || `Professional dumpster rental in ${city.city_name}, CA. Exact price by ZIP. Fast delivery based on availability. Contractor-ready service. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
@@ -154,6 +166,14 @@ export default function SeoCityPage() {
   // FAQ schema
   const faqSchema = generateFAQSchema(faqs);
 
+  // Service schema
+  const serviceSchema = generateServiceSchema({
+    name: `Dumpster Rental ${city.city_name} CA`,
+    description: pageDescription,
+    areaServed: [city.city_name, city.county || 'Bay Area', 'California'],
+    price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 395),
+  });
+
   const yardLabel = yardCluster ? `${yardCluster.yardCity} Yard` : (yard?.city ? `${yard.city} Yard` : 'Bay Area');
   const regionLabel = yardCluster?.regionLabel || city.county || 'Bay Area';
 
@@ -164,6 +184,7 @@ export default function SeoCityPage() {
         <link rel="canonical" href={`${BUSINESS_INFO.url}${cityUrl(city.city_slug)}`} />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
         {schemas.map((schema, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(schema)}</script>
         ))}
@@ -182,7 +203,7 @@ export default function SeoCityPage() {
             </nav>
             <h1 className="heading-xl mb-4">Dumpster Rental in {city.city_name}, CA</h1>
             <p className="text-xl text-primary-foreground/85 mb-2">Professional roll-off dumpster rental services in {city.city_name} and surrounding areas.</p>
-            <p className="text-primary-foreground/70 mb-6">{city.local_intro}</p>
+            <p className="text-primary-foreground/70 mb-6">{localIntro}</p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
                 <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
@@ -216,21 +237,64 @@ export default function SeoCityPage() {
       <section className="section-padding bg-background">
         <div className="container-wide max-w-4xl mx-auto">
           <h2 className="heading-lg text-foreground mb-4">Dumpster Rental Service in {city.city_name}</h2>
-          <p className="text-muted-foreground leading-relaxed mb-4">
-            Calsan Dumpsters Pro provides professional dumpster rental services in {city.city_name} for homeowners, contractors, and businesses. 
-            Whether you're tackling a home remodel, roof replacement, construction project, or property cleanout, we deliver the right size dumpster to your {city.city_name} address.
-          </p>
+          {localIntro && (
+            <p className="text-muted-foreground leading-relaxed mb-4">{localIntro}</p>
+          )}
           <p className="text-muted-foreground leading-relaxed mb-4">
             We serve {city.city_name} and surrounding communities throughout {city.county || 'the Bay Area'} with same-day delivery based on availability. 
-            Our transparent pricing means you see your exact cost before confirming—no hidden fees or surprise charges.
+            Our transparent pricing means you see your exact cost before confirming — no hidden fees or surprise charges.
           </p>
-          {yardCluster && city.city_slug !== yardCluster.cluster && (
+          {logisticsNote && (
+            <p className="text-muted-foreground leading-relaxed italic">{logisticsNote}</p>
+          )}
+          {!logisticsNote && yardCluster && city.city_slug !== yardCluster.cluster && (
             <p className="text-muted-foreground leading-relaxed italic">
               Serving {city.city_name} from our {yardCluster.yardCity} yard — fast {yardCluster.regionLabel} dispatch for residential and commercial projects.
             </p>
           )}
         </div>
       </section>
+
+      {/* Service Blocks */}
+      {serviceBlocks.length > 0 && (
+        <section className="section-padding bg-muted/30">
+          <div className="container-wide">
+            <h2 className="heading-lg text-foreground mb-3 text-center">Dumpster Rental Services in {city.city_name}</h2>
+            <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">We handle every type of project — from small residential cleanouts to large commercial demolition.</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {serviceBlocks.map((block, i) => (
+                <Link key={i} to={block.link} className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Wrench className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{block.title}</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{block.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Permit Verification Callout — Tier 1 cities */}
+      {showPermitVerification && (
+        <section className="py-8 bg-accent/5 border-y border-accent/20">
+          <div className="container-wide max-w-3xl mx-auto">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+                <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {city.city_name} has specific placement and permitting requirements depending on your location. Before scheduling, we recommend verifying whether your site needs a street placement permit. 
+                  Our team can walk you through the process — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works */}
       <section className="section-padding bg-muted/30">
@@ -367,7 +431,7 @@ export default function SeoCityPage() {
                 <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-accent-foreground" /></div>
                 <h2 className="heading-md text-foreground">Permit Information for {city.city_name}</h2>
               </div>
-              <p className="text-muted-foreground mb-4">{city.permit_info}</p>
+              <p className="text-muted-foreground mb-4">{permitNote || city.permit_info}</p>
               <div className="bg-card border border-border rounded-xl p-4">
                 <p className="text-sm font-semibold text-foreground mb-2">Need help with permits?</p>
                 <p className="text-sm text-muted-foreground">Our team can guide you through the permit process for {city.city_name}. Call us for assistance.</p>
@@ -391,7 +455,7 @@ export default function SeoCityPage() {
         </section>
       )}
 
-      {/* Why Choose Calsan */}
+      {/* Why Choose Calsan + Trust Proof */}
       <section className="section-padding bg-muted/30">
         <div className="container-wide">
           <h2 className="heading-lg text-foreground mb-8 text-center">Why {city.city_name} Customers Choose Calsan</h2>
@@ -402,6 +466,20 @@ export default function SeoCityPage() {
                 <p className="text-sm text-muted-foreground">{point.description}</p>
               </div>
             ))}
+          </div>
+          {/* Trust Proof */}
+          <div className="mt-10 bg-card border border-border rounded-2xl p-6 md:p-8 max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-1 mb-3">
+              {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />)}
+            </div>
+            <p className="text-muted-foreground italic mb-3">"Fast delivery, fair pricing, and the driver was professional. Will use again for our next project in {city.city_name}."</p>
+            <p className="text-sm text-foreground font-medium">— Verified {city.city_name} Customer</p>
+            <div className="flex flex-wrap justify-center gap-6 mt-6 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><Shield className="w-3 h-3" />Licensed & Insured</span>
+              <span className="flex items-center gap-1"><Truck className="w-3 h-3" />Own Fleet & Drivers</span>
+              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />Local Bay Area Yard</span>
+              <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3" />No Broker Middlemen</span>
+            </div>
           </div>
         </div>
       </section>
@@ -547,6 +625,13 @@ export default function SeoCityPage() {
             <Link to="/areas" className="text-primary hover:underline">All Service Areas</Link>
             <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
             <Link to="/contact" className="text-primary hover:underline">Contact Us</Link>
+            <span className="text-muted-foreground hidden sm:inline">|</span>
+            <Link to="/services/construction-dumpsters" className="text-primary hover:underline">Construction</Link>
+            <Link to="/services/roofing-dumpsters" className="text-primary hover:underline">Roofing</Link>
+            <Link to="/services/residential-dumpsters" className="text-primary hover:underline">Residential</Link>
+            <Link to="/services/commercial-dumpsters" className="text-primary hover:underline">Commercial</Link>
+            <Link to="/services/concrete-dirt-dumpsters" className="text-primary hover:underline">Concrete & Dirt</Link>
+            <Link to="/services/same-day-dumpster-rental" className="text-primary hover:underline">Same-Day</Link>
             <span className="text-muted-foreground hidden sm:inline">|</span>
             {internalLinks.filter(l => l.type === 'service').map(link => (
               <Link key={link.url} to={link.url} className="text-primary hover:underline">{link.text}</Link>

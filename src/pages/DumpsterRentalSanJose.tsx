@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, AlertTriangle } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── San Jose-specific data ───────────────────────────────────
@@ -160,6 +160,24 @@ export default function DumpsterRentalSanJose() {
                   <Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
+      <section className="py-6 bg-accent/5 border-b border-accent/20">
+        <div className="container-wide max-w-3xl mx-auto">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+              <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                San Jose requires permits for dumpsters placed on public streets or rights-of-way. Private property placement (driveways, construction sites) is typically permit-free. 
+                Our team can guide you through San Jose permit requirements — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+              </p>
             </div>
           </div>
         </div>

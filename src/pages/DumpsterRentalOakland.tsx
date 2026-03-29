@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck, AlertTriangle } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── Oakland-specific data ────────────────────────────────────
@@ -190,6 +190,24 @@ export default function DumpsterRentalOakland() {
                   <Phone className="w-4 h-4 mr-2" />Call {BUSINESS_INFO.phone.salesFormatted}
                 </a>
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
+      <section className="py-6 bg-accent/5 border-b border-accent/20">
+        <div className="container-wide max-w-3xl mx-auto">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+              <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Oakland has specific rules for dumpster placement on public streets and rights-of-way. Private property placement (driveways, lots) typically needs no permit. 
+                For street placement, an encroachment permit from Oakland Public Works may be required. Our team can walk you through the process — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+              </p>
             </div>
           </div>
         </div>
