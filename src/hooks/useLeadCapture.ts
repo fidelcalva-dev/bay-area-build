@@ -136,15 +136,34 @@ export function useLeadCapture(filters: LeadFilters = {}) {
     }
   }, [filters, toast]);
 
-  const updateLeadStatus = useCallback(async (leadId: string, newStatus: string) => {
+  const updateLeadStatus = useCallback(async (leadId: string, newStatus: string, extras?: { loss_reason?: string; booked_value?: number; quote_amount?: number }) => {
     try {
+      // Require loss reason for lost
+      if (newStatus === 'lost' && !extras?.loss_reason) {
+        toast({ title: 'Please provide a loss reason', variant: 'destructive' });
+        return;
+      }
+
       const updates: Record<string, unknown> = { 
         lead_status: newStatus,
         updated_at: new Date().toISOString(),
       };
       
-      if (newStatus === 'converted') {
+      if (newStatus === 'converted' || newStatus === 'booked') {
         updates.converted_at = new Date().toISOString();
+        updates.pipeline_stage = 'booked';
+      }
+      if (newStatus === 'lost') {
+        updates.loss_reason = extras?.loss_reason;
+      }
+      if (newStatus === 'quoted') {
+        updates.pipeline_stage = 'quoted';
+      }
+      if (extras?.booked_value != null) {
+        updates.booked_value = extras.booked_value;
+      }
+      if (extras?.quote_amount != null) {
+        updates.quote_amount = extras.quote_amount;
       }
 
       const { error } = await supabase
@@ -158,7 +177,7 @@ export function useLeadCapture(filters: LeadFilters = {}) {
       await supabase.from('lead_events').insert({
         lead_id: leadId,
         event_type: `STATUS_CHANGED_TO_${newStatus.toUpperCase()}`,
-        payload_json: { new_status: newStatus },
+        payload_json: { new_status: newStatus, ...extras },
       });
 
       toast({ title: `Lead status updated to ${newStatus}` });

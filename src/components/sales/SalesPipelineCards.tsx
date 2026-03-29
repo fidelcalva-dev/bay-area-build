@@ -300,7 +300,18 @@ function LeadRow({ lead, showAge, showLastContact }: { lead: PipelineLead; showA
   return (
     <Link to={`/sales/leads/${lead.id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium truncate">{lead.customer_name || 'Unknown'}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-medium truncate">{lead.customer_name || 'Unknown'}</p>
+          {lead.lead_priority === 'hot' && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-red-600 text-white border-0 animate-pulse">🔥 HOT</Badge>
+          )}
+          {lead.lead_priority === 'high' && lead.lead_priority !== 'hot' && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-amber-500 text-white border-0">⚡ HIGH</Badge>
+          )}
+          {lead.same_day && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-red-500 text-white border-0">SAME DAY</Badge>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground truncate">
           {lead.city || lead.zip || 'No location'}
           {showAge && ` · ${formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}`}
