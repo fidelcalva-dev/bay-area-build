@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { SeoSupportSection } from '@/components/seo/SeoSupportSection';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 
 const PRICING_FAQS: FAQItem[] = [
   { question: 'What is included in the dumpster rental price?', answer: 'Every rental includes delivery, pickup, a 7-day rental period, and a weight allowance based on your dumpster size. No hidden trip fees or service charges.' },

@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { SeoJsonLd } from '@/components/seo/SeoJsonLd';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import {
   CheckCircle, ArrowRight, Phone, Truck, AlertTriangle,
   Home, HardHat, Trees, Wrench, Scale, Hammer, Info

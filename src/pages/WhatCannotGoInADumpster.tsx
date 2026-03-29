@@ -3,6 +3,10 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import {
   XCircle, ArrowRight, Phone, AlertTriangle, Info,
   CheckCircle, DollarSign, Shield
