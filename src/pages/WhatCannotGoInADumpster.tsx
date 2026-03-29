@@ -258,6 +258,8 @@ export default function WhatCannotGoInADumpster() {
       <PageFAQ faqs={FAQS} />
       <InternalLinkCluster exclude={['/what-cannot-go-in-a-dumpster']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -280,6 +282,8 @@ export default function WhatCannotGoInADumpster() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="what-cannot-go-in-a-dumpster" />
     </Layout>
   );
 }
