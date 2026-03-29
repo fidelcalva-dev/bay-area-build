@@ -25,6 +25,8 @@ const MATERIAL_SCORE: Record<string, number> = {
   'roofing': 10, 'mixed': 8, 'dirt': 8, 'yard_waste': 5, 'household': 5,
 };
 
+const HIGH_VALUE_CITIES = ['oakland', 'san jose', 'san francisco', 'berkeley', 'fremont', 'walnut creek', 'san mateo', 'palo alto', 'redwood city'];
+
 function scoreLead(input: Record<string, unknown>) {
   const FREE = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','mail.com','protonmail.com','live.com'];
   const DISPOSABLE = ['mailinator.com','guerrillamail.com','tempmail.com','throwaway.email','yopmail.com'];
@@ -33,6 +35,7 @@ function scoreLead(input: Record<string, unknown>) {
   const domain = email.split('@')[1]?.toLowerCase();
   let companyDomain: string | null = null;
   let custType = 'unknown';
+  let priority = 'normal';
   if (domain && !FREE.includes(domain) && !DISPOSABLE.includes(domain)) { qs += 12; companyDomain = domain; custType = 'contractor'; }
   else if (domain && FREE.includes(domain)) { qs += 3; custType = 'homeowner'; }
   if (domain && DISPOSABLE.includes(domain)) rs += 30;
@@ -40,8 +43,13 @@ function scoreLead(input: Record<string, unknown>) {
   const name = (input.name || input.contact_name || input.customer_name || '') as string;
   if (name.trim().length > 2) qs += 8; else rs += 10;
   const phone = (input.phone || input.customer_phone || '') as string;
-  if (phone.replace(/\D/g, '').length >= 10) qs += 8; else if (phone) rs += 20;
-  if (input.address || input.city) qs += 8;
+  const hasPhone = phone.replace(/\D/g, '').length >= 10;
+  if (hasPhone) qs += 8; else if (phone) rs += 20;
+  const city = ((input.city || '') as string).toLowerCase();
+  if (input.address || city) qs += 8;
+
+  // +10 phone AND city present
+  if (hasPhone && city) qs += 10;
 
   // Location scoring — high-value ZIP
   const zip = (input.zip || '') as string;
@@ -49,6 +57,9 @@ function scoreLead(input: Record<string, unknown>) {
     qs += 10;
     if (HIGH_VALUE_ZIPS.includes(zip.slice(0, 5))) qs += 5;
   }
+
+  // +15 high-value city
+  if (HIGH_VALUE_CITIES.includes(city)) { qs += 15; priority = 'high'; }
 
   if (input.company_name) { qs += 8; if (custType === 'unknown') custType = 'contractor'; }
 
@@ -58,19 +69,29 @@ function scoreLead(input: Record<string, unknown>) {
   qs += projectBonus;
 
   // Material scoring
-  const material = ((input.material_category || input.material_type || '') as string).toLowerCase().replace(/[\s-]/g, '_');
+  const material = ((input.material_category || input.material_type || input.debris_type || '') as string).toLowerCase().replace(/[\s-]/g, '_');
   const materialBonus = MATERIAL_SCORE[material] || 0;
   qs += materialBonus;
 
+  // +20 same-day flag
+  if (input.same_day === true) { qs += 20; priority = 'hot'; }
+
+  // +20 contractor or commercial lead type
+  const leadType = ((input.lead_type || input.customer_type || '') as string).toLowerCase();
+  if (['contractor', 'commercial', 'property_manager'].includes(leadType)) { qs += 20; if (priority !== 'hot') priority = 'high'; }
+
+  // +5 repeat lead (dedup match signals this)
+  // Handled post-scoring via is_existing_customer flag
+
   // Urgency / high-intent keywords
-  const text = [input.message, input.message_excerpt].filter(Boolean).join(' ').toLowerCase();
-  if (/need today|ready to book|asap|urgent|same day|tomorrow|this week|need now|schedule/.test(text)) qs += 12;
+  const text = [input.message, input.message_excerpt, input.project_description].filter(Boolean).join(' ').toLowerCase();
+  if (/need today|ready to book|asap|urgent|same day|tomorrow|this week|need now|schedule/.test(text)) { qs += 12; if (priority === 'normal') priority = 'high'; }
   if (/free|test|testing|asdf|xxx|fake/.test(text)) rs += 20;
   if (name.trim().length === 1) rs += 15;
 
   qs = Math.min(100, qs); rs = Math.min(100, rs);
   const label = rs >= 50 || qs < 20 ? 'RED' : rs >= 25 || qs < 40 ? 'AMBER' : 'GREEN';
-  return { quality_score: qs, risk_score: rs, quality_label: label, company_domain: companyDomain, customer_type_inferred: custType };
+  return { quality_score: qs, risk_score: rs, quality_label: label, company_domain: companyDomain, customer_type_inferred: custType, priority };
 }
 
 interface IngestPayload {
