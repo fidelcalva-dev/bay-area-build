@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CleanupLayout } from '@/components/cleanup/CleanupLayout';
 import { CLEANUP_BRAND, BRAND_CLARIFICATION } from '@/config/cleanup/content';
 import { Button } from '@/components/ui/button';
-import { Shield, Camera } from 'lucide-react';
+import { Shield, Camera, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const SERVICE_OPTIONS = [
   'Construction Cleanup',
@@ -11,8 +13,7 @@ const SERVICE_OPTIONS = [
   'Demolition Debris Cleanup',
   'Recurring Jobsite Cleanup',
   'Labor-Assisted Cleanup',
-  'Material Pickup / Haul-Off',
-  'Other / Not Sure',
+  'Not Sure Yet',
 ];
 
 const TIMELINE_OPTIONS = [
@@ -22,22 +23,114 @@ const TIMELINE_OPTIONS = [
   'Planning ahead',
 ];
 
+const CONTACT_METHOD_OPTIONS = [
+  { value: 'phone', label: 'Phone' },
+  { value: 'text', label: 'Text' },
+  { value: 'email', label: 'Email' },
+];
+
 export default function CleanupQuote() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [submitting, setSubmitting] = useState(false);
 
-  // Hidden CRM attribution fields
+  // Form state
+  const [form, setForm] = useState({
+    name: '',
+    company_name: '',
+    phone: '',
+    email: '',
+    address: '',
+    city: '',
+    service_type: searchParams.get('service') || '',
+    timeline: '',
+    approx_size: '',
+    scope: '',
+    contact_method: 'phone',
+  });
+
+  // Attribution (captured once on mount)
   const [attribution] = useState(() => ({
     source_page: typeof window !== 'undefined' ? window.location.pathname : '',
-    source_channel: 'website',
+    source_channel: 'CLEANUP_WEBSITE',
+    source_module: 'cleanup_quote_form',
     utm_source: searchParams.get('utm_source') || '',
     utm_medium: searchParams.get('utm_medium') || '',
     utm_campaign: searchParams.get('utm_campaign') || '',
     utm_term: searchParams.get('utm_term') || '',
     utm_content: searchParams.get('utm_content') || '',
     gclid: searchParams.get('gclid') || '',
-    page_variant: 'cleanup_quote_v1',
+    page_variant: 'cleanup_quote_v2',
   }));
+
+  const updateField = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      // Build the message from scope + metadata
+      const messageParts = [
+        `Service: ${form.service_type}`,
+        form.timeline ? `Timeline: ${form.timeline}` : '',
+        form.approx_size ? `Size: ${form.approx_size}` : '',
+        form.contact_method ? `Preferred contact: ${form.contact_method}` : '',
+        '',
+        form.scope,
+      ].filter(Boolean).join('\n');
+
+      const payload = {
+        source_channel: attribution.source_channel,
+        source_page: attribution.source_page,
+        source_module: attribution.source_module,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        company_name: form.company_name || undefined,
+        address: form.address,
+        city: form.city,
+        message: messageParts,
+        project_type: 'construction_cleanup',
+        customer_type: form.company_name ? 'contractor' : 'homeowner',
+        utm_source: attribution.utm_source || undefined,
+        utm_medium: attribution.utm_medium || undefined,
+        utm_campaign: attribution.utm_campaign || undefined,
+        utm_term: attribution.utm_term || undefined,
+        utm_content: attribution.utm_content || undefined,
+        gclid: attribution.gclid || undefined,
+        landing_url: typeof window !== 'undefined' ? window.location.href : undefined,
+        referrer_url: typeof document !== 'undefined' ? document.referrer || undefined : undefined,
+        raw_payload: {
+          service_line: 'CLEANUP',
+          cleanup_service_type: form.service_type,
+          cleanup_timeline: form.timeline,
+          project_scope: form.scope,
+          approx_size: form.approx_size,
+          contact_method: form.contact_method,
+          contractor_flag: !!form.company_name,
+          recurring_service_flag: form.service_type === 'Recurring Jobsite Cleanup',
+        },
+      };
+
+      const { error } = await supabase.functions.invoke('lead-ingest', {
+        body: payload,
+      });
+
+      if (error) throw error;
+
+      navigate('/cleanup/thank-you');
+    } catch (err) {
+      console.error('Cleanup quote submission error:', err);
+      toast.error('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const inputClass = 'w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30';
 
   return (
     <CleanupLayout
@@ -54,68 +147,107 @@ export default function CleanupQuote() {
                 Tell us what kind of project you have, where it is located, and upload photos if available. We'll review the scope and follow up with the best next step.
               </p>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  // TODO: submit to backend with attribution fields
-                  navigate('/cleanup/thank-you');
-                }}
-                className="space-y-4"
-              >
-                {/* Hidden attribution fields */}
-                {Object.entries(attribution).map(([key, value]) => (
-                  <input key={key} type="hidden" name={key} value={value} />
-                ))}
-
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Name *</label>
-                    <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" />
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => updateField('name', e.target.value)}
+                      className={inputClass}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Company Name</label>
-                    <input className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" />
+                    <input
+                      value={form.company_name}
+                      onChange={(e) => updateField('company_name', e.target.value)}
+                      className={inputClass}
+                    />
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Phone *</label>
-                    <input required type="tel" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" />
+                    <input
+                      required
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => updateField('phone', e.target.value)}
+                      className={inputClass}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Email *</label>
-                    <input required type="email" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" />
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => updateField('email', e.target.value)}
+                      className={inputClass}
+                    />
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-foreground mb-1">Project Address *</label>
-                    <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="Street address" />
+                    <input
+                      required
+                      value={form.address}
+                      onChange={(e) => updateField('address', e.target.value)}
+                      placeholder="Street address"
+                      className={inputClass}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">City *</label>
-                    <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="e.g. Oakland" />
+                    <input
+                      required
+                      value={form.city}
+                      onChange={(e) => updateField('city', e.target.value)}
+                      placeholder="e.g. Oakland"
+                      className={inputClass}
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Service Needed *</label>
-                  <select required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm">
+                  <select
+                    required
+                    value={form.service_type}
+                    onChange={(e) => updateField('service_type', e.target.value)}
+                    className={inputClass}
+                  >
                     <option value="">Select a service</option>
-                    {SERVICE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                    {SERVICE_OPTIONS.map((o) => (
+                      <option key={o} value={o}>{o}</option>
+                    ))}
                   </select>
-                  <input type="hidden" name="requested_service_type" />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Timeline Needed</label>
-                    <select className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm">
+                    <select
+                      value={form.timeline}
+                      onChange={(e) => updateField('timeline', e.target.value)}
+                      className={inputClass}
+                    >
                       <option value="">Select timeline</option>
-                      {TIMELINE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                      {TIMELINE_OPTIONS.map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Approximate Size (sqft)</label>
-                    <input type="text" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="e.g. 1,200 sqft" />
+                    <input
+                      type="text"
+                      value={form.approx_size}
+                      onChange={(e) => updateField('approx_size', e.target.value)}
+                      placeholder="e.g. 1,200 sqft"
+                      className={inputClass}
+                    />
                   </div>
                 </div>
                 <div>
@@ -123,7 +255,9 @@ export default function CleanupQuote() {
                   <textarea
                     required
                     rows={4}
-                    className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm resize-y"
+                    value={form.scope}
+                    onChange={(e) => updateField('scope', e.target.value)}
+                    className={`${inputClass} resize-y`}
                     placeholder="What kind of project, current condition, what needs to be cleaned or removed..."
                   />
                 </div>
@@ -137,15 +271,32 @@ export default function CleanupQuote() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Best Contact Method</label>
-                  <select className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm">
-                    <option value="phone">Phone</option>
-                    <option value="text">Text</option>
-                    <option value="email">Email</option>
+                  <select
+                    value={form.contact_method}
+                    onChange={(e) => updateField('contact_method', e.target.value)}
+                    className={inputClass}
+                  >
+                    {CONTACT_METHOD_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
 
-                <Button type="submit" size="lg" variant="cta" className="w-full text-base font-bold">
-                  Submit Quote Request
+                <Button
+                  type="submit"
+                  size="lg"
+                  variant="cta"
+                  className="w-full text-base font-bold"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Submitting…
+                    </>
+                  ) : (
+                    'Submit Quote Request'
+                  )}
                 </Button>
               </form>
             </div>
