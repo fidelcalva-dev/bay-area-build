@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
-import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
+import { BUSINESS_INFO, PAGE_SEO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
