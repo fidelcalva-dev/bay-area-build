@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Phone, MessageCircle, Send } from 'lucide-react';
-import { BUSINESS_INFO } from '@/lib/seo';
+import { BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
