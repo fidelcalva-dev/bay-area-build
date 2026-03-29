@@ -159,6 +159,8 @@ const featuredCities = CITY_PERMITS.filter(c => c.featured);
 const otherCities = CITY_PERMITS.filter(c => !c.featured);
 
 export default function Permits() {
+  useSeoTracking({ pageType: 'blog', slug: 'permits' });
+
   const breadcrumbs = [
     { name: 'Home', url: '/' },
     { name: 'Permits & Placement Guide', url: '/permits' },
@@ -174,6 +176,7 @@ export default function Permits() {
         generateFAQSchema(PERMIT_FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
