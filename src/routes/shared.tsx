@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 
 // Page loading fallback — shared across all route modules
 export const PageLoader = () => (
@@ -10,7 +11,11 @@ export const PageLoader = () => (
   </div>
 );
 
-// Suspense wrapper helper
+// Suspense + ErrorBoundary wrapper for every lazy route
 export function SuspenseRoute({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
+  return (
+    <RouteErrorBoundary>
+      <Suspense fallback={<PageLoader />}>{children}</Suspense>
+    </RouteErrorBoundary>
+  );
 }
