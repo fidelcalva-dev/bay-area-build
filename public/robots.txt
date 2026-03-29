@@ -12,6 +12,14 @@ Allow: /
 
 User-agent: *
 Allow: /
+Allow: /assets/
+Allow: *.js
+Allow: *.css
+Allow: *.jpg
+Allow: *.png
+Allow: *.svg
+Allow: *.webp
+
 Disallow: /app
 Disallow: /admin/
 Disallow: /admin/*
@@ -40,5 +48,6 @@ Disallow: /visualizer
 Disallow: /thank-you
 Disallow: /set-password
 Disallow: /schedule-delivery
+Disallow: /cleanup/thank-you
 
 Sitemap: https://calsandumpsterspro.com/sitemap.xml
