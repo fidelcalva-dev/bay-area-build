@@ -6,9 +6,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
-import { BUSINESS_INFO } from '@/lib/seo';
+import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const SIZES_FAQS: FAQItem[] = [
+  { question: 'What is the most popular dumpster size?', answer: 'The 20 yard dumpster is our most popular size. It fits most single-room renovations, garage cleanouts, and roofing projects while still fitting in a standard driveway.' },
+  { question: 'Can I put concrete or dirt in a regular dumpster?', answer: 'No. Heavy materials like concrete, dirt, brick, and asphalt require a dedicated heavy material dumpster (5, 8, or 10 yard). These use flat-fee pricing with disposal included.' },
+  { question: 'How do I know which size I need?', answer: 'Consider your project type: bathroom remodel (10yd), garage cleanout (20yd), whole-house renovation (30yd), or new construction (40-50yd). Use our size visualizer or call us for a free recommendation.' },
+  { question: 'What does "included tonnage" mean?', answer: 'Each dumpster size comes with a base weight allowance included in the price. For example, a 20 yard includes 2 tons. Weight beyond that is billed at $165/ton for general debris.' },
+];
 
 export default function Sizes() {
   const { t } = useLanguage();
