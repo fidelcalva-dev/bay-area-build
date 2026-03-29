@@ -17,9 +17,9 @@ const COMPANY_LINKS = [
 ];
 
 const AREA_LINKS = [
-  { label: 'Oakland', href: '/cleanup/oakland-construction-cleanup' },
-  { label: 'Alameda', href: '/cleanup/alameda-construction-cleanup' },
-  { label: 'Bay Area', href: '/cleanup/bay-area-construction-cleanup' },
+  { label: 'Oakland', href: '/cleanup/oakland' },
+  { label: 'Alameda', href: '/cleanup/alameda' },
+  { label: 'Bay Area', href: '/cleanup/bay-area' },
   { label: 'Service Areas', href: '/cleanup/service-areas' },
 ];
 

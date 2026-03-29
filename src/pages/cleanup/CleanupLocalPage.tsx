@@ -17,8 +17,8 @@ interface LocalPageConfig {
 }
 
 const LOCAL_PAGES: Record<string, LocalPageConfig> = {
-  'oakland-construction-cleanup': {
-    slug: 'oakland-construction-cleanup',
+  'oakland': {
+    slug: 'oakland',
     city: 'Oakland',
     seoTitle: 'Construction Cleanup Oakland CA | Calsan C&D Waste Removal',
     metaDesc: 'Professional construction cleanup, post-construction cleanup, and demolition debris cleanup in Oakland, CA. Local crews, fast response. CSLB #1152237.',
@@ -33,12 +33,12 @@ const LOCAL_PAGES: Record<string, LocalPageConfig> = {
       'Demo debris cleanup for renovation phases',
     ],
     nearbyLinks: [
-      { label: 'Alameda', href: '/cleanup/alameda-construction-cleanup' },
-      { label: 'Bay Area', href: '/cleanup/bay-area-construction-cleanup' },
+      { label: 'Alameda', href: '/cleanup/alameda' },
+      { label: 'Bay Area', href: '/cleanup/bay-area' },
     ],
   },
-  'alameda-construction-cleanup': {
-    slug: 'alameda-construction-cleanup',
+  'alameda': {
+    slug: 'alameda',
     city: 'Alameda',
     seoTitle: 'Construction Cleanup Alameda CA | Calsan C&D Waste Removal',
     metaDesc: 'Construction cleanup, post-construction cleanup, and recurring jobsite service in Alameda, CA. Licensed, fast, professional. CSLB #1152237.',
@@ -52,12 +52,12 @@ const LOCAL_PAGES: Record<string, LocalPageConfig> = {
       'Recurring site support',
     ],
     nearbyLinks: [
-      { label: 'Oakland', href: '/cleanup/oakland-construction-cleanup' },
-      { label: 'Bay Area', href: '/cleanup/bay-area-construction-cleanup' },
+      { label: 'Oakland', href: '/cleanup/oakland' },
+      { label: 'Bay Area', href: '/cleanup/bay-area' },
     ],
   },
-  'bay-area-construction-cleanup': {
-    slug: 'bay-area-construction-cleanup',
+  'bay-area': {
+    slug: 'bay-area',
     city: 'Bay Area',
     seoTitle: 'Bay Area Construction Cleanup | Calsan C&D Waste Removal',
     metaDesc: 'Professional construction cleanup across the Bay Area. Oakland, Alameda, and extended service area. CSLB #1152237.',
@@ -72,15 +72,16 @@ const LOCAL_PAGES: Record<string, LocalPageConfig> = {
       'Light commercial cleanup',
     ],
     nearbyLinks: [
-      { label: 'Oakland', href: '/cleanup/oakland-construction-cleanup' },
-      { label: 'Alameda', href: '/cleanup/alameda-construction-cleanup' },
+      { label: 'Oakland', href: '/cleanup/oakland' },
+      { label: 'Alameda', href: '/cleanup/alameda' },
     ],
     isHub: true,
   },
 };
 
 export default function CleanupLocalPage() {
-  const slug = window.location.pathname.replace('/cleanup/', '');
+  const pathPart = window.location.pathname.replace('/cleanup/', '');
+  const slug = pathPart.replace(/\/$/, '');
   const page = LOCAL_PAGES[slug];
 
   if (!page) {
