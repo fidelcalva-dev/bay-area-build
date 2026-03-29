@@ -2,7 +2,7 @@
 // Fires seo_page_view on mount, provides helpers for quote/call click tracking
 import { useEffect, useCallback } from 'react';
 import { track, zipPrefix } from '@/lib/analytics/ga4';
-import { trackPhoneClick, trackQuoteClick } from '@/lib/analytics/seoTracking';
+import { trackPhoneClick, trackQuoteClick as trackSeoQuoteClick } from '@/lib/analytics/seoTracking';
 
 export type SeoPageType = 'city' | 'city_size' | 'city_material' | 'city_job' | 'zip' | 'blog';
 
