@@ -163,7 +163,10 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const payload: IngestPayload = await req.json();
+    const rawBody = await req.json();
+    // Flatten lead_context into top-level if present (frontend may nest attribution)
+    const { lead_context, ...rest } = rawBody;
+    const payload: IngestPayload = lead_context ? { ...rest, ...lead_context } : rest;
     rawPayload = payload;
     console.log('Lead ingest payload:', JSON.stringify(payload).slice(0, 500));
 
