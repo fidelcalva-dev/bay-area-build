@@ -42,6 +42,7 @@ const SitemapPage = lazy(lazyRetry(() => import("@/pages/SitemapPage")));
 const ContactUs = lazy(lazyRetry(() => import("@/pages/ContactUs")));
 const Permits = lazy(lazyRetry(() => import("@/pages/Permits")));
 const ComparePage = lazy(lazyRetry(() => import("@/pages/ComparePage")));
+const ServicePage = lazy(lazyRetry(() => import("@/pages/ServicePage")));
 
 // Auth pages — also resilient to stale chunks
 const StaffLogin = lazy(lazyRetry(() => import("@/pages/StaffLogin")));
