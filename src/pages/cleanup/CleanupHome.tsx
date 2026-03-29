@@ -174,9 +174,9 @@ export default function CleanupHome() {
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{HOMEPAGE.serviceAreas.headline}</h2>
           <p className="text-muted-foreground mb-6">{HOMEPAGE.serviceAreas.body}</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/cleanup/oakland-construction-cleanup" className="text-sm font-medium text-primary hover:underline">Oakland →</Link>
-            <Link to="/cleanup/alameda-construction-cleanup" className="text-sm font-medium text-primary hover:underline">Alameda →</Link>
-            <Link to="/cleanup/bay-area-construction-cleanup" className="text-sm font-medium text-primary hover:underline">Bay Area →</Link>
+            <Link to="/cleanup/oakland" className="text-sm font-medium text-primary hover:underline">Oakland →</Link>
+            <Link to="/cleanup/alameda" className="text-sm font-medium text-primary hover:underline">Alameda →</Link>
+            <Link to="/cleanup/bay-area" className="text-sm font-medium text-primary hover:underline">Bay Area →</Link>
           </div>
         </div>
       </section>

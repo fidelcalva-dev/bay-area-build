@@ -80,7 +80,8 @@ const LOCAL_PAGES: Record<string, LocalPageConfig> = {
 };
 
 export default function CleanupLocalPage() {
-  const slug = window.location.pathname.replace('/cleanup/', '');
+  const pathPart = window.location.pathname.replace('/cleanup/', '');
+  const slug = pathPart.replace(/\/$/, '');
   const page = LOCAL_PAGES[slug];
 
   if (!page) {
