@@ -429,6 +429,13 @@ export function V3QuoteFlow() {
           last_step_completed: milestone,
           message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
           consent_status: 'TRANSACTIONAL',
+          // SEO attribution context
+          ...buildLeadContext({
+            debris_type: materialTypeForPricing || undefined,
+            same_day: serviceOptions.wantsSameDay || false,
+            lead_type: customerType === 'contractor' ? 'commercial' : 'residential',
+            placement_type: serviceOptions.specialPlacement || undefined,
+          }),
           raw_payload: {
             milestone,
             selected_size: size,
