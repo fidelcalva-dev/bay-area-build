@@ -45,9 +45,9 @@ export default function Blog() {
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <h1 className="heading-xl mb-4">Blog & Resources</h1>
+            <h1 className="heading-xl mb-4">Dumpster Rental Tips &amp; Guides</h1>
             <p className="text-xl text-primary-foreground/85">
-              Expert tips, guides, and news to help you with your dumpster rental and waste disposal needs.
+              Expert advice on sizing, materials, permits, and waste disposal for Bay Area residents and contractors.
             </p>
           </div>
         </div>
