@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
 
 const ABOUT_FAQS: FAQItem[] = [
@@ -82,11 +82,24 @@ export default function About() {
     setCurrentImageIndex((prev) => (prev - 1 + fleetGallery.length) % fleetGallery.length);
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about' },
+  ]);
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About Calsan Dumpsters Pro",
+    "url": `${BUSINESS_INFO.url}/about`,
+    "mainEntity": { "@type": "LocalBusiness", "@id": `${BUSINESS_INFO.url}/#organization` },
+  };
+
   return (
     <Layout
       title={PAGE_SEO.about.title}
       description={PAGE_SEO.about.description}
       canonical={PAGE_SEO.about.canonical}
+      schema={[aboutSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, MapPin, Phone, Truck, Clock, Shield, Building } from 'lucide-react';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { REGIONS, getCitiesForRegion, type RegionConfig } from '@/lib/service-area-config';
 import { cityUrl } from '@/lib/seo-urls';
 
@@ -71,11 +71,22 @@ export default function Areas() {
   const directRegions = REGIONS.filter(r => r.serviceModel === 'DIRECT_OPERATION');
   const partnerRegions = REGIONS.filter(r => r.serviceModel === 'PARTNER_NETWORK');
 
+  const areasSchema = generateServiceSchema({
+    name: 'Bay Area Dumpster Rental Service Areas',
+    description: 'Dumpster delivery across 9 Bay Area counties from local yards in Oakland, San Jose & SF. Same-day available.',
+    areaServed: ['Alameda County', 'Santa Clara County', 'San Francisco County', 'Contra Costa County', 'San Mateo County'],
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Service Areas', url: '/areas' },
+  ]);
+
   return (
     <Layout
       title={PAGE_SEO.areas.title}
       description={PAGE_SEO.areas.description}
       canonical={PAGE_SEO.areas.canonical}
+      schema={[areasSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

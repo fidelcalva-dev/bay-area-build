@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
-import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
+import { BUSINESS_INFO, PAGE_SEO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
@@ -29,11 +29,21 @@ export default function Sizes() {
   const generalSizes = getGeneralSizes();
   const heavySizes = getHeavySizes();
 
+  const sizesSchema = generateServiceSchema({
+    name: 'Dumpster Sizes 5 to 50 Yard',
+    description: 'Compare dumpster sizes from 5 to 50 yards. See dimensions, weight limits, and best-use projects. Bay Area delivery available.',
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Sizes', url: '/sizes' },
+  ]);
+
   return (
     <Layout
       title={PAGE_SEO.sizes.title}
       description={PAGE_SEO.sizes.description}
       canonical={PAGE_SEO.sizes.canonical}
+      schema={[sizesSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

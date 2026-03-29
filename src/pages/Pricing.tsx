@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
 import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
 import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
@@ -191,11 +191,23 @@ const overageExplanations = [
 export default function Pricing() {
   useSeoTracking({ pageType: 'blog', slug: 'pricing' });
 
+  const pricingSchema = generateServiceSchema({
+    name: 'Bay Area Dumpster Rental',
+    description: 'All-inclusive dumpster rental pricing from $399. Delivery, pickup & weight included. 5–50 yard sizes for general debris and heavy materials.',
+    price: '$399',
+    areaServed: ['Oakland', 'San Jose', 'San Francisco', 'Bay Area'],
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Pricing', url: '/pricing' },
+  ]);
+
   return (
     <Layout 
       title={PAGE_SEO.pricing.title}
       description={PAGE_SEO.pricing.description}
       canonical={PAGE_SEO.pricing.canonical}
+      schema={[pricingSchema, breadcrumbSchema]}
     >
       <SeoTrustBar />
       {/* Hero */}
