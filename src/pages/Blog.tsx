@@ -80,50 +80,80 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Blog Posts */}
+      {/* Blog Posts + Sidebar */}
       <section className="section-padding bg-background">
         <div className="container-wide">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allPosts.map((post) => {
-              const image = BLOG_IMAGES[post.slug] || (post as any).image;
-              return (
-                <Link to={`/blog/${post.slug}`} key={post.slug}>
-                  <article className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group h-full">
-                    {/* Image */}
-                    <div className="aspect-[16/9] bg-muted flex items-center justify-center overflow-hidden">
-                      {image ? (
-                        <img src={image} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Tag className="w-8 h-8 text-primary" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded mb-3">
-                        {post.category}
-                      </span>
-                      <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h2>
-                      <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                        {post.metaDescription}
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {post.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {post.readTime}
-                        </span>
+          <div className="grid lg:grid-cols-[1fr_280px] gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
+              {allPosts
+                .filter(post => activeCategory === 'all' || post.category?.toLowerCase() === activeCategory)
+                .map((post) => {
+                const image = BLOG_IMAGES[post.slug] || (post as any).image;
+                return (
+                  <Link to={`/blog/${post.slug}`} key={post.slug}>
+                    <article className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group h-full">
+                      <div className="aspect-[16/9] bg-muted flex items-center justify-center overflow-hidden">
+                        {image ? (
+                          <img src={image} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Tag className="w-8 h-8 text-primary" />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </article>
-                </Link>
-              );
-            })}
+                      <div className="p-6">
+                        <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded mb-3">
+                          {post.category}
+                        </span>
+                        <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                          {post.title}
+                        </h2>
+                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                          {post.metaDescription}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {post.date}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {post.readTime}
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Commercial Sidebar */}
+            <aside className="hidden lg:block space-y-6">
+              <div className="bg-primary text-primary-foreground rounded-2xl p-6 sticky top-24">
+                <h3 className="font-bold text-lg mb-2">Need a Dumpster?</h3>
+                <p className="text-sm text-primary-foreground/80 mb-4">Get an instant quote with transparent, all-inclusive pricing.</p>
+                <Button asChild variant="cta" size="lg" className="w-full">
+                  <Link to="/quote">Get Instant Quote</Link>
+                </Button>
+                <div className="mt-4 pt-4 border-t border-primary-foreground/20">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="flex items-center gap-2 text-sm text-primary-foreground/80 hover:text-primary-foreground">
+                    <Phone className="w-4 h-4" />
+                    {BUSINESS_INFO.phone.salesFormatted}
+                  </a>
+                </div>
+              </div>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <h3 className="font-bold text-foreground mb-3">Quick Links</h3>
+                <div className="space-y-2 text-sm">
+                  <Link to="/sizes" className="block text-primary hover:underline">Dumpster Sizes Guide</Link>
+                  <Link to="/pricing" className="block text-primary hover:underline">Pricing</Link>
+                  <Link to="/materials" className="block text-primary hover:underline">Materials Guide</Link>
+                  <Link to="/areas" className="block text-primary hover:underline">Service Areas</Link>
+                  <Link to="/permits" className="block text-primary hover:underline">Permit Guide</Link>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </section>

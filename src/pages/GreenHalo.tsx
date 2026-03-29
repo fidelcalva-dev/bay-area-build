@@ -86,8 +86,8 @@ const useCases = [
 const GreenHalo = () => {
   return (
     <Layout
-      title="Green Halo™ – Recycling Support Program"
-      description="Track recycling documentation for your projects. Weight tickets, diversion reports, and sustainability data available upon request."
+      title={PAGE_SEO.greenHalo?.title || "Green Halo™ – Recycling Documentation & Diversion Reports"}
+      description={PAGE_SEO.greenHalo?.description || "Track recycling documentation for construction projects. Weight tickets, diversion reports, and WMP compliance support."}
     >
       {/* Removed noindex — page supports brand credibility */}
       {/* Hero Section */}
