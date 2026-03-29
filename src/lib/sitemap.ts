@@ -49,6 +49,13 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/compare/dumpster-rental-vs-junk-removal', changefreq: 'monthly', priority: 0.7 },
   { url: '/compare/10-vs-20-yard-dumpster', changefreq: 'monthly', priority: 0.7 },
   { url: '/compare/20-vs-30-yard-dumpster', changefreq: 'monthly', priority: 0.7 },
+  { url: '/services/construction-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/roofing-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/residential-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/commercial-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/concrete-dirt-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/junk-debris-dumpsters', changefreq: 'monthly', priority: 0.9 },
+  { url: '/services/same-day-dumpster-rental', changefreq: 'monthly', priority: 0.9 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   // Hub pages — only active regions in sitemap

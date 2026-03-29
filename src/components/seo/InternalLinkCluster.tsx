@@ -8,10 +8,13 @@ interface ClusterLink {
 }
 
 const SERVICE_LINKS: ClusterLink[] = [
-  { to: '/construction-dumpsters', label: 'Construction Dumpsters', icon: HardHat },
-  { to: '/roofing-dumpsters', label: 'Roofing Dumpsters', icon: Truck },
-  { to: '/residential-dumpsters', label: 'Residential Dumpsters', icon: Truck },
-  { to: '/commercial-dumpsters', label: 'Commercial Dumpsters', icon: Truck },
+  { to: '/services/construction-dumpsters', label: 'Construction Dumpsters', icon: HardHat },
+  { to: '/services/roofing-dumpsters', label: 'Roofing Dumpsters', icon: Truck },
+  { to: '/services/residential-dumpsters', label: 'Residential Dumpsters', icon: Truck },
+  { to: '/services/commercial-dumpsters', label: 'Commercial Dumpsters', icon: Truck },
+  { to: '/services/concrete-dirt-dumpsters', label: 'Concrete & Dirt Dumpsters', icon: Truck },
+  { to: '/services/junk-debris-dumpsters', label: 'Junk & Debris Dumpsters', icon: Truck },
+  { to: '/services/same-day-dumpster-rental', label: 'Same-Day Delivery', icon: Truck },
 ];
 
 const SIZE_LINKS: ClusterLink[] = [
