@@ -757,6 +757,30 @@ export default function Pricing() {
         </div>
       </section>
 
+      {/* Material & Permit Links */}
+      <section className="py-8 bg-muted/30">
+        <div className="container-wide">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link to="/what-can-you-put-in-a-dumpster" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Accepted Materials</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/what-cannot-go-in-a-dumpster" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Prohibited Items</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/permits" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Permit Guide</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/sizes" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Size Guide</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <PageFAQ faqs={PRICING_FAQS} />
       <InternalLinkCluster exclude={['/pricing']} />
 
