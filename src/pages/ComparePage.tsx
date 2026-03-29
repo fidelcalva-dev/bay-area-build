@@ -238,6 +238,8 @@ export default function ComparePage() {
   const { slug } = useParams<{ slug: string }>();
   const data = slug ? COMPARISONS[slug] : undefined;
 
+  useSeoTracking({ pageType: 'blog', slug: slug || 'compare' });
+
   if (!data) {
     return <Navigate to="/sizes" replace />;
   }
@@ -258,6 +260,7 @@ export default function ComparePage() {
         generateFAQSchema(data.faqs),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
