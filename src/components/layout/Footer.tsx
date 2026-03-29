@@ -132,16 +132,13 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Services */}
           <div>
-            <h4 className="font-bold text-lg mb-4">{t('footer.quickLinks')}</h4>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
+            <h4 className="font-bold text-lg mb-4">Services</h4>
+            <ul className="space-y-2">
+              {serviceLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
@@ -149,56 +146,52 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Sizes & Pricing */}
           <div>
-            <h4 className="font-bold text-lg mb-4">{t('footer.services')}</h4>
-            <ul className="space-y-3">
-              {serviceLinks.map((link) => (
+            <h4 className="font-bold text-lg mb-4">Sizes &amp; Pricing</h4>
+            <ul className="space-y-2">
+              {sizeLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
               ))}
-              {moreLinks.map((link) => (
+            </ul>
+          </div>
+
+          {/* Locations */}
+          <div>
+            <h4 className="font-bold text-lg mb-4">Locations</h4>
+            <ul className="space-y-2">
+              {locationLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources & Company */}
+          <div>
+            <h4 className="font-bold text-lg mb-4">Resources</h4>
+            <ul className="space-y-2">
+              {resourceLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
 
-            {/* Resources subsection */}
-            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Resources</h5>
+            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Company</h5>
             <ul className="space-y-2">
-              {resourceLinks.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            
-            {/* Why Us / Differentiation Links */}
-            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Why Us</h5>
-            <ul className="space-y-2">
-              {differentiationLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs">
                     {link.label}
                   </Link>
                 </li>
