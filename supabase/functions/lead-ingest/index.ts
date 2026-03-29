@@ -201,10 +201,23 @@ Deno.serve(async (req) => {
     if (payload.lat != null) extraUpdates.lat = payload.lat;
     if (payload.lng != null) extraUpdates.lng = payload.lng;
 
-    // === NEW: Source attribution ===
+    // === Source attribution ===
     extraUpdates.source_channel = payload.source_channel;
     if (payload.source_page) extraUpdates.source_page = payload.source_page;
     if (payload.source_module) extraUpdates.source_module = payload.source_module;
+
+    // === SEO intent & attribution fields ===
+    if (payload.msclkid) extraUpdates.msclkid = payload.msclkid;
+    if (payload.city_intent) extraUpdates.city_intent = payload.city_intent;
+    if (payload.service_intent) extraUpdates.service_intent = payload.service_intent;
+    if (payload.debris_type) extraUpdates.debris_type = payload.debris_type;
+    if (payload.same_day != null) extraUpdates.same_day = payload.same_day;
+    if (payload.needs_permit != null) extraUpdates.needs_permit = payload.needs_permit;
+    if (payload.lead_type) extraUpdates.lead_type = payload.lead_type;
+    if (payload.project_description) extraUpdates.project_description = payload.project_description;
+    if (payload.booked_value != null) extraUpdates.booked_value = payload.booked_value;
+    if (payload.pipeline_stage) extraUpdates.pipeline_stage = payload.pipeline_stage;
+    if (payload.first_seen_at) extraUpdates.first_touch_at = payload.first_seen_at;
 
     // === NEW: Quote enrichment fields ===
     if (payload.selected_size != null) extraUpdates.selected_size = payload.selected_size;
