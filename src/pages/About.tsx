@@ -13,6 +13,9 @@ const ABOUT_FAQS: FAQItem[] = [
   { question: 'Do you offer bilingual support?', answer: 'Yes. Our team provides full support in English and Spanish (Hablamos Español).' },
   { question: 'What sizes of dumpsters do you carry?', answer: 'We carry 7 sizes: 5, 8, 10, 20, 30, 40, and 50 yard roll-off dumpsters for both general debris and heavy materials like concrete and dirt.' },
 ];
+
+// Served from public/ to avoid bundling large files
+const fleetYard = '/images/real-work/fleet-yard.jpg';
 const brandedFleet = '/images/real-work/branded-fleet.jpg';
 const stockedReady = '/images/real-work/stocked-ready.jpg';
 const jobSite = '/images/real-work/job-site.jpg';
