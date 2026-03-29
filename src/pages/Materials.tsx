@@ -64,8 +64,9 @@ const PICKUP_LOADS_QUICK = [
 export default function Materials() {
   return (
     <Layout
-      title="Accepted Dumpster Materials | What Can Go in a Dumpster"
-      description="Learn what materials are allowed in your dumpster rental. Accepted items, prohibited materials, and special rules for concrete and dirt disposal."
+      title={PAGE_SEO.materials.title}
+      description={PAGE_SEO.materials.description}
+      canonical={PAGE_SEO.materials.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
