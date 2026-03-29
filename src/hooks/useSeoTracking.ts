@@ -34,8 +34,8 @@ export function useSeoTracking(params: UseSeoTrackingParams) {
 
   const page = slug || pageType;
 
-  const trackQuoteClick = useCallback(() => {
-    trackQuoteClick(page, city);
+  const handleQuoteClick = useCallback(() => {
+    trackSeoQuoteClick(page, city);
   }, [page, city]);
 
   const trackCallClick = useCallback(() => {
