@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CleanupLayout } from '@/components/cleanup/CleanupLayout';
 import { CLEANUP_BRAND, BRAND_CLARIFICATION } from '@/config/cleanup/content';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Shield, Camera } from 'lucide-react';
+import { Shield, Camera } from 'lucide-react';
 
 const SERVICE_OPTIONS = [
   'Construction Cleanup',
@@ -22,26 +23,21 @@ const TIMELINE_OPTIONS = [
 ];
 
 export default function CleanupQuote() {
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  if (submitted) {
-    return (
-      <CleanupLayout title="Thank You | Calsan C&D Waste Removal" description="Your cleanup quote request has been received.">
-        <section className="py-16 md:py-24">
-          <div className="max-w-lg mx-auto px-4 text-center">
-            <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
-            <h1 className="text-3xl font-extrabold text-foreground mb-4">Request Received</h1>
-            <p className="text-muted-foreground mb-6">
-              We'll review your project details and follow up with a recommendation and pricing as quickly as possible.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              During business hours (Mon–Sat, 6 AM – 9 PM PT), expect a response within 15 minutes.
-            </p>
-          </div>
-        </section>
-      </CleanupLayout>
-    );
-  }
+  // Hidden CRM attribution fields
+  const [attribution] = useState(() => ({
+    source_page: typeof window !== 'undefined' ? window.location.pathname : '',
+    source_channel: 'website',
+    utm_source: searchParams.get('utm_source') || '',
+    utm_medium: searchParams.get('utm_medium') || '',
+    utm_campaign: searchParams.get('utm_campaign') || '',
+    utm_term: searchParams.get('utm_term') || '',
+    utm_content: searchParams.get('utm_content') || '',
+    gclid: searchParams.get('gclid') || '',
+    page_variant: 'cleanup_quote_v1',
+  }));
 
   return (
     <CleanupLayout
@@ -61,10 +57,16 @@ export default function CleanupQuote() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  setSubmitted(true);
+                  // TODO: submit to backend with attribution fields
+                  navigate('/cleanup/thank-you');
                 }}
                 className="space-y-4"
               >
+                {/* Hidden attribution fields */}
+                {Object.entries(attribution).map(([key, value]) => (
+                  <input key={key} type="hidden" name={key} value={value} />
+                ))}
+
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Name *</label>
@@ -85,9 +87,15 @@ export default function CleanupQuote() {
                     <input required type="email" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Project Address *</label>
-                  <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="Street, City, ZIP" />
+                <div className="grid sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-foreground mb-1">Project Address *</label>
+                    <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="Street address" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">City *</label>
+                    <input required className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="e.g. Oakland" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Service Needed *</label>
@@ -95,17 +103,20 @@ export default function CleanupQuote() {
                     <option value="">Select a service</option>
                     {SERVICE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
                   </select>
+                  <input type="hidden" name="requested_service_type" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Timeline Needed</label>
-                  <select className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm">
-                    <option value="">Select timeline</option>
-                    {TIMELINE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Approximate Project Size (sqft)</label>
-                  <input type="text" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="e.g. 1,200 sqft" />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Timeline Needed</label>
+                    <select className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm">
+                      <option value="">Select timeline</option>
+                      {TIMELINE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Approximate Size (sqft)</label>
+                    <input type="text" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm" placeholder="e.g. 1,200 sqft" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Describe the Scope *</label>

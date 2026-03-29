@@ -11,6 +11,7 @@ const CleanupAbout = lazy(() => import('@/pages/cleanup/CleanupAbout'));
 const CleanupFAQs = lazy(() => import('@/pages/cleanup/CleanupFAQs'));
 const CleanupContact = lazy(() => import('@/pages/cleanup/CleanupContact'));
 const CleanupQuote = lazy(() => import('@/pages/cleanup/CleanupQuote'));
+const CleanupThankYou = lazy(() => import('@/pages/cleanup/CleanupThankYou'));
 const CleanupBeforeAfter = lazy(() => import('@/pages/cleanup/CleanupBeforeAfter'));
 const CleanupServiceAreas = lazy(() => import('@/pages/cleanup/CleanupServiceAreas'));
 const CleanupLocalPage = lazy(() => import('@/pages/cleanup/CleanupLocalPage'));
@@ -29,6 +30,7 @@ export function getCleanupRoutes() {
     <Route key="cleanup-faqs" path="/cleanup/faqs" element={<SuspenseRoute><CleanupFAQs /></SuspenseRoute>} />,
     <Route key="cleanup-contact" path="/cleanup/contact" element={<SuspenseRoute><CleanupContact /></SuspenseRoute>} />,
     <Route key="cleanup-quote" path="/cleanup/quote" element={<SuspenseRoute><CleanupQuote /></SuspenseRoute>} />,
+    <Route key="cleanup-thank-you" path="/cleanup/thank-you" element={<SuspenseRoute><CleanupThankYou /></SuspenseRoute>} />,
     <Route key="cleanup-before-after" path="/cleanup/before-after" element={<SuspenseRoute><CleanupBeforeAfter /></SuspenseRoute>} />,
     <Route key="cleanup-service-areas" path="/cleanup/service-areas" element={<SuspenseRoute><CleanupServiceAreas /></SuspenseRoute>} />,
     <Route key="cleanup-oakland" path="/cleanup/oakland-construction-cleanup" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
