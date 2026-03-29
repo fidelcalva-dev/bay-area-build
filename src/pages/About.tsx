@@ -81,17 +81,32 @@ export default function About() {
 
   return (
     <Layout
-      title="About Calsan Dumpsters Pro | Bay Area Dumpster Company"
-      description="Locally owned dumpster rental company serving the SF Bay Area. Reliable, eco-friendly waste removal with bilingual support. Learn about our story."
+      title={PAGE_SEO.about.title}
+      description={PAGE_SEO.about.description}
+      canonical={PAGE_SEO.about.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <h1 className="heading-xl mb-4">About Us</h1>
-            <p className="text-xl text-primary-foreground/85">
-              Your trusted dumpster rental partner in the San Francisco Bay Area. Reliable service, transparent pricing, eco-friendly practices.
+            <h1 className="heading-xl mb-4">Bay Area's Trusted Local Dumpster Company</h1>
+            <p className="text-xl text-primary-foreground/85 mb-6">
+              Real yards in Oakland, San Jose &amp; San Francisco. Reliable delivery, transparent pricing, and bilingual support since day one.
             </p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild variant="cta" size="lg">
+                <Link to="/quote">
+                  Get Instant Quote
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="heroOutline" size="lg">
+                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                  <Phone className="w-4 h-4" />
+                  {BUSINESS_INFO.phone.salesFormatted}
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
