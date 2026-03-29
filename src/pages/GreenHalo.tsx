@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from 'react-helmet-async';
-import { BUSINESS_INFO } from "@/lib/seo";
+import { BUSINESS_INFO, PAGE_SEO } from "@/lib/seo";
 
 const features = [
   {
