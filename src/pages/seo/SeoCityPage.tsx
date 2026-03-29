@@ -237,21 +237,64 @@ export default function SeoCityPage() {
       <section className="section-padding bg-background">
         <div className="container-wide max-w-4xl mx-auto">
           <h2 className="heading-lg text-foreground mb-4">Dumpster Rental Service in {city.city_name}</h2>
-          <p className="text-muted-foreground leading-relaxed mb-4">
-            Calsan Dumpsters Pro provides professional dumpster rental services in {city.city_name} for homeowners, contractors, and businesses. 
-            Whether you're tackling a home remodel, roof replacement, construction project, or property cleanout, we deliver the right size dumpster to your {city.city_name} address.
-          </p>
+          {localIntro && (
+            <p className="text-muted-foreground leading-relaxed mb-4">{localIntro}</p>
+          )}
           <p className="text-muted-foreground leading-relaxed mb-4">
             We serve {city.city_name} and surrounding communities throughout {city.county || 'the Bay Area'} with same-day delivery based on availability. 
-            Our transparent pricing means you see your exact cost before confirming—no hidden fees or surprise charges.
+            Our transparent pricing means you see your exact cost before confirming — no hidden fees or surprise charges.
           </p>
-          {yardCluster && city.city_slug !== yardCluster.cluster && (
+          {logisticsNote && (
+            <p className="text-muted-foreground leading-relaxed italic">{logisticsNote}</p>
+          )}
+          {!logisticsNote && yardCluster && city.city_slug !== yardCluster.cluster && (
             <p className="text-muted-foreground leading-relaxed italic">
               Serving {city.city_name} from our {yardCluster.yardCity} yard — fast {yardCluster.regionLabel} dispatch for residential and commercial projects.
             </p>
           )}
         </div>
       </section>
+
+      {/* Service Blocks */}
+      {serviceBlocks.length > 0 && (
+        <section className="section-padding bg-muted/30">
+          <div className="container-wide">
+            <h2 className="heading-lg text-foreground mb-3 text-center">Dumpster Rental Services in {city.city_name}</h2>
+            <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">We handle every type of project — from small residential cleanouts to large commercial demolition.</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {serviceBlocks.map((block, i) => (
+                <Link key={i} to={block.link} className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Wrench className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{block.title}</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{block.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Permit Verification Callout — Tier 1 cities */}
+      {showPermitVerification && (
+        <section className="py-8 bg-accent/5 border-y border-accent/20">
+          <div className="container-wide max-w-3xl mx-auto">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+                <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {city.city_name} has specific placement and permitting requirements depending on your location. Before scheduling, we recommend verifying whether your site needs a street placement permit. 
+                  Our team can walk you through the process — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works */}
       <section className="section-padding bg-muted/30">
