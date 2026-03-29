@@ -2,12 +2,17 @@ import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PAGE_SEO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
 
-// Served from public/ to avoid bundling large files
-const fleetYard = '/images/real-work/fleet-yard.jpg';
+const ABOUT_FAQS: FAQItem[] = [
+  { question: 'Where is Calsan Dumpsters Pro located?', answer: 'Our headquarters is in Oakland, CA, with operational yards in Oakland, San Jose, and San Francisco. We serve all 9 Bay Area counties.' },
+  { question: 'Is Calsan a broker or a local operator?', answer: 'We are a direct yard operator — not a broker. Your dumpster comes from our own local fleet, dispatched from real yards near your project.' },
+  { question: 'Do you offer bilingual support?', answer: 'Yes. Our team provides full support in English and Spanish (Hablamos Español).' },
+  { question: 'What sizes of dumpsters do you carry?', answer: 'We carry 7 sizes: 5, 8, 10, 20, 30, 40, and 50 yard roll-off dumpsters for both general debris and heavy materials like concrete and dirt.' },
+];
 const brandedFleet = '/images/real-work/branded-fleet.jpg';
 const stockedReady = '/images/real-work/stocked-ready.jpg';
 const jobSite = '/images/real-work/job-site.jpg';
