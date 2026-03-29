@@ -28,9 +28,9 @@ const LOCATION_LINKS: ClusterLink[] = [
   { to: '/dumpster-rental-oakland-ca', label: 'Oakland', icon: MapPin },
   { to: '/dumpster-rental-san-jose-ca', label: 'San Jose', icon: MapPin },
   { to: '/dumpster-rental-san-francisco-ca', label: 'San Francisco', icon: MapPin },
-  { to: '/dumpster-rental-berkeley-ca', label: 'Berkeley', icon: MapPin },
-  { to: '/dumpster-rental-fremont-ca', label: 'Fremont', icon: MapPin },
-  { to: '/dumpster-rental-hayward-ca', label: 'Hayward', icon: MapPin },
+  { to: '/dumpster-rental/berkeley', label: 'Berkeley', icon: MapPin },
+  { to: '/dumpster-rental/fremont', label: 'Fremont', icon: MapPin },
+  { to: '/dumpster-rental/hayward', label: 'Hayward', icon: MapPin },
 ];
 
 type ClusterType = 'services' | 'sizes' | 'locations' | 'all';
