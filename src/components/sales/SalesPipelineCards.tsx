@@ -305,7 +305,7 @@ function LeadRow({ lead, showAge, showLastContact }: { lead: PipelineLead; showA
           {lead.lead_priority === 'hot' && (
             <Badge className="h-4 px-1.5 text-[9px] font-bold bg-red-600 text-white border-0 animate-pulse">🔥 HOT</Badge>
           )}
-          {lead.lead_priority === 'high' && lead.lead_priority !== 'hot' && (
+          {lead.lead_priority === 'high' && (
             <Badge className="h-4 px-1.5 text-[9px] font-bold bg-amber-500 text-white border-0">⚡ HIGH</Badge>
           )}
           {lead.same_day && (
