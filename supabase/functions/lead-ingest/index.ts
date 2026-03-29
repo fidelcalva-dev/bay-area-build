@@ -109,12 +109,24 @@ interface IngestPayload {
   utm_term?: string;
   utm_content?: string;
   gclid?: string;
+  msclkid?: string;
   landing_url?: string;
   referrer_url?: string;
+  first_seen_at?: string;
   consent_status?: string;
   raw_payload?: Record<string, unknown>;
   dedup_window_days?: number;
   performed_by_user_id?: string;
+  // SEO intent fields
+  city_intent?: string;
+  service_intent?: string;
+  debris_type?: string;
+  same_day?: boolean;
+  needs_permit?: boolean;
+  lead_type?: string;
+  project_description?: string;
+  booked_value?: number;
+  pipeline_stage?: string;
 }
 
 Deno.serve(async (req) => {
