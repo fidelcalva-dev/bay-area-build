@@ -41,11 +41,11 @@ const BlogArticle = lazy(lazyRetry(() => import("@/pages/BlogArticle")));
 const SitemapPage = lazy(lazyRetry(() => import("@/pages/SitemapPage")));
 const ContactUs = lazy(lazyRetry(() => import("@/pages/ContactUs")));
 
-// Auth pages
-const StaffLogin = lazy(() => import("@/pages/StaffLogin"));
-const RoleRouter = lazy(() => import("@/pages/RoleRouter"));
-const RequestAccess = lazy(() => import("@/pages/RequestAccess"));
-const SetPassword = lazy(() => import("@/pages/SetPassword"));
+// Auth pages — also resilient to stale chunks
+const StaffLogin = lazy(lazyRetry(() => import("@/pages/StaffLogin")));
+const RoleRouter = lazy(lazyRetry(() => import("@/pages/RoleRouter")));
+const RequestAccess = lazy(lazyRetry(() => import("@/pages/RequestAccess")));
+const SetPassword = lazy(lazyRetry(() => import("@/pages/SetPassword")));
 
 export function getPublicRoutes() {
   return [
