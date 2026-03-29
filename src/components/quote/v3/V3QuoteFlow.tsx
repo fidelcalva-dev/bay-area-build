@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 import { analytics } from '@/lib/analytics';
+import { buildLeadContext } from '@/lib/attributionTracker';
 import { ga4, zipPrefix } from '@/lib/analytics/ga4';
 import { PRICING_POLICIES, INCLUDED_TONS_BY_SIZE } from '@/lib/shared-data';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
@@ -429,6 +430,13 @@ export function V3QuoteFlow() {
           last_step_completed: milestone,
           message: `Quote flow milestone: ${milestone} | Size: ${size}yd | Type: ${customerType || 'unknown'}`,
           consent_status: 'TRANSACTIONAL',
+          // SEO attribution context
+          ...buildLeadContext({
+            debris_type: materialTypeForPricing || undefined,
+            same_day: serviceOptions.wantsSameDay || false,
+            lead_type: customerType === 'contractor' ? 'commercial' : 'residential',
+            placement_type: serviceOptions.specialPlacement || undefined,
+          }),
           raw_payload: {
             milestone,
             selected_size: size,
