@@ -89,6 +89,8 @@ export function getPublicRoutes() {
     <Route key="how-it-works" path="/how-it-works" element={<SuspenseRoute><HowItWorks /></SuspenseRoute>} />,
     <Route key="technology" path="/technology" element={<SuspenseRoute><Technology /></SuspenseRoute>} />,
     <Route key="why-calsan" path="/why-calsan" element={<SuspenseRoute><WhyCalsan /></SuspenseRoute>} />,
+    <Route key="permits" path="/permits" element={<SuspenseRoute><Permits /></SuspenseRoute>} />,
+    <Route key="compare" path="/compare/:slug" element={<SuspenseRoute><ComparePage /></SuspenseRoute>} />,
     <Route key="staff" path="/staff" element={<SuspenseRoute><StaffLogin /></SuspenseRoute>} />,
     <Route key="app" path="/app" element={<SuspenseRoute><RoleRouter /></SuspenseRoute>} />,
     <Route key="request-access" path="/request-access" element={<SuspenseRoute><RequestAccess /></SuspenseRoute>} />,
