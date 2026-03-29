@@ -21,14 +21,25 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    label: 'Dumpster Sizes',
+    label: 'Services',
+    children: [
+      { to: '/construction-dumpsters', label: 'Construction Dumpsters' },
+      { to: '/commercial-dumpster-rental', label: 'Commercial Dumpsters' },
+      { to: '/roofing-dumpster-rental', label: 'Roofing Dumpsters' },
+      { to: '/residential-dumpster-rental', label: 'Residential Dumpsters' },
+      { to: '/concrete-dumpster-rental', label: 'Concrete & Dirt Dumpsters' },
+      { to: '/contractors', label: 'Contractor Programs' },
+    ],
+  },
+  {
+    label: 'Sizes & Pricing',
     children: [
       { to: '/sizes', label: 'All Sizes' },
-      { to: '/sizes#10-yard', label: '10 Yard Dumpster' },
-      { to: '/sizes#20-yard', label: '20 Yard Dumpster' },
-      { to: '/sizes#30-yard', label: '30 Yard Dumpster' },
-      { to: '/sizes#40-yard', label: '40 Yard Dumpster' },
-      { to: '/materials', label: 'Heavy Material Dumpsters' },
+      { to: '/10-yard-dumpster-rental', label: '10 Yard Dumpster' },
+      { to: '/20-yard-dumpster-rental', label: '20 Yard Dumpster' },
+      { to: '/30-yard-dumpster-rental', label: '30 Yard Dumpster' },
+      { to: '/40-yard-dumpster-rental', label: '40 Yard Dumpster' },
+      { to: '/pricing', label: 'Pricing' },
     ],
   },
   {
@@ -37,24 +48,18 @@ const NAV_ITEMS: NavItem[] = [
       { to: '/dumpster-rental-oakland-ca', label: 'Oakland' },
       { to: '/dumpster-rental-san-jose-ca', label: 'San Jose' },
       { to: '/dumpster-rental-san-francisco-ca', label: 'San Francisco' },
-      { to: '/areas', label: 'Bay Area Coverage Map' },
-    ],
-  },
-  {
-    label: 'For Contractors',
-    children: [
-      { to: '/contractors', label: 'Contractor Accounts' },
-      { to: '/quote/contractor', label: 'Volume Pricing' },
-      { to: '/contractor-best-practices', label: 'Project Scheduling' },
-      { to: '/contractor-resources', label: 'Documentation & Compliance' },
+      { to: '/dumpster-rental-east-bay', label: 'East Bay' },
+      { to: '/dumpster-rental-south-bay', label: 'South Bay' },
+      { to: '/areas', label: 'All Service Areas' },
     ],
   },
   {
     label: 'Resources',
     children: [
-      { to: '/materials', label: 'What Can I Put in a Dumpster?' },
-      { to: '/how-it-works', label: 'How Pricing Works' },
-      { to: '/blog', label: 'Blog' },
+      { to: '/materials', label: 'What Goes in a Dumpster' },
+      { to: '/permits', label: 'Permits & Rules' },
+      { to: '/how-it-works', label: 'How It Works' },
+      { to: '/blog', label: 'Blog & Guides' },
       { to: '/about', label: 'About Calsan' },
     ],
   },
