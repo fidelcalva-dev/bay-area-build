@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
 import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
 import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
