@@ -9617,6 +9617,60 @@ export type Database = {
           },
         ]
       }
+      lead_follow_up_tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_at: string
+          id: string
+          lead_id: string
+          status: string
+          task_type: string
+          title: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at: string
+          id?: string
+          lead_id: string
+          status?: string
+          task_type?: string
+          title: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string
+          id?: string
+          lead_id?: string
+          status?: string
+          task_type?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_follow_up_tasks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_follow_up_tasks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_handoff_packets: {
         Row: {
           assigned_team: string
@@ -18100,6 +18154,7 @@ export type Database = {
           latest_heavy_flag: boolean | null
           latest_recommended_size: number | null
           latest_touch_at: string | null
+          lead_priority: string | null
           lead_quality_label: string | null
           lead_quality_score: number | null
           lead_risk_score: number | null
@@ -18109,6 +18164,7 @@ export type Database = {
           linked_contact_id: string | null
           linked_opportunity_id: string | null
           lng: number | null
+          loss_reason: string | null
           market_code: string | null
           material_category: string | null
           message_excerpt: string | null
@@ -18207,6 +18263,7 @@ export type Database = {
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
           latest_touch_at?: string | null
+          lead_priority?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -18216,6 +18273,7 @@ export type Database = {
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           lng?: number | null
+          loss_reason?: string | null
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
@@ -18314,6 +18372,7 @@ export type Database = {
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
           latest_touch_at?: string | null
+          lead_priority?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
           lead_risk_score?: number | null
@@ -18323,6 +18382,7 @@ export type Database = {
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           lng?: number | null
+          loss_reason?: string | null
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
