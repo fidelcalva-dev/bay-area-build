@@ -189,12 +189,15 @@ const overageExplanations = [
 ];
 
 export default function Pricing() {
+  useSeoTracking({ pageType: 'blog', slug: 'pricing' });
+
   return (
     <Layout 
       title={PAGE_SEO.pricing.title}
       description={PAGE_SEO.pricing.description}
       canonical={PAGE_SEO.pricing.canonical}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
