@@ -309,8 +309,8 @@ export const CITY_CONTENT: CityContent[] = [
     logisticsNote: 'Dispatched from our Oakland yard via I-580 — most Dublin deliveries arrive within 45–60 minutes during business hours.',
     serviceBlocks: [CONSTRUCTION_BLOCK, RESIDENTIAL_BLOCK, HEAVY_BLOCK, COMMERCIAL_BLOCK, ROOFING_BLOCK],
     faqs: [
-      { question: 'Do I need a permit for a dumpster in Dublin?', answer: 'No permit needed for private property. Street placement requires an encroachment permit from Dublin Public Works. Most permits are straightforward given Dublin's wide residential streets.' },
-      { question: 'Can I place a dumpster on the street in Dublin?', answer: 'Yes, with a city permit. Dublin's newer developments have wider streets that accommodate roll-offs easily. Driveway placement is faster and requires no permit.' },
+      { question: 'Do I need a permit for a dumpster in Dublin?', answer: 'No permit needed for private property. Street placement requires an encroachment permit from Dublin Public Works. Most permits are straightforward given Dublin\'s wide residential streets.' },
+      { question: 'Can I place a dumpster on the street in Dublin?', answer: 'Yes, with a city permit. Dublin\'s newer developments have wider streets that accommodate roll-offs easily. Driveway placement is faster and requires no permit.' },
       { question: 'What size dumpster is best for new construction in Dublin?', answer: 'New construction in Dublin typically requires a 30 or 40-yard dumpster. For remodels and cleanouts, a 20-yard is the most popular choice.' },
       { question: 'Do you offer same-day delivery to Dublin?', answer: `Same-day delivery is available for Dublin addresses when ordered before noon. We serve the entire Tri-Valley daily. Call ${BUSINESS_INFO.phone.salesFormatted}.` },
       { question: 'What materials are restricted in Dublin dumpsters?', answer: 'Hazardous waste, paint, batteries, tires, and electronics are not accepted. New construction debris (lumber, drywall, shingles) is fine. Concrete and dirt use flat-fee heavy containers.' },
