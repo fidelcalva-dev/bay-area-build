@@ -431,7 +431,7 @@ export default function SeoCityPage() {
                 <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-accent-foreground" /></div>
                 <h2 className="heading-md text-foreground">Permit Information for {city.city_name}</h2>
               </div>
-              <p className="text-muted-foreground mb-4">{city.permit_info}</p>
+              <p className="text-muted-foreground mb-4">{permitNote || city.permit_info}</p>
               <div className="bg-card border border-border rounded-xl p-4">
                 <p className="text-sm font-semibold text-foreground mb-2">Need help with permits?</p>
                 <p className="text-sm text-muted-foreground">Our team can guide you through the permit process for {city.city_name}. Call us for assistance.</p>
