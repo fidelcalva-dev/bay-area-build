@@ -28,6 +28,7 @@ import { getAdminRoutes } from './routes/adminRoutes';
 import { getPlatformRoutes } from './routes/platformRoutes';
 import { getProviderRoutes } from './routes/providerRoutes';
 import { getCrewRoutes } from './routes/crewRoutes';
+import { getCleanupRoutes } from './routes/cleanupRoutes';
 import {
   getDriverRoutes,
   getCsRoutes,
