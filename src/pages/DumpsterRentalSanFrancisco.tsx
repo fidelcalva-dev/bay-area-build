@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, AlertTriangle, Wrench } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── SF-specific data ─────────────────────────────────────────
