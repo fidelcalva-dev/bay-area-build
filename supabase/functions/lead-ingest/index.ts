@@ -165,8 +165,15 @@ Deno.serve(async (req) => {
 
     const rawBody = await req.json();
     // Flatten lead_context into top-level if present (frontend may nest attribution)
+    // Use rest-first so top-level values win over lead_context when both exist,
+    // but lead_context fills in missing fields (UTMs, intent, etc.)
     const { lead_context, ...rest } = rawBody;
-    const payload: IngestPayload = lead_context ? { ...rest, ...lead_context } : rest;
+    const merged = lead_context ? { ...lead_context, ...rest } : rest;
+    // Normalize aliases: size_intent → size_preference
+    if (merged.size_intent && !merged.size_preference) {
+      merged.size_preference = String(merged.size_intent);
+    }
+    const payload: IngestPayload = merged;
     rawPayload = payload;
     console.log('Lead ingest payload:', JSON.stringify(payload).slice(0, 500));
 
