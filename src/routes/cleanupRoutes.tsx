@@ -33,8 +33,12 @@ export function getCleanupRoutes() {
     <Route key="cleanup-thank-you" path="/cleanup/thank-you" element={<SuspenseRoute><CleanupThankYou /></SuspenseRoute>} />,
     <Route key="cleanup-before-after" path="/cleanup/before-after" element={<SuspenseRoute><CleanupBeforeAfter /></SuspenseRoute>} />,
     <Route key="cleanup-service-areas" path="/cleanup/service-areas" element={<SuspenseRoute><CleanupServiceAreas /></SuspenseRoute>} />,
-    <Route key="cleanup-oakland" path="/cleanup/oakland-construction-cleanup" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
-    <Route key="cleanup-alameda" path="/cleanup/alameda-construction-cleanup" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
-    <Route key="cleanup-bay-area" path="/cleanup/bay-area-construction-cleanup" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
+    <Route key="cleanup-oakland" path="/cleanup/oakland" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
+    <Route key="cleanup-alameda" path="/cleanup/alameda" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
+    <Route key="cleanup-bay-area" path="/cleanup/bay-area" element={<SuspenseRoute><CleanupLocalPage /></SuspenseRoute>} />,
+    // Legacy redirects for old local page URLs
+    <Route key="cleanup-oakland-redirect" path="/cleanup/oakland-construction-cleanup" element={<Navigate to="/cleanup/oakland" replace />} />,
+    <Route key="cleanup-alameda-redirect" path="/cleanup/alameda-construction-cleanup" element={<Navigate to="/cleanup/alameda" replace />} />,
+    <Route key="cleanup-bay-area-redirect" path="/cleanup/bay-area-construction-cleanup" element={<Navigate to="/cleanup/bay-area" replace />} />,
   ];
 }
