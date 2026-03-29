@@ -203,7 +203,7 @@ export default function SeoCityPage() {
             </nav>
             <h1 className="heading-xl mb-4">Dumpster Rental in {city.city_name}, CA</h1>
             <p className="text-xl text-primary-foreground/85 mb-2">Professional roll-off dumpster rental services in {city.city_name} and surrounding areas.</p>
-            <p className="text-primary-foreground/70 mb-6">{city.local_intro}</p>
+            <p className="text-primary-foreground/70 mb-6">{localIntro}</p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
                 <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
