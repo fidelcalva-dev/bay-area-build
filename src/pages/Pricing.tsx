@@ -3,6 +3,15 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const PRICING_FAQS: FAQItem[] = [
+  { question: 'What is included in the dumpster rental price?', answer: 'Every rental includes delivery, pickup, a 7-day rental period, and a weight allowance based on your dumpster size. No hidden trip fees or service charges.' },
+  { question: 'How does heavy material (concrete/dirt) pricing work?', answer: 'Heavy material dumpsters (5, 8, 10 yard) use flat-fee pricing. Disposal is included with no weight overage charges for clean, unmixed loads of concrete, dirt, brick, or asphalt.' },
+  { question: 'What happens if I go over the weight limit?', answer: 'For general debris dumpsters, weight beyond the included tonnage is billed at $165 per ton based on the certified scale ticket. Heavy material dumpsters have no overage — they are flat fee.' },
+  { question: 'Can I keep the dumpster longer than 7 days?', answer: 'Yes. Extra days beyond the standard 7-day rental are $20 per day. We will send a reminder before your rental period ends.' },
+  { question: 'Why do prices vary by ZIP code?', answer: 'Pricing depends on the distance from our nearest yard to your project location. Closer ZIPs get the best rates. Enter your ZIP in the quote tool for your exact price.' },
+];
 import { 
   PLAN_A_PRICING, 
   HEAVY_MATERIAL_PRICING, 
