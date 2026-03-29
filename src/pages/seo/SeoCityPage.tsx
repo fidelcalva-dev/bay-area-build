@@ -626,6 +626,13 @@ export default function SeoCityPage() {
             <Link to="/quote" className="text-primary hover:underline">Get Quote</Link>
             <Link to="/contact" className="text-primary hover:underline">Contact Us</Link>
             <span className="text-muted-foreground hidden sm:inline">|</span>
+            <Link to="/services/construction-dumpsters" className="text-primary hover:underline">Construction</Link>
+            <Link to="/services/roofing-dumpsters" className="text-primary hover:underline">Roofing</Link>
+            <Link to="/services/residential-dumpsters" className="text-primary hover:underline">Residential</Link>
+            <Link to="/services/commercial-dumpsters" className="text-primary hover:underline">Commercial</Link>
+            <Link to="/services/concrete-dirt-dumpsters" className="text-primary hover:underline">Concrete & Dirt</Link>
+            <Link to="/services/same-day-dumpster-rental" className="text-primary hover:underline">Same-Day</Link>
+            <span className="text-muted-foreground hidden sm:inline">|</span>
             {internalLinks.filter(l => l.type === 'service').map(link => (
               <Link key={link.url} to={link.url} className="text-primary hover:underline">{link.text}</Link>
             ))}
