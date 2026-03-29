@@ -21,11 +21,13 @@ interface PipelineLead {
   customer_phone: string | null;
   lead_status: string;
   lead_quality_label: string | null;
+  lead_priority: string | null;
   source_key: string | null;
   created_at: string;
   last_contacted_at: string | null;
   city: string | null;
   zip: string | null;
+  same_day: boolean | null;
 }
 
 interface PipelineQuote {
