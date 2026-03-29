@@ -221,6 +221,9 @@ export default function WhyCalsan() {
           </AnimatedSection>
         </div>
       </section>
+
+      <PageFAQ faqs={WHY_CALSAN_FAQS} />
+      <InternalLinkCluster exclude={['/why-calsan']} />
     </Layout>
   );
 }

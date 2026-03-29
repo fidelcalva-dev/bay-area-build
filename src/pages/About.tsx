@@ -297,7 +297,7 @@ export default function About() {
         <div className="container-narrow text-center">
           <h2 className="heading-lg text-foreground mb-4">Ready to Work With Us?</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Experience the difference with a dumpster rental company that puts you first.
+            Experience the difference with a local dumpster company that puts you first.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
@@ -314,6 +314,9 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      <PageFAQ faqs={ABOUT_FAQS} />
+      <InternalLinkCluster exclude={['/about']} />
     </Layout>
   );
 }
