@@ -281,6 +281,8 @@ export default function WhatCanYouPutInADumpster() {
       <PageFAQ faqs={FAQS} />
       <InternalLinkCluster exclude={['/what-can-you-put-in-a-dumpster']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -303,6 +305,8 @@ export default function WhatCanYouPutInADumpster() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="what-can-you-put-in-a-dumpster" />
     </Layout>
   );
 }

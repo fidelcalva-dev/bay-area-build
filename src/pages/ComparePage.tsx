@@ -368,6 +368,9 @@ export default function ComparePage() {
       <PageFAQ faqs={data.faqs} />
       <InternalLinkCluster exclude={[`/compare/${data.slug}`]} />
 
+      <SeoReviewProof className="mb-0" />
+      <SeoSupportSection page={`compare-${slug}`} />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -390,6 +393,8 @@ export default function ComparePage() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page={`compare-${slug}`} />
     </Layout>
   );
 }

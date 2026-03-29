@@ -355,6 +355,8 @@ export default function Permits() {
       <PageFAQ faqs={PERMIT_FAQS} />
       <InternalLinkCluster exclude={['/permits']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -375,6 +377,8 @@ export default function Permits() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="permits" />
     </Layout>
   );
 }

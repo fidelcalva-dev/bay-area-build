@@ -792,6 +792,9 @@ export default function Pricing() {
       <PageFAQ faqs={PRICING_FAQS} />
       <InternalLinkCluster exclude={['/pricing']} />
 
+      <SeoReviewProof className="mb-0" />
+      <SeoSupportSection page="pricing" />
+
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
@@ -814,6 +817,8 @@ export default function Pricing() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="pricing" />
     </Layout>
   );
 }
