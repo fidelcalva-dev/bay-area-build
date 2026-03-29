@@ -40,6 +40,8 @@ const WhyCalsan = lazy(lazyRetry(() => import("@/pages/WhyCalsan")));
 const BlogArticle = lazy(lazyRetry(() => import("@/pages/BlogArticle")));
 const SitemapPage = lazy(lazyRetry(() => import("@/pages/SitemapPage")));
 const ContactUs = lazy(lazyRetry(() => import("@/pages/ContactUs")));
+const Permits = lazy(lazyRetry(() => import("@/pages/Permits")));
+const ComparePage = lazy(lazyRetry(() => import("@/pages/ComparePage")));
 
 // Auth pages — also resilient to stale chunks
 const StaffLogin = lazy(lazyRetry(() => import("@/pages/StaffLogin")));
