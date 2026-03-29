@@ -3,10 +3,9 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
-import { SeoJsonLd } from '@/components/seo/SeoJsonLd';
 import { 
   ArrowRight, Phone, CheckCircle, XCircle, 
-  Truck, Clock, DollarSign, Scale, Ruler, HardHat
+  Truck, DollarSign, Ruler
 } from 'lucide-react';
 import { AnimatedSection } from '@/components/animations';
 
@@ -47,12 +46,12 @@ const COMPARISONS: Record<string, ComparisonData> = {
     title: 'Dumpster Rental vs Junk Removal',
     metaTitle: 'Dumpster Rental vs Junk Removal | Which Is Right for You?',
     metaDescription: 'Compare dumpster rental vs junk removal service. Cost, convenience, and which is better for your Bay Area project. Real pricing and honest comparison.',
-    h1: 'Dumpster Rental vs Junk Removal — Which Is Right for Your Project?',
-    intro: 'Both options handle waste removal, but they serve different needs. Dumpster rental gives you time and capacity for bigger projects. Junk removal gives you labor and speed for smaller ones. Here's how they compare for Bay Area homeowners and contractors.',
+    h1: 'Dumpster Rental vs Junk Removal \u2014 Which Is Right for Your Project?',
+    intro: 'Both options handle waste removal, but they serve different needs. Dumpster rental gives you time and capacity for bigger projects. Junk removal gives you labor and speed for smaller ones. Here is how they compare for Bay Area homeowners and contractors.',
     optionA: {
       name: 'Dumpster Rental',
       pros: [
-        'Load on your own schedule — keep it for 7+ days',
+        'Load on your own schedule \u2014 keep it for 7+ days',
         'Better value for large projects (renovations, cleanouts)',
         'You control what goes in and when',
         'Available in multiple sizes (5-50 yards)',
@@ -70,7 +69,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
     optionB: {
       name: 'Junk Removal Service',
       pros: [
-        'Crew loads everything for you — no lifting',
+        'Crew loads everything for you \u2014 no lifting',
         'Same-day pickup often available',
         'No driveway or street space needed',
         'Good for small, one-time cleanouts',
@@ -85,11 +84,11 @@ const COMPARISONS: Record<string, ComparisonData> = {
       bestFor: 'Small cleanouts, single-room jobs, or when you cannot do the loading yourself',
       priceRange: '$200-$800+ depending on volume',
     },
-    verdict: 'For most construction, renovation, and large cleanout projects in the Bay Area, dumpster rental is the better value. You get more capacity, more time, and lower cost per cubic yard. Junk removal makes sense for small jobs where you need someone else to do the lifting. Many contractors keep a dumpster on-site for the duration of a project — it's simply more efficient.',
+    verdict: 'For most construction, renovation, and large cleanout projects in the Bay Area, dumpster rental is the better value. You get more capacity, more time, and lower cost per cubic yard. Junk removal makes sense for small jobs where you need someone else to do the lifting. Many contractors keep a dumpster on-site for the duration of a project \u2014 it is simply more efficient.',
     faqs: [
       { question: 'Is a dumpster rental cheaper than junk removal?', answer: 'Yes, for most projects. A 20-yard dumpster rental costs roughly $450-$600 for 7 days and holds 6-8 pickup truck loads. Junk removal for the same volume would typically cost $1,200-$2,000+.' },
       { question: 'Can I use both for the same project?', answer: 'Absolutely. Some customers rent a dumpster for bulk construction debris and hire junk removal for specific items like appliances or furniture that need special handling or heavy lifting.' },
-      { question: 'Which is faster for a home cleanout?', answer: 'Junk removal is faster for small jobs — the crew comes and takes everything in a few hours. For larger cleanouts (whole house, estate), a dumpster is more efficient because you can load over multiple days.' },
+      { question: 'Which is faster for a home cleanout?', answer: 'Junk removal is faster for small jobs \u2014 the crew comes and takes everything in a few hours. For larger cleanouts (whole house, estate), a dumpster is more efficient because you can load over multiple days.' },
       { question: 'Do I need to be home when the dumpster is delivered?', answer: 'No. As long as we have clear access to your driveway or agreed placement spot, we can deliver while you are away. We will text you when the dumpster is placed.' },
     ],
     relatedLinks: [
@@ -109,16 +108,16 @@ const COMPARISONS: Record<string, ComparisonData> = {
     title: '10 vs 20 Yard Dumpster',
     metaTitle: '10 vs 20 Yard Dumpster | Size Comparison Guide',
     metaDescription: 'Compare 10 yard vs 20 yard dumpsters. Dimensions, capacity, weight limits, and pricing. Which size fits your Bay Area project?',
-    h1: '10 Yard vs 20 Yard Dumpster — Which Size Do You Need?',
-    intro: 'The 10-yard and 20-yard are two of our most popular sizes. The right choice depends on your project scope, debris type, and available space. Here's a side-by-side comparison with real dimensions, capacity, and pricing.',
+    h1: '10 Yard vs 20 Yard Dumpster \u2014 Which Size Do You Need?',
+    intro: 'The 10-yard and 20-yard are two of our most popular sizes. The right choice depends on your project scope, debris type, and available space. Here is a side-by-side comparison with real dimensions, capacity, and pricing.',
     optionA: {
       name: '10 Yard Dumpster',
-      dimensions: "12' L × 7.5' W × 3' H",
+      dimensions: "12' L x 7.5' W x 3' H",
       capacity: '4-5 pickup truck loads',
       pros: [
         'Fits in tight driveways and small spaces',
         'Perfect for single-room renovations',
-        'Lower rental cost — best for budget-conscious projects',
+        'Lower rental cost \u2014 best for budget-conscious projects',
         'Available for heavy materials (concrete, dirt, brick)',
         'Easier to fill without overloading',
       ],
@@ -131,10 +130,10 @@ const COMPARISONS: Record<string, ComparisonData> = {
     },
     optionB: {
       name: '20 Yard Dumpster',
-      dimensions: "18' L × 7.5' W × 4' H",
+      dimensions: "18' L x 7.5' W x 4' H",
       capacity: '6-8 pickup truck loads',
       pros: [
-        'Most popular size — handles most residential projects',
+        'Most popular size \u2014 handles most residential projects',
         'Holds 6-8 pickup truck loads of debris',
         'Cost-effective for medium to large projects',
         'Good for mixed debris and general construction waste',
@@ -148,10 +147,10 @@ const COMPARISONS: Record<string, ComparisonData> = {
       bestFor: 'Full kitchen or bathroom renovations, roofing tear-offs, whole-house cleanouts, deck removal',
       priceRange: 'Starting around $450',
     },
-    verdict: 'The 10-yard is your best bet for small, focused projects or heavy material removal. The 20-yard is the go-to for most residential renovations and cleanouts. When in doubt, size up — the cost difference between a 10 and 20 is much less than ordering a second haul.',
+    verdict: 'The 10-yard is your best bet for small, focused projects or heavy material removal. The 20-yard is the go-to for most residential renovations and cleanouts. When in doubt, size up \u2014 the cost difference between a 10 and 20 is much less than ordering a second haul.',
     faqs: [
-      { question: 'What if my project is between a 10 and 20 yard?', answer: 'When in doubt, go with the 20-yard. The cost difference is modest, and overfilling a smaller dumpster leads to overage charges or a second haul — both more expensive than sizing up.' },
-      { question: 'Can I put concrete in a 20-yard dumpster?', answer: 'No, heavy materials like concrete, dirt, and asphalt require dedicated heavy-material dumpsters (5, 8, or 10 yard). This is a weight limit — 20 yards of concrete would exceed truck capacity.' },
+      { question: 'What if my project is between a 10 and 20 yard?', answer: 'When in doubt, go with the 20-yard. The cost difference is modest, and overfilling a smaller dumpster leads to overage charges or a second haul \u2014 both more expensive than sizing up.' },
+      { question: 'Can I put concrete in a 20-yard dumpster?', answer: 'No, heavy materials like concrete, dirt, and asphalt require dedicated heavy-material dumpsters (5, 8, or 10 yard). This is a weight limit \u2014 20 yards of concrete would exceed truck capacity.' },
       { question: 'How many rooms of debris fit in a 10-yard dumpster?', answer: 'A 10-yard typically handles one room of renovation debris (bathroom or small kitchen). For a full kitchen remodel or multi-room project, step up to a 20-yard.' },
     ],
     relatedLinks: [
@@ -171,11 +170,11 @@ const COMPARISONS: Record<string, ComparisonData> = {
     title: '20 vs 30 Yard Dumpster',
     metaTitle: '20 vs 30 Yard Dumpster | Size Comparison Guide',
     metaDescription: 'Compare 20 yard vs 30 yard dumpsters. Dimensions, capacity, weight limits, and pricing. Which size fits your Bay Area project?',
-    h1: '20 Yard vs 30 Yard Dumpster — Which Size Do You Need?',
-    intro: 'Deciding between a 20-yard and 30-yard dumpster usually comes down to project scope. The 20 is the residential workhorse. The 30 handles larger renovations and commercial jobs. Here's how to choose.',
+    h1: '20 Yard vs 30 Yard Dumpster \u2014 Which Size Do You Need?',
+    intro: 'Deciding between a 20-yard and 30-yard dumpster usually comes down to project scope. The 20 is the residential workhorse. The 30 handles larger renovations and commercial jobs. Here is how to choose.',
     optionA: {
       name: '20 Yard Dumpster',
-      dimensions: "18' L × 7.5' W × 4' H",
+      dimensions: "18' L x 7.5' W x 4' H",
       capacity: '6-8 pickup truck loads',
       pros: [
         'Most popular residential size',
@@ -193,11 +192,11 @@ const COMPARISONS: Record<string, ComparisonData> = {
     },
     optionB: {
       name: '30 Yard Dumpster',
-      dimensions: "18' L × 7.5' W × 6' H",
+      dimensions: "18' L x 7.5' W x 6' H",
       capacity: '9-12 pickup truck loads',
       pros: [
         'Handles large renovations and commercial cleanouts',
-        'Reduces need for multiple hauls — saves on delivery fees',
+        'Reduces need for multiple hauls \u2014 saves on delivery fees',
         'Ideal for new construction debris',
         '3 tons included weight',
         'Cost-effective for high-volume projects',
@@ -205,16 +204,16 @@ const COMPARISONS: Record<string, ComparisonData> = {
       cons: [
         'Requires larger placement area',
         'Higher base rental cost',
-        '6 feet tall — harder to throw debris over the sides',
+        '6 feet tall \u2014 harder to throw debris over the sides',
       ],
       bestFor: 'Multi-room renovations, large roofing projects, commercial buildouts, new construction, warehouse cleanouts',
       priceRange: 'Starting around $550',
     },
-    verdict: 'Choose the 20-yard for standard residential projects. The 30-yard makes sense when you know you\'ll generate more than 6-8 pickup loads of debris. A single 30-yard is almost always cheaper than ordering two 20-yard hauls.',
+    verdict: 'Choose the 20-yard for standard residential projects. The 30-yard makes sense when you know you will generate more than 6-8 pickup loads of debris. A single 30-yard is almost always cheaper than ordering two 20-yard hauls.',
     faqs: [
       { question: 'Is it better to get a 30-yard or two 20-yard loads?', answer: 'Usually a single 30-yard is more cost-effective. Two 20-yard hauls mean two delivery fees and two pickup fees. A 30-yard gives you 50% more capacity for roughly 20-25% more cost.' },
-      { question: 'Will a 30-yard dumpster fit in my driveway?', answer: 'A 30-yard is 18ft long × 7.5ft wide × 6ft tall. Most standard driveways accommodate this, but measure your space first. Width is the same as a 20-yard — only height changes.' },
-      { question: 'Can I mix construction and household debris in a 30-yard?', answer: 'Yes. General debris dumpsters accept mixed loads — construction materials, furniture, roofing, yard waste. Just no heavy materials (concrete, dirt) or prohibited items.' },
+      { question: 'Will a 30-yard dumpster fit in my driveway?', answer: 'A 30-yard is 18ft long x 7.5ft wide x 6ft tall. Most standard driveways accommodate this, but measure your space first. Width is the same as a 20-yard \u2014 only height changes.' },
+      { question: 'Can I mix construction and household debris in a 30-yard?', answer: 'Yes. General debris dumpsters accept mixed loads \u2014 construction materials, furniture, roofing, yard waste. Just no heavy materials (concrete, dirt) or prohibited items.' },
     ],
     relatedLinks: [
       { to: '/sizes', label: 'All Dumpster Sizes' },
