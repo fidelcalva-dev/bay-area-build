@@ -1,20 +1,21 @@
 import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
+import { lazyRetry } from '@/lib/lazyRetry';
 
-const CleanupHome = lazy(() => import('@/pages/cleanup/CleanupHome'));
-const CleanupServices = lazy(() => import('@/pages/cleanup/CleanupServices'));
-const CleanupServiceDetail = lazy(() => import('@/pages/cleanup/CleanupServiceDetail'));
-const CleanupForContractors = lazy(() => import('@/pages/cleanup/CleanupForContractors'));
-const CleanupPricing = lazy(() => import('@/pages/cleanup/CleanupPricing'));
-const CleanupAbout = lazy(() => import('@/pages/cleanup/CleanupAbout'));
-const CleanupFAQs = lazy(() => import('@/pages/cleanup/CleanupFAQs'));
-const CleanupContact = lazy(() => import('@/pages/cleanup/CleanupContact'));
-const CleanupQuote = lazy(() => import('@/pages/cleanup/CleanupQuote'));
-const CleanupThankYou = lazy(() => import('@/pages/cleanup/CleanupThankYou'));
-const CleanupBeforeAfter = lazy(() => import('@/pages/cleanup/CleanupBeforeAfter'));
-const CleanupServiceAreas = lazy(() => import('@/pages/cleanup/CleanupServiceAreas'));
-const CleanupLocalPage = lazy(() => import('@/pages/cleanup/CleanupLocalPage'));
+const CleanupHome = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupHome')));
+const CleanupServices = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupServices')));
+const CleanupServiceDetail = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupServiceDetail')));
+const CleanupForContractors = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupForContractors')));
+const CleanupPricing = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupPricing')));
+const CleanupAbout = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupAbout')));
+const CleanupFAQs = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupFAQs')));
+const CleanupContact = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupContact')));
+const CleanupQuote = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupQuote')));
+const CleanupThankYou = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupThankYou')));
+const CleanupBeforeAfter = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupBeforeAfter')));
+const CleanupServiceAreas = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupServiceAreas')));
+const CleanupLocalPage = lazy(lazyRetry(() => import('@/pages/cleanup/CleanupLocalPage')));
 
 export function getCleanupRoutes() {
   return [

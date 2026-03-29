@@ -1,4 +1,4 @@
-import { ReactNode, lazy, Suspense } from 'react';
+import { ReactNode, lazy, Suspense, Component, ErrorInfo } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileBottomBar } from './MobileBottomBar';
@@ -7,6 +7,16 @@ import { SWUpdatePrompt } from '@/components/pwa/SWUpdatePrompt';
 
 // Lazy load AI chat widget to avoid impacting initial load
 const AIChatWidget = lazy(() => import('@/components/chat/AIChatWidget'));
+
+/** Silent boundary — swallows errors from non-critical widgets (chat, PWA prompts) */
+class WidgetBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.warn('[WidgetBoundary] non-critical widget failed:', error.message);
+  }
+  render() { return this.state.failed ? null : this.props.children; }
+}
 
 interface LayoutProps {
   children: ReactNode;
@@ -41,13 +51,17 @@ export function Layout({
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <Footer />
         <MobileBottomBar />
-        <SWUpdatePrompt />
+        <WidgetBoundary>
+          <SWUpdatePrompt />
+        </WidgetBoundary>
         
-        {/* AI Chat Widget */}
+        {/* AI Chat Widget — wrapped so failures never break page content */}
         {!hideChat && (
-          <Suspense fallback={null}>
-            <AIChatWidget />
-          </Suspense>
+          <WidgetBoundary>
+            <Suspense fallback={null}>
+              <AIChatWidget />
+            </Suspense>
+          </WidgetBoundary>
         )}
       </div>
     </>

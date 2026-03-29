@@ -2,27 +2,28 @@ import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
 import { LegacySizeRedirect, LegacySubpageRedirect } from '@/components/seo/SeoLegacyRedirects';
+import { lazyRetry } from '@/lib/lazyRetry';
 
 // SEO Domination Pages
-const DumpsterRentalOakland = lazy(() => import("@/pages/DumpsterRentalOakland"));
-const DumpsterRentalSanJose = lazy(() => import("@/pages/DumpsterRentalSanJose"));
-const DumpsterRentalSanFrancisco = lazy(() => import("@/pages/DumpsterRentalSanFrancisco"));
-const RegionalLandingPage = lazy(() => import("@/pages/RegionalLandingPage"));
-const CommercialLandingPage = lazy(() => import("@/pages/CommercialLandingPage"));
-const SizeLandingPage = lazy(() => import("@/pages/SizeLandingPage"));
-const MaterialLandingPage = lazy(() => import("@/pages/MaterialLandingPage"));
-const YardHubPage = lazy(() => import("@/pages/seo/YardHubPage"));
+const DumpsterRentalOakland = lazy(lazyRetry(() => import("@/pages/DumpsterRentalOakland")));
+const DumpsterRentalSanJose = lazy(lazyRetry(() => import("@/pages/DumpsterRentalSanJose")));
+const DumpsterRentalSanFrancisco = lazy(lazyRetry(() => import("@/pages/DumpsterRentalSanFrancisco")));
+const RegionalLandingPage = lazy(lazyRetry(() => import("@/pages/RegionalLandingPage")));
+const CommercialLandingPage = lazy(lazyRetry(() => import("@/pages/CommercialLandingPage")));
+const SizeLandingPage = lazy(lazyRetry(() => import("@/pages/SizeLandingPage")));
+const MaterialLandingPage = lazy(lazyRetry(() => import("@/pages/MaterialLandingPage")));
+const YardHubPage = lazy(lazyRetry(() => import("@/pages/seo/YardHubPage")));
 
 // SEO City Engine Pages
-const SeoCityPage = lazy(() => import("@/pages/seo/SeoCityPage"));
-const SeoCitySizePage = lazy(() => import("@/pages/seo/SeoCitySizePage"));
-const SeoCityMaterialPage = lazy(() => import("@/pages/seo/SeoCityMaterialPage"));
-const SeoZipPage = lazy(() => import("@/pages/seo/SeoZipPage"));
-const SeoServiceCityPage = lazy(() => import("@/pages/seo/SeoServiceCityPage"));
-const SeoCityJobPage = lazy(() => import("@/pages/seo/SeoCityJobPage"));
-const SeoCountyPage = lazy(() => import("@/pages/seo/SeoCountyPage"));
-const SeoUseCasePage = lazy(() => import("@/pages/seo/SeoUseCasePage"));
-const SeoHubPage = lazy(() => import("@/pages/seo/SeoHubPage"));
+const SeoCityPage = lazy(lazyRetry(() => import("@/pages/seo/SeoCityPage")));
+const SeoCitySizePage = lazy(lazyRetry(() => import("@/pages/seo/SeoCitySizePage")));
+const SeoCityMaterialPage = lazy(lazyRetry(() => import("@/pages/seo/SeoCityMaterialPage")));
+const SeoZipPage = lazy(lazyRetry(() => import("@/pages/seo/SeoZipPage")));
+const SeoServiceCityPage = lazy(lazyRetry(() => import("@/pages/seo/SeoServiceCityPage")));
+const SeoCityJobPage = lazy(lazyRetry(() => import("@/pages/seo/SeoCityJobPage")));
+const SeoCountyPage = lazy(lazyRetry(() => import("@/pages/seo/SeoCountyPage")));
+const SeoUseCasePage = lazy(lazyRetry(() => import("@/pages/seo/SeoUseCasePage")));
+const SeoHubPage = lazy(lazyRetry(() => import("@/pages/seo/SeoHubPage")));
 
 export function getSeoRoutes() {
   return [
