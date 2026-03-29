@@ -91,7 +91,7 @@ export const CITY_CONTENT: CityContent[] = [
     logisticsNote: 'Served from our San Jose yard — most Fremont deliveries arrive within 60–90 minutes during standard hours.',
     serviceBlocks: [RESIDENTIAL_BLOCK, CONSTRUCTION_BLOCK, HEAVY_BLOCK, ROOFING_BLOCK, COMMERCIAL_BLOCK],
     faqs: [
-      { question: 'Do I need a permit for a dumpster in Fremont?', answer: 'Private property placement (driveway or yard) typically doesn't require a permit. Street placement in Fremont requires an encroachment permit from the city's Engineering Division. Our team can help you figure out what's needed.' },
+      { question: 'Do I need a permit for a dumpster in Fremont?', answer: 'Private property placement (driveway or yard) typically does not require a permit. Street placement in Fremont requires an encroachment permit from the Engineering Division. Our team can help you figure out what is needed.' },
       { question: 'Can I place a dumpster on the street in Fremont?', answer: 'Yes, with an encroachment permit from the City of Fremont. Most residential streets can accommodate a roll-off container. We recommend checking with us first — driveway placement is faster and avoids permitting.' },
       { question: 'What size dumpster is best for a remodel in Fremont?', answer: 'Most Fremont home remodels use a 20-yard dumpster. For ADU construction or large renovations, a 30-yard handles the extra volume. Bathroom-only remodels can often use a 10-yard.' },
       { question: 'Do you offer same-day dumpster delivery in Fremont?', answer: `Same-day delivery is available for Fremont addresses when ordered before noon. We dispatch from our San Jose yard. Call ${BUSINESS_INFO.phone.salesFormatted} for current scheduling.` },
