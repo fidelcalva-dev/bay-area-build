@@ -8,9 +8,11 @@ import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
 const PRICING_FAQS: FAQItem[] = [
   { question: 'What is included in the dumpster rental price?', answer: 'Every rental includes delivery, pickup, a 7-day rental period, and a weight allowance based on your dumpster size. No hidden trip fees or service charges.' },
   { question: 'How does heavy material (concrete/dirt) pricing work?', answer: 'Heavy material dumpsters (5, 8, 10 yard) use flat-fee pricing. Disposal is included with no weight overage charges for clean, unmixed loads of concrete, dirt, brick, or asphalt.' },
-  { question: 'What happens if I go over the weight limit?', answer: 'For general debris dumpsters, weight beyond the included tonnage is billed at $165 per ton based on the certified scale ticket. Heavy material dumpsters have no overage — they are flat fee.' },
+  { question: 'What happens if I go over the weight limit?', answer: 'For general debris dumpsters, weight beyond the included tonnage is billed at $165 per ton based on the certified scale ticket. Heavy material dumpsters have no overage \u2014 they are flat fee.' },
   { question: 'Can I keep the dumpster longer than 7 days?', answer: 'Yes. Extra days beyond the standard 7-day rental are $20 per day. We will send a reminder before your rental period ends.' },
   { question: 'Why do prices vary by ZIP code?', answer: 'Pricing depends on the distance from our nearest yard to your project location. Closer ZIPs get the best rates. Enter your ZIP in the quote tool for your exact price.' },
+  { question: 'What materials can I put in a dumpster?', answer: 'Most non-hazardous materials are accepted: household junk, construction debris, roofing, yard waste. Heavy materials (concrete, dirt) need a dedicated dumpster. See our full accepted materials guide for details.' },
+  { question: 'Do I need a permit for a dumpster?', answer: 'Private property placement (driveway, yard) typically does not require a permit. Street placement requires a permit in most Bay Area cities. See our permit guide for city-specific rules.' },
 ];
 import { 
   PLAN_A_PRICING, 
@@ -751,6 +753,30 @@ export default function Pricing() {
                 Final pricing depends on your delivery location (distance from our yard), material type, and current landfill rates. Rather than surprise you later, we show honest price ranges upfront. <span className="font-medium text-foreground">Get an instant quote with your ZIP code for your exact price.</span>
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Material & Permit Links */}
+      <section className="py-8 bg-muted/30">
+        <div className="container-wide">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link to="/what-can-you-put-in-a-dumpster" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Accepted Materials</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/what-cannot-go-in-a-dumpster" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Prohibited Items</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/permits" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Permit Guide</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
+            <Link to="/sizes" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all group">
+              <span className="text-sm font-medium text-foreground">Size Guide</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            </Link>
           </div>
         </div>
       </section>
