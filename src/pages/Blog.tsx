@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar, Clock, Tag } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, Tag, Phone } from 'lucide-react';
 import { getAllBlogArticles } from './BlogArticle';
 const benefitsSameProviderImg = '/images/blog/benefits-same-provider.jpg';
 const positiveImpactOaklandImg = '/images/blog/positive-impact-oakland.jpg';
@@ -9,7 +10,7 @@ const checklistBeforeDumpsterImg = '/images/blog/checklist-before-dumpster.jpg';
 const separateRecyclableImg = '/images/blog/separate-recyclable-materials.jpg';
 const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
 const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
-import { PAGE_SEO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
 const BLOG_IMAGES: Record<string, string> = {
