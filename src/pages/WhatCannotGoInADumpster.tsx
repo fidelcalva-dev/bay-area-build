@@ -115,6 +115,8 @@ const breadcrumbs = [
 ];
 
 export default function WhatCannotGoInADumpster() {
+  useSeoTracking({ pageType: 'blog', slug: 'what-cannot-go-in-a-dumpster' });
+
   return (
     <Layout
       title="What Cannot Go in a Dumpster? | Prohibited Items List"
@@ -125,6 +127,7 @@ export default function WhatCannotGoInADumpster() {
         generateFAQSchema(FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-destructive/90 text-destructive-foreground py-12 md:py-16">
         <div className="container-wide">
