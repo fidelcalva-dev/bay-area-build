@@ -82,11 +82,24 @@ export default function About() {
     setCurrentImageIndex((prev) => (prev - 1 + fleetGallery.length) % fleetGallery.length);
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about' },
+  ]);
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About Calsan Dumpsters Pro",
+    "url": `${BUSINESS_INFO.url}/about`,
+    "mainEntity": { "@type": "LocalBusiness", "@id": `${BUSINESS_INFO.url}/#organization` },
+  };
+
   return (
     <Layout
       title={PAGE_SEO.about.title}
       description={PAGE_SEO.about.description}
       canonical={PAGE_SEO.about.canonical}
+      schema={[aboutSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

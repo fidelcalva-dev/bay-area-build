@@ -71,11 +71,22 @@ export default function Areas() {
   const directRegions = REGIONS.filter(r => r.serviceModel === 'DIRECT_OPERATION');
   const partnerRegions = REGIONS.filter(r => r.serviceModel === 'PARTNER_NETWORK');
 
+  const areasSchema = generateServiceSchema({
+    name: 'Bay Area Dumpster Rental Service Areas',
+    description: 'Dumpster delivery across 9 Bay Area counties from local yards in Oakland, San Jose & SF. Same-day available.',
+    areaServed: ['Alameda County', 'Santa Clara County', 'San Francisco County', 'Contra Costa County', 'San Mateo County'],
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Service Areas', url: '/areas' },
+  ]);
+
   return (
     <Layout
       title={PAGE_SEO.areas.title}
       description={PAGE_SEO.areas.description}
       canonical={PAGE_SEO.areas.canonical}
+      schema={[areasSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">

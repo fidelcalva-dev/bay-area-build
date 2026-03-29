@@ -191,11 +191,23 @@ const overageExplanations = [
 export default function Pricing() {
   useSeoTracking({ pageType: 'blog', slug: 'pricing' });
 
+  const pricingSchema = generateServiceSchema({
+    name: 'Bay Area Dumpster Rental',
+    description: 'All-inclusive dumpster rental pricing from $399. Delivery, pickup & weight included. 5–50 yard sizes for general debris and heavy materials.',
+    price: '$399',
+    areaServed: ['Oakland', 'San Jose', 'San Francisco', 'Bay Area'],
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Pricing', url: '/pricing' },
+  ]);
+
   return (
     <Layout 
       title={PAGE_SEO.pricing.title}
       description={PAGE_SEO.pricing.description}
       canonical={PAGE_SEO.pricing.canonical}
+      schema={[pricingSchema, breadcrumbSchema]}
     >
       <SeoTrustBar />
       {/* Hero */}

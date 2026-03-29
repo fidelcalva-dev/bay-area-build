@@ -108,11 +108,24 @@ export default function ContactUs() {
     }
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Contact', url: '/contact-us' },
+  ]);
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Calsan Dumpsters Pro",
+    "url": `${BUSINESS_INFO.url}/contact-us`,
+    "mainEntity": { "@type": "LocalBusiness", "@id": `${BUSINESS_INFO.url}/#organization` },
+  };
+
   return (
     <Layout
       title="Contact Us | Calsan Dumpsters Pro"
       description="Get in touch with Calsan Dumpsters Pro for dumpster rental in the Bay Area. Call, text, or request a quote online."
-      canonical="https://calsandumpsterspro.com/contact-us"
+      canonical="/contact-us"
+      schema={[contactSchema, breadcrumbSchema]}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground py-12 md:py-16">
