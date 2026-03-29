@@ -38,9 +38,9 @@ export function useSeoTracking(params: UseSeoTrackingParams) {
     trackSeoQuoteClick(page, city);
   }, [page, city]);
 
-  const trackCallClick = useCallback(() => {
+  const handleCallClick = useCallback(() => {
     trackPhoneClick(page, city);
   }, [page, city]);
 
-  return { trackQuoteClick, trackCallClick };
+  return { trackQuoteClick: handleQuoteClick, trackCallClick: handleCallClick };
 }
