@@ -21,11 +21,13 @@ interface PipelineLead {
   customer_phone: string | null;
   lead_status: string;
   lead_quality_label: string | null;
+  lead_priority: string | null;
   source_key: string | null;
   created_at: string;
   last_contacted_at: string | null;
   city: string | null;
   zip: string | null;
+  same_day: boolean | null;
 }
 
 interface PipelineQuote {
@@ -77,13 +79,13 @@ export function SalesPipelineCards() {
 
     const [hotRes, staleRes, quotesRes, followUpRes, contractsRes, paymentsRes] = await Promise.all([
       supabase.from('sales_leads')
-        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
+        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, lead_priority, source_key, created_at, last_contacted_at, city, zip, same_day')
         .eq('lead_status', 'new')
         .gte('created_at', twoHoursAgo)
         .order('created_at', { ascending: false })
         .limit(10),
       supabase.from('sales_leads')
-        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
+        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, lead_priority, source_key, created_at, last_contacted_at, city, zip, same_day')
         .in('lead_status', ['new', 'contacted'])
         .lt('created_at', twentyFourHoursAgo)
         .order('created_at', { ascending: true })
@@ -94,7 +96,7 @@ export function SalesPipelineCards() {
         .order('created_at', { ascending: false })
         .limit(10),
       supabase.from('sales_leads')
-        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
+        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, lead_priority, source_key, created_at, last_contacted_at, city, zip, same_day')
         .eq('lead_status', 'contacted')
         .not('last_contacted_at', 'is', null)
         .order('last_contacted_at', { ascending: true })
@@ -298,7 +300,18 @@ function LeadRow({ lead, showAge, showLastContact }: { lead: PipelineLead; showA
   return (
     <Link to={`/sales/leads/${lead.id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors gap-2">
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium truncate">{lead.customer_name || 'Unknown'}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-medium truncate">{lead.customer_name || 'Unknown'}</p>
+          {lead.lead_priority === 'hot' && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-red-600 text-white border-0 animate-pulse">🔥 HOT</Badge>
+          )}
+          {lead.lead_priority === 'high' && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-amber-500 text-white border-0">⚡ HIGH</Badge>
+          )}
+          {lead.same_day && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-red-500 text-white border-0">SAME DAY</Badge>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground truncate">
           {lead.city || lead.zip || 'No location'}
           {showAge && ` · ${formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}`}
