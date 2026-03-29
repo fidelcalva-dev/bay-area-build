@@ -14,46 +14,63 @@ export function Footer() {
   const { data: footerSocialLinks } = useFooterSocialLinks();
   const currentYear = new Date().getFullYear();
 
-  const quickLinks = [
-    { to: '/pricing', label: t('nav.pricing') },
-    { to: '/sizes', label: t('nav.sizes') },
-    { to: '/areas', label: t('nav.areas') },
-    { to: '/materials', label: t('nav.materials') },
-    { to: '/locations', label: 'Locations' },
-  ];
-
   const serviceLinks = [
-    { to: '/contractors', label: t('nav.contractors') },
-    { to: '/about', label: t('nav.about') },
-    { to: '/contact', label: t('nav.contact') },
-    { to: '/blog', label: t('nav.blog') },
+    { to: '/construction-dumpsters', label: 'Construction Dumpsters' },
+    { to: '/commercial-dumpster-rental', label: 'Commercial Dumpsters' },
+    { to: '/roofing-dumpster-rental', label: 'Roofing Dumpsters' },
+    { to: '/residential-dumpster-rental', label: 'Residential Dumpsters' },
+    { to: '/concrete-dumpster-rental', label: 'Concrete & Dirt Dumpsters' },
+    { to: '/contractors', label: 'Contractor Programs' },
+    { to: '/quote/contractor', label: 'Contractor Pricing' },
   ];
 
-  const moreLinks = [
-    { to: '/green-halo', label: 'Green Halo™' },
-    { to: '/careers', label: 'Careers' },
-    { to: '/quote', label: 'Get Quote' },
+  const sizeLinks = [
+    { to: '/sizes', label: 'All Dumpster Sizes' },
+    { to: '/10-yard-dumpster-rental', label: '10 Yard Dumpster' },
+    { to: '/20-yard-dumpster-rental', label: '20 Yard Dumpster' },
+    { to: '/30-yard-dumpster-rental', label: '30 Yard Dumpster' },
+    { to: '/40-yard-dumpster-rental', label: '40 Yard Dumpster' },
+    { to: '/pricing', label: 'Pricing' },
+    { to: '/capacity-guide', label: 'Capacity Guide' },
+  ];
+
+  const locationLinks = [
+    { to: '/dumpster-rental-oakland-ca', label: 'Oakland' },
+    { to: '/dumpster-rental-san-jose-ca', label: 'San Jose' },
+    { to: '/dumpster-rental-san-francisco-ca', label: 'San Francisco' },
+    { to: '/dumpster-rental/berkeley', label: 'Berkeley' },
+    { to: '/dumpster-rental/fremont', label: 'Fremont' },
+    { to: '/dumpster-rental/hayward', label: 'Hayward' },
+    { to: '/dumpster-rental/milpitas', label: 'Milpitas' },
+    { to: '/dumpster-rental/san-leandro', label: 'San Leandro' },
+    { to: '/dumpster-rental/santa-clara', label: 'Santa Clara' },
+    { to: '/dumpster-rental/sunnyvale', label: 'Sunnyvale' },
+    { to: '/areas', label: 'All Service Areas →' },
   ];
 
   const resourceLinks = [
+    { to: '/materials', label: 'What Goes in a Dumpster' },
+    { to: '/permits', label: 'Permits & Rules' },
+    { to: '/how-it-works', label: 'How It Works' },
+    { to: '/blog', label: 'Blog & Guides' },
     { to: '/contractor-best-practices', label: 'Contractor Best Practices' },
-    { to: '/materials', label: 'Materials Guide' },
-    { to: '/sizes', label: 'Size Guide' },
+    { to: '/contractor-resources', label: 'Contractor Resources' },
   ];
 
-  // Category differentiation links (SEO + Trust)
-  const differentiationLinks = [
+  const companyLinks = [
+    { to: '/about', label: 'About Calsan' },
     { to: '/why-calsan', label: 'Why Calsan' },
     { to: '/why-local-yards', label: 'Why Local Yards' },
-    { to: '/not-a-broker', label: 'We\'re Not a Broker' },
-    { to: '/how-it-works', label: 'How It Works' },
-    { to: '/technology', label: 'Our Technology' },
+    { to: '/not-a-broker', label: "We're Not a Broker" },
+    { to: '/careers', label: 'Careers' },
+    { to: '/contact-us', label: 'Contact Us' },
+    { to: '/quote', label: 'Get Quote' },
   ];
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container-wide section-padding">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-6">
           {/* Brand Column - NAP Consistent */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
@@ -115,16 +132,13 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Services */}
           <div>
-            <h4 className="font-bold text-lg mb-4">{t('footer.quickLinks')}</h4>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
+            <h4 className="font-bold text-lg mb-4">Services</h4>
+            <ul className="space-y-2">
+              {serviceLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
@@ -132,56 +146,52 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Sizes & Pricing */}
           <div>
-            <h4 className="font-bold text-lg mb-4">{t('footer.services')}</h4>
-            <ul className="space-y-3">
-              {serviceLinks.map((link) => (
+            <h4 className="font-bold text-lg mb-4">Sizes &amp; Pricing</h4>
+            <ul className="space-y-2">
+              {sizeLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
               ))}
-              {moreLinks.map((link) => (
+            </ul>
+          </div>
+
+          {/* Locations */}
+          <div>
+            <h4 className="font-bold text-lg mb-4">Locations</h4>
+            <ul className="space-y-2">
+              {locationLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources & Company */}
+          <div>
+            <h4 className="font-bold text-lg mb-4">Resources</h4>
+            <ul className="space-y-2">
+              {resourceLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
 
-            {/* Resources subsection */}
-            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Resources</h5>
+            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Company</h5>
             <ul className="space-y-2">
-              {resourceLinks.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            
-            {/* Why Us / Differentiation Links */}
-            <h5 className="font-semibold text-sm mt-5 mb-2 text-secondary-foreground/70">Why Us</h5>
-            <ul className="space-y-2">
-              {differentiationLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs"
-                  >
+                  <Link to={link.to} className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors text-xs">
                     {link.label}
                   </Link>
                 </li>

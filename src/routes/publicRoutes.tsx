@@ -40,6 +40,8 @@ const WhyCalsan = lazy(lazyRetry(() => import("@/pages/WhyCalsan")));
 const BlogArticle = lazy(lazyRetry(() => import("@/pages/BlogArticle")));
 const SitemapPage = lazy(lazyRetry(() => import("@/pages/SitemapPage")));
 const ContactUs = lazy(lazyRetry(() => import("@/pages/ContactUs")));
+const Permits = lazy(lazyRetry(() => import("@/pages/Permits")));
+const ComparePage = lazy(lazyRetry(() => import("@/pages/ComparePage")));
 
 // Auth pages — also resilient to stale chunks
 const StaffLogin = lazy(lazyRetry(() => import("@/pages/StaffLogin")));
@@ -87,6 +89,8 @@ export function getPublicRoutes() {
     <Route key="how-it-works" path="/how-it-works" element={<SuspenseRoute><HowItWorks /></SuspenseRoute>} />,
     <Route key="technology" path="/technology" element={<SuspenseRoute><Technology /></SuspenseRoute>} />,
     <Route key="why-calsan" path="/why-calsan" element={<SuspenseRoute><WhyCalsan /></SuspenseRoute>} />,
+    <Route key="permits" path="/permits" element={<SuspenseRoute><Permits /></SuspenseRoute>} />,
+    <Route key="compare" path="/compare/:slug" element={<SuspenseRoute><ComparePage /></SuspenseRoute>} />,
     <Route key="staff" path="/staff" element={<SuspenseRoute><StaffLogin /></SuspenseRoute>} />,
     <Route key="app" path="/app" element={<SuspenseRoute><RoleRouter /></SuspenseRoute>} />,
     <Route key="request-access" path="/request-access" element={<SuspenseRoute><RequestAccess /></SuspenseRoute>} />,

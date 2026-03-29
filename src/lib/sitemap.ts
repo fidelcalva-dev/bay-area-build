@@ -45,6 +45,10 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/not-a-broker', changefreq: 'monthly', priority: 0.7 },
   { url: '/how-it-works', changefreq: 'monthly', priority: 0.7 },
   { url: '/why-calsan', changefreq: 'monthly', priority: 0.7 },
+  { url: '/permits', changefreq: 'monthly', priority: 0.8 },
+  { url: '/compare/dumpster-rental-vs-junk-removal', changefreq: 'monthly', priority: 0.7 },
+  { url: '/compare/10-vs-20-yard-dumpster', changefreq: 'monthly', priority: 0.7 },
+  { url: '/compare/20-vs-30-yard-dumpster', changefreq: 'monthly', priority: 0.7 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   // Hub pages — only active regions in sitemap
