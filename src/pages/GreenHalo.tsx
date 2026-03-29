@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from 'react-helmet-async';
-import { BUSINESS_INFO } from "@/lib/seo";
+import { BUSINESS_INFO, PAGE_SEO } from "@/lib/seo";
 
 const features = [
   {
@@ -86,10 +86,10 @@ const useCases = [
 const GreenHalo = () => {
   return (
     <Layout
-      title="Green Halo™ – Recycling Support Program"
-      description="Track recycling documentation for your projects. Weight tickets, diversion reports, and sustainability data available upon request."
+      title={PAGE_SEO.greenHalo?.title || "Green Halo™ – Recycling Documentation & Diversion Reports"}
+      description={PAGE_SEO.greenHalo?.description || "Track recycling documentation for construction projects. Weight tickets, diversion reports, and WMP compliance support."}
     >
-      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
+      {/* Removed noindex — page supports brand credibility */}
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white pt-24 pb-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

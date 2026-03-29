@@ -260,11 +260,11 @@ const Index = () => {
         <div className="container-wide">
           <div className="text-center mb-8 space-y-4 max-w-[660px] mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Get Your Dumpster Quote
-              <span className="block text-primary mt-1">In 60 Seconds</span>
+              Bay Area Dumpster Rental
+              <span className="block text-primary mt-1">Transparent Pricing, Same-Day Delivery</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto">
-              Transparent roll-off dumpster pricing across the Bay Area. Fast delivery, local coordination, and clear rental terms.
+              Roll-off dumpster rentals from local yards in Oakland, San Jose &amp; San Francisco. 5–50 yard sizes with all-inclusive pricing.
             </p>
           </div>
 

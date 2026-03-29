@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler } from 'lucide-react';
-import { BUSINESS_INFO } from '@/lib/seo';
+import { ArrowRight, CheckCircle, XCircle, AlertTriangle, Info, Truck, Ruler, Phone } from 'lucide-react';
+import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const MATERIALS_FAQS: FAQItem[] = [
+  { question: 'Can I mix concrete with regular trash?', answer: 'No. Concrete, dirt, brick, and asphalt must go in a dedicated heavy material dumpster (5, 8, or 10 yard). Mixing with general debris will result in reclassification and additional charges.' },
+  { question: 'What happens if I put prohibited items in the dumpster?', answer: 'Prohibited items (hazardous waste, batteries, electronics) will be identified during disposal. You may be charged additional fees for special handling and your load may be rejected by the facility.' },
+  { question: 'Do I need to separate materials before loading?', answer: 'For general debris dumpsters, no separation is needed — you can mix household items, construction debris, and yard waste. For heavy material dumpsters, only one material type is allowed per load.' },
+  { question: 'What should I do if I am unsure about a material?', answer: 'Call us before loading at (510) 680-2150. Our team will advise you on the right dumpster type and any special handling requirements. It is always better to ask first.' },
+];
 
 const allowed = [
   { category: 'Household Junk', items: ['Furniture', 'Appliances (without freon)', 'Clothing & textiles', 'Books & paper', 'Toys', 'General household items'] },
@@ -56,17 +64,24 @@ const PICKUP_LOADS_QUICK = [
 export default function Materials() {
   return (
     <Layout
-      title="Accepted Dumpster Materials | What Can Go in a Dumpster"
-      description="Learn what materials are allowed in your dumpster rental. Accepted items, prohibited materials, and special rules for concrete and dirt disposal."
+      title={PAGE_SEO.materials.title}
+      description={PAGE_SEO.materials.description}
+      canonical={PAGE_SEO.materials.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <h1 className="heading-xl mb-4">Materials Guide</h1>
-            <p className="text-xl text-primary-foreground/85">
-              Know what you can and can't put in your dumpster. Avoid extra fees and ensure safe disposal.
+            <h1 className="heading-xl mb-4">What Can Go in a Dumpster?</h1>
+            <p className="text-xl text-primary-foreground/85 mb-6">
+              Know what you can and can't load. Avoid extra fees and ensure safe, compliant disposal.
             </p>
+            <Button asChild variant="cta" size="lg">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                <Phone className="w-4 h-4" />
+                Not Sure? Call Before Loading
+              </a>
+            </Button>
           </div>
         </div>
       </section>
@@ -196,30 +211,8 @@ export default function Materials() {
         </div>
       </section>
 
-      {/* Internal Links */}
-      <section className="section-padding bg-background">
-        <div className="container-wide">
-          <h2 className="heading-md text-foreground mb-6 text-center">Related Resources</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <Link to="/sizes" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Ruler className="w-4 h-4 text-primary shrink-0" />
-              Dumpster Sizes Guide
-            </Link>
-            <Link to="/pricing" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Info className="w-4 h-4 text-primary shrink-0" />
-              Full Pricing Details
-            </Link>
-            <Link to="/contractors" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Truck className="w-4 h-4 text-primary shrink-0" />
-              Contractor Services
-            </Link>
-            <Link to="/areas" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
-              Service Areas
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageFAQ faqs={MATERIALS_FAQS} />
+      <InternalLinkCluster exclude={['/materials']} />
 
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">

@@ -6,9 +6,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRight, Weight, CheckCircle, Phone, HelpCircle, Hammer, Home, Eye, Calculator, HardHat } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-data';
-import { BUSINESS_INFO } from '@/lib/seo';
+import { BUSINESS_INFO, PAGE_SEO } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const SIZES_FAQS: FAQItem[] = [
+  { question: 'What is the most popular dumpster size?', answer: 'The 20 yard dumpster is our most popular size. It fits most single-room renovations, garage cleanouts, and roofing projects while still fitting in a standard driveway.' },
+  { question: 'Can I put concrete or dirt in a regular dumpster?', answer: 'No. Heavy materials like concrete, dirt, brick, and asphalt require a dedicated heavy material dumpster (5, 8, or 10 yard). These use flat-fee pricing with disposal included.' },
+  { question: 'How do I know which size I need?', answer: 'Consider your project type: bathroom remodel (10yd), garage cleanout (20yd), whole-house renovation (30yd), or new construction (40-50yd). Use our size visualizer or call us for a free recommendation.' },
+  { question: 'What does "included tonnage" mean?', answer: 'Each dumpster size comes with a base weight allowance included in the price. For example, a 20 yard includes 2 tons. Weight beyond that is billed at $165/ton for general debris.' },
+];
 
 export default function Sizes() {
   const { t } = useLanguage();
@@ -23,8 +31,9 @@ export default function Sizes() {
 
   return (
     <Layout
-      title="Dumpster Sizes Guide | 5 to 50 Yard Dumpsters"
-      description="Compare dumpster sizes from 5 to 50 yards. Heavy material sizes (5, 8, 10 yard) for concrete and dirt. General debris sizes for renovations and cleanouts."
+      title={PAGE_SEO.sizes.title}
+      description={PAGE_SEO.sizes.description}
+      canonical={PAGE_SEO.sizes.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
@@ -246,30 +255,8 @@ export default function Sizes() {
         </div>
       </section>
 
-      {/* Internal Links */}
-      <section className="section-padding bg-background">
-        <div className="container-wide">
-          <h2 className="heading-md text-foreground mb-6 text-center">Explore More</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <Link to="/materials" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-              Accepted Materials
-            </Link>
-            <Link to="/pricing" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Calculator className="w-4 h-4 text-primary shrink-0" />
-              Full Pricing
-            </Link>
-            <Link to="/contractors" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <HardHat className="w-4 h-4 text-primary shrink-0" />
-              Contractor Services
-            </Link>
-            <Link to="/areas" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
-              Service Areas
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageFAQ faqs={SIZES_FAQS} />
+      <InternalLinkCluster exclude={['/sizes']} />
     </Layout>
   );
 }

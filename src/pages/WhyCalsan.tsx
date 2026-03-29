@@ -7,12 +7,20 @@ import {
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
+
+const WHY_CALSAN_FAQS: FAQItem[] = [
+  { question: 'How is Calsan different from online dumpster brokers?', answer: 'We operate our own yards and fleet in Oakland, San Jose, and San Francisco. Brokers resell capacity from random vendors — we dispatch directly, which means faster service, better communication, and no middleman markups.' },
+  { question: 'Can Calsan handle heavy materials like concrete and dirt?', answer: 'Yes. We offer dedicated 5, 8, and 10 yard heavy material dumpsters with flat-fee pricing. Disposal is included with no weight overage charges for clean loads.' },
+  { question: 'Do you work with contractors on recurring projects?', answer: 'Absolutely. We support multi-container orders, swap scheduling, weight enforcement documentation, and digital dump tickets for accountability on ongoing jobs.' },
+  { question: 'What does "ZIP-based pricing" mean?', answer: 'Your price is calculated based on your project ZIP code, material type, and dumpster size. This ensures accurate, transparent pricing with no hidden distance fees.' },
+];
 
 export default function WhyCalsan() {
   return (
     <Layout
-      title="Dumpster Rental Done Right"
-      description="Learn why Calsan Dumpsters Pro manages dispatch directly through local yard operations, structured routing, and technology-enhanced service across the Bay Area."
+      title="Why Choose Calsan Dumpsters | Local Bay Area Yard Operator"
+      description="Calsan operates local yards, manages dispatch directly, and delivers contractor-grade dumpster service across the Bay Area. No brokers, no surprises."
       canonical="/why-calsan"
     >
       {/* Hero */}
@@ -213,6 +221,9 @@ export default function WhyCalsan() {
           </AnimatedSection>
         </div>
       </section>
+
+      <PageFAQ faqs={WHY_CALSAN_FAQS} />
+      <InternalLinkCluster exclude={['/why-calsan']} />
     </Layout>
   );
 }

@@ -3,6 +3,15 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+
+const PRICING_FAQS: FAQItem[] = [
+  { question: 'What is included in the dumpster rental price?', answer: 'Every rental includes delivery, pickup, a 7-day rental period, and a weight allowance based on your dumpster size. No hidden trip fees or service charges.' },
+  { question: 'How does heavy material (concrete/dirt) pricing work?', answer: 'Heavy material dumpsters (5, 8, 10 yard) use flat-fee pricing. Disposal is included with no weight overage charges for clean, unmixed loads of concrete, dirt, brick, or asphalt.' },
+  { question: 'What happens if I go over the weight limit?', answer: 'For general debris dumpsters, weight beyond the included tonnage is billed at $165 per ton based on the certified scale ticket. Heavy material dumpsters have no overage — they are flat fee.' },
+  { question: 'Can I keep the dumpster longer than 7 days?', answer: 'Yes. Extra days beyond the standard 7-day rental are $20 per day. We will send a reminder before your rental period ends.' },
+  { question: 'Why do prices vary by ZIP code?', answer: 'Pricing depends on the distance from our nearest yard to your project location. Closer ZIPs get the best rates. Enter your ZIP in the quote tool for your exact price.' },
+];
 import { 
   PLAN_A_PRICING, 
   HEAVY_MATERIAL_PRICING, 
@@ -746,30 +755,8 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Internal Links */}
-      <section className="section-padding bg-background">
-        <div className="container-wide">
-          <h2 className="heading-md text-foreground mb-6 text-center">Related Resources</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <Link to="/sizes" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Package className="w-4 h-4 text-primary shrink-0" />
-              Dumpster Sizes Guide
-            </Link>
-            <Link to="/materials" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-              Accepted Materials
-            </Link>
-            <Link to="/contractors" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <HardHat className="w-4 h-4 text-primary shrink-0" />
-              Contractor Services
-            </Link>
-            <Link to="/areas" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <MapPin className="w-4 h-4 text-primary shrink-0" />
-              Service Areas
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageFAQ faqs={PRICING_FAQS} />
+      <InternalLinkCluster exclude={['/pricing']} />
 
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
