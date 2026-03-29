@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 import { analytics } from '@/lib/analytics';
+import { buildLeadContext } from '@/lib/attributionTracker';
 import { ga4, zipPrefix } from '@/lib/analytics/ga4';
 import { PRICING_POLICIES, INCLUDED_TONS_BY_SIZE } from '@/lib/shared-data';
 import { DUMPSTER_PHOTO_MAP } from '@/lib/canonicalDumpsterImages';
