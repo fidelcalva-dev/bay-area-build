@@ -72,10 +72,16 @@ export default function Materials() {
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
           <div className="max-w-3xl">
-            <h1 className="heading-xl mb-4">Materials Guide</h1>
-            <p className="text-xl text-primary-foreground/85">
-              Know what you can and can't put in your dumpster. Avoid extra fees and ensure safe disposal.
+            <h1 className="heading-xl mb-4">What Can Go in a Dumpster?</h1>
+            <p className="text-xl text-primary-foreground/85 mb-6">
+              Know what you can and can't load. Avoid extra fees and ensure safe, compliant disposal.
             </p>
+            <Button asChild variant="cta" size="lg">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                <Phone className="w-4 h-4" />
+                Not Sure? Call Before Loading
+              </a>
+            </Button>
           </div>
         </div>
       </section>
