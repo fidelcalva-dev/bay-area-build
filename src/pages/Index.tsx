@@ -333,6 +333,12 @@ const Index = () => {
               Text Us
             </a>
           </div>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Need cleanup too?{' '}
+            <Link to="/cleanup" className="text-primary font-medium hover:underline">
+              The same trusted team now offers construction cleanup →
+            </Link>
+          </p>
         </div>
       </section>
 
