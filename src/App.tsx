@@ -95,6 +95,9 @@ const App = () => {
                 {/* Crew portal */}
                 {getCrewRoutes()}
                 
+                {/* Cleanup brand site */}
+                {getCleanupRoutes()}
+                
                 {/* Department portals */}
                 {getDriverRoutes()}
                 {getCsRoutes()}
