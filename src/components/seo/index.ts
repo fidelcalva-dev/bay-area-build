@@ -9,3 +9,4 @@ export {
 export { RelatedLocations } from './RelatedLocations';
 export { InternalLinkBlock } from './InternalLinkBlock';
 export { FooterLocationCluster } from './FooterLocationCluster';
+export { SeoJsonLd } from './SeoJsonLd';

@@ -247,7 +247,7 @@ function renderEntries(entries: SitemapEntry[]): string {
 }
 
 export function generateSitemapXml(seoPages: SitemapEntry[] = []): string {
-  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...ZIP_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES, ...seoPages];
+  const allPages = [...STATIC_PAGES, ...BLOG_PAGES, ...SIZE_PAGES, ...MATERIAL_PAGES, ...CITY_PAGES, ...COUNTY_PAGES, ...USE_CASE_PAGES, ...ZIP_PAGES, ...YARD_PAGES, ...GRID_SERVICE_PAGES, ...CLEANUP_SITEMAP_PAGES, ...seoPages];
 
   // Deduplicate by URL
   const seen = new Set<string>();
