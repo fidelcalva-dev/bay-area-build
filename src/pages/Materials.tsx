@@ -211,30 +211,8 @@ export default function Materials() {
         </div>
       </section>
 
-      {/* Internal Links */}
-      <section className="section-padding bg-background">
-        <div className="container-wide">
-          <h2 className="heading-md text-foreground mb-6 text-center">Related Resources</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <Link to="/sizes" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Ruler className="w-4 h-4 text-primary shrink-0" />
-              Dumpster Sizes Guide
-            </Link>
-            <Link to="/pricing" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Info className="w-4 h-4 text-primary shrink-0" />
-              Full Pricing Details
-            </Link>
-            <Link to="/contractors" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <Truck className="w-4 h-4 text-primary shrink-0" />
-              Contractor Services
-            </Link>
-            <Link to="/areas" className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 transition-all">
-              <ArrowRight className="w-4 h-4 text-primary shrink-0" />
-              Service Areas
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PageFAQ faqs={MATERIALS_FAQS} />
+      <InternalLinkCluster exclude={['/materials']} />
 
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
