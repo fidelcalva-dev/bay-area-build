@@ -136,6 +136,8 @@ const breadcrumbs = [
 ];
 
 export default function WhatCanYouPutInADumpster() {
+  useSeoTracking({ pageType: 'blog', slug: 'what-can-you-put-in-a-dumpster' });
+
   return (
     <Layout
       title="What Can You Put in a Dumpster? | Accepted Materials Guide"
@@ -146,6 +148,7 @@ export default function WhatCanYouPutInADumpster() {
         generateFAQSchema(FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
