@@ -19,8 +19,8 @@ const WHY_CALSAN_FAQS: FAQItem[] = [
 export default function WhyCalsan() {
   return (
     <Layout
-      title="Dumpster Rental Done Right"
-      description="Learn why Calsan Dumpsters Pro manages dispatch directly through local yard operations, structured routing, and technology-enhanced service across the Bay Area."
+      title="Why Choose Calsan Dumpsters | Local Bay Area Yard Operator"
+      description="Calsan operates local yards, manages dispatch directly, and delivers contractor-grade dumpster service across the Bay Area. No brokers, no surprises."
       canonical="/why-calsan"
     >
       {/* Hero */}
