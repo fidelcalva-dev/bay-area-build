@@ -161,6 +161,27 @@ const USE_CASE_PAGES: SitemapEntry[] = SEO_USE_CASES.map(uc => ({
   priority: 0.8,
 }));
 
+// Cleanup division pages
+const CLEANUP_SITEMAP_PAGES: SitemapEntry[] = [
+  { url: '/cleanup', changefreq: 'weekly', priority: 0.8 },
+  { url: '/cleanup/services', changefreq: 'monthly', priority: 0.7 },
+  { url: '/cleanup/construction-cleanup', changefreq: 'monthly', priority: 0.75 },
+  { url: '/cleanup/post-construction-cleanup', changefreq: 'monthly', priority: 0.75 },
+  { url: '/cleanup/demolition-debris-cleanup', changefreq: 'monthly', priority: 0.75 },
+  { url: '/cleanup/recurring-jobsite-cleanup', changefreq: 'monthly', priority: 0.75 },
+  { url: '/cleanup/for-contractors', changefreq: 'monthly', priority: 0.7 },
+  { url: '/cleanup/pricing', changefreq: 'monthly', priority: 0.7 },
+  { url: '/cleanup/about', changefreq: 'monthly', priority: 0.5 },
+  { url: '/cleanup/faqs', changefreq: 'monthly', priority: 0.5 },
+  { url: '/cleanup/contact', changefreq: 'monthly', priority: 0.6 },
+  { url: '/cleanup/quote', changefreq: 'monthly', priority: 0.7 },
+  { url: '/cleanup/before-after', changefreq: 'monthly', priority: 0.5 },
+  { url: '/cleanup/service-areas', changefreq: 'monthly', priority: 0.6 },
+  { url: '/cleanup/oakland', changefreq: 'monthly', priority: 0.75 },
+  { url: '/cleanup/alameda', changefreq: 'monthly', priority: 0.7 },
+  { url: '/cleanup/bay-area', changefreq: 'monthly', priority: 0.7 },
+];
+
 // ZIP pages (300+ targeted ZIP codes)
 const ZIP_PAGES: SitemapEntry[] = SEO_ZIP_DATA.map(z => ({
   url: `/service-area/${z.zip}/dumpster-rental`,
