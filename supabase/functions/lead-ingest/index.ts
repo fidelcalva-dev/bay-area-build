@@ -220,8 +220,6 @@ Deno.serve(async (req) => {
 
     // Update additional fields not in the RPC
     const extraUpdates: Record<string, unknown> = {};
-    if (payload.utm_medium) extraUpdates.utm_medium = payload.utm_medium;
-    if (payload.utm_content) extraUpdates.utm_content = payload.utm_content;
     if (payload.landing_url) extraUpdates.landing_url = payload.landing_url;
     if (payload.referrer_url) extraUpdates.referrer_url = payload.referrer_url;
     if (payload.source_detail) extraUpdates.source_key = payload.source_detail;
