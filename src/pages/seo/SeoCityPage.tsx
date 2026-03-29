@@ -133,14 +133,25 @@ export default function SeoCityPage() {
 
   const yard = OPERATIONAL_YARDS.find(y => y.id === city.primary_yard_id);
   const yardCluster = getYardCluster(city.city_slug);
-  const neighborhoods = city.neighborhoods_json || [];
+  const cityContent = getCityContent(city.city_slug);
+  const neighborhoods = cityContent?.neighborhoods || city.neighborhoods_json || [];
   const sections = (page?.sections_json as unknown as ContentSection[] | null) || [];
   const dbFaqs = (page?.faq_json as unknown as FaqItem[] | null) || [];
   const schemas = (page?.schema_json as unknown as object[] | null) || [];
   const internalLinks = generateInternalLinks(city, 'CITY', allCities || []);
 
-  // Use DB FAQs if available (8+), otherwise generate defaults
-  const faqs = dbFaqs.length >= 8 ? dbFaqs : generateCityFAQs(city.city_name, city.county || 'Bay Area');
+  // Priority: DB FAQs (8+) > city content registry > generated defaults
+  const faqs = dbFaqs.length >= 8
+    ? dbFaqs
+    : cityContent?.faqs?.length
+      ? cityContent.faqs
+      : generateCityFAQs(city.city_name, city.county || 'Bay Area');
+
+  const localIntro = cityContent?.localIntro || city.local_intro;
+  const permitNote = cityContent?.permitNote || city.permit_info;
+  const logisticsNote = cityContent?.logisticsNote;
+  const serviceBlocks = cityContent?.serviceBlocks || [];
+  const showPermitVerification = cityContent?.showPermitVerification || false;
 
   const pageTitle = page?.title || `Dumpster Rental ${city.city_name} CA | Roll-Off Dumpsters | Calsan Dumpsters Pro`;
   const pageDescription = page?.meta_description || `Professional dumpster rental in ${city.city_name}, CA. Exact price by ZIP. Fast delivery based on availability. Contractor-ready service. Call ${BUSINESS_INFO.phone.salesFormatted}.`;
