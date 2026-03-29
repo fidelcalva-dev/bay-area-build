@@ -232,10 +232,18 @@ Deno.serve(async (req) => {
     if (payload.lat != null) extraUpdates.lat = payload.lat;
     if (payload.lng != null) extraUpdates.lng = payload.lng;
 
-    // === Source attribution ===
+    // === Source attribution (always write to survive dedup) ===
     extraUpdates.source_channel = payload.source_channel;
     if (payload.source_page) extraUpdates.source_page = payload.source_page;
     if (payload.source_module) extraUpdates.source_module = payload.source_module;
+
+    // === UTM & click IDs (write via extraUpdates to survive RPC dedup) ===
+    if (payload.utm_source) extraUpdates.utm_source = payload.utm_source;
+    if (payload.utm_medium) extraUpdates.utm_medium = payload.utm_medium;
+    if (payload.utm_campaign) extraUpdates.utm_campaign = payload.utm_campaign;
+    if (payload.utm_term) extraUpdates.utm_term = payload.utm_term;
+    if (payload.utm_content) extraUpdates.utm_content = payload.utm_content;
+    if (payload.gclid) extraUpdates.gclid = payload.gclid;
 
     // === SEO intent & attribution fields ===
     if (payload.msclkid) extraUpdates.msclkid = payload.msclkid;
