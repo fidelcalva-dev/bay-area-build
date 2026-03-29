@@ -964,6 +964,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ai_chat_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ai_chat_sessions_archive: {
@@ -7400,6 +7407,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ghl_call_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ghl_call_logs_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -7537,6 +7551,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ghl_message_threads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ghl_message_threads_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -7667,6 +7688,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ghl_messages_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
           {
@@ -8944,6 +8972,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_actions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       lead_activity_log: {
@@ -8977,6 +9012,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activity_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -9029,6 +9071,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_addresses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       lead_alerts: {
@@ -9074,6 +9123,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_alerts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -9165,6 +9221,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_card_info_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       lead_channels: {
@@ -9234,6 +9297,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_dedup_keys_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -9328,6 +9398,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -9595,6 +9672,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "lead_handoff_packets_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "lead_handoff_packets_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
@@ -9702,6 +9786,60 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_notes: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          followup_completed_at: string | null
+          followup_due_at: string | null
+          id: string
+          is_followup: boolean | null
+          lead_id: string
+          note_type: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          created_at?: string
+          followup_completed_at?: string | null
+          followup_due_at?: string | null
+          id?: string
+          is_followup?: boolean | null
+          lead_id: string
+          note_type?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          followup_completed_at?: string | null
+          followup_due_at?: string | null
+          id?: string
+          is_followup?: boolean | null
+          lead_id?: string
+          note_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -9877,6 +10015,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_source_metadata_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       lead_sources: {
@@ -9914,6 +10059,51 @@ export type Database = {
           source_key?: string
         }
         Relationships: []
+      }
+      lead_stage_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          from_stage: string | null
+          id: string
+          lead_id: string
+          reason: string | null
+          to_stage: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          from_stage?: string | null
+          id?: string
+          lead_id: string
+          reason?: string | null
+          to_stage: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          from_stage?: string | null
+          id?: string
+          lead_id?: string
+          reason?: string | null
+          to_stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_stage_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_stage_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lead_visitor_links: {
         Row: {
@@ -11763,6 +11953,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
           {
@@ -17685,6 +17882,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "sales_ai_audit_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sales_ai_insights: {
@@ -17757,6 +17961,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "sales_ai_insights_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sales_ai_messages_drafts: {
@@ -17827,6 +18038,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "sales_ai_messages_drafts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sales_leads: {
@@ -17842,11 +18060,13 @@ export type Database = {
           assigned_at: string | null
           assigned_to: string | null
           assignment_type: string | null
+          booked_value: number | null
           call_recording_id: string | null
           capture_ip: string | null
           capture_user_agent: string | null
           channel_key: string | null
           city: string | null
+          city_intent: string | null
           company_domain: string | null
           company_name: string | null
           consent_status: string | null
@@ -17856,6 +18076,7 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           customer_type_detected: string | null
+          debris_type: string | null
           delivery_preference: string | null
           escalation_level: number
           first_contact_at: string | null
@@ -17884,20 +18105,25 @@ export type Database = {
           lead_risk_score: number | null
           lead_source: string | null
           lead_status: string
+          lead_type: string | null
           linked_contact_id: string | null
           linked_opportunity_id: string | null
           lng: number | null
           market_code: string | null
           material_category: string | null
           message_excerpt: string | null
+          msclkid: string | null
+          needs_permit: boolean | null
           next_best_action: string | null
           next_followup_at: string | null
           normalized_email: string | null
           normalized_phone: string | null
           notes: string | null
           owner_user_id: string | null
+          pipeline_stage: string | null
           placement_type: string | null
           project_category: string | null
+          project_description: string | null
           quote_amount: number | null
           quote_amount_high: number | null
           quote_id: string | null
@@ -17908,7 +18134,9 @@ export type Database = {
           routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
+          same_day: boolean | null
           selected_size: number | null
+          service_intent: string | null
           size_preference: string | null
           sla_due_at: string | null
           sla_minutes: number
@@ -17939,11 +18167,13 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          booked_value?: number | null
           call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
+          city_intent?: string | null
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
@@ -17953,6 +18183,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          debris_type?: string | null
           delivery_preference?: string | null
           escalation_level?: number
           first_contact_at?: string | null
@@ -17981,20 +18212,25 @@ export type Database = {
           lead_risk_score?: number | null
           lead_source?: string | null
           lead_status?: string
+          lead_type?: string | null
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           lng?: number | null
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
+          msclkid?: string | null
+          needs_permit?: boolean | null
           next_best_action?: string | null
           next_followup_at?: string | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          pipeline_stage?: string | null
           placement_type?: string | null
           project_category?: string | null
+          project_description?: string | null
           quote_amount?: number | null
           quote_amount_high?: number | null
           quote_id?: string | null
@@ -18005,7 +18241,9 @@ export type Database = {
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          same_day?: boolean | null
           selected_size?: number | null
+          service_intent?: string | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
@@ -18036,11 +18274,13 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           assignment_type?: string | null
+          booked_value?: number | null
           call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
+          city_intent?: string | null
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
@@ -18050,6 +18290,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          debris_type?: string | null
           delivery_preference?: string | null
           escalation_level?: number
           first_contact_at?: string | null
@@ -18078,20 +18319,25 @@ export type Database = {
           lead_risk_score?: number | null
           lead_source?: string | null
           lead_status?: string
+          lead_type?: string | null
           linked_contact_id?: string | null
           linked_opportunity_id?: string | null
           lng?: number | null
           market_code?: string | null
           material_category?: string | null
           message_excerpt?: string | null
+          msclkid?: string | null
+          needs_permit?: boolean | null
           next_best_action?: string | null
           next_followup_at?: string | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          pipeline_stage?: string | null
           placement_type?: string | null
           project_category?: string | null
+          project_description?: string | null
           quote_amount?: number | null
           quote_amount_high?: number | null
           quote_id?: string | null
@@ -18102,7 +18348,9 @@ export type Database = {
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
+          same_day?: boolean | null
           selected_size?: number | null
+          service_intent?: string | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
@@ -22769,6 +23017,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "waste_vision_analyses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "waste_vision_analyses_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -23280,6 +23535,13 @@ export type Database = {
             referencedRelation: "sales_leads"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_card_info_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
         ]
       }
       overdue_assets: {
@@ -23358,6 +23620,135 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      seo_lead_dashboard_vw: {
+        Row: {
+          booked_value: number | null
+          city: string | null
+          city_intent: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          debris_type: string | null
+          first_touch_at: string | null
+          gclid: string | null
+          id: string | null
+          landing_url: string | null
+          last_activity_at: string | null
+          latest_touch_at: string | null
+          lead_quality_label: string | null
+          lead_quality_score: number | null
+          lead_status: string | null
+          lead_type: string | null
+          material_category: string | null
+          msclkid: string | null
+          needs_permit: boolean | null
+          next_best_action: string | null
+          owner_user_id: string | null
+          pipeline_stage: string | null
+          placement_type: string | null
+          project_description: string | null
+          quote_amount: number | null
+          referrer_url: string | null
+          same_day: boolean | null
+          selected_size: number | null
+          service_intent: string | null
+          size_preference: string | null
+          source_channel: string | null
+          source_page: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          zip: string | null
+        }
+        Insert: {
+          booked_value?: number | null
+          city?: string | null
+          city_intent?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          debris_type?: string | null
+          first_touch_at?: string | null
+          gclid?: string | null
+          id?: string | null
+          landing_url?: string | null
+          last_activity_at?: string | null
+          latest_touch_at?: string | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_status?: string | null
+          lead_type?: string | null
+          material_category?: string | null
+          msclkid?: string | null
+          needs_permit?: boolean | null
+          next_best_action?: string | null
+          owner_user_id?: string | null
+          pipeline_stage?: string | null
+          placement_type?: string | null
+          project_description?: string | null
+          quote_amount?: number | null
+          referrer_url?: string | null
+          same_day?: boolean | null
+          selected_size?: number | null
+          service_intent?: string | null
+          size_preference?: string | null
+          source_channel?: string | null
+          source_page?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
+        }
+        Update: {
+          booked_value?: number | null
+          city?: string | null
+          city_intent?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          debris_type?: string | null
+          first_touch_at?: string | null
+          gclid?: string | null
+          id?: string | null
+          landing_url?: string | null
+          last_activity_at?: string | null
+          latest_touch_at?: string | null
+          lead_quality_label?: string | null
+          lead_quality_score?: number | null
+          lead_status?: string | null
+          lead_type?: string | null
+          material_category?: string | null
+          msclkid?: string | null
+          needs_permit?: boolean | null
+          next_best_action?: string | null
+          owner_user_id?: string | null
+          pipeline_stage?: string | null
+          placement_type?: string | null
+          project_description?: string | null
+          quote_amount?: number | null
+          referrer_url?: string | null
+          same_day?: boolean | null
+          selected_size?: number | null
+          service_intent?: string | null
+          size_preference?: string | null
+          source_channel?: string | null
+          source_page?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
+        }
+        Relationships: []
       }
       yards_public: {
         Row: {
