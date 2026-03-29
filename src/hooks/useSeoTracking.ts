@@ -1,7 +1,8 @@
-// SEO Page GA4 Tracking Hook
+// SEO Page GA4 + dataLayer Tracking Hook
 // Fires seo_page_view on mount, provides helpers for quote/call click tracking
 import { useEffect, useCallback } from 'react';
 import { track, zipPrefix } from '@/lib/analytics/ga4';
+import { trackPhoneClick, trackQuoteClick } from '@/lib/analytics/seoTracking';
 
 export type SeoPageType = 'city' | 'city_size' | 'city_material' | 'city_job' | 'zip' | 'blog';
 
@@ -31,24 +32,15 @@ export function useSeoTracking(params: UseSeoTrackingParams) {
     });
   }, [pageType, city, zip, sizeYd, material, jobType, slug]);
 
+  const page = slug || pageType;
+
   const trackQuoteClick = useCallback(() => {
-    track('quote_click_from_seo', {
-      page_type: pageType,
-      city: city || undefined,
-      zip_prefix: zip ? zipPrefix(zip) : undefined,
-      size_yd: sizeYd || undefined,
-      material: material || undefined,
-      job_type: jobType || undefined,
-    });
-  }, [pageType, city, zip, sizeYd, material, jobType]);
+    trackQuoteClick(page, city);
+  }, [page, city]);
 
   const trackCallClick = useCallback(() => {
-    track('call_click_from_seo', {
-      page_type: pageType,
-      city: city || undefined,
-      zip_prefix: zip ? zipPrefix(zip) : undefined,
-    });
-  }, [pageType, city, zip]);
+    trackPhoneClick(page, city);
+  }, [page, city]);
 
   return { trackQuoteClick, trackCallClick };
 }
