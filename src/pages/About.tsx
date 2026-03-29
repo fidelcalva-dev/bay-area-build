@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
 
 const ABOUT_FAQS: FAQItem[] = [
