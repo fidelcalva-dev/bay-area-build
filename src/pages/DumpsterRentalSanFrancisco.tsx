@@ -177,6 +177,24 @@ export default function DumpsterRentalSanFrancisco() {
         </div>
       </section>
 
+      {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
+      <section className="py-6 bg-accent/5 border-b border-accent/20">
+        <div className="container-wide max-w-3xl mx-auto">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+              <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                San Francisco has strict requirements for dumpster placement on public streets, especially in residential neighborhoods and metered zones. Private property placement is typically permit-free. 
+                Street placement requires a Temporary Exclusive Use permit from SFMTA. Our team can help — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── 2. LOCAL AUTHORITY ─────────────────────────────── */}
       <section className="section-padding bg-muted/30">
         <div className="container-narrow">
