@@ -31,8 +31,9 @@ export default function Sizes() {
 
   return (
     <Layout
-      title="Dumpster Sizes Guide | 5 to 50 Yard Dumpsters"
-      description="Compare dumpster sizes from 5 to 50 yards. Heavy material sizes (5, 8, 10 yard) for concrete and dirt. General debris sizes for renovations and cleanouts."
+      title={PAGE_SEO.sizes.title}
+      description={PAGE_SEO.sizes.description}
+      canonical={PAGE_SEO.sizes.canonical}
     >
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
