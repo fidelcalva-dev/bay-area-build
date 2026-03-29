@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { SeoJsonLd } from '@/components/seo/SeoJsonLd';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import {
   CheckCircle, ArrowRight, Phone, Truck, AlertTriangle,
   Home, HardHat, Trees, Wrench, Scale, Hammer, Info
@@ -132,6 +136,8 @@ const breadcrumbs = [
 ];
 
 export default function WhatCanYouPutInADumpster() {
+  useSeoTracking({ pageType: 'blog', slug: 'what-can-you-put-in-a-dumpster' });
+
   return (
     <Layout
       title="What Can You Put in a Dumpster? | Accepted Materials Guide"
@@ -142,6 +148,7 @@ export default function WhatCanYouPutInADumpster() {
         generateFAQSchema(FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
@@ -274,6 +281,8 @@ export default function WhatCanYouPutInADumpster() {
       <PageFAQ faqs={FAQS} />
       <InternalLinkCluster exclude={['/what-can-you-put-in-a-dumpster']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -296,6 +305,8 @@ export default function WhatCanYouPutInADumpster() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="what-can-you-put-in-a-dumpster" />
     </Layout>
   );
 }

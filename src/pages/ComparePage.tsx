@@ -3,6 +3,11 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { SeoSupportSection } from '@/components/seo/SeoSupportSection';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { 
   ArrowRight, Phone, CheckCircle, XCircle, 
   Truck, DollarSign, Ruler
@@ -233,6 +238,8 @@ export default function ComparePage() {
   const { slug } = useParams<{ slug: string }>();
   const data = slug ? COMPARISONS[slug] : undefined;
 
+  useSeoTracking({ pageType: 'blog', slug: slug || 'compare' });
+
   if (!data) {
     return <Navigate to="/sizes" replace />;
   }
@@ -253,6 +260,7 @@ export default function ComparePage() {
         generateFAQSchema(data.faqs),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
@@ -360,6 +368,9 @@ export default function ComparePage() {
       <PageFAQ faqs={data.faqs} />
       <InternalLinkCluster exclude={[`/compare/${data.slug}`]} />
 
+      <SeoReviewProof className="mb-0" />
+      <SeoSupportSection page={`compare-${slug}`} />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -382,6 +393,8 @@ export default function ComparePage() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page={`compare-${slug}`} />
     </Layout>
   );
 }

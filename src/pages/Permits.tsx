@@ -3,6 +3,11 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { SeoSupportSection } from '@/components/seo/SeoSupportSection';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import { 
   FileText, MapPin, ArrowRight, Phone, AlertTriangle,
   CheckCircle, Clock, Building2, Home, Shield, Truck, Info
@@ -154,6 +159,8 @@ const featuredCities = CITY_PERMITS.filter(c => c.featured);
 const otherCities = CITY_PERMITS.filter(c => !c.featured);
 
 export default function Permits() {
+  useSeoTracking({ pageType: 'blog', slug: 'permits' });
+
   const breadcrumbs = [
     { name: 'Home', url: '/' },
     { name: 'Permits & Placement Guide', url: '/permits' },
@@ -169,6 +176,7 @@ export default function Permits() {
         generateFAQSchema(PERMIT_FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide">
@@ -347,6 +355,8 @@ export default function Permits() {
       <PageFAQ faqs={PERMIT_FAQS} />
       <InternalLinkCluster exclude={['/permits']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -367,6 +377,8 @@ export default function Permits() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="permits" />
     </Layout>
   );
 }

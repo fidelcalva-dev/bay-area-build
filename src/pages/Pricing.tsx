@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, CheckCircle, XCircle, Info, DollarSign, Truck, Clock, AlertTriangle, Scale, Calendar, Trash2, HardHat, Leaf, Ban, MapPin, Weight, Boxes, Sparkles, Receipt, Recycle, FileText, ClipboardList, Settings2 } from 'lucide-react';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { SeoSupportSection } from '@/components/seo/SeoSupportSection';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 
 const PRICING_FAQS: FAQItem[] = [
   { question: 'What is included in the dumpster rental price?', answer: 'Every rental includes delivery, pickup, a 7-day rental period, and a weight allowance based on your dumpster size. No hidden trip fees or service charges.' },
@@ -184,12 +189,15 @@ const overageExplanations = [
 ];
 
 export default function Pricing() {
+  useSeoTracking({ pageType: 'blog', slug: 'pricing' });
+
   return (
     <Layout 
       title={PAGE_SEO.pricing.title}
       description={PAGE_SEO.pricing.description}
       canonical={PAGE_SEO.pricing.canonical}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
@@ -784,6 +792,9 @@ export default function Pricing() {
       <PageFAQ faqs={PRICING_FAQS} />
       <InternalLinkCluster exclude={['/pricing']} />
 
+      <SeoReviewProof className="mb-0" />
+      <SeoSupportSection page="pricing" />
+
       {/* CTA */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
@@ -806,6 +817,8 @@ export default function Pricing() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="pricing" />
     </Layout>
   );
 }

@@ -3,6 +3,10 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import { SeoTrustBar } from '@/components/seo/SeoTrustBar';
+import { SeoReviewProof } from '@/components/seo/SeoReviewProof';
+import { StickyMobileCTA } from '@/components/seo/StickyMobileCTA';
+import { useSeoTracking } from '@/hooks/useSeoTracking';
 import {
   XCircle, ArrowRight, Phone, AlertTriangle, Info,
   CheckCircle, DollarSign, Shield
@@ -111,6 +115,8 @@ const breadcrumbs = [
 ];
 
 export default function WhatCannotGoInADumpster() {
+  useSeoTracking({ pageType: 'blog', slug: 'what-cannot-go-in-a-dumpster' });
+
   return (
     <Layout
       title="What Cannot Go in a Dumpster? | Prohibited Items List"
@@ -121,6 +127,7 @@ export default function WhatCannotGoInADumpster() {
         generateFAQSchema(FAQS),
       ]}
     >
+      <SeoTrustBar />
       {/* Hero */}
       <section className="bg-destructive/90 text-destructive-foreground py-12 md:py-16">
         <div className="container-wide">
@@ -251,6 +258,8 @@ export default function WhatCannotGoInADumpster() {
       <PageFAQ faqs={FAQS} />
       <InternalLinkCluster exclude={['/what-cannot-go-in-a-dumpster']} />
 
+      <SeoReviewProof className="mb-0" />
+
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16">
         <div className="container-wide text-center max-w-2xl mx-auto">
@@ -273,6 +282,8 @@ export default function WhatCannotGoInADumpster() {
           </div>
         </div>
       </section>
+
+      <StickyMobileCTA page="what-cannot-go-in-a-dumpster" />
     </Layout>
   );
 }
