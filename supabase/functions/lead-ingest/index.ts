@@ -298,6 +298,8 @@ Deno.serve(async (req) => {
     extraUpdates.lead_risk_score = scoring.risk_score;
     extraUpdates.lead_quality_label = scoring.quality_label;
     extraUpdates.company_domain = scoring.company_domain;
+    extraUpdates.lead_priority = scoring.priority;
+    extraUpdates.urgency_score = scoring.quality_score; // sync urgency_score
     if (captureIp) extraUpdates.capture_ip = captureIp;
     if (captureUserAgent) extraUpdates.capture_user_agent = captureUserAgent;
     if (scoring.customer_type_inferred !== 'unknown' && !payload.customer_type) {
