@@ -4,7 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
-import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck, AlertTriangle, Wrench } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
 
 // ── Oakland-specific data ────────────────────────────────────
@@ -405,11 +405,36 @@ export default function DumpsterRentalOakland() {
         </div>
       </section>
 
-      {/* ── SECTION 7: INTERNAL LINKING ────────────────── */}
+      {/* ── SECTION 7: SERVICE VERTICALS ─────────────── */}
       <section className="section-padding bg-muted/30">
+        <div className="container-wide">
+          <h2 className="heading-lg text-foreground mb-3 text-center">Dumpster Rental Services in Oakland</h2>
+          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">We handle every type of project — from small residential cleanouts to large commercial demolition.</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {[
+              { title: 'Construction Dumpsters', desc: 'Roll-offs for new builds, remodels, and demolition. 20–50 yard sizes.', link: '/services/construction-dumpsters' },
+              { title: 'Roofing Dumpsters', desc: 'Dedicated containers for shingle tear-offs. 20–30 yard sizes recommended.', link: '/services/roofing-dumpsters' },
+              { title: 'Residential Dumpsters', desc: 'Cleanouts, remodels, and yard projects. 10–20 yard sizes fit most driveways.', link: '/services/residential-dumpsters' },
+              { title: 'Commercial Dumpsters', desc: 'Warehouse cleanouts, retail build-outs, and multi-unit projects.', link: '/services/commercial-dumpsters' },
+              { title: 'Concrete & Dirt', desc: 'Flat-fee heavy material containers — no weight overage charges.', link: '/services/concrete-dirt-dumpsters' },
+              { title: 'Same-Day Rental', desc: 'Order before noon for same-day delivery to Oakland addresses.', link: '/services/same-day-dumpster-rental' },
+            ].map((block, i) => (
+              <Link key={i} to={block.link} className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all group">
+                <div className="flex items-center gap-3 mb-2">
+                  <Wrench className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{block.title}</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">{block.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 8: INTERNAL LINKING ────────────────── */}
+      <section className="section-padding bg-background">
         <div className="container-narrow">
           <h2 className="heading-lg text-foreground mb-8 text-center">Explore More Services</h2>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { to: '/dumpster-rental/oakland/10-yard', label: '10 Yard Dumpster Oakland', desc: 'Compact dumpster for cleanouts and small remodels.' },
@@ -422,11 +447,7 @@ export default function DumpsterRentalOakland() {
               { to: '/sizes', label: 'All Dumpster Sizes', desc: 'Compare all sizes from 5 to 50 yards with pricing.' },
               { to: '/materials', label: 'Accepted Materials Guide', desc: 'What you can and cannot put in a dumpster.' },
             ].map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition-colors group"
-              >
+              <Link key={link.to} to={link.to} className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition-colors group">
                 <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">{link.label}</h3>
                 <p className="text-sm text-muted-foreground">{link.desc}</p>
               </Link>
