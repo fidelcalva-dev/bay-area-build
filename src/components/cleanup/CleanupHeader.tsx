@@ -84,6 +84,12 @@ export function CleanupHeader() {
           >
             Dumpster Rentals →
           </a>
+          <Button asChild size="sm" variant="outline">
+            <a href="tel:+15106802150">
+              <Phone className="w-4 h-4 mr-1.5" />
+              Call Now
+            </a>
+          </Button>
           <Button asChild size="sm" variant="default">
             <Link to="/cleanup/quote">
               <FileText className="w-4 h-4 mr-1.5" />

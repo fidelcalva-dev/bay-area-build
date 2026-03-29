@@ -3,6 +3,7 @@ import { SEOHead } from '@/components/seo/SEOHead';
 import { CleanupHeader } from './CleanupHeader';
 import { CleanupFooter } from './CleanupFooter';
 import { CleanupMobileBar } from './CleanupMobileBar';
+import { CleanupTrustStrip } from './CleanupTrustStrip';
 
 interface CleanupLayoutProps {
   children: ReactNode;
@@ -11,6 +12,7 @@ interface CleanupLayoutProps {
   canonical?: string;
   noindex?: boolean;
   schema?: object | object[];
+  hideTrustStrip?: boolean;
 }
 
 export function CleanupLayout({
@@ -20,6 +22,7 @@ export function CleanupLayout({
   canonical,
   noindex,
   schema,
+  hideTrustStrip,
 }: CleanupLayoutProps) {
   return (
     <>
@@ -36,6 +39,7 @@ export function CleanupLayout({
           Licensed Construction Cleanup · CSLB #1152237 · Serving Oakland, Alameda &amp; the Bay Area
         </div>
         <CleanupHeader />
+        {!hideTrustStrip && <CleanupTrustStrip />}
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <CleanupFooter />
         <CleanupMobileBar />
