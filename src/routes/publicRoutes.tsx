@@ -95,6 +95,8 @@ export function getPublicRoutes() {
     <Route key="permits" path="/permits" element={<SuspenseRoute><Permits /></SuspenseRoute>} />,
     <Route key="compare" path="/compare/:slug" element={<SuspenseRoute><ComparePage /></SuspenseRoute>} />,
     <Route key="service-page" path="/services/:slug" element={<SuspenseRoute><ServicePage /></SuspenseRoute>} />,
+    <Route key="what-can-put" path="/what-can-you-put-in-a-dumpster" element={<SuspenseRoute><WhatCanYouPutInADumpster /></SuspenseRoute>} />,
+    <Route key="what-cannot-go" path="/what-cannot-go-in-a-dumpster" element={<SuspenseRoute><WhatCannotGoInADumpster /></SuspenseRoute>} />,
     <Route key="staff" path="/staff" element={<SuspenseRoute><StaffLogin /></SuspenseRoute>} />,
     <Route key="app" path="/app" element={<SuspenseRoute><RoleRouter /></SuspenseRoute>} />,
     <Route key="request-access" path="/request-access" element={<SuspenseRoute><RequestAccess /></SuspenseRoute>} />,
