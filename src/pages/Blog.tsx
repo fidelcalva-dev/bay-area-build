@@ -33,6 +33,7 @@ const blogCategories = [
 
 export default function Blog() {
   const allPosts = getAllBlogArticles();
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   return (
     <Layout
