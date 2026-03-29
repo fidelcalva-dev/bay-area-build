@@ -96,7 +96,7 @@ export function SalesPipelineCards() {
         .order('created_at', { ascending: false })
         .limit(10),
       supabase.from('sales_leads')
-        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, source_key, created_at, last_contacted_at, city, zip')
+        .select('id, customer_name, customer_phone, lead_status, lead_quality_label, lead_priority, source_key, created_at, last_contacted_at, city, zip, same_day')
         .eq('lead_status', 'contacted')
         .not('last_contacted_at', 'is', null)
         .order('last_contacted_at', { ascending: true })
