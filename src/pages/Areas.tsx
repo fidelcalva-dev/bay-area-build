@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, MapPin, Phone, Truck, Clock, Shield, Building } from 'lucide-react';
-import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
+import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { REGIONS, getCitiesForRegion, type RegionConfig } from '@/lib/service-area-config';
 import { cityUrl } from '@/lib/seo-urls';
 
