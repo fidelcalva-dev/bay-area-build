@@ -675,25 +675,133 @@ const Index = () => {
         <FAQSection limit={6} />
       </Suspense>
 
+      {/* ========== SPLIT SERVICE SELECTOR ========== */}
+      <section className="py-12 md:py-16 bg-muted/30">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Two Service Lines, One Trusted Team</h2>
+            <p className="text-muted-foreground mt-2 max-w-xl mx-auto text-sm">
+              The same team you know as Calsan Dumpsters Pro, now with a dedicated construction cleanup division.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Dumpster Rentals */}
+            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 text-center">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Truck className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Dumpster Rentals</h3>
+              <p className="text-sm text-muted-foreground mb-5">
+                Roll-off dumpsters, debris containers, and self-loaded projects across the Bay Area.
+              </p>
+              <Button asChild size="lg" className="w-full rounded-xl">
+                <Link to={quoteUrl()}>Rent a Dumpster</Link>
+              </Button>
+            </div>
+            {/* Cleanup */}
+            <div className="bg-card rounded-2xl border-2 border-accent p-6 md:p-8 text-center relative">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-full">NEW</span>
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                <HardHat className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Construction Cleanup</h3>
+              <p className="text-sm text-muted-foreground mb-5">
+                Active jobsite cleanup, final cleanup, demolition debris, and recurring contractor support.
+              </p>
+              <Button asChild size="lg" variant="cta" className="w-full rounded-xl">
+                <Link to="/cleanup/quote">Request Cleanup Service</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== WHICH SERVICE DO I NEED? ========== */}
+      <section className="py-10 md:py-14 bg-background">
+        <div className="container-wide max-w-3xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-6">Which Service Do I Need?</h2>
+          <div className="space-y-4">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="font-semibold text-foreground mb-1">Choose a Dumpster Rental when…</h3>
+              <p className="text-sm text-muted-foreground">You need a container placed on-site, your crew loads it, and we pick it up when you're done.</p>
+            </div>
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="font-semibold text-foreground mb-1">Choose Cleanup Service when…</h3>
+              <p className="text-sm text-muted-foreground">You need our crew to handle the cleanup labor — debris collection, site reset, final cleaning, or recurring support.</p>
+            </div>
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="font-semibold text-foreground mb-1">Need both?</h3>
+              <p className="text-sm text-muted-foreground">Many projects use dumpster rental plus cleanup support. We can coordinate both service lines for your project.</p>
+            </div>
+          </div>
+          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+            <Button asChild size="lg" className="rounded-full font-semibold px-8">
+              <Link to={quoteUrl()}>Start With Dumpster Quote</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
+              <Link to="/cleanup/quote">Start With Cleanup Quote</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== CLEANUP TEASER ========== */}
+      <section className="py-12 md:py-16 bg-muted/30">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Construction Cleanup &amp; Debris Removal for Contractors and Owners
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto mb-8">
+            {[
+              { name: 'Construction Cleanup', desc: 'Active jobsite cleanup and site reset between trades.', href: '/cleanup/construction-cleanup' },
+              { name: 'Final / Post-Construction', desc: 'Turnover-ready cleanup for walkthroughs and handoff.', href: '/cleanup/post-construction-cleanup' },
+              { name: 'Demolition Debris', desc: 'Debris staging, loading, and disposal coordination.', href: '/cleanup/demolition-debris-cleanup' },
+              { name: 'Recurring Cleanup', desc: 'Scheduled support for contractors with active projects.', href: '/cleanup/recurring-jobsite-cleanup' },
+            ].map((svc) => (
+              <Link
+                key={svc.name}
+                to={svc.href}
+                className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-accent/30 transition-all group"
+              >
+                <h3 className="font-bold text-foreground text-sm mb-2">{svc.name}</h3>
+                <p className="text-xs text-muted-foreground mb-3">{svc.desc}</p>
+                <span className="text-xs font-medium text-accent group-hover:underline">Learn More →</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center flex flex-col sm:flex-row justify-center gap-3">
+            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6">
+              <Link to="/cleanup/for-contractors">For Contractors</Link>
+            </Button>
+            <Button asChild variant="cta" size="lg" className="rounded-full font-semibold px-6">
+              <Link to="/cleanup/quote">Request Cleanup Quote</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* ========== SECTION 14 — FINAL CTA ========== */}
       <section className="py-14 md:py-20 gradient-hero">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            Ready to Get Your Dumpster Price?
+            Ready to Get Started?
           </h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 mb-4">
+          <div className="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-4">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
               <Link to={quoteUrl()}>
-                Get Exact Price
+                Get Dumpster Quote
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
-              <Link to="/waste-vision">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photo
+              <Link to="/cleanup/quote">
+                Request Cleanup Quote
               </Link>
             </Button>
+          </div>
+          <div className="flex justify-center gap-4">
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
                 <Phone className="w-4 h-4 mr-2" />

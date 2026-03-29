@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
 
 const CleanupHome = lazy(() => import('@/pages/cleanup/CleanupHome'));
