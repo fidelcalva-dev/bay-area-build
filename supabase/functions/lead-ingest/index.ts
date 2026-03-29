@@ -413,6 +413,24 @@ Deno.serve(async (req) => {
       provider: 'SYSTEM',
     });
 
+    // Create first follow-up task
+    const followUpDue = new Date();
+    if (scoring.priority === 'hot') {
+      followUpDue.setMinutes(followUpDue.getMinutes() + 15);
+    } else if (scoring.priority === 'high') {
+      followUpDue.setMinutes(followUpDue.getMinutes() + 60);
+    } else {
+      followUpDue.setHours(followUpDue.getHours() + 4);
+    }
+    await supabase.from('lead_follow_up_tasks').insert({
+      lead_id: leadId,
+      task_type: 'initial_contact',
+      title: scoring.priority === 'hot' ? '🔥 URGENT: Contact hot lead' : 'Initial follow-up call',
+      description: `New ${payload.source_channel} lead${payload.city ? ' from ' + payload.city : ''}. Priority: ${scoring.priority}.`,
+      due_at: followUpDue.toISOString(),
+      assigned_to: assignedOwner || null,
+    }).then(() => {});
+
     // Enqueue AI classification if available
     try {
       await supabase.rpc('enqueue_ai_job', {
