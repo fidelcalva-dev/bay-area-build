@@ -57,16 +57,24 @@ export default function Blog() {
       <section className="py-8 bg-muted border-b border-border">
         <div className="container-wide">
           <div className="flex flex-wrap gap-2">
-            <span className="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium">
+            <button
+              onClick={() => setActiveCategory('all')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === 'all' ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary'
+              }`}
+            >
               All Posts
-            </span>
+            </button>
             {blogCategories.map((category) => (
-              <span
+              <button
                 key={category.slug}
-                className="px-4 py-2 bg-card border border-border rounded-full text-sm font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors"
+                onClick={() => setActiveCategory(category.slug)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeCategory === category.slug ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                }`}
               >
                 {category.name}
-              </span>
+              </button>
             ))}
           </div>
         </div>
