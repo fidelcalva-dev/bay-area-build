@@ -162,6 +162,14 @@ export interface LeadHubLead {
   ai_conversation_summary: string | null;
   latest_recommended_size: number | null;
   latest_heavy_flag: boolean | null;
+  // Service line fields
+  service_line: string | null;
+  cleanup_service_type: string | null;
+  contractor_flag: boolean | null;
+  recurring_service_flag: boolean | null;
+  bundle_opportunity_flag: boolean | null;
+  photos_uploaded_flag: boolean | null;
+  needs_site_visit: boolean | null;
 }
 
 export type LeadHubTab = 
