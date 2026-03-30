@@ -153,10 +153,16 @@ const SOURCE_LABELS: Record<string, string> = {
 export default function SalesLeads() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAdminAuth();
 
-  const [activeTab, setActiveTab] = useState<LeadHubTab>('new');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  // Support ?view=cleanup-board URL param
+  const urlView = searchParams.get('view');
+  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : 'list';
+  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : 'new';
+
+  const [activeTab, setActiveTab] = useState<LeadHubTab>(initialTab);
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
