@@ -15714,6 +15714,77 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_line_items: {
+        Row: {
+          created_at: string
+          dumpster_size_yd: number | null
+          heavy_group: string | null
+          id: string
+          included_tons: number | null
+          line_total: number | null
+          line_type: string
+          material_class: string | null
+          material_type: string | null
+          notes_customer: string | null
+          notes_internal: string | null
+          overage_rate: number | null
+          quantity: number | null
+          quote_id: string
+          rental_days: number | null
+          sort_order: number | null
+          unit_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dumpster_size_yd?: number | null
+          heavy_group?: string | null
+          id?: string
+          included_tons?: number | null
+          line_total?: number | null
+          line_type?: string
+          material_class?: string | null
+          material_type?: string | null
+          notes_customer?: string | null
+          notes_internal?: string | null
+          overage_rate?: number | null
+          quantity?: number | null
+          quote_id: string
+          rental_days?: number | null
+          sort_order?: number | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dumpster_size_yd?: number | null
+          heavy_group?: string | null
+          id?: string
+          included_tons?: number | null
+          line_total?: number | null
+          line_type?: string
+          material_class?: string | null
+          material_type?: string | null
+          notes_customer?: string | null
+          notes_internal?: string | null
+          overage_rate?: number | null
+          quantity?: number | null
+          quote_id?: string
+          rental_days?: number | null
+          sort_order?: number | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_line_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_sessions: {
         Row: {
           access_notes: string | null
