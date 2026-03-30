@@ -369,6 +369,13 @@ export function getAdminRoutes() {
       {/* Activation & Leads */}
       <Route path="activation" element={<SuspenseRoute><ActivationDashboard /></SuspenseRoute>} />
       <Route path="leads" element={<SuspenseRoute><AdminLeadsHub /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — Admin mode (keeps AdminLeadsHub for analytics) */}
+      <Route path="leads/workspace" element={<SuspenseRoute><AdminLeadWorkspace mode="admin" /></SuspenseRoute>} />
+      <Route path="leads/workspace/:id" element={<SuspenseRoute><AdminLeadDetail mode="admin" /></SuspenseRoute>} />
+      {/* Canonical shared quote workspace — Admin mode */}
+      <Route path="quotes" element={<SuspenseRoute><AdminQuoteWorkspace mode="admin" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><AdminQuoteDetail mode="admin" /></SuspenseRoute>} />
+      <Route path="quotes/new" element={<SuspenseRoute><AdminQuoteBuilder mode="admin" /></SuspenseRoute>} />
       <Route path="leads-health" element={<SuspenseRoute><LeadsHealthDashboard /></SuspenseRoute>} />
       <Route path="system/reset" element={<SuspenseRoute><SystemResetPage /></SuspenseRoute>} />
       <Route path="email-config" element={<SuspenseRoute><EmailConfigPanel /></SuspenseRoute>} />
