@@ -394,23 +394,32 @@ export function useCalsanChat() {
       }).eq('id', conversationId);
     }
 
-    // Create lead via existing edge function
+    // Create lead via canonical lead-ingest
     const transcript = messages.slice(-20).map(m =>
       `${m.role === 'user' ? 'Customer' : 'AI'}: ${m.content}`
     ).join('\n\n');
 
     try {
-      await supabase.functions.invoke('lead-capture', {
+      await supabase.functions.invoke('lead-ingest', {
         body: {
+          source_channel: 'AI_CHAT',
+          source_page: typeof window !== 'undefined' ? window.location.pathname : '',
+          source_module: 'calsan_chat_widget',
+          lead_intent: 'CHAT_HANDOFF',
           name: data.name,
           phone: data.phone,
           email: data.email,
-          source: 'ai_chat',
-          zip: context.zip,
-          material: context.material,
-          size: context.size,
-          project_type: context.projectType,
-          notes: `AI Chat Lead\n\nTranscript:\n${transcript}`,
+          city: context.city || undefined,
+          zip: context.zip || undefined,
+          material_category: context.material || undefined,
+          size_preference: context.size ? String(context.size) : undefined,
+          project_type: context.projectType || undefined,
+          message: `AI Chat Lead\n\nTranscript:\n${transcript}`,
+          consent_status: 'TRANSACTIONAL',
+          raw_payload: {
+            service_line: context.serviceType === 'cleanup' ? 'CLEANUP' : 'DUMPSTER',
+            brand: context.serviceType === 'cleanup' ? 'CALSAN_CD_WASTE_REMOVAL' : 'CALSAN_DUMPSTERS_PRO',
+          },
         },
       });
     } catch (err) {
