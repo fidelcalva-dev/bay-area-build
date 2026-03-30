@@ -170,6 +170,9 @@ export interface LeadHubLead {
   bundle_opportunity_flag: boolean | null;
   photos_uploaded_flag: boolean | null;
   needs_site_visit: boolean | null;
+  // Brand
+  brand: string | null;
+  lead_intent: string | null;
 }
 
 export type LeadHubTab = 
