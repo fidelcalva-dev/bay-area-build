@@ -160,9 +160,10 @@ export default function SalesLeads() {
     search: searchTerm || undefined,
     source: sourceFilter !== 'all' ? sourceFilter : undefined,
     quality: qualityFilter !== 'all' ? qualityFilter : undefined,
+    serviceLine: serviceLineFilter !== 'all' ? serviceLineFilter : undefined,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
-  }), [activeTab, searchTerm, sourceFilter, qualityFilter, dateFrom, dateTo]);
+  }), [activeTab, searchTerm, sourceFilter, qualityFilter, serviceLineFilter, dateFrom, dateTo]);
 
   const { leads, loading, totalCount, refetch } = useLeadHub(filters);
   const { stats } = useLeadHubStats();
