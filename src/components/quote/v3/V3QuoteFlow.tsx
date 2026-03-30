@@ -414,6 +414,8 @@ export function V3QuoteFlow() {
           source_detail: `quote_${milestone}`,
           source_page: '/quote',
           source_module: 'v3_quote_flow',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'QUOTE_REQUEST',
           name: customerName || null,
           phone: customerPhone || null,
           email: customerEmail || null,
