@@ -142,6 +142,7 @@ export default function SalesLeads() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
+  const [serviceLineFilter, setServiceLineFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
