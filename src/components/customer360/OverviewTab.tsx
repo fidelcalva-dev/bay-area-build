@@ -9,6 +9,7 @@ import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { RecommendedScriptWidget } from './RecommendedScriptWidget';
+import { ServiceLineSummary } from './ServiceLineSummary';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
