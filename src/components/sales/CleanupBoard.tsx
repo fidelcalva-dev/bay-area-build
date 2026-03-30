@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Phone, MessageSquare, Camera, MapPin, HardHat, RefreshCw, Layers, Clock, AlertTriangle } from "lucide-react";
+import { Phone, MessageSquare, Camera, MapPin, HardHat, RefreshCw, Layers, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -66,12 +66,26 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'needs_followup', label: 'Needs Follow-Up', icon: MessageSquare },
   { key: 'my_leads', label: 'My Leads', icon: UserCheck },
   { key: 'high_intent', label: 'High Intent', icon: Zap },
-  { key: 'cleanup', label: 'Cleanup', icon: AlertTriangle },
+  { key: 'cleanup', label: 'Cleanup', icon: HardHat },
   { key: 'contractor', label: 'Contractors', icon: Users },
-  { key: 'bundle', label: 'Bundle', icon: TrendingUp },
+  { key: 'bundle', label: 'Bundle', icon: Layers },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
   { key: 'all', label: 'All', icon: Users },
+];
+
+// Cleanup saved views
+const CLEANUP_SAVED_VIEWS = [
+  { key: 'all_cleanup', label: 'All Cleanup Leads', filter: { tab: 'cleanup' as LeadHubTab } },
+  { key: 'cleanup_contractors', label: 'Cleanup Contractors', filter: { tab: 'cleanup' as LeadHubTab, extra: 'contractor' } },
+  { key: 'recurring', label: 'Recurring Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'recurring' } },
+  { key: 'waiting_photos', label: 'Waiting on Photos', filter: { tab: 'cleanup' as LeadHubTab, extra: 'waiting_photos' } },
+  { key: 'needs_site_visit', label: 'Needs Site Visit', filter: { tab: 'cleanup' as LeadHubTab, extra: 'needs_site_visit' } },
+  { key: 'proposal_sent', label: 'Proposal Sent', filter: { tab: 'cleanup' as LeadHubTab, extra: 'proposal_sent' } },
+  { key: 'bundle', label: 'Bundle Leads', filter: { tab: 'bundle' as LeadHubTab } },
+  { key: 'oakland_cleanup', label: 'Oakland Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'oakland' } },
+  { key: 'alameda_cleanup', label: 'Alameda Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'alameda' } },
+  { key: 'bay_area_cleanup', label: 'Bay Area Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'bay_area' } },
 ];
 
 const SERVICE_LINE_OPTIONS = [
