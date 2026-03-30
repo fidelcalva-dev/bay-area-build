@@ -5067,6 +5067,7 @@ export type Database = {
           normalized_phone: string | null
           notes: string | null
           phone: string | null
+          service_line: string | null
           sms_opt_out: boolean | null
           sms_opt_out_at: string | null
           updated_at: string
@@ -5100,6 +5101,7 @@ export type Database = {
           normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
+          service_line?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -5133,6 +5135,7 @@ export type Database = {
           normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
+          service_line?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -12653,6 +12656,7 @@ export type Database = {
           scheduled_pickup_date: string | null
           scheduled_pickup_window: string | null
           secondary_dumpster_id: string | null
+          service_line: string | null
           sla_tier: string | null
           status: string
           text_before_arrival: boolean | null
@@ -12766,6 +12770,7 @@ export type Database = {
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           secondary_dumpster_id?: string | null
+          service_line?: string | null
           sla_tier?: string | null
           status?: string
           text_before_arrival?: boolean | null
@@ -12879,6 +12884,7 @@ export type Database = {
           scheduled_pickup_date?: string | null
           scheduled_pickup_window?: string | null
           secondary_dumpster_id?: string | null
+          service_line?: string | null
           sla_tier?: string | null
           status?: string
           text_before_arrival?: boolean | null
@@ -15748,6 +15754,7 @@ export type Database = {
           approved_by_user_id: string | null
           billing_instructions: string | null
           city_rate_id: string | null
+          cleanup_service_type: string | null
           company_name: string | null
           completed_at: string | null
           confidence_level: string | null
@@ -15848,6 +15855,7 @@ export type Database = {
           routing_provider: string | null
           scheduling_notes: string | null
           selected_vendor_id: string | null
+          service_line: string | null
           size_id: string | null
           status: string
           subtotal: number
@@ -15893,6 +15901,7 @@ export type Database = {
           approved_by_user_id?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
+          cleanup_service_type?: string | null
           company_name?: string | null
           completed_at?: string | null
           confidence_level?: string | null
@@ -15993,6 +16002,7 @@ export type Database = {
           routing_provider?: string | null
           scheduling_notes?: string | null
           selected_vendor_id?: string | null
+          service_line?: string | null
           size_id?: string | null
           status?: string
           subtotal: number
@@ -16038,6 +16048,7 @@ export type Database = {
           approved_by_user_id?: string | null
           billing_instructions?: string | null
           city_rate_id?: string | null
+          cleanup_service_type?: string | null
           company_name?: string | null
           completed_at?: string | null
           confidence_level?: string | null
@@ -16138,6 +16149,7 @@ export type Database = {
           routing_provider?: string | null
           scheduling_notes?: string | null
           selected_vendor_id?: string | null
+          service_line?: string | null
           size_id?: string | null
           status?: string
           subtotal?: number
@@ -18115,21 +18127,26 @@ export type Database = {
           assigned_to: string | null
           assignment_type: string | null
           booked_value: number | null
+          bundle_opportunity_flag: boolean | null
           call_recording_id: string | null
           capture_ip: string | null
           capture_user_agent: string | null
           channel_key: string | null
           city: string | null
           city_intent: string | null
+          cleanup_notes: string | null
+          cleanup_service_type: string | null
           company_domain: string | null
           company_name: string | null
           consent_status: string | null
+          contractor_flag: boolean | null
           converted_at: string | null
           created_at: string
           customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
           customer_type_detected: string | null
+          debris_condition: string | null
           debris_type: string | null
           delivery_preference: string | null
           escalation_level: number
@@ -18169,30 +18186,41 @@ export type Database = {
           material_category: string | null
           message_excerpt: string | null
           msclkid: string | null
+          need_dumpster_too: boolean | null
           needs_permit: boolean | null
+          needs_site_visit: boolean | null
           next_best_action: string | null
           next_followup_at: string | null
           normalized_email: string | null
           normalized_phone: string | null
           notes: string | null
           owner_user_id: string | null
+          photos_uploaded_flag: boolean | null
           pipeline_stage: string | null
           placement_type: string | null
           project_category: string | null
           project_description: string | null
+          project_scope: string | null
+          project_size_sqft: string | null
+          project_stage: string | null
           quote_amount: number | null
           quote_amount_high: number | null
           quote_id: string | null
           raw_payload_json: Json | null
+          recurring_frequency: string | null
+          recurring_service_flag: boolean | null
           referrer_url: string | null
           requested_delivery_date: string | null
           requested_service: string | null
+          requested_start_date: string | null
+          requested_timeline: string | null
           routing_rule_id: string | null
           routing_tags: string[] | null
           sales_notes: string | null
           same_day: boolean | null
           selected_size: number | null
           service_intent: string | null
+          service_line: string | null
           size_preference: string | null
           sla_due_at: string | null
           sla_minutes: number
@@ -18224,21 +18252,26 @@ export type Database = {
           assigned_to?: string | null
           assignment_type?: string | null
           booked_value?: number | null
+          bundle_opportunity_flag?: boolean | null
           call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
           city_intent?: string | null
+          cleanup_notes?: string | null
+          cleanup_service_type?: string | null
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
+          contractor_flag?: boolean | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          debris_condition?: string | null
           debris_type?: string | null
           delivery_preference?: string | null
           escalation_level?: number
@@ -18278,30 +18311,41 @@ export type Database = {
           material_category?: string | null
           message_excerpt?: string | null
           msclkid?: string | null
+          need_dumpster_too?: boolean | null
           needs_permit?: boolean | null
+          needs_site_visit?: boolean | null
           next_best_action?: string | null
           next_followup_at?: string | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          photos_uploaded_flag?: boolean | null
           pipeline_stage?: string | null
           placement_type?: string | null
           project_category?: string | null
           project_description?: string | null
+          project_scope?: string | null
+          project_size_sqft?: string | null
+          project_stage?: string | null
           quote_amount?: number | null
           quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          recurring_frequency?: string | null
+          recurring_service_flag?: boolean | null
           referrer_url?: string | null
           requested_delivery_date?: string | null
           requested_service?: string | null
+          requested_start_date?: string | null
+          requested_timeline?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
           same_day?: boolean | null
           selected_size?: number | null
           service_intent?: string | null
+          service_line?: string | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
@@ -18333,21 +18377,26 @@ export type Database = {
           assigned_to?: string | null
           assignment_type?: string | null
           booked_value?: number | null
+          bundle_opportunity_flag?: boolean | null
           call_recording_id?: string | null
           capture_ip?: string | null
           capture_user_agent?: string | null
           channel_key?: string | null
           city?: string | null
           city_intent?: string | null
+          cleanup_notes?: string | null
+          cleanup_service_type?: string | null
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
+          contractor_flag?: boolean | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_type_detected?: string | null
+          debris_condition?: string | null
           debris_type?: string | null
           delivery_preference?: string | null
           escalation_level?: number
@@ -18387,30 +18436,41 @@ export type Database = {
           material_category?: string | null
           message_excerpt?: string | null
           msclkid?: string | null
+          need_dumpster_too?: boolean | null
           needs_permit?: boolean | null
+          needs_site_visit?: boolean | null
           next_best_action?: string | null
           next_followup_at?: string | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           owner_user_id?: string | null
+          photos_uploaded_flag?: boolean | null
           pipeline_stage?: string | null
           placement_type?: string | null
           project_category?: string | null
           project_description?: string | null
+          project_scope?: string | null
+          project_size_sqft?: string | null
+          project_stage?: string | null
           quote_amount?: number | null
           quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          recurring_frequency?: string | null
+          recurring_service_flag?: boolean | null
           referrer_url?: string | null
           requested_delivery_date?: string | null
           requested_service?: string | null
+          requested_start_date?: string | null
+          requested_timeline?: string | null
           routing_rule_id?: string | null
           routing_tags?: string[] | null
           sales_notes?: string | null
           same_day?: boolean | null
           selected_size?: number | null
           service_intent?: string | null
+          service_line?: string | null
           size_preference?: string | null
           sla_due_at?: string | null
           sla_minutes?: number
