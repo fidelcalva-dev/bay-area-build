@@ -32,6 +32,7 @@ import {
 import { ContractsTab } from '@/components/customer360/ContractsTab';
 import { CommercialAccountCard } from '@/components/customer360/CommercialAccountCard';
 import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
+import { ServiceLineSummary } from '@/components/customer360/ServiceLineSummary';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
