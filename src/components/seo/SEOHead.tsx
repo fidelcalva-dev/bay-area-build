@@ -26,7 +26,12 @@ export function SEOHead({
 }: SEOHeadProps) {
   const { data: schemaSameAs } = useSchemaSocialUrls();
 
-  const fullTitle = title ? `${title} | ${BUSINESS_INFO.name}` : DEFAULT_TITLE;
+  // Avoid double brand name — if title already contains brand, use as-is
+  const brandName = BUSINESS_INFO.name;
+  const titleAlreadyBranded = title ? (title.includes('Calsan') || title.includes(brandName)) : false;
+  const fullTitle = title 
+    ? (titleAlreadyBranded ? title : `${title} | ${brandName}`)
+    : DEFAULT_TITLE;
   const canonicalUrl = canonical ? `${BUSINESS_INFO.url}${canonical}` : undefined;
   const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
