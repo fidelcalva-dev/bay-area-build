@@ -86,6 +86,8 @@ export default function CleanupQuote() {
         source_channel: attribution.source_channel,
         source_page: attribution.source_page,
         source_module: attribution.source_module,
+        brand: 'CALSAN_CD_WASTE_REMOVAL',
+        lead_intent: 'QUOTE_REQUEST',
         name: form.name,
         phone: form.phone,
         email: form.email,
@@ -105,6 +107,7 @@ export default function CleanupQuote() {
         referrer_url: typeof document !== 'undefined' ? document.referrer || undefined : undefined,
         raw_payload: {
           service_line: 'CLEANUP',
+          brand: 'CALSAN_CD_WASTE_REMOVAL',
           cleanup_service_type: form.service_type,
           cleanup_timeline: form.timeline,
           project_scope: form.scope,
