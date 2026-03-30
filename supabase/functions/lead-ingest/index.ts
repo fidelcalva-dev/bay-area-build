@@ -169,9 +169,15 @@ Deno.serve(async (req) => {
     // but lead_context fills in missing fields (UTMs, intent, etc.)
     const { lead_context, ...rest } = rawBody;
     const merged = lead_context ? { ...lead_context, ...rest } : rest;
-    // Normalize aliases: size_intent → size_preference
+    // Normalize field aliases — frontend may use short names
     if (merged.size_intent && !merged.size_preference) {
       merged.size_preference = String(merged.size_intent);
+    }
+    if (merged.landing_page && !merged.landing_url) {
+      merged.landing_url = merged.landing_page;
+    }
+    if (merged.referrer && !merged.referrer_url) {
+      merged.referrer_url = merged.referrer;
     }
     const payload: IngestPayload = merged;
     rawPayload = payload;
