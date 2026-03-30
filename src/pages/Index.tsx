@@ -6,6 +6,7 @@ import { getFAQsForSchema } from '@/lib/shared-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
+import { CleanupAnnouncementCapture } from '@/components/cleanup/CleanupAnnouncementCapture';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
