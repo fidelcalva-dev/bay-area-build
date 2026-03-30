@@ -239,6 +239,11 @@ export default function CustomerDetail() {
         {/* ─── OVERVIEW ─── */}
         <TabsContent value="overview">
           <div className="space-y-4">
+            <ServiceLineSummary
+              customerServiceLine={(customer as any).service_line}
+              orders={orders}
+              quotes={quotes}
+            />
             <OverviewTab data={data} timelineEvents={timelineEvents} isTimelineLoading={isTimelineLoading} />
             <CommercialAccountCard
               customerId={customer.id}
