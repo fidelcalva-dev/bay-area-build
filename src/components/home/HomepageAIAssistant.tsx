@@ -218,10 +218,14 @@ export function HomepageAIAssistant() {
         body: {
           source_channel: 'WEBSITE_ASSISTANT',
           source_detail: 'homepage_ai_lead_capture',
+          source_page: '/',
+          source_module: 'homepage_ai_assistant',
+          brand: 'CALSAN_DUMPSTERS_PRO',
           name: leadName.trim() || undefined,
           phone: leadPhone.trim(),
           notes: question ? `AI Q: ${question.slice(0, 200)}` : undefined,
           consent_status: 'FORM_SUBMIT',
+          raw_payload: { service_line: 'DUMPSTER' },
         },
       });
       track('assistant_lead_created', { source: 'homepage_ai' });

@@ -115,6 +115,10 @@ export default function ScheduleDelivery() {
         body: {
           source_channel: 'SCHEDULE_DELIVERY',
           source_detail: 'schedule_delivery_form',
+          source_page: '/schedule-delivery',
+          source_module: 'schedule_delivery_form',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'SCHEDULE_REQUEST',
           name: name,
           phone: phone,
           email: email || null,
@@ -127,6 +131,7 @@ export default function ScheduleDelivery() {
           consent_status: 'OPTED_IN',
           raw_payload: {
             ...leadPayload,
+            service_line: 'DUMPSTER',
             event_type: 'schedule_request',
           },
         },

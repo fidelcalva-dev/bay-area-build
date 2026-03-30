@@ -117,11 +117,15 @@ export default function QuickOrder() {
         body: {
           source_channel: 'QUICK_ORDER',
           source_detail: 'quick_order_start',
+          source_page: '/quick-order',
+          source_module: 'quick_order_flow',
+          brand: 'CALSAN_DUMPSTERS_PRO',
           zip: config.zip || null,
           material_category: config.material || null,
           size_preference: String(config.size),
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
+            service_line: 'DUMPSTER',
             milestone: 'quick_order_started',
             selected_size: config.size,
             material_type: config.material,
