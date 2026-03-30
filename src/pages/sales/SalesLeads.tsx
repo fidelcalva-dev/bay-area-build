@@ -589,8 +589,22 @@ export default function SalesLeads() {
                             {(!lead.service_line || lead.service_line === 'DUMPSTER') && (
                               <Badge variant="outline" className="text-[10px] px-1.5 py-0">Dumpster</Badge>
                             )}
+                            {lead.cleanup_service_type && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                                {lead.cleanup_service_type.replace(/_/g, ' ').toLowerCase().replace(/^\w/, (c: string) => c.toUpperCase())}
+                              </Badge>
+                            )}
                             {lead.contractor_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Contractor</Badge>}
                             {lead.recurring_service_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Recurring</Badge>}
+                            {lead.bundle_opportunity_flag && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-purple-300 text-purple-700 dark:border-purple-700 dark:text-purple-300">Bundle</Badge>
+                            )}
+                            {lead.photos_uploaded_flag && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">📷 Photos</Badge>
+                            )}
+                            {lead.needs_site_visit && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-rose-300 text-rose-700 dark:border-rose-700 dark:text-rose-300">Site Visit</Badge>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
