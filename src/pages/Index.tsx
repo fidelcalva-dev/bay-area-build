@@ -6,7 +6,6 @@ import { getFAQsForSchema } from '@/lib/shared-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
-import { CleanupAnnouncementCapture } from '@/components/cleanup/CleanupAnnouncementCapture';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -237,8 +236,24 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== CLEANUP ANNOUNCEMENT STRIP WITH LEAD CAPTURE ========== */}
-      <CleanupAnnouncementCapture />
+      {/* ========== CLEANUP ANNOUNCEMENT STRIP ========== */}
+      <div className="bg-accent/10 border-b border-accent/20">
+        <div className="container-wide py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded mr-2">NEW</span>
+              Construction Cleanup Division Now Available
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Calsan C&D Waste Removal now supports active jobsites, final cleanups, demolition debris, and recurring contractor cleanup.
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Link to="/cleanup" className="text-xs font-semibold text-primary hover:underline">Learn More →</Link>
+            <Link to="/cleanup/quote" className="text-xs font-semibold text-accent hover:underline">Get Cleanup Quote →</Link>
+          </div>
+        </div>
+      </div>
 
       {/* ========== SECTION 1 — HERO ========== */}
       <section className="bg-background py-12 md:py-20">
