@@ -430,6 +430,15 @@ export default function SalesLeads() {
               <SelectItem value="RED">Red</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={serviceLineFilter} onValueChange={setServiceLineFilter}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="All Services" />
+            </SelectTrigger>
+            <SelectContent>
+              {SERVICE_LINE_OPTIONS.map(o => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="default" className={`gap-2 ${dateFrom || dateTo ? 'border-primary text-primary' : ''}`}>
