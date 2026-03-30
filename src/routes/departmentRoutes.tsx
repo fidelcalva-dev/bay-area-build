@@ -20,17 +20,17 @@ const CSRequests = lazy(() => import("@/pages/cs/CSRequests"));
 const CSTemplates = lazy(() => import("@/pages/cs/CSTemplates"));
 const CSMessages = lazy(() => import("@/pages/cs/CSMessages"));
 const CSCalls = lazy(() => import("@/pages/cs/CSCalls"));
-const CSLeads = lazy(() => import("@/pages/cs/CSLeads"));
-const CSLeadInbox = lazy(() => import("@/pages/cs/CSLeadInbox"));
+
+// Canonical shared feature modules (used by CS, Sales, Admin)
+const LeadWorkspacePage = lazy(() => import("@/features/leads/LeadWorkspacePage"));
+const LeadDetailPage = lazy(() => import("@/features/leads/LeadDetailPage"));
+const QuoteWorkspacePage = lazy(() => import("@/features/quotes/QuoteWorkspacePage"));
+const QuoteDetailPage = lazy(() => import("@/features/quotes/QuoteDetailPage"));
+const QuoteBuilderPage = lazy(() => import("@/features/quotes/QuoteBuilderPage"));
 
 // Sales Portal
 const SalesLayout = lazy(() => import("@/pages/sales/SalesLayout"));
 const SalesDashboard = lazy(() => import("@/pages/sales/SalesDashboard"));
-const SalesLeads = lazy(() => import("@/pages/sales/SalesLeads"));
-const SalesLeadDetail = lazy(() => import("@/pages/sales/LeadDetail"));
-const SalesQuotes = lazy(() => import("@/pages/sales/SalesQuotes"));
-const SalesQuoteDetail = lazy(() => import("@/pages/sales/SalesQuoteDetail"));
-const SalesNewQuote = lazy(() => import("@/pages/internal/InternalCalculator"));
 const SalesCalls = lazy(() => import("@/pages/sales/SalesCalls"));
 const OrderBuilder = lazy(() => import("@/pages/sales/OrderBuilder"));
 
@@ -86,8 +86,13 @@ export function getCsRoutes() {
       <Route path="templates" element={<SuspenseRoute><CSTemplates /></SuspenseRoute>} />
       <Route path="messages" element={<SuspenseRoute><CSMessages /></SuspenseRoute>} />
       <Route path="calls" element={<SuspenseRoute><CSCalls /></SuspenseRoute>} />
-      <Route path="leads" element={<SuspenseRoute><CSLeads /></SuspenseRoute>} />
-      <Route path="lead-inbox" element={<SuspenseRoute><CSLeadInbox /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — CS mode */}
+      <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="cs" /></SuspenseRoute>} />
+      <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="cs" /></SuspenseRoute>} />
+      <Route path="lead-inbox" element={<Navigate to="/cs/leads" replace />} />
+      {/* Canonical shared quote workspace — CS mode */}
+      <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="cs" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="cs" /></SuspenseRoute>} />
     </Route>,
   ];
 }
@@ -96,11 +101,13 @@ export function getSalesRoutes() {
   return [
     <Route key="sales" path="/sales" element={<SuspenseRoute><SalesLayout /></SuspenseRoute>}>
       <Route index element={<SuspenseRoute><SalesDashboard /></SuspenseRoute>} />
-      <Route path="leads" element={<SuspenseRoute><SalesLeads /></SuspenseRoute>} />
-      <Route path="leads/:id" element={<SuspenseRoute><SalesLeadDetail /></SuspenseRoute>} />
-      <Route path="quotes" element={<SuspenseRoute><SalesQuotes /></SuspenseRoute>} />
-      <Route path="quotes/:id" element={<SuspenseRoute><SalesQuoteDetail /></SuspenseRoute>} />
-      <Route path="quotes/new" element={<SuspenseRoute><SalesNewQuote /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — Sales mode */}
+      <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="sales" /></SuspenseRoute>} />
+      <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="sales" /></SuspenseRoute>} />
+      {/* Canonical shared quote workspace — Sales mode */}
+      <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="sales" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="sales" /></SuspenseRoute>} />
+      <Route path="quotes/new" element={<SuspenseRoute><QuoteBuilderPage mode="sales" /></SuspenseRoute>} />
       <Route path="calls" element={<SuspenseRoute><SalesCalls /></SuspenseRoute>} />
       <Route path="inbox" element={<Navigate to="/sales/leads" replace />} />
       <Route path="lead-hub" element={<Navigate to="/sales/leads" replace />} />
@@ -146,8 +153,8 @@ export function getCalculatorRoutes() {
   return [
     <Route key="internal-calc" path="/internal/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
     <Route key="ops-calc" path="/ops/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
-    <Route key="sales-calc" path="/sales/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
-    <Route key="cs-calc" path="/cs/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
+    <Route key="sales-calc" path="/sales/calculator" element={<Navigate to="/sales/quotes/new" replace />} />,
+    <Route key="cs-calc" path="/cs/calculator" element={<Navigate to="/cs/quotes" replace />} />,
     <Route key="dispatch-calc" path="/dispatch/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
   ];
 }

@@ -2,6 +2,13 @@ import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
 
+// Canonical shared feature modules
+const AdminLeadWorkspace = lazy(() => import("@/features/leads/LeadWorkspacePage"));
+const AdminLeadDetail = lazy(() => import("@/features/leads/LeadDetailPage"));
+const AdminQuoteWorkspace = lazy(() => import("@/features/quotes/QuoteWorkspacePage"));
+const AdminQuoteDetail = lazy(() => import("@/features/quotes/QuoteDetailPage"));
+const AdminQuoteBuilder = lazy(() => import("@/features/quotes/QuoteBuilderPage"));
+
 // Admin Layout & Core
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("@/pages/admin/AdminLayout"));
@@ -362,6 +369,13 @@ export function getAdminRoutes() {
       {/* Activation & Leads */}
       <Route path="activation" element={<SuspenseRoute><ActivationDashboard /></SuspenseRoute>} />
       <Route path="leads" element={<SuspenseRoute><AdminLeadsHub /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — Admin mode (keeps AdminLeadsHub for analytics) */}
+      <Route path="leads/workspace" element={<SuspenseRoute><AdminLeadWorkspace mode="admin" /></SuspenseRoute>} />
+      <Route path="leads/workspace/:id" element={<SuspenseRoute><AdminLeadDetail mode="admin" /></SuspenseRoute>} />
+      {/* Canonical shared quote workspace — Admin mode */}
+      <Route path="quotes" element={<SuspenseRoute><AdminQuoteWorkspace mode="admin" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><AdminQuoteDetail mode="admin" /></SuspenseRoute>} />
+      <Route path="quotes/new" element={<SuspenseRoute><AdminQuoteBuilder mode="admin" /></SuspenseRoute>} />
       <Route path="leads-health" element={<SuspenseRoute><LeadsHealthDashboard /></SuspenseRoute>} />
       <Route path="system/reset" element={<SuspenseRoute><SystemResetPage /></SuspenseRoute>} />
       <Route path="email-config" element={<SuspenseRoute><EmailConfigPanel /></SuspenseRoute>} />
