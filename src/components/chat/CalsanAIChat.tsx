@@ -612,6 +612,8 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           source_detail: state.photoPath ? 'photo_flow' : 'structured_flow',
           source_page: window.location.pathname,
           source_module: 'calsan_ai_chat',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'CHAT_HANDOFF',
           name,
           phone: phoneInput,
           email: emailInput.trim() || null,
@@ -639,6 +641,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
           ].filter(Boolean).join('. '),
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
+            service_line: 'DUMPSTER',
             photo_path: state.photoPath || null,
             photo_confidence: state.photoAnalysis?.confidence || null,
             booking_mode: state.bookingMode,
