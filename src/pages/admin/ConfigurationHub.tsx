@@ -316,6 +316,48 @@ export default function ConfigurationHub() {
     fetchLastUpdates();
   }, []);
 
+  const renderModuleCard = (mod: ModuleInfo) => {
+    const Icon = mod.icon;
+    const canRead = hasPermission(mod.module, 'read');
+    const canWrite = hasPermission(mod.module, 'write');
+    const lastUpdate = lastUpdates[mod.module];
+
+    if (!canRead && mod.module !== 'config' && mod.module !== 'leads') return null;
+
+    return (
+      <Card
+        key={mod.path}
+        className={`cursor-pointer hover:shadow-lg transition-all ${!canWrite ? 'opacity-75' : ''}`}
+        onClick={() => navigate(mod.path)}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className={`p-2 rounded-lg ${mod.bgColor}`}>
+              <Icon className={`w-5 h-5 ${mod.color}`} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-green-700 border-green-300 dark:text-green-400 dark:border-green-700">Active</Badge>
+              {mod.isCritical && (
+                <Badge variant="destructive" className="text-xs">Critical</Badge>
+              )}
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </div>
+          </div>
+          <CardTitle className="text-lg">{mod.title}</CardTitle>
+          <CardDescription>{mod.description}</CardDescription>
+        </CardHeader>
+        {lastUpdate && !isLoadingUpdates && (
+          <CardContent className="pt-0">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="w-3 h-3" />
+              <span>Updated {format(new Date(lastUpdate.updatedAt), 'MMM d')} by {lastUpdate.updatedBy.split('@')[0]}</span>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    );
+  };
+
   if (permissionsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
