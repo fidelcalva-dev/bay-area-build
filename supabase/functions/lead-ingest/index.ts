@@ -277,6 +277,28 @@ Deno.serve(async (req) => {
     if (payload.ai_estimated_yards_min != null) extraUpdates.ai_estimated_yards_min = payload.ai_estimated_yards_min;
     if (payload.ai_estimated_yards_max != null) extraUpdates.ai_estimated_yards_max = payload.ai_estimated_yards_max;
 
+    // === SERVICE LINE & CLEANUP FIELDS ===
+    const rawPl2 = payload.raw_payload || {};
+    const serviceLine = (rawPl2.service_line as string) || (payload.source_channel?.startsWith('CLEANUP') ? 'CLEANUP' : 'DUMPSTER');
+    extraUpdates.service_line = serviceLine;
+
+    if (rawPl2.cleanup_service_type) extraUpdates.cleanup_service_type = rawPl2.cleanup_service_type;
+    if (rawPl2.project_scope) extraUpdates.project_scope = rawPl2.project_scope;
+    if (rawPl2.cleanup_timeline) extraUpdates.requested_timeline = rawPl2.cleanup_timeline;
+    if (rawPl2.approx_size) extraUpdates.project_size_sqft = String(rawPl2.approx_size);
+    if (rawPl2.contractor_flag != null) extraUpdates.contractor_flag = !!rawPl2.contractor_flag;
+    if (rawPl2.recurring_service_flag != null) extraUpdates.recurring_service_flag = !!rawPl2.recurring_service_flag;
+    if (rawPl2.need_dumpster_too != null) {
+      extraUpdates.need_dumpster_too = !!rawPl2.need_dumpster_too;
+      if (rawPl2.need_dumpster_too) {
+        extraUpdates.bundle_opportunity_flag = true;
+        extraUpdates.service_line = 'BOTH';
+      }
+    }
+    if (rawPl2.photos_uploaded_flag != null) extraUpdates.photos_uploaded_flag = !!rawPl2.photos_uploaded_flag;
+    if (rawPl2.needs_site_visit != null) extraUpdates.needs_site_visit = !!rawPl2.needs_site_visit;
+    if (rawPl2.cleanup_notes) extraUpdates.cleanup_notes = rawPl2.cleanup_notes;
+
     // Map size/heavy fields for Sales visibility
     const rawPl = payload.raw_payload || {};
     if (rawPl.recommended_size_yd != null) {
