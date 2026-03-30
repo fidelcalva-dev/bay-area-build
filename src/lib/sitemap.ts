@@ -240,7 +240,7 @@ async function fetchRegistryLocations(): Promise<SitemapEntry[]> {
     if (!data) return [];
 
     // Standalone pages are already in STATIC_PAGES; only add /dumpster-rental/{slug} entries
-    const standalonePages = new Set(['oakland-ca', 'san-jose-ca', 'san-francisco-ca']);
+    const standalonePages = new Set(['oakland', 'san-jose', 'san-francisco']);
     return data
       .filter(loc => !standalonePages.has(loc.slug))
       .map(loc => ({
