@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
-  Users, Phone, Mail, MessageSquare, FileText, Search, Plus, Clock,
-  CheckCircle2, XCircle, TrendingUp, AlertTriangle, Shield, Loader2,
-  Download, Calendar, Filter, Inbox, UserCheck, Zap, LayoutGrid
+  Users, Phone, MessageSquare, FileText, Search, Plus, Clock,
+  Shield, Loader2, Download, Calendar, Inbox, UserCheck, Zap,
+  LayoutGrid, HardHat, Layers
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
+import { CleanupBoard } from "@/components/sales/CleanupBoard";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -64,12 +65,26 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'needs_followup', label: 'Needs Follow-Up', icon: MessageSquare },
   { key: 'my_leads', label: 'My Leads', icon: UserCheck },
   { key: 'high_intent', label: 'High Intent', icon: Zap },
-  { key: 'cleanup', label: 'Cleanup', icon: AlertTriangle },
+  { key: 'cleanup', label: 'Cleanup', icon: HardHat },
   { key: 'contractor', label: 'Contractors', icon: Users },
-  { key: 'bundle', label: 'Bundle', icon: TrendingUp },
+  { key: 'bundle', label: 'Bundle', icon: Layers },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
   { key: 'all', label: 'All', icon: Users },
+];
+
+// Cleanup saved views
+const CLEANUP_SAVED_VIEWS = [
+  { key: 'all_cleanup', label: 'All Cleanup Leads', filter: { tab: 'cleanup' as LeadHubTab } },
+  { key: 'cleanup_contractors', label: 'Cleanup Contractors', filter: { tab: 'cleanup' as LeadHubTab, extra: 'contractor' } },
+  { key: 'recurring', label: 'Recurring Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'recurring' } },
+  { key: 'waiting_photos', label: 'Waiting on Photos', filter: { tab: 'cleanup' as LeadHubTab, extra: 'waiting_photos' } },
+  { key: 'needs_site_visit', label: 'Needs Site Visit', filter: { tab: 'cleanup' as LeadHubTab, extra: 'needs_site_visit' } },
+  { key: 'proposal_sent', label: 'Proposal Sent', filter: { tab: 'cleanup' as LeadHubTab, extra: 'proposal_sent' } },
+  { key: 'bundle', label: 'Bundle Leads', filter: { tab: 'bundle' as LeadHubTab } },
+  { key: 'oakland_cleanup', label: 'Oakland Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'oakland' } },
+  { key: 'alameda_cleanup', label: 'Alameda Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'alameda' } },
+  { key: 'bay_area_cleanup', label: 'Bay Area Cleanup', filter: { tab: 'cleanup' as LeadHubTab, extra: 'bay_area' } },
 ];
 
 const SERVICE_LINE_OPTIONS = [
@@ -85,7 +100,7 @@ const SERVICE_LINE_COLORS: Record<string, string> = {
   BOTH: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
 };
 
-type ViewMode = 'list' | 'pipeline';
+type ViewMode = 'list' | 'pipeline' | 'cleanup-board';
 
 const SOURCE_LABELS: Record<string, string> = {
   QUOTE_FLOW: "Quote Flow",
@@ -138,10 +153,16 @@ const SOURCE_LABELS: Record<string, string> = {
 export default function SalesLeads() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const searchParams = useSearchParams()[0];
   const { user } = useAdminAuth();
 
-  const [activeTab, setActiveTab] = useState<LeadHubTab>('new');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  // Support ?view=cleanup-board URL param
+  const urlView = searchParams.get('view');
+  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : 'list';
+  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : 'new';
+
+  const [activeTab, setActiveTab] = useState<LeadHubTab>(initialTab);
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
@@ -309,13 +330,27 @@ export default function SalesLeads() {
           </h1>
           <p className="text-sm text-muted-foreground">Omni-channel inbox — every lead, one place</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+          >
+            <Inbox className="w-4 h-4 mr-1" /> List
+          </Button>
           <Button
             variant={viewMode === 'pipeline' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setViewMode(viewMode === 'list' ? 'pipeline' : 'list')}
+            onClick={() => setViewMode('pipeline')}
           >
             <LayoutGrid className="w-4 h-4 mr-1" /> Pipeline
+          </Button>
+          <Button
+            variant={viewMode === 'cleanup-board' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setViewMode('cleanup-board'); setActiveTab('cleanup'); }}
+          >
+            <HardHat className="w-4 h-4 mr-1" /> Cleanup Board
           </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
@@ -473,8 +508,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Pipeline Board or Table */}
-        {viewMode === 'pipeline' ? (
+        {/* Pipeline Board, Cleanup Board, or Table */}
+        {viewMode === 'cleanup-board' ? (
+          <div className="mt-4">
+            <CleanupBoard leads={leads} onRefresh={refetch} />
+          </div>
+        ) : viewMode === 'pipeline' ? (
           <div className="mt-4">
             <SalesPipelineBoard leads={leads as any} onRefresh={refetch} />
           </div>
@@ -550,8 +589,22 @@ export default function SalesLeads() {
                             {(!lead.service_line || lead.service_line === 'DUMPSTER') && (
                               <Badge variant="outline" className="text-[10px] px-1.5 py-0">Dumpster</Badge>
                             )}
+                            {lead.cleanup_service_type && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                                {lead.cleanup_service_type.replace(/_/g, ' ').toLowerCase().replace(/^\w/, (c: string) => c.toUpperCase())}
+                              </Badge>
+                            )}
                             {lead.contractor_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Contractor</Badge>}
                             {lead.recurring_service_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Recurring</Badge>}
+                            {lead.bundle_opportunity_flag && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-purple-300 text-purple-700 dark:border-purple-700 dark:text-purple-300">Bundle</Badge>
+                            )}
+                            {lead.photos_uploaded_flag && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">📷 Photos</Badge>
+                            )}
+                            {lead.needs_site_visit && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-rose-300 text-rose-700 dark:border-rose-700 dark:text-rose-300">Site Visit</Badge>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>

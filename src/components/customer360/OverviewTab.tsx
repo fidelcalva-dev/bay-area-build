@@ -9,6 +9,7 @@ import type { TimelineEvent } from '@/lib/timelineService';
 import type { Customer360Data } from './types';
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { RecommendedScriptWidget } from './RecommendedScriptWidget';
+import { ServiceLineSummary } from './ServiceLineSummary';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
@@ -117,6 +118,15 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
           </Card>
         </div>
       )}
+
+      {/* Service Line Summary */}
+      <div className="lg:col-span-3">
+        <ServiceLineSummary
+          customerServiceLine={(customer as any).service_line || null}
+          orders={orders}
+          quotes={quotes}
+        />
+      </div>
 
       {/* Left Column */}
       <div className="lg:col-span-2 space-y-6">
