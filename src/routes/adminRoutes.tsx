@@ -2,6 +2,13 @@ import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
 
+// Canonical shared feature modules
+const AdminLeadWorkspace = lazy(() => import("@/features/leads/LeadWorkspacePage"));
+const AdminLeadDetail = lazy(() => import("@/features/leads/LeadDetailPage"));
+const AdminQuoteWorkspace = lazy(() => import("@/features/quotes/QuoteWorkspacePage"));
+const AdminQuoteDetail = lazy(() => import("@/features/quotes/QuoteDetailPage"));
+const AdminQuoteBuilder = lazy(() => import("@/features/quotes/QuoteBuilderPage"));
+
 // Admin Layout & Core
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("@/pages/admin/AdminLayout"));
