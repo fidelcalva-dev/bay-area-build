@@ -79,6 +79,9 @@ export default function ContactUs() {
         body: {
           source_channel: 'CONTACT_FORM',
           source_page: '/contact-us',
+          source_module: 'contact_us_form',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'CONTACT_REQUEST',
           name: form.name.trim(),
           phone: phoneValidation?.formatted || form.phone.trim(),
           email: form.email.trim(),
@@ -89,6 +92,7 @@ export default function ContactUs() {
           selected_size: sizeNum ? Number(sizeNum) : undefined,
           consent_status: 'OPTED_IN',
           last_step_completed: 'contact_captured',
+          raw_payload: { service_line: 'DUMPSTER' },
         },
       });
 

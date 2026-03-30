@@ -99,6 +99,8 @@ interface IngestPayload {
   source_detail?: string;
   source_page?: string;
   source_module?: string;
+  brand?: string;
+  lead_intent?: string;
   name?: string;
   phone?: string;
   email?: string;
@@ -277,9 +279,31 @@ Deno.serve(async (req) => {
     if (payload.ai_estimated_yards_min != null) extraUpdates.ai_estimated_yards_min = payload.ai_estimated_yards_min;
     if (payload.ai_estimated_yards_max != null) extraUpdates.ai_estimated_yards_max = payload.ai_estimated_yards_max;
 
-    // === SERVICE LINE & CLEANUP FIELDS ===
+    // === BRAND & INTENT ===
     const rawPl2 = payload.raw_payload || {};
-    const serviceLine = (rawPl2.service_line as string) || (payload.source_channel?.startsWith('CLEANUP') ? 'CLEANUP' : 'DUMPSTER');
+    const channelKey = payload.source_channel || '';
+    const isCleanupChannel = channelKey.startsWith('CLEANUP') || channelKey === 'CLEANUP_WEBSITE' || channelKey === 'CLEANUP_CONTACT' || channelKey === 'CLEANUP_CONTRACTOR';
+    
+    // Brand inference
+    const brand = payload.brand || (rawPl2.brand as string) || (isCleanupChannel ? 'CALSAN_CD_WASTE_REMOVAL' : 'CALSAN_DUMPSTERS_PRO');
+    extraUpdates.brand = brand;
+    
+    // Intent inference
+    const intentMap: Record<string, string> = {
+      'QUOTE_FLOW': 'QUOTE_REQUEST', 'CLEANUP_WEBSITE': 'QUOTE_REQUEST',
+      'CONTACT_FORM': 'CONTACT_REQUEST', 'CLEANUP_CONTACT': 'CONTACT_REQUEST',
+      'CONTRACTOR_APPLICATION': 'CONTRACTOR_APPLICATION', 'CLEANUP_CONTRACTOR': 'CONTRACTOR_APPLICATION',
+      'PHOTO_UPLOAD': 'PHOTO_REVIEW', 'CLEANUP_PHOTO_UPLOAD': 'PHOTO_REVIEW',
+      'SCHEDULE_DELIVERY': 'SCHEDULE_REQUEST', 'CALLBACK_REQUEST': 'CALLBACK_REQUEST',
+      'AI_CHAT': 'CHAT_HANDOFF', 'CLICK_TO_CALL': 'CALLBACK_REQUEST',
+      'CLICK_TO_TEXT': 'CONTACT_REQUEST', 'MANUAL_STAFF': 'MANUAL_STAFF_LEAD',
+      'QUICK_ORDER': 'QUOTE_REQUEST', 'WEBSITE_QUOTE': 'QUOTE_REQUEST',
+    };
+    const intent = payload.lead_intent || (rawPl2.lead_intent as string) || intentMap[channelKey] || 'UNKNOWN';
+    extraUpdates.lead_intent = intent;
+
+    // === SERVICE LINE & CLEANUP FIELDS ===
+    const serviceLine = (rawPl2.service_line as string) || (isCleanupChannel ? 'CLEANUP' : 'DUMPSTER');
     extraUpdates.service_line = serviceLine;
 
     if (rawPl2.cleanup_service_type) extraUpdates.cleanup_service_type = rawPl2.cleanup_service_type;

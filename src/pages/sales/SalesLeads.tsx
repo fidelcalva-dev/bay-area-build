@@ -209,6 +209,9 @@ export default function SalesLeads() {
         body: {
           source_channel: form.source_channel,
           source_detail: 'MANUAL_ENTRY',
+          source_module: 'lead_hub_manual',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'MANUAL_STAFF_LEAD',
           name: form.customer_name || null,
           phone: form.customer_phone || null,
           email: form.customer_email || null,
@@ -531,6 +534,11 @@ export default function SalesLeads() {
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col gap-1">
+                            {lead.brand === 'CALSAN_CD_WASTE_REMOVAL' && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                                C&D
+                              </Badge>
+                            )}
                             {lead.service_line && lead.service_line !== 'DUMPSTER' && (
                               <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 ${SERVICE_LINE_COLORS[lead.service_line] || ''}`}>
                                 {lead.service_line === 'BOTH' ? 'Bundle' : lead.service_line === 'CLEANUP' ? 'Cleanup' : lead.service_line}
