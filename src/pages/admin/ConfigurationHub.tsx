@@ -354,13 +354,32 @@ export default function ConfigurationHub() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Configuration Modules</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {configModules.map((mod) => {
-              const Icon = mod.icon;
-              const canRead = hasPermission(mod.module, 'read');
-              const canWrite = hasPermission(mod.module, 'write');
-              const lastUpdate = lastUpdates[mod.module];
+            {configModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
 
-              if (!canRead) return null;
+        {/* Sales & Leads */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Sales & Leads</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {salesModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
+
+        {/* Operations */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Operations</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {operationsModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
+
+        {/* Integrations */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Integrations & SEO</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {integrationModules.map((mod) => renderModuleCard(mod))}
+          </div>
 
               return (
                 <Card
