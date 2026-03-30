@@ -15714,6 +15714,128 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_sessions: {
+        Row: {
+          access_notes: string | null
+          completed_steps_json: Json | null
+          created_at: string
+          current_step: string | null
+          customer_id: string | null
+          customer_required_dump_flag: boolean | null
+          extras_json: Json | null
+          gate_code: string | null
+          heavy_group: string | null
+          id: string
+          last_saved_at: string | null
+          lead_id: string | null
+          material_class: string | null
+          material_type: string | null
+          permit_required: boolean | null
+          placement_notes: string | null
+          placement_type_requested: string | null
+          project_type: string | null
+          quantity: number | null
+          quote_id: string | null
+          quote_notes_customer: string | null
+          rental_days: number | null
+          requested_delivery_date: string | null
+          requested_dump_site_name: string | null
+          requested_dump_site_notes: string | null
+          requested_time_window: string | null
+          selected_size_yd: number | null
+          updated_at: string
+        }
+        Insert: {
+          access_notes?: string | null
+          completed_steps_json?: Json | null
+          created_at?: string
+          current_step?: string | null
+          customer_id?: string | null
+          customer_required_dump_flag?: boolean | null
+          extras_json?: Json | null
+          gate_code?: string | null
+          heavy_group?: string | null
+          id?: string
+          last_saved_at?: string | null
+          lead_id?: string | null
+          material_class?: string | null
+          material_type?: string | null
+          permit_required?: boolean | null
+          placement_notes?: string | null
+          placement_type_requested?: string | null
+          project_type?: string | null
+          quantity?: number | null
+          quote_id?: string | null
+          quote_notes_customer?: string | null
+          rental_days?: number | null
+          requested_delivery_date?: string | null
+          requested_dump_site_name?: string | null
+          requested_dump_site_notes?: string | null
+          requested_time_window?: string | null
+          selected_size_yd?: number | null
+          updated_at?: string
+        }
+        Update: {
+          access_notes?: string | null
+          completed_steps_json?: Json | null
+          created_at?: string
+          current_step?: string | null
+          customer_id?: string | null
+          customer_required_dump_flag?: boolean | null
+          extras_json?: Json | null
+          gate_code?: string | null
+          heavy_group?: string | null
+          id?: string
+          last_saved_at?: string | null
+          lead_id?: string | null
+          material_class?: string | null
+          material_type?: string | null
+          permit_required?: boolean | null
+          placement_notes?: string | null
+          placement_type_requested?: string | null
+          project_type?: string | null
+          quantity?: number | null
+          quote_id?: string | null
+          quote_notes_customer?: string | null
+          rental_days?: number | null
+          requested_delivery_date?: string | null
+          requested_dump_site_name?: string | null
+          requested_dump_site_notes?: string | null
+          requested_time_window?: string | null
+          selected_size_yd?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_sessions_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_site_placement: {
         Row: {
           created_at: string
