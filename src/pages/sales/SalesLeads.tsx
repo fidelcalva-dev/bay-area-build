@@ -124,6 +124,12 @@ const SOURCE_LABELS: Record<string, string> = {
   MANUAL_ENTRY: "Manual",
   CALLBACK_REQUEST: "Callback",
   CONTACT_FORM: "Contact Form",
+  CLEANUP_WEBSITE: "Cleanup Website",
+  CLEANUP_CONTACT: "Cleanup Contact",
+  CLEANUP_CONTRACTOR: "Cleanup Contractor",
+  CLEANUP_PHOTO_UPLOAD: "Cleanup Photos",
+  CLEANUP_CALL: "Cleanup Call",
+  CLEANUP_TEXT: "Cleanup Text",
 };
 
 export default function SalesLeads() {
