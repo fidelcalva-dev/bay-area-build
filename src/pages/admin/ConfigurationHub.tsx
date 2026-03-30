@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
   ChevronRight, Settings, Banknote, Scale, Shield, History,
-  FileText, Bell, Users, Clock, Loader2
+  FileText, Bell, Users, Clock, Loader2, Activity, BarChart3,
+  MessageSquare, Globe, Zap, Truck, HardHat, CheckCircle2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -147,6 +148,96 @@ const configModules: ModuleInfo[] = [
   },
 ];
 
+const salesModules: ModuleInfo[] = [
+  {
+    title: 'Lead Hub',
+    description: 'Unified lead pipeline for both brands',
+    icon: Zap,
+    path: '/sales/leads',
+    module: 'leads' as AdminModule,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+  },
+  {
+    title: 'Internal Calculator',
+    description: 'Master quote tool for staff',
+    icon: DollarSign,
+    path: '/sales/quotes/new',
+    module: 'config' as AdminModule,
+    color: 'text-violet-600',
+    bgColor: 'bg-violet-100',
+  },
+  {
+    title: 'Lead Engine Settings',
+    description: 'Scoring, routing, and automation rules',
+    icon: Settings,
+    path: '/admin/leads/settings',
+    module: 'config' as AdminModule,
+    color: 'text-sky-600',
+    bgColor: 'bg-sky-100',
+  },
+];
+
+const operationsModules: ModuleInfo[] = [
+  {
+    title: 'Dispatch',
+    description: 'Daily dispatch operations',
+    icon: Truck,
+    path: '/dispatch',
+    module: 'config' as AdminModule,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-100',
+  },
+  {
+    title: 'Control Tower',
+    description: 'Real-time fleet and asset tracking',
+    icon: Activity,
+    path: '/dispatch/control-tower',
+    module: 'config' as AdminModule,
+    color: 'text-red-600',
+    bgColor: 'bg-red-100',
+  },
+  {
+    title: 'Inventory',
+    description: 'Dumpster fleet and asset management',
+    icon: Warehouse,
+    path: '/admin/inventory',
+    module: 'config' as AdminModule,
+    color: 'text-slate-600',
+    bgColor: 'bg-slate-100',
+  },
+];
+
+const integrationModules: ModuleInfo[] = [
+  {
+    title: 'GHL Integration',
+    description: 'GoHighLevel communication sync',
+    icon: MessageSquare,
+    path: '/admin/ghl',
+    module: 'config' as AdminModule,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-100',
+  },
+  {
+    title: 'Notifications',
+    description: 'SMS/Email routing and templates',
+    icon: Bell,
+    path: '/admin/notifications-config',
+    module: 'notifications' as AdminModule,
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+  },
+  {
+    title: 'SEO Dashboard',
+    description: 'Organic search performance',
+    icon: Globe,
+    path: '/admin/seo/dashboard',
+    module: 'config' as AdminModule,
+    color: 'text-green-600',
+    bgColor: 'bg-green-100',
+  },
+];
+
 const systemModules: ModuleInfo[] = [
   {
     title: 'User Management',
@@ -165,6 +256,24 @@ const systemModules: ModuleInfo[] = [
     module: 'audit',
     color: 'text-stone-600',
     bgColor: 'bg-stone-100',
+  },
+  {
+    title: 'QA Control Center',
+    description: 'Route, build, and config health',
+    icon: CheckCircle2,
+    path: '/admin/qa/control-center',
+    module: 'config' as AdminModule,
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-100',
+  },
+  {
+    title: 'Security Health',
+    description: 'Security posture and vulnerabilities',
+    icon: Shield,
+    path: '/admin/security',
+    module: 'config' as AdminModule,
+    color: 'text-rose-600',
+    bgColor: 'bg-rose-100',
   },
 ];
 
@@ -207,6 +316,48 @@ export default function ConfigurationHub() {
     fetchLastUpdates();
   }, []);
 
+  const renderModuleCard = (mod: ModuleInfo) => {
+    const Icon = mod.icon;
+    const canRead = hasPermission(mod.module, 'read');
+    const canWrite = hasPermission(mod.module, 'write');
+    const lastUpdate = lastUpdates[mod.module];
+
+    if (!canRead && mod.module !== ('config' as AdminModule)) return null;
+
+    return (
+      <Card
+        key={mod.path}
+        className={`cursor-pointer hover:shadow-lg transition-all ${!canWrite ? 'opacity-75' : ''}`}
+        onClick={() => navigate(mod.path)}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className={`p-2 rounded-lg ${mod.bgColor}`}>
+              <Icon className={`w-5 h-5 ${mod.color}`} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-green-700 border-green-300 dark:text-green-400 dark:border-green-700">Active</Badge>
+              {mod.isCritical && (
+                <Badge variant="destructive" className="text-xs">Critical</Badge>
+              )}
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </div>
+          </div>
+          <CardTitle className="text-lg">{mod.title}</CardTitle>
+          <CardDescription>{mod.description}</CardDescription>
+        </CardHeader>
+        {lastUpdate && !isLoadingUpdates && (
+          <CardContent className="pt-0">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="w-3 h-3" />
+              <span>Updated {format(new Date(lastUpdate.updatedAt), 'MMM d')} by {lastUpdate.updatedBy.split('@')[0]}</span>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    );
+  };
+
   if (permissionsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -245,58 +396,31 @@ export default function ConfigurationHub() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Configuration Modules</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {configModules.map((mod) => {
-              const Icon = mod.icon;
-              const canRead = hasPermission(mod.module, 'read');
-              const canWrite = hasPermission(mod.module, 'write');
-              const lastUpdate = lastUpdates[mod.module];
+            {configModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
 
-              if (!canRead) return null;
+        {/* Sales & Leads */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Sales & Leads</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {salesModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
 
-              return (
-                <Card
-                  key={mod.path}
-                  className={`cursor-pointer hover:shadow-lg transition-all ${
-                    !canWrite ? 'opacity-75' : ''
-                  }`}
-                  onClick={() => navigate(mod.path)}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className={`p-2 rounded-lg ${mod.bgColor}`}>
-                        <Icon className={`w-5 h-5 ${mod.color}`} />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {mod.isCritical && (
-                          <Badge variant="destructive" className="text-xs">
-                            Critical
-                          </Badge>
-                        )}
-                        {!canWrite && (
-                          <Badge variant="secondary" className="text-xs">
-                            Read-only
-                          </Badge>
-                        )}
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg">{mod.title}</CardTitle>
-                    <CardDescription>{mod.description}</CardDescription>
-                  </CardHeader>
-                  {lastUpdate && !isLoadingUpdates && (
-                    <CardContent className="pt-0">
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span>
-                          Updated {format(new Date(lastUpdate.updatedAt), 'MMM d')} by{' '}
-                          {lastUpdate.updatedBy.split('@')[0]}
-                        </span>
-                      </div>
-                    </CardContent>
-                  )}
-                </Card>
-              );
-            })}
+        {/* Operations */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Operations</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {operationsModules.map((mod) => renderModuleCard(mod))}
+          </div>
+        </div>
+
+        {/* Integrations */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Integrations & SEO</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {integrationModules.map((mod) => renderModuleCard(mod))}
           </div>
         </div>
 
@@ -305,28 +429,7 @@ export default function ConfigurationHub() {
           <div>
             <h2 className="text-lg font-semibold mb-4">System Administration</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {systemModules.map((mod) => {
-                const Icon = mod.icon;
-
-                return (
-                  <Card
-                    key={mod.path}
-                    className="cursor-pointer hover:shadow-lg transition-all"
-                    onClick={() => navigate(mod.path)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className={`p-2 rounded-lg ${mod.bgColor}`}>
-                          <Icon className={`w-5 h-5 ${mod.color}`} />
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                      <CardTitle className="text-lg">{mod.title}</CardTitle>
-                      <CardDescription>{mod.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                );
-              })}
+              {systemModules.map((mod) => renderModuleCard(mod))}
             </div>
           </div>
         )}
