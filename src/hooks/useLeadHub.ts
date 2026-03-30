@@ -187,6 +187,7 @@ export interface LeadHubFilters {
   search?: string;
   source?: string;
   quality?: string;
+  serviceLine?: string;
   dateFrom?: string;
   dateTo?: string;
 }
