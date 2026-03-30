@@ -99,6 +99,8 @@ interface IngestPayload {
   source_detail?: string;
   source_page?: string;
   source_module?: string;
+  brand?: string;
+  lead_intent?: string;
   name?: string;
   phone?: string;
   email?: string;
