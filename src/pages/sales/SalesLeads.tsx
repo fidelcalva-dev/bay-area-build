@@ -209,6 +209,9 @@ export default function SalesLeads() {
         body: {
           source_channel: form.source_channel,
           source_detail: 'MANUAL_ENTRY',
+          source_module: 'lead_hub_manual',
+          brand: 'CALSAN_DUMPSTERS_PRO',
+          lead_intent: 'MANUAL_STAFF_LEAD',
           name: form.customer_name || null,
           phone: form.customer_phone || null,
           email: form.customer_email || null,
