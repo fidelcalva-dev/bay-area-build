@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Users, Phone, Mail, MessageSquare, FileText, Search, Plus, Clock,
   CheckCircle2, XCircle, TrendingUp, AlertTriangle, Shield, Loader2,
-  Download, Calendar, Filter, Inbox, UserCheck, Zap, LayoutGrid
+  Download, Calendar, Filter, Inbox, UserCheck, Zap, LayoutGrid, HardHat,
+  Camera, MapPin, RefreshCw, Layers
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
+import { CleanupBoard } from "@/components/sales/CleanupBoard";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
