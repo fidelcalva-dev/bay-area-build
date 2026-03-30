@@ -15748,6 +15748,7 @@ export type Database = {
         Row: {
           access_flags: Json | null
           access_notes: string | null
+          addendum_required: boolean | null
           ai_analysis_id: string | null
           ai_confidence: string | null
           ai_hazards_json: Json | null
@@ -15758,6 +15759,7 @@ export type Database = {
           approval_required: boolean | null
           approved_at: string | null
           approved_by_user_id: string | null
+          assigned_rep_id: string | null
           billing_instructions: string | null
           brand: string | null
           city_rate_id: string | null
@@ -15766,6 +15768,7 @@ export type Database = {
           completed_at: string | null
           confidence_level: string | null
           confidence_note: string | null
+          contract_required: boolean | null
           converted_at: string | null
           created_at: string
           customer_email: string | null
@@ -15784,6 +15787,7 @@ export type Database = {
           delivery_time_window: string | null
           discount_cap_applied: boolean | null
           discount_percent: number | null
+          discounts_total: number | null
           display_id: string | null
           distance_bracket: string | null
           distance_miles: number | null
@@ -15796,9 +15800,11 @@ export type Database = {
           estimated_weight_tons_min: number | null
           extra_tons_prepurchased: number | null
           extras: string[] | null
+          extras_total: number | null
           fraud_flags_count: number | null
           gate_code: string | null
           gclid: string | null
+          grand_total: number | null
           green_halo_category: string | null
           green_halo_dump_fee: number | null
           green_halo_dump_fee_per_ton: number | null
@@ -15816,13 +15822,18 @@ export type Database = {
           is_trash_contaminated: boolean | null
           is_weekend_delivery: boolean | null
           last_synced_at: string | null
+          lead_id: string | null
           margin: number | null
           market_id: string | null
           material_class: string | null
           material_type: string
           negotiated_price: number | null
+          notes_customer: string | null
+          notes_internal: string | null
           order_id: string | null
           original_material_type: string | null
+          payment_required: boolean | null
+          pdf_url: string | null
           permit_required: boolean | null
           placement_lat: number | null
           placement_lng: number | null
@@ -15838,6 +15849,7 @@ export type Database = {
           prepurchase_city_rate: number | null
           prepurchase_discount_pct: number | null
           prepurchase_rate: number | null
+          preview_html: string | null
           price_approval_required: boolean | null
           price_approved_by_user_id: string | null
           price_override_reason: string | null
@@ -15845,6 +15857,7 @@ export type Database = {
           pricing_status: string | null
           project_type: string | null
           quick_link_id: string | null
+          quote_type: string | null
           range_max: number | null
           range_min: number | null
           receipt_sent_at: string | null
@@ -15863,11 +15876,13 @@ export type Database = {
           scheduling_notes: string | null
           selected_vendor_id: string | null
           service_line: string | null
+          signed_pdf_url: string | null
           size_id: string | null
           status: string
           subtotal: number
           suggested_extra_tons: number | null
           suggested_pickup_date: string | null
+          taxes_total: number | null
           time_window: string | null
           toll_surcharge: number | null
           truck_distance_miles: number | null
@@ -15896,6 +15911,7 @@ export type Database = {
         Insert: {
           access_flags?: Json | null
           access_notes?: string | null
+          addendum_required?: boolean | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -15906,6 +15922,7 @@ export type Database = {
           approval_required?: boolean | null
           approved_at?: string | null
           approved_by_user_id?: string | null
+          assigned_rep_id?: string | null
           billing_instructions?: string | null
           brand?: string | null
           city_rate_id?: string | null
@@ -15914,6 +15931,7 @@ export type Database = {
           completed_at?: string | null
           confidence_level?: string | null
           confidence_note?: string | null
+          contract_required?: boolean | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
@@ -15932,6 +15950,7 @@ export type Database = {
           delivery_time_window?: string | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
+          discounts_total?: number | null
           display_id?: string | null
           distance_bracket?: string | null
           distance_miles?: number | null
@@ -15944,9 +15963,11 @@ export type Database = {
           estimated_weight_tons_min?: number | null
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          extras_total?: number | null
           fraud_flags_count?: number | null
           gate_code?: string | null
           gclid?: string | null
+          grand_total?: number | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
@@ -15964,13 +15985,18 @@ export type Database = {
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
+          lead_id?: string | null
           margin?: number | null
           market_id?: string | null
           material_class?: string | null
           material_type: string
           negotiated_price?: number | null
+          notes_customer?: string | null
+          notes_internal?: string | null
           order_id?: string | null
           original_material_type?: string | null
+          payment_required?: boolean | null
+          pdf_url?: string | null
           permit_required?: boolean | null
           placement_lat?: number | null
           placement_lng?: number | null
@@ -15986,6 +16012,7 @@ export type Database = {
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
+          preview_html?: string | null
           price_approval_required?: boolean | null
           price_approved_by_user_id?: string | null
           price_override_reason?: string | null
@@ -15993,6 +16020,7 @@ export type Database = {
           pricing_status?: string | null
           project_type?: string | null
           quick_link_id?: string | null
+          quote_type?: string | null
           range_max?: number | null
           range_min?: number | null
           receipt_sent_at?: string | null
@@ -16011,11 +16039,13 @@ export type Database = {
           scheduling_notes?: string | null
           selected_vendor_id?: string | null
           service_line?: string | null
+          signed_pdf_url?: string | null
           size_id?: string | null
           status?: string
           subtotal: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          taxes_total?: number | null
           time_window?: string | null
           toll_surcharge?: number | null
           truck_distance_miles?: number | null
@@ -16044,6 +16074,7 @@ export type Database = {
         Update: {
           access_flags?: Json | null
           access_notes?: string | null
+          addendum_required?: boolean | null
           ai_analysis_id?: string | null
           ai_confidence?: string | null
           ai_hazards_json?: Json | null
@@ -16054,6 +16085,7 @@ export type Database = {
           approval_required?: boolean | null
           approved_at?: string | null
           approved_by_user_id?: string | null
+          assigned_rep_id?: string | null
           billing_instructions?: string | null
           brand?: string | null
           city_rate_id?: string | null
@@ -16062,6 +16094,7 @@ export type Database = {
           completed_at?: string | null
           confidence_level?: string | null
           confidence_note?: string | null
+          contract_required?: boolean | null
           converted_at?: string | null
           created_at?: string
           customer_email?: string | null
@@ -16080,6 +16113,7 @@ export type Database = {
           delivery_time_window?: string | null
           discount_cap_applied?: boolean | null
           discount_percent?: number | null
+          discounts_total?: number | null
           display_id?: string | null
           distance_bracket?: string | null
           distance_miles?: number | null
@@ -16092,9 +16126,11 @@ export type Database = {
           estimated_weight_tons_min?: number | null
           extra_tons_prepurchased?: number | null
           extras?: string[] | null
+          extras_total?: number | null
           fraud_flags_count?: number | null
           gate_code?: string | null
           gclid?: string | null
+          grand_total?: number | null
           green_halo_category?: string | null
           green_halo_dump_fee?: number | null
           green_halo_dump_fee_per_ton?: number | null
@@ -16112,13 +16148,18 @@ export type Database = {
           is_trash_contaminated?: boolean | null
           is_weekend_delivery?: boolean | null
           last_synced_at?: string | null
+          lead_id?: string | null
           margin?: number | null
           market_id?: string | null
           material_class?: string | null
           material_type?: string
           negotiated_price?: number | null
+          notes_customer?: string | null
+          notes_internal?: string | null
           order_id?: string | null
           original_material_type?: string | null
+          payment_required?: boolean | null
+          pdf_url?: string | null
           permit_required?: boolean | null
           placement_lat?: number | null
           placement_lng?: number | null
@@ -16134,6 +16175,7 @@ export type Database = {
           prepurchase_city_rate?: number | null
           prepurchase_discount_pct?: number | null
           prepurchase_rate?: number | null
+          preview_html?: string | null
           price_approval_required?: boolean | null
           price_approved_by_user_id?: string | null
           price_override_reason?: string | null
@@ -16141,6 +16183,7 @@ export type Database = {
           pricing_status?: string | null
           project_type?: string | null
           quick_link_id?: string | null
+          quote_type?: string | null
           range_max?: number | null
           range_min?: number | null
           receipt_sent_at?: string | null
@@ -16159,11 +16202,13 @@ export type Database = {
           scheduling_notes?: string | null
           selected_vendor_id?: string | null
           service_line?: string | null
+          signed_pdf_url?: string | null
           size_id?: string | null
           status?: string
           subtotal?: number
           suggested_extra_tons?: number | null
           suggested_pickup_date?: string | null
+          taxes_total?: number | null
           time_window?: string | null
           toll_surcharge?: number | null
           truck_distance_miles?: number | null
@@ -16202,6 +16247,20 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
           {
@@ -18218,6 +18277,7 @@ export type Database = {
           quote_amount_high: number | null
           quote_id: string | null
           raw_payload_json: Json | null
+          readiness_state: string | null
           recurring_frequency: string | null
           recurring_service_flag: boolean | null
           referrer_url: string | null
@@ -18239,6 +18299,7 @@ export type Database = {
           source_key: string | null
           source_module: string | null
           source_page: string | null
+          state: string | null
           timeout_at: string | null
           updated_at: string
           urgency_score: number | null
@@ -18345,6 +18406,7 @@ export type Database = {
           quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          readiness_state?: string | null
           recurring_frequency?: string | null
           recurring_service_flag?: boolean | null
           referrer_url?: string | null
@@ -18366,6 +18428,7 @@ export type Database = {
           source_key?: string | null
           source_module?: string | null
           source_page?: string | null
+          state?: string | null
           timeout_at?: string | null
           updated_at?: string
           urgency_score?: number | null
@@ -18472,6 +18535,7 @@ export type Database = {
           quote_amount_high?: number | null
           quote_id?: string | null
           raw_payload_json?: Json | null
+          readiness_state?: string | null
           recurring_frequency?: string | null
           recurring_service_flag?: boolean | null
           referrer_url?: string | null
@@ -18493,6 +18557,7 @@ export type Database = {
           source_key?: string | null
           source_module?: string | null
           source_page?: string | null
+          state?: string | null
           timeout_at?: string | null
           updated_at?: string
           urgency_score?: number | null
