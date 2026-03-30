@@ -153,8 +153,8 @@ export function getCalculatorRoutes() {
   return [
     <Route key="internal-calc" path="/internal/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
     <Route key="ops-calc" path="/ops/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
-    <Route key="sales-calc" path="/sales/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
-    <Route key="cs-calc" path="/cs/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
+    <Route key="sales-calc" path="/sales/calculator" element={<Navigate to="/sales/quotes/new" replace />} />,
+    <Route key="cs-calc" path="/cs/calculator" element={<Navigate to="/cs/quotes" replace />} />,
     <Route key="dispatch-calc" path="/dispatch/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
   ];
 }
