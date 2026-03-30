@@ -86,8 +86,13 @@ export function getCsRoutes() {
       <Route path="templates" element={<SuspenseRoute><CSTemplates /></SuspenseRoute>} />
       <Route path="messages" element={<SuspenseRoute><CSMessages /></SuspenseRoute>} />
       <Route path="calls" element={<SuspenseRoute><CSCalls /></SuspenseRoute>} />
-      <Route path="leads" element={<SuspenseRoute><CSLeads /></SuspenseRoute>} />
-      <Route path="lead-inbox" element={<SuspenseRoute><CSLeadInbox /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — CS mode */}
+      <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="cs" /></SuspenseRoute>} />
+      <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="cs" /></SuspenseRoute>} />
+      <Route path="lead-inbox" element={<Navigate to="/cs/leads" replace />} />
+      {/* Canonical shared quote workspace — CS mode */}
+      <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="cs" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="cs" /></SuspenseRoute>} />
     </Route>,
   ];
 }
@@ -96,11 +101,13 @@ export function getSalesRoutes() {
   return [
     <Route key="sales" path="/sales" element={<SuspenseRoute><SalesLayout /></SuspenseRoute>}>
       <Route index element={<SuspenseRoute><SalesDashboard /></SuspenseRoute>} />
-      <Route path="leads" element={<SuspenseRoute><SalesLeads /></SuspenseRoute>} />
-      <Route path="leads/:id" element={<SuspenseRoute><SalesLeadDetail /></SuspenseRoute>} />
-      <Route path="quotes" element={<SuspenseRoute><SalesQuotes /></SuspenseRoute>} />
-      <Route path="quotes/:id" element={<SuspenseRoute><SalesQuoteDetail /></SuspenseRoute>} />
-      <Route path="quotes/new" element={<SuspenseRoute><SalesNewQuote /></SuspenseRoute>} />
+      {/* Canonical shared lead workspace — Sales mode */}
+      <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="sales" /></SuspenseRoute>} />
+      <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="sales" /></SuspenseRoute>} />
+      {/* Canonical shared quote workspace — Sales mode */}
+      <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="sales" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="sales" /></SuspenseRoute>} />
+      <Route path="quotes/new" element={<SuspenseRoute><QuoteBuilderPage mode="sales" /></SuspenseRoute>} />
       <Route path="calls" element={<SuspenseRoute><SalesCalls /></SuspenseRoute>} />
       <Route path="inbox" element={<Navigate to="/sales/leads" replace />} />
       <Route path="lead-hub" element={<Navigate to="/sales/leads" replace />} />
