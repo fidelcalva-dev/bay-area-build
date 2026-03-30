@@ -322,7 +322,7 @@ export default function ConfigurationHub() {
     const canWrite = hasPermission(mod.module, 'write');
     const lastUpdate = lastUpdates[mod.module];
 
-    if (!canRead && mod.module !== 'config' && mod.module !== 'leads') return null;
+    if (!canRead && mod.module !== ('config' as AdminModule)) return null;
 
     return (
       <Card
