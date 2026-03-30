@@ -232,6 +232,15 @@ export function useLeadHub(filters: LeadHubFilters) {
         case 'high_risk':
           query = query.eq('lead_quality_label', 'RED');
           break;
+        case 'cleanup':
+          query = query.in('service_line', ['CLEANUP', 'BOTH']);
+          break;
+        case 'contractor':
+          query = query.eq('contractor_flag', true);
+          break;
+        case 'bundle':
+          query = query.or('service_line.eq.BOTH,bundle_opportunity_flag.eq.true');
+          break;
         // 'my_leads' is filtered client-side after fetch (needs auth.uid)
       }
 
