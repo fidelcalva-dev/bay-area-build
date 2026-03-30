@@ -380,52 +380,6 @@ export default function ConfigurationHub() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {integrationModules.map((mod) => renderModuleCard(mod))}
           </div>
-
-              return (
-                <Card
-                  key={mod.path}
-                  className={`cursor-pointer hover:shadow-lg transition-all ${
-                    !canWrite ? 'opacity-75' : ''
-                  }`}
-                  onClick={() => navigate(mod.path)}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className={`p-2 rounded-lg ${mod.bgColor}`}>
-                        <Icon className={`w-5 h-5 ${mod.color}`} />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {mod.isCritical && (
-                          <Badge variant="destructive" className="text-xs">
-                            Critical
-                          </Badge>
-                        )}
-                        {!canWrite && (
-                          <Badge variant="secondary" className="text-xs">
-                            Read-only
-                          </Badge>
-                        )}
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg">{mod.title}</CardTitle>
-                    <CardDescription>{mod.description}</CardDescription>
-                  </CardHeader>
-                  {lastUpdate && !isLoadingUpdates && (
-                    <CardContent className="pt-0">
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span>
-                          Updated {format(new Date(lastUpdate.updatedAt), 'MMM d')} by{' '}
-                          {lastUpdate.updatedBy.split('@')[0]}
-                        </span>
-                      </div>
-                    </CardContent>
-                  )}
-                </Card>
-              );
-            })}
-          </div>
         </div>
 
         {/* System Modules (Admin Only) */}
@@ -433,28 +387,7 @@ export default function ConfigurationHub() {
           <div>
             <h2 className="text-lg font-semibold mb-4">System Administration</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {systemModules.map((mod) => {
-                const Icon = mod.icon;
-
-                return (
-                  <Card
-                    key={mod.path}
-                    className="cursor-pointer hover:shadow-lg transition-all"
-                    onClick={() => navigate(mod.path)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className={`p-2 rounded-lg ${mod.bgColor}`}>
-                          <Icon className={`w-5 h-5 ${mod.color}`} />
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                      <CardTitle className="text-lg">{mod.title}</CardTitle>
-                      <CardDescription>{mod.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                );
-              })}
+              {systemModules.map((mod) => renderModuleCard(mod))}
             </div>
           </div>
         )}
