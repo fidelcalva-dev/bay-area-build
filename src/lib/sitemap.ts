@@ -135,9 +135,14 @@ const GRID_SERVICE_PAGES: SitemapEntry[] = (() => {
 import { CITY_DIRECTORY } from './service-area-config';
 import { getMarketClassification, isMarketIndexable } from './market-classification';
 
+// Tier 1 cities have domination pages — exclude from programmatic /dumpster-rental/{slug}
+const TIER1_CITY_SLUGS = new Set(['oakland', 'san-jose', 'san-francisco']);
+
 const CITY_PAGES: SitemapEntry[] = SERVICE_CITIES
   .map(city => {
     const canonical = city.slug.endsWith('-ca') ? city.slug.slice(0, -3) : city.slug;
+    // Skip Tier 1 — their canonical is the domination page already in STATIC_PAGES
+    if (TIER1_CITY_SLUGS.has(canonical)) return null;
     const market = getMarketClassification(canonical);
     // Skip non-indexable markets (paused, noindex, future partner)
     if (market && !market.indexable) return null;
@@ -235,7 +240,7 @@ async function fetchRegistryLocations(): Promise<SitemapEntry[]> {
     if (!data) return [];
 
     // Standalone pages are already in STATIC_PAGES; only add /dumpster-rental/{slug} entries
-    const standalonePages = new Set(['oakland-ca', 'san-jose-ca', 'san-francisco-ca']);
+    const standalonePages = new Set(['oakland', 'san-jose', 'san-francisco']);
     return data
       .filter(loc => !standalonePages.has(loc.slug))
       .map(loc => ({

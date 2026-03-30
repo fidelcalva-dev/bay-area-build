@@ -122,9 +122,14 @@ export function generateSitemapEntries(cities: CityForSitemap[]): SitemapEntry[]
   const entries: SitemapEntry[] = [...STATIC_PAGES, ...BLOG_ARTICLES, ...COUNTY_PAGES, ...USE_CASE_PAGES];
   const today = new Date().toISOString().split('T')[0];
 
+  // Tier 1 cities have domination pages in STATIC_PAGES — skip programmatic entries
+  const TIER1_SLUGS = new Set(['oakland', 'san-jose', 'san-francisco']);
+
   for (const city of cities) {
     // Skip cities that are not indexable per market classification
     if (!isMarketIndexable(city.city_slug)) continue;
+    // Skip Tier 1 — canonical is domination page already in STATIC_PAGES
+    if (TIER1_SLUGS.has(city.city_slug)) continue;
 
     const market = getMarketClassification(city.city_slug);
     const isPrimary = market?.focus === 'CORE_DIRECT';
