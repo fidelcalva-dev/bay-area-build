@@ -69,6 +69,19 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'all', label: 'All', icon: Users },
 ];
 
+const SERVICE_LINE_OPTIONS = [
+  { value: 'all', label: 'All Services' },
+  { value: 'DUMPSTER', label: 'Dumpster' },
+  { value: 'CLEANUP', label: 'Cleanup' },
+  { value: 'BOTH', label: 'Bundle' },
+];
+
+const SERVICE_LINE_COLORS: Record<string, string> = {
+  DUMPSTER: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  CLEANUP: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
+  BOTH: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+};
+
 type ViewMode = 'list' | 'pipeline';
 
 const SOURCE_LABELS: Record<string, string> = {
