@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Warehouse, MapPin, DollarSign, Layers, AlertTriangle, Plus, 
   ChevronRight, Settings, Banknote, Scale, Shield, History,
-  FileText, Bell, Users, Clock, Loader2
+  FileText, Bell, Users, Clock, Loader2, Activity, BarChart3,
+  MessageSquare, Globe, Zap, Truck, HardHat, CheckCircle2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
