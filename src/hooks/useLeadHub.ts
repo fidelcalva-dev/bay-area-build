@@ -235,6 +235,9 @@ export function useLeadHub(filters: LeadHubFilters) {
       if (filters.quality) {
         query = query.eq('lead_quality_label', filters.quality);
       }
+      if (filters.serviceLine) {
+        query = query.eq('service_line', filters.serviceLine);
+      }
       if (filters.dateFrom) {
         query = query.gte('created_at', filters.dateFrom);
       }
