@@ -183,6 +183,9 @@ export type LeadHubTab =
   | 'existing_customer' 
   | 'high_risk' 
   | 'my_leads'
+  | 'cleanup'
+  | 'contractor'
+  | 'bundle'
   | 'all';
 
 export interface LeadHubFilters {
