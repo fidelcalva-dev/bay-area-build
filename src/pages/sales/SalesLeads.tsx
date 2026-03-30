@@ -330,13 +330,27 @@ export default function SalesLeads() {
           </h1>
           <p className="text-sm text-muted-foreground">Omni-channel inbox — every lead, one place</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+          >
+            <Inbox className="w-4 h-4 mr-1" /> List
+          </Button>
           <Button
             variant={viewMode === 'pipeline' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setViewMode(viewMode === 'list' ? 'pipeline' : 'list')}
+            onClick={() => setViewMode('pipeline')}
           >
             <LayoutGrid className="w-4 h-4 mr-1" /> Pipeline
+          </Button>
+          <Button
+            variant={viewMode === 'cleanup-board' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setViewMode('cleanup-board'); setActiveTab('cleanup'); }}
+          >
+            <HardHat className="w-4 h-4 mr-1" /> Cleanup Board
           </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
