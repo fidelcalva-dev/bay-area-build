@@ -530,6 +530,20 @@ export default function SalesLeads() {
                           </div>
                         </TableCell>
                         <TableCell>
+                          <div className="flex flex-col gap-1">
+                            {lead.service_line && lead.service_line !== 'DUMPSTER' && (
+                              <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 ${SERVICE_LINE_COLORS[lead.service_line] || ''}`}>
+                                {lead.service_line === 'BOTH' ? 'Bundle' : lead.service_line === 'CLEANUP' ? 'Cleanup' : lead.service_line}
+                              </Badge>
+                            )}
+                            {(!lead.service_line || lead.service_line === 'DUMPSTER') && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">Dumpster</Badge>
+                            )}
+                            {lead.contractor_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Contractor</Badge>}
+                            {lead.recurring_service_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Recurring</Badge>}
+                          </div>
+                        </TableCell>
+                        <TableCell>
                           <AddressesCell
                             addresses={leadAddressesMap[lead.id] || []}
                             leadZip={lead.zip}
