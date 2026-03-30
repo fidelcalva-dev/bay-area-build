@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
-  Users, Phone, Mail, MessageSquare, FileText, Search, Plus, Clock,
-  CheckCircle2, XCircle, TrendingUp, AlertTriangle, Shield, Loader2,
-  Download, Calendar, Filter, Inbox, UserCheck, Zap, LayoutGrid, HardHat,
-  Camera, MapPin, RefreshCw, Layers
+  Users, Phone, MessageSquare, FileText, Search, Plus, Clock,
+  Shield, Loader2, Download, Calendar, Inbox, UserCheck, Zap,
+  LayoutGrid, HardHat, Layers
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { CleanupBoard } from "@/components/sales/CleanupBoard";
