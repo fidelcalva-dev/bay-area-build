@@ -508,8 +508,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Pipeline Board or Table */}
-        {viewMode === 'pipeline' ? (
+        {/* Pipeline Board, Cleanup Board, or Table */}
+        {viewMode === 'cleanup-board' ? (
+          <div className="mt-4">
+            <CleanupBoard leads={leads} onRefresh={refetch} />
+          </div>
+        ) : viewMode === 'pipeline' ? (
           <div className="mt-4">
             <SalesPipelineBoard leads={leads as any} onRefresh={refetch} />
           </div>
