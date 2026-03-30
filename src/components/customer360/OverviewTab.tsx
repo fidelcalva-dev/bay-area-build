@@ -119,6 +119,15 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
         </div>
       )}
 
+      {/* Service Line Summary */}
+      <div className="lg:col-span-3">
+        <ServiceLineSummary
+          customerServiceLine={(customer as any).service_line || null}
+          orders={orders}
+          quotes={quotes}
+        />
+      </div>
+
       {/* Left Column */}
       <div className="lg:col-span-2 space-y-6">
         {/* Service Summary */}
