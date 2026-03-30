@@ -1,0 +1,20 @@
+
+-- Add brand and intent columns to sales_leads
+ALTER TABLE public.sales_leads 
+  ADD COLUMN IF NOT EXISTS brand text DEFAULT 'CALSAN_DUMPSTERS_PRO',
+  ADD COLUMN IF NOT EXISTS lead_intent text DEFAULT 'UNKNOWN';
+
+-- Add brand to customers
+ALTER TABLE public.customers
+  ADD COLUMN IF NOT EXISTS brand text DEFAULT 'CALSAN_DUMPSTERS_PRO';
+
+-- Add brand to quotes
+ALTER TABLE public.quotes
+  ADD COLUMN IF NOT EXISTS brand text DEFAULT 'CALSAN_DUMPSTERS_PRO';
+
+-- Add brand to orders
+ALTER TABLE public.orders
+  ADD COLUMN IF NOT EXISTS brand text DEFAULT 'CALSAN_DUMPSTERS_PRO';
+
+COMMENT ON COLUMN public.sales_leads.brand IS 'CALSAN_DUMPSTERS_PRO or CALSAN_CD_WASTE_REMOVAL';
+COMMENT ON COLUMN public.sales_leads.lead_intent IS 'QUOTE_REQUEST, CONTACT_REQUEST, CONTRACTOR_APPLICATION, PHOTO_REVIEW, SCHEDULE_REQUEST, CALLBACK_REQUEST, CHAT_HANDOFF, MANUAL_STAFF_LEAD, UNKNOWN';

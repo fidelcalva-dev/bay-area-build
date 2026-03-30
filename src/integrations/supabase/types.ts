@@ -5047,6 +5047,7 @@ export type Database = {
           billing_address: string | null
           billing_email: string | null
           billing_phone: string | null
+          brand: string | null
           commercial_account_status: string | null
           commercial_approved_at: string | null
           commercial_approved_by: string | null
@@ -5081,6 +5082,7 @@ export type Database = {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
+          brand?: string | null
           commercial_account_status?: string | null
           commercial_approved_at?: string | null
           commercial_approved_by?: string | null
@@ -5115,6 +5117,7 @@ export type Database = {
           billing_address?: string | null
           billing_email?: string | null
           billing_phone?: string | null
+          brand?: string | null
           commercial_account_status?: string | null
           commercial_approved_at?: string | null
           commercial_approved_by?: string | null
@@ -12568,6 +12571,7 @@ export type Database = {
           assigned_driver_id: string | null
           assigned_yard_id: string | null
           balance_due: number | null
+          brand: string | null
           contamination_detected: boolean | null
           contamination_detected_at: string | null
           contamination_notes: string | null
@@ -12682,6 +12686,7 @@ export type Database = {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          brand?: string | null
           contamination_detected?: boolean | null
           contamination_detected_at?: string | null
           contamination_notes?: string | null
@@ -12796,6 +12801,7 @@ export type Database = {
           assigned_driver_id?: string | null
           assigned_yard_id?: string | null
           balance_due?: number | null
+          brand?: string | null
           contamination_detected?: boolean | null
           contamination_detected_at?: string | null
           contamination_notes?: string | null
@@ -15753,6 +15759,7 @@ export type Database = {
           approved_at: string | null
           approved_by_user_id: string | null
           billing_instructions: string | null
+          brand: string | null
           city_rate_id: string | null
           cleanup_service_type: string | null
           company_name: string | null
@@ -15900,6 +15907,7 @@ export type Database = {
           approved_at?: string | null
           approved_by_user_id?: string | null
           billing_instructions?: string | null
+          brand?: string | null
           city_rate_id?: string | null
           cleanup_service_type?: string | null
           company_name?: string | null
@@ -16047,6 +16055,7 @@ export type Database = {
           approved_at?: string | null
           approved_by_user_id?: string | null
           billing_instructions?: string | null
+          brand?: string | null
           city_rate_id?: string | null
           cleanup_service_type?: string | null
           company_name?: string | null
@@ -18127,6 +18136,7 @@ export type Database = {
           assigned_to: string | null
           assignment_type: string | null
           booked_value: number | null
+          brand: string | null
           bundle_opportunity_flag: boolean | null
           call_recording_id: string | null
           capture_ip: string | null
@@ -18171,6 +18181,7 @@ export type Database = {
           latest_heavy_flag: boolean | null
           latest_recommended_size: number | null
           latest_touch_at: string | null
+          lead_intent: string | null
           lead_priority: string | null
           lead_quality_label: string | null
           lead_quality_score: number | null
@@ -18252,6 +18263,7 @@ export type Database = {
           assigned_to?: string | null
           assignment_type?: string | null
           booked_value?: number | null
+          brand?: string | null
           bundle_opportunity_flag?: boolean | null
           call_recording_id?: string | null
           capture_ip?: string | null
@@ -18296,6 +18308,7 @@ export type Database = {
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
           latest_touch_at?: string | null
+          lead_intent?: string | null
           lead_priority?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
@@ -18377,6 +18390,7 @@ export type Database = {
           assigned_to?: string | null
           assignment_type?: string | null
           booked_value?: number | null
+          brand?: string | null
           bundle_opportunity_flag?: boolean | null
           call_recording_id?: string | null
           capture_ip?: string | null
@@ -18421,6 +18435,7 @@ export type Database = {
           latest_heavy_flag?: boolean | null
           latest_recommended_size?: number | null
           latest_touch_at?: string | null
+          lead_intent?: string | null
           lead_priority?: string | null
           lead_quality_label?: string | null
           lead_quality_score?: number | null
