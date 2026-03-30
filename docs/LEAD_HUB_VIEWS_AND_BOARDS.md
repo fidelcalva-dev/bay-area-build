@@ -14,6 +14,9 @@
 | Needs Follow-Up | `lead_status IN ('contacted', 'qualified', 'quoted')` |
 | My Leads | `owner_user_id = current_user` |
 | High Intent | `urgency_score >= 70` |
+| Cleanup | `service_line IN ('CLEANUP', 'BOTH')` |
+| Contractors | `contractor_flag = true` |
+| Bundle | `service_line = 'BOTH' OR bundle_opportunity_flag = true` |
 | Existing Customer | `is_existing_customer = true` |
 | High Risk | `lead_quality_label = 'RED'` |
 | All | No filter |
@@ -38,3 +41,21 @@ Each lead row displays:
 
 - **List**: Table view with all columns
 - **Pipeline**: Kanban board by `lead_status`
+
+## Cleanup Board (Pipeline View)
+
+Accessible via the Cleanup tab + Pipeline view toggle.
+
+| Column | Status Filter |
+|---|---|
+| New Inbound | `new` |
+| Pending Contact | `contacted` |
+| Waiting on Photos | `qualified` + `photos_uploaded_flag = false` |
+| Scope Review | `qualified` |
+| Needs Site Visit | `needs_site_visit = true` |
+| Estimating | `quote_started` / `price_shown` |
+| Proposal Sent | `quote_sent` / `quote_ready` |
+| Follow-Up | `contacted` / `qualified` with followup_count > 0 |
+| Scheduled | `contract_signed` / `payment_received` |
+| Won | `converted` |
+| Lost | `lost` |
