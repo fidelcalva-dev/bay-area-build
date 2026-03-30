@@ -479,6 +479,7 @@ export default function SalesLeads() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[200px]">Contact</TableHead>
+                  <TableHead>Service</TableHead>
                   <TableHead>Addresses</TableHead>
                   <TableHead>Source</TableHead>
                   <TableHead>Progress</TableHead>
