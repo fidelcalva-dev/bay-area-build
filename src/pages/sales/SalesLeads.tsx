@@ -439,6 +439,7 @@ export default function SalesLeads() {
                 <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
               ))}
             </SelectContent>
+          </Select>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="default" className={`gap-2 ${dateFrom || dateTo ? 'border-primary text-primary' : ''}`}>
