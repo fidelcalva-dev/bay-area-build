@@ -14,4 +14,5 @@ export { RecommendedScriptWidget } from './RecommendedScriptWidget';
 export { PaymentsTab } from './PaymentsTab';
 export { DocumentsTab } from './DocumentsTab';
 export { CommercialAccountCard } from './CommercialAccountCard';
+export { ServiceLineSummary } from './ServiceLineSummary';
 export type * from './types';

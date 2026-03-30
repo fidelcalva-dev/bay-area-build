@@ -69,6 +69,19 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'all', label: 'All', icon: Users },
 ];
 
+const SERVICE_LINE_OPTIONS = [
+  { value: 'all', label: 'All Services' },
+  { value: 'DUMPSTER', label: 'Dumpster' },
+  { value: 'CLEANUP', label: 'Cleanup' },
+  { value: 'BOTH', label: 'Bundle' },
+];
+
+const SERVICE_LINE_COLORS: Record<string, string> = {
+  DUMPSTER: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  CLEANUP: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
+  BOTH: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+};
+
 type ViewMode = 'list' | 'pipeline';
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -111,6 +124,12 @@ const SOURCE_LABELS: Record<string, string> = {
   MANUAL_ENTRY: "Manual",
   CALLBACK_REQUEST: "Callback",
   CONTACT_FORM: "Contact Form",
+  CLEANUP_WEBSITE: "Cleanup Website",
+  CLEANUP_CONTACT: "Cleanup Contact",
+  CLEANUP_CONTRACTOR: "Cleanup Contractor",
+  CLEANUP_PHOTO_UPLOAD: "Cleanup Photos",
+  CLEANUP_CALL: "Cleanup Call",
+  CLEANUP_TEXT: "Cleanup Text",
 };
 
 export default function SalesLeads() {
@@ -123,6 +142,7 @@ export default function SalesLeads() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
+  const [serviceLineFilter, setServiceLineFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -140,9 +160,10 @@ export default function SalesLeads() {
     search: searchTerm || undefined,
     source: sourceFilter !== 'all' ? sourceFilter : undefined,
     quality: qualityFilter !== 'all' ? qualityFilter : undefined,
+    serviceLine: serviceLineFilter !== 'all' ? serviceLineFilter : undefined,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
-  }), [activeTab, searchTerm, sourceFilter, qualityFilter, dateFrom, dateTo]);
+  }), [activeTab, searchTerm, sourceFilter, qualityFilter, serviceLineFilter, dateFrom, dateTo]);
 
   const { leads, loading, totalCount, refetch } = useLeadHub(filters);
   const { stats } = useLeadHubStats();
@@ -409,6 +430,16 @@ export default function SalesLeads() {
               <SelectItem value="RED">Red</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={serviceLineFilter} onValueChange={setServiceLineFilter}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="All Services" />
+            </SelectTrigger>
+            <SelectContent>
+              {SERVICE_LINE_OPTIONS.map(o => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="default" className={`gap-2 ${dateFrom || dateTo ? 'border-primary text-primary' : ''}`}>
@@ -448,6 +479,7 @@ export default function SalesLeads() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[200px]">Contact</TableHead>
+                  <TableHead>Service</TableHead>
                   <TableHead>Addresses</TableHead>
                   <TableHead>Source</TableHead>
                   <TableHead>Progress</TableHead>
@@ -460,7 +492,7 @@ export default function SalesLeads() {
               <TableBody>
                 {leads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                       No leads found in this view
                     </TableCell>
                   </TableRow>
@@ -495,6 +527,20 @@ export default function SalesLeads() {
                             <p className="font-medium text-sm">{lead.customer_name || "--"}</p>
                             <p className="text-xs text-muted-foreground">{lead.customer_phone}</p>
                             {lead.city && <p className="text-xs text-muted-foreground">{lead.city}{lead.zip ? `, ${lead.zip}` : ''}</p>}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            {lead.service_line && lead.service_line !== 'DUMPSTER' && (
+                              <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 ${SERVICE_LINE_COLORS[lead.service_line] || ''}`}>
+                                {lead.service_line === 'BOTH' ? 'Bundle' : lead.service_line === 'CLEANUP' ? 'Cleanup' : lead.service_line}
+                              </Badge>
+                            )}
+                            {(!lead.service_line || lead.service_line === 'DUMPSTER') && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">Dumpster</Badge>
+                            )}
+                            {lead.contractor_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Contractor</Badge>}
+                            {lead.recurring_service_flag && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Recurring</Badge>}
                           </div>
                         </TableCell>
                         <TableCell>

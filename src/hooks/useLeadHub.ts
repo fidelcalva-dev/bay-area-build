@@ -162,6 +162,14 @@ export interface LeadHubLead {
   ai_conversation_summary: string | null;
   latest_recommended_size: number | null;
   latest_heavy_flag: boolean | null;
+  // Service line fields
+  service_line: string | null;
+  cleanup_service_type: string | null;
+  contractor_flag: boolean | null;
+  recurring_service_flag: boolean | null;
+  bundle_opportunity_flag: boolean | null;
+  photos_uploaded_flag: boolean | null;
+  needs_site_visit: boolean | null;
 }
 
 export type LeadHubTab = 
@@ -179,6 +187,7 @@ export interface LeadHubFilters {
   search?: string;
   source?: string;
   quality?: string;
+  serviceLine?: string;
   dateFrom?: string;
   dateTo?: string;
 }
@@ -193,7 +202,7 @@ export function useLeadHub(filters: LeadHubFilters) {
     try {
       let query = supabase
         .from('sales_leads')
-        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, source_channel, source_page, source_module, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, owner_user_id, city, zip, customer_type_detected, project_category, material_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, first_contact_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes, sla_due_at, escalation_level, is_sla_breached, next_best_action, last_step_completed, selected_size, quote_amount, quote_amount_high, delivery_preference, ai_conversation_summary, latest_recommended_size, latest_heavy_flag', { count: 'exact' })
+        .select('id, created_at, updated_at, customer_name, customer_phone, customer_email, company_name, source_key, channel_key, lead_source, source_channel, source_page, source_module, lead_status, lead_quality_score, lead_risk_score, lead_quality_label, assignment_type, assigned_to, owner_user_id, city, zip, customer_type_detected, project_category, material_category, urgency_score, message_excerpt, consent_status, is_existing_customer, first_response_at, first_response_sent_at, first_contact_at, last_activity_at, last_contacted_at, last_followup_at, followup_count, sla_minutes, sla_due_at, escalation_level, is_sla_breached, next_best_action, last_step_completed, selected_size, quote_amount, quote_amount_high, delivery_preference, ai_conversation_summary, latest_recommended_size, latest_heavy_flag, service_line, cleanup_service_type, contractor_flag, recurring_service_flag, bundle_opportunity_flag, photos_uploaded_flag, needs_site_visit', { count: 'exact' })
         .order('created_at', { ascending: false })
         .limit(500);
 
@@ -225,6 +234,9 @@ export function useLeadHub(filters: LeadHubFilters) {
       }
       if (filters.quality) {
         query = query.eq('lead_quality_label', filters.quality);
+      }
+      if (filters.serviceLine) {
+        query = query.eq('service_line', filters.serviceLine);
       }
       if (filters.dateFrom) {
         query = query.gte('created_at', filters.dateFrom);

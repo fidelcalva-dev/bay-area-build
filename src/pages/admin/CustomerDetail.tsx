@@ -32,6 +32,7 @@ import {
 import { ContractsTab } from '@/components/customer360/ContractsTab';
 import { CommercialAccountCard } from '@/components/customer360/CommercialAccountCard';
 import { SendPaymentButton } from '@/components/customer360/PaymentRequestsSection';
+import { ServiceLineSummary } from '@/components/customer360/ServiceLineSummary';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -156,6 +157,14 @@ export default function CustomerDetail() {
                 </h1>
                 <div className="flex items-center gap-2 mt-1 text-muted-foreground">
                   {customer.customer_type && <Badge variant="secondary">{customer.customer_type}</Badge>}
+                  {(customer as any).service_line && (customer as any).service_line !== 'DUMPSTER' && (
+                    <Badge variant="secondary" className={
+                      (customer as any).service_line === 'BOTH' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                      : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                    }>
+                      {(customer as any).service_line === 'BOTH' ? 'Bundle' : 'Cleanup'}
+                    </Badge>
+                  )}
                   {customer.is_active ? <Badge variant="default" className="text-xs">Active</Badge> : <Badge variant="outline" className="text-xs">Inactive</Badge>}
                   <span className="text-sm">Since {new Date(customer.created_at).toLocaleDateString()}</span>
                 </div>
@@ -230,6 +239,11 @@ export default function CustomerDetail() {
         {/* ─── OVERVIEW ─── */}
         <TabsContent value="overview">
           <div className="space-y-4">
+            <ServiceLineSummary
+              customerServiceLine={(customer as any).service_line}
+              orders={orders}
+              quotes={quotes}
+            />
             <OverviewTab data={data} timelineEvents={timelineEvents} isTimelineLoading={isTimelineLoading} />
             <CommercialAccountCard
               customerId={customer.id}
