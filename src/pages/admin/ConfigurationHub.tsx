@@ -148,6 +148,96 @@ const configModules: ModuleInfo[] = [
   },
 ];
 
+const salesModules: ModuleInfo[] = [
+  {
+    title: 'Lead Hub',
+    description: 'Unified lead pipeline for both brands',
+    icon: Zap,
+    path: '/sales/leads',
+    module: 'leads' as AdminModule,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+  },
+  {
+    title: 'Internal Calculator',
+    description: 'Master quote tool for staff',
+    icon: DollarSign,
+    path: '/sales/quotes/new',
+    module: 'config' as AdminModule,
+    color: 'text-violet-600',
+    bgColor: 'bg-violet-100',
+  },
+  {
+    title: 'Lead Engine Settings',
+    description: 'Scoring, routing, and automation rules',
+    icon: Settings,
+    path: '/admin/leads/settings',
+    module: 'config' as AdminModule,
+    color: 'text-sky-600',
+    bgColor: 'bg-sky-100',
+  },
+];
+
+const operationsModules: ModuleInfo[] = [
+  {
+    title: 'Dispatch',
+    description: 'Daily dispatch operations',
+    icon: Truck,
+    path: '/dispatch',
+    module: 'config' as AdminModule,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-100',
+  },
+  {
+    title: 'Control Tower',
+    description: 'Real-time fleet and asset tracking',
+    icon: Activity,
+    path: '/dispatch/control-tower',
+    module: 'config' as AdminModule,
+    color: 'text-red-600',
+    bgColor: 'bg-red-100',
+  },
+  {
+    title: 'Inventory',
+    description: 'Dumpster fleet and asset management',
+    icon: Warehouse,
+    path: '/admin/inventory',
+    module: 'config' as AdminModule,
+    color: 'text-slate-600',
+    bgColor: 'bg-slate-100',
+  },
+];
+
+const integrationModules: ModuleInfo[] = [
+  {
+    title: 'GHL Integration',
+    description: 'GoHighLevel communication sync',
+    icon: MessageSquare,
+    path: '/admin/ghl',
+    module: 'config' as AdminModule,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-100',
+  },
+  {
+    title: 'Notifications',
+    description: 'SMS/Email routing and templates',
+    icon: Bell,
+    path: '/admin/notifications-config',
+    module: 'notifications' as AdminModule,
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+  },
+  {
+    title: 'SEO Dashboard',
+    description: 'Organic search performance',
+    icon: Globe,
+    path: '/admin/seo/dashboard',
+    module: 'config' as AdminModule,
+    color: 'text-green-600',
+    bgColor: 'bg-green-100',
+  },
+];
+
 const systemModules: ModuleInfo[] = [
   {
     title: 'User Management',
@@ -166,6 +256,24 @@ const systemModules: ModuleInfo[] = [
     module: 'audit',
     color: 'text-stone-600',
     bgColor: 'bg-stone-100',
+  },
+  {
+    title: 'QA Control Center',
+    description: 'Route, build, and config health',
+    icon: CheckCircle2,
+    path: '/admin/qa/control-center',
+    module: 'config' as AdminModule,
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-100',
+  },
+  {
+    title: 'Security Health',
+    description: 'Security posture and vulnerabilities',
+    icon: Shield,
+    path: '/admin/security',
+    module: 'config' as AdminModule,
+    color: 'text-rose-600',
+    bgColor: 'bg-rose-100',
   },
 ];
 
