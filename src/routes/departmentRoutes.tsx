@@ -20,17 +20,17 @@ const CSRequests = lazy(() => import("@/pages/cs/CSRequests"));
 const CSTemplates = lazy(() => import("@/pages/cs/CSTemplates"));
 const CSMessages = lazy(() => import("@/pages/cs/CSMessages"));
 const CSCalls = lazy(() => import("@/pages/cs/CSCalls"));
-const CSLeads = lazy(() => import("@/pages/cs/CSLeads"));
-const CSLeadInbox = lazy(() => import("@/pages/cs/CSLeadInbox"));
+
+// Canonical shared feature modules (used by CS, Sales, Admin)
+const LeadWorkspacePage = lazy(() => import("@/features/leads/LeadWorkspacePage"));
+const LeadDetailPage = lazy(() => import("@/features/leads/LeadDetailPage"));
+const QuoteWorkspacePage = lazy(() => import("@/features/quotes/QuoteWorkspacePage"));
+const QuoteDetailPage = lazy(() => import("@/features/quotes/QuoteDetailPage"));
+const QuoteBuilderPage = lazy(() => import("@/features/quotes/QuoteBuilderPage"));
 
 // Sales Portal
 const SalesLayout = lazy(() => import("@/pages/sales/SalesLayout"));
 const SalesDashboard = lazy(() => import("@/pages/sales/SalesDashboard"));
-const SalesLeads = lazy(() => import("@/pages/sales/SalesLeads"));
-const SalesLeadDetail = lazy(() => import("@/pages/sales/LeadDetail"));
-const SalesQuotes = lazy(() => import("@/pages/sales/SalesQuotes"));
-const SalesQuoteDetail = lazy(() => import("@/pages/sales/SalesQuoteDetail"));
-const SalesNewQuote = lazy(() => import("@/pages/internal/InternalCalculator"));
 const SalesCalls = lazy(() => import("@/pages/sales/SalesCalls"));
 const OrderBuilder = lazy(() => import("@/pages/sales/OrderBuilder"));
 
