@@ -108,7 +108,8 @@ export default function ContractorApplication() {
           message: `Contractor application: ${companyName} | Volume: ${monthlyVolume} | Cities: ${serviceCities.join(', ')} | Sizes: ${typicalSizes.join(', ')}`,
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
-            service_line: 'DUMPSTER',
+            service_line: 'CLEANUP',
+            contractor_application_flag: true,
             contractor_flag: true,
             service_cities: serviceCities,
             project_types: projectTypes,
