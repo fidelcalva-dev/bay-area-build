@@ -1,54 +1,53 @@
 # Cleanup Board Specification
 
-> Last updated: 2026-03-30
+> Last updated: 2026-03-31
 
-## Location
+## Overview
 
-Inside the canonical Lead Hub at `/sales/leads` — accessible via the "Cleanup" tab.
+The Cleanup Board is a dedicated pipeline view for C&D Waste Removal leads within the canonical Lead Hub. Not a separate system.
 
-## Cleanup Board Columns (Pipeline View)
+## Access
 
-| Column | Filter Logic | SLA |
+- `/sales/leads?view=cleanup-board`
+- `/cs/leads?view=cleanup-board`
+- `/admin/leads/workspace?view=cleanup-board`
+
+## Board Columns
+
+| # | Column | Stage |
 |---|---|---|
-| New Inbound | `service_line IN ('CLEANUP','BOTH') AND lead_status = 'new'` | 1h |
-| Pending Contact | `lead_status = 'contacted'` | 24h |
-| Waiting on Photos | `photos_uploaded_flag = false AND lead_status IN ('contacted','qualified')` | 48h |
-| Scope Review | `lead_status = 'qualified'` | 24h |
-| Needs Site Visit | `needs_site_visit = true` | 48h |
-| Estimating | `lead_status IN ('quote_started','price_shown')` | 4h |
-| Proposal Sent | `lead_status IN ('quote_sent','quote_ready')` | 24h follow-up |
-| Follow-Up | `lead_status IN ('contacted','qualified','quoted') AND followup_count > 0` | Daily |
-| Scheduled | `lead_status IN ('contract_signed','payment_received','ready_for_dispatch')` | — |
-| Won | `lead_status = 'converted'` | — |
-| Lost | `lead_status = 'lost'` | — |
+| 1 | New Inbound | new_inbound |
+| 2 | Pending Contact | pending_contact |
+| 3 | Waiting on Photos | waiting_on_photos |
+| 4 | Scope Review | reviewing_scope |
+| 5 | Needs Site Visit | needs_site_visit |
+| 6 | Estimating | estimating |
+| 7 | Proposal Sent | proposal_sent |
+| 8 | Follow-Up | follow_up |
+| 9 | Scheduled | scheduled |
+| 10 | Won | won |
+| 11 | Lost | lost |
 
-## Saved Views (Inside Lead Hub)
+## Card Badges
 
-| View Name | Filter |
-|---|---|
-| Cleanup Leads | `service_line IN ('CLEANUP','BOTH')` |
-| Contractor Leads | `contractor_flag = true` |
-| Recurring Service | `recurring_service_flag = true` |
-| Bundle Leads | `service_line = 'BOTH' OR bundle_opportunity_flag = true` |
-| Waiting on Photos | `photos_uploaded_flag = false` |
-| Needs Site Visit | `needs_site_visit = true` |
+- Contractor 🏗️
+- Recurring 🔄
+- Bundle 📦
+- Photos 📷
+- Site Visit 📍
+- HOT 🔥
+- SAME DAY ⚡
 
-## Lead Card Badges (Cleanup Context)
+## Filters
 
-- **C&D** — amber badge for `brand = CALSAN_CD_WASTE_REMOVAL`
-- **Cleanup** — emerald badge for `service_line = CLEANUP`
-- **Bundle** — purple badge for `service_line = BOTH`
-- **Contractor** — outline badge for `contractor_flag = true`
-- **Recurring** — outline badge for `recurring_service_flag = true`
-- **Photos** — camera icon if `photos_uploaded_flag = true`
-- **Site Visit** — map pin icon if `needs_site_visit = true`
+Service type, city, assigned rep, contractor flag, recurring flag, bundle flag, photos uploaded, needs site visit, date range.
 
-## Quick Actions
+## Data Source
 
-- Call
-- Text
-- Email
-- Open Lead
-- Create Quote
-- Request Photos
-- Schedule Site Visit
+Same `sales_leads` table filtered by `service_line IN ('CLEANUP', 'BOTH')`.
+
+## Role Behavior
+
+- Sales: Full CRUD + drag-drop
+- CS: Read-only + notes
+- Admin: Full CRUD + reassign + override

@@ -1,60 +1,44 @@
 # Lead Intake Matrix
 
-> Last updated: 2026-03-30
+> Last updated: 2026-03-31
 
-## Entry Points
+## All Inbound Channels → Canonical `lead-ingest`
 
-| Entry Point | Brand | Service Line | Intent | Handler | source_channel | Lead Created | Quote Session | Draft Quote | Status |
-|---|---|---|---|---|---|---|---|---|---|
-| `/quote` (V3QuoteFlow) | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST | lead-ingest | `QUOTE_FLOW` | ✅ | ✅ | ✅ | ✅ Fixed — added brand/intent |
-| `/cleanup/quote` | CALSAN_CD_WASTE_REMOVAL | CLEANUP | QUOTE_REQUEST | lead-ingest | `CLEANUP_WEBSITE` | ✅ | ✅ | N/A | ✅ |
-| `/cleanup/contact` | CALSAN_CD_WASTE_REMOVAL | CLEANUP | CONTACT_REQUEST | lead-ingest | `CLEANUP_CONTACT` | ✅ | ❌ | ❌ | ✅ |
-| `/cleanup/for-contractors` | — | — | — | Links to /cleanup/quote | — | ❌ (landing page) | ❌ | ❌ | ✅ By design |
-| `/contact-us` | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTACT_REQUEST | lead-ingest | `CONTACT_FORM` | ✅ | ❌ | ❌ | ✅ |
-| `/contractor-application` | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTRACTOR_APPLICATION | lead-ingest | `CONTRACTOR_APPLICATION` | ✅ | ❌ | ❌ | ✅ |
-| AI Chat | CALSAN_DUMPSTERS_PRO | DUMPSTER | CHAT_HANDOFF | lead-ingest | `AI_CHAT` | ✅ | ❌ | ❌ | ✅ Fixed — added brand/intent/service_line |
-| Homepage AI Assistant | CALSAN_DUMPSTERS_PRO | DUMPSTER | — | lead-ingest | `WEBSITE_ASSISTANT` | ✅ | ❌ | ❌ | ✅ Fixed — added brand/source_page/module |
-| Quick Order | CALSAN_DUMPSTERS_PRO | DUMPSTER | — | lead-ingest | `QUICK_ORDER` | ✅ | ❌ | ❌ | ✅ Fixed — added brand/service_line |
-| Schedule Delivery | CALSAN_DUMPSTERS_PRO | DUMPSTER | SCHEDULE_REQUEST | lead-ingest | `SCHEDULE_DELIVERY` | ✅ | ❌ | ❌ | ✅ Fixed — added brand/intent/service_line |
-| Manual Staff | Selectable | Selectable | MANUAL_STAFF_LEAD | lead-ingest | `MANUAL_ENTRY` | ✅ | ❌ | ❌ | ✅ |
-| Phone Inbound | Auto-detected | DUMPSTER | CALLBACK_REQUEST | lead-from-phone → lead-ingest | `PHONE_INBOUND` | ✅ | ❌ | ❌ | ✅ |
-| SMS Inbound | Auto-detected | DUMPSTER | CONTACT_REQUEST | twilio-sms-webhook | `SMS_INBOUND` | ✅ | ❌ | ❌ | ✅ |
-| Google Ads | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST | lead-from-google-ads | `GOOGLE_ADS` | ✅ | ❌ | ❌ | ✅ |
-| Meta Ads | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST | lead-from-meta | `META_ADS` | ✅ | ❌ | ❌ | ✅ |
-| GHL Inbound | Auto-detected | DUMPSTER | CONTACT_REQUEST | ghl-webhook-inbound → lead-ingest | `GHL_INBOUND` | ✅ | ❌ | ❌ | ✅ |
-| save-quote (final) | Auto-detected | DUMPSTER | QUOTE_REQUEST | save-quote → lead-ingest | `WEBSITE_QUOTE` | ✅ | ✅ | ✅ | ✅ |
-| Media Upload (AI Chat) | CALSAN_DUMPSTERS_PRO | DUMPSTER | PHOTO_REVIEW | lead-ingest | `WEBSITE_MEDIA` | ✅ | ❌ | ❌ | ✅ |
+| # | Channel | Source Page/Module | Handler | Brand | Service Line | Lead Intent |
+|---|---|---|---|---|---|---|
+| 1 | Website Quote | `/quote` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST |
+| 2 | Contractor Quote | `/quote/contractor` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST |
+| 3 | Cleanup Quote | `/cleanup/quote` | lead-ingest | CALSAN_CD_WASTE_REMOVAL | CLEANUP | QUOTE_REQUEST |
+| 4 | Contact Form | `/contact` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTACT_REQUEST |
+| 5 | Contact Us | `/contact-us` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTACT_REQUEST |
+| 6 | Cleanup Contact | `/cleanup/contact` | lead-ingest | CALSAN_CD_WASTE_REMOVAL | CLEANUP | CONTACT_REQUEST |
+| 7 | Contractor App | `/contractor-application` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTRACTOR_APPLICATION |
+| 8 | Cleanup Contractors | `/cleanup/for-contractors` | lead-ingest | CALSAN_CD_WASTE_REMOVAL | CLEANUP | CONTRACTOR_APPLICATION |
+| 9 | Schedule Delivery | `/schedule-delivery` | schedule-delivery | CALSAN_DUMPSTERS_PRO | DUMPSTER | SCHEDULE_REQUEST |
+| 10 | AI Chat | Homepage widget | lead-ingest | Auto-detected | Auto-detected | CHAT_HANDOFF |
+| 11 | Manual Staff Lead | CRM Lead Hub | lead-ingest | Selectable | Selectable | MANUAL_STAFF_LEAD |
+| 12 | Phone Inbound | Call system | lead-from-phone | Auto-detected | DUMPSTER | CALLBACK_REQUEST |
+| 13 | SMS Inbound | Twilio webhook | twilio-sms-webhook | Auto-detected | DUMPSTER | CONTACT_REQUEST |
+| 14 | Google Ads | Landing pages | lead-from-google-ads | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST |
+| 15 | Meta Ads | Facebook/IG | lead-from-meta | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST |
+| 16 | Quick Order | `/quick-order` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | SCHEDULE_REQUEST |
+| 17 | Download Price List | `/download-price-list` | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | CONTACT_REQUEST |
+| 18 | SEO City Pages | `/dumpster-rental/:city` CTAs | lead-ingest | CALSAN_DUMPSTERS_PRO | DUMPSTER | QUOTE_REQUEST |
 
-## Required Fields per Lead
+## Validated Fields
 
-All leads capture:
-- `brand` — CALSAN_DUMPSTERS_PRO or CALSAN_CD_WASTE_REMOVAL
-- `service_line` — DUMPSTER, CLEANUP, or BOTH
-- `lead_intent` — QUOTE_REQUEST, CONTACT_REQUEST, CONTRACTOR_APPLICATION, etc.
-- `source_channel` — canonical source key
-- `source_page` — originating URL path
-- `source_module` — component module name
-
-## Cleanup-Specific Fields
-
-- `cleanup_service_type` — construction_cleanup, post_construction, demolition_debris, recurring
-- `project_scope` — small, medium, large
-- `contractor_flag` — boolean
-- `recurring_service_flag` — boolean
-- `needs_site_visit` — boolean
-- `photos_uploaded_flag` — boolean
-
-## Bundle Detection
-
-- If `need_dumpster_too = true` on cleanup form → `service_line = BOTH`, `bundle_opportunity_flag = true`
-- If form indicates both services → auto-set bundle fields
-
-## Fixes Applied (2026-03-30)
-
-| Entry Point | Issue | Fix |
+| Field | Required | Source |
 |---|---|---|
-| V3QuoteFlow | Missing `brand`, `lead_intent` | Added `CALSAN_DUMPSTERS_PRO`, `QUOTE_REQUEST` |
-| CalsanAIChat | Missing `brand`, `lead_intent`, `service_line` | Added all three fields |
-| HomepageAIAssistant | Missing `brand`, `source_page`, `source_module`, `service_line` | Added all fields |
-| QuickOrder | Missing `brand`, `service_line`, `source_page`, `source_module` | Added all fields |
-| ScheduleDelivery | Missing `brand`, `lead_intent`, `service_line`, `source_page`, `source_module` | Added all fields |
+| brand_origin | ✅ | Auto-detected from source channel |
+| service_line | ✅ | DUMPSTER / CLEANUP / BOTH |
+| lead_intent | ✅ | 10 canonical intent types |
+| source_channel | ✅ | Channel identifier |
+| contractor_flag | Optional | From form or URL |
+| recurring_service_flag | Optional | Cleanup-specific |
+| bundle_opportunity_flag | Optional | Auto-detected |
+| photos_uploaded_flag | Optional | Cleanup forms |
+| needs_site_visit | Optional | Cleanup scope assessment |
+
+## Destination
+
+All leads arrive in `/sales/leads` (Lead Hub) and appear in table, pipeline board, and cleanup board views.
