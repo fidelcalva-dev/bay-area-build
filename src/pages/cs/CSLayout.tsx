@@ -12,6 +12,7 @@ import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 import { AgentStatusWidget } from '@/components/telephony';
 import AiControlWidget from '@/components/ai/AiControlWidget';
+import { NotificationBell } from '@/components/notifications';
 
 const navItems = [
   { path: '/cs', label: 'Dashboard', icon: Home, end: true },

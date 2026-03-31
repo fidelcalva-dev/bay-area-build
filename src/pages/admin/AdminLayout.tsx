@@ -6,6 +6,7 @@ import { useMobileMode } from '@/hooks/useMobileMode';
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from '@/components/mobile';
 import AiControlWidget from '@/components/ai/AiControlWidget';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import { NotificationBell } from '@/components/notifications';
 
 // Mobile navigation - limited admin view
 const mobileNavItems: MobileNavItem[] = [

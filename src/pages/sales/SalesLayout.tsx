@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from "@/components/mobile";
 import { AgentStatusWidget } from '@/components/telephony';
 import AiControlWidget from '@/components/ai/AiControlWidget';
+import { NotificationBell } from '@/components/notifications';
 
 const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
