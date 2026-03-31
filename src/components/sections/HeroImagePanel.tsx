@@ -1,5 +1,5 @@
 import { MapPin, Truck, Ruler } from 'lucide-react';
-import heroDefault from '@/assets/calsan-promise-dumpster.jpg';
+import heroDefault from '@/assets/calsan-yard-operations.jpg';
 
 const BADGES = [
   { icon: MapPin, label: 'Local Bay Area Yards' },
