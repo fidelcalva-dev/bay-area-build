@@ -102,6 +102,7 @@ export default function SalesLayout() {
           <img src={logoCalsan} alt="Calsan" className="h-8 rounded" />
           <span className="font-semibold">Sales Portal</span>
         </div>
+        <NotificationBell />
       </header>
 
       {/* Sidebar */}
