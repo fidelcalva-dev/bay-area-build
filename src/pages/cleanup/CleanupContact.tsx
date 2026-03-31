@@ -104,6 +104,7 @@ export default function CleanupContact() {
                     <label className="block text-sm font-medium text-foreground mb-1">How can we help?</label>
                     <textarea rows={4} value={form.message} onChange={e => updateField('message', e.target.value)} placeholder="Describe your project or question..." className={`${inputClass} resize-y`} />
                   </div>
+                  <PrivacyNoticeAtCollection variant="compact" className="pt-1" />
                   <Button type="submit" size="lg" variant="cta" className="w-full" disabled={submitting}>
                     {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending…</> : 'Send Message'}
                   </Button>
