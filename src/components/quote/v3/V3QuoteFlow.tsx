@@ -681,6 +681,9 @@ export function V3QuoteFlow() {
       if (result.success) {
         setSavedQuoteId(result.quoteId ?? null);
         draft.resetDraft();
+        sessionTracker.logEvent('quote_submitted', { quote_id: result.quoteId, size, subtotal: quote.subtotal });
+        sessionTracker.updateSession({ quoteId: result.quoteId || undefined, currentStep: 'completed' });
+        sessionTracker.clearSession();
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
         ga4.quoteSubmitted({ flow_version: 'v3', size_yd: size, material_category: materialTypeForPricing, value_estimated: quote.subtotal, city: zoneResult?.cityName, zip, serviceable: true });
         supabase.functions.invoke('send-quote-summary', {
