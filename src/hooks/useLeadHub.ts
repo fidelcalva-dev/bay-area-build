@@ -183,11 +183,16 @@ export type LeadHubTab =
   | 'existing_customer' 
   | 'high_risk' 
   | 'my_leads'
+  | 'dumpster'
   | 'cleanup'
   | 'contractor'
   | 'bundle'
   | 'ai_chat'
   | 'contact_form'
+  | 'waiting_photos'
+  | 'needs_site_visit'
+  | 'won'
+  | 'lost'
   | 'all';
 
 export interface LeadHubFilters {
