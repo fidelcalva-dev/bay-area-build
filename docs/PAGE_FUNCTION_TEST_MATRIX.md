@@ -1,46 +1,54 @@
 # Page Function Test Matrix
 
-> Last updated: 2026-03-30
+> Last updated: 2026-03-31
 
-## Test Results
+## Website
 
-| Route | Business Purpose | Route Load | Data Load | Save | Canonical Service | Duplicate Logic | Status |
-|---|---|---|---|---|---|---|---|
-| `/` | Homepage | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/quote` | Dumpster quote flow | ✅ | ✅ | ✅ | ✅ masterPricingService, draftQuoteService | ❌ | ✅ |
-| `/cleanup/quote` | Cleanup quote | ✅ | ✅ | ✅ | ✅ lead-ingest | ❌ | ✅ |
-| `/contact` | Contact form | ✅ | N/A | ✅ | ✅ lead-ingest | ❌ | ✅ |
-| `/cleanup/contact` | Cleanup contact | ✅ | N/A | ✅ | ✅ lead-ingest | ❌ | ✅ |
-| `/contractors` | Contractor application | ✅ | N/A | ✅ | ✅ lead-ingest | ❌ | ✅ |
-| `/cleanup/for-contractors` | Cleanup contractor app | ✅ | N/A | ✅ | ✅ lead-ingest | ❌ | ✅ |
-| `/pricing` | Public pricing | ✅ | ✅ | N/A | ✅ masterPricingService | ❌ | ✅ |
-| `/sales` | Sales dashboard | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/sales/leads` | Lead Hub | ✅ | ✅ | ✅ | ✅ useLeadHub | ❌ | ✅ |
-| `/sales/leads/:id` | Lead detail | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/sales/quotes` | Quotes list | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/sales/quotes/:id` | Quote detail | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/sales/quotes/new` | Internal calculator | ✅ | ✅ | ✅ | ✅ calculatorService | ❌ | ✅ |
-| `/admin` | Command center | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/admin/configuration` | Config hub | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/admin/pricing` | Master pricing | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/admin/customers` | Customer list | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/admin/customers/:id` | Customer 360 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/admin/orders` | Orders list | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/admin/ghl` | GHL integration | ✅ | ✅ | ✅ | ✅ ghlCommunication | ❌ | ✅ |
-| `/dispatch` | Dispatch dashboard | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/dispatch/control-tower` | Control tower | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/driver` | Driver home | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/finance` | Finance dashboard | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/finance/ar-aging` | AR aging | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/portal` | Customer login | ✅ | N/A | ✅ | ✅ useCustomerAuth | ❌ | ✅ |
-| `/portal/dashboard` | Customer dashboard | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/portal/orders` | Customer orders | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
-| `/portal/pay` | Payment | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/cs` | CS dashboard | ✅ | ✅ | N/A | ✅ | ❌ | ✅ |
+| Page | Route | Loads | CTA | Lead | SEO | Mobile |
+|---|---|---|---|---|---|---|
+| Homepage | `/` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pricing | `/pricing` | ✅ | ✅ | — | ✅ | ✅ |
+| Quote Flow | `/quote` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Contact | `/contact` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Cleanup Home | `/cleanup` | ✅ | ✅ | — | ✅ | ✅ |
+| Cleanup Quote | `/cleanup/quote` | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-## Notes
+## CRM
 
-- No critical duplicate business logic found in page components
-- All lead creation paths use canonical `lead-ingest` edge function
-- All pricing paths use canonical `masterPricingService`
-- All communication paths use canonical `ghlCommunication`
+| Page | Route | Loads | CRUD | Shared | Mobile |
+|---|---|---|---|---|---|
+| Sales Leads | `/sales/leads` | ✅ | ✅ | LeadWorkspacePage(sales) | ✅ |
+| CS Leads | `/cs/leads` | ✅ | 👁 | LeadWorkspacePage(cs) | ✅ |
+| Admin Leads | `/admin/leads/workspace` | ✅ | ✅ | LeadWorkspacePage(admin) | ✅ |
+| Sales Quotes | `/sales/quotes` | ✅ | ✅ | QuoteWorkspacePage(sales) | ✅ |
+| Quote Builder | `/sales/quotes/new` | ✅ | ✅ | QuoteBuilderPage(sales) | ✅ |
+| Quote Detail | `/sales/quotes/:id` | ✅ | ✅ | QuoteDetailPage(sales) | ✅ |
+| Customer 360 | `/admin/customers/:id` | ✅ | ✅ | CustomerDetail | ✅ |
+
+## Operations
+
+| Page | Route | Loads | Actions | Mobile |
+|---|---|---|---|---|
+| Dispatch | `/dispatch` | ✅ | ✅ | ✅ |
+| Control Tower | `/dispatch/control-tower` | ✅ | ✅ | ✅ |
+| Driver | `/driver` | ✅ | ✅ | ✅ (primary) |
+| Finance | `/finance` | ✅ | ✅ | ✅ |
+| AR Aging | `/finance/ar-aging` | ✅ | ✅ | ✅ |
+
+## Portal
+
+| Page | Route | Loads | Auth | Mobile |
+|---|---|---|---|---|
+| Login | `/portal` | ✅ | OTP | ✅ |
+| Dashboard | `/portal/dashboard` | ✅ | Guard | ✅ |
+| Pay | `/portal/pay` | ✅ | SMS | ✅ |
+| Contract Sign | `/contract/:token` | ✅ | Token | ✅ |
+
+## Admin
+
+| Page | Route | Loads | Actions | Mobile |
+|---|---|---|---|---|
+| Command Center | `/admin` | ✅ | ✅ | ✅ |
+| Configuration Hub | `/admin/configuration` | ✅ | ✅ | ✅ |
+| Pricing Hub | `/admin/pricing` | ✅ | ✅ | ✅ |
+| Audit Logs | `/admin/audit-logs` | ✅ | ✅ | ✅ |

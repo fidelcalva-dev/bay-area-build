@@ -1,102 +1,75 @@
 # Admin Activation Hub Specification
 
-> Last updated: 2026-03-30
+> Last updated: 2026-03-31
 
 ## Location
 
-`/admin/configuration` — the visual Admin Activation Hub
+`/admin/configuration` — Visual command center for all platform modules.
 
 ## Module Groups
 
 ### Core CRM
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Customer 360 | `/admin/customers/:id` | Sales/CS | ✅ Active |
-| Customers List | `/admin/customers` | Sales/CS | ✅ Active |
-| Orders | `/admin/orders` | CS/Dispatch | ✅ Active |
-| Tickets | `/admin/tickets` | CS | ✅ Active |
+- Lead Hub (`/sales/leads`) ✅
+- Quote Workspace (`/sales/quotes`) ✅
+- Customer 360 (`/admin/customers/:id`) ✅
+- Orders (`/admin/orders`) ✅
 
 ### Pricing
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Master Pricing Hub | `/admin/pricing` | Admin | ✅ Active |
-| Extras Catalog | `/admin/extras` | Admin | ✅ Active |
-| Vendors | `/admin/vendors` | Admin | ✅ Active |
+- Master Pricing Hub (`/admin/pricing`) ✅ — 34 tabs
 
 ### Leads / Sales
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Lead Hub | `/sales/leads` | Sales | ✅ Active |
-| Internal Calculator | `/sales/quotes/new` | Sales | ✅ Active |
-| Lead Engine Settings | `/admin/leads/settings` | Admin | ✅ Active |
-| Sales Performance | `/admin/dashboards/sales` | Admin | ✅ Active |
+- Lead Analytics (`/admin/leads`) ✅
+- Lead Workspace (`/admin/leads/workspace`) ✅
+- Lead Engine Settings (`/admin/leads/settings`) ✅
+- Leads Health (`/admin/leads-health`) ✅
+- Sales Performance (`/admin/sales-performance`) ✅
 
 ### Operations
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Dispatch | `/dispatch` | Dispatch | ✅ Active |
-| Control Tower | `/dispatch/control-tower` | Dispatch | ✅ Active |
-| Driver App | `/driver` | Driver | ✅ Active |
-| Yards | `/admin/yards` | Admin | ✅ Active |
-| Markets | `/admin/markets` | Admin | ✅ Active |
-| Zones | `/admin/zones` | Admin | ✅ Active |
-| Inventory | `/admin/inventory` | Admin | ✅ Active |
-| Assets | `/admin/assets` | Admin | ✅ Active |
-| Facilities | `/admin/facilities` | Admin | ✅ Active |
+- Dispatch (`/dispatch`) ✅
+- Control Tower (`/dispatch/control-tower`) ✅
+- Yards (`/admin/yards`) ✅
+- Zones (`/admin/zones`) ✅
+- Inventory (`/admin/inventory`) ✅
+- Assets (`/admin/assets`) ✅
+- Drivers (`/admin/drivers`) ✅
+- Facilities (`/admin/facilities`) ✅
+- Markets (`/admin/markets`) ✅
+- Maintenance (`/admin/maintenance`) ✅
 
 ### Finance
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Finance Dashboard | `/finance` | Finance | ✅ Active |
-| AR Aging | `/finance/ar-aging` | Finance | ✅ Active |
-| Overdue Billing | `/admin/overdue` | Finance | ✅ Active |
-| Compensation | `/admin/compensation` | Admin | ✅ Active |
+- Finance Dashboard (`/finance`) ✅
+- Invoices (`/finance/invoices`) ✅
+- AR Aging (`/finance/ar-aging`) ✅
+- Overdue (`/admin/overdue`) ✅
+- Profitability (`/admin/profitability`) ✅
 
 ### Integrations
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| GHL Integration | `/admin/ghl` | Admin | ✅ Active |
-| Google Settings | `/admin/google` | Admin | ✅ Active |
-| Messaging | `/admin/messaging` | Admin | ✅ Active |
-| Notifications Config | `/admin/notifications-config` | Admin | ✅ Active |
+- GHL (`/admin/ghl`) ✅
+- Telephony (`/admin/telephony/calls`) ✅
+- Google Ads (`/admin/ads`) ✅
+- Google Settings (`/admin/google`) ✅
+- Messaging (`/admin/messaging`) ✅
 
 ### SEO / Local
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| SEO Dashboard | `/admin/seo/dashboard` | Admin | ✅ Active |
-| SEO Health | `/admin/seo/health` | Admin | ✅ Active |
-| Local Search | `/admin/local` | Admin | ✅ Active |
+- SEO Dashboard (`/admin/seo/dashboard`) ✅
+- SEO Cities/Pages/Health/Audit ✅
+- Local Dashboard (`/admin/local/dashboard`) ✅
+- Google Business/Reviews ✅
 
 ### QA / Health
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| QA Control Center | `/admin/qa/control-center` | Admin | ✅ Active |
-| Config Health | `/admin/config/health` | Admin | ✅ Active |
-| Security Health | `/admin/security` | Admin | ✅ Active |
-| Build Health | `/admin/qa/build` | Admin | ✅ Active |
-| Route Health | `/admin/qa/routes` | Admin | ✅ Active |
+- QA Control Center (`/admin/qa/control-center`) ✅
+- Config/Security/Route/Domain/Build/Env Health ✅
 
 ### AI / Automations
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| AI Control Center | `/admin/ai` | Admin | ✅ Active |
-| AI Performance | `/admin/ai-performance` | Admin | ✅ Active |
-| AI Chat | `/admin/ai-chat` | Admin | ✅ Active |
+- AI Control Center (`/admin/ai/control-center`) ✅
+- Role Copilots (Sales, CS, Dispatch, Driver, Fleet, Finance, SEO, Admin) ✅
 
-### Legal / Documents
-| Module | Route | Owner | Status |
-|---|---|---|---|
-| Contracts Config | `/admin/contracts-config` | Admin | ✅ Active |
-| Internal Docs | `/admin/docs` | Admin | ✅ Active |
-| Approval Queue | `/admin/approval-queue` | Admin | ✅ Active |
+### Marketing
+- Marketing Dashboard (`/admin/marketing/dashboard`) ✅
+- Visitors/Sessions ✅
+- Executive/BI Dashboards ✅
 
-## Module Card Requirements
+## Distinction
 
-Each module card shows:
-- Module name
-- Canonical route
-- Active/inactive status badge
-- Health status indicator
-- Owner role
-- Last update timestamp
-- Quick navigation action
+- `/admin/configuration` = Visual Activation Hub (module cards + health)
+- `/admin/config` = Raw key-value business settings
