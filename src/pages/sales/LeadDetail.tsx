@@ -361,10 +361,16 @@ export default function LeadDetail() {
             </Button>
             <Separator orientation="vertical" className="h-8" />
             <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}`)}>
-              <FileText className="w-4 h-4 mr-1" /> Create Quote
+              <FileText className="w-4 h-4 mr-1" /> Dumpster Quote
             </Button>
+            <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}&type=cleanup`)}>
+              <FileText className="w-4 h-4 mr-1" /> Cleanup Proposal
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => navigate(`/sales/quotes/new?lead_id=${lead.id}&type=bundle`)}>
+              <FileText className="w-4 h-4 mr-1" /> Bundle Quote
+            </Button>
+            <Separator orientation="vertical" className="h-8" />
             <Button size="sm" variant="outline" onClick={() => {
-              // Navigate to quote sending flow - find existing quote or create
               navigate(`/sales/quotes/new?lead_id=${lead.id}&action=send`);
               logAction('QUOTE_SENT', 'Initiated quote send');
             }}>
@@ -394,6 +400,23 @@ export default function LeadDetail() {
               logAction('SCHEDULE_INITIATED', 'Initiated delivery scheduling');
             }}>
               <Clock className="w-4 h-4 mr-1" /> Schedule Delivery
+            </Button>
+            <Separator orientation="vertical" className="h-8" />
+            <Button size="sm" variant={lead.lead_status === 'converted' ? 'default' : 'outline'} onClick={async () => {
+              await supabase.from('sales_leads').update({ lead_status: 'converted' }).eq('id', lead.id);
+              logAction('STATUS_CHANGE', 'Marked as Won');
+              fetchAll();
+              toast({ title: 'Lead marked as Won' });
+            }}>
+              <CheckCircle2 className="w-4 h-4 mr-1" /> Mark Won
+            </Button>
+            <Button size="sm" variant={lead.lead_status === 'lost' ? 'destructive' : 'outline'} onClick={async () => {
+              await supabase.from('sales_leads').update({ lead_status: 'lost' }).eq('id', lead.id);
+              logAction('STATUS_CHANGE', 'Marked as Lost');
+              fetchAll();
+              toast({ title: 'Lead marked as Lost' });
+            }}>
+              <X className="w-4 h-4 mr-1" /> Mark Lost
             </Button>
           </div>
         </CardContent>
