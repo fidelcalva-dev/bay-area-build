@@ -1,6 +1,7 @@
 // V3 Step 6 — Contact / Lead Capture
 import React from 'react';
 import { User, Phone, Mail, Shield, Clock, ChevronRight, Building2 } from 'lucide-react';
+import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -135,6 +136,9 @@ export function ContactStep({
             </span>
           </label>
         </div>
+
+        {/* Privacy Notice */}
+        <PrivacyNoticeAtCollection variant="compact" />
 
         {/* Trust */}
         <div className="flex items-center justify-center gap-4 py-1">

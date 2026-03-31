@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, FileText, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
 
 export default function CleanupContact() {
   const [submitting, setSubmitting] = useState(false);
@@ -104,6 +105,7 @@ export default function CleanupContact() {
                     <label className="block text-sm font-medium text-foreground mb-1">How can we help?</label>
                     <textarea rows={4} value={form.message} onChange={e => updateField('message', e.target.value)} placeholder="Describe your project or question..." className={`${inputClass} resize-y`} />
                   </div>
+                  <PrivacyNoticeAtCollection variant="compact" className="pt-1" />
                   <Button type="submit" size="lg" variant="cta" className="w-full" disabled={submitting}>
                     {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending…</> : 'Send Message'}
                   </Button>

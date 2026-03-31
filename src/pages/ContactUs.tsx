@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Phone, MessageCircle, Send } from 'lucide-react';
 import { BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { Link } from 'react-router-dom';
+import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
 import { useToast } from '@/hooks/use-toast';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
 
@@ -258,6 +259,9 @@ export default function ContactUs() {
                   </Label>
                 </div>
               </div>
+
+              {/* Privacy Notice */}
+              <PrivacyNoticeAtCollection variant="compact" className="pt-1" />
 
               {/* Submit */}
               <Button type="submit" size="lg" disabled={!canSubmit} className="w-full rounded-xl font-semibold text-base gap-2 mt-2">
