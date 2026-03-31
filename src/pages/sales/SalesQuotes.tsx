@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   FileText, DollarSign, Clock, CheckCircle2, 
   Search, Filter, Loader2, ArrowRight, Send
