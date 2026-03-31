@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } fro
 import { getPriceRangeForZip, type PriceRange } from '@/lib/masterPricingService';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
+import { useQuoteSessionTracker } from './hooks/useQuoteSessionTracker';
 import { upsertDraftQuote, logQuoteMilestone, getDraftQuoteId, clearDraftIds, meetsQuoteThreshold, type DraftQuoteData } from '@/lib/draftQuoteService';
 import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
 import {
@@ -105,6 +106,9 @@ export function V3QuoteFlow() {
   const draft = useQuoteDraftAutosave(urlDraftToken);
   const draftApplied = useRef(false);
   const quoteStartedFired = useRef(false);
+
+  // Progressive quote session tracker (server-side)
+  const sessionTracker = useQuoteSessionTracker('/quote');
 
   // Step state — new flow: skip to 'zip' step when URL has a valid ZIP pre-filled
   const hasUrlZipPrefill = urlZip.length === 5 && /^\d{5}$/.test(urlZip);
@@ -219,6 +223,27 @@ export function V3QuoteFlow() {
       lat: addressResult?.lat, lng: addressResult?.lng,
     });
   }, [step, zip, customerType, selectedUniversalProject, selectedProject, size, customerName, customerPhone, customerEmail, termsAccepted, useAddress, addressResult]);
+
+  // Progressive server-side session sync
+  useEffect(() => {
+    if (step === 'placement') return;
+    sessionTracker.updateSession({
+      currentStep: step,
+      zip: zip || undefined,
+      city: zoneResult?.cityName || undefined,
+      customerType: customerType || undefined,
+      projectType: selectedUniversalProject?.label || selectedProject?.label || undefined,
+      materialType: materialTypeForPricing || undefined,
+      materialClass: isHeavy ? (selectedMaterial?.internalClass || 'heavy') : 'general',
+      selectedSizeYd: size,
+      rentalDays,
+      customerName: customerName || undefined,
+      customerPhone: customerPhone || undefined,
+      customerEmail: customerEmail || undefined,
+      companyName: companyName || undefined,
+      customerNotes: customerNotes || undefined,
+    });
+  }, [step, zip, zoneResult?.cityName, customerType, selectedUniversalProject, selectedProject, materialTypeForPricing, isHeavy, selectedMaterial, size, rentalDays, customerName, customerPhone, customerEmail, companyName, customerNotes]);
 
   // Handle "Start Over"
   const handleStartOver = useCallback(() => {
@@ -365,6 +390,7 @@ export function V3QuoteFlow() {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
     ga4.quoteStepCompleted({ flow_version: 'v3', step_name: step, time_on_step_sec: Math.round(duration / 1000) });
+    sessionTracker.logEvent(`step_completed_${step}`, { duration_ms: duration, size, zip });
     if (step === 'zip' && !quoteStartedFired.current) {
       quoteStartedFired.current = true;
       ga4.quoteStarted({ flow_version: 'v3', entry_point: 'quote_page', city: zoneResult?.cityName, zip });
@@ -655,6 +681,9 @@ export function V3QuoteFlow() {
       if (result.success) {
         setSavedQuoteId(result.quoteId ?? null);
         draft.resetDraft();
+        sessionTracker.logEvent('quote_submitted', { quote_id: result.quoteId, size, subtotal: quote.subtotal });
+        sessionTracker.updateSession({ quoteId: result.quoteId || undefined, currentStep: 'completed' });
+        sessionTracker.clearSession();
         analytics.quoteCompleted(size, materialTypeForPricing, quote.subtotal);
         ga4.quoteSubmitted({ flow_version: 'v3', size_yd: size, material_category: materialTypeForPricing, value_estimated: quote.subtotal, city: zoneResult?.cityName, zip, serviceable: true });
         supabase.functions.invoke('send-quote-summary', {

@@ -10015,6 +10015,55 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_source_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          event_payload_json: Json | null
+          id: string
+          lead_id: string | null
+          quote_session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          event_payload_json?: Json | null
+          id?: string
+          lead_id?: string | null
+          quote_session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          event_payload_json?: Json | null
+          id?: string
+          lead_id?: string | null
+          quote_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_source_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_source_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_source_events_quote_session_id_fkey"
+            columns: ["quote_session_id"]
+            isOneToOne: false
+            referencedRelation: "quote_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_source_metadata: {
         Row: {
           approx_city: string | null
@@ -15787,94 +15836,181 @@ export type Database = {
       }
       quote_sessions: {
         Row: {
+          abandoned_at: string | null
           access_notes: string | null
+          brand_origin: string | null
+          browser_name: string | null
+          city: string | null
+          company_name: string | null
           completed_steps_json: Json | null
           created_at: string
           current_step: string | null
+          customer_email: string | null
           customer_id: string | null
+          customer_name: string | null
+          customer_notes: string | null
+          customer_phone: string | null
           customer_required_dump_flag: boolean | null
+          customer_type: string | null
+          device_type: string | null
           extras_json: Json | null
+          fbclid: string | null
           gate_code: string | null
+          gclid: string | null
           heavy_group: string | null
           id: string
+          landing_page: string | null
           last_saved_at: string | null
           lead_id: string | null
           material_class: string | null
           material_type: string | null
+          os_name: string | null
           permit_required: boolean | null
+          photos_uploaded_flag: boolean | null
           placement_notes: string | null
           placement_type_requested: string | null
           project_type: string | null
+          promoted_to_lead_at: string | null
           quantity: number | null
           quote_id: string | null
           quote_notes_customer: string | null
+          referrer_url: string | null
           rental_days: number | null
           requested_delivery_date: string | null
           requested_dump_site_name: string | null
           requested_dump_site_notes: string | null
           requested_time_window: string | null
           selected_size_yd: number | null
+          service_line: string | null
+          session_token: string | null
+          source_channel: string | null
+          source_page: string | null
+          status: string | null
           updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          zip: string | null
         }
         Insert: {
+          abandoned_at?: string | null
           access_notes?: string | null
+          brand_origin?: string | null
+          browser_name?: string | null
+          city?: string | null
+          company_name?: string | null
           completed_steps_json?: Json | null
           created_at?: string
           current_step?: string | null
+          customer_email?: string | null
           customer_id?: string | null
+          customer_name?: string | null
+          customer_notes?: string | null
+          customer_phone?: string | null
           customer_required_dump_flag?: boolean | null
+          customer_type?: string | null
+          device_type?: string | null
           extras_json?: Json | null
+          fbclid?: string | null
           gate_code?: string | null
+          gclid?: string | null
           heavy_group?: string | null
           id?: string
+          landing_page?: string | null
           last_saved_at?: string | null
           lead_id?: string | null
           material_class?: string | null
           material_type?: string | null
+          os_name?: string | null
           permit_required?: boolean | null
+          photos_uploaded_flag?: boolean | null
           placement_notes?: string | null
           placement_type_requested?: string | null
           project_type?: string | null
+          promoted_to_lead_at?: string | null
           quantity?: number | null
           quote_id?: string | null
           quote_notes_customer?: string | null
+          referrer_url?: string | null
           rental_days?: number | null
           requested_delivery_date?: string | null
           requested_dump_site_name?: string | null
           requested_dump_site_notes?: string | null
           requested_time_window?: string | null
           selected_size_yd?: number | null
+          service_line?: string | null
+          session_token?: string | null
+          source_channel?: string | null
+          source_page?: string | null
+          status?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
         }
         Update: {
+          abandoned_at?: string | null
           access_notes?: string | null
+          brand_origin?: string | null
+          browser_name?: string | null
+          city?: string | null
+          company_name?: string | null
           completed_steps_json?: Json | null
           created_at?: string
           current_step?: string | null
+          customer_email?: string | null
           customer_id?: string | null
+          customer_name?: string | null
+          customer_notes?: string | null
+          customer_phone?: string | null
           customer_required_dump_flag?: boolean | null
+          customer_type?: string | null
+          device_type?: string | null
           extras_json?: Json | null
+          fbclid?: string | null
           gate_code?: string | null
+          gclid?: string | null
           heavy_group?: string | null
           id?: string
+          landing_page?: string | null
           last_saved_at?: string | null
           lead_id?: string | null
           material_class?: string | null
           material_type?: string | null
+          os_name?: string | null
           permit_required?: boolean | null
+          photos_uploaded_flag?: boolean | null
           placement_notes?: string | null
           placement_type_requested?: string | null
           project_type?: string | null
+          promoted_to_lead_at?: string | null
           quantity?: number | null
           quote_id?: string | null
           quote_notes_customer?: string | null
+          referrer_url?: string | null
           rental_days?: number | null
           requested_delivery_date?: string | null
           requested_dump_site_name?: string | null
           requested_dump_site_notes?: string | null
           requested_time_window?: string | null
           selected_size_yd?: number | null
+          service_line?: string | null
+          session_token?: string | null
+          source_channel?: string | null
+          source_page?: string | null
+          status?: string | null
           updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          zip?: string | null
         }
         Relationships: [
           {
