@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   FileText, DollarSign, Clock, CheckCircle2, 
   Search, Filter, Loader2, ArrowRight, Send
@@ -42,10 +42,11 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 export default function SalesQuotes() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
 
   useEffect(() => {
     fetchQuotes();

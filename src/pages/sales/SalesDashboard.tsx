@@ -1,157 +1,104 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  Users, FileText, TrendingUp, DollarSign,
-  Clock, Loader2, GitBranch, ScrollText, CreditCard, CheckCircle,
-  Phone, MessageSquare, Zap, Target, Mail, Send, Truck,
-  StickyNote, Package, Filter, X,
+  Users, FileText, DollarSign,
+  Clock, Loader2, Zap, HardHat,
+  Layers, Plus, AlertTriangle, CheckCircle,
+  Bot, Mail, UserCheck, Calendar
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
-import { SalesLifecycleDashboard } from "@/components/lifecycle/dashboards";
-import { HotAILeadsQueue } from "@/components/sales/HotAILeadsQueue";
-import { SalesPipelineCards } from "@/components/sales/SalesPipelineCards";
-import { SalesScriptLibrary } from "@/components/sales/SalesScriptLibrary";
-import { SalesReadinessPanel } from "@/components/sales/SalesReadinessPanel";
 
 interface DashboardStats {
-  leadsTotal: number;
   leadsNew: number;
-  leadsConverted: number;
-  leadsHot: number;
-  quotesTotal: number;
-  quotesSaved: number;
-  pipelineValue: number;
-  contractsSent: number;
-  paymentsSent: number;
-  ordersCreated: number;
   followUpsDue: number;
+  quotesPending: number;
+  contractorApps: number;
+  bundleLeads: number;
+  cleanupLeads: number;
+  highRisk: number;
+  wonThisWeek: number;
+  existingCustomers: number;
+  scheduledJobs: number;
+  aiChatLeads: number;
+  contactFormLeads: number;
+  pipelineValue: number;
   recentActivity: Array<{
     type: "lead" | "quote" | "contract" | "payment";
     name: string;
     action: string;
     time: string;
+    link?: string;
   }>;
 }
 
-// Filter options
-const STATUS_FILTER_OPTIONS = [
-  { value: "all", label: "All Statuses" },
-  { value: "new", label: "New" },
-  { value: "contacted", label: "Contacted" },
-  { value: "qualified", label: "Qualified" },
-  { value: "quote_sent", label: "Quote Sent" },
-  { value: "converted", label: "Converted" },
-  { value: "attention_required", label: "Attention Required" },
-];
-
-const SOURCE_FILTER_OPTIONS = [
-  { value: "all", label: "All Sources" },
-  { value: "website", label: "Website" },
-  { value: "phone", label: "Phone" },
-  { value: "referral", label: "Referral" },
-  { value: "google_ads", label: "Google Ads" },
-  { value: "ai_chat", label: "AI Chat" },
-];
-
-const READINESS_FILTER_OPTIONS = [
-  { value: "all", label: "All Readiness" },
-  { value: "ready", label: "Ready to Dispatch" },
-  { value: "waiting_contract", label: "Waiting on Contract" },
-  { value: "waiting_payment", label: "Waiting on Payment" },
-  { value: "missing_info", label: "Missing Info" },
-];
-
 export default function SalesDashboard() {
-  const { user } = useAdminAuth();
+  useAdminAuth();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
-    leadsTotal: 0, leadsNew: 0, leadsConverted: 0, leadsHot: 0,
-    quotesTotal: 0, quotesSaved: 0, pipelineValue: 0,
-    contractsSent: 0, paymentsSent: 0, ordersCreated: 0, followUpsDue: 0,
-    recentActivity: [],
+    leadsNew: 0, followUpsDue: 0, quotesPending: 0,
+    contractorApps: 0, bundleLeads: 0, cleanupLeads: 0,
+    highRisk: 0, wonThisWeek: 0, existingCustomers: 0,
+    scheduledJobs: 0, aiChatLeads: 0, contactFormLeads: 0,
+    pipelineValue: 0, recentActivity: [],
   });
-
-  // Filters
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [filterSource, setFilterSource] = useState("all");
-  const [filterCity, setFilterCity] = useState("");
-  const [filterReadiness, setFilterReadiness] = useState("all");
-  const hasActiveFilters = filterStatus !== "all" || filterSource !== "all" || filterCity !== "" || filterReadiness !== "all";
-
-  function clearFilters() {
-    setFilterStatus("all");
-    setFilterSource("all");
-    setFilterCity("");
-    setFilterReadiness("all");
-  }
 
   useEffect(() => { fetchStats(); }, []);
 
   async function fetchStats() {
     setIsLoading(true);
     try {
-      const now = new Date();
-      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-      const [leadsRes, quotesRes, contractsRes, paymentsRes, ordersRes, followUpRes] = await Promise.all([
-        supabase.from("sales_leads").select("lead_status, created_at, lead_quality_label"),
-        supabase.from("quotes").select("status, subtotal, created_at, customer_name").order("created_at", { ascending: false }).limit(200),
-        supabase.from("quote_contracts").select("status, created_at, customer_name").order("created_at", { ascending: false }).limit(50),
-        supabase.from("payment_requests" as "orders").select("status, amount, created_at" as "*").order("created_at", { ascending: false }).limit(50),
-        supabase.from("orders").select("id, created_at").gte("created_at", todayStart),
-        supabase.from("sales_leads").select("id").eq("lead_status", "contacted").not("last_contacted_at", "is", null),
+      const [leadsRes, quotesRes, ordersRes] = await Promise.all([
+        supabase.from("sales_leads").select("lead_status, lead_quality_label, urgency_score, is_existing_customer, contractor_flag, service_line, bundle_opportunity_flag, source_channel, created_at, customer_name"),
+        supabase.from("quotes").select("id, status, subtotal, created_at, customer_name").order("created_at", { ascending: false }).limit(200),
+        supabase.from("orders").select("id, status").in("status", ["confirmed", "scheduled"]),
       ]);
 
       const leads = leadsRes.data || [];
       const quotes = quotesRes.data || [];
-      const contracts = (contractsRes.data || []) as any[];
-      const payments = ((paymentsRes.data || []) as any[]);
       const orders = ordersRes.data || [];
-      const followUps = followUpRes.data || [];
 
-      const hotLeads = leads.filter(l => l.lead_status === "new" && l.created_at >= twoHoursAgo).length;
+      const followupStatuses = ['contacted', 'qualified', 'quoted'];
+      const aiSources = ['AI_CHAT', 'AI_ASSISTANT', 'WEBSITE_CHAT', 'WEBSITE_ASSISTANT'];
+      const contactSources = ['CONTACT_FORM', 'CLEANUP_CONTACT', 'CALLBACK_REQUEST'];
 
       const recentActivity = [
-        ...leads.slice(0, 2).map((l) => ({
+        ...leads.filter(l => l.lead_status === 'new').slice(0, 3).map(l => ({
           type: "lead" as const,
-          name: "New Lead",
-          action: `Status: ${l.lead_status}`,
+          name: l.customer_name || "New Lead",
+          action: `Status: New`,
           time: l.created_at,
+          link: "/sales/leads",
         })),
-        ...quotes.slice(0, 2).map((q) => ({
+        ...quotes.slice(0, 2).map(q => ({
           type: "quote" as const,
           name: q.customer_name || "Quote",
-          action: `$${q.subtotal?.toFixed(0) || 0}`,
+          action: `$${q.subtotal?.toFixed(0) || 0} — ${q.status}`,
           time: q.created_at,
+          link: "/sales/quotes",
         })),
-        ...contracts.slice(0, 1).map((c: any) => ({
-          type: "contract" as const,
-          name: c.customer_name || "Contract",
-          action: `Status: ${c.status}`,
-          time: c.created_at,
-        })),
-      ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 6);
+      ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
 
       setStats({
-        leadsTotal: leads.length,
-        leadsNew: leads.filter((l) => l.lead_status === "new").length,
-        leadsConverted: leads.filter((l) => l.lead_status === "converted").length,
-        leadsHot: hotLeads,
-        quotesTotal: quotes.length,
-        quotesSaved: quotes.filter((q) => q.status === "saved").length,
-        pipelineValue: quotes.filter(q => q.status === "saved").reduce((sum, q) => sum + (q.subtotal || 0), 0),
-        contractsSent: contracts.filter((c: any) => c.status === "pending").length,
-        paymentsSent: payments.filter((p: any) => p.status === "sent").length,
-        ordersCreated: orders.length,
-        followUpsDue: followUps.length,
+        leadsNew: leads.filter(l => l.lead_status === 'new').length,
+        followUpsDue: leads.filter(l => followupStatuses.includes(l.lead_status)).length,
+        quotesPending: quotes.filter(q => ['saved', 'draft', 'sent', 'viewed'].includes(q.status)).length,
+        contractorApps: leads.filter(l => l.contractor_flag).length,
+        bundleLeads: leads.filter(l => l.service_line === 'BOTH' || l.bundle_opportunity_flag).length,
+        cleanupLeads: leads.filter(l => ['CLEANUP', 'BOTH'].includes(l.service_line || '')).length,
+        highRisk: leads.filter(l => l.lead_quality_label === 'RED').length,
+        wonThisWeek: leads.filter(l => l.lead_status === 'converted' && l.created_at >= weekAgo).length,
+        existingCustomers: leads.filter(l => l.is_existing_customer).length,
+        scheduledJobs: orders.length,
+        aiChatLeads: leads.filter(l => aiSources.includes(l.source_channel || '')).length,
+        contactFormLeads: leads.filter(l => contactSources.includes(l.source_channel || '')).length,
+        pipelineValue: quotes.filter(q => q.status === 'saved').reduce((sum, q) => sum + (q.subtotal || 0), 0),
         recentActivity,
       });
     } catch (err) {
@@ -169,199 +116,142 @@ export default function SalesDashboard() {
     );
   }
 
-  const kpis = [
-    { label: "New Leads", value: stats.leadsNew, icon: Users, alert: stats.leadsNew > 0 },
-    { label: "Hot Leads", value: stats.leadsHot, icon: Zap, alert: stats.leadsHot > 0 },
-    { label: "Quotes Ready", value: stats.quotesSaved, icon: FileText },
-    { label: "Pipeline Value", value: `$${(stats.pipelineValue / 1000).toFixed(1)}k`, icon: DollarSign },
-    { label: "Contracts Pending", value: stats.contractsSent, icon: ScrollText },
-    { label: "Payments Pending", value: stats.paymentsSent, icon: CreditCard },
-    { label: "Orders Today", value: stats.ordersCreated, icon: Target },
-    { label: "Follow-Ups Due", value: stats.followUpsDue, icon: Clock, alert: stats.followUpsDue > 0 },
+  const quickActions = [
+    { label: "New Lead", icon: Plus, href: "/sales/leads", variant: "default" as const },
+    { label: "New Quote", icon: FileText, href: "/sales/quotes/new", variant: "default" as const },
+    { label: "Open Leads", icon: Users, href: "/sales/leads", variant: "outline" as const },
+    { label: "Open Quotes", icon: FileText, href: "/sales/quotes", variant: "outline" as const },
+    { label: "Contractors", icon: HardHat, href: "/sales/leads?tab=contractor", variant: "outline" as const },
+    { label: "Cleanup Board", icon: HardHat, href: "/sales/leads?view=cleanup-board", variant: "outline" as const },
+  ];
+
+  const primaryKpis = [
+    { label: "New Leads", value: stats.leadsNew, icon: Zap, alert: stats.leadsNew > 0, href: "/sales/leads?tab=new" },
+    { label: "Follow-Up Today", value: stats.followUpsDue, icon: Clock, alert: stats.followUpsDue > 0, href: "/sales/leads?tab=needs_followup" },
+    { label: "Quotes Pending", value: stats.quotesPending, icon: FileText, alert: stats.quotesPending > 0, href: "/sales/quotes?status=saved" },
+    { label: "Contractor Apps", value: stats.contractorApps, icon: HardHat, href: "/sales/leads?tab=contractor" },
+    { label: "Bundle Leads", value: stats.bundleLeads, icon: Layers, href: "/sales/leads?tab=bundle" },
+  ];
+
+  const secondaryKpis = [
+    { label: "AI Chat Leads", value: stats.aiChatLeads, icon: Bot, href: "/sales/leads?tab=ai_chat" },
+    { label: "Contact Form", value: stats.contactFormLeads, icon: Mail, href: "/sales/leads?tab=contact_form" },
+    { label: "High Risk", value: stats.highRisk, icon: AlertTriangle, href: "/sales/leads?tab=high_risk" },
+    { label: "Won This Week", value: stats.wonThisWeek, icon: CheckCircle },
+    { label: "Existing Customers", value: stats.existingCustomers, icon: UserCheck, href: "/sales/leads?tab=existing_customer" },
+    { label: "Scheduled Jobs", value: stats.scheduledJobs, icon: Calendar, href: "/admin/orders" },
+    { label: "Pipeline Value", value: `$${(stats.pipelineValue / 1000).toFixed(1)}k`, icon: DollarSign, href: "/sales/quotes" },
+    { label: "Cleanup Leads", value: stats.cleanupLeads, icon: HardHat, href: "/sales/leads?tab=cleanup" },
   ];
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="overview">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="readiness"><CheckCircle className="w-3 h-3 mr-1" />Readiness</TabsTrigger>
-          <TabsTrigger value="lifecycle"><GitBranch className="w-3 h-3 mr-1" />Lifecycle Pipeline</TabsTrigger>
-        </TabsList>
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold">Sales Dashboard</h1>
+        <p className="text-sm text-muted-foreground">Quick access to leads, quotes, and pipeline</p>
+      </div>
 
-        <TabsContent value="overview">
-          <div className="space-y-6">
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-2">
+        {quickActions.map(action => {
+          const Icon = action.icon;
+          return (
+            <Button key={action.label} variant={action.variant} size="sm" asChild>
+              <Link to={action.href}>
+                <Icon className="w-4 h-4 mr-1.5" />
+                {action.label}
+              </Link>
+            </Button>
+          );
+        })}
+      </div>
 
-      {/* Hot AI Leads */}
-      <HotAILeadsQueue />
+      {/* Primary KPIs — clickable */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {primaryKpis.map(kpi => {
+          const Icon = kpi.icon;
+          return (
+            <Card
+              key={kpi.label}
+              className={`cursor-pointer hover:border-primary/50 transition-colors ${kpi.alert ? 'border-destructive/30' : ''}`}
+              onClick={() => kpi.href && navigate(kpi.href)}
+            >
+              <CardContent className="flex items-center gap-3 pt-4 pb-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpi.alert ? 'bg-destructive/10' : 'bg-muted'}`}>
+                  <Icon className={`w-4 h-4 ${kpi.alert ? 'text-destructive' : 'text-primary'}`} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
+                  <p className={`text-lg font-bold ${kpi.alert ? 'text-destructive' : ''}`}>{kpi.value}</p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {kpis.map(kpi => (
-          <Card key={kpi.label}>
-            <CardContent className="flex items-center gap-3 pt-4 pb-3">
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpi.alert ? 'bg-destructive/10' : 'bg-muted'}`}>
-                <kpi.icon className={`w-4 h-4 ${kpi.alert ? 'text-destructive' : 'text-primary'}`} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
-                <p className={`text-lg font-bold ${kpi.alert ? 'text-destructive' : ''}`}>{kpi.value}</p>
+      {/* Secondary KPIs + Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Secondary metrics */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Pipeline Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {secondaryKpis.map(kpi => {
+                  const Icon = kpi.icon;
+                  return (
+                    <div
+                      key={kpi.label}
+                      className={`flex items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors ${kpi.href ? 'cursor-pointer' : ''}`}
+                      onClick={() => kpi.href && navigate(kpi.href)}
+                    >
+                      <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold">{kpi.value}</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{kpi.label}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="py-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[150px] h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS_FILTER_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterSource} onValueChange={setFilterSource}>
-              <SelectTrigger className="w-[140px] h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {SOURCE_FILTER_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterReadiness} onValueChange={setFilterReadiness}>
-              <SelectTrigger className="w-[160px] h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {READINESS_FILTER_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" className="h-8 text-xs gap-1" onClick={clearFilters}>
-                <X className="w-3 h-3" /> Clear
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pipeline Cards */}
-      <SalesPipelineCards />
-
-      {/* Quick Actions + Recent Activity */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Recent Activity */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-2">
-            <Button className="justify-start" asChild>
-              <Link to="/sales/quotes/new">
-                <FileText className="w-4 h-4 mr-2" /> New Quote
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/sales/leads">
-                <Users className="w-4 h-4 mr-2" /> Lead Hub
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/admin/customers">
-                <Users className="w-4 h-4 mr-2" /> Customers
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/sales/quotes">
-                <FileText className="w-4 h-4 mr-2" /> All Quotes
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/sales/calls">
-                <Phone className="w-4 h-4 mr-2" /> Call Log
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/admin/orders">
-                <Package className="w-4 h-4 mr-2" /> Orders
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/finance/payments">
-                <CreditCard className="w-4 h-4 mr-2" /> Payments
-              </Link>
-            </Button>
-            <Button variant="outline" className="justify-start" asChild>
-              <Link to="/dispatch">
-                <Truck className="w-4 h-4 mr-2" /> Dispatch
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Recent Activity</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {stats.recentActivity.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
               ) : (
-                stats.recentActivity.map((activity, i) => {
-                  const iconMap = {
-                    lead: { Icon: Users, bg: "bg-primary/10", fg: "text-primary" },
-                    quote: { Icon: FileText, bg: "bg-primary/10", fg: "text-primary" },
-                    contract: { Icon: ScrollText, bg: "bg-primary/10", fg: "text-primary" },
-                    payment: { Icon: CreditCard, bg: "bg-primary/10", fg: "text-primary" },
-                  }[activity.type];
-                  return (
-                    <div key={i} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${iconMap.bg}`}>
-                          <iconMap.Icon className={`w-3 h-3 ${iconMap.fg}`} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{activity.name}</p>
-                          <p className="text-xs text-muted-foreground">{activity.action}</p>
-                        </div>
-                      </div>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {format(new Date(activity.time), "h:mm a")}
-                      </span>
+                stats.recentActivity.map((activity, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between ${activity.link ? 'cursor-pointer hover:bg-muted/50 rounded-md p-1 -m-1' : ''}`}
+                    onClick={() => activity.link && navigate(activity.link)}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{activity.name}</p>
+                      <p className="text-xs text-muted-foreground">{activity.action}</p>
                     </div>
-                  );
-                })
+                    <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
+                      {format(new Date(activity.time), "h:mm a")}
+                    </span>
+                  </div>
+                ))
               )}
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Sales Scripts */}
-      <SalesScriptLibrary />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="readiness">
-          <SalesReadinessPanel />
-        </TabsContent>
-
-        <TabsContent value="lifecycle">
-          <SalesLifecycleDashboard />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
