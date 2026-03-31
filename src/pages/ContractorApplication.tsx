@@ -99,7 +99,7 @@ export default function ContractorApplication() {
           source_page: '/contractor-application',
           source_module: 'contractor_application',
           brand: 'CALSAN_DUMPSTERS_PRO',
-          lead_intent: 'CONTRACTOR_APPLICATION',
+          lead_intent: 'CONTRACTOR_ACCOUNT',
           name: contactName,
           phone,
           email,
