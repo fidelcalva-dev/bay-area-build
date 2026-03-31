@@ -74,6 +74,9 @@ export default function AdminLayout() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
+        <div className="flex items-center justify-end p-2 border-b border-border bg-background lg:hidden">
+          <NotificationBell />
+        </div>
         <Outlet />
       </main>
 

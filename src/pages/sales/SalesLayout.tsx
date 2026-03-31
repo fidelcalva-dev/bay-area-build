@@ -120,6 +120,8 @@ export default function SalesLayout() {
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             </div>
+            <div className="flex items-center gap-1">
+              <NotificationBell />
             <Button 
               variant="ghost" 
               size="icon" 

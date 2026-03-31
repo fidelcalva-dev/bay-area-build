@@ -101,14 +101,17 @@ export default function CSLayout() {
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 bg-card border-r border-border flex flex-col">
         <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Headphones className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+                <Headphones className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="font-bold text-foreground">CS Panel</h1>
+                <p className="text-xs text-muted-foreground">Customer Service</p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-bold text-foreground">CS Panel</h1>
-              <p className="text-xs text-muted-foreground">Customer Service</p>
-            </div>
+            <NotificationBell />
           </div>
         </div>
 
