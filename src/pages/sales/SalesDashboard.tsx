@@ -36,7 +36,7 @@ interface DashboardStats {
 }
 
 export default function SalesDashboard() {
-  const { user } = useAdminAuth();
+  useAdminAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
