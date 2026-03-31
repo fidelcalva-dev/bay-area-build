@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Users, FileText, TrendingUp, DollarSign,
-  Clock, Loader2, Zap, Target, Phone, HardHat,
-  Layers, Plus, ArrowRight, AlertTriangle, CheckCircle,
-  Bot, Mail, UserCheck, Shield, Calendar, Package
+  Users, FileText, DollarSign,
+  Clock, Loader2, Zap, HardHat,
+  Layers, Plus, AlertTriangle, CheckCircle,
+  Bot, Mail, UserCheck, Calendar
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
