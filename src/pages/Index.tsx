@@ -48,6 +48,7 @@ import yd50Img from '@/assets/50yd-dumpster.png';
 import yd50Photo1 from '@/assets/50yd-photo-1.jpg';
 import yd50Photo2 from '@/assets/50yd-photo-2.jpg';
 import yd50Photo3 from '@/assets/50yd-photo-3.jpg';
+import { HeroImagePanel } from '@/components/sections/HeroImagePanel';
 import yd50Photo4 from '@/assets/50yd-photo-4.jpg';
 
 const SIZE_GALLERY: Record<number, string[]> = {
@@ -256,89 +257,99 @@ const Index = () => {
       </div>
 
       {/* ========== SECTION 1 — HERO ========== */}
-      <section className="bg-background py-12 md:py-20">
+      <section className="bg-background py-10 md:py-16 lg:py-20">
         <div className="container-wide">
-          <div className="text-center mb-8 space-y-4 max-w-[660px] mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              Bay Area Dumpster Rental
-              <span className="block text-primary mt-1">Transparent Pricing, Same-Day Delivery</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto">
-              Roll-off dumpster rentals from local yards in Oakland, San Jose &amp; San Francisco. 5–50 yard sizes with all-inclusive pricing.
-            </p>
-          </div>
-
-          {/* Mini Quote Starter */}
-          <div className="max-w-md mx-auto mb-4 space-y-3">
-            <div className="flex items-center bg-card rounded-2xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
-              <div className="flex items-center pl-4 pr-2">
-                <MapPin className="w-5 h-5 text-muted-foreground" />
+          <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-8 lg:gap-12 items-center">
+            {/* Left — Content + Form */}
+            <div className="order-2 lg:order-1 space-y-6">
+              <div className="text-center lg:text-left space-y-4">
+                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
+                  Bay Area Dumpster Rental
+                  <span className="block text-primary mt-1">Transparent Pricing, Same-Day Delivery</span>
+                </h1>
+                <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
+                  Roll-off dumpster rentals from local yards in Oakland, San Jose &amp; San Francisco. 5–50 yard sizes with all-inclusive pricing.
+                </p>
               </div>
-              <Input
-                type="text"
-                value={heroInput}
-                onChange={(e) => setHeroInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleHeroQuote(); }}
-                placeholder="Service address or ZIP"
-                className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
-              />
-            </div>
-            <select
-              value={heroProject}
-              onChange={(e) => setHeroProject(e.target.value)}
-              className="w-full h-12 rounded-2xl border border-border bg-card px-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 focus:outline-none appearance-none"
-            >
-              <option value="">What are you working on?</option>
-              <option value="home-cleanout">Home Cleanout</option>
-              <option value="kitchen-remodel">Kitchen Remodel</option>
-              <option value="roof-replacement">Roofing Debris</option>
-              <option value="construction-debris">Construction Debris</option>
-              <option value="garage-cleanout">Garage Cleanout</option>
-              <option value="estate-cleanout">Estate Cleanout</option>
-              <option value="yard-cleanup">Yard Cleanup</option>
-              <option value="concrete-soil">Concrete / Soil Removal</option>
-            </select>
-            <Button
-              size="lg"
-              onClick={handleHeroQuote}
-              className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
-            >
-              Check Price & Availability
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </div>
 
-          {/* Supporting CTAs */}
-          <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-[520px] mx-auto">
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
-              <Link to="/waste-vision">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photo for Size Help
-              </Link>
-            </Button>
+              {/* Mini Quote Starter */}
+              <div className="max-w-md mx-auto lg:mx-0 space-y-3">
+                <div className="flex items-center bg-card rounded-2xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
+                  <div className="flex items-center pl-4 pr-2">
+                    <MapPin className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <Input
+                    type="text"
+                    value={heroInput}
+                    onChange={(e) => setHeroInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleHeroQuote(); }}
+                    placeholder="Service address or ZIP"
+                    className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
+                  />
+                </div>
+                <select
+                  value={heroProject}
+                  onChange={(e) => setHeroProject(e.target.value)}
+                  className="w-full h-12 rounded-2xl border border-border bg-card px-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 focus:outline-none appearance-none"
+                >
+                  <option value="">What are you working on?</option>
+                  <option value="home-cleanout">Home Cleanout</option>
+                  <option value="kitchen-remodel">Kitchen Remodel</option>
+                  <option value="roof-replacement">Roofing Debris</option>
+                  <option value="construction-debris">Construction Debris</option>
+                  <option value="garage-cleanout">Garage Cleanout</option>
+                  <option value="estate-cleanout">Estate Cleanout</option>
+                  <option value="yard-cleanup">Yard Cleanup</option>
+                  <option value="concrete-soil">Concrete / Soil Removal</option>
+                </select>
+                <Button
+                  size="lg"
+                  onClick={handleHeroQuote}
+                  className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
+                >
+                  Check Price & Availability
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+
+              {/* Supporting CTAs */}
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 max-w-[520px] mx-auto lg:mx-0">
+                <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
+                  <Link to="/waste-vision">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Photo for Size Help
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex justify-center lg:justify-start gap-4">
+                <a
+                  href={`tel:${BUSINESS_INFO.phone.sales}`}
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  Call {BUSINESS_INFO.phone.salesFormatted}
+                </a>
+                <a
+                  href={`sms:${BUSINESS_INFO.phone.sales}`}
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Text Us
+                </a>
+              </div>
+              <p className="text-center lg:text-left text-sm text-muted-foreground">
+                Need cleanup too?{' '}
+                <Link to="/cleanup" className="text-primary font-medium hover:underline">
+                  The same trusted team now offers construction cleanup →
+                </Link>
+              </p>
+            </div>
+
+            {/* Right — Hero Image */}
+            <div className="order-1 lg:order-2">
+              <HeroImagePanel />
+            </div>
           </div>
-          <div className="mt-3 flex justify-center gap-4">
-            <a
-              href={`tel:${BUSINESS_INFO.phone.sales}`}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              Call {BUSINESS_INFO.phone.salesFormatted}
-            </a>
-            <a
-              href={`sms:${BUSINESS_INFO.phone.sales}`}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              Text Us
-            </a>
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Need cleanup too?{' '}
-            <Link to="/cleanup" className="text-primary font-medium hover:underline">
-              The same trusted team now offers construction cleanup →
-            </Link>
-          </p>
         </div>
       </section>
 
