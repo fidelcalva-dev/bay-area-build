@@ -107,6 +107,9 @@ export function V3QuoteFlow() {
   const draftApplied = useRef(false);
   const quoteStartedFired = useRef(false);
 
+  // Progressive quote session tracker (server-side)
+  const sessionTracker = useQuoteSessionTracker('/quote');
+
   // Step state — new flow: skip to 'zip' step when URL has a valid ZIP pre-filled
   const hasUrlZipPrefill = urlZip.length === 5 && /^\d{5}$/.test(urlZip);
   const [step, setStep] = useState<QuoteStep>(hasUrlZipPrefill ? 'zip' : 'project-type');
