@@ -99,7 +99,7 @@ export default function ContractorApplication() {
           source_page: '/contractor-application',
           source_module: 'contractor_application',
           brand: 'CALSAN_DUMPSTERS_PRO',
-          lead_intent: 'CONTRACTOR_APPLICATION',
+          lead_intent: 'CONTRACTOR_ACCOUNT',
           name: contactName,
           phone,
           email,
@@ -108,7 +108,8 @@ export default function ContractorApplication() {
           message: `Contractor application: ${companyName} | Volume: ${monthlyVolume} | Cities: ${serviceCities.join(', ')} | Sizes: ${typicalSizes.join(', ')}`,
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
-            service_line: 'DUMPSTER',
+            service_line: 'CLEANUP',
+            contractor_application_flag: true,
             contractor_flag: true,
             service_cities: serviceCities,
             project_types: projectTypes,

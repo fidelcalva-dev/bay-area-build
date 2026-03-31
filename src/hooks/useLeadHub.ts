@@ -183,11 +183,16 @@ export type LeadHubTab =
   | 'existing_customer' 
   | 'high_risk' 
   | 'my_leads'
+  | 'dumpster'
   | 'cleanup'
   | 'contractor'
   | 'bundle'
   | 'ai_chat'
   | 'contact_form'
+  | 'waiting_photos'
+  | 'needs_site_visit'
+  | 'won'
+  | 'lost'
   | 'all';
 
 export interface LeadHubFilters {
@@ -248,6 +253,21 @@ export function useLeadHub(filters: LeadHubFilters) {
           break;
         case 'contact_form':
           query = query.in('source_channel', ['CONTACT_FORM', 'CLEANUP_CONTACT', 'CALLBACK_REQUEST', 'CLICK_TO_CALL', 'CLICK_TO_TEXT']);
+          break;
+        case 'dumpster':
+          query = query.eq('service_line', 'DUMPSTER');
+          break;
+        case 'waiting_photos':
+          query = query.eq('photos_uploaded_flag', false).in('lead_status', ['new', 'contacted', 'qualified']);
+          break;
+        case 'needs_site_visit':
+          query = query.eq('needs_site_visit', true);
+          break;
+        case 'won':
+          query = query.eq('lead_status', 'converted');
+          break;
+        case 'lost':
+          query = query.eq('lead_status', 'lost');
           break;
         // 'my_leads' is filtered client-side after fetch (needs auth.uid)
       }
