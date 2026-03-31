@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, FileText, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
 
 export default function CleanupContact() {
   const [submitting, setSubmitting] = useState(false);

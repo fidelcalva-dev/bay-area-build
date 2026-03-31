@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { Link } from 'react-router-dom';
+import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
 
 const SERVICE_CITIES = [
   'Oakland', 'San Jose', 'San Francisco', 'Berkeley', 'Alameda',
