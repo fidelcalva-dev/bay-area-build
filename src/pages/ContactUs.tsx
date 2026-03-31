@@ -259,6 +259,9 @@ export default function ContactUs() {
                 </div>
               </div>
 
+              {/* Privacy Notice */}
+              <PrivacyNoticeAtCollection variant="compact" className="pt-1" />
+
               {/* Submit */}
               <Button type="submit" size="lg" disabled={!canSubmit} className="w-full rounded-xl font-semibold text-base gap-2 mt-2">
                 <Send className="w-4 h-4" />
