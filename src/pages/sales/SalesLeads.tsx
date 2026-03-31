@@ -65,13 +65,18 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'needs_followup', label: 'Needs Follow-Up', icon: MessageSquare },
   { key: 'my_leads', label: 'My Leads', icon: UserCheck },
   { key: 'high_intent', label: 'High Intent', icon: Zap },
+  { key: 'dumpster', label: 'Dumpster', icon: FileText },
   { key: 'cleanup', label: 'Cleanup', icon: HardHat },
   { key: 'contractor', label: 'Contractors', icon: Users },
   { key: 'bundle', label: 'Bundle', icon: Layers },
   { key: 'ai_chat', label: 'AI Chat', icon: Bot },
   { key: 'contact_form', label: 'Contact Form', icon: Mail },
+  { key: 'waiting_photos', label: 'Waiting Photos', icon: Clock },
+  { key: 'needs_site_visit', label: 'Site Visit', icon: MapPin },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
+  { key: 'won', label: 'Won', icon: CheckCircle2 },
+  { key: 'lost', label: 'Lost', icon: X },
   { key: 'all', label: 'All', icon: Users },
 ];
 
