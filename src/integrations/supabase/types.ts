@@ -11839,6 +11839,63 @@ export type Database = {
           },
         ]
       }
+      notification_events: {
+        Row: {
+          brand_origin: string | null
+          created_at: string
+          customer_id: string | null
+          dedupe_key: string | null
+          deep_link: string | null
+          event_type: string
+          id: string
+          lead_id: string | null
+          message: string | null
+          payload_json: Json | null
+          quote_id: string | null
+          requires_action: boolean
+          service_line: string | null
+          severity: string
+          target_roles: string[]
+          title: string
+        }
+        Insert: {
+          brand_origin?: string | null
+          created_at?: string
+          customer_id?: string | null
+          dedupe_key?: string | null
+          deep_link?: string | null
+          event_type: string
+          id?: string
+          lead_id?: string | null
+          message?: string | null
+          payload_json?: Json | null
+          quote_id?: string | null
+          requires_action?: boolean
+          service_line?: string | null
+          severity?: string
+          target_roles?: string[]
+          title: string
+        }
+        Update: {
+          brand_origin?: string | null
+          created_at?: string
+          customer_id?: string | null
+          dedupe_key?: string | null
+          deep_link?: string | null
+          event_type?: string
+          id?: string
+          lead_id?: string | null
+          message?: string | null
+          payload_json?: Json | null
+          quote_id?: string | null
+          requires_action?: boolean
+          service_line?: string | null
+          severity?: string
+          target_roles?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           created_at: string
@@ -11888,6 +11945,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_routing_config: {
+        Row: {
+          channel_email: boolean
+          channel_in_app: boolean
+          channel_sms: boolean
+          created_at: string
+          event_type: string
+          id: string
+          is_active: boolean
+          target_role: string
+        }
+        Insert: {
+          channel_email?: boolean
+          channel_in_app?: boolean
+          channel_sms?: boolean
+          created_at?: string
+          event_type: string
+          id?: string
+          is_active?: boolean
+          target_role: string
+        }
+        Update: {
+          channel_email?: boolean
+          channel_in_app?: boolean
+          channel_sms?: boolean
+          created_at?: string
+          event_type?: string
+          id?: string
+          is_active?: boolean
+          target_role?: string
+        }
+        Relationships: []
       }
       notification_rules: {
         Row: {
