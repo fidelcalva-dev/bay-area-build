@@ -224,6 +224,27 @@ export function V3QuoteFlow() {
     });
   }, [step, zip, customerType, selectedUniversalProject, selectedProject, size, customerName, customerPhone, customerEmail, termsAccepted, useAddress, addressResult]);
 
+  // Progressive server-side session sync
+  useEffect(() => {
+    if (step === 'placement') return;
+    sessionTracker.updateSession({
+      currentStep: step,
+      zip: zip || undefined,
+      city: zoneResult?.cityName || undefined,
+      customerType: customerType || undefined,
+      projectType: selectedUniversalProject?.label || selectedProject?.label || undefined,
+      materialType: materialTypeForPricing || undefined,
+      materialClass: isHeavy ? (selectedMaterial?.internalClass || 'heavy') : 'general',
+      selectedSizeYd: size,
+      rentalDays,
+      customerName: customerName || undefined,
+      customerPhone: customerPhone || undefined,
+      customerEmail: customerEmail || undefined,
+      companyName: companyName || undefined,
+      customerNotes: customerNotes || undefined,
+    });
+  }, [step, zip, zoneResult?.cityName, customerType, selectedUniversalProject, selectedProject, materialTypeForPricing, isHeavy, selectedMaterial, size, rentalDays, customerName, customerPhone, customerEmail, companyName, customerNotes]);
+
   // Handle "Start Over"
   const handleStartOver = useCallback(() => {
     draft.resetDraft();
