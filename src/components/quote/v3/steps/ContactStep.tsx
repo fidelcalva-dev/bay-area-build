@@ -137,6 +137,9 @@ export function ContactStep({
           </label>
         </div>
 
+        {/* Privacy Notice */}
+        <PrivacyNoticeAtCollection variant="compact" />
+
         {/* Trust */}
         <div className="flex items-center justify-center gap-4 py-1">
           <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
