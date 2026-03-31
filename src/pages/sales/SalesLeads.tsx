@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Users, Phone, MessageSquare, FileText, Search, Plus, Clock,
   Shield, Loader2, Download, Calendar, Inbox, UserCheck, Zap,
-  LayoutGrid, HardHat, Layers
+  LayoutGrid, HardHat, Layers, Bot, Mail
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { CleanupBoard } from "@/components/sales/CleanupBoard";
