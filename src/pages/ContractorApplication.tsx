@@ -349,6 +349,9 @@ export default function ContractorApplication() {
               </CardContent>
             </Card>
 
+            {/* Privacy Notice */}
+            <PrivacyNoticeAtCollection variant="compact" />
+
             {/* Submit */}
             <Button type="submit" size="lg" className="w-full h-14 text-base font-bold" disabled={isSubmitting}>
               {isSubmitting ? (
