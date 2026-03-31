@@ -186,6 +186,8 @@ export type LeadHubTab =
   | 'cleanup'
   | 'contractor'
   | 'bundle'
+  | 'ai_chat'
+  | 'contact_form'
   | 'all';
 
 export interface LeadHubFilters {
