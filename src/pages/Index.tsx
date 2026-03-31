@@ -48,6 +48,7 @@ import yd50Img from '@/assets/50yd-dumpster.png';
 import yd50Photo1 from '@/assets/50yd-photo-1.jpg';
 import yd50Photo2 from '@/assets/50yd-photo-2.jpg';
 import yd50Photo3 from '@/assets/50yd-photo-3.jpg';
+import { HeroImagePanel } from '@/components/sections/HeroImagePanel';
 import yd50Photo4 from '@/assets/50yd-photo-4.jpg';
 
 const SIZE_GALLERY: Record<number, string[]> = {
