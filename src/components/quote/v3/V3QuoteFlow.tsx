@@ -390,6 +390,7 @@ export function V3QuoteFlow() {
     const duration = Date.now() - stepStartTime;
     analytics.quoteStepComplete(step, duration);
     ga4.quoteStepCompleted({ flow_version: 'v3', step_name: step, time_on_step_sec: Math.round(duration / 1000) });
+    sessionTracker.logEvent(`step_completed_${step}`, { duration_ms: duration, size, zip });
     if (step === 'zip' && !quoteStartedFired.current) {
       quoteStartedFired.current = true;
       ga4.quoteStarted({ flow_version: 'v3', entry_point: 'quote_page', city: zoneResult?.cityName, zip });
