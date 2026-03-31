@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { MobileLayout, MobileNavItem, MobileGlobalSearch } from "@/components/mobile";
 import { AgentStatusWidget } from '@/components/telephony';
 import AiControlWidget from '@/components/ai/AiControlWidget';
+import { NotificationBell } from '@/components/notifications';
 
 const SALES_NAV = [
   { label: "Dashboard", href: "/sales", icon: Home },
@@ -101,6 +102,7 @@ export default function SalesLayout() {
           <img src={logoCalsan} alt="Calsan" className="h-8 rounded" />
           <span className="font-semibold">Sales Portal</span>
         </div>
+        <NotificationBell />
       </header>
 
       {/* Sidebar */}
@@ -118,14 +120,17 @@ export default function SalesLayout() {
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <NotificationBell />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Navigation */}

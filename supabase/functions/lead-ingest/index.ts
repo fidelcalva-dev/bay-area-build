@@ -508,27 +508,117 @@ Deno.serve(async (req) => {
       });
     } catch { /* AI job queue optional */ }
 
-    // Send internal notification
+    // Send internal notification via canonical notification_events
     try {
       const { data: lead } = await supabase
         .from('sales_leads')
-        .select('assignment_type, customer_name, city')
+        .select('assignment_type, customer_name, city, contractor_flag, bundle_opportunity_flag, recurring_service_flag, needs_site_visit, photos_uploaded_flag')
         .eq('id', leadId)
         .single();
 
       if (lead) {
-        await supabase.rpc('enqueue_notification', {
-          p_channel: 'IN_APP',
-          p_target_team: lead.assignment_type === 'cs' ? 'CS' : 'SALES',
-          p_title: `New Lead from ${payload.source_channel}`,
-          p_body: `${lead.customer_name || 'Unknown'} ${lead.city ? '(' + lead.city + ')' : ''}`,
-          p_entity_type: 'lead',
-          p_entity_id: leadId,
-          p_priority: 'NORMAL',
-          p_mode: 'LIVE_INTERNAL',
+        // Determine specific event type for routing
+        let eventType = 'lead_created';
+        const targetRoles = ['admin'];
+        const deeplinkBase = '/sales/leads';
+
+        if (intent === 'CONTRACTOR_APPLICATION') {
+          eventType = 'contractor_application_submitted';
+          targetRoles.push('sales');
+        } else if (channelKey === 'AI_CHAT') {
+          eventType = 'ai_chat_handoff_created';
+          targetRoles.push('sales');
+        } else if (channelKey === 'CONTACT_FORM' || channelKey === 'CLEANUP_CONTACT') {
+          eventType = 'contact_form_submitted';
+          targetRoles.push('sales');
+        } else if (serviceLine === 'BOTH') {
+          eventType = 'bundle_lead_created';
+          targetRoles.push('sales');
+        } else if (serviceLine === 'CLEANUP') {
+          eventType = 'cleanup_lead_created';
+          targetRoles.push('sales');
+        } else {
+          eventType = 'dumpster_lead_created';
+          targetRoles.push('sales');
+        }
+
+        const severity = scoring.priority === 'hot' ? 'critical' : scoring.priority === 'high' ? 'warning' : 'info';
+        const dedupeKey = `${eventType}:${leadId}`;
+        const deepLink = `${deeplinkBase}?id=${leadId}`;
+
+        // Write to notification_events
+        await supabase.from('notification_events').insert({
+          event_type: eventType,
+          lead_id: leadId,
+          brand_origin: brand,
+          service_line: serviceLine,
+          severity,
+          requires_action: true,
+          title: `New ${eventType.replace(/_/g, ' ')} — ${lead.customer_name || 'Unknown'}`,
+          message: `${payload.source_channel} lead${lead.city ? ' from ' + lead.city : ''}. Priority: ${scoring.priority}.`,
+          deep_link: deepLink,
+          payload_json: { source_channel: payload.source_channel, city: lead.city, priority: scoring.priority },
+          dedupe_key: dedupeKey,
+          target_roles: targetRoles,
         });
+
+        // Also write staff_notifications for each target user (existing bell system)
+        const roleFilter = targetRoles.filter(r => r !== 'admin');
+        const allRoles = [...new Set([...roleFilter, 'admin', 'sales_manager'])];
+        const { data: targetUsers } = await supabase
+          .from('user_roles')
+          .select('user_id')
+          .in('role', allRoles);
+
+        if (targetUsers && targetUsers.length > 0) {
+          const notifications = targetUsers.map((u: { user_id: string }) => ({
+            user_id: u.user_id,
+            notification_type: eventType.toUpperCase(),
+            priority: severity === 'critical' ? 'CRITICAL' : severity === 'warning' ? 'HIGH' : 'NORMAL',
+            channel: 'IN_APP',
+            title: `New ${eventType.replace(/_/g, ' ')}`,
+            message: `${lead.customer_name || 'Unknown'} ${lead.city ? '(' + lead.city + ')' : ''} via ${payload.source_channel}`,
+            action_url: deepLink,
+          }));
+          await supabase.from('staff_notifications').insert(notifications);
+        }
+
+        // Additional events for special flags
+        if (lead.needs_site_visit) {
+          await supabase.from('notification_events').insert({
+            event_type: 'needs_site_visit',
+            lead_id: leadId,
+            brand_origin: brand,
+            service_line: serviceLine,
+            severity: 'warning',
+            requires_action: true,
+            title: `Site visit needed — ${lead.customer_name || 'Unknown'}`,
+            message: `Lead requires site visit before estimating.`,
+            deep_link: deepLink,
+            dedupe_key: `needs_site_visit:${leadId}`,
+            target_roles: ['sales', 'customer_service'],
+          });
+        }
+
+        if (lead.recurring_service_flag) {
+          await supabase.from('notification_events').insert({
+            event_type: 'recurring_service_interest',
+            lead_id: leadId,
+            brand_origin: brand,
+            service_line: serviceLine,
+            severity: 'info',
+            requires_action: true,
+            title: `Recurring service interest — ${lead.customer_name || 'Unknown'}`,
+            message: `Lead interested in recurring cleanup service.`,
+            deep_link: deepLink,
+            dedupe_key: `recurring_service:${leadId}`,
+            target_roles: ['sales', 'admin'],
+          });
+        }
       }
-    } catch { /* notification optional */ }
+    } catch (notifErr) {
+      console.error('Notification creation failed (non-fatal):', notifErr);
+    }
 
     return new Response(
       JSON.stringify({
