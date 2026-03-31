@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Users, Phone, MessageSquare, FileText, Search, Plus, Clock,
   Shield, Loader2, Download, Calendar, Inbox, UserCheck, Zap,
-  LayoutGrid, HardHat, Layers
+  LayoutGrid, HardHat, Layers, Bot, Mail
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { CleanupBoard } from "@/components/sales/CleanupBoard";
@@ -68,6 +68,8 @@ const TAB_CONFIG: { key: LeadHubTab; label: string; icon: typeof Inbox }[] = [
   { key: 'cleanup', label: 'Cleanup', icon: HardHat },
   { key: 'contractor', label: 'Contractors', icon: Users },
   { key: 'bundle', label: 'Bundle', icon: Layers },
+  { key: 'ai_chat', label: 'AI Chat', icon: Bot },
+  { key: 'contact_form', label: 'Contact Form', icon: Mail },
   { key: 'existing_customer', label: 'Existing Customer', icon: UserCheck },
   { key: 'high_risk', label: 'High Risk', icon: Shield },
   { key: 'all', label: 'All', icon: Users },
@@ -140,8 +142,10 @@ const SOURCE_LABELS: Record<string, string> = {
   ANGI: "Angi",
   THUMBTACK: "Thumbtack",
   MANUAL_ENTRY: "Manual",
+  MANUAL_STAFF: "Staff Entry",
   CALLBACK_REQUEST: "Callback",
   CONTACT_FORM: "Contact Form",
+  CONTRACTOR_APPLICATION: "Contractor App",
   CLEANUP_WEBSITE: "Cleanup Website",
   CLEANUP_CONTACT: "Cleanup Contact",
   CLEANUP_CONTRACTOR: "Cleanup Contractor",
