@@ -1,5 +1,4 @@
 import { MapPin, Truck, Ruler } from 'lucide-react';
-import heroDefault from '@/assets/calsan-yard-operations.jpg';
 
 const BADGES = [
   { icon: MapPin, label: 'Local Bay Area Yards' },
@@ -8,35 +7,25 @@ const BADGES = [
 ];
 
 interface HeroImagePanelProps {
-  /** Override image URL (for future admin config) */
-  imageUrl?: string;
-  /** Alt text override */
-  imageAlt?: string;
-  /** 0-1 overlay opacity */
   overlayOpacity?: number;
-  /** Custom badges override */
   badges?: { icon: typeof MapPin; label: string }[];
 }
 
 export function HeroImagePanel({
-  imageUrl,
-  imageAlt = 'Professional roll-off dumpster on a clean Bay Area driveway',
   overlayOpacity = 0.15,
   badges = BADGES,
 }: HeroImagePanelProps) {
-  const src = imageUrl || heroDefault;
-
   return (
     <div className="relative w-full">
-      {/* Desktop: tall panel, Mobile: short banner */}
       <div className="relative rounded-2xl overflow-hidden shadow-lg h-[240px] md:h-[280px] lg:h-full lg:min-h-[480px]">
-        <img
-          src={src}
-          alt={imageAlt}
-          width={1280}
-          height={960}
+        <video
+          src="/calsan-hero-video.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
           className="w-full h-full object-cover"
-          fetchPriority="high"
         />
         {/* Subtle gradient overlay */}
         <div
