@@ -243,6 +243,12 @@ export function useLeadHub(filters: LeadHubFilters) {
         case 'bundle':
           query = query.or('service_line.eq.BOTH,bundle_opportunity_flag.eq.true');
           break;
+        case 'ai_chat':
+          query = query.in('source_channel', ['AI_CHAT', 'AI_ASSISTANT', 'WEBSITE_CHAT', 'WEBSITE_ASSISTANT']);
+          break;
+        case 'contact_form':
+          query = query.in('source_channel', ['CONTACT_FORM', 'CLEANUP_CONTACT', 'CALLBACK_REQUEST', 'CLICK_TO_CALL', 'CLICK_TO_TEXT']);
+          break;
         // 'my_leads' is filtered client-side after fetch (needs auth.uid)
       }
 
