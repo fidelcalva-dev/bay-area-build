@@ -4107,73 +4107,178 @@ export type Database = {
       }
       contractor_applications: {
         Row: {
+          approved_by_user_id: string | null
+          approved_discount_percent: number | null
+          average_project_size: string | null
           billing_preference: string | null
+          brand_origin: string | null
+          business_address: string | null
+          city: string | null
+          common_dumpster_sizes: string[] | null
+          common_materials: string[] | null
           company_name: string
           contact_name: string
+          contractor_fit_score: number | null
+          contractor_type: string | null
+          converted_at: string | null
           created_at: string
           credit_terms_requested: string | null
+          current_active_projects: number | null
           customer_id: string | null
+          dba_name: string | null
+          declined_reason: string | null
+          docs_uploaded_json: Json | null
           email: string
           estimated_monthly_volume: string | null
           id: string
+          is_insured: boolean | null
+          lead_id: string | null
+          legal_business_name: string | null
+          license_number: string | null
           materials_handled: string[] | null
+          monthly_cleanup_usage_estimate: string | null
+          monthly_dumpster_usage_estimate: string | null
+          need_net_terms: boolean | null
+          need_priority_service: boolean | null
           notes: string | null
           phone: string
+          preferred_cleanup_frequency: string | null
           pricing_tier: string | null
+          pricing_tier_recommendation: string | null
           project_types: string[] | null
+          recurring_service_interest: boolean | null
+          required_dump_sites: string | null
           review_notes: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          role_title: string | null
+          service_area: string | null
           service_cities: string[] | null
+          service_line_interest: string | null
+          state: string | null
           status: string
+          typical_project_type: string | null
           typical_sizes: string[] | null
           updated_at: string
+          website: string | null
+          years_in_business: number | null
+          zip: string | null
         }
         Insert: {
+          approved_by_user_id?: string | null
+          approved_discount_percent?: number | null
+          average_project_size?: string | null
           billing_preference?: string | null
+          brand_origin?: string | null
+          business_address?: string | null
+          city?: string | null
+          common_dumpster_sizes?: string[] | null
+          common_materials?: string[] | null
           company_name: string
           contact_name: string
+          contractor_fit_score?: number | null
+          contractor_type?: string | null
+          converted_at?: string | null
           created_at?: string
           credit_terms_requested?: string | null
+          current_active_projects?: number | null
           customer_id?: string | null
+          dba_name?: string | null
+          declined_reason?: string | null
+          docs_uploaded_json?: Json | null
           email: string
           estimated_monthly_volume?: string | null
           id?: string
+          is_insured?: boolean | null
+          lead_id?: string | null
+          legal_business_name?: string | null
+          license_number?: string | null
           materials_handled?: string[] | null
+          monthly_cleanup_usage_estimate?: string | null
+          monthly_dumpster_usage_estimate?: string | null
+          need_net_terms?: boolean | null
+          need_priority_service?: boolean | null
           notes?: string | null
           phone: string
+          preferred_cleanup_frequency?: string | null
           pricing_tier?: string | null
+          pricing_tier_recommendation?: string | null
           project_types?: string[] | null
+          recurring_service_interest?: boolean | null
+          required_dump_sites?: string | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          role_title?: string | null
+          service_area?: string | null
           service_cities?: string[] | null
+          service_line_interest?: string | null
+          state?: string | null
           status?: string
+          typical_project_type?: string | null
           typical_sizes?: string[] | null
           updated_at?: string
+          website?: string | null
+          years_in_business?: number | null
+          zip?: string | null
         }
         Update: {
+          approved_by_user_id?: string | null
+          approved_discount_percent?: number | null
+          average_project_size?: string | null
           billing_preference?: string | null
+          brand_origin?: string | null
+          business_address?: string | null
+          city?: string | null
+          common_dumpster_sizes?: string[] | null
+          common_materials?: string[] | null
           company_name?: string
           contact_name?: string
+          contractor_fit_score?: number | null
+          contractor_type?: string | null
+          converted_at?: string | null
           created_at?: string
           credit_terms_requested?: string | null
+          current_active_projects?: number | null
           customer_id?: string | null
+          dba_name?: string | null
+          declined_reason?: string | null
+          docs_uploaded_json?: Json | null
           email?: string
           estimated_monthly_volume?: string | null
           id?: string
+          is_insured?: boolean | null
+          lead_id?: string | null
+          legal_business_name?: string | null
+          license_number?: string | null
           materials_handled?: string[] | null
+          monthly_cleanup_usage_estimate?: string | null
+          monthly_dumpster_usage_estimate?: string | null
+          need_net_terms?: boolean | null
+          need_priority_service?: boolean | null
           notes?: string | null
           phone?: string
+          preferred_cleanup_frequency?: string | null
           pricing_tier?: string | null
+          pricing_tier_recommendation?: string | null
           project_types?: string[] | null
+          recurring_service_interest?: boolean | null
+          required_dump_sites?: string | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          role_title?: string | null
+          service_area?: string | null
           service_cities?: string[] | null
+          service_line_interest?: string | null
+          state?: string | null
           status?: string
+          typical_project_type?: string | null
           typical_sizes?: string[] | null
           updated_at?: string
+          website?: string | null
+          years_in_business?: number | null
+          zip?: string | null
         }
         Relationships: [
           {
@@ -4181,6 +4286,20 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contractor_applications_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "sales_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contractor_applications_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "seo_lead_dashboard_vw"
             referencedColumns: ["id"]
           },
         ]
@@ -5054,21 +5173,27 @@ export type Database = {
           commercial_notes: string | null
           company_name: string | null
           contact_name: string | null
+          contractor_application_id: string | null
           contractor_tier: string | null
+          contractor_type: string | null
           created_at: string
           credit_terms_requested: string | null
           customer_type: string
           discount_pct: number | null
+          documents_status: string | null
           id: string
           identity_group_id: string | null
           is_active: boolean
+          is_contractor_account: boolean | null
           merge_status: string | null
           monthly_volume_estimate: number | null
+          net_terms_approved: boolean | null
           normalized_email: string | null
           normalized_phone: string | null
           notes: string | null
           phone: string | null
           service_line: string | null
+          service_line_permissions: string | null
           sms_opt_out: boolean | null
           sms_opt_out_at: string | null
           updated_at: string
@@ -5089,21 +5214,27 @@ export type Database = {
           commercial_notes?: string | null
           company_name?: string | null
           contact_name?: string | null
+          contractor_application_id?: string | null
           contractor_tier?: string | null
+          contractor_type?: string | null
           created_at?: string
           credit_terms_requested?: string | null
           customer_type?: string
           discount_pct?: number | null
+          documents_status?: string | null
           id?: string
           identity_group_id?: string | null
           is_active?: boolean
+          is_contractor_account?: boolean | null
           merge_status?: string | null
           monthly_volume_estimate?: number | null
+          net_terms_approved?: boolean | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
           service_line?: string | null
+          service_line_permissions?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -5124,21 +5255,27 @@ export type Database = {
           commercial_notes?: string | null
           company_name?: string | null
           contact_name?: string | null
+          contractor_application_id?: string | null
           contractor_tier?: string | null
+          contractor_type?: string | null
           created_at?: string
           credit_terms_requested?: string | null
           customer_type?: string
           discount_pct?: number | null
+          documents_status?: string | null
           id?: string
           identity_group_id?: string | null
           is_active?: boolean
+          is_contractor_account?: boolean | null
           merge_status?: string | null
           monthly_volume_estimate?: number | null
+          net_terms_approved?: boolean | null
           normalized_email?: string | null
           normalized_phone?: string | null
           notes?: string | null
           phone?: string | null
           service_line?: string | null
+          service_line_permissions?: string | null
           sms_opt_out?: boolean | null
           sms_opt_out_at?: string | null
           updated_at?: string
@@ -18627,6 +18764,7 @@ export type Database = {
           company_domain: string | null
           company_name: string | null
           consent_status: string | null
+          contractor_application_id: string | null
           contractor_flag: boolean | null
           converted_at: string | null
           created_at: string
@@ -18756,6 +18894,7 @@ export type Database = {
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
+          contractor_application_id?: string | null
           contractor_flag?: boolean | null
           converted_at?: string | null
           created_at?: string
@@ -18885,6 +19024,7 @@ export type Database = {
           company_domain?: string | null
           company_name?: string | null
           consent_status?: string | null
+          contractor_application_id?: string | null
           contractor_flag?: boolean | null
           converted_at?: string | null
           created_at?: string
@@ -18989,6 +19129,13 @@ export type Database = {
           zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_leads_contractor_application_id_fkey"
+            columns: ["contractor_application_id"]
+            isOneToOne: false
+            referencedRelation: "contractor_applications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_leads_latest_assessment_id_fkey"
             columns: ["latest_assessment_id"]
