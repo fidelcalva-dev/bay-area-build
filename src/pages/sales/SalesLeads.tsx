@@ -362,6 +362,13 @@ export default function SalesLeads() {
           >
             <HardHat className="w-4 h-4 mr-1" /> Cleanup Board
           </Button>
+          <Button
+            variant={viewMode === 'contractor-board' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setViewMode('contractor-board'); setActiveTab('contractor'); }}
+          >
+            <Users className="w-4 h-4 mr-1" /> Contractor Board
+          </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
