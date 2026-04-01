@@ -75,19 +75,7 @@ export function ContractorApplicationDetail({ applicationId, onUpdated }: Props)
     loadApplication();
   }, [loadApplication]);
 
-  async function loadApplication() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('contractor_applications')
-      .select('*')
-      .eq('id', applicationId)
-      .single();
-    if (!error && data) {
-      setApp(data);
-      setNotes(data.review_notes || '');
-    }
-    setLoading(false);
-  }
+  // loadApplication moved to useCallback above
 
   async function updateStatus(status: string, extra: Record<string, any> = {}) {
     setActionLoading(true);

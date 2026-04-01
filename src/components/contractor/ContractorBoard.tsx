@@ -41,7 +41,6 @@ interface Props {
 export function ContractorBoard({ onSelectApplication }: Props) {
   const [apps, setApps] = useState<ContractorApp[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
