@@ -4036,6 +4036,8 @@ export type Database = {
       }
       contractor_accounts: {
         Row: {
+          active_projects_count: number | null
+          application_id: string | null
           approved_at: string | null
           approved_by: string | null
           common_materials: string[] | null
@@ -4043,19 +4045,29 @@ export type Database = {
           contact_email: string | null
           contact_name: string | null
           contact_phone: string | null
+          contractor_type: string | null
           created_at: string
           customer_id: string | null
+          documents_status: string | null
           id: string
           is_active: boolean
           is_approved: boolean
+          monthly_cleanup_estimate: string | null
           monthly_volume_estimate: number | null
           notes: string | null
           payment_terms: string | null
+          preferred_cleanup_frequency: string | null
           preferred_sizes: number[] | null
           pricing_tier: Database["public"]["Enums"]["contractor_tier"]
+          recurring_service_flag: boolean | null
+          required_dump_sites: string | null
+          service_line_permissions: string | null
           updated_at: string
+          years_in_business: number | null
         }
         Insert: {
+          active_projects_count?: number | null
+          application_id?: string | null
           approved_at?: string | null
           approved_by?: string | null
           common_materials?: string[] | null
@@ -4063,19 +4075,29 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
+          contractor_type?: string | null
           created_at?: string
           customer_id?: string | null
+          documents_status?: string | null
           id?: string
           is_active?: boolean
           is_approved?: boolean
+          monthly_cleanup_estimate?: string | null
           monthly_volume_estimate?: number | null
           notes?: string | null
           payment_terms?: string | null
+          preferred_cleanup_frequency?: string | null
           preferred_sizes?: number[] | null
           pricing_tier?: Database["public"]["Enums"]["contractor_tier"]
+          recurring_service_flag?: boolean | null
+          required_dump_sites?: string | null
+          service_line_permissions?: string | null
           updated_at?: string
+          years_in_business?: number | null
         }
         Update: {
+          active_projects_count?: number | null
+          application_id?: string | null
           approved_at?: string | null
           approved_by?: string | null
           common_materials?: string[] | null
@@ -4083,19 +4105,34 @@ export type Database = {
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
+          contractor_type?: string | null
           created_at?: string
           customer_id?: string | null
+          documents_status?: string | null
           id?: string
           is_active?: boolean
           is_approved?: boolean
+          monthly_cleanup_estimate?: string | null
           monthly_volume_estimate?: number | null
           notes?: string | null
           payment_terms?: string | null
+          preferred_cleanup_frequency?: string | null
           preferred_sizes?: number[] | null
           pricing_tier?: Database["public"]["Enums"]["contractor_tier"]
+          recurring_service_flag?: boolean | null
+          required_dump_sites?: string | null
+          service_line_permissions?: string | null
           updated_at?: string
+          years_in_business?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "contractor_accounts_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "contractor_applications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contractor_accounts_customer_id_fkey"
             columns: ["customer_id"]
@@ -4349,6 +4386,51 @@ export type Database = {
           tier_name?: Database["public"]["Enums"]["contractor_tier"]
           updated_at?: string
           zone_surcharge_behavior?: string
+        }
+        Relationships: []
+      }
+      contractor_tiers: {
+        Row: {
+          approval_required: boolean
+          created_at: string
+          discount_percent: number
+          id: string
+          is_active: boolean
+          minimum_margin_pct: number
+          non_discountable_items: string[] | null
+          notes: string | null
+          sort_order: number
+          tier_code: string
+          tier_label: string
+          updated_at: string
+        }
+        Insert: {
+          approval_required?: boolean
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          minimum_margin_pct?: number
+          non_discountable_items?: string[] | null
+          notes?: string | null
+          sort_order?: number
+          tier_code: string
+          tier_label: string
+          updated_at?: string
+        }
+        Update: {
+          approval_required?: boolean
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          minimum_margin_pct?: number
+          non_discountable_items?: string[] | null
+          notes?: string | null
+          sort_order?: number
+          tier_code?: string
+          tier_label?: string
+          updated_at?: string
         }
         Relationships: []
       }
