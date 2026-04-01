@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { CleanupBoard } from "@/components/sales/CleanupBoard";
+import { ContractorBoard } from "@/components/contractor/ContractorBoard";
+import { ContractorApplicationDetail } from "@/components/contractor/ContractorApplicationDetail";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
