@@ -120,6 +120,11 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
         </div>
       )}
 
+      {/* Contractor Account Card */}
+      <div className="lg:col-span-3">
+        <ContractorAccountCard customerId={customer.id} customer={customer} />
+      </div>
+
       {/* Service Line Summary */}
       <div className="lg:col-span-3">
         <ServiceLineSummary
