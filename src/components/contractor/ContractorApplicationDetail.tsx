@@ -2,8 +2,8 @@
  * Contractor Application Detail — Full review/approval UI
  * Used inside Lead Detail or standalone route
  */
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  CheckCircle2, XCircle, Clock, MessageSquare, UserPlus, Link2,
-  Building2, FileText, HardHat, Loader2, AlertTriangle
+  CheckCircle2, XCircle, MessageSquare, UserPlus,
+  FileText, HardHat, Loader2, AlertTriangle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
