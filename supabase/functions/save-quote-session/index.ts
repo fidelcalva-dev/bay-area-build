@@ -116,22 +116,14 @@ Deno.serve(async (req) => {
 
       let sessionId: string;
 
-      if (existing) {
-        const { error } = await supabase
-          .from('quote_sessions')
-          .update(sessionData)
-          .eq('id', existing.id);
-        if (error) throw error;
-        sessionId = existing.id;
-      } else {
-        const { data: inserted, error } = await supabase
-          .from('quote_sessions')
-          .insert(sessionData)
-          .select('id')
-          .single();
-        if (error) throw error;
-        sessionId = inserted.id;
-      }
+      // Use upsert to handle race conditions (concurrent requests with same session_token)
+      const { data: upserted, error: upsertError } = await supabase
+        .from('quote_sessions')
+        .upsert(sessionData, { onConflict: 'session_token' })
+        .select('id')
+        .single();
+      if (upsertError) throw upsertError;
+      sessionId = upserted.id;
 
       // Check if we should promote to lead
       let promotedLeadId = existing?.lead_id || lead_id || null;
