@@ -6,9 +6,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { HardHat, Building2, MapPin, FileText, Loader2 } from 'lucide-react';
+import { HardHat, MapPin, FileText, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
 
 const BOARD_COLUMNS = [
   { status: 'submitted', label: 'New Application', color: 'bg-blue-500' },
