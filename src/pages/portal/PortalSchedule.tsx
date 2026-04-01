@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { logTimelineEvent } from '@/lib/timelineService';
 import { useToast } from '@/hooks/use-toast';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 const TIME_WINDOWS = [
   { id: 'morning', label: 'Morning', time: '8 AM - 12 PM', icon: '🌅' },

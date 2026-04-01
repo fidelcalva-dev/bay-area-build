@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin, Truck, Facebook, Instagram, Youtube, Shield, Award
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BUSINESS_INFO, SERVICE_AREAS, OPERATIONAL_YARDS } from '@/lib/seo';
 import { OfficeStatusIndicator } from '@/components/shared/OfficeStatusIndicator';
-import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.jpeg';
+import logoCalsanDumpstersPro from '@/assets/logo-calsan-dumpsters-pro-bg.webp';
 import { FooterLocationCluster } from '@/components/seo/FooterLocationCluster';
 import { useFooterSocialLinks } from '@/hooks/useSocialLinks';
 import { usePublicLocations } from '@/hooks/useLocationConfigs';

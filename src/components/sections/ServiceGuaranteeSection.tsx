@@ -1,6 +1,6 @@
 import { Shield, Clock, Users, CheckCircle } from 'lucide-react';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
-import calsanPromiseImage from '@/assets/calsan-promise-dumpster.jpg';
+import calsanPromiseImage from '@/assets/calsan-promise-dumpster.webp';
 
 const GUARANTEES = [
   {

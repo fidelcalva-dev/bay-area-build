@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 interface MobileTopBarProps {
   title: string;

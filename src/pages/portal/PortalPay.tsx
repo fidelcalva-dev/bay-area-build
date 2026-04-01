@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { logTimelineEvent } from '@/lib/timelineService';
 import { useToast } from '@/hooks/use-toast';
 import { checkGuardrail, type GuardrailResult } from '@/services/riskCheckService';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 export default function PortalPay() {
   const [searchParams] = useSearchParams();
