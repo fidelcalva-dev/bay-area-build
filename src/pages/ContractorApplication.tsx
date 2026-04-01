@@ -1,136 +1,156 @@
 import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { HardHat, CheckCircle, ArrowRight, Phone, Loader2, Send } from 'lucide-react';
+import { HardHat, CheckCircle, ArrowRight, ArrowLeft, Phone, Loader2, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { Link } from 'react-router-dom';
 import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCollection';
-
-const SERVICE_CITIES = [
-  'Oakland', 'San Jose', 'San Francisco', 'Berkeley', 'Alameda',
-  'San Leandro', 'Hayward', 'Fremont', 'Walnut Creek', 'Concord',
-  'Pleasanton', 'Dublin', 'Livermore', 'Santa Clara', 'Sunnyvale', 'Mountain View',
-];
-
-const PROJECT_TYPE_OPTIONS = [
-  'New Construction', 'Renovation / Remodel', 'Roofing', 'Demolition',
-  'Landscaping / Excavation', 'Commercial Buildout', 'Multi-Family Cleanout', 'Other',
-];
-
-const DUMPSTER_SIZES = ['5 yd', '8 yd', '10 yd', '20 yd', '30 yd', '40 yd', '50 yd'];
-
-const MATERIAL_OPTIONS = [
-  'General Debris', 'Clean Concrete', 'Clean Soil', 'Mixed Soil',
-  'Roofing Materials', 'Yard Waste', 'Mixed Construction',
-];
-
-const BILLING_OPTIONS = [
-  { value: 'per_job', label: 'Pay Per Job' },
-  { value: 'invoice', label: 'Monthly Invoice' },
-  { value: 'net_15', label: 'Net 15' },
-  { value: 'net_30', label: 'Net 30' },
-];
+import {
+  type ContractorFormData,
+  getInitialFormData,
+  calculateContractorFitScore,
+  APPLICATION_STEPS,
+} from '@/components/contractor/ContractorApplicationTypes';
+import { CompanyInfoStep } from '@/components/contractor/steps/CompanyInfoStep';
+import { ContractorProfileStep } from '@/components/contractor/steps/ContractorProfileStep';
+import { ServiceNeedsStep } from '@/components/contractor/steps/ServiceNeedsStep';
+import { DocumentUploadStep } from '@/components/contractor/steps/DocumentUploadStep';
+import { ReviewStep } from '@/components/contractor/steps/ReviewStep';
 
 export default function ContractorApplication() {
   const { toast } = useToast();
+  const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [data, setData] = useState<ContractorFormData>(getInitialFormData());
 
-  // Form state
-  const [companyName, setCompanyName] = useState('');
-  const [contactName, setContactName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [serviceCities, setServiceCities] = useState<string[]>([]);
-  const [projectTypes, setProjectTypes] = useState<string[]>([]);
-  const [monthlyVolume, setMonthlyVolume] = useState('');
-  const [typicalSizes, setTypicalSizes] = useState<string[]>([]);
-  const [materials, setMaterials] = useState<string[]>([]);
-  const [billingPreference, setBillingPreference] = useState('per_job');
-  const [creditTerms, setCreditTerms] = useState('');
-  const [notes, setNotes] = useState('');
+  const update = (updates: Partial<ContractorFormData>) => setData(prev => ({ ...prev, ...updates }));
 
-  const toggleArray = (arr: string[], val: string, setter: (v: string[]) => void) => {
-    setter(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!companyName || !contactName || !phone || !email) {
-      toast({ title: 'Please fill in all required fields', variant: 'destructive' });
-      return;
+  function validateStep(): boolean {
+    switch (step) {
+      case 1:
+        if (!data.legal_business_name || !data.contact_name || !data.phone || !data.email || !data.business_address || !data.city || !data.zip) {
+          toast({ title: 'Please fill in all required fields', variant: 'destructive' });
+          return false;
+        }
+        return true;
+      case 2:
+        if (!data.contractor_type) {
+          toast({ title: 'Please select a contractor type', variant: 'destructive' });
+          return false;
+        }
+        return true;
+      case 3:
+        return true;
+      case 4:
+        return true;
+      default:
+        return true;
     }
+  }
 
+  function nextStep() {
+    if (validateStep()) setStep(s => Math.min(s + 1, 5));
+  }
+
+  async function handleSubmit() {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('contractor_applications').insert({
-        company_name: companyName,
-        contact_name: contactName,
-        phone,
-        email,
-        service_cities: serviceCities,
-        project_types: projectTypes,
-        estimated_monthly_volume: monthlyVolume,
-        typical_sizes: typicalSizes,
-        materials_handled: materials,
-        billing_preference: billingPreference,
-        credit_terms_requested: creditTerms || null,
-        notes: notes || null,
-      });
+      const fitScore = calculateContractorFitScore(data);
+
+      // Insert contractor application
+      const { data: appData, error } = await supabase.from('contractor_applications').insert({
+        company_name: data.legal_business_name,
+        legal_business_name: data.legal_business_name,
+        dba_name: data.dba_name || null,
+        contact_name: data.contact_name,
+        role_title: data.role_title || null,
+        phone: data.phone,
+        email: data.email,
+        website: data.website || null,
+        business_address: data.business_address,
+        city: data.city,
+        state: data.state,
+        zip: data.zip,
+        contractor_type: data.contractor_type,
+        license_number: data.license_number || null,
+        is_insured: data.is_insured,
+        years_in_business: data.years_in_business ? parseInt(data.years_in_business) : null,
+        service_area: data.service_area || null,
+        typical_project_type: data.typical_project_type || null,
+        current_active_projects: data.current_active_projects ? parseInt(data.current_active_projects) : null,
+        average_project_size: data.average_project_size || null,
+        service_line_interest: data.service_line_interest,
+        monthly_dumpster_usage_estimate: data.monthly_dumpster_usage_estimate || null,
+        monthly_cleanup_usage_estimate: data.monthly_cleanup_usage_estimate || null,
+        recurring_service_interest: data.recurring_service_interest,
+        preferred_cleanup_frequency: data.preferred_cleanup_frequency || null,
+        common_dumpster_sizes: data.common_dumpster_sizes.length > 0 ? data.common_dumpster_sizes : null,
+        common_materials: data.common_materials.length > 0 ? data.common_materials : null,
+        need_priority_service: data.need_priority_service,
+        need_net_terms: data.need_net_terms,
+        required_dump_sites: data.required_dump_sites || null,
+        notes: data.notes || null,
+        docs_uploaded_json: data.uploadedFiles.length > 0 ? data.uploadedFiles : {},
+        contractor_fit_score: fitScore,
+        status: 'submitted',
+        service_cities: data.service_area ? data.service_area.split(', ').filter(Boolean) : null,
+        typical_sizes: data.common_dumpster_sizes.length > 0 ? data.common_dumpster_sizes : null,
+        materials_handled: data.common_materials.length > 0 ? data.common_materials : null,
+        estimated_monthly_volume: data.monthly_dumpster_usage_estimate || null,
+      } as any).select('id').single();
 
       if (error) throw error;
+      const appId = appData?.id;
 
-      // Lead ingest — capture contractor application as a lead (non-blocking)
+      // Lead ingest — capture contractor application as a lead
       supabase.functions.invoke('lead-ingest', {
         body: {
           source_channel: 'CONTRACTOR_APPLICATION',
-          source_detail: 'contractor_application_form',
+          source_detail: 'contractor_application_form_v2',
           source_page: '/contractor-application',
           source_module: 'contractor_application',
           brand: 'CALSAN_DUMPSTERS_PRO',
           lead_intent: 'CONTRACTOR_ACCOUNT',
-          name: contactName,
-          phone,
-          email,
-          company_name: companyName,
+          name: data.contact_name,
+          phone: data.phone,
+          email: data.email,
+          company_name: data.legal_business_name,
           customer_type: 'contractor',
-          message: `Contractor application: ${companyName} | Volume: ${monthlyVolume} | Cities: ${serviceCities.join(', ')} | Sizes: ${typicalSizes.join(', ')}`,
+          city: data.city,
+          zip: data.zip,
+          message: `Contractor Application: ${data.legal_business_name} | Type: ${data.contractor_type} | Service: ${data.service_line_interest} | Fit Score: ${fitScore}`,
           consent_status: 'TRANSACTIONAL',
           raw_payload: {
-            service_line: 'CLEANUP',
+            service_line: data.service_line_interest,
             contractor_application_flag: true,
             contractor_flag: true,
-            service_cities: serviceCities,
-            project_types: projectTypes,
-            monthly_volume: monthlyVolume,
-            typical_sizes: typicalSizes,
-            materials: materials,
-            billing_preference: billingPreference,
-            credit_terms: creditTerms,
+            contractor_application_id: appId,
+            contractor_type: data.contractor_type,
+            service_area: data.service_area,
+            recurring_interest: data.recurring_service_interest,
+            active_projects: data.current_active_projects,
+            fit_score: fitScore,
+            need_priority_service: data.need_priority_service,
+            need_net_terms: data.need_net_terms,
+            docs_count: data.uploadedFiles.length,
           },
         },
-      }).catch(err => console.warn('lead-ingest failed for contractor app (non-blocking):', err));
+      }).catch(err => console.warn('lead-ingest (non-blocking):', err));
 
       setIsSubmitted(true);
       toast({ title: 'Application submitted successfully!' });
     } catch (err) {
-      console.error('Error submitting application:', err);
-      toast({ title: 'Failed to submit application. Please try again or call us.', variant: 'destructive' });
+      console.error('Error submitting:', err);
+      toast({ title: 'Failed to submit. Please try again or call us.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   if (isSubmitted) {
     return (
@@ -146,14 +166,11 @@ export default function ContractorApplication() {
             </div>
             <h1 className="heading-lg text-foreground mb-4">Application Received</h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-              Thank you! Our team will review your application and contact you within 1–2 business days to discuss your account setup.
+              Thank you! Our team will review your application and contact you within 1–2 business days.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild size="lg">
-                <Link to="/quote">
-                  Get a Quote Now
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                <Link to="/quote">Get a Quote Now <ArrowRight className="w-4 h-4 ml-2" /></Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
@@ -175,207 +192,86 @@ export default function ContractorApplication() {
       canonical="/contractor-application"
     >
       {/* Hero */}
-      <section className="gradient-hero text-primary-foreground py-10 md:py-14">
+      <section className="gradient-hero text-primary-foreground py-8 md:py-12">
         <div className="container-narrow text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-foreground/10 rounded-full text-sm mb-4">
             <HardHat className="w-4 h-4" />
             Contractor & Commercial Accounts
           </div>
           <h1 className="heading-lg mb-3">Apply for a Contractor Account</h1>
-          <p className="text-lg text-primary-foreground/85 max-w-lg mx-auto">
-            Get priority dispatch, dedicated support, and volume pricing for your construction projects across the Bay Area.
+          <p className="text-base text-primary-foreground/85 max-w-lg mx-auto">
+            Priority dispatch, dedicated support, and volume pricing for Bay Area contractors.
           </p>
         </div>
       </section>
 
-      {/* Form */}
-      <section className="py-10 md:py-14 bg-background">
+      {/* Steps Progress */}
+      <section className="py-6 bg-muted/30 border-b">
         <div className="container-narrow max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-8">
-
-            {/* Company Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Company Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="companyName">Company Name *</Label>
-                    <Input id="companyName" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
-                  </div>
-                  <div>
-                    <Label htmlFor="contactName">Primary Contact Name *</Label>
-                    <Input id="contactName" value={contactName} onChange={e => setContactName(e.target.value)} required />
-                  </div>
+          <div className="flex items-center justify-between gap-1">
+            {APPLICATION_STEPS.map((s, i) => (
+              <div key={s.id} className="flex items-center gap-1 flex-1">
+                <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0 ${
+                  step > s.id ? 'bg-primary text-primary-foreground' :
+                  step === s.id ? 'bg-primary text-primary-foreground' :
+                  'bg-muted text-muted-foreground'
+                }`}>
+                  {step > s.id ? <CheckCircle className="w-4 h-4" /> : s.id}
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="phone">Phone *</Label>
-                    <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} required />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                <span className={`text-xs hidden sm:inline ${step === s.id ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                  {s.label}
+                </span>
+                {i < APPLICATION_STEPS.length - 1 && <div className={`h-px flex-1 mx-1 ${step > s.id ? 'bg-primary' : 'bg-border'}`} />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Service Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Service Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Label className="mb-2 block">Service Cities (select all that apply)</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {SERVICE_CITIES.map(city => (
-                      <Badge
-                        key={city}
-                        variant={serviceCities.includes(city) ? 'default' : 'outline'}
-                        className="cursor-pointer"
-                        onClick={() => toggleArray(serviceCities, city, setServiceCities)}
-                      >
-                        {city}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+      {/* Form */}
+      <section className="py-8 md:py-12 bg-background">
+        <div className="container-narrow max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">Step {step} of 5</Badge>
+                {APPLICATION_STEPS[step - 1]?.label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {step === 1 && <CompanyInfoStep data={data} onChange={update} />}
+              {step === 2 && <ContractorProfileStep data={data} onChange={update} />}
+              {step === 3 && <ServiceNeedsStep data={data} onChange={update} />}
+              {step === 4 && <DocumentUploadStep data={data} onChange={update} />}
+              {step === 5 && <ReviewStep data={data} />}
+            </CardContent>
+          </Card>
 
-                <div>
-                  <Label className="mb-2 block">Project Types</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {PROJECT_TYPE_OPTIONS.map(pt => (
-                      <Badge
-                        key={pt}
-                        variant={projectTypes.includes(pt) ? 'default' : 'outline'}
-                        className="cursor-pointer"
-                        onClick={() => toggleArray(projectTypes, pt, setProjectTypes)}
-                      >
-                        {pt}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+          {step === 5 && <div className="mt-4"><PrivacyNoticeAtCollection variant="compact" /></div>}
 
-                <div>
-                  <Label htmlFor="monthlyVolume">Estimated Monthly Volume</Label>
-                  <Select value={monthlyVolume} onValueChange={setMonthlyVolume}>
-                    <SelectTrigger><SelectValue placeholder="How many dumpsters per month?" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1-3">1–3 per month</SelectItem>
-                      <SelectItem value="4-10">4–10 per month</SelectItem>
-                      <SelectItem value="11-25">11–25 per month</SelectItem>
-                      <SelectItem value="25+">25+ per month</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label className="mb-2 block">Typical Dumpster Sizes</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {DUMPSTER_SIZES.map(s => (
-                      <Badge
-                        key={s}
-                        variant={typicalSizes.includes(s) ? 'default' : 'outline'}
-                        className="cursor-pointer"
-                        onClick={() => toggleArray(typicalSizes, s, setTypicalSizes)}
-                      >
-                        {s}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="mb-2 block">Materials Handled</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {MATERIAL_OPTIONS.map(m => (
-                      <Badge
-                        key={m}
-                        variant={materials.includes(m) ? 'default' : 'outline'}
-                        className="cursor-pointer"
-                        onClick={() => toggleArray(materials, m, setMaterials)}
-                      >
-                        {m}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Billing */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Billing Preferences</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="billing">Preferred Billing Method</Label>
-                  <Select value={billingPreference} onValueChange={setBillingPreference}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {BILLING_OPTIONS.map(o => (
-                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="creditTerms">Credit Terms Requested (optional)</Label>
-                  <Input
-                    id="creditTerms"
-                    value={creditTerms}
-                    onChange={e => setCreditTerms(e.target.value)}
-                    placeholder="e.g., Net 30, PO-based billing"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Notes */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Additional Notes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                  placeholder="Anything else we should know about your business or project needs?"
-                  rows={4}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Privacy Notice */}
-            <PrivacyNoticeAtCollection variant="compact" />
-
-            {/* Submit */}
-            <Button type="submit" size="lg" className="w-full h-14 text-base font-bold" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5 mr-2" />
-                  Submit Application
-                </>
-              )}
+          {/* Nav Buttons */}
+          <div className="flex items-center justify-between mt-6 gap-3">
+            <Button variant="outline" onClick={() => setStep(s => Math.max(s - 1, 1))} disabled={step === 1}>
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back
             </Button>
+            {step < 5 ? (
+              <Button onClick={nextStep}>
+                Next <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit} disabled={isSubmitting} size="lg" className="gap-2">
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {isSubmitting ? 'Submitting...' : 'Submit Application'}
+              </Button>
+            )}
+          </div>
 
-            <p className="text-sm text-muted-foreground text-center">
-              Prefer to talk? Call us at{' '}
-              <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary font-semibold">
-                {BUSINESS_INFO.phone.salesFormatted}
-              </a>
-            </p>
-          </form>
+          <p className="text-sm text-muted-foreground text-center mt-4">
+            Prefer to talk? Call{' '}
+            <a href={`tel:${BUSINESS_INFO.phone.sales}`} className="text-primary font-semibold">
+              {BUSINESS_INFO.phone.salesFormatted}
+            </a>
+          </p>
         </div>
       </section>
     </Layout>
