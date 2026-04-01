@@ -527,8 +527,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Pipeline Board, Cleanup Board, or Table */}
-        {viewMode === 'cleanup-board' ? (
+        {/* Pipeline Board, Cleanup Board, Contractor Board, or Table */}
+        {viewMode === 'contractor-board' ? (
+          <div className="mt-4">
+            <ContractorBoard onSelectApplication={(id) => navigate(`/sales/leads?view=contractor-board&app=${id}`)} />
+          </div>
+        ) : viewMode === 'cleanup-board' ? (
           <div className="mt-4">
             <CleanupBoard leads={leads} onRefresh={refetch} />
           </div>
