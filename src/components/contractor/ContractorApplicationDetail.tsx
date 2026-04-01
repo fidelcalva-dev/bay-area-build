@@ -113,7 +113,7 @@ export function ContractorApplicationDetail({ applicationId, onUpdated }: Props)
     setShowDecline(false);
   }
 
-  async function handleConvertToCustomer() {
+  async function checkAndConvert() {
     setActionLoading(true);
     try {
       // Check for existing customer match

@@ -1,12 +1,12 @@
 /**
  * ContractorAccountCard — Displays contractor account status, tier, and application history
- * within Customer 360 Overview tab.
+ * within Customer 360 Overview tab. Enhanced with full actions.
  */
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { HardHat, FileText, Loader2 } from 'lucide-react';
+import { HardHat, FileText, Loader2, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,13 +25,24 @@ interface Props {
 
 export function ContractorAccountCard({ customerId, customer }: Props) {
   const [application, setApplication] = useState<any>(null);
+  const [account, setAccount] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
-      // Look for linked contractor application
-      const appId = customer.contractor_application_id;
+      // Load contractor account
+      const { data: acct } = await supabase
+        .from('contractor_accounts')
+        .select('*')
+        .eq('customer_id', customerId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (acct) setAccount(acct);
+
+      // Load linked contractor application
+      const appId = customer.contractor_application_id || acct?.application_id;
       if (appId) {
         const { data } = await supabase
           .from('contractor_applications')
@@ -54,7 +65,7 @@ export function ContractorAccountCard({ customerId, customer }: Props) {
     load();
   }, [customerId, customer]);
 
-  if (!customer.is_contractor_account && !application) return null;
+  if (!customer.is_contractor_account && !application && !account) return null;
 
   return (
     <Card>
@@ -62,7 +73,7 @@ export function ContractorAccountCard({ customerId, customer }: Props) {
         <CardTitle className="text-base flex items-center gap-2">
           <HardHat className="w-4 h-4" />
           Contractor Account
-          {customer.is_contractor_account && (
+          {(customer.is_contractor_account || account?.is_active) && (
             <Badge className="ml-auto bg-emerald-100 text-emerald-800 text-[10px]">Active</Badge>
           )}
         </CardTitle>
@@ -75,46 +86,54 @@ export function ContractorAccountCard({ customerId, customer }: Props) {
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase">Type</p>
-                <p className="font-medium">{customer.contractor_type || application?.contractor_type || '—'}</p>
+                <p className="font-medium">{account?.contractor_type || customer.contractor_type || application?.contractor_type || '—'}</p>
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase">Tier / Discount</p>
                 <p className="font-medium">
-                  {TIER_LABELS[customer.contractor_tier] || customer.contractor_tier || '—'}
-                  {customer.discount_pct > 0 && <span className="text-primary ml-1">({customer.discount_pct}%)</span>}
+                  {TIER_LABELS[account?.pricing_tier || customer.contractor_tier] || customer.contractor_tier || '—'}
+                  {(customer.discount_pct > 0 || account?.pricing_tier) && (
+                    <span className="text-primary ml-1">({customer.discount_pct || 0}%)</span>
+                  )}
                 </p>
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase">Service Lines</p>
-                <p className="font-medium">{customer.service_line_permissions || application?.service_line_interest || '—'}</p>
+                <p className="font-medium">{account?.service_line_permissions || customer.service_line_permissions || application?.service_line_interest || '—'}</p>
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase">Net Terms</p>
                 <p className="font-medium">{customer.net_terms_approved ? 'Approved' : 'No'}</p>
               </div>
-              {application && (
+              {(application || account) && (
                 <>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase">Recurring Interest</p>
-                    <p className="font-medium">{application.recurring_service_interest ? 'Yes' : 'No'}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">Recurring</p>
+                    <p className="font-medium">{(account?.recurring_service_flag || application?.recurring_service_interest) ? 'Yes' : 'No'}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase">Active Projects</p>
-                    <p className="font-medium">{application.current_active_projects || '—'}</p>
+                    <p className="font-medium">{account?.active_projects_count || application?.current_active_projects || '—'}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase">Fit Score</p>
-                    <p className="font-medium">{application.contractor_fit_score || '—'}/100</p>
+                    <p className="font-medium">{application?.contractor_fit_score || '—'}/100</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase">Application</p>
-                    <p className="font-medium capitalize">{application.status}</p>
+                    <p className="font-medium capitalize">{application?.status || '—'}</p>
                   </div>
+                  {account?.required_dump_sites && (
+                    <div className="col-span-2">
+                      <p className="text-[10px] text-muted-foreground uppercase">Required Dump Sites</p>
+                      <p className="font-medium">{account.required_dump_sites}</p>
+                    </div>
+                  )}
                 </>
               )}
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase">Docs Status</p>
-                <p className="font-medium capitalize">{customer.documents_status || 'Unknown'}</p>
+                <p className="font-medium capitalize">{account?.documents_status || customer.documents_status || 'Unknown'}</p>
               </div>
             </div>
 
@@ -124,8 +143,14 @@ export function ContractorAccountCard({ customerId, customer }: Props) {
                   <FileText className="w-3 h-3" /> View Application
                 </Button>
               )}
-              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => navigate(`/sales/quotes/new?customer_id=${customerId}`)}>
-                Create Quote
+              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => navigate(`/sales/quotes/new?customer_id=${customerId}&service=DUMPSTER`)}>
+                <Plus className="w-3 h-3" /> Dumpster Quote
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => navigate(`/sales/quotes/new?customer_id=${customerId}&service=CLEANUP`)}>
+                <Plus className="w-3 h-3" /> Cleanup Proposal
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => navigate(`/sales/quotes/new?customer_id=${customerId}&service=BOTH`)}>
+                <Plus className="w-3 h-3" /> Bundle Quote
               </Button>
             </div>
           </>
