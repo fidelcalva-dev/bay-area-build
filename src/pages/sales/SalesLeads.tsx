@@ -107,7 +107,7 @@ const SERVICE_LINE_COLORS: Record<string, string> = {
   BOTH: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
 };
 
-type ViewMode = 'list' | 'pipeline' | 'cleanup-board';
+type ViewMode = 'list' | 'pipeline' | 'cleanup-board' | 'contractor-board';
 
 const SOURCE_LABELS: Record<string, string> = {
   QUOTE_FLOW: "Quote Flow",
