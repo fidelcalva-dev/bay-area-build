@@ -11,7 +11,7 @@ import {
   GREEN_HALO_NOTE 
 } from '@/data/recycling';
 import { AnimatedSection, StaggeredContainer, AnimatedItem } from '@/components/animations';
-import recyclingPhoto from '@/assets/recycling-commitment-photo.jpg';
+import recyclingPhoto from '@/assets/recycling-commitment-photo.webp';
 
 export function RecyclingCommitmentSection() {
   return (
