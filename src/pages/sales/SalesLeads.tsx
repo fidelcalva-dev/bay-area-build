@@ -165,11 +165,11 @@ export default function SalesLeads() {
   const searchParams = useSearchParams()[0];
   const { user } = useAdminAuth();
 
-  // Support ?view=cleanup-board and ?tab=xxx URL params
+  // Support ?view=cleanup-board, ?view=contractor-board and ?tab=xxx URL params
   const urlView = searchParams.get('view');
   const urlTab = searchParams.get('tab') as LeadHubTab | null;
-  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : 'list';
-  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : (urlTab && TAB_CONFIG.some(t => t.key === urlTab) ? urlTab : 'new');
+  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : urlView === 'contractor-board' || urlView === 'contractor-applications' ? 'contractor-board' : 'list';
+  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : urlView === 'contractor-board' || urlView === 'contractor-applications' ? 'contractor' : (urlTab && TAB_CONFIG.some(t => t.key === urlTab) ? urlTab : 'new');
 
   const [activeTab, setActiveTab] = useState<LeadHubTab>(initialTab);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
