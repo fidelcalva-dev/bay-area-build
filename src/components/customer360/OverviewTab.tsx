@@ -10,6 +10,7 @@ import type { Customer360Data } from './types';
 import { SalesIntelligencePanel } from './SalesIntelligencePanel';
 import { RecommendedScriptWidget } from './RecommendedScriptWidget';
 import { ServiceLineSummary } from './ServiceLineSummary';
+import { ContractorAccountCard } from './ContractorAccountCard';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
@@ -118,6 +119,11 @@ export function OverviewTab({ data, timelineEvents, isTimelineLoading }: Props) 
           </Card>
         </div>
       )}
+
+      {/* Contractor Account Card */}
+      <div className="lg:col-span-3">
+        <ContractorAccountCard customerId={customer.id} customer={customer} />
+      </div>
 
       {/* Service Line Summary */}
       <div className="lg:col-span-3">

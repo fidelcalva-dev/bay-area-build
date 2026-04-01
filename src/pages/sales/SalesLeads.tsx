@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import SalesPipelineBoard from "@/components/sales/SalesPipelineBoard";
 import { CleanupBoard } from "@/components/sales/CleanupBoard";
+import { ContractorBoard } from "@/components/contractor/ContractorBoard";
+
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,7 +109,7 @@ const SERVICE_LINE_COLORS: Record<string, string> = {
   BOTH: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
 };
 
-type ViewMode = 'list' | 'pipeline' | 'cleanup-board';
+type ViewMode = 'list' | 'pipeline' | 'cleanup-board' | 'contractor-board';
 
 const SOURCE_LABELS: Record<string, string> = {
   QUOTE_FLOW: "Quote Flow",
@@ -165,11 +167,11 @@ export default function SalesLeads() {
   const searchParams = useSearchParams()[0];
   const { user } = useAdminAuth();
 
-  // Support ?view=cleanup-board and ?tab=xxx URL params
+  // Support ?view=cleanup-board, ?view=contractor-board and ?tab=xxx URL params
   const urlView = searchParams.get('view');
   const urlTab = searchParams.get('tab') as LeadHubTab | null;
-  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : 'list';
-  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : (urlTab && TAB_CONFIG.some(t => t.key === urlTab) ? urlTab : 'new');
+  const initialViewMode: ViewMode = urlView === 'cleanup-board' ? 'cleanup-board' : urlView === 'contractor-board' || urlView === 'contractor-applications' ? 'contractor-board' : 'list';
+  const initialTab: LeadHubTab = urlView === 'cleanup-board' ? 'cleanup' : urlView === 'contractor-board' || urlView === 'contractor-applications' ? 'contractor' : (urlTab && TAB_CONFIG.some(t => t.key === urlTab) ? urlTab : 'new');
 
   const [activeTab, setActiveTab] = useState<LeadHubTab>(initialTab);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
@@ -362,6 +364,13 @@ export default function SalesLeads() {
           >
             <HardHat className="w-4 h-4 mr-1" /> Cleanup Board
           </Button>
+          <Button
+            variant={viewMode === 'contractor-board' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setViewMode('contractor-board'); setActiveTab('contractor'); }}
+          >
+            <Users className="w-4 h-4 mr-1" /> Contractor Board
+          </Button>
           <Button variant="outline" size="sm" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
@@ -518,8 +527,12 @@ export default function SalesLeads() {
           <span className="text-sm text-muted-foreground ml-auto">{leads.length} leads</span>
         </div>
 
-        {/* Pipeline Board, Cleanup Board, or Table */}
-        {viewMode === 'cleanup-board' ? (
+        {/* Pipeline Board, Cleanup Board, Contractor Board, or Table */}
+        {viewMode === 'contractor-board' ? (
+          <div className="mt-4">
+            <ContractorBoard onSelectApplication={(id) => navigate(`/sales/leads?view=contractor-board&app=${id}`)} />
+          </div>
+        ) : viewMode === 'cleanup-board' ? (
           <div className="mt-4">
             <CleanupBoard leads={leads} onRefresh={refetch} />
           </div>
