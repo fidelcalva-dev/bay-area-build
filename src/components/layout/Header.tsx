@@ -5,7 +5,7 @@ import { Menu, X, Phone, ChevronDown, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { cn } from '@/lib/utils';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 // ── NAV CONFIG ──────────────────────────────────────────
 interface NavChild {

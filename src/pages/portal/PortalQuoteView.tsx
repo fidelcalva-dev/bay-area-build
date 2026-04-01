@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { logTimelineEvent } from '@/lib/timelineService';
 import { BUSINESS_INFO } from '@/lib/seo';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 interface OutboundQuote {
   id: string;

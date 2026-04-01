@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { checkGuardrail, type GuardrailResult } from '@/services/riskCheckService';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 
 export default function QuotePayment() {
   const [searchParams] = useSearchParams();

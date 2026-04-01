@@ -5,7 +5,7 @@ import { PrivacyNoticeAtCollection } from '@/components/legal/PrivacyNoticeAtCol
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import logoCalsan from '@/assets/logo-calsan.jpeg';
+import logoCalsan from '@/assets/logo-calsan.webp';
 import { StepTransition, BackButton } from './shared';
 import type { ContactStepProps } from './types';
 
