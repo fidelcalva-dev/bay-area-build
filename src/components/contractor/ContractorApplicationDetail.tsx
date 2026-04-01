@@ -57,9 +57,23 @@ export function ContractorApplicationDetail({ applicationId, onUpdated }: Props)
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const loadApplication = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('contractor_applications')
+      .select('*')
+      .eq('id', applicationId)
+      .single();
+    if (!error && data) {
+      setApp(data);
+      setNotes(data.review_notes || '');
+    }
+    setLoading(false);
+  }, [applicationId]);
+
   useEffect(() => {
     loadApplication();
-  }, [applicationId]);
+  }, [loadApplication]);
 
   async function loadApplication() {
     setLoading(true);
