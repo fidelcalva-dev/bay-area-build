@@ -136,12 +136,10 @@ Deno.serve(async (req) => {
     const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
 
     if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-      console.error("Twilio credentials not configured");
-      // In development, log the code
-      console.log(`[DEV] OTP for ${formattedPhone}: ${code}`);
+      console.error("Twilio credentials not configured - SMS service unavailable");
       return new Response(
-        JSON.stringify({ success: true, message: "Code sent", dev_code: code }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "SMS service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
