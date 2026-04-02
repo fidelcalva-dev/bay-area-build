@@ -4,7 +4,7 @@
 // Consolidates all pricing config into one tabbed interface
 // ══════════════════════════════════════════════════════════════
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import PricingOverviewPanel from '@/components/admin/pricing/PricingOverviewPanel';
@@ -12,8 +12,11 @@ import {
   DollarSign, Scale, MapPin, Users, Plus, Gauge, LayoutDashboard,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
   Loader2, ShieldCheck, FileText, Truck, Package, Layers, Weight,
-  Calendar, Navigation
+  Calendar, Navigation, GitBranch, Upload, Download, Eye, Save
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { getPublishedVersion, type PricingVersion } from '@/lib/pricingVersionService';
+import { checkPublicCatalogHealth } from '@/lib/pricingCatalogCompiler';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
