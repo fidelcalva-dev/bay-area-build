@@ -108,7 +108,7 @@ function getCtasForResponse(
   // Photo / unsure / size help
   if (action === 'PHOTO' || stage === 'EXPLORING' || intent === 'SIZE_HELP') {
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
       icon: ArrowRight,
       variant: 'primary',
       to: '/quote?v3=1',
