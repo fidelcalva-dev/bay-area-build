@@ -18,7 +18,7 @@ export function getStepTitles() {
     PROJECT_STEP_TITLE: "What's your project?",
     PROJECT_STEP_SUBTITLE: 'Pick the closest match',
     SIZE_STEP_TITLE: 'Recommended for your project',
-    PRICE_STEP_TITLE: 'Your exact price for this ZIP',
+    PRICE_STEP_TITLE: 'Your recommended price',
     CONFIRM_STEP_TITLE: 'Confirm your order',
   } as const;
 }
@@ -58,7 +58,7 @@ interface HeavyPriceMomentCopy {
 }
 
 const HOMEOWNER_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Your exact price for this ZIP',
+  headline: 'Your recommended price for this area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [
@@ -75,7 +75,7 @@ const HOMEOWNER_COPY = (includedTons: number): PriceMomentCopy => ({
 });
 
 const CONTRACTOR_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Exact contractor pricing for this ZIP',
+  headline: 'Contractor pricing for your area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [
@@ -92,7 +92,7 @@ const CONTRACTOR_COPY = (includedTons: number): PriceMomentCopy => ({
 });
 
 const COMMERCIAL_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Exact commercial pricing for this ZIP',
+  headline: 'Commercial pricing for your area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [

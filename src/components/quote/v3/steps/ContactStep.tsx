@@ -43,7 +43,7 @@ export function ContactStep({
             Almost there — who should we contact?
           </h4>
           <p className="text-sm text-muted-foreground">
-            We'll send your exact price and next steps.
+            We'll send your recommended options and next steps.
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export function ContactStep({
           onClick={goNext}
           disabled={!customerName || !phoneValid || !consentSms || !consentTerms}
         >
-          See My Exact Price
+          Review My Exact Quote
           <ChevronRight className="w-5 h-5 ml-1" />
         </Button>
 

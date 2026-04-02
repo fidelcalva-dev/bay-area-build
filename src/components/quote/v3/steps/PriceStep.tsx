@@ -37,7 +37,7 @@ export function PriceStep({
             <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-3" />
             <p className="font-semibold text-foreground">Calculating your price...</p>
             <p className="text-sm text-muted-foreground mt-1">
-              We'll confirm the exact price after reviewing your location.
+              We'll confirm pricing after reviewing your location.
             </p>
           </div>
           <Button variant="outline" className="w-full rounded-xl" onClick={goBack}>
