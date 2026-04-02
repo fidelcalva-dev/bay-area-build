@@ -125,7 +125,7 @@ function getCtasForResponse(
   // Ready / pricing
   if (stage === 'READY' || action === 'QUOTE' || intent === 'PRICING_HELP' || intent === 'READY_TO_BOOK') {
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'See My Pricing Options',
       icon: ArrowRight,
       variant: 'primary',
       to: '/quote?v3=1',
