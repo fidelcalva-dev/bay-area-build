@@ -291,7 +291,7 @@ export const serviceAreas: CountyData[] = [
         description: 'Pittsburg\'s revitalizing downtown and residential areas make it a growing market for dumpster service. We provide reliable, affordable options for all project types.',
         highlights: ['Revitalizing area coverage', 'Affordable rates', 'All project types'],
         faqs: [
-          { question: 'What sizes are available for Pittsburg?', answer: 'We offer our full range from 6 to 50 yards throughout Pittsburg.' },
+          { question: 'What sizes are available for Pittsburg?', answer: 'We offer our full range from 5 to 50 yards throughout Pittsburg.' },
           { question: 'How does pricing compare?', answer: 'Pittsburg is standard pricing, no extra charges. Get an instant quote online.' },
         ],
       },
