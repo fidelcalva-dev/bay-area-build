@@ -264,8 +264,8 @@ const Index = () => {
             <div className="order-2 lg:order-1 space-y-6">
               <div className="text-center lg:text-left space-y-4">
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-                  Find the Right Dumpster
-                  <span className="block text-primary mt-1">for Your Project</span>
+                  Dumpster Rental Made Simple
+                  <span className="block text-primary mt-1">in the Bay Area</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
                   Enter your ZIP to see pricing and availability in your area. We'll guide you to the right size — no guesswork.
