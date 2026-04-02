@@ -18,7 +18,7 @@ export function getStepTitles() {
     PROJECT_STEP_TITLE: "What's your project?",
     PROJECT_STEP_SUBTITLE: 'Pick the closest match',
     SIZE_STEP_TITLE: 'Recommended for your project',
-    PRICE_STEP_TITLE: 'Your exact price for this ZIP',
+    PRICE_STEP_TITLE: 'Your recommended price',
     CONFIRM_STEP_TITLE: 'Confirm your order',
   } as const;
 }
