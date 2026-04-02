@@ -52,9 +52,8 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
 
           {/* Subheadline */}
           <motion.div variants={fadeUp} className="space-y-1 text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            <p>Local yards in Oakland, San Jose & San Francisco.</p>
-            <p>Clear pricing based on your ZIP, size, and material type.</p>
-            <p>We'll guide you to the best option — no guesswork.</p>
+            <p>Check pricing in your area, compare the right sizes,</p>
+            <p>and get the best option for your project.</p>
           </motion.div>
 
           {/* Trust Row */}
