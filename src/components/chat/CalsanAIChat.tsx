@@ -1060,10 +1060,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                      Get Exact Price
+                      Check Price & Availability
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      Exact rental price by ZIP and project type.
+                      See pricing for your ZIP and project type.
                     </span>
                   </button>
                   <button
