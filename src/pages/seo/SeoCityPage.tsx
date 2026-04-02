@@ -208,7 +208,7 @@ export default function SeoCityPage() {
             <p className="text-primary-foreground/70 mb-6">{localIntro}</p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
-                <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
+                <Link to="/quote">Check Price in {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg">
                 <Link to="/quote?step=photo"><Upload className="w-4 h-4 mr-2" />Upload Photo for Size Help</Link>
