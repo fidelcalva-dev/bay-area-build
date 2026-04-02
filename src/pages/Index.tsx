@@ -310,6 +310,7 @@ const Index = () => {
                   Check Price & Availability
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
+                <p className="text-xs text-muted-foreground text-center lg:text-left">Takes about 60 seconds · No commitment · Local Bay Area service</p>
               </div>
 
               {/* Supporting CTAs */}
