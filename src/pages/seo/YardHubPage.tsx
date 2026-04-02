@@ -108,7 +108,7 @@ export default function YardHubPage() {
 
           <Link to="/quote">
             <Button variant="cta" size="lg">
-              Get Exact Price <ArrowRight className="w-4 h-4 ml-2" />
+              Check Price & Availability <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>
@@ -371,7 +371,7 @@ export default function YardHubPage() {
           </p>
           <Link to="/quote">
             <Button variant="cta" size="lg">
-              Get Exact Price <ArrowRight className="w-4 h-4 ml-2" />
+              Check Price & Availability <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>

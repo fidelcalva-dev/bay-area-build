@@ -41,8 +41,9 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
   if (lowestPrice === null) return null;
 
   const priceText = `Starting at $${lowestPrice}`;
-  const rentalText = '7-day rentals';
-  const includedText = 'Delivery & pickup included · Pricing varies by area';
+  const rentalText = '7-day rental';
+  const includedText = 'Delivery & pickup included';
+  const disclaimerText = 'Pricing varies by area, size, and material';
 
   if (variant === 'compact') {
     return (
@@ -62,12 +63,14 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
 
   // Hero variant (default)
   return (
-    <p className={cn(
-      "text-sm text-primary-foreground/70 mt-3",
-      className
-    )}>
-      {priceText} · {rentalText} · {includedText}
-    </p>
+    <div className={cn("mt-3 text-center", className)}>
+      <p className="text-sm text-muted-foreground font-medium">
+        {priceText} · {rentalText} · {includedText}
+      </p>
+      <p className="text-xs text-muted-foreground/70 mt-1">
+        {disclaimerText}
+      </p>
+    </div>
   );
 }
 

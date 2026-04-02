@@ -44,17 +44,16 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
             variants={fadeUp}
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight"
           >
-            Find the Right Dumpster
+            Dumpster Rental Made Simple
             <span className="block text-primary mt-2 text-3xl sm:text-4xl lg:text-5xl font-bold">
-              for Your Bay Area Project
+              in the Bay Area
             </span>
           </motion.h1>
 
           {/* Subheadline */}
           <motion.div variants={fadeUp} className="space-y-1 text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            <p>Local yards in Oakland, San Jose & San Francisco.</p>
-            <p>Clear pricing based on your ZIP, size, and material type.</p>
-            <p>We'll guide you to the best option — no guesswork.</p>
+            <p>Check pricing in your area, compare the right sizes,</p>
+            <p>and get the best option for your project.</p>
           </motion.div>
 
           {/* Trust Row */}
@@ -75,7 +74,7 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
           {/* CTAs */}
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
             <Button asChild variant="cta" size="lg" className="flex-1 text-lg font-bold">
-              <a href="/quote">Check Price & Availability</a>
+              <a href="/quote">Check Price in My Area</a>
             </Button>
             <Button
               asChild

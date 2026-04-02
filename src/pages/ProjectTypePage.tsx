@@ -276,7 +276,7 @@ export default function ProjectTypePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg" className="rounded-full font-semibold px-8">
               <Link to={`/quote?v3=1&project=${data.slug}`}>
-                Get Exact Price <ArrowRight className="w-4 h-4 ml-2" />
+                Check Price & Availability <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8">

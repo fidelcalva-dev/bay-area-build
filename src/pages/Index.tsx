@@ -115,7 +115,7 @@ const WHY_CALSAN = [
 ];
 
 const HOW_IT_WORKS_STEPS = [
-  { number: '1', icon: Search, title: 'Get Your Exact Price', desc: 'Enter your ZIP and project details' },
+  { number: '1', icon: Search, title: 'Check Price in Your Area', desc: 'Enter your ZIP and project details' },
   { number: '2', icon: Package, title: 'Choose the Right Container', desc: 'We help you pick the right size' },
   { number: '3', icon: Clock, title: 'Pick Your Delivery Date', desc: 'Choose a date that works for you' },
   { number: '4', icon: Truck, title: 'Fill It & We Pick It Up', desc: 'Load at your pace — we haul it away' },
@@ -179,7 +179,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
 }
 
 const ACTION_OPTIONS = [
-  { label: 'Check Price & Availability', icon: ArrowRight, to: '/quote?v3=1', primary: true },
+  { label: 'Check Price in My Area', icon: ArrowRight, to: '/quote?v3=1', primary: true },
   { label: 'Upload Photos for Size Help', icon: Upload, to: '/waste-vision', primary: false },
   { label: 'Talk to a Specialist', icon: Phone, href: true, primary: false },
   { label: 'Schedule a Delivery', icon: Clock, to: '/schedule-delivery', primary: false },
@@ -264,11 +264,11 @@ const Index = () => {
             <div className="order-2 lg:order-1 space-y-6">
               <div className="text-center lg:text-left space-y-4">
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-                  Find the Right Dumpster
-                  <span className="block text-primary mt-1">for Your Project</span>
+                  Dumpster Rental Made Simple
+                  <span className="block text-primary mt-1">in the Bay Area</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
-                  Enter your ZIP to see pricing and availability in your area. We'll guide you to the right size — no guesswork.
+                  Check pricing in your area, compare the right sizes, and get the best option for your project.
                 </p>
               </div>
 
@@ -307,10 +307,10 @@ const Index = () => {
                   onClick={handleHeroQuote}
                   className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
                 >
-                  Check Price & Availability
+                  Check Price in My Area
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <p className="text-xs text-muted-foreground text-center lg:text-left">Takes about 60 seconds · No commitment · Local Bay Area service</p>
+                <p className="text-xs text-muted-foreground text-center lg:text-left">No commitment · Fast response · Local Bay Area service</p>
               </div>
 
               {/* Supporting CTAs */}
