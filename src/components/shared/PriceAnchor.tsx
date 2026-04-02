@@ -40,7 +40,7 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
 
   if (lowestPrice === null) return null;
 
-  const priceText = `Dumpsters from $${lowestPrice}`;
+  const priceText = `Starting at $${lowestPrice}`;
   const rentalText = '7-day rentals';
   const includedText = 'Delivery & pickup included';
 
