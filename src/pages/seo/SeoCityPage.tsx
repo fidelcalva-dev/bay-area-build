@@ -80,6 +80,7 @@ export default function SeoCityPage() {
   });
 
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city?.city_name || '', slug: city?.city_slug || '' });
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
 
   // Redirect AFTER all hooks have been called (Rules of Hooks)
   if (needsRedirect) {
