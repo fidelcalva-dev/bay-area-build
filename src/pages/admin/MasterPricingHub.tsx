@@ -57,6 +57,7 @@ const RentalTermsPanel = lazy(() => import('@/pages/admin/pricing/RentalTermsPan
 const CustomerDumpSitePanel = lazy(() => import('@/pages/admin/pricing/CustomerDumpSitePanel'));
 const PublicQuoteDisplayPanel = lazy(() => import('@/pages/admin/pricing/PublicQuoteDisplayPanel'));
 const CrmCalculatorRulesPanel = lazy(() => import('@/pages/admin/pricing/CrmCalculatorRulesPanel'));
+const VersioningPublishPanel = lazy(() => import('@/pages/admin/pricing/VersioningPublishPanel'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
