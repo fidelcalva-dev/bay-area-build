@@ -41,8 +41,9 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
   if (lowestPrice === null) return null;
 
   const priceText = `Starting at $${lowestPrice}`;
-  const rentalText = '7-day rentals';
-  const includedText = 'Delivery & pickup included · Pricing varies by area';
+  const rentalText = '7-day rental';
+  const includedText = 'Delivery & pickup included';
+  const disclaimerText = 'Pricing varies by area, size, and material';
 
   if (variant === 'compact') {
     return (
