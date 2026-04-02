@@ -209,7 +209,7 @@ export function Header() {
                 className="hidden sm:inline-flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm font-semibold text-[13px] px-5 hover:scale-[1.02] transition-all duration-200"
               >
                 <Link to="/quote?v3=1">
-                  Get Exact Price
+                  Check Price & Availability
                 </Link>
               </Button>
 
