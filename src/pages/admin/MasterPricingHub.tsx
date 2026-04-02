@@ -114,7 +114,7 @@ const TABS: TabDef[] = [
   { value: 'extras-health', label: 'Extras Health', icon: Activity, group: 'Analysis', description: 'Extras catalog completeness' },
   { value: 'audit-log', label: 'Audit Log', icon: Activity, group: 'Analysis', description: 'Pricing change history and version control' },
   { value: 'versioning', label: 'Versioning', icon: GitBranch, group: 'Analysis', description: 'Draft / publish / archive pricing versions' },
-
+];
 export default function MasterPricingHub() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'dashboard';
