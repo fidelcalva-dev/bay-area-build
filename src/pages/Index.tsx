@@ -115,7 +115,7 @@ const WHY_CALSAN = [
 ];
 
 const HOW_IT_WORKS_STEPS = [
-  { number: '1', icon: Search, title: 'Get Your Exact Price', desc: 'Enter your ZIP and project details' },
+  { number: '1', icon: Search, title: 'Check Price in Your Area', desc: 'Enter your ZIP and project details' },
   { number: '2', icon: Package, title: 'Choose the Right Container', desc: 'We help you pick the right size' },
   { number: '3', icon: Clock, title: 'Pick Your Delivery Date', desc: 'Choose a date that works for you' },
   { number: '4', icon: Truck, title: 'Fill It & We Pick It Up', desc: 'Load at your pace — we haul it away' },
