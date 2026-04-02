@@ -268,7 +268,7 @@ const Index = () => {
                   <span className="block text-primary mt-1">in the Bay Area</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
-                  Enter your ZIP to see pricing and availability in your area. We'll guide you to the right size — no guesswork.
+                  Check pricing in your area, compare the right sizes, and get the best option for your project.
                 </p>
               </div>
 
