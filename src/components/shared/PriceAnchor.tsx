@@ -78,7 +78,7 @@ export function PriceAnchorStatic({ className, variant = 'hero' }: PriceAnchorPr
   if (variant === 'compact') {
     return (
       <span className={cn("text-sm text-muted-foreground", className)}>
-        Dumpsters from ${lowestPrice} · 7-day rentals
+        Starting at ${lowestPrice} · 7-day rentals
       </span>
     );
   }
