@@ -75,7 +75,7 @@ const HOMEOWNER_COPY = (includedTons: number): PriceMomentCopy => ({
 });
 
 const CONTRACTOR_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Exact contractor pricing for this ZIP',
+  headline: 'Contractor pricing for your area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [
