@@ -96,7 +96,7 @@ export function PriceAnchorStatic({ className, variant = 'hero' }: PriceAnchorPr
       "text-sm text-primary-foreground/70 mt-3",
       className
     )}>
-      Dumpsters from ${lowestPrice} · 7-day rentals · Delivery & pickup included
+      Starting at ${lowestPrice} · 7-day rentals · Delivery & pickup included · Pricing varies by area
     </p>
   );
 }
