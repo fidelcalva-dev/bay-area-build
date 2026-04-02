@@ -1,0 +1,1 @@
+ALTER TABLE public.quote_sessions ADD CONSTRAINT quote_sessions_session_token_unique UNIQUE (session_token);
