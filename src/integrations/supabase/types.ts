@@ -4533,6 +4533,68 @@ export type Database = {
           },
         ]
       }
+      crm_calculator_rules: {
+        Row: {
+          active: boolean
+          addendum_triggers_json: Json | null
+          allow_customer_required_dump_site: boolean
+          allow_extra_days: boolean
+          allow_multiline_quotes: boolean
+          allow_multiple_dumpsters: boolean
+          allow_swaps: boolean
+          created_at: string
+          id: string
+          manager_approval_threshold: number | null
+          negotiated_price_floor: number | null
+          override_floors_json: Json | null
+          placement_review_triggers_json: Json | null
+          pricing_version_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          addendum_triggers_json?: Json | null
+          allow_customer_required_dump_site?: boolean
+          allow_extra_days?: boolean
+          allow_multiline_quotes?: boolean
+          allow_multiple_dumpsters?: boolean
+          allow_swaps?: boolean
+          created_at?: string
+          id?: string
+          manager_approval_threshold?: number | null
+          negotiated_price_floor?: number | null
+          override_floors_json?: Json | null
+          placement_review_triggers_json?: Json | null
+          pricing_version_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          addendum_triggers_json?: Json | null
+          allow_customer_required_dump_site?: boolean
+          allow_extra_days?: boolean
+          allow_multiline_quotes?: boolean
+          allow_multiple_dumpsters?: boolean
+          allow_swaps?: boolean
+          created_at?: string
+          id?: string
+          manager_approval_threshold?: number | null
+          negotiated_price_floor?: number | null
+          override_floors_json?: Json | null
+          placement_review_triggers_json?: Json | null
+          pricing_version_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_calculator_rules_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_errors: {
         Row: {
           action: string
@@ -14735,6 +14797,59 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_change_log: {
+        Row: {
+          changed_at: string
+          changed_by_user_id: string | null
+          config_area: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          pricing_version_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by_user_id?: string | null
+          config_area: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          pricing_version_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by_user_id?: string | null
+          config_area?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          pricing_version_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_change_log_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing_extras: {
         Row: {
           amount: number | null
@@ -14751,6 +14866,7 @@ export type Database = {
           notes: string | null
           price: number
           pricing_mode: string | null
+          pricing_version_id: string | null
           requires_review: boolean | null
           sort_order: number | null
           unit_type: string | null
@@ -14773,6 +14889,7 @@ export type Database = {
           notes?: string | null
           price: number
           pricing_mode?: string | null
+          pricing_version_id?: string | null
           requires_review?: boolean | null
           sort_order?: number | null
           unit_type?: string | null
@@ -14795,6 +14912,7 @@ export type Database = {
           notes?: string | null
           price?: number
           pricing_mode?: string | null
+          pricing_version_id?: string | null
           requires_review?: boolean | null
           sort_order?: number | null
           unit_type?: string | null
@@ -14802,7 +14920,15 @@ export type Database = {
           value?: string
           version_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pricing_extras_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pricing_families: {
         Row: {
@@ -15103,6 +15229,7 @@ export type Database = {
           id: string
           label: string
           policy_code: string
+          pricing_version_id: string | null
           updated_at: string
           version_id: string | null
         }
@@ -15114,6 +15241,7 @@ export type Database = {
           id?: string
           label: string
           policy_code: string
+          pricing_version_id?: string | null
           updated_at?: string
           version_id?: string | null
         }
@@ -15125,10 +15253,19 @@ export type Database = {
           id?: string
           label?: string
           policy_code?: string
+          pricing_version_id?: string | null
           updated_at?: string
           version_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pricing_policies_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pricing_rules: {
         Row: {
@@ -15640,6 +15777,139 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      public_price_catalog: {
+        Row: {
+          active: boolean
+          city_slug: string | null
+          created_at: string
+          id: string
+          included_days: number
+          included_tons: number
+          market_code: string
+          material_group_code: string | null
+          overage_rate: number
+          price_family: string
+          pricing_version_id: string | null
+          public_description: string | null
+          public_label: string
+          public_price: number
+          public_visible: boolean
+          service_line: string
+          size_yd: number
+          updated_at: string
+          zip_code: string | null
+        }
+        Insert: {
+          active?: boolean
+          city_slug?: string | null
+          created_at?: string
+          id?: string
+          included_days?: number
+          included_tons?: number
+          market_code?: string
+          material_group_code?: string | null
+          overage_rate?: number
+          price_family?: string
+          pricing_version_id?: string | null
+          public_description?: string | null
+          public_label: string
+          public_price: number
+          public_visible?: boolean
+          service_line?: string
+          size_yd: number
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Update: {
+          active?: boolean
+          city_slug?: string | null
+          created_at?: string
+          id?: string
+          included_days?: number
+          included_tons?: number
+          market_code?: string
+          material_group_code?: string | null
+          overage_rate?: number
+          price_family?: string
+          pricing_version_id?: string | null
+          public_description?: string | null
+          public_label?: string
+          public_price?: number
+          public_visible?: boolean
+          service_line?: string
+          size_yd?: number
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_price_catalog_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      public_quote_display_rules: {
+        Row: {
+          active: boolean
+          created_at: string
+          display_mode: string
+          id: string
+          pricing_version_id: string | null
+          show_add_another_dumpster: boolean
+          show_customer_required_dump_site: boolean
+          show_extra_days: boolean
+          show_heavy_groups_json: Json
+          show_materials_json: Json
+          show_notes_field: boolean
+          show_sizes_json: Json
+          show_swap: boolean
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          display_mode?: string
+          id?: string
+          pricing_version_id?: string | null
+          show_add_another_dumpster?: boolean
+          show_customer_required_dump_site?: boolean
+          show_extra_days?: boolean
+          show_heavy_groups_json?: Json
+          show_materials_json?: Json
+          show_notes_field?: boolean
+          show_sizes_json?: Json
+          show_swap?: boolean
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          display_mode?: string
+          id?: string
+          pricing_version_id?: string | null
+          show_add_another_dumpster?: boolean
+          show_customer_required_dump_site?: boolean
+          show_extra_days?: boolean
+          show_heavy_groups_json?: Json
+          show_materials_json?: Json
+          show_notes_field?: boolean
+          show_sizes_json?: Json
+          show_swap?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_quote_display_rules_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -17436,6 +17706,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      rental_term_catalog: {
+        Row: {
+          active: boolean
+          applies_to_material_classes_json: Json | null
+          applies_to_sizes_json: Json | null
+          created_at: string
+          extra_day_fee: number
+          id: string
+          included_days: number
+          label: string
+          pricing_version_id: string | null
+          public_visible: boolean
+          rental_term_code: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          applies_to_material_classes_json?: Json | null
+          applies_to_sizes_json?: Json | null
+          created_at?: string
+          extra_day_fee?: number
+          id?: string
+          included_days?: number
+          label: string
+          pricing_version_id?: string | null
+          public_visible?: boolean
+          rental_term_code: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          applies_to_material_classes_json?: Json | null
+          applies_to_sizes_json?: Json | null
+          created_at?: string
+          extra_day_fee?: number
+          id?: string
+          included_days?: number
+          label?: string
+          pricing_version_id?: string | null
+          public_visible?: boolean
+          rental_term_code?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_term_catalog_pricing_version_id_fkey"
+            columns: ["pricing_version_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       review_requests: {
         Row: {
