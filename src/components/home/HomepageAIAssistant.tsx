@@ -63,7 +63,7 @@ function getCtasForResponse(
       to: '/contractor-signup',
     });
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
       icon: ArrowRight,
       variant: 'secondary',
       to: '/quote?v3=1',
@@ -97,7 +97,7 @@ function getCtasForResponse(
       to: '/schedule-delivery',
     });
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
       icon: ArrowRight,
       variant: 'secondary',
       to: '/quote?v3=1',
@@ -108,7 +108,7 @@ function getCtasForResponse(
   // Photo / unsure / size help
   if (action === 'PHOTO' || stage === 'EXPLORING' || intent === 'SIZE_HELP') {
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
       icon: ArrowRight,
       variant: 'primary',
       to: '/quote?v3=1',
@@ -125,7 +125,7 @@ function getCtasForResponse(
   // Ready / pricing
   if (stage === 'READY' || action === 'QUOTE' || intent === 'PRICING_HELP' || intent === 'READY_TO_BOOK') {
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'See My Pricing Options',
       icon: ArrowRight,
       variant: 'primary',
       to: '/quote?v3=1',
@@ -141,7 +141,7 @@ function getCtasForResponse(
 
   // Default
   ctas.push({
-    label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+    label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
     icon: ArrowRight,
     variant: 'primary',
     to: '/quote?v3=1',

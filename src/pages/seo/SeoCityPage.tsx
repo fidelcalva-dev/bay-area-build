@@ -208,7 +208,7 @@ export default function SeoCityPage() {
             <p className="text-primary-foreground/70 mb-6">{localIntro}</p>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
-                <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
+                <Link to="/quote">Check Price in {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg">
                 <Link to="/quote?step=photo"><Upload className="w-4 h-4 mr-2" />Upload Photo for Size Help</Link>
@@ -490,10 +490,10 @@ export default function SeoCityPage() {
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 text-center">
-            <h2 className="heading-md text-foreground mb-3">Get Your {city.city_name} Dumpster Price</h2>
+            <h2 className="heading-md text-foreground mb-3">Dumpster Pricing in {city.city_name}</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{city.pricing_note}</p>
             <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
-              <Link to="/quote">Get Exact Price for {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Check Price in {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
           </div>
         </div>
@@ -596,10 +596,10 @@ export default function SeoCityPage() {
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
           <h2 className="heading-lg mb-4">Ready to Rent a Dumpster in {city.city_name}?</h2>
-          <p className="text-lg text-primary-foreground/80 mb-8">Get an instant quote or call us now. Same-day delivery available for {city.city_name} addresses.</p>
+          <p className="text-lg text-primary-foreground/80 mb-8">Check pricing and availability for {city.city_name}. Same-day delivery available.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl" onClick={trackQuoteClick}>
-              <Link to="/quote">Get Exact Price <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Check Price & Availability <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
             <Button asChild variant="heroOutline" size="xl" onClick={trackCallClick}>
               <a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" />Talk to a Specialist</a>

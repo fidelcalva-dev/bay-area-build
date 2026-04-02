@@ -40,9 +40,9 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
 
   if (lowestPrice === null) return null;
 
-  const priceText = `Dumpsters from $${lowestPrice}`;
+  const priceText = `Starting at $${lowestPrice}`;
   const rentalText = '7-day rentals';
-  const includedText = 'Delivery & pickup included';
+  const includedText = 'Delivery & pickup included · Pricing varies by area';
 
   if (variant === 'compact') {
     return (
@@ -78,7 +78,7 @@ export function PriceAnchorStatic({ className, variant = 'hero' }: PriceAnchorPr
   if (variant === 'compact') {
     return (
       <span className={cn("text-sm text-muted-foreground", className)}>
-        Dumpsters from ${lowestPrice} · 7-day rentals
+        Starting at ${lowestPrice} · 7-day rentals
       </span>
     );
   }
@@ -96,7 +96,7 @@ export function PriceAnchorStatic({ className, variant = 'hero' }: PriceAnchorPr
       "text-sm text-primary-foreground/70 mt-3",
       className
     )}>
-      Dumpsters from ${lowestPrice} · 7-day rentals · Delivery & pickup included
+      Starting at ${lowestPrice} · 7-day rentals · Delivery & pickup included · Pricing varies by area
     </p>
   );
 }

@@ -1060,10 +1060,10 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                   >
                     <span className="flex items-center gap-2 text-xs font-medium text-foreground">
                       <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                      Get Exact Price
+                      Check Price & Availability
                     </span>
                     <span className="text-[10px] text-muted-foreground leading-tight pl-5.5">
-                      Exact rental price by ZIP and project type.
+                      See pricing for your ZIP and project type.
                     </span>
                   </button>
                   <button
@@ -2216,7 +2216,7 @@ export function CalsanAIChat({ chatMode = 'default', className }: CalsanAIChatPr
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-3 border-t border-[hsl(220_10%_93%)]">
                       <ActionButton
-                        label={detectedLang === 'ES' ? 'Precio Exacto' : 'Get Exact Price'}
+                        label={detectedLang === 'ES' ? 'Ver Precio' : 'Check Price & Availability'}
                         onClick={() => { setChatTab('guided'); logEvent('ai_tool_clicked', { tool: 'instant_price_from_ask' }); }}
                         variant="primary"
                         icon={<Zap className="w-3.5 h-3.5" />}

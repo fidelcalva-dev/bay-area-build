@@ -55,10 +55,10 @@ export default function CityPricingBlock({ citySlug, cityName, showHeavy = true 
     return (
       <section className="section-padding bg-muted/30">
         <div className="container-wide text-center">
-          <h2 className="heading-lg text-foreground mb-4">Get Exact Pricing for {cityName}</h2>
-          <p className="text-muted-foreground mb-6">Enter your ZIP code for transparent, instant pricing.</p>
+          <h2 className="heading-lg text-foreground mb-4">Dumpster Pricing in {cityName}</h2>
+          <p className="text-muted-foreground mb-6">Enter your ZIP code to see pricing and availability in your area.</p>
           <Button asChild variant="cta" size="lg">
-            <Link to="/quote">Get Exact Price for Your ZIP <ArrowRight className="w-4 h-4 ml-1" /></Link>
+            <Link to="/quote">Check Price in {cityName} <ArrowRight className="w-4 h-4 ml-1" /></Link>
           </Button>
         </div>
       </section>
@@ -105,7 +105,7 @@ export default function CityPricingBlock({ citySlug, cityName, showHeavy = true 
         <div className="text-center mt-6">
           <p className="text-xs text-muted-foreground mb-4">{displayData.disclaimer}</p>
           <Button asChild variant="cta" size="lg">
-            <Link to="/quote">Get Exact Price for {cityName} <ArrowRight className="w-4 h-4 ml-1" /></Link>
+            <Link to="/quote">Check Price in {cityName} <ArrowRight className="w-4 h-4 ml-1" /></Link>
           </Button>
         </div>
       </div>
