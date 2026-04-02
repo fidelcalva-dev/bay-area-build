@@ -179,7 +179,7 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
 }
 
 const ACTION_OPTIONS = [
-  { label: 'Check Price & Availability', icon: ArrowRight, to: '/quote?v3=1', primary: true },
+  { label: 'Check Price in My Area', icon: ArrowRight, to: '/quote?v3=1', primary: true },
   { label: 'Upload Photos for Size Help', icon: Upload, to: '/waste-vision', primary: false },
   { label: 'Talk to a Specialist', icon: Phone, href: true, primary: false },
   { label: 'Schedule a Delivery', icon: Clock, to: '/schedule-delivery', primary: false },
