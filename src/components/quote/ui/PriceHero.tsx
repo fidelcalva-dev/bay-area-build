@@ -83,7 +83,7 @@ export function PriceHero({
           )}
         </div>
         
-        <div className="text-sm text-muted-foreground mb-1">{priceLabel}</div>
+        <div className="text-sm text-muted-foreground mb-1">{priceLabel || 'Your recommended price'}</div>
         <div className="text-5xl font-bold text-foreground tracking-tight">
           ${price.toLocaleString()}
         </div>

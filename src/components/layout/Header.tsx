@@ -237,7 +237,7 @@ export function Header() {
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold shadow-sm"
                 >
                   <Link to="/quote?v3=1" onClick={() => setIsMenuOpen(false)}>
-                    Get Exact Price
+                    Check Price & Availability
                   </Link>
                 </Button>
               </div>

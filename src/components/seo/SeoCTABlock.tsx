@@ -55,7 +55,7 @@ export function SeoCTABlock({
               size="lg"
               className="gap-2 w-full sm:w-auto"
             >
-              Get Exact Price
+              Check Price & Availability
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>

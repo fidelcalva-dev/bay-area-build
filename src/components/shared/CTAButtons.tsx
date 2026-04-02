@@ -30,7 +30,7 @@ export function CTAButtons({
   showQuote = true,
   showText = true,
   showCall = true,
-  quoteLabel = 'Get Instant Quote',
+  quoteLabel = 'Check Price & Availability',
   className,
 }: CTAButtonsProps) {
   if (variant === 'hero') {

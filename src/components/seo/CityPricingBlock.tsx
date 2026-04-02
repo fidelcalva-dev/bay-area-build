@@ -105,7 +105,7 @@ export default function CityPricingBlock({ citySlug, cityName, showHeavy = true 
         <div className="text-center mt-6">
           <p className="text-xs text-muted-foreground mb-4">{displayData.disclaimer}</p>
           <Button asChild variant="cta" size="lg">
-            <Link to="/quote">Get Exact Price for {cityName} <ArrowRight className="w-4 h-4 ml-1" /></Link>
+            <Link to="/quote">Check Price in {cityName} <ArrowRight className="w-4 h-4 ml-1" /></Link>
           </Button>
         </div>
       </div>

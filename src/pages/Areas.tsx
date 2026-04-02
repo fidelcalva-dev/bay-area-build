@@ -183,7 +183,7 @@ export default function Areas() {
           </p>
           <Button asChild variant="cta" size="lg">
             <Link to="/quote">
-              Get Your Exact Price
+              See Pricing in My Area
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

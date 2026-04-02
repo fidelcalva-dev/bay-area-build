@@ -16,7 +16,7 @@ const benefits = [
 ];
 
 const HOW_IT_WORKS = [
-  { number: '1', icon: ArrowRight, title: 'Get your exact price', desc: 'Enter ZIP and project type' },
+  { number: '1', icon: ArrowRight, title: 'Check pricing in your area', desc: 'Enter ZIP and project type' },
   { number: '2', icon: Clock, title: 'Choose delivery date', desc: 'Pick a date that works' },
   { number: '3', icon: Package, title: 'Fill the dumpster', desc: 'Load at your own pace' },
   { number: '4', icon: Truck, title: 'We pick it up', desc: 'We haul it away' },

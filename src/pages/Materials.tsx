@@ -224,7 +224,7 @@ export default function Materials() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="cta" size="xl">
               <Link to="/quote">
-                Get Exact Price
+                Check Material Pricing in My Area
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>

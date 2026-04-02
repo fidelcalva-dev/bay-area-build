@@ -284,12 +284,12 @@ function ServicePageContent() {
         <div className="container-wide max-w-3xl text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Get your exact price in 60 seconds. Transparent pricing, local delivery, no broker fees.
+            Check pricing in about 60 seconds. Transparent rates, local delivery, no broker fees.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button asChild size="lg" variant="secondary" className="text-base">
               <Link to="/quote">
-                Get Your Exact Price <ArrowRight className="ml-2 w-4 h-4" />
+                Check Price & Availability <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">

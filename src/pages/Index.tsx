@@ -318,7 +318,7 @@ const Index = () => {
                 <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
                   <Link to="/waste-vision">
                     <Upload className="w-4 h-4 mr-2" />
-                    Upload Photo for Size Help
+                    Upload Photos for Size Help
                   </Link>
                 </Button>
               </div>
