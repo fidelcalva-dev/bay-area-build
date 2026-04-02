@@ -13,7 +13,7 @@ const corsHeaders = {
 // ── Pricing & Sizes ──
 const DUMPSTER_SIZES = [10, 20, 30, 40];
 const BASE_PRICES: Record<number, number> = {
-  6: 390, 8: 440, 10: 499, 20: 599, 30: 749, 40: 899, 50: 1135
+  5: 395, 8: 425, 10: 495, 20: 650, 30: 775, 40: 925, 50: 1095
 };
 
 // ── Campaign Blueprints ──

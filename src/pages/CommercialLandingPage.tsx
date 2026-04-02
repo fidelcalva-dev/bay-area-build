@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
-import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
+import { PRICING_POLICIES } from '@/lib/shared-data';
+import { useDumpsterSizes } from '@/hooks/useDumpsterSizes';
 import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, Building, Truck, CheckCircle, Warehouse, HardHat } from 'lucide-react';
 
@@ -86,6 +87,7 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
 };
 
 export default function CommercialLandingPage() {
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
   const slug = window.location.pathname.replace('/', '');
   const content = COMMERCIAL_PAGES[slug];
 

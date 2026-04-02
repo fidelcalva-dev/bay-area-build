@@ -4,13 +4,14 @@ import { PageFAQ } from '@/components/seo/PageFAQ';
 import { InternalLinkCluster } from '@/components/seo/InternalLinkCluster';
 import { SeoJsonLd } from '@/components/seo/SeoJsonLd';
 import { getServicePageBySlug, SERVICE_PAGES } from '@/lib/service-pages-data';
-import { DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { useDumpsterSizes } from '@/hooks/useDumpsterSizes';
 import { BUSINESS_INFO } from '@/lib/seo';
 import { ArrowRight, Phone, CheckCircle2, AlertTriangle, Truck, MapPin, DollarSign, Ruler, Clock, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 function ServicePageContent() {
   const { slug } = useParams<{ slug: string }>();
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
   const page = slug ? getServicePageBySlug(slug) : undefined;
 
   if (!page) return <Navigate to="/" replace />;

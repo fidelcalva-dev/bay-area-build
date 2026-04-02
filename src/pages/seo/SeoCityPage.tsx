@@ -5,7 +5,8 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { BUSINESS_INFO, OPERATIONAL_YARDS, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/seo';
-import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
+import { PRICING_POLICIES } from '@/lib/shared-data';
+import { useDumpsterSizes } from '@/hooks/useDumpsterSizes';
 import { SEO_MATERIALS, type SeoCity, type ContentSection, type FaqItem, generateInternalLinks } from '@/lib/seo-engine';
 import { getMarketClassification, getMarketRedirectTarget, isMarketIndexable } from '@/lib/market-classification';
 import { ArrowRight, MapPin, Phone, Truck, Clock, Shield, Building, AlertTriangle, CheckCircle, BookOpen, Hammer, HardHat, FileText, Upload, Star, Wrench } from 'lucide-react';
@@ -79,6 +80,7 @@ export default function SeoCityPage() {
   });
 
   const { trackQuoteClick, trackCallClick } = useSeoTracking({ pageType: 'city', city: city?.city_name || '', slug: city?.city_slug || '' });
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
 
   // Redirect AFTER all hooks have been called (Rules of Hooks)
   if (needsRedirect) {
