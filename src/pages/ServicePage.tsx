@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 
 function ServicePageContent() {
   const { slug } = useParams<{ slug: string }>();
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
   const page = slug ? getServicePageBySlug(slug) : undefined;
 
   if (!page) return <Navigate to="/" replace />;

@@ -87,6 +87,7 @@ const COMMERCIAL_PAGES: Record<string, CommercialPageContent> = {
 };
 
 export default function CommercialLandingPage() {
+  const { sizes: DUMPSTER_SIZES_DATA } = useDumpsterSizes();
   const slug = window.location.pathname.replace('/', '');
   const content = COMMERCIAL_PAGES[slug];
 
