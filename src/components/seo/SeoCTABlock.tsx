@@ -20,8 +20,8 @@ interface SeoCTABlockProps {
 
 export function SeoCTABlock({
   page,
-  headline = 'Ready to get your dumpster price?',
-  subline = 'Transparent pricing. No hidden fees. Same-day available.',
+  headline = 'Find the right dumpster for your project',
+  subline = 'Check pricing in your area. No hidden fees. Local Bay Area service.',
   quoteHref = '/quote',
   showPhone = true,
   variant = 'primary',
