@@ -307,7 +307,7 @@ const Index = () => {
                   onClick={handleHeroQuote}
                   className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
                 >
-                  Check Price & Availability
+                  Check Price in My Area
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <p className="text-xs text-muted-foreground text-center lg:text-left">Takes about 60 seconds · No commitment · Local Bay Area service</p>
