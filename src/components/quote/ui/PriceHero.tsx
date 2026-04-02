@@ -15,7 +15,7 @@ interface IncludedItem {
 
 interface PriceHeroProps {
   price: number;
-  priceLabel?: string;
+  priceLabel?: string; // e.g. "Your recommended price"
   subtitle?: string;
   ctaLabel: string;
   ctaIcon?: LucideIcon;
