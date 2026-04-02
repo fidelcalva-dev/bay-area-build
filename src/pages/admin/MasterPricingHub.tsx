@@ -4,7 +4,7 @@
 // Consolidates all pricing config into one tabbed interface
 // ══════════════════════════════════════════════════════════════
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import PricingOverviewPanel from '@/components/admin/pricing/PricingOverviewPanel';
@@ -12,8 +12,11 @@ import {
   DollarSign, Scale, MapPin, Users, Plus, Gauge, LayoutDashboard,
   Calculator, Activity, Building2, Zap, AlertTriangle, Globe,
   Loader2, ShieldCheck, FileText, Truck, Package, Layers, Weight,
-  Calendar, Navigation
+  Calendar, Navigation, GitBranch, Upload, Download, Eye, Save
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { getPublishedVersion, type PricingVersion } from '@/lib/pricingVersionService';
+import { checkPublicCatalogHealth } from '@/lib/pricingCatalogCompiler';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
@@ -54,6 +57,7 @@ const RentalTermsPanel = lazy(() => import('@/pages/admin/pricing/RentalTermsPan
 const CustomerDumpSitePanel = lazy(() => import('@/pages/admin/pricing/CustomerDumpSitePanel'));
 const PublicQuoteDisplayPanel = lazy(() => import('@/pages/admin/pricing/PublicQuoteDisplayPanel'));
 const CrmCalculatorRulesPanel = lazy(() => import('@/pages/admin/pricing/CrmCalculatorRulesPanel'));
+const VersioningPublishPanel = lazy(() => import('@/pages/admin/pricing/VersioningPublishPanel'));
 
 const TabSpinner = () => (
   <div className="flex items-center justify-center py-20">
@@ -109,15 +113,22 @@ const TABS: TabDef[] = [
   { value: 'contractor-health', label: 'Contractor Health', icon: Activity, group: 'Analysis', description: 'Contractor rules health checks' },
   { value: 'extras-health', label: 'Extras Health', icon: Activity, group: 'Analysis', description: 'Extras catalog completeness' },
   { value: 'audit-log', label: 'Audit Log', icon: Activity, group: 'Analysis', description: 'Pricing change history and version control' },
+  { value: 'versioning', label: 'Versioning', icon: GitBranch, group: 'Analysis', description: 'Draft / publish / archive pricing versions' },
 ];
-
 export default function MasterPricingHub() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'dashboard';
+  const [publishedVersion, setPublishedVersion] = useState<PricingVersion | null>(null);
+  const [healthIssueCount, setHealthIssueCount] = useState(0);
 
   const setTab = (tab: string) => {
     setSearchParams({ tab }, { replace: true });
   };
+
+  useEffect(() => {
+    getPublishedVersion().then(v => setPublishedVersion(v));
+    checkPublicCatalogHealth().then(h => setHealthIssueCount(h.issues.length));
+  }, []);
 
   // Group tabs
   const groups = ['Core', 'Geography', 'Fees', 'Rules', 'Analysis'];
@@ -133,22 +144,36 @@ export default function MasterPricingHub() {
       </Helmet>
 
       <div className="flex flex-col h-full">
-        {/* ── Header ── */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border px-6 py-4">
+        {/* ── Sticky Action Bar ── */}
+        <div className="sticky top-0 z-10 bg-background border-b border-border px-6 py-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <DollarSign className="w-6 h-6 text-primary" />
+              <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
                 Master Pricing Control Center
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 All costs, sizes, materials, zones, fees, and rules — one place.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                Canonical Hub
-              </Badge>
+              <Button size="sm" variant="outline" onClick={() => setTab('simulator')}>
+                <Eye className="w-3.5 h-3.5 mr-1" /> Simulator
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setTab('readiness')}>
+                <Gauge className="w-3.5 h-3.5 mr-1" /> Health
+                {healthIssueCount > 0 && (
+                  <Badge variant="destructive" className="ml-1 text-[9px] h-4 px-1">
+                    {healthIssueCount}
+                  </Badge>
+                )}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setTab('versioning')}>
+                <GitBranch className="w-3.5 h-3.5 mr-1" /> Versioning
+              </Button>
+              <Button size="sm" onClick={() => setTab('versioning')}>
+                <Upload className="w-3.5 h-3.5 mr-1" /> Publish
+              </Button>
             </div>
           </div>
         </div>
@@ -210,7 +235,7 @@ export default function MasterPricingHub() {
 
           {/* ── Main Content ── */}
           <main className="flex-1 overflow-y-auto">
-             <Suspense fallback={<TabSpinner />}>
+            <Suspense fallback={<TabSpinner />}>
               {activeTab === 'dashboard' && <PricingOverviewPanel onNavigateTab={setTab} />}
               {activeTab === 'sizes' && <SizeCatalogPanel />}
               {activeTab === 'waste-catalog' && <WasteMaterialCatalogPanel />}
@@ -245,8 +270,66 @@ export default function MasterPricingHub() {
               {activeTab === 'contractor-health' && <ContractorRulesHealth />}
               {activeTab === 'extras-health' && <ExtrasHealthDashboard />}
               {activeTab === 'audit-log' && <PricingAuditLogPanel />}
+              {activeTab === 'versioning' && <VersioningPublishPanel />}
             </Suspense>
           </main>
+
+          {/* ── Right Summary Sidebar ── */}
+          <aside className="w-52 shrink-0 border-l border-border bg-muted/10 overflow-y-auto hidden xl:block p-4 space-y-4">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Live Version
+              </p>
+              {publishedVersion ? (
+                <div className="space-y-1">
+                  <Badge className="text-[10px]">{publishedVersion.version_code}</Badge>
+                  <p className="text-[10px] text-muted-foreground">
+                    Published {publishedVersion.published_at
+                      ? new Date(publishedVersion.published_at).toLocaleDateString()
+                      : '—'}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">No published version</p>
+              )}
+            </div>
+
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Health
+              </p>
+              <div className="flex items-center gap-1.5">
+                {healthIssueCount === 0 ? (
+                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">✓ Healthy</Badge>
+                ) : (
+                  <Badge variant="destructive" className="text-[10px]">{healthIssueCount} issues</Badge>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Quick Nav
+              </p>
+              <div className="space-y-1">
+                {[
+                  { label: 'General Prices', tab: 'general-edit' },
+                  { label: 'Heavy Rates', tab: 'heavy-rates' },
+                  { label: 'Extras', tab: 'extras' },
+                  { label: 'Simulator', tab: 'simulator' },
+                  { label: 'Audit Log', tab: 'audit-log' },
+                ].map(q => (
+                  <button
+                    key={q.tab}
+                    onClick={() => setTab(q.tab)}
+                    className="block w-full text-left text-[11px] text-muted-foreground hover:text-foreground py-0.5 transition-colors"
+                  >
+                    → {q.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </>
