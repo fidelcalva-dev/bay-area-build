@@ -159,7 +159,7 @@ export function ContactStep({
           onClick={goNext}
           disabled={!customerName || !phoneValid || !consentSms || !consentTerms}
         >
-          See My Exact Price
+          Review My Exact Quote
           <ChevronRight className="w-5 h-5 ml-1" />
         </Button>
 

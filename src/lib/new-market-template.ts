@@ -164,7 +164,7 @@ export function createMarketTemplate(
       nearbyCities: [],
       countyContext: `${county}, California`,
       internalLinks: ['/quote', '/sizes', '/materials', '/pricing'],
-      quoteCta: 'Get Exact Price',
+      quoteCta: 'Check Price & Availability',
       serviceAreaNotes: `Serving ${city} and surrounding ${county} communities.`,
       reviewReadiness: false,
       photoReadiness: false,

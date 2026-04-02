@@ -47,7 +47,7 @@ export function evaluateLocalReadiness(): LocalReadinessScore {
       weight: 25,
       checks: [
         { id: 'quote_flow_stable', label: 'Quote flow preserves ZIP, progressive capture works', status: 'PASS' },
-        { id: 'cta_hierarchy', label: 'Get Exact Price > Upload Photo > Call/Text', status: 'PASS' },
+        { id: 'cta_hierarchy', label: 'Check Price in My Area > Upload Photo > Call/Text', status: 'PASS' },
         { id: 'pricing_consistent', label: 'One pricing source of truth across all pages', status: 'PASS' },
         { id: 'size_material_rules', label: '5–50yd general, 5–10yd heavy enforced everywhere', status: 'PASS' },
         { id: 'lead_capture', label: 'Progressive lead ingest at 4 milestones', status: 'PASS' },

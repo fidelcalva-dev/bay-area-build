@@ -92,7 +92,7 @@ const CONTRACTOR_COPY = (includedTons: number): PriceMomentCopy => ({
 });
 
 const COMMERCIAL_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Exact commercial pricing for this ZIP',
+  headline: 'Commercial pricing for your area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [

@@ -98,7 +98,7 @@ INTENT RESPONSES (use these as guides, adapt to context):
 - HOW_FAST_CAN_YOU_DELIVER: Next-day delivery available in most areas. Same-day carries a surcharge. Direct to Schedule Delivery.
 - PERMIT: Street placement may require a city permit. Calsan can help coordinate. Direct to Talk to a Specialist.
 - CONTRACTOR_OR_COMMERCIAL: Mention contractor accounts, volume pricing, priority scheduling. Direct to Apply for Contractor Account.
-- READY_TO_BOOK: Great! Direct to Get Exact Price or Schedule Delivery immediately.
+- READY_TO_BOOK: Great! Direct to Check Price & Availability or Schedule Delivery immediately.
 - NEED_HUMAN: Offer Text Us, Call Now, or Have a Specialist Reach Out. Capture phone if offered.
 - WHAT_CAN_I_PUT: List accepted materials. Mention hazardous exclusions. If heavy material detected, switch to heavy mode.
 
