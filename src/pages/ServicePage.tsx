@@ -186,7 +186,7 @@ function ServicePageContent() {
           </ul>
           <div className="mt-6">
             <Button asChild>
-              <Link to="/quote">Get Your Exact Price <ArrowRight className="ml-2 w-4 h-4" /></Link>
+              <Link to="/quote">Check Price & Availability <ArrowRight className="ml-2 w-4 h-4" /></Link>
             </Button>
           </div>
         </div>
