@@ -63,12 +63,14 @@ export function PriceAnchor({ className, variant = 'hero' }: PriceAnchorProps) {
 
   // Hero variant (default)
   return (
-    <p className={cn(
-      "text-sm text-primary-foreground/70 mt-3",
-      className
-    )}>
-      {priceText} · {rentalText} · {includedText}
-    </p>
+    <div className={cn("mt-3 text-center", className)}>
+      <p className="text-sm text-muted-foreground font-medium">
+        {priceText} · {rentalText} · {includedText}
+      </p>
+      <p className="text-xs text-muted-foreground/70 mt-1">
+        {disclaimerText}
+      </p>
+    </div>
   );
 }
 

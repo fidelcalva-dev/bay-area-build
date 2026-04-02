@@ -74,7 +74,7 @@ export default function SeoServiceCityPage() {
             <p className="text-muted-foreground mb-4">Enter your ZIP code for instant, all-inclusive pricing.</p>
             <Link to="/quote">
               <Button variant="cta" size="lg">
-                Get Exact Price <ArrowRight className="w-4 h-4 ml-2" />
+                Check Price & Availability <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>

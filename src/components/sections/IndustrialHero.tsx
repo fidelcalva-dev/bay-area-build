@@ -74,7 +74,7 @@ export function IndustrialHero({ cityName, countyName }: IndustrialHeroProps) {
           {/* CTAs */}
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
             <Button asChild variant="cta" size="lg" className="flex-1 text-lg font-bold">
-              <a href="/quote">Check Price & Availability</a>
+              <a href="/quote">Check Price in My Area</a>
             </Button>
             <Button
               asChild
