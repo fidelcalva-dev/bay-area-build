@@ -490,10 +490,10 @@ export default function SeoCityPage() {
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 text-center">
-            <h2 className="heading-md text-foreground mb-3">Get Your {city.city_name} Dumpster Price</h2>
+            <h2 className="heading-md text-foreground mb-3">Dumpster Pricing in {city.city_name}</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{city.pricing_note}</p>
             <Button asChild variant="cta" size="lg" onClick={trackQuoteClick}>
-              <Link to="/quote">Get Exact Price for {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/quote">Check Price in {city.city_name} <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
           </div>
         </div>
