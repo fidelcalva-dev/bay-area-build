@@ -58,7 +58,7 @@ interface HeavyPriceMomentCopy {
 }
 
 const HOMEOWNER_COPY = (includedTons: number): PriceMomentCopy => ({
-  headline: 'Your exact price for this ZIP',
+  headline: 'Your recommended price for this area',
   subheadline: 'Local yard selected for faster delivery and better availability.',
   includedTitle: 'Included',
   includedItems: [
