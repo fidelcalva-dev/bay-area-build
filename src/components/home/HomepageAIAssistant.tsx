@@ -97,7 +97,7 @@ function getCtasForResponse(
       to: '/schedule-delivery',
     });
     ctas.push({
-      label: isEs ? 'Ver Precio Exacto' : 'Get Exact Price',
+      label: isEs ? 'Ver Precio y Disponibilidad' : 'Check Price & Availability',
       icon: ArrowRight,
       variant: 'secondary',
       to: '/quote?v3=1',
