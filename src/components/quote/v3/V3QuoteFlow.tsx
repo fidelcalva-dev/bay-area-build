@@ -920,14 +920,17 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 3: Material */}
+        {/* Step 3: Material (Multi-Select Waste) */}
         {step === 'material' && (
-          <MaterialStep
+          <WasteSelectionStep
             selectedMaterialGroup={selectedMaterialGroup}
-            selectedMaterial={selectedMaterial}
+            selectedMaterialIds={selectedMaterialIds}
+            canSeparateRecyclables={canSeparateRecyclables}
             isProjectHeavy={selectedUniversalProject?.isHeavy || false}
             onSelectGroup={handleMaterialGroupSelect}
-            onSelectMaterial={handleMaterialSelect}
+            onSelectMaterials={setSelectedMaterialIds}
+            onSetCanSeparate={setCanSeparateRecyclables}
+            onComplete={handleWasteComplete}
             goBack={goBack}
           />
         )}
