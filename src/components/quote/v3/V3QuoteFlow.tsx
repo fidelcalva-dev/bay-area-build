@@ -53,10 +53,15 @@ import {
 import type { UniversalProject } from './projectTypes';
 import type { MaterialGroup, MaterialOption } from './materialTypes';
 import type { ServiceOptions } from './steps/ServiceCustomizationStep';
+import type { WasteSelectionResult, RecyclableSeparation } from './steps/WasteSelectionStep';
+import {
+  hasRecyclableSelection, isMixedLoad, hasSpecialHandling, needsManualReview,
+  hasHeavySelection,
+} from './wasteCatalog';
 
 // Step Components
 import {
-  ProjectTypeStep, ZipStep, MaterialStep, SizeStep,
+  ProjectTypeStep, ZipStep, MaterialStep, WasteSelectionStep, SizeStep,
   ServiceCustomizationStep,
   ContactStep, PriceStep, AccessStep, ConfirmStep,
   StepTransition,
@@ -142,6 +147,9 @@ export function V3QuoteFlow() {
   // Material selection
   const [selectedMaterialGroup, setSelectedMaterialGroup] = useState<MaterialGroup | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption | null>(null);
+  // Multi-select waste materials
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
+  const [canSeparateRecyclables, setCanSeparateRecyclables] = useState<RecyclableSeparation | null>(null);
 
   // Service customization
   const [serviceOptions, setServiceOptions] = useState<ServiceOptions>({
@@ -169,8 +177,8 @@ export function V3QuoteFlow() {
   const customerNotes = serviceOptions.customerNotes;
   const setCustomerNotes = (v: string) => setServiceOptions(prev => ({ ...prev, customerNotes: v }));
 
-  // ---- Derive isHeavy from material or project ----
-  const isHeavy = selectedMaterial?.group === 'heavy' || selectedUniversalProject?.isHeavy || false;
+  // ---- Derive isHeavy from material or project or multi-select ----
+  const isHeavy = selectedMaterial?.group === 'heavy' || selectedUniversalProject?.isHeavy || hasHeavySelection(selectedMaterialIds) || false;
   const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
   // Restore draft state
@@ -255,6 +263,8 @@ export function V3QuoteFlow() {
     setSelectedUniversalProject(null);
     setSelectedMaterialGroup(null);
     setSelectedMaterial(null);
+    setSelectedMaterialIds([]);
+    setCanSeparateRecyclables(null);
     setSize(20);
     setCustomerName('');
     setCustomerPhone('');
@@ -599,7 +609,7 @@ export function V3QuoteFlow() {
     setTimeout(() => setStep('zip'), 200);
   };
 
-  // Material selection
+  // Material selection (legacy single-select kept for compat)
   const handleMaterialGroupSelect = (group: MaterialGroup) => {
     setSelectedMaterialGroup(group);
     setSelectedMaterial(null);
@@ -608,6 +618,16 @@ export function V3QuoteFlow() {
   const handleMaterialSelect = (material: MaterialOption) => {
     setSelectedMaterial(material);
     if (material.group === 'heavy' && size > 10) setSize(10);
+    setTimeout(() => goNext(), 200);
+  };
+
+  // Multi-select waste completion handler
+  const handleWasteComplete = (result: WasteSelectionResult) => {
+    setSelectedMaterialGroup(result.materialGroup);
+    // If only heavy materials, enforce size
+    if (hasHeavySelection(result.selectedMaterialIds) && !result.isMixed && size > 10) {
+      setSize(10);
+    }
     setTimeout(() => goNext(), 200);
   };
 
@@ -900,14 +920,17 @@ export function V3QuoteFlow() {
           />
         )}
 
-        {/* Step 3: Material */}
+        {/* Step 3: Material (Multi-Select Waste) */}
         {step === 'material' && (
-          <MaterialStep
+          <WasteSelectionStep
             selectedMaterialGroup={selectedMaterialGroup}
-            selectedMaterial={selectedMaterial}
+            selectedMaterialIds={selectedMaterialIds}
+            canSeparateRecyclables={canSeparateRecyclables}
             isProjectHeavy={selectedUniversalProject?.isHeavy || false}
             onSelectGroup={handleMaterialGroupSelect}
-            onSelectMaterial={handleMaterialSelect}
+            onSelectMaterials={setSelectedMaterialIds}
+            onSetCanSeparate={setCanSeparateRecyclables}
+            onComplete={handleWasteComplete}
             goBack={goBack}
           />
         )}
