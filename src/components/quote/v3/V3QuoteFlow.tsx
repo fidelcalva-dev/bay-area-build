@@ -263,6 +263,8 @@ export function V3QuoteFlow() {
     setSelectedUniversalProject(null);
     setSelectedMaterialGroup(null);
     setSelectedMaterial(null);
+    setSelectedMaterialIds([]);
+    setCanSeparateRecyclables(null);
     setSize(20);
     setCustomerName('');
     setCustomerPhone('');
