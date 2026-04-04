@@ -177,8 +177,8 @@ export function V3QuoteFlow() {
   const customerNotes = serviceOptions.customerNotes;
   const setCustomerNotes = (v: string) => setServiceOptions(prev => ({ ...prev, customerNotes: v }));
 
-  // ---- Derive isHeavy from material or project ----
-  const isHeavy = selectedMaterial?.group === 'heavy' || selectedUniversalProject?.isHeavy || false;
+  // ---- Derive isHeavy from material or project or multi-select ----
+  const isHeavy = selectedMaterial?.group === 'heavy' || selectedUniversalProject?.isHeavy || hasHeavySelection(selectedMaterialIds) || false;
   const materialTypeForPricing = isHeavy ? 'heavy' : 'general';
 
   // Restore draft state
