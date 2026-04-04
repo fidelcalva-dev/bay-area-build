@@ -147,6 +147,9 @@ export function V3QuoteFlow() {
   // Material selection
   const [selectedMaterialGroup, setSelectedMaterialGroup] = useState<MaterialGroup | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialOption | null>(null);
+  // Multi-select waste materials
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
+  const [canSeparateRecyclables, setCanSeparateRecyclables] = useState<RecyclableSeparation | null>(null);
 
   // Service customization
   const [serviceOptions, setServiceOptions] = useState<ServiceOptions>({
