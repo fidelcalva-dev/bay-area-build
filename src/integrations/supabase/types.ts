@@ -16419,6 +16419,7 @@ export type Database = {
           access_notes: string | null
           brand_origin: string | null
           browser_name: string | null
+          can_separate_recyclables: string | null
           city: string | null
           company_name: string | null
           completed_steps_json: Json | null
@@ -16436,6 +16437,7 @@ export type Database = {
           fbclid: string | null
           gate_code: string | null
           gclid: string | null
+          has_recyclable_materials: boolean | null
           heavy_group: string | null
           id: string
           landing_page: string | null
@@ -16443,11 +16445,14 @@ export type Database = {
           lead_id: string | null
           material_class: string | null
           material_type: string | null
+          mixed_load_flag: boolean | null
           os_name: string | null
           permit_required: boolean | null
           photos_uploaded_flag: boolean | null
           placement_notes: string | null
           placement_type_requested: string | null
+          possible_recycling_credit_flag: boolean | null
+          pricing_family: string | null
           project_type: string | null
           promoted_to_lead_at: string | null
           quantity: number | null
@@ -16459,6 +16464,8 @@ export type Database = {
           requested_dump_site_name: string | null
           requested_dump_site_notes: string | null
           requested_time_window: string | null
+          requires_manual_review: boolean | null
+          selected_materials_json: Json | null
           selected_size_yd: number | null
           service_line: string | null
           session_token: string | null
@@ -16478,6 +16485,7 @@ export type Database = {
           access_notes?: string | null
           brand_origin?: string | null
           browser_name?: string | null
+          can_separate_recyclables?: string | null
           city?: string | null
           company_name?: string | null
           completed_steps_json?: Json | null
@@ -16495,6 +16503,7 @@ export type Database = {
           fbclid?: string | null
           gate_code?: string | null
           gclid?: string | null
+          has_recyclable_materials?: boolean | null
           heavy_group?: string | null
           id?: string
           landing_page?: string | null
@@ -16502,11 +16511,14 @@ export type Database = {
           lead_id?: string | null
           material_class?: string | null
           material_type?: string | null
+          mixed_load_flag?: boolean | null
           os_name?: string | null
           permit_required?: boolean | null
           photos_uploaded_flag?: boolean | null
           placement_notes?: string | null
           placement_type_requested?: string | null
+          possible_recycling_credit_flag?: boolean | null
+          pricing_family?: string | null
           project_type?: string | null
           promoted_to_lead_at?: string | null
           quantity?: number | null
@@ -16518,6 +16530,8 @@ export type Database = {
           requested_dump_site_name?: string | null
           requested_dump_site_notes?: string | null
           requested_time_window?: string | null
+          requires_manual_review?: boolean | null
+          selected_materials_json?: Json | null
           selected_size_yd?: number | null
           service_line?: string | null
           session_token?: string | null
@@ -16537,6 +16551,7 @@ export type Database = {
           access_notes?: string | null
           brand_origin?: string | null
           browser_name?: string | null
+          can_separate_recyclables?: string | null
           city?: string | null
           company_name?: string | null
           completed_steps_json?: Json | null
@@ -16554,6 +16569,7 @@ export type Database = {
           fbclid?: string | null
           gate_code?: string | null
           gclid?: string | null
+          has_recyclable_materials?: boolean | null
           heavy_group?: string | null
           id?: string
           landing_page?: string | null
@@ -16561,11 +16577,14 @@ export type Database = {
           lead_id?: string | null
           material_class?: string | null
           material_type?: string | null
+          mixed_load_flag?: boolean | null
           os_name?: string | null
           permit_required?: boolean | null
           photos_uploaded_flag?: boolean | null
           placement_notes?: string | null
           placement_type_requested?: string | null
+          possible_recycling_credit_flag?: boolean | null
+          pricing_family?: string | null
           project_type?: string | null
           promoted_to_lead_at?: string | null
           quantity?: number | null
@@ -16577,6 +16596,8 @@ export type Database = {
           requested_dump_site_name?: string | null
           requested_dump_site_notes?: string | null
           requested_time_window?: string | null
+          requires_manual_review?: boolean | null
+          selected_materials_json?: Json | null
           selected_size_yd?: number | null
           service_line?: string | null
           session_token?: string | null
