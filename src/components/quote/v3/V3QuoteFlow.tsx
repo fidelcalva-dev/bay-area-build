@@ -609,7 +609,7 @@ export function V3QuoteFlow() {
     setTimeout(() => setStep('zip'), 200);
   };
 
-  // Material selection
+  // Material selection (legacy single-select kept for compat)
   const handleMaterialGroupSelect = (group: MaterialGroup) => {
     setSelectedMaterialGroup(group);
     setSelectedMaterial(null);
@@ -618,6 +618,16 @@ export function V3QuoteFlow() {
   const handleMaterialSelect = (material: MaterialOption) => {
     setSelectedMaterial(material);
     if (material.group === 'heavy' && size > 10) setSize(10);
+    setTimeout(() => goNext(), 200);
+  };
+
+  // Multi-select waste completion handler
+  const handleWasteComplete = (result: WasteSelectionResult) => {
+    setSelectedMaterialGroup(result.materialGroup);
+    // If only heavy materials, enforce size
+    if (hasHeavySelection(result.selectedMaterialIds) && !result.isMixed && size > 10) {
+      setSize(10);
+    }
     setTimeout(() => goNext(), 200);
   };
 
