@@ -1,7 +1,7 @@
 // ============================================================
 // V3 Step 3 — Multi-Select Waste / Material Selection
 // ============================================================
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Package, Scale, HelpCircle, Phone, Recycle, AlertTriangle, ChevronDown, ChevronUp, Ban, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,6 @@ import {
   PROHIBITED_ITEMS, RECYCLING_CREDIT_COPY, MIXED_LOAD_WARNING,
   groupMaterialsByGroup, hasRecyclableSelection, isMixedLoad, hasSpecialHandling,
   needsManualReview,
-  type WasteMaterial,
 } from '../wasteCatalog';
 import type { MaterialGroup } from '../materialTypes';
 
