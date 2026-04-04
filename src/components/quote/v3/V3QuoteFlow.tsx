@@ -53,6 +53,11 @@ import {
 import type { UniversalProject } from './projectTypes';
 import type { MaterialGroup, MaterialOption } from './materialTypes';
 import type { ServiceOptions } from './steps/ServiceCustomizationStep';
+import type { WasteSelectionResult, RecyclableSeparation } from './steps/WasteSelectionStep';
+import {
+  hasRecyclableSelection, isMixedLoad, hasSpecialHandling, needsManualReview,
+  hasHeavySelection,
+} from './wasteCatalog';
 
 // Step Components
 import {
