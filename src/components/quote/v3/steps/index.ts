@@ -2,6 +2,8 @@
 export { ProjectTypeStep } from './ProjectTypeStep';
 export { ZipStep } from './ZipStep';
 export { MaterialStep } from './MaterialStep';
+export { WasteSelectionStep } from './WasteSelectionStep';
+export type { WasteSelectionResult, RecyclableSeparation } from './WasteSelectionStep';
 export { SizeStep } from './SizeStep';
 export { ServiceCustomizationStep } from './ServiceCustomizationStep';
 export { ContactStep } from './ContactStep';
