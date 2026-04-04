@@ -61,7 +61,7 @@ import {
 
 // Step Components
 import {
-  ProjectTypeStep, ZipStep, MaterialStep, SizeStep,
+  ProjectTypeStep, ZipStep, MaterialStep, WasteSelectionStep, SizeStep,
   ServiceCustomizationStep,
   ContactStep, PriceStep, AccessStep, ConfirmStep,
   StepTransition,
