@@ -1,30 +1,35 @@
+## Waste Selection Step Redesign
 
-## Pricing Unification — Remaining Work
+### Phase 1: Data Model Migration
+- Add new columns to `quote_sessions`: `selected_materials_json`, `has_recyclable_materials`, `can_separate_recyclables`, `mixed_load_flag`, `possible_recycling_credit_flag`, `requires_manual_review`, `pricing_family`
 
-### What's Already Done ✓
-- `public_price_catalog`, `rental_term_catalog`, `crm_calculator_rules`, `public_quote_display_rules`, `pricing_change_log` tables
-- `publicPricingService.ts`, `pricingCatalogCompiler.ts`, `pricingVersionService.ts`
-- MasterPricingHub with 33+ tabs, sticky action bar, right sidebar
-- `VersioningPublishPanel.tsx`
-- All documentation files
-- Size/material/waste catalogs in DB
+### Phase 2: Material Catalog & Constants
+- Create `src/components/quote/v3/wasteCatalog.ts` with:
+  - Full general debris list (28 items)
+  - Full heavy materials list (14 items)
+  - Recyclable-eligible flags
+  - Special handling items
+  - Prohibited items list
 
-### Phase 1 — Seed Public Catalog & Fix 6yd References
-1. Seed `public_price_catalog` with initial published data from config constants
-2. Create initial `pricing_versions` record (v1.0 published)
-3. Fix `serviceAreas.ts` 6-yard FAQ reference ("6 to 50 yards" → "5 to 50 yards")
-4. Fix `ads-generate-campaigns` edge function hardcoded `BASE_PRICES` with 6yd key
+### Phase 3: UI Components
+- **New `WasteSelectionStep.tsx`** — replaces current `MaterialStep.tsx` behavior:
+  - Category picker (General / Heavy / Not Sure)
+  - Multi-select chip grid for materials within category
+  - Recyclable separation question (Yes/No/Not Sure)
+  - Mixed-load warning when both categories selected
+  - Special handling callouts
+  - Prohibited items disclosure
+  - Mobile-first layout with grouped sections
 
-### Phase 2 — Create `usePublicPricing` Hook
-5. Create `src/hooks/usePublicPricing.ts` — React hook wrapping `publicPricingService.ts` with React Query
-6. Create `src/hooks/useDumpsterSizes.ts` — hook that returns `DumpsterSizeData[]` from public catalog with `DUMPSTER_SIZES_DATA` fallback
+### Phase 4: Integration
+- Wire new step into `V3QuoteFlow` state
+- Save selected materials to quote session
+- Route heavy-only selections to 5/8/10yd sizing
+- Show recyclable credit messaging when applicable
 
-### Phase 3 — Wire Key Website Pages to Public Catalog
-7. Update `SeoCityPage.tsx` to use `usePublicPricing` instead of `DUMPSTER_SIZES_DATA`
-8. Update `CommercialLandingPage.tsx` similarly
-9. Update `ServicePage.tsx` similarly
-10. Update `cityData.ts` schema generation to use public pricing
+### Phase 5: Copy & Messaging
+- All copy per the spec (title, subtitle, recycling credit, mixed load warning)
 
-### Phase 4 — Updated Documentation
-11. Update `PRICING_SOURCE_AUDIT.md` with current state
-12. Update `FINAL_PRICING_SIMPLIFICATION_SUMMARY.md` with completion status
+### Not included (future work)
+- Edge function changes for pricing based on new fields
+- CRM-side display of new material selections
