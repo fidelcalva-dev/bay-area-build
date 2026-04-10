@@ -12,6 +12,9 @@ export function ReplacementForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hardError, setHardError] = useState(false);
   
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [legalConsent, setLegalConsent] = useState(false);
+
   const [formData, setFormData] = useState({
     address: '',
     dumpsterNumber: '',
@@ -217,7 +220,36 @@ export function ReplacementForm() {
           />
         </div>
 
-        <Button type="submit" variant="default" size="lg" className="w-full" disabled={isSubmitting}>
+        {/* Consent Checkboxes */}
+        <div className="space-y-3 pt-1">
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={smsConsent}
+              onChange={(e) => setSmsConsent(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-input text-primary focus:ring-primary/30 shrink-0"
+            />
+            <span className="text-xs text-muted-foreground leading-relaxed">
+              By checking, you are allowing to receive promotional/marketing SMS communications from Calsan Dumpsters Pro. Frequency may vary. Message and data rates may apply, reply HELP for help or STOP to opt-out.
+            </span>
+          </label>
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={legalConsent}
+              onChange={(e) => setLegalConsent(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-input text-primary focus:ring-primary/30 shrink-0"
+            />
+            <span className="text-xs text-muted-foreground leading-relaxed">
+              By checking, I accept{' '}
+              <a href="/terms" className="text-primary underline hover:text-primary/80">Terms Of Service</a>
+              {' & '}
+              <a href="/privacy" className="text-primary underline hover:text-primary/80">Privacy Policy</a>
+            </span>
+          </label>
+        </div>
+
+        <Button type="submit" variant="default" size="lg" className="w-full" disabled={isSubmitting || !smsConsent || !legalConsent}>
           {isSubmitting ? 'Submitting...' : hardError ? 'Try Again' : 'Submit Request'}
           <ArrowRight className="w-4 h-4" />
         </Button>
