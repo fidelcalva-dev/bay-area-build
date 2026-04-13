@@ -1,4 +1,5 @@
 import { Suspense, lazy, useState, useCallback } from 'react'; // homepage
+import { PhotoCarousel } from '@/components/home/PhotoCarousel';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
