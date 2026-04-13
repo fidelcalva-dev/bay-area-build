@@ -416,6 +416,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ========== PHOTO CAROUSEL ========== */}
+      <PhotoCarousel />
+
       {/* ========== SECTION 4 — WHAT'S INCLUDED ========== */}
       <section className="py-10 md:py-14 bg-muted/30">
         <div className="container-wide">
