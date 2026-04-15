@@ -333,12 +333,12 @@ export default function SalesLeads() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Inbox className="w-6 h-6" /> Lead Hub
+          <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+            <Inbox className="w-5 h-5 md:w-6 md:h-6" /> Lead Hub
           </h1>
           <p className="text-sm text-muted-foreground">Omni-channel inbox — every lead, one place</p>
         </div>
@@ -346,6 +346,7 @@ export default function SalesLeads() {
           <Button
             variant={viewMode === 'list' ? 'default' : 'outline'}
             size="sm"
+            className="min-h-[44px] md:min-h-0"
             onClick={() => setViewMode('list')}
           >
             <Inbox className="w-4 h-4 mr-1" /> List
@@ -353,6 +354,7 @@ export default function SalesLeads() {
           <Button
             variant={viewMode === 'pipeline' ? 'default' : 'outline'}
             size="sm"
+            className="min-h-[44px] md:min-h-0"
             onClick={() => setViewMode('pipeline')}
           >
             <LayoutGrid className="w-4 h-4 mr-1" /> Pipeline
@@ -360,6 +362,7 @@ export default function SalesLeads() {
           <Button
             variant={viewMode === 'cleanup-board' ? 'default' : 'outline'}
             size="sm"
+            className="min-h-[44px] md:min-h-0 hidden sm:inline-flex"
             onClick={() => { setViewMode('cleanup-board'); setActiveTab('cleanup'); }}
           >
             <HardHat className="w-4 h-4 mr-1" /> Cleanup Board
@@ -367,14 +370,15 @@ export default function SalesLeads() {
           <Button
             variant={viewMode === 'contractor-board' ? 'default' : 'outline'}
             size="sm"
+            className="min-h-[44px] md:min-h-0 hidden sm:inline-flex"
             onClick={() => { setViewMode('contractor-board'); setActiveTab('contractor'); }}
           >
             <Users className="w-4 h-4 mr-1" /> Contractor Board
           </Button>
-          <Button variant="outline" size="sm" onClick={exportPDF}>
+          <Button variant="outline" size="sm" className="min-h-[44px] md:min-h-0 hidden sm:inline-flex" onClick={exportPDF}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
-          <Button size="sm" onClick={() => {
+          <Button size="sm" className="min-h-[44px] md:min-h-0" onClick={() => {
             setForm({ customer_name: "", customer_phone: "", customer_email: "", company_name: "", source_channel: "MANUAL_ENTRY", notes: "", city: "", zip: "" });
             setDialogOpen(true);
           }}>
