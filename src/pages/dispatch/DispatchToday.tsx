@@ -178,9 +178,9 @@ export default function DispatchToday() {
       </div>
 
       {/* Filters */}
-      <div className={`flex gap-2 ${mobileMode ? 'px-4 pb-4' : 'mb-4'}`}>
+      <div className={`flex flex-wrap gap-2 ${mobileMode ? 'px-4 pb-4' : 'mb-4'}`}>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-[calc(50%-0.25rem)] sm:w-32 min-h-[44px]">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
           <SelectContent>
@@ -190,7 +190,7 @@ export default function DispatchToday() {
           </SelectContent>
         </Select>
         <Select value={filterWindow} onValueChange={setFilterWindow}>
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-[calc(50%-0.25rem)] sm:w-32 min-h-[44px]">
             <SelectValue placeholder="All Windows" />
           </SelectTrigger>
           <SelectContent>
