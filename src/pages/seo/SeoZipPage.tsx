@@ -160,7 +160,7 @@ export default function SeoZipPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground mt-3">All sizes 6-50 yard. Overage: ${PRICING_POLICIES.overagePerTonGeneral}/ton.</p>
+              <p className="text-xs text-muted-foreground mt-3">All sizes 5-50 yard. Overage: ${PRICING_POLICIES.overagePerTonGeneral}/ton.</p>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@
 |-------|-----------|--------|
 | `/` | Dumpster Rental SF Bay Area \| Same-Day Delivery | `src/pages/Index.tsx` |
 | `/pricing` | Dumpster Rental Prices \| Transparent Pricing | `src/pages/Pricing.tsx` |
-| `/sizes` | Dumpster Sizes Guide \| 6 to 50 Yard Dumpsters | `src/pages/Sizes.tsx` |
+| `/sizes` | Dumpster Sizes Guide \| 5 to 50 Yard Dumpsters | `src/pages/Sizes.tsx` |
 | `/visualizer` | Dumpster Size Visualizer \| Compare Dimensions & Capacity | `src/pages/DumpsterVisualizer.tsx` |
 | `/areas` | Service Areas \| Bay Area Dumpster Delivery | `src/pages/Areas.tsx` |
 | `/materials` | Accepted Materials \| What Can Go in a Dumpster | `src/pages/Materials.tsx` |
@@ -64,7 +64,7 @@ Source: `supabase/functions/ads-generate-campaigns/index.ts:195`
 | **How It Works** | 3 steps | `HowItWorksSection` |
 | **Features** | Service guarantees | `FeaturesSection` |
 | **Size Cards** | 10/20/30/40 yard with photos | `SizesPreviewSection` → `PhotoDumpsterCard` |
-| **Heavy Materials Callout** | "Concrete, dirt, brick → 6/8/10 yard with flat fee pricing" | Hardcoded |
+| **Heavy Materials Callout** | "Concrete, dirt, brick → 5/8/10 yard with flat fee pricing" | Hardcoded |
 | **FAQ** | 6 FAQs | `FAQSection` → `MASTER_FAQS` from shared-data |
 
 ### Pricing Page (`/pricing`)
@@ -88,7 +88,7 @@ Source: `supabase/functions/ads-generate-campaigns/index.ts:195`
 |---------|---------|--------|
 | **H1** | "Find Your Perfect Size" | Hardcoded (i18n) |
 | **Tabs** | "General Debris" / "Heavy Materials" | Hardcoded |
-| **General Sizes** | 6/8/10/20/30/40/50 yard | `getGeneralSizes()` from shared-data |
+| **General Sizes** | 5/8/10/20/30/40/50 yard | `getGeneralSizes()` from shared-data |
 | **Heavy Sizes** | 6/8/10 yard only | `getHeavySizes()` from shared-data |
 | **Flat Fee Note** | "Flat Fee Pricing – No Weight Worries" | Hardcoded |
 | **Heavy Warning** | "Heavy Materials Only – No Mixing" | Hardcoded |
