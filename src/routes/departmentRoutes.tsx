@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { SuspenseRoute } from './shared';
+import RoleGuard from '@/components/auth/RoleGuard';
 
 // Driver App
 const DriverLayout = lazy(() => import("@/pages/driver/DriverLayout"));
@@ -118,7 +119,11 @@ export function getSalesRoutes() {
 
 export function getDispatchRoutes() {
   return [
-    <Route key="dispatch" path="/dispatch" element={<SuspenseRoute><DispatchLayout /></SuspenseRoute>}>
+    <Route key="dispatch" path="/dispatch" element={
+      <RoleGuard allowedRoles={['dispatcher', 'ops_admin']}>
+        <SuspenseRoute><DispatchLayout /></SuspenseRoute>
+      </RoleGuard>
+    }>
       <Route index element={<SuspenseRoute><DispatchDashboard /></SuspenseRoute>} />
       <Route path="today" element={<SuspenseRoute><DispatchToday /></SuspenseRoute>} />
       <Route path="calendar" element={<SuspenseRoute><DispatchCalendarPage /></SuspenseRoute>} />
@@ -151,10 +156,22 @@ export function getFinanceRoutes() {
 
 export function getCalculatorRoutes() {
   return [
-    <Route key="internal-calc" path="/internal/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
-    <Route key="ops-calc" path="/ops/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
+    <Route key="internal-calc" path="/internal/calculator" element={
+      <RoleGuard allowedRoles={['sales', 'sales_admin', 'sales_rep', 'ops_admin', 'dispatcher']}>
+        <SuspenseRoute><InternalCalculator /></SuspenseRoute>
+      </RoleGuard>
+    } />,
+    <Route key="ops-calc" path="/ops/calculator" element={
+      <RoleGuard allowedRoles={['ops_admin', 'dispatcher']}>
+        <SuspenseRoute><InternalCalculator /></SuspenseRoute>
+      </RoleGuard>
+    } />,
     <Route key="sales-calc" path="/sales/calculator" element={<Navigate to="/sales/quotes/new" replace />} />,
     <Route key="cs-calc" path="/cs/calculator" element={<Navigate to="/cs/quotes" replace />} />,
-    <Route key="dispatch-calc" path="/dispatch/calculator" element={<SuspenseRoute><InternalCalculator /></SuspenseRoute>} />,
+    <Route key="dispatch-calc" path="/dispatch/calculator" element={
+      <RoleGuard allowedRoles={['dispatcher', 'ops_admin']}>
+        <SuspenseRoute><InternalCalculator /></SuspenseRoute>
+      </RoleGuard>
+    } />,
   ];
 }
