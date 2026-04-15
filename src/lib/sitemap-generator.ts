@@ -50,6 +50,8 @@ const STATIC_PAGES: SitemapEntry[] = [
   { url: '/commercial-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/construction-dumpsters', changefreq: 'monthly', priority: 0.8 },
   // Standalone size intent pages
+  { url: '/5-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
+  { url: '/8-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/10-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/20-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
   { url: '/30-yard-dumpster-rental', changefreq: 'monthly', priority: 0.8 },
