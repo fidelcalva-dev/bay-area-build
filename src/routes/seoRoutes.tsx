@@ -40,6 +40,8 @@ export function getSeoRoutes() {
     <Route key="warehouse" path="/warehouse-cleanout-dumpsters" element={<SuspenseRoute><CommercialLandingPage /></SuspenseRoute>} />,
     
     // Size intent pages
+    <Route key="5yd" path="/5-yard-dumpster-rental" element={<SuspenseRoute><SizeLandingPage /></SuspenseRoute>} />,
+    <Route key="8yd" path="/8-yard-dumpster-rental" element={<SuspenseRoute><SizeLandingPage /></SuspenseRoute>} />,
     <Route key="10yd" path="/10-yard-dumpster-rental" element={<SuspenseRoute><SizeLandingPage /></SuspenseRoute>} />,
     <Route key="20yd" path="/20-yard-dumpster-rental" element={<SuspenseRoute><SizeLandingPage /></SuspenseRoute>} />,
     <Route key="30yd" path="/30-yard-dumpster-rental" element={<SuspenseRoute><SizeLandingPage /></SuspenseRoute>} />,
