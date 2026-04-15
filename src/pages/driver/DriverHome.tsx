@@ -151,7 +151,7 @@ export default function DriverHome() {
   };
 
   return (
-    <div className="p-4 space-y-5 max-w-lg mx-auto pb-24">
+    <div className="p-4 space-y-5 max-w-lg mx-auto pb-24 overflow-x-hidden">
       {/* Clock In / Status Bar */}
       <div className="flex gap-3">
         <Button
@@ -324,7 +324,7 @@ export default function DriverHome() {
           </h3>
           <div className="space-y-2 opacity-60">
             {runs.filter(r => r.status === 'COMPLETED').map(run => (
-              <div key={run.id} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+              <div key={run.id} className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 min-h-[44px]">
                 <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-white', RUN_TYPE_CONFIG[run.run_type].color)}>
                   {TYPE_ICONS[run.run_type]}
                 </div>
