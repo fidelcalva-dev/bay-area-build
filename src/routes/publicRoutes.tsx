@@ -45,6 +45,7 @@ const ComparePage = lazy(lazyRetry(() => import("@/pages/ComparePage")));
 const ServicePage = lazy(lazyRetry(() => import("@/pages/ServicePage")));
 const WhatCanYouPutInADumpster = lazy(lazyRetry(() => import("@/pages/WhatCanYouPutInADumpster")));
 const WhatCannotGoInADumpster = lazy(lazyRetry(() => import("@/pages/WhatCannotGoInADumpster")));
+const Unauthorized = lazy(lazyRetry(() => import("@/pages/Unauthorized")));
 
 // Auth pages — also resilient to stale chunks
 const StaffLogin = lazy(lazyRetry(() => import("@/pages/StaffLogin")));
@@ -101,6 +102,7 @@ export function getPublicRoutes() {
     <Route key="app" path="/app" element={<SuspenseRoute><RoleRouter /></SuspenseRoute>} />,
     <Route key="request-access" path="/request-access" element={<SuspenseRoute><RequestAccess /></SuspenseRoute>} />,
     <Route key="set-password" path="/set-password" element={<SuspenseRoute><SetPassword /></SuspenseRoute>} />,
+    <Route key="unauthorized" path="/unauthorized" element={<SuspenseRoute><Unauthorized /></SuspenseRoute>} />,
     // Preview redirects
     <Route key="preview-quote" path="/preview/quote" element={<Navigate to="/quote" replace />} />,
     <Route key="preview-home" path="/preview/home" element={<Navigate to="/" replace />} />,
