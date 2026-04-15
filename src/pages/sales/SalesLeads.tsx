@@ -465,7 +465,6 @@ export default function SalesLeads() {
             })}
           </TabsList>
         </div>
-        </div>
 
         {/* Filters Bar */}
         <div className="flex flex-wrap items-center gap-3 mt-4">
