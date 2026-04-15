@@ -219,7 +219,7 @@ const KPI_TARGETS = [
   { metric: 'Map Pack SJ', current: 'Not ranked', target30: 'Top 10', target60: 'Top 7', target90: 'Top 5' },
 ];
 
-const DESCRIPTION_750 = `Calsan Dumpsters Pro is the Bay Area's trusted local dumpster rental service, operating from our own yards in Oakland and San Jose. We offer roll-off dumpster rental in sizes from 6 to 50 yards for residential cleanouts, construction projects, and commercial jobs across Oakland, San Jose, San Francisco, and the entire Bay Area. Same-day dumpster delivery available. We're not a broker — we own every dumpster and truck in our fleet, which means faster service and lower prices. Specializing in concrete, dirt, mixed debris, and clean loads. Licensed, insured, and locally operated. Hablamos Español. Call (510) 680-2150 or book online for instant pricing.`;
+const DESCRIPTION_750 = `Calsan Dumpsters Pro is the Bay Area's trusted local dumpster rental service, operating from our own yards in Oakland and San Jose. We offer roll-off dumpster rental in sizes from 5 to 50 yards for residential cleanouts, construction projects, and commercial jobs across Oakland, San Jose, San Francisco, and the entire Bay Area. Same-day dumpster delivery available. We're not a broker — we own every dumpster and truck in our fleet, which means faster service and lower prices. Specializing in concrete, dirt, mixed debris, and clean loads. Licensed, insured, and locally operated. Hablamos Español. Call (510) 680-2150 or book online for instant pricing.`;
 
 // ─── Component ───────────────────────────────────────────────
 export default function GbpDominationPlan() {
