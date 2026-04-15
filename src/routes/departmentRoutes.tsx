@@ -91,7 +91,7 @@ export function getCsRoutes() {
       <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="cs" /></SuspenseRoute>} />
       <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="cs" /></SuspenseRoute>} />
       <Route path="lead-inbox" element={<Navigate to="/cs/leads" replace />} />
-      {/* Canonical shared quote workspace — CS mode */}
+      {/* Canonical shared quote workspace — CS mode (no quotes/new — CS uses sales/quotes/new) */}
       <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="cs" /></SuspenseRoute>} />
       <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="cs" /></SuspenseRoute>} />
     </Route>,
@@ -106,9 +106,10 @@ export function getSalesRoutes() {
       <Route path="leads" element={<SuspenseRoute><LeadWorkspacePage mode="sales" /></SuspenseRoute>} />
       <Route path="leads/:id" element={<SuspenseRoute><LeadDetailPage mode="sales" /></SuspenseRoute>} />
       {/* Canonical shared quote workspace — Sales mode */}
+      {/* IMPORTANT: "quotes/new" must come before "quotes/:id" to prevent "new" matching as an ID param */}
       <Route path="quotes" element={<SuspenseRoute><QuoteWorkspacePage mode="sales" /></SuspenseRoute>} />
-      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="sales" /></SuspenseRoute>} />
       <Route path="quotes/new" element={<SuspenseRoute><QuoteBuilderPage mode="sales" /></SuspenseRoute>} />
+      <Route path="quotes/:id" element={<SuspenseRoute><QuoteDetailPage mode="sales" /></SuspenseRoute>} />
       <Route path="calls" element={<SuspenseRoute><SalesCalls /></SuspenseRoute>} />
       <Route path="inbox" element={<Navigate to="/sales/leads" replace />} />
       <Route path="lead-hub" element={<Navigate to="/sales/leads" replace />} />
