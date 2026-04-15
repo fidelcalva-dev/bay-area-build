@@ -388,7 +388,7 @@ export default function SalesLeads() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2 md:gap-3">
         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setActiveTab('all')}>
           <CardContent className="pt-4 pb-3">
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -453,7 +453,7 @@ export default function SalesLeads() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as LeadHubTab)}>
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="overflow-x-auto">
           <TabsList className="h-auto flex-wrap">
             {TAB_CONFIG.map(tab => {
               const Icon = tab.icon;
@@ -464,6 +464,7 @@ export default function SalesLeads() {
               );
             })}
           </TabsList>
+        </div>
         </div>
 
         {/* Filters Bar */}
