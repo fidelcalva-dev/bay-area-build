@@ -546,7 +546,7 @@ export default function SalesLeads() {
           </div>
         ) : (
         <Card className="mt-4">
-          <CardContent className="p-0">
+          <CardContent className="p-0 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
