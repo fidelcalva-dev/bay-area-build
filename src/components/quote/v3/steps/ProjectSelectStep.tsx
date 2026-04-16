@@ -8,15 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { StepTransition } from './shared';
-
-// Lazy import DumpsterSVG — optional enhancement
-let DumpsterSVG: React.ComponentType<{ yards: number }> | null = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  DumpsterSVG = require('@/components/sizes/DumpsterSVG').DumpsterSVG;
-} catch {
-  // Component not available — fallback to text
-}
+import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
 
 export interface ProjectSelectItem {
   id: string;
