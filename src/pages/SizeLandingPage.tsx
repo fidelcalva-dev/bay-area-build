@@ -219,7 +219,6 @@ export default function SizeLandingPage() {
               </ul>
             </div>
           </div>
-        </div>
 
           {/* Who Needs This Size */}
           {WHO_NEEDS[yards] && (
