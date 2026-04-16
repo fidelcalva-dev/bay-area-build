@@ -6,6 +6,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
+import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
 import NotFound from './NotFound';
 
 const SIZE_SPECS: Record<number, { physDimensions: string; truckLoads: string; weightLimit: string }> = {
@@ -131,26 +132,31 @@ export default function SizeLandingPage() {
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground section-padding">
         <div className="container-wide">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
-              <Link to="/" className="hover:text-primary-foreground">Home</Link>
-              <span>/</span>
-              <Link to="/sizes" className="hover:text-primary-foreground">Sizes</Link>
-              <span>/</span>
-              <span className="text-primary-foreground">{yards} Yard</span>
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2 text-primary-foreground/70 text-sm mb-3">
+                <Link to="/" className="hover:text-primary-foreground">Home</Link>
+                <span>/</span>
+                <Link to="/sizes" className="hover:text-primary-foreground">Sizes</Link>
+                <span>/</span>
+                <span className="text-primary-foreground">{yards} Yard</span>
+              </div>
+              <h1 className="heading-xl mb-4">{yards} Yard Dumpster Rental</h1>
+              <p className="text-xl text-primary-foreground/85 mb-2">{content.headline}</p>
+              <p className="text-primary-foreground/70 mb-6">Starting at <strong className="text-primary-foreground">${sizeData.priceFrom}</strong></p>
+              <div className="flex flex-wrap gap-4">
+                <Button asChild variant="cta" size="lg">
+                  <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
+                </Button>
+                <Button asChild variant="heroOutline" size="lg">
+                  <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                    <Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}
+                  </a>
+                </Button>
+              </div>
             </div>
-            <h1 className="heading-xl mb-4">{yards} Yard Dumpster Rental</h1>
-            <p className="text-xl text-primary-foreground/85 mb-2">{content.headline}</p>
-            <p className="text-primary-foreground/70 mb-6">Starting at <strong className="text-primary-foreground">${sizeData.priceFrom}</strong></p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild variant="cta" size="lg">
-                <Link to="/quote">Get Instant Quote <ArrowRight className="w-4 h-4 ml-1" /></Link>
-              </Button>
-              <Button asChild variant="heroOutline" size="lg">
-                <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                  <Phone className="w-4 h-4 mr-2" />{BUSINESS_INFO.phone.salesFormatted}
-                </a>
-              </Button>
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <DumpsterSVG yards={yards as 5|8|10|20|30|40|50} className="w-full h-auto" />
             </div>
           </div>
         </div>
