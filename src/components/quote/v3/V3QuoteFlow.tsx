@@ -66,6 +66,7 @@ import {
   ContactStep, PriceStep, AccessStep, ConfirmStep,
   StepTransition,
 } from './steps';
+import { ProjectSelectStep, type ProjectSelectItem } from './steps/ProjectSelectStep';
 
 // Lazy load placement map
 const PlacementMap = lazy(() =>
