@@ -48,7 +48,7 @@ export default function YardHubPage() {
         "priceCurrency": "USD",
       })),
     },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "300", "bestRating": "5" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "300", "bestRating": "5", "worstRating": "1" },
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": `${BUSINESS_INFO.url}/quote`, "name": "Online Quote Calculator" },
   };
 
