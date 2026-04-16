@@ -48,7 +48,7 @@ export function TimelineCredibilitySection() {
             Built on Experience. Powered by Logistics.
           </h2>
           <p className="text-lg text-muted-foreground">
-            Serving the Bay Area Since 2009.
+            Serving the Bay Area Since 2015.
           </p>
         </AnimatedSection>
 

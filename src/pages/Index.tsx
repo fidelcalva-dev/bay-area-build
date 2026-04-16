@@ -237,31 +237,12 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== CLEANUP ANNOUNCEMENT STRIP ========== */}
-      <div className="bg-accent/10 border-b border-accent/20">
-        <div className="container-wide py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded mr-2">NEW</span>
-              Construction Cleanup Division Now Available
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Calsan C&D Waste Removal now supports active jobsites, final cleanups, demolition debris, and recurring contractor cleanup.
-            </p>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            <Link to="/cleanup" className="text-xs font-semibold text-primary hover:underline">Learn More →</Link>
-            <Link to="/cleanup/quote" className="text-xs font-semibold text-accent hover:underline">Get Cleanup Quote →</Link>
-          </div>
-        </div>
-      </div>
-
       {/* ========== SECTION 1 — HERO ========== */}
       <section className="bg-background py-10 md:py-16 lg:py-20">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-8 lg:gap-12 items-center">
             {/* Left — Content + Form */}
-            <div className="order-2 lg:order-1 space-y-6">
+            <div className="order-1 lg:order-1 space-y-6">
               <div className="text-center lg:text-left space-y-4">
                 <p className="text-sm font-semibold text-primary tracking-wide uppercase">10+ Years Local Experience · Since 2015</p>
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
@@ -309,7 +290,7 @@ const Index = () => {
                 </select>
                 {/* Urgency badge */}
                 <div className="flex justify-center lg:justify-start">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-primary text-primary-foreground px-4 py-1.5 rounded-full">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full">
                     🚛 Same-day delivery available in Oakland &amp; San Jose
                   </span>
                 </div>
@@ -377,7 +358,7 @@ const Index = () => {
             </div>
 
             {/* Right — Hero Image */}
-            <div className="order-1 lg:order-2">
+            <div className="order-2 lg:order-2">
               <HeroImagePanel />
             </div>
           </div>
@@ -446,6 +427,25 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ========== CLEANUP ANNOUNCEMENT STRIP ========== */}
+      <div className="bg-accent/10 border-b border-accent/20">
+        <div className="container-wide py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded mr-2">NEW</span>
+              Construction Cleanup Division Now Available
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Calsan C&amp;D Waste Removal now supports active jobsites, final cleanups, demolition debris, and recurring contractor cleanup.
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Link to="/cleanup" className="text-xs font-semibold text-primary hover:underline">Learn More →</Link>
+            <Link to="/cleanup/quote" className="text-xs font-semibold text-accent hover:underline">Get Cleanup Quote →</Link>
+          </div>
+        </div>
+      </div>
+
       {/* ========== PHOTO CAROUSEL ========== */}
       <PhotoCarousel />
 
@@ -478,12 +478,12 @@ const Index = () => {
           </div>
 
           {/* Size grid — responsive: 1 col mobile, 2 col sm, 3 col lg */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-6">
             {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => (
               <Link
                 key={s.size}
                 to={quoteUrl({ size: String(s.size) })}
-                className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
+                className="bg-card rounded-2xl border border-border p-4 md:p-8 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
               >
                 <div className="w-full flex justify-center mb-5 relative">
                   {SIZE_GALLERY[s.size] ? (
@@ -492,7 +492,7 @@ const Index = () => {
                     <img
                       src={SIZE_IMAGES[s.size]}
                       alt={`${s.size} yard dumpster`}
-                      className="h-28 md:h-36 w-auto object-contain rounded-xl"
+                      className="h-20 md:h-36 w-auto object-contain rounded-xl"
                     />
                   )}
                 </div>
@@ -518,7 +518,7 @@ const Index = () => {
                   <img
                     src={SIZE_IMAGES[50]}
                     alt="50 yard dumpster"
-                    className="h-28 md:h-36 w-auto object-contain rounded-xl"
+                    className="h-20 md:h-36 w-auto object-contain rounded-xl"
                   />
                 )}
               </div>
