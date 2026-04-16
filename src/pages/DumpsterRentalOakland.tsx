@@ -16,47 +16,61 @@ const META = {
   slug: 'dumpster-rental-oakland-ca',
 };
 
-const SIZE_DETAILS: { yards: number; title: string; description: string; includes: string[] }[] = [
+const SIZE_DETAILS: { yards: number; title: string; description: string; dimensions: string; weightLimit: string; includes: string[] }[] = [
   {
     yards: 5,
     title: '5 Yard Dumpster',
     description: 'Compact size for small jobs, concrete removal, and yard debris.',
+    dimensions: "12' L × 5' W × 2.25' H",
+    weightLimit: '0.5 ton included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
   },
   {
     yards: 8,
     title: '8 Yard Dumpster',
     description: 'Popular for driveway and foundation work.',
+    dimensions: "12' L × 6' W × 3' H",
+    weightLimit: '0.5 ton included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '0.5 ton included'],
   },
   {
     yards: 10,
     title: '10 Yard Dumpster',
     description: 'Best for cleanouts and small remodels.',
+    dimensions: "12' L × 7.5' W × 3' H",
+    weightLimit: '1 ton included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '1 ton included'],
   },
   {
     yards: 20,
     title: '20 Yard Dumpster',
     description: 'Ideal for kitchen remodels and medium construction projects.',
+    dimensions: "18' L × 7.5' W × 4' H",
+    weightLimit: '2 tons included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '2 tons included'],
   },
   {
     yards: 30,
     title: '30 Yard Dumpster',
     description: 'Great for large renovations and commercial cleanouts.',
+    dimensions: "18' L × 7.5' W × 6' H",
+    weightLimit: '3 tons included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '3 tons included'],
   },
   {
     yards: 40,
     title: '40 Yard Dumpster',
     description: 'Designed for major construction and demolition.',
+    dimensions: "24' L × 7.5' W × 6' H",
+    weightLimit: '4 tons included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '4 tons included'],
   },
   {
     yards: 50,
     title: '50 Yard Dumpster',
     description: 'Maximum capacity for large-scale commercial and industrial projects.',
+    dimensions: "24' L × 7.5' W × 8' H",
+    weightLimit: '5 tons included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '5 tons included'],
   },
 ];
@@ -197,16 +211,26 @@ export default function DumpsterRentalOakland() {
 
       {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
       <section className="py-6 bg-accent/5 border-b border-accent/20">
-        <div className="container-wide max-w-3xl mx-auto">
+        <div className="container-wide max-w-3xl mx-auto space-y-4">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
               <AlertTriangle className="w-5 h-5 text-accent-foreground" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Placement & Permit Verification Recommended</h3>
+              <h3 className="font-semibold text-foreground mb-1">Oakland Permit Information</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Oakland has specific rules for dumpster placement on public streets and rights-of-way. Private property placement (driveways, lots) typically needs no permit. 
-                For street placement, an encroachment permit from Oakland Public Works may be required. Our team can walk you through the process — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+                Dumpsters on Oakland streets require an Encroachment Permit from the City of Oakland. Dumpsters on private property (driveways) do not require a permit. Our team can walk you through the process — call {BUSINESS_INFO.phone.salesFormatted} or mention it during your quote.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+              <Truck className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Delivered from Our Oakland Yard</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                All Oakland deliveries are dispatched directly from our Oakland yard at 46th Ave — no brokers, no middlemen. Central location means faster delivery and lower costs for Oakland job sites.
               </p>
             </div>
           </div>
@@ -266,12 +290,11 @@ export default function DumpsterRentalOakland() {
                     </div>
                     <div>
                       <h3 className="font-bold text-foreground text-lg">{size.title}</h3>
-                      {sizeData.dimensions && (
-                        <p className="text-sm text-muted-foreground">{sizeData.dimensions}</p>
-                      )}
+                      <p className="text-sm text-muted-foreground">{size.dimensions}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">{size.description}</p>
+                  <p className="text-sm text-muted-foreground mb-2">{size.description}</p>
+                  <p className="text-xs font-medium text-foreground mb-4">Weight limit: {size.weightLimit}</p>
                   <ul className="space-y-2">
                     {size.includes.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">

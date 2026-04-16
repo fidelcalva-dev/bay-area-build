@@ -91,7 +91,8 @@ const SectionLoader = () => (
 
 const TRUST_BADGES = [
   { icon: Shield, label: 'Licensed & Insured' },
-  { icon: MapPin, label: 'Local Bay Area Support' },
+  { icon: Shield, label: 'BBB A+ Accredited' },
+  { icon: MapPin, label: 'Local Bay Area Since 2015' },
   { icon: Scale, label: 'Transparent Pricing' },
   { icon: HardHat, label: 'Contractor-Ready' },
   { icon: Star, label: '4.9★ Verified Reviews' },
@@ -264,12 +265,17 @@ const Index = () => {
             {/* Left — Content + Form */}
             <div className="order-2 lg:order-1 space-y-6">
               <div className="text-center lg:text-left space-y-4">
+                <p className="text-sm font-semibold text-primary tracking-wide uppercase">10+ Years Local Experience · Since 2015</p>
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
                   Dumpster Rental Made Simple
                   <span className="block text-primary mt-1">in the Bay Area</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
                   Check pricing in your area, compare the right sizes, and get the best option for your project.
+                </p>
+                {/* Dynamic starting price from config */}
+                <p className="text-base text-foreground font-semibold">
+                  Starting at ${GENERAL_DEBRIS_SIZES[0]?.price || 395} · 7-day rental · Delivery included
                 </p>
               </div>
 
@@ -323,19 +329,21 @@ const Index = () => {
                   </Link>
                 </Button>
               </div>
-              <div className="flex justify-center lg:justify-start gap-4">
+              {/* Prominent phone number */}
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 items-center">
                 <a
                   href={`tel:${BUSINESS_INFO.phone.sales}`}
-                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                  className="inline-flex items-center gap-2 text-lg md:text-xl font-bold text-primary hover:text-primary/80 transition-colors min-h-[44px]"
                 >
-                  <Phone className="w-3.5 h-3.5" />
-                  Call {BUSINESS_INFO.phone.salesFormatted}
+                  <Phone className="w-5 h-5" />
+                  {BUSINESS_INFO.phone.salesFormatted}
                 </a>
+                <span className="hidden sm:inline text-muted-foreground">·</span>
                 <a
                   href={`sms:${BUSINESS_INFO.phone.sales}`}
-                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium min-h-[44px]"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
+                  <MessageSquare className="w-4 h-4" />
                   Text Us
                 </a>
               </div>
