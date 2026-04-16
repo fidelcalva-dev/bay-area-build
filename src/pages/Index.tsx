@@ -14,6 +14,7 @@ import {
   Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
+import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
 
 // Dumpster images
 import yd5Img from '@/assets/5yd-dumpster.webp';
@@ -485,16 +486,8 @@ const Index = () => {
                 to={quoteUrl({ size: String(s.size) })}
                 className="bg-card rounded-2xl border border-border p-4 md:p-8 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
               >
-                <div className="w-full flex justify-center mb-5 relative">
-                  {SIZE_GALLERY[s.size] ? (
-                    <DumpsterGallery images={SIZE_GALLERY[s.size]} alt={`${s.size} yard dumpster`} />
-                  ) : (
-                    <img
-                      src={SIZE_IMAGES[s.size]}
-                      alt={`${s.size} yard dumpster`}
-                      className="h-20 md:h-36 w-auto object-contain rounded-xl"
-                    />
-                  )}
+                <div className="w-full flex justify-center mb-5 relative px-2">
+                  <DumpsterSVG yards={s.size as 5|8|10|20|30|40|50} className="w-full h-auto max-h-28 md:max-h-40" />
                 </div>
                 <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                   {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
@@ -511,16 +504,8 @@ const Index = () => {
               to={quoteUrl({ size: '50' })}
               className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
             >
-              <div className="w-full flex justify-center mb-5 relative">
-                {SIZE_GALLERY[50] ? (
-                  <DumpsterGallery images={SIZE_GALLERY[50]} alt="50 yard dumpster" />
-                ) : (
-                  <img
-                    src={SIZE_IMAGES[50]}
-                    alt="50 yard dumpster"
-                    className="h-20 md:h-36 w-auto object-contain rounded-xl"
-                  />
-                )}
+              <div className="w-full flex justify-center mb-5 relative px-2">
+                <DumpsterSVG yards={50} className="w-full h-auto max-h-28 md:max-h-40" />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
