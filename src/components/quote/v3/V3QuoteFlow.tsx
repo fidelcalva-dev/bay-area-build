@@ -829,7 +829,7 @@ export function V3QuoteFlow() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {step !== 'project-type' && step !== 'placement' && (
+            {step !== 'project-select' && step !== 'project-type' && step !== 'placement' && (
               <button
                 onClick={handleStartOver}
                 className="text-[10px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5"
@@ -897,6 +897,34 @@ export function V3QuoteFlow() {
               Change
             </button>
           </div>
+        )}
+
+        {/* Step 0: Project Select */}
+        {step === 'project-select' && (
+          <ProjectSelectStep
+            onSelect={(project: ProjectSelectItem) => {
+              // Map to UniversalProject-compatible selection
+              setSize(project.recommendedSize);
+              const isHeavyProject = project.id === 'concrete-soil';
+              setSelectedMaterialGroup(isHeavyProject ? 'heavy' : 'general');
+              const legacyProject: ProjectCard = {
+                id: project.id, label: project.label, description: '',
+                icon: 'home', materialCategory: isHeavyProject ? 'HEAVY_MATERIALS' : 'GENERAL_DEBRIS',
+                isHeavy: isHeavyProject, suggestedSize: project.recommendedSize,
+                customerTypes: ['homeowner', 'contractor'],
+              };
+              setSelectedProject(legacyProject);
+              // Also set universal project for downstream compat
+              setSelectedUniversalProject({
+                id: project.id, label: project.label, description: '',
+                icon: 'home', materialCategory: isHeavyProject ? 'HEAVY_MATERIALS' : 'GENERAL_DEBRIS',
+                isHeavy: isHeavyProject, suggestedSize: project.recommendedSize,
+                segments: ['homeowner', 'contractor'], sortOrder: 0,
+              });
+              setStep('zip');
+            }}
+            onSkip={() => setStep('zip')}
+          />
         )}
 
         {/* Step 1: Project Type */}
