@@ -22,42 +22,50 @@ const SIZE_DATA: Record<Yards, {
   H: string;
   ribs: number;
 }> = {
-  5:  { bodyW: 156, bodyH: 50,  depth: 16, L: '12 ft', W: '5 ft',   H: '2.25 ft', ribs: 3 },
-  8:  { bodyW: 156, bodyH: 65,  depth: 18, L: '12 ft', W: '6 ft',   H: '3 ft',    ribs: 3 },
-  10: { bodyW: 156, bodyH: 65,  depth: 22, L: '12 ft', W: '7.5 ft', H: '3 ft',    ribs: 3 },
-  20: { bodyW: 234, bodyH: 86,  depth: 22, L: '18 ft', W: '7.5 ft', H: '4 ft',    ribs: 4 },
-  30: { bodyW: 234, bodyH: 130, depth: 22, L: '18 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
-  40: { bodyW: 286, bodyH: 130, depth: 22, L: '22 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
-  50: { bodyW: 312, bodyH: 162, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 4 },
+  5:  { bodyW: 156, bodyH: 44,  depth: 16, L: '12 ft', W: '5 ft',   H: '2.25 ft', ribs: 3 },
+  8:  { bodyW: 156, bodyH: 58,  depth: 18, L: '12 ft', W: '6 ft',   H: '3 ft',    ribs: 3 },
+  10: { bodyW: 156, bodyH: 58,  depth: 22, L: '12 ft', W: '7.5 ft', H: '3 ft',    ribs: 3 },
+  20: { bodyW: 234, bodyH: 78,  depth: 22, L: '18 ft', W: '7.5 ft', H: '4 ft',    ribs: 4 },
+  30: { bodyW: 234, bodyH: 110, depth: 22, L: '18 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
+  40: { bodyW: 286, bodyH: 110, depth: 22, L: '22 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
+  50: { bodyW: 312, bodyH: 138, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 4 },
 };
 
 export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
   const d = SIZE_DATA[yards];
   if (!d) return null;
 
-  // Layout padding to accommodate dimension labels
-  const padL = 38;   // left for height arrow
-  const padR = 24;   // right
-  const padT = 28;   // top for width arrow
-  const padB = 36;   // bottom for length arrow
+  const padL = 48;
+  const padR = 24;
+  const padT = 28;
+  const padB = 40;
+  const wheelR = 5;
 
   const vbW = padL + d.bodyW + d.depth + padR;
   const vbH = padT + d.bodyH + d.depth + padB;
 
-  // Body anchors
   const x0 = padL;
-  const y0 = padT + d.depth; // front face top
+  const y0 = padT + d.depth;
   const frontX = x0;
   const frontY = y0;
   const frontW = d.bodyW;
   const frontH = d.bodyH;
 
-  // Top face polygon (parallelogram)
+  // Top face polygon
   const topPts = [
     [frontX, frontY],
     [frontX + d.depth, frontY - d.depth],
     [frontX + frontW + d.depth, frontY - d.depth],
     [frontX + frontW, frontY],
+  ].map(p => p.join(',')).join(' ');
+
+  // Open cavity inside top face (inset 4px)
+  const inset = 4;
+  const cavityPts = [
+    [frontX + inset, frontY - inset * 0.2],
+    [frontX + d.depth + inset * 0.5, frontY - d.depth + inset],
+    [frontX + frontW + d.depth - inset * 0.5, frontY - d.depth + inset],
+    [frontX + frontW - inset, frontY - inset * 0.2],
   ].map(p => p.join(',')).join(' ');
 
   // Right side polygon
@@ -68,7 +76,7 @@ export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
     [frontX + frontW, frontY + frontH],
   ].map(p => p.join(',')).join(' ');
 
-  // Top rim (silver) overlay - 6px tall on the top face plane
+  // Top rim
   const rimH = 6;
   const rimPts = [
     [frontX, frontY],
@@ -91,10 +99,26 @@ export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
     [frontX + frontW - 6, frontY + frontH - 8],
   ];
 
-  // Dimension arrows
-  const lenArrowY = frontY + frontH + 18;
-  const heightArrowX = frontX - 14;
-  const widthArrowY1 = frontY - d.depth - 8; // above top face
+  // Wheels
+  const wheelY = frontY + frontH + wheelR;
+  const wheels = [
+    [frontX + 14, wheelY],
+    [frontX + 34, wheelY],
+    [frontX + frontW - 34, wheelY],
+    [frontX + frontW - 14, wheelY],
+  ];
+
+  // Door latch
+  const latchW = 20;
+  const latchH = 6;
+  const latchX = frontX + frontW / 2 - latchW / 2;
+  const latchY = frontY + frontH * 0.66;
+
+  // Dimension positions
+  const lenArrowY = frontY + frontH + 22;
+  const heightArrowX = frontX - 18;
+  const widthCenterX = frontX + frontW / 2 + d.depth / 2;
+  const widthCenterY = frontY - d.depth - 10;
 
   const uid = `ds-${yards}`;
 
@@ -146,39 +170,34 @@ export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
         opacity="0.18"
       />
 
+      {/* Wheels */}
+      {wheels.map((w, i) => (
+        <ellipse key={`wh-${i}`} cx={w[0]} cy={w[1]} rx={wheelR} ry={3} fill="#1a1a1a" />
+      ))}
+
       <g filter={`url(#${uid}-shadow)`}>
         {/* Top face */}
         <polygon points={topPts} fill={`url(#${uid}-top)`} stroke="#0a2d18" strokeWidth="1" />
+        {/* Open cavity */}
+        <polygon points={cavityPts} fill="rgba(0,0,0,0.3)" />
         {/* Right side */}
         <polygon points={rightPts} fill={`url(#${uid}-right)`} stroke="#0a2d18" strokeWidth="1" />
         {/* Front face */}
         <rect x={frontX} y={frontY} width={frontW} height={frontH} fill={`url(#${uid}-front)`} stroke="#0a2d18" strokeWidth="1" />
 
-        {/* Vertical ribs on front */}
+        {/* Vertical ribs */}
         {ribs.map((rx, i) => (
-          <line
-            key={i}
-            x1={rx}
-            y1={frontY + rimH + 2}
-            x2={rx}
-            y2={frontY + frontH - 4}
-            stroke="#0a2d18"
-            strokeWidth="1.5"
-            opacity="0.55"
-          />
+          <line key={i} x1={rx} y1={frontY + rimH + 2} x2={rx} y2={frontY + frontH - 4} stroke="#0a2d18" strokeWidth="1.5" opacity="0.55" />
         ))}
 
-        {/* Top rim (silver/steel) */}
+        {/* Top rim */}
         <polygon points={rimPts} fill="#c8ddd2" stroke="#0a2d18" strokeWidth="0.75" />
 
         {/* Bottom rail */}
-        <rect
-          x={frontX}
-          y={frontY + frontH - 4}
-          width={frontW}
-          height={4}
-          fill="#0d3d20"
-        />
+        <rect x={frontX} y={frontY + frontH - 4} width={frontW} height={4} fill="#0d3d20" />
+
+        {/* Door latch */}
+        <rect x={latchX} y={latchY} width={latchW} height={latchH} rx={2} fill="#8aab97" />
 
         {/* Corner bolts */}
         {bolts.map((b, i) => (
@@ -201,62 +220,26 @@ export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
       </g>
 
       {/* ===== Dimension overlays (orange) ===== */}
-      <g fontFamily="Arial, sans-serif" fontSize="11" fontWeight="700" fill="#e85d04">
-        {/* Length arrow (below front face) */}
-        <line
-          x1={frontX}
-          y1={lenArrowY}
-          x2={frontX + frontW}
-          y2={lenArrowY}
-          stroke="#e85d04"
-          strokeWidth="1.5"
-          markerStart={`url(#${uid}-arrow)`}
-          markerEnd={`url(#${uid}-arrow)`}
-        />
+      <g fontFamily="Arial, sans-serif" fontSize="10" fontWeight="700" fill="#e85d04">
+        {/* Length arrow (below) */}
+        <line x1={frontX} y1={lenArrowY} x2={frontX + frontW} y2={lenArrowY} stroke="#e85d04" strokeWidth="1.5" markerStart={`url(#${uid}-arrow)`} markerEnd={`url(#${uid}-arrow)`} />
         <line x1={frontX} y1={lenArrowY - 4} x2={frontX} y2={lenArrowY + 4} stroke="#e85d04" strokeWidth="1.5" />
         <line x1={frontX + frontW} y1={lenArrowY - 4} x2={frontX + frontW} y2={lenArrowY + 4} stroke="#e85d04" strokeWidth="1.5" />
-        <text x={frontX + frontW / 2} y={lenArrowY + 14} textAnchor="middle">L: {d.L}</text>
+        <rect x={frontX + frontW / 2 - 20} y={lenArrowY + 3} width={40} height={13} rx={3} fill="white" opacity="0.9" />
+        <text x={frontX + frontW / 2} y={lenArrowY + 13} textAnchor="middle">{d.L}</text>
 
-        {/* Height arrow (left of front face) */}
-        <line
-          x1={heightArrowX}
-          y1={frontY}
-          x2={heightArrowX}
-          y2={frontY + frontH}
-          stroke="#e85d04"
-          strokeWidth="1.5"
-          markerStart={`url(#${uid}-arrow)`}
-          markerEnd={`url(#${uid}-arrow)`}
-        />
+        {/* Height arrow (left, centered, rotated) */}
+        <line x1={heightArrowX} y1={frontY} x2={heightArrowX} y2={frontY + frontH} stroke="#e85d04" strokeWidth="1.5" markerStart={`url(#${uid}-arrow)`} markerEnd={`url(#${uid}-arrow)`} />
         <line x1={heightArrowX - 4} y1={frontY} x2={heightArrowX + 4} y2={frontY} stroke="#e85d04" strokeWidth="1.5" />
         <line x1={heightArrowX - 4} y1={frontY + frontH} x2={heightArrowX + 4} y2={frontY + frontH} stroke="#e85d04" strokeWidth="1.5" />
-        <text
-          x={heightArrowX - 6}
-          y={frontY + frontH / 2}
-          textAnchor="middle"
-          transform={`rotate(-90 ${heightArrowX - 6} ${frontY + frontH / 2})`}
-        >
-          H: {d.H}
-        </text>
+        <g transform={`translate(${heightArrowX - 8}, ${frontY + frontH / 2})`}>
+          <rect x={-16} y={-7} width={32} height={13} rx={3} fill="white" opacity="0.9" transform="rotate(-90)" />
+          <text textAnchor="middle" dy="3" transform="rotate(-90)">{d.H}</text>
+        </g>
 
-        {/* Width arrow (along top diagonal face) */}
-        <line
-          x1={frontX + 2}
-          y1={widthArrowY1 + d.depth - 2}
-          x2={frontX + d.depth + 2}
-          y2={widthArrowY1 - 2}
-          stroke="#e85d04"
-          strokeWidth="1.5"
-          markerStart={`url(#${uid}-arrow)`}
-          markerEnd={`url(#${uid}-arrow)`}
-        />
-        <text
-          x={frontX + d.depth + 8}
-          y={widthArrowY1 + 2}
-          textAnchor="start"
-        >
-          W: {d.W}
-        </text>
+        {/* Width label (above top face, centered) */}
+        <rect x={widthCenterX - 18} y={widthCenterY - 6} width={36} height={13} rx={3} fill="white" opacity="0.9" />
+        <text x={widthCenterX} y={widthCenterY + 4} textAnchor="middle">{d.W}</text>
       </g>
     </svg>
   );
