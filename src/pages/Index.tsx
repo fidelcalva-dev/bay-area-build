@@ -291,7 +291,7 @@ const Index = () => {
                 {/* Urgency badge */}
                 <div className="flex justify-center lg:justify-start">
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full">
-                    🚛 Same-day delivery available in Oakland &amp; San Jose
+                    Same-day delivery available in Oakland & San Jose
                   </span>
                 </div>
 
