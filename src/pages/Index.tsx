@@ -95,7 +95,7 @@ const TRUST_BADGES = [
   { icon: MapPin, label: 'Local Bay Area Since 2015' },
   { icon: Scale, label: 'Transparent Pricing' },
   { icon: HardHat, label: 'Contractor-Ready' },
-  { icon: Star, label: '4.9★ Verified Reviews' },
+  { icon: Star, label: '4.9★ · 89 Reviews on Google' },
   { icon: Globe, label: 'Español Disponible' },
 ];
 
@@ -181,11 +181,9 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
 }
 
 const ACTION_OPTIONS = [
-  { label: 'Check Price in My Area', icon: ArrowRight, to: '/quote?v3=1', primary: true },
+  { label: 'See My Price Now', icon: ArrowRight, to: '/quote?v3=1', primary: true },
+  { label: 'Call / Text Us', icon: Phone, href: true, primary: false },
   { label: 'Upload Photos for Size Help', icon: Upload, to: '/waste-vision', primary: false },
-  { label: 'Talk to a Specialist', icon: Phone, href: true, primary: false },
-  { label: 'Schedule a Delivery', icon: Clock, to: '/schedule-delivery', primary: false },
-  { label: 'Contractor Account', icon: HardHat, to: '/contractor-application', primary: false },
 ];
 
 const SERVICE_AREAS_CITIES = [
@@ -267,11 +265,11 @@ const Index = () => {
               <div className="text-center lg:text-left space-y-4">
                 <p className="text-sm font-semibold text-primary tracking-wide uppercase">10+ Years Local Experience · Since 2015</p>
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-                  Dumpster Rental Made Simple
-                  <span className="block text-primary mt-1">in the Bay Area</span>
+                  Bay Area Dumpster Rental
+                  <span className="block text-primary mt-1">Flat Rate. No Surprises.</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
-                  Check pricing in your area, compare the right sizes, and get the best option for your project.
+                  See your exact price in 60 seconds — delivery, pickup, and weight all included. No hidden fees, no bait-and-switch.
                 </p>
                 {/* Dynamic starting price from config */}
                 <p className="text-base text-foreground font-semibold">
@@ -309,15 +307,38 @@ const Index = () => {
                   <option value="yard-cleanup">Yard Cleanup</option>
                   <option value="concrete-soil">Concrete / Soil Removal</option>
                 </select>
+                {/* Urgency badge */}
+                <div className="flex justify-center lg:justify-start">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-primary text-primary-foreground px-4 py-1.5 rounded-full">
+                    🚛 Same-day delivery available in Oakland &amp; San Jose
+                  </span>
+                </div>
+
+                {/* Trust proof lines */}
+                <div className="space-y-1 text-center lg:text-left">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
+                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
+                    4.9★ from 89 verified Bay Area customers
+                  </p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
+                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
+                    Same-day delivery available
+                  </p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
+                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
+                    Price locked when you book — no surprises
+                  </p>
+                </div>
+
                 <Button
                   size="lg"
                   onClick={handleHeroQuote}
                   className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
                 >
-                  Check Price in My Area
+                  See My Exact Price Now
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <p className="text-xs text-muted-foreground text-center lg:text-left">No commitment · Fast response · Local Bay Area service</p>
+                <p className="text-xs text-muted-foreground text-center lg:text-left">Instant price — no account needed · No spam · Cancel anytime before delivery</p>
               </div>
 
               {/* Supporting CTAs */}
