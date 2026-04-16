@@ -373,7 +373,7 @@ export function generateLocalBusinessSchema() {
     "review": GBP_SEED_REVIEWS.slice(0, 3).map(r => ({
       "@type": "Review",
       "author": { "@type": "Person", "name": r.author },
-      "reviewRating": { "@type": "Rating", "ratingValue": r.rating, "bestRating": "5" },
+      "reviewRating": { "@type": "Rating", "ratingValue": r.rating, "bestRating": "5", "worstRating": "1" },
       "reviewBody": r.text,
       "datePublished": r.date
     }))
