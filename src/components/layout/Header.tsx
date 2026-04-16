@@ -103,7 +103,7 @@ export function Header() {
       <div className="bg-[#F7F9F8] border-b border-border/30">
         <div className="container-wide flex justify-center py-1.5">
           <span className="text-[11px] text-muted-foreground/60 tracking-wide">
-            Serving the Bay Area since 2009
+            Serving the Bay Area since 2015
           </span>
         </div>
       </div>
