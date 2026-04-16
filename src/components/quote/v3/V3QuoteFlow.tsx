@@ -216,7 +216,7 @@ export function V3QuoteFlow() {
     if (step === 'placement') return;
     // Map new step back to legacy step for draft compat
     const legacyStepMap: Record<QuoteStep, V3Step> = {
-      'project-type': 'project', 'zip': 'zip', 'material': 'project',
+      'project-select': 'project', 'project-type': 'project', 'zip': 'zip', 'material': 'project',
       'size': 'size', 'service': 'size', 'contact': 'contact', 'price': 'price',
       'access': 'access', 'confirm': 'confirm', 'placement': 'placement',
     };
@@ -798,6 +798,7 @@ export function V3QuoteFlow() {
 
   // Step label for progress bar
   const stepLabels: Record<QuoteStep, string> = {
+    'project-select': 'Project',
     'project-type': 'Project',
     zip: 'Location',
     material: 'Material',
