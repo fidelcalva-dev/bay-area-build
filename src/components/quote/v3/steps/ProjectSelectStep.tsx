@@ -106,11 +106,9 @@ export function ProjectSelectStep({ onSelect, onSkip }: ProjectSelectStepProps) 
                 <p className="text-sm font-semibold text-foreground">
                   For {selected.label} we recommend a {selected.recommendedSize}-yard dumpster
                 </p>
-                {DumpsterSVG && (
-                  <div className="mt-2 max-w-[180px]">
-                    <DumpsterSVG yards={selected.recommendedSize} />
-                  </div>
-                )}
+                <div className="mt-2 max-w-[180px]">
+                  <DumpsterSVG yards={selected.recommendedSize as 5 | 8 | 10 | 20 | 30 | 40 | 50} />
+                </div>
               </div>
             </div>
             <button
