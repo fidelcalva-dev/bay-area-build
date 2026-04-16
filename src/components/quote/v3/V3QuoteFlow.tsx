@@ -76,7 +76,7 @@ const PlacementMap = lazy(() =>
 // ============================================================
 // EXTENDED STEP TYPE
 // ============================================================
-type QuoteStep = 'project-type' | 'zip' | 'material' | 'size' | 'service' | 'contact' | 'price' | 'access' | 'confirm' | 'placement';
+type QuoteStep = 'project-select' | 'project-type' | 'zip' | 'material' | 'size' | 'service' | 'contact' | 'price' | 'access' | 'confirm' | 'placement';
 
 // ============================================================
 // ZONE RESULT
@@ -118,7 +118,7 @@ export function V3QuoteFlow() {
 
   // Step state — new flow: skip to 'zip' step when URL has a valid ZIP pre-filled
   const hasUrlZipPrefill = urlZip.length === 5 && /^\d{5}$/.test(urlZip);
-  const [step, setStep] = useState<QuoteStep>(hasUrlZipPrefill ? 'zip' : 'project-type');
+  const [step, setStep] = useState<QuoteStep>(hasUrlZipPrefill ? 'zip' : 'project-select');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingZip, setIsCheckingZip] = useState(false);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
@@ -257,7 +257,7 @@ export function V3QuoteFlow() {
   // Handle "Start Over"
   const handleStartOver = useCallback(() => {
     draft.resetDraft();
-    setStep('project-type');
+    setStep('project-select');
     setZip('');
     setCustomerType(null);
     setSelectedProject(null);
@@ -300,7 +300,7 @@ export function V3QuoteFlow() {
 
   // Track step timing + GA4
   const stepIndexMap: Record<QuoteStep, number> = {
-    'project-type': 1, zip: 2, material: 3, size: 4, service: 5, contact: 6, price: 7, access: 8, confirm: 9, placement: 10,
+    'project-select': 1, 'project-type': 2, zip: 3, material: 4, size: 5, service: 6, contact: 7, price: 8, access: 9, confirm: 10, placement: 11,
   };
   useEffect(() => {
     setStepStartTime(Date.now());
@@ -393,7 +393,7 @@ export function V3QuoteFlow() {
   }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange, rentalDays]);
 
   // Step index for progress
-  const totalSteps = 9;
+  const totalSteps = 10;
   const stepIndex = useMemo(() => Math.min(stepIndexMap[step], totalSteps), [step]);
 
   // Navigation — new flow
@@ -407,6 +407,7 @@ export function V3QuoteFlow() {
       ga4.quoteStarted({ flow_version: 'v3', entry_point: 'quote_page', city: zoneResult?.cityName, zip });
     }
     const next: Record<QuoteStep, QuoteStep> = {
+      'project-select': 'project-type',
       'project-type': 'zip',
       zip: 'material',
       material: 'size',
@@ -423,7 +424,8 @@ export function V3QuoteFlow() {
 
   const goBack = () => {
     const prev: Record<QuoteStep, QuoteStep> = {
-      'project-type': 'project-type',
+      'project-select': 'project-select',
+      'project-type': 'project-select',
       zip: 'project-type',
       material: 'zip',
       size: 'material',
