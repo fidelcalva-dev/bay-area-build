@@ -266,10 +266,10 @@ const Index = () => {
                 <p className="text-sm font-semibold text-primary tracking-wide uppercase">10+ Years Local Experience · Since 2015</p>
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
                   Bay Area Dumpster Rental
-                  <span className="block text-primary mt-1">Flat Rate. No Surprises.</span>
+                  <span className="block text-primary mt-1">Transparent Pricing. No Hidden Fees.</span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
-                  See your exact price in 60 seconds — delivery, pickup, and weight all included. No hidden fees, no bait-and-switch.
+                  See your all-in price upfront — delivery, pickup, and included weight shown before you book. No surprises, no bait-and-switch.
                 </p>
                 {/* Dynamic starting price from config */}
                 <p className="text-base text-foreground font-semibold">
@@ -326,7 +326,7 @@ const Index = () => {
                   </p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
                     <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
-                    Price locked when you book — no surprises
+                    Included weight shown upfront — no hidden fees
                   </p>
                 </div>
 
