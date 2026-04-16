@@ -8,6 +8,26 @@ import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
 import NotFound from './NotFound';
 
+const SIZE_SPECS: Record<number, { physDimensions: string; truckLoads: string; weightLimit: string }> = {
+  5:  { physDimensions: "12' L × 5' W × 2.25' H", truckLoads: '2-3 truck loads', weightLimit: '0.5 ton included' },
+  8:  { physDimensions: "12' L × 6' W × 3' H", truckLoads: '3-4 truck loads', weightLimit: '0.5 ton included' },
+  10: { physDimensions: "12' L × 7.5' W × 3' H", truckLoads: '3 truck loads', weightLimit: '1 ton included' },
+  20: { physDimensions: "18' L × 7.5' W × 4' H", truckLoads: '6 truck loads', weightLimit: '2 tons included' },
+  30: { physDimensions: "18' L × 7.5' W × 6' H", truckLoads: '9 truck loads', weightLimit: '3 tons included' },
+  40: { physDimensions: "24' L × 7.5' W × 6' H", truckLoads: '12 truck loads', weightLimit: '4 tons included' },
+  50: { physDimensions: "24' L × 7.5' W × 8' H", truckLoads: '16 truck loads', weightLimit: '5 tons included' },
+};
+
+const WHO_NEEDS: Record<number, string[]> = {
+  5:  ['Homeowners with small garage or yard cleanouts', 'Contractors removing a single concrete slab', 'Small bathroom demo projects'],
+  8:  ['Driveway or foundation demolition crews', 'Garage cleanout projects with heavy debris', 'Small kitchen or bathroom remodels'],
+  10: ['Homeowners doing deck removal or large cleanouts', 'Contractors with medium concrete or dirt jobs', 'Estate cleanout companies'],
+  20: ['Full kitchen or bathroom renovation projects', 'Roofers replacing up to 30 squares of shingles', 'Property managers handling large tenant turnovers'],
+  30: ['General contractors on major home renovations', 'Commercial tenant improvement buildouts', 'Estate cleanout teams with bulky furniture'],
+  40: ['Commercial demolition and construction projects', 'Multi-unit residential renovation crews', 'Industrial facility cleanout teams'],
+  50: ['Warehouse and industrial site cleanouts', 'Large-scale commercial demolition projects', 'Multi-building construction waste management'],
+};
+
 const SIZE_CONTENT: Record<number, {
   headline: string;
   description: string;
@@ -139,21 +159,26 @@ export default function SizeLandingPage() {
       {/* Specs */}
       <section className="py-6 bg-muted/50 border-b border-border">
         <div className="container-wide">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-center">
             <div>
               <Ruler className="w-5 h-5 text-primary mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">{sizeData.dimensions}</div>
+              <div className="text-sm font-semibold text-foreground">{SIZE_SPECS[yards]?.physDimensions || sizeData.dimensions}</div>
               <div className="text-xs text-muted-foreground">Dimensions</div>
             </div>
             <div>
               <Truck className="w-5 h-5 text-primary mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">{sizeData.loads}</div>
-              <div className="text-xs text-muted-foreground">Pickup Loads</div>
+              <div className="text-sm font-semibold text-foreground">{SIZE_SPECS[yards]?.truckLoads || sizeData.loads}</div>
+              <div className="text-xs text-muted-foreground">Equivalent Loads</div>
             </div>
             <div>
               <Weight className="w-5 h-5 text-primary mx-auto mb-1" />
               <div className="text-sm font-semibold text-foreground">{sizeData.includedTons}T Included</div>
               <div className="text-xs text-muted-foreground">General Debris</div>
+            </div>
+            <div>
+              <Weight className="w-5 h-5 text-primary mx-auto mb-1" />
+              <div className="text-sm font-semibold text-foreground">{SIZE_SPECS[yards]?.weightLimit || `${sizeData.includedTons}T`}</div>
+              <div className="text-xs text-muted-foreground">Weight Limit</div>
             </div>
             <div>
               {isHeavyCapable ? <Hammer className="w-5 h-5 text-primary mx-auto mb-1" /> : <Home className="w-5 h-5 text-primary mx-auto mb-1" />}
@@ -194,6 +219,22 @@ export default function SizeLandingPage() {
               </ul>
             </div>
           </div>
+        </div>
+
+          {/* Who Needs This Size */}
+          {WHO_NEEDS[yards] && (
+            <div className="mt-10">
+              <h2 className="heading-md text-foreground mb-4">Who Needs a {yards}-Yard Dumpster?</h2>
+              <ul className="space-y-3">
+                {WHO_NEEDS[yards].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 shrink-0" />
+                    <span className="text-muted-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 
