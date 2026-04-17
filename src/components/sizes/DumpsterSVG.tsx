@@ -37,11 +37,16 @@ const SIZE_DATA: Record<Yards, {
   50: { bodyW: 312, bodyH: 138, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 4 },
 };
 
-export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
+export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGProps) {
   const d = SIZE_DATA[yards];
   if (!d) return null;
 
-  const padL = 48;
+  // Person silhouette dimensions (scaled to canvas)
+  const personH = showScale ? PERSON_HEIGHT_FT * FT_TO_PX : 0; // ~75px
+  const personW = personH * 0.32;
+  const personGap = showScale ? 14 : 0;
+
+  const padL = 48 + (showScale ? personW + personGap : 0);
   const padR = 24;
   const padT = 28;
   const padB = 40;
