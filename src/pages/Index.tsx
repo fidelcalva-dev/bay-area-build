@@ -485,31 +485,51 @@ const Index = () => {
 
           {/* Size grid — responsive: 1 col mobile, 2 col sm, 3 col lg */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-6">
-            {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => (
-              <Link
-                key={s.size}
-                to={quoteUrl({ size: String(s.size) })}
-                className="bg-card rounded-2xl border border-border p-4 md:p-8 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center"
-              >
-                <div className="w-full flex justify-center mb-5 relative px-2">
-                  <DumpsterSVG yards={s.size as 5|8|10|20|30|40|50} className="w-full h-auto max-h-28 md:max-h-40" />
-                </div>
-                <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
-                  {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
-                </div>
-                <div className="text-lg font-semibold text-primary mt-3">From ${s.price.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
-              </Link>
-            ))}
+            {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => {
+              const isMostPopular = s.size === 20;
+              return (
+                <Link
+                  key={s.size}
+                  to={quoteUrl({ size: String(s.size) })}
+                  className={`relative bg-card rounded-2xl border p-4 md:p-8 text-center hover:shadow-xl transition-all group flex flex-col items-center ${
+                    isMostPopular
+                      ? 'border-primary/60 ring-2 ring-primary/30 shadow-lg'
+                      : 'border-border hover:border-primary/30'
+                  }`}
+                >
+                  {isMostPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground shadow-md whitespace-nowrap">
+                        ★ Most Popular
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-3">
+                    <SizeCategoryBadge yards={s.size} />
+                  </div>
+                  <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
+                    <DumpsterSVG yards={s.size as 5|8|10|20|30|40|50} className="w-full h-auto max-h-28 md:max-h-40" />
+                  </div>
+                  <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
+                    {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
+                  </div>
+                  <div className="text-lg font-semibold text-primary mt-3">From ${s.price.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
+                </Link>
+              );
+            })}
           </div>
 
           {/* Second row: 50 yd centered */}
           <div className="flex justify-center max-w-5xl mx-auto mb-6">
             <Link
               to={quoteUrl({ size: '50' })}
-              className="bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
+              className="relative bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
             >
-              <div className="w-full flex justify-center mb-5 relative px-2">
+              <div className="absolute top-3 right-3">
+                <SizeCategoryBadge yards={50} />
+              </div>
+              <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
                 <DumpsterSVG yards={50} className="w-full h-auto max-h-28 md:max-h-40" />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
