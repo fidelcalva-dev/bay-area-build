@@ -142,6 +142,8 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
       className={className || 'w-full h-auto'}
       preserveAspectRatio="xMidYMid meet"
     >
+      <title>{`Calsan Dumpsters Pro ${yards}-yard roll-off dumpster — ${d.L} long × ${d.W} wide × ${d.H} tall`}</title>
+      <desc>{`Scale diagram of a ${yards}-yard roll-off dumpster compared to a 5'9" person, used for Bay Area dumpster rental.`}</desc>
       <defs>
         <linearGradient id={`${uid}-front`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#2d7a48" />

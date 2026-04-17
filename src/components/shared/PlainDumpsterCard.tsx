@@ -82,9 +82,19 @@ export function PlainDumpsterCard({
         <div className="w-full h-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
           <img 
             src={photoUrl}
-            alt={`${sizeYd}-yard dumpster`}
-            className="w-full h-full object-contain"
+            alt={`Calsan Dumpsters Pro ${sizeYd}-yard roll-off dumpster delivery in the Bay Area`}
+            width={400}
+            height={300}
             loading="lazy"
+            decoding="async"
+            className="w-full h-full object-contain"
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (!t.dataset.fallback) {
+                t.dataset.fallback = '1';
+                t.src = '/images/dumpster-placeholder.jpg';
+              }
+            }}
           />
         </div>
 
