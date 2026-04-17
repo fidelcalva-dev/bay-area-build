@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { CleanupLayout } from '@/components/cleanup/CleanupLayout';
 import { HOMEPAGE, CORE_SERVICES, CLEANUP_BRAND, BRAND_CLARIFICATION } from '@/config/cleanup/content';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, Phone, Camera, FileText, HardHat, Sparkles, Hammer, CalendarCheck, ChevronRight } from 'lucide-react';
+import { ArrowRight, CheckCircle, Phone, Camera, FileText, HardHat, Sparkles, Hammer, CalendarCheck, ChevronRight, Users, RefreshCw } from 'lucide-react';
+import { BeforeAfterStrip } from '@/components/cleanup/BeforeAfterStrip';
+import { ServiceAreaBadges } from '@/components/cleanup/ServiceAreaBadges';
 
 const SERVICE_ICONS: Record<string, React.ElementType> = {
   'hard-hat': HardHat,
