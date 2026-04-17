@@ -7,6 +7,7 @@ import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema } from '
 import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
 import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
+import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 import NotFound from './NotFound';
 
 const SIZE_SPECS: Record<number, { physDimensions: string; truckLoads: string; weightLimit: string }> = {
@@ -155,7 +156,10 @@ export default function SizeLandingPage() {
                 </Button>
               </div>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+            <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="absolute top-3 right-3">
+                <SizeCategoryBadge yards={yards} />
+              </div>
               <DumpsterSVG yards={yards as 5|8|10|20|30|40|50} className="w-full h-auto" />
             </div>
           </div>

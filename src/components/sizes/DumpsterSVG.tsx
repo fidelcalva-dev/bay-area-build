@@ -11,7 +11,13 @@ type Yards = 5 | 8 | 10 | 20 | 30 | 40 | 50;
 interface DumpsterSVGProps {
   yards: Yards;
   className?: string;
+  /** Show a human silhouette next to the dumpster for scale reference. Default: true. */
+  showScale?: boolean;
 }
+
+/** Real-world height of a 5'9" person in feet, scaled to the 1ft ≈ 13px canvas. */
+const PERSON_HEIGHT_FT = 5.75;
+const FT_TO_PX = 13;
 
 const SIZE_DATA: Record<Yards, {
   bodyW: number;
@@ -31,11 +37,16 @@ const SIZE_DATA: Record<Yards, {
   50: { bodyW: 312, bodyH: 138, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 4 },
 };
 
-export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
+export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGProps) {
   const d = SIZE_DATA[yards];
   if (!d) return null;
 
-  const padL = 48;
+  // Person silhouette dimensions (scaled to canvas)
+  const personH = showScale ? PERSON_HEIGHT_FT * FT_TO_PX : 0; // ~75px
+  const personW = personH * 0.32;
+  const personGap = showScale ? 14 : 0;
+
+  const padL = 48 + (showScale ? personW + personGap : 0);
   const padR = 24;
   const padT = 28;
   const padB = 40;
@@ -169,6 +180,45 @@ export function DumpsterSVG({ yards, className }: DumpsterSVGProps) {
         fill="#000"
         opacity="0.18"
       />
+
+      {/* Human silhouette for scale (5'9" person) */}
+      {showScale && (() => {
+        const baselineY = frontY + frontH; // align feet to dumpster base
+        const px = padL - personW - personGap; // x of silhouette left edge
+        const cx = px + personW / 2;
+        const headR = personW * 0.32;
+        const headCy = baselineY - personH + headR;
+        const bodyTop = headCy + headR;
+        const bodyH = personH - (headR * 2);
+        return (
+          <g opacity="0.55" aria-hidden="true">
+            {/* Head */}
+            <circle cx={cx} cy={headCy} r={headR} fill="#5a6470" />
+            {/* Body (rounded torso + legs) */}
+            <rect
+              x={px}
+              y={bodyTop}
+              width={personW}
+              height={bodyH}
+              rx={personW * 0.35}
+              fill="#5a6470"
+            />
+            {/* Baseline tick */}
+            <line x1={px - 2} y1={baselineY} x2={px + personW + 2} y2={baselineY} stroke="#5a6470" strokeWidth="0.75" opacity="0.6" />
+            <text
+              x={cx}
+              y={baselineY + 11}
+              textAnchor="middle"
+              fontFamily="Arial, sans-serif"
+              fontSize="8"
+              fontWeight="600"
+              fill="#5a6470"
+            >
+              5'9"
+            </text>
+          </g>
+        );
+      })()}
 
       {/* Wheels */}
       {wheels.map((w, i) => (
