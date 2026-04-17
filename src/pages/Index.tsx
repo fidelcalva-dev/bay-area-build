@@ -861,22 +861,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Build fingerprint */}
-      {import.meta.env.DEV ? (
-        <div className="fixed bottom-2 right-2 z-[9999] bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded pointer-events-none">
-          <div>HOME_SOURCE: src/pages/Index.tsx</div>
-          <div>BUILD: {BUILD_INFO.timestamp}</div>
-          <div>ENV: {BUILD_INFO.env}</div>
-        </div>
-      ) : (
-        <div
-          data-build-source="src/pages/Index.tsx"
-          data-build-time={BUILD_INFO.timestamp}
-          data-build-env={BUILD_INFO.env}
-          className="hidden"
-          aria-hidden="true"
-        />
-      )}
+      {/* Build fingerprint — invisible metadata only (visible overlay removed) */}
+      <div
+        data-build-source="src/pages/Index.tsx"
+        data-build-time={BUILD_INFO.timestamp}
+        data-build-env={BUILD_INFO.env}
+        className="hidden"
+        aria-hidden="true"
+      />
     </Layout>
   );
 };
