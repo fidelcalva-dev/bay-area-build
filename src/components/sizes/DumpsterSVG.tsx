@@ -28,21 +28,25 @@ const SIZE_DATA: Record<Yards, {
   H: string;
   ribs: number;
 }> = {
-  5:  { bodyW: 156, bodyH: 44,  depth: 16, L: '12 ft', W: '5 ft',   H: '2.25 ft', ribs: 3 },
-  8:  { bodyW: 156, bodyH: 58,  depth: 18, L: '12 ft', W: '6 ft',   H: '3 ft',    ribs: 3 },
-  10: { bodyW: 156, bodyH: 58,  depth: 22, L: '12 ft', W: '7.5 ft', H: '3 ft',    ribs: 3 },
-  20: { bodyW: 234, bodyH: 78,  depth: 22, L: '18 ft', W: '7.5 ft', H: '4 ft',    ribs: 4 },
-  30: { bodyW: 234, bodyH: 110, depth: 22, L: '18 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
-  40: { bodyW: 286, bodyH: 110, depth: 22, L: '22 ft', W: '7.5 ft', H: '6 ft',    ribs: 4 },
-  50: { bodyW: 312, bodyH: 138, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 4 },
+  5:  { bodyW: 156, bodyH: 44,  depth: 16, L: '12 ft', W: '5 ft',   H: '2.25 ft', ribs: 4 },
+  8:  { bodyW: 156, bodyH: 58,  depth: 18, L: '12 ft', W: '6 ft',   H: '3 ft',    ribs: 4 },
+  10: { bodyW: 156, bodyH: 58,  depth: 22, L: '12 ft', W: '7.5 ft', H: '3 ft',    ribs: 4 },
+  // 30yd: +20% height (78 → 94), 40yd: +25% (78 → 98), 50yd: +30% (138 → 179) — but use prior 30/40/50 base of 78
+  20: { bodyW: 234, bodyH: 78,  depth: 22, L: '18 ft', W: '7.5 ft', H: '4 ft',    ribs: 5 },
+  30: { bodyW: 234, bodyH: 132, depth: 22, L: '18 ft', W: '7.5 ft', H: '6 ft',    ribs: 5 },
+  40: { bodyW: 286, bodyH: 138, depth: 22, L: '22 ft', W: '7.5 ft', H: '6 ft',    ribs: 6 },
+  50: { bodyW: 312, bodyH: 179, depth: 22, L: '24 ft', W: '7.5 ft', H: '7.5 ft',  ribs: 6 },
 };
 
 export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGProps) {
   const d = SIZE_DATA[yards];
   if (!d) return null;
 
-  // Person silhouette dimensions (scaled to canvas)
-  const personH = showScale ? PERSON_HEIGHT_FT * FT_TO_PX : 0; // ~75px
+  // Person silhouette dimensions (scaled to canvas).
+  // For very tall containers (50yd), scale the person up so it remains visually
+  // present next to the larger dumpster while still representing ~5'9".
+  const personScale = yards === 50 ? 1.35 : yards === 40 || yards === 30 ? 1.15 : 1;
+  const personH = showScale ? PERSON_HEIGHT_FT * FT_TO_PX * personScale : 0;
   const personW = personH * 0.32;
   const personGap = showScale ? 14 : 0;
 
@@ -50,7 +54,7 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
   const padR = 24;
   const padT = 28;
   const padB = 40;
-  const wheelR = 5;
+  const wheelR = 7;
 
   const vbW = padL + d.bodyW + d.depth + padR;
   const vbH = padT + d.bodyH + d.depth + padB;
@@ -110,14 +114,20 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
     [frontX + frontW - 6, frontY + frontH - 8],
   ];
 
-  // Wheels
-  const wheelY = frontY + frontH + wheelR;
+  // Wheels — 4 visible rollers along the bottom rail
+  const wheelY = frontY + frontH + wheelR - 1;
   const wheels = [
-    [frontX + 14, wheelY],
-    [frontX + 34, wheelY],
-    [frontX + frontW - 34, wheelY],
-    [frontX + frontW - 14, wheelY],
+    [frontX + 16, wheelY],
+    [frontX + 42, wheelY],
+    [frontX + frontW - 42, wheelY],
+    [frontX + frontW - 16, wheelY],
   ];
+
+  // Rear door indicator (only on 20yd+ — true roll-off containers)
+  const hasRearDoor = yards >= 20;
+  const doorX = frontX + frontW - 8;
+  const doorTopY = frontY + rimH + 2;
+  const doorBottomY = frontY + frontH - 6;
 
   // Door latch
   const latchW = 20;
@@ -222,9 +232,12 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
         );
       })()}
 
-      {/* Wheels */}
+      {/* Wheels — larger rollers with hub detail */}
       {wheels.map((w, i) => (
-        <ellipse key={`wh-${i}`} cx={w[0]} cy={w[1]} rx={wheelR} ry={3} fill="#1a1a1a" />
+        <g key={`wh-${i}`}>
+          <ellipse cx={w[0]} cy={w[1]} rx={wheelR} ry={4} fill="#1a1a1a" />
+          <ellipse cx={w[0]} cy={w[1]} rx={wheelR * 0.4} ry={1.5} fill="#4a4a4a" />
+        </g>
       ))}
 
       <g filter={`url(#${uid}-shadow)`}>
@@ -247,6 +260,17 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
 
         {/* Bottom rail */}
         <rect x={frontX} y={frontY + frontH - 4} width={frontW} height={4} fill="#0d3d20" />
+
+        {/* Rear door indicator with hinges (real roll-off detail) */}
+        {hasRearDoor && (
+          <g aria-hidden="true">
+            <line x1={doorX} y1={doorTopY} x2={doorX} y2={doorBottomY} stroke="#0a2d18" strokeWidth="1.5" opacity="0.7" />
+            {/* Hinges */}
+            <rect x={doorX - 3} y={doorTopY + 4} width={6} height={3} rx={1} fill="#8aab97" />
+            <rect x={doorX - 3} y={(doorTopY + doorBottomY) / 2 - 1.5} width={6} height={3} rx={1} fill="#8aab97" />
+            <rect x={doorX - 3} y={doorBottomY - 7} width={6} height={3} rx={1} fill="#8aab97" />
+          </g>
+        )}
 
         {/* Door latch */}
         <rect x={latchX} y={latchY} width={latchW} height={latchH} rx={2} fill="#8aab97" />
