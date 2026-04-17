@@ -152,8 +152,11 @@ export function ServiceCycleSection() {
             <img
               src={serviceCycleImg}
               alt="Calsan truck at disposal facility with concrete debris"
-              className="w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"
+              width={800}
+              height={600}
               loading="lazy"
+              decoding="async"
+              className="w-full rounded-2xl border-4 border-[hsl(140,40%,75%)] shadow-lg"
             />
           </AnimatedSection>
         </div>

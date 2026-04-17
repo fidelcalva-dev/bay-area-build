@@ -494,7 +494,7 @@ function ContractorQuoteCalculator() {
                     <button key={size.id} type="button" onClick={() => setFormData((prev) => ({ ...prev, size: size.value }))}
                       className={cn("relative p-3 rounded-xl border-2 text-left transition-all", formData.size === size.value ? "border-orange-500 bg-orange-500/5 ring-2 ring-orange-500/20" : "border-input hover:border-orange-500/50")}>
                       {size.popular && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full">POPULAR</span>}
-                      {image && <div className="aspect-[4/3] bg-muted/50 rounded-lg mb-2 p-2"><img src={image} alt={size.label} className="w-full h-full object-contain" /></div>}
+                      {image && <div className="aspect-[4/3] bg-muted/50 rounded-lg mb-2 p-2"><img src={image} alt={`${size.label} dumpster rental Bay Area`} width={400} height={300} loading="lazy" decoding="async" className="w-full h-full object-contain" /></div>}
                       <div className="text-center">
                         <div className="text-2xl font-bold text-foreground">{size.value}</div>
                         <div className="text-xs text-muted-foreground uppercase">yard</div>

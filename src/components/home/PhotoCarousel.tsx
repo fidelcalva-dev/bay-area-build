@@ -23,6 +23,10 @@ export function PhotoCarousel() {
           <img
             src={PHOTOS[current].src}
             alt={PHOTOS[current].alt}
+            width={800}
+            height={400}
+            loading="lazy"
+            decoding="async"
             className="w-full h-[280px] md:h-[400px] object-cover transition-opacity duration-300"
           />
 
