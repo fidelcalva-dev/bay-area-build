@@ -15,6 +15,7 @@ import {
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
 import { DumpsterIllustration } from '@/components/dumpster/DumpsterIllustration';
+import { DumpsterSizeComparison } from '@/components/dumpster/DumpsterSizeComparison';
 import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 
 // Dumpster images
@@ -625,6 +626,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* ========== SECTION 8.5 — VISUAL SIZE COMPARISON ========== */}
+      <DumpsterSizeComparison />
 
       {/* ========== SECTION 9 — WHY CALSAN ========== */}
       <section className="py-12 md:py-16 bg-background">

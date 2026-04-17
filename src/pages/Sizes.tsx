@@ -9,6 +9,7 @@ import { PRICING_POLICIES, getHeavySizes, getGeneralSizes } from '@/lib/shared-d
 import { BUSINESS_INFO, PAGE_SEO, generateBreadcrumbSchema, generateServiceSchema } from '@/lib/seo';
 import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/PlainDumpsterCard';
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
+import { DumpsterSizeComparison } from '@/components/dumpster/DumpsterSizeComparison';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
 
 const SIZES_FAQS: FAQItem[] = [
@@ -212,6 +213,9 @@ export default function Sizes() {
           </div>
         </div>
       </section>
+
+      {/* Visual Size Comparison */}
+      <DumpsterSizeComparison />
 
       {/* Visualizer Section */}
       <section className="section-padding bg-background">
