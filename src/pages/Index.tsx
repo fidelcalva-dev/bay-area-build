@@ -14,7 +14,7 @@ import {
   Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
-import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
+import { DumpsterIllustration } from '@/components/dumpster/DumpsterIllustration';
 import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 
 // Dumpster images
@@ -508,7 +508,7 @@ const Index = () => {
                     <SizeCategoryBadge yards={s.size} />
                   </div>
                   <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                    <DumpsterSVG yards={s.size as 5|8|10|20|30|40|50} className="w-full h-auto max-h-28 md:max-h-40" />
+                    <DumpsterIllustration yards={s.size} width={220} className="w-full h-auto max-w-[220px]" />
                   </div>
                   <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                     {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
@@ -530,7 +530,7 @@ const Index = () => {
                 <SizeCategoryBadge yards={50} />
               </div>
               <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                <DumpsterSVG yards={50} className="w-full h-auto max-h-28 md:max-h-40" />
+                <DumpsterIllustration yards={50} width={240} className="w-full h-auto max-w-[240px]" />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
