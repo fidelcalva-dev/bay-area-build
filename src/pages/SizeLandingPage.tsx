@@ -6,7 +6,7 @@ import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
-import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
+import { DumpsterIllustration } from '@/components/dumpster/DumpsterIllustration';
 import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 import NotFound from './NotFound';
 
@@ -160,7 +160,7 @@ export default function SizeLandingPage() {
               <div className="absolute top-3 right-3">
                 <SizeCategoryBadge yards={yards} />
               </div>
-              <DumpsterSVG yards={yards as 5|8|10|20|30|40|50} className="w-full h-auto" />
+              <DumpsterIllustration yards={yards} width={320} className="w-full h-auto mx-auto" />
             </div>
           </div>
         </div>
