@@ -6,6 +6,7 @@ import { BUSINESS_INFO, generateFAQSchema, generateServiceSchema, generateBreadc
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, AlertTriangle, Wrench } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
+import { CityVisualIdentity } from '@/components/seo/CityVisualIdentity';
 
 // ── SF-specific data ─────────────────────────────────────────
 const META = {
@@ -176,6 +177,8 @@ export default function DumpsterRentalSanFrancisco() {
           </div>
         </div>
       </section>
+
+      <CityVisualIdentity city="san-francisco" />
 
       {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
       <section className="py-6 bg-accent/5 border-b border-accent/20">
