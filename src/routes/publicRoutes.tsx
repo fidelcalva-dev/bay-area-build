@@ -106,5 +106,7 @@ export function getPublicRoutes() {
     // Preview redirects
     <Route key="preview-quote" path="/preview/quote" element={<Navigate to="/quote" replace />} />,
     <Route key="preview-home" path="/preview/home" element={<Navigate to="/" replace />} />,
+    // SEO: /home → / (avoid duplicate content)
+    <Route key="home-redirect" path="/home" element={<Navigate to="/" replace />} />,
   ];
 }
