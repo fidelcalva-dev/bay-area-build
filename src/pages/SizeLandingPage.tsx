@@ -7,6 +7,7 @@ import { BUSINESS_INFO, generateServiceSchema, generateBreadcrumbSchema } from '
 import { SERVICE_CITIES, getCanonicalCitySlug } from '@/lib/cityData';
 import { ArrowRight, Phone, CheckCircle, Weight, Ruler, Truck, Home, Hammer } from 'lucide-react';
 import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
+import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 import NotFound from './NotFound';
 
 const SIZE_SPECS: Record<number, { physDimensions: string; truckLoads: string; weightLimit: string }> = {
