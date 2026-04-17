@@ -2,7 +2,16 @@ import { Link } from 'react-router-dom';
 import { CleanupLayout } from '@/components/cleanup/CleanupLayout';
 import { CORE_SERVICES } from '@/config/cleanup/content';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, HardHat, Sparkles, Hammer, CalendarCheck } from 'lucide-react';
+import { BeforeAfterStrip } from '@/components/cleanup/BeforeAfterStrip';
+import { ServiceAreaBadges } from '@/components/cleanup/ServiceAreaBadges';
+
+const SERVICE_ICONS: Record<string, React.ElementType> = {
+  'hard-hat': HardHat,
+  'sparkles': Sparkles,
+  'hammer': Hammer,
+  'calendar-check': CalendarCheck,
+};
 
 const ADD_ONS = [
   'Labor-assisted cleanup',
@@ -21,25 +30,41 @@ export default function CleanupServices() {
       <section className="py-12 md:py-16">
         <div className="max-w-5xl mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Cleanup Services Built for Construction Projects</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mb-10">
+          <p className="text-lg text-muted-foreground max-w-2xl mb-6">
             Our service menu is built around the work that shows up most often on real projects: active site cleanup, final cleanup, debris-heavy cleanup, and recurring jobsite support.
           </p>
 
+          {/* Service area pills */}
+          <div className="mb-10">
+            <ServiceAreaBadges align="start" />
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
-            {CORE_SERVICES.map((svc) => (
-              <Link
-                key={svc.code}
-                to={`/cleanup/${svc.slug}`}
-                className="group bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow"
-              >
-                <h2 className="text-lg font-bold text-foreground mb-2">{svc.name}</h2>
-                <p className="text-sm text-muted-foreground mb-3">{svc.tagline}</p>
-                <p className="text-sm font-semibold text-primary mb-4">{svc.startingPrice}</p>
-                <span className="text-sm text-accent font-medium inline-flex items-center gap-1 group-hover:underline">
-                  Learn More <ChevronRight className="w-4 h-4" />
-                </span>
-              </Link>
-            ))}
+            {CORE_SERVICES.map((svc) => {
+              const Icon = SERVICE_ICONS[svc.icon] || HardHat;
+              return (
+                <Link
+                  key={svc.code}
+                  to={`/cleanup/${svc.slug}`}
+                  className="group bg-card rounded-xl border border-border p-6 hover:shadow-md hover:border-primary/30 transition-all flex flex-col"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-lg font-bold text-foreground">{svc.name}</h2>
+                      <p className="text-sm font-semibold text-primary">{svc.startingPrice}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4 flex-1">{svc.tagline}</p>
+                  <BeforeAfterStrip className="mb-4" />
+                  <span className="text-sm text-accent font-medium inline-flex items-center gap-1 group-hover:underline">
+                    Learn More <ChevronRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="bg-muted rounded-xl p-6 border border-border mb-10">
