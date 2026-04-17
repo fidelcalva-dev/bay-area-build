@@ -94,7 +94,7 @@ export default function Blog() {
                     <article className="bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 hover:shadow-card-hover transition-all group h-full">
                       <div className="aspect-[16/9] bg-muted flex items-center justify-center overflow-hidden">
                         {image ? (
-                          <img src={image} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+                          <img src={image} alt={post.title} width={400} height={300} loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
                         ) : (
                           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                             <Tag className="w-8 h-8 text-primary" />

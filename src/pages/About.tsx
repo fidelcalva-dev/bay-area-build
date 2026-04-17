@@ -182,7 +182,11 @@ export default function About() {
               >
                 <img 
                   src={image.image} 
-                  alt={image.caption}
+                  alt={image.caption || 'Calsan Bay Area dumpster fleet photo'}
+                  width={400}
+                  height={400}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 
@@ -210,7 +214,11 @@ export default function About() {
             <div className="relative aspect-video flex items-center justify-center">
               <img 
                 src={fleetGallery[currentImageIndex]?.image} 
-                alt={fleetGallery[currentImageIndex]?.caption}
+                alt={fleetGallery[currentImageIndex]?.caption || 'Calsan Bay Area dumpster fleet photo'}
+                width={1200}
+                height={800}
+                loading="eager"
+                decoding="async"
                 className="max-w-full max-h-full object-contain"
               />
 

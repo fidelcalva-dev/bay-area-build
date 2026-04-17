@@ -121,7 +121,11 @@ export const RealWorkSection = () => {
           <div className="relative aspect-video">
             <img 
               src={galleryImages[currentImageIndex]?.src}
-              alt={galleryImages[currentImageIndex]?.alt}
+              alt={galleryImages[currentImageIndex]?.alt || 'Calsan Bay Area dumpster project'}
+              width={1200}
+              height={800}
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-contain"
             />
 

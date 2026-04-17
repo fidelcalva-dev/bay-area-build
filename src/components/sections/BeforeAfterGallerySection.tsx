@@ -134,7 +134,11 @@ export function BeforeAfterGallerySection() {
               >
                 <img
                   src={project.afterImage}
-                  alt={`${project.city} project`}
+                  alt={`${project.city} ${project.material} cleanup project after`}
+                  width={80}
+                  height={56}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
               </button>

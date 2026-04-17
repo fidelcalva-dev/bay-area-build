@@ -157,6 +157,10 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
       <img
         src={images[idx]}
         alt={`${alt} - ${idx + 1}`}
+        width={400}
+        height={300}
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover transition-opacity duration-300 rounded-2xl"
       />
       {/* Left arrow */}

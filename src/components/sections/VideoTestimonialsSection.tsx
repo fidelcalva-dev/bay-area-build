@@ -86,7 +86,11 @@ export const VideoTestimonialsSection = () => {
               <div className="relative aspect-video overflow-hidden">
                 <img
                   src={testimonial.thumbnailUrl}
-                  alt={`${testimonial.name} testimonial`}
+                  alt={`${testimonial.name} customer testimonial - Bay Area dumpster rental`}
+                  width={400}
+                  height={300}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -134,7 +138,11 @@ export const VideoTestimonialsSection = () => {
                   <div className="flex items-center gap-1 text-xs text-primary font-medium">
                     <img
                       src="https://www.google.com/favicon.ico"
-                      alt="Google"
+                      alt="Google review"
+                      width={16}
+                      height={16}
+                      loading="lazy"
+                      decoding="async"
                       className="w-4 h-4"
                     />
                     Verified
