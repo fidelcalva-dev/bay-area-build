@@ -67,9 +67,19 @@ function DumpsterPhotoDisplay({
     <div className={cn("relative w-full flex items-center justify-center py-4 pb-6", className)}>
       <img 
         src={photoUrl}
-        alt={`${size} yard roll-off dumpster: ${spec.length} long, ${spec.width} wide, ${spec.height} tall`}
-        className="w-full max-w-[180px] h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+        alt={`Calsan Dumpsters Pro ${size}-yard roll-off dumpster (${spec.length} long, ${spec.width} wide, ${spec.height} tall) for Bay Area projects`}
+        width={360}
+        height={270}
         loading="lazy"
+        decoding="async"
+        className="w-full max-w-[180px] h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+        onError={(e) => {
+          const t = e.currentTarget;
+          if (!t.dataset.fallback) {
+            t.dataset.fallback = '1';
+            t.src = '/images/dumpster-placeholder.jpg';
+          }
+        }}
       />
       
       {/* Dimension labels below image */}
