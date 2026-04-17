@@ -88,13 +88,14 @@ export default function CleanupHome() {
                 <Link
                   key={svc.code}
                   to={`/cleanup/${svc.slug}`}
-                  className="group bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow flex flex-col"
+                  className="group bg-card rounded-xl border border-border p-6 hover:shadow-md hover:border-primary/30 transition-all flex flex-col"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="font-bold text-foreground mb-2">{svc.name}</h3>
                   <p className="text-sm text-muted-foreground flex-1 mb-4">{svc.tagline}</p>
+                  <BeforeAfterStrip className="mb-4" />
                   <p className="text-sm font-semibold text-primary mb-3">{svc.startingPrice}</p>
                   <span className="text-sm font-medium text-accent group-hover:underline inline-flex items-center gap-1">
                     Learn More <ChevronRight className="w-4 h-4" />
