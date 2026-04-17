@@ -15,6 +15,7 @@ import {
   Search, Building2, Home, TreePine, Shovel,
 } from 'lucide-react';
 import { DumpsterSVG } from '@/components/sizes/DumpsterSVG';
+import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 
 // Dumpster images
 import yd5Img from '@/assets/5yd-dumpster.webp';
