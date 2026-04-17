@@ -210,6 +210,8 @@ export default function DumpsterRentalOakland() {
         </div>
       </section>
 
+      <CityVisualIdentity city="oakland" />
+
       {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
       <section className="py-6 bg-accent/5 border-b border-accent/20">
         <div className="container-wide max-w-3xl mx-auto space-y-4">
