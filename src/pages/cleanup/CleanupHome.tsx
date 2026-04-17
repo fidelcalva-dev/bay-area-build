@@ -158,6 +158,40 @@ export default function CleanupHome() {
         </div>
       </section>
 
+      {/* ===== FOR CONTRACTORS BANNER ===== */}
+      <section className="py-12 md:py-16">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6 md:p-10">
+            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+            <div className="relative grid md:grid-cols-[auto,1fr,auto] gap-6 items-center">
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 mx-auto md:mx-0">
+                <HardHat className="w-7 h-7 md:w-8 md:h-8" />
+              </div>
+              <div className="text-center md:text-left">
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-primary mb-2">
+                  <Users className="w-3.5 h-3.5" />
+                  For Contractors
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                  Recurring Jobsite Cleanup Programs Available
+                </h2>
+                <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
+                  Weekly or biweekly cleanup schedules, dedicated crews, and consolidated invoicing for active jobsites. Built for GCs, remodelers, and property teams.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
+                <Button asChild size="lg" variant="cta" className="font-bold whitespace-nowrap">
+                  <Link to="/cleanup/for-contractors">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Apply as a Partner
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== DUMPSTER CROSSOVER ===== */}
       <section className="bg-foreground text-primary-foreground py-12 md:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
@@ -176,6 +210,7 @@ export default function CleanupHome() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{HOMEPAGE.serviceAreas.headline}</h2>
           <p className="text-muted-foreground mb-6">{HOMEPAGE.serviceAreas.body}</p>
+          <ServiceAreaBadges className="mb-6" />
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/cleanup/oakland" className="text-sm font-medium text-primary hover:underline">Oakland →</Link>
             <Link to="/cleanup/alameda" className="text-sm font-medium text-primary hover:underline">Alameda →</Link>
