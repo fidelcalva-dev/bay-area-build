@@ -232,9 +232,12 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
         );
       })()}
 
-      {/* Wheels */}
+      {/* Wheels — larger rollers with hub detail */}
       {wheels.map((w, i) => (
-        <ellipse key={`wh-${i}`} cx={w[0]} cy={w[1]} rx={wheelR} ry={3} fill="#1a1a1a" />
+        <g key={`wh-${i}`}>
+          <ellipse cx={w[0]} cy={w[1]} rx={wheelR} ry={4} fill="#1a1a1a" />
+          <ellipse cx={w[0]} cy={w[1]} rx={wheelR * 0.4} ry={1.5} fill="#4a4a4a" />
+        </g>
       ))}
 
       <g filter={`url(#${uid}-shadow)`}>
@@ -257,6 +260,17 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
 
         {/* Bottom rail */}
         <rect x={frontX} y={frontY + frontH - 4} width={frontW} height={4} fill="#0d3d20" />
+
+        {/* Rear door indicator with hinges (real roll-off detail) */}
+        {hasRearDoor && (
+          <g aria-hidden="true">
+            <line x1={doorX} y1={doorTopY} x2={doorX} y2={doorBottomY} stroke="#0a2d18" strokeWidth="1.5" opacity="0.7" />
+            {/* Hinges */}
+            <rect x={doorX - 3} y={doorTopY + 4} width={6} height={3} rx={1} fill="#8aab97" />
+            <rect x={doorX - 3} y={(doorTopY + doorBottomY) / 2 - 1.5} width={6} height={3} rx={1} fill="#8aab97" />
+            <rect x={doorX - 3} y={doorBottomY - 7} width={6} height={3} rx={1} fill="#8aab97" />
+          </g>
+        )}
 
         {/* Door latch */}
         <rect x={latchX} y={latchY} width={latchW} height={latchH} rx={2} fill="#8aab97" />
