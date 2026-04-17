@@ -11,7 +11,13 @@ type Yards = 5 | 8 | 10 | 20 | 30 | 40 | 50;
 interface DumpsterSVGProps {
   yards: Yards;
   className?: string;
+  /** Show a human silhouette next to the dumpster for scale reference. Default: true. */
+  showScale?: boolean;
 }
+
+/** Real-world height of a 5'9" person in feet, scaled to the 1ft ≈ 13px canvas. */
+const PERSON_HEIGHT_FT = 5.75;
+const FT_TO_PX = 13;
 
 const SIZE_DATA: Record<Yards, {
   bodyW: number;
