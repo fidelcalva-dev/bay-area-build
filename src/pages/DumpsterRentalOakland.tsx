@@ -6,6 +6,7 @@ import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSch
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, Users, Weight, Scale, FileCheck, AlertTriangle, Wrench } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
+import { CityVisualIdentity } from '@/components/seo/CityVisualIdentity';
 
 // ── Oakland-specific data ────────────────────────────────────
 const OAKLAND_YARD = OPERATIONAL_YARDS.find(y => y.id === 'oakland')!;
@@ -208,6 +209,8 @@ export default function DumpsterRentalOakland() {
           </div>
         </div>
       </section>
+
+      <CityVisualIdentity city="oakland" />
 
       {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
       <section className="py-6 bg-accent/5 border-b border-accent/20">

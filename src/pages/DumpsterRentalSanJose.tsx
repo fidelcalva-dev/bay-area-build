@@ -6,6 +6,7 @@ import { BUSINESS_INFO, OPERATIONAL_YARDS, generateFAQSchema, generateServiceSch
 import { DUMPSTER_SIZES_DATA, PRICING_POLICIES } from '@/lib/shared-data';
 import { ArrowRight, Phone, MapPin, Clock, Shield, Truck, CheckCircle, HardHat, Building2, Ruler, AlertTriangle, Wrench } from 'lucide-react';
 import { RelatedLocations, InternalLinkBlock } from '@/components/seo';
+import { CityVisualIdentity } from '@/components/seo/CityVisualIdentity';
 
 // ── San Jose-specific data ───────────────────────────────────
 const SJ_YARD = OPERATIONAL_YARDS.find(y => y.id === 'sanjose')!;
@@ -164,6 +165,8 @@ export default function DumpsterRentalSanJose() {
           </div>
         </div>
       </section>
+
+      <CityVisualIdentity city="san-jose" />
 
       {/* ── PERMIT VERIFICATION CALLOUT ────────────────── */}
       <section className="py-6 bg-accent/5 border-b border-accent/20">
