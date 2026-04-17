@@ -181,6 +181,45 @@ export function DumpsterSVG({ yards, className, showScale = true }: DumpsterSVGP
         opacity="0.18"
       />
 
+      {/* Human silhouette for scale (5'9" person) */}
+      {showScale && (() => {
+        const baselineY = frontY + frontH; // align feet to dumpster base
+        const px = padL - personW - personGap; // x of silhouette left edge
+        const cx = px + personW / 2;
+        const headR = personW * 0.32;
+        const headCy = baselineY - personH + headR;
+        const bodyTop = headCy + headR;
+        const bodyH = personH - (headR * 2);
+        return (
+          <g opacity="0.55" aria-hidden="true">
+            {/* Head */}
+            <circle cx={cx} cy={headCy} r={headR} fill="#5a6470" />
+            {/* Body (rounded torso + legs) */}
+            <rect
+              x={px}
+              y={bodyTop}
+              width={personW}
+              height={bodyH}
+              rx={personW * 0.35}
+              fill="#5a6470"
+            />
+            {/* Baseline tick */}
+            <line x1={px - 2} y1={baselineY} x2={px + personW + 2} y2={baselineY} stroke="#5a6470" strokeWidth="0.75" opacity="0.6" />
+            <text
+              x={cx}
+              y={baselineY + 11}
+              textAnchor="middle"
+              fontFamily="Arial, sans-serif"
+              fontSize="8"
+              fontWeight="600"
+              fill="#5a6470"
+            >
+              5'9"
+            </text>
+          </g>
+        );
+      })()}
+
       {/* Wheels */}
       {wheels.map((w, i) => (
         <ellipse key={`wh-${i}`} cx={w[0]} cy={w[1]} rx={wheelR} ry={3} fill="#1a1a1a" />
