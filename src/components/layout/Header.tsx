@@ -63,6 +63,10 @@ const NAV_ITEMS: NavItem[] = [
       { to: '/about', label: 'About Calsan' },
     ],
   },
+  {
+    label: 'Blog',
+    to: '/blog',
+  },
 ];
 
 // ── HEADER ──────────────────────────────────────────────
