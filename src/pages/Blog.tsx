@@ -15,6 +15,7 @@ const roofRenovationImg = '/images/blog/roof-renovation-dumpster.jpg';
 const calculateDumpsterSizeImg = '/images/blog/calculate-dumpster-size.jpg';
 const reduceProjectCostsImg = '/images/blog/dumpster-reduce-project-costs.jpg';
 const commonMistakesFillingImg = '/images/blog/common-mistakes-filling-dumpster.jpg';
+const maximizeDumpsterSpaceImg = '/images/blog/maximize-dumpster-space.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -30,6 +31,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'calculate-right-dumpster-size-for-your-project': calculateDumpsterSizeImg,
   'how-renting-dumpster-reduces-project-costs': reduceProjectCostsImg,
   'common-mistakes-when-filling-a-dumpster': commonMistakesFillingImg,
+  'tips-to-maximize-space-in-your-dumpster': maximizeDumpsterSpaceImg,
 };
 
 const blogCategories = [
