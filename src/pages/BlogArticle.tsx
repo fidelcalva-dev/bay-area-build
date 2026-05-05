@@ -328,6 +328,31 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     ],
     relatedArticles: ['benefits-same-dumpster-provider', 'positive-impact-dumpster-rentals-oakland'],
   },
+  'roof-renovation-dumpster-shingles-heavy-debris': {
+    slug: 'roof-renovation-dumpster-shingles-heavy-debris',
+    title: 'Roof Renovation: The Perfect Dumpster for Shingles & Heavy Debris',
+    metaTitle: 'Roof Renovation Dumpster | Best Size for Shingles & Tear-Offs',
+    metaDescription: 'Replacing a roof? Learn the best dumpster size for shingles and roofing debris. 10-20 yard recommendations, weight tips, and contractor advice from Calsan.',
+    h1: 'Roof Renovation: The Perfect Dumpster for Shingles & Heavy Debris',
+    date: 'May 5, 2026',
+    readTime: '5 min read',
+    category: 'Tips & Guides',
+    image: roofRenovationImg,
+    sections: [
+      { heading: 'Why Roofing Projects Need the Right Dumpster', body: 'Replacing a roof is one of the most important upgrades you can make to a property. Whether you are a contractor managing multiple projects or a homeowner investing in a full roof replacement, one thing is certain: roof tear-offs create a lot of heavy debris.' },
+      { heading: 'Why Roofing Debris Requires a Specialized Dumpster', body: 'Roofing materials are not like regular household junk. They are:\n\nExtremely heavy (especially asphalt shingles)\nDense and compact\nOften mixed with nails, flashing, and wood\nDifficult to handle without proper disposal equipment' },
+      { heading: 'What Size Dumpster Is Best for Roof Renovation?', body: 'For roofing projects, we typically recommend:\n\n10-Yard Dumpster -- Perfect for small residential roof replacements, single-layer shingle removal, and garage or small structure tear-offs. Compact, heavy-duty, and ideal for dense materials like shingles.\n\n15-20 Yard Dumpster -- Best for medium to large residential roofs, multi-layer shingle removal, and roofing combined with minor wood decking debris. Provides additional volume while maintaining safe weight limits.\n\nTip: It is not just about size -- it is about weight capacity. Roofing debris fills up weight limits before it fills up space.' },
+      { heading: 'Why Contractors Choose the Right Dumpster', body: 'Using the proper dumpster for roofing projects helps:\n\nKeep the job site clean and organized\nPrevent overloading fees\nSpeed up tear-off and cleanup\nImprove safety for your crew\nStay compliant with local disposal regulations' },
+      { heading: 'Pro Tips for Roofing Dumpster Rentals', body: 'Place plywood under the dumpster to protect driveways.\nKeep debris evenly distributed to avoid weight imbalance.\nDo not mix prohibited materials (like hazardous waste).\nSchedule pickup promptly once the project is complete.\n\nProper planning ensures your roofing project runs smoothly from start to finish.' },
+      { heading: 'Work with a Reliable Dumpster Provider', body: `At Calsan Dumpsters Pro, we understand the demands of roofing contractors and property owners. We offer durable dumpsters designed to handle heavy materials like shingles, tile, and construction debris.\n\nCall Calsan Dumpsters Pro today: ${BUSINESS_INFO.phone.salesFormatted}` },
+    ],
+    faqs: [
+      { question: 'What size dumpster do I need for a roof tear-off?', answer: 'A 10-yard dumpster works for small single-layer roof replacements. For medium to large roofs or multi-layer tear-offs, a 15-20 yard dumpster is the better choice.' },
+      { question: 'Can I put shingles with nails in the dumpster?', answer: 'Yes. Shingles, nails, flashing, and wood decking can all go into a roofing dumpster. Just keep hazardous materials out.' },
+      { question: 'Why is weight capacity more important than size for roofing?', answer: 'Roofing debris is dense and very heavy. A dumpster will typically hit its weight limit long before it looks full, which is why right-sizing the container matters.' },
+    ],
+    relatedArticles: ['heavy-material-dumpsters-explained', 'dumpster-sizes-guide', 'checklist-before-dumpster-arrives'],
+  },
 };
 
 // ── Build the unified article map: editorial + generated from topics ──
