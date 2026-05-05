@@ -18,6 +18,7 @@ const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 const roofRenovationImg = '/images/blog/roof-renovation-dumpster.jpg';
 const calculateDumpsterSizeImg = '/images/blog/calculate-dumpster-size.jpg';
 const reduceProjectCostsImg = '/images/blog/dumpster-reduce-project-costs.jpg';
+const commonMistakesFillingImg = '/images/blog/common-mistakes-filling-dumpster.jpg';
 
 interface BlogArticleData {
   slug: string;
@@ -404,6 +405,33 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
       { question: 'How fast can Calsan deliver?', answer: 'We offer same-day and next-day delivery across the SF Bay Area. Call (510) 680-2150 to confirm availability.' },
     ],
     relatedArticles: ['benefits-same-dumpster-provider', 'calculate-right-dumpster-size-for-your-project', 'dumpster-cost-oakland'],
+  },
+  'common-mistakes-when-filling-a-dumpster': {
+    slug: 'common-mistakes-when-filling-a-dumpster',
+    title: 'Common Mistakes When Filling a Dumpster (And How to Avoid Them)',
+    metaTitle: 'Common Mistakes When Filling a Dumpster | Calsan Bay Area',
+    metaDescription: 'Avoid extra fees and pickup delays. Learn the most common dumpster loading mistakes -- overfilling, weight distribution, prohibited items -- and how to prevent them.',
+    h1: 'Common Mistakes When Filling a Dumpster (And How to Avoid Them)',
+    date: 'May 5, 2026',
+    readTime: '5 min read',
+    category: 'Tips & Guides',
+    image: commonMistakesFillingImg,
+    sections: [
+      { heading: 'Load Smart, Save Money', body: 'When renting a dumpster for your project, it might seem simple -- just toss everything in and you are done. But how you fill the container has a real impact on safety, pickup, and your final bill. Here are the most common mistakes we see, and how to avoid them.' },
+      { heading: '1. Overfilling the Dumpster', body: 'One of the most frequent mistakes is filling the dumpster above the top edge.\n\nWhy it is a problem:\nIt is unsafe for transport\nYou may be charged extra fees\nPickup could be delayed\n\nHow to avoid it:\nAlways keep debris level with the top of the container.' },
+      { heading: '2. Poor Weight Distribution', body: 'Throwing everything in one side or dumping heavy materials in a single spot can cause imbalance.\n\nWhy it is a problem:\nMakes pickup dangerous\nCan damage the dumpster\nMay result in additional charges\n\nHow to avoid it:\nDistribute weight evenly throughout the dumpster, especially when disposing of heavy materials like concrete, dirt, or roofing shingles.' },
+      { heading: '3. Throwing in Prohibited Items', body: 'Not everything can go into a dumpster.\n\nCommon restricted items include:\nHazardous waste (chemicals, paint, oils)\nBatteries\nTires\nCertain electronics\n\nHow to avoid it:\nAlways check with your provider for a list of accepted and prohibited materials before loading.' },
+      { heading: '4. Wasting Space', body: 'Many people toss items in randomly without breaking them down.\n\nWhy it is a problem:\nYou run out of space faster\nYou might need a second dumpster\n\nHow to avoid it:\nBreak down boxes, furniture, and bulky items. Think of it like a puzzle -- maximize every inch of space.' },
+      { heading: '5. Choosing the Wrong Dumpster Size', body: 'Getting a dumpster that is too small is a common (and costly) mistake.\n\nWhy it is a problem:\nOverflow issues\nExtra rental costs\nProject delays\n\nHow to avoid it:\nLet professionals help you choose the right size based on your project.' },
+      { heading: '6. Waiting Until the Last Minute', body: 'Some people overload the dumpster right before pickup, rushing the process.\n\nWhy it is a problem:\nLeads to messy loading\nIncreases chances of mistakes\nCan cause safety risks\n\nHow to avoid it:\nLoad your dumpster gradually and strategically throughout your project.' },
+      { heading: 'Need Help? Call Calsan Dumpsters Pro', body: `At Calsan Dumpsters Pro, we are here to guide you every step of the way. Need help or ready to book your dumpster?\n\nCall us: ${BUSINESS_INFO.phone.salesFormatted}` },
+    ],
+    faqs: [
+      { question: 'What happens if I overfill my dumpster?', answer: 'Overfilled dumpsters cannot be safely transported. We may need to remove debris on-site, reschedule pickup, or charge an overfill fee. Always keep debris level with the top edge.' },
+      { question: 'What items cannot go in a dumpster?', answer: 'Hazardous waste, paint, chemicals, oils, batteries, tires, and certain electronics are prohibited. Call (510) 680-2150 to confirm what is accepted for your project.' },
+      { question: 'How do I know what size dumpster I need?', answer: 'It depends on your project type and material. Our team can recommend the right size in under 2 minutes -- call (510) 680-2150 or use our instant quote tool.' },
+    ],
+    relatedArticles: ['calculate-right-dumpster-size-for-your-project', 'checklist-before-dumpster-arrives', 'heavy-material-dumpsters-explained'],
   },
 };
 
