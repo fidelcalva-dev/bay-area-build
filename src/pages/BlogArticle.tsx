@@ -14,6 +14,7 @@ const checklistBeforeDumpsterImg = '/images/blog/checklist-before-dumpster.jpg';
 const separateRecyclableImg = '/images/blog/separate-recyclable-materials.jpg';
 const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
 const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
+const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 
 interface BlogArticleData {
   slug: string;
