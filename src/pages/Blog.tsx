@@ -12,6 +12,7 @@ const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
 const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
 const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 const roofRenovationImg = '/images/blog/roof-renovation-dumpster.jpg';
+const calculateDumpsterSizeImg = '/images/blog/calculate-dumpster-size.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -24,6 +25,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'dumpster-post-storm-cleanup-bay-area': postStormCleanupImg,
   'why-customers-trust-calsan-dumpsters-pro': whyCustomersTrustImg,
   'roof-renovation-dumpster-shingles-heavy-debris': roofRenovationImg,
+  'calculate-right-dumpster-size-for-your-project': calculateDumpsterSizeImg,
 };
 
 const blogCategories = [
