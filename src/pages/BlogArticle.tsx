@@ -17,6 +17,7 @@ const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
 const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 const roofRenovationImg = '/images/blog/roof-renovation-dumpster.jpg';
 const calculateDumpsterSizeImg = '/images/blog/calculate-dumpster-size.jpg';
+const reduceProjectCostsImg = '/images/blog/dumpster-reduce-project-costs.jpg';
 
 interface BlogArticleData {
   slug: string;
