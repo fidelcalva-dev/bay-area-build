@@ -10,6 +10,7 @@ const checklistBeforeDumpsterImg = '/images/blog/checklist-before-dumpster.jpg';
 const separateRecyclableImg = '/images/blog/separate-recyclable-materials.jpg';
 const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
 const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
+const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -20,6 +21,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'separate-recyclable-materials-construction-dumpster': separateRecyclableImg,
   'using-dumpsters-for-big-moves': dumpstersBigMovesImg,
   'dumpster-post-storm-cleanup-bay-area': postStormCleanupImg,
+  'why-customers-trust-calsan-dumpsters-pro': whyCustomersTrustImg,
 };
 
 const blogCategories = [
