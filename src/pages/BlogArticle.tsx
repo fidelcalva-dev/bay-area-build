@@ -16,6 +16,7 @@ const dumpstersBigMovesImg = '/images/blog/dumpsters-big-moves.jpg';
 const postStormCleanupImg = '/images/blog/post-storm-cleanup.jpg';
 const whyCustomersTrustImg = '/images/blog/why-customers-trust-calsan.jpg';
 const roofRenovationImg = '/images/blog/roof-renovation-dumpster.jpg';
+const calculateDumpsterSizeImg = '/images/blog/calculate-dumpster-size.jpg';
 
 interface BlogArticleData {
   slug: string;
@@ -352,6 +353,32 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
       { question: 'Why is weight capacity more important than size for roofing?', answer: 'Roofing debris is dense and very heavy. A dumpster will typically hit its weight limit long before it looks full, which is why right-sizing the container matters.' },
     ],
     relatedArticles: ['heavy-material-dumpsters-explained', 'dumpster-sizes-guide', 'checklist-before-dumpster-arrives'],
+  },
+  'calculate-right-dumpster-size-for-your-project': {
+    slug: 'calculate-right-dumpster-size-for-your-project',
+    title: 'How to Calculate the Right Dumpster Size for Your Project (With Examples)',
+    metaTitle: 'How to Calculate the Right Dumpster Size | Examples & Sizing Guide',
+    metaDescription: 'Simple guide to calculating the right dumpster size by project type. Real Bay Area examples for cleanouts, remodels, and construction. Call Calsan to confirm.',
+    h1: 'How to Calculate the Right Dumpster Size for Your Project (With Examples)',
+    date: 'May 5, 2026',
+    readTime: '5 min read',
+    category: 'Sizing',
+    image: calculateDumpsterSizeImg,
+    sections: [
+      { heading: 'A Simple Guide to Picking the Right Size', body: 'Choosing the wrong dumpster size can mean overflow charges, a second haul, or paying for space you do not need. Here is a simple guide to help you calculate the right dumpster size based on your project type.' },
+      { heading: '1. Small Home Cleanouts or Yard Projects', body: 'Examples:\nGarage cleanout\nSmall landscaping job\nRemoving dirt or clean concrete\nMinor bathroom remodel\n\nRecommended Size: 8-yard or 10-yard dumpster\n\nExample: If you are removing a small concrete patio (around 200-300 sq ft), a 10-yard dumpster for clean concrete is usually the right choice.' },
+      { heading: '2. Medium Remodeling Projects', body: 'Examples:\nKitchen remodel\nFlooring replacement\nRoof shingle removal (small to mid-size home)\nDeck removal\n\nRecommended Size: 20-yard dumpster\n\nA 20-yard dumpster is one of the most popular sizes because it offers enough space without taking up too much room on your driveway or job site.\n\nExample: Replacing flooring in a 1,500 sq ft home? A 20-yard dumpster is typically perfect for wood, tile, carpet, and general debris.' },
+      { heading: '3. Large Construction or Demolition Jobs', body: 'Examples:\nFull home renovation\nLarge roofing projects\nMajor construction debris\nCommercial cleanouts\n\nRecommended Size: 30-yard or 40-yard dumpster\n\nFor bulky materials like drywall, wood framing, furniture, or mixed construction debris, larger containers prevent overflow and extra haul charges.\n\nExample: A full home remodel or commercial renovation will usually require a 30-yard or 40-yard dumpster to handle all debris efficiently.' },
+      { heading: 'Do Not Forget: Weight Matters', body: 'Many people focus only on volume (yards), but weight is just as important.\n\nDirt, concrete, asphalt -- Smaller dumpsters (8 or 10 yards)\nHousehold junk, furniture, mixed debris -- Larger dumpsters (20-40 yards)' },
+      { heading: 'Quick Reference Guide', body: 'Small cleanouts -- 8-10 yard\nMedium remodel -- 20 yard\nLarge construction -- 30-40 yard\nHeavy materials -- Always smaller containers\n\nWe make dumpster rental simple and stress-free for contractors and homeowners across the Bay Area.' },
+      { heading: 'Need Help Choosing the Right Dumpster?', body: `Call Calsan Dumpsters Pro today and let us help you pick the perfect size for your project.\n\n${BUSINESS_INFO.phone.salesFormatted}` },
+    ],
+    faqs: [
+      { question: 'What is the most popular dumpster size?', answer: 'The 20-yard dumpster is the most popular for remodeling projects -- enough capacity for kitchens, flooring, or shingle removal without dominating the driveway.' },
+      { question: 'Why are heavy materials assigned to smaller dumpsters?', answer: 'Concrete, dirt, and asphalt are extremely dense. Smaller 8 or 10 yard containers stay within safe legal weight limits during transport.' },
+      { question: 'What if I am between two sizes?', answer: 'When in doubt, size up. A second haul almost always costs more than a slightly larger container. Call us at (510) 680-2150 and we will recommend the best fit.' },
+    ],
+    relatedArticles: ['heavy-material-dumpsters-explained', 'roof-renovation-dumpster-shingles-heavy-debris', 'dumpster-cost-oakland'],
   },
 };
 
