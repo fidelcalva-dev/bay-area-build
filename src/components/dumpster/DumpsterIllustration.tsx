@@ -40,8 +40,9 @@ export function DumpsterIllustration({
       <img
         src={photo}
         alt={`${yards} yard roll-off dumpster`}
-        width={width}
+        width={Math.round(width * 1.25)}
         className={className}
+        style={{ maxWidth: '100%', height: 'auto' }}
         loading="lazy"
         decoding="async"
       />
