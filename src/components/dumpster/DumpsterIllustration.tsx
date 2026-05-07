@@ -4,9 +4,11 @@
  * Realistic 3D look with metal ribbing, rear door, wheels, and scale reference.
  */
 import dumpster5yd from "@/assets/dumpsters/dumpster-5yd.jpg";
+import dumpster8yd from "@/assets/dumpsters/dumpster-8yd.jpg";
 
 const PHOTO_OVERRIDES: Partial<Record<number, string>> = {
   5: dumpster5yd,
+  8: dumpster8yd,
 };
 
 interface DumpsterIllustrationProps {
