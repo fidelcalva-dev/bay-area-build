@@ -509,7 +509,7 @@ const Index = () => {
                     <SizeCategoryBadge yards={s.size} />
                   </div>
                   <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                    <DumpsterIllustration yards={s.size} width={300} className="w-full h-auto max-w-[300px]" />
+                    <DumpsterIllustration yards={s.size} width={400} className="w-full h-auto max-w-[400px]" />
                   </div>
                   <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                     {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
@@ -531,7 +531,7 @@ const Index = () => {
                 <SizeCategoryBadge yards={50} />
               </div>
               <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                <DumpsterIllustration yards={50} width={320} className="w-full h-auto max-w-[320px]" />
+                <DumpsterIllustration yards={50} width={420} className="w-full h-auto max-w-[420px]" />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
