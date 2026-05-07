@@ -3,6 +3,11 @@
  * Pure-SVG isometric roll-off dumpster illustration.
  * Realistic 3D look with metal ribbing, rear door, wheels, and scale reference.
  */
+import dumpster5yd from "@/assets/dumpsters/dumpster-5yd.jpg";
+
+const PHOTO_OVERRIDES: Partial<Record<number, string>> = {
+  5: dumpster5yd,
+};
 
 interface DumpsterIllustrationProps {
   yards: 5 | 8 | 10 | 20 | 30 | 40 | 50 | number;
@@ -29,6 +34,19 @@ export function DumpsterIllustration({
   width = 280,
   className,
 }: DumpsterIllustrationProps) {
+  const photo = PHOTO_OVERRIDES[yards];
+  if (photo) {
+    return (
+      <img
+        src={photo}
+        alt={`${yards} yard roll-off dumpster`}
+        width={width}
+        className={className}
+        loading="lazy"
+        decoding="async"
+      />
+    );
+  }
   const spec = DUMPSTER_SPECS[yards] || DUMPSTER_SPECS[20];
   const { w, h, depth, widthFt, heightFt } = spec;
 
