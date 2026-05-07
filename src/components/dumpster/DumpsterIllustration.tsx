@@ -8,6 +8,7 @@ import dumpster8yd from "@/assets/dumpsters/dumpster-8yd.jpg";
 import dumpster10yd from "@/assets/dumpsters/dumpster-10yd.jpg";
 import dumpster20yd from "@/assets/dumpsters/dumpster-20yd.jpg";
 import dumpster30yd from "@/assets/dumpsters/dumpster-30yd.jpg";
+import dumpster40yd from "@/assets/dumpsters/dumpster-40yd.jpg";
 
 const PHOTO_OVERRIDES: Partial<Record<number, string>> = {
   5: dumpster5yd,
@@ -15,6 +16,7 @@ const PHOTO_OVERRIDES: Partial<Record<number, string>> = {
   10: dumpster10yd,
   20: dumpster20yd,
   30: dumpster30yd,
+  40: dumpster40yd,
 };
 
 interface DumpsterIllustrationProps {
