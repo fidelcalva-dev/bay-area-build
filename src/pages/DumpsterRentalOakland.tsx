@@ -62,7 +62,7 @@ const SIZE_DETAILS: { yards: number; title: string; description: string; dimensi
     yards: 40,
     title: '40 Yard Dumpster',
     description: 'Designed for major construction and demolition.',
-    dimensions: "24' L × 7.5' W × 6' H",
+    dimensions: "22' L × 7.5' W × 6' H",
     weightLimit: '4 tons included',
     includes: ['Delivery included', 'Pickup included', '7-day rental included', '4 tons included'],
   },
