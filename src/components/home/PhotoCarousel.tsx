@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const PHOTOS = [
-  { src: '/images/carousel/1.jpg', alt: 'Calsan dumpsters at yard' },
   { src: '/images/carousel/2.jpg', alt: 'Dumpster at residential site' },
   { src: '/images/carousel/3.jpg', alt: 'Dumpster loaded with soil' },
   { src: '/images/carousel/4.jpg', alt: 'Dumpster being delivered by truck' },
