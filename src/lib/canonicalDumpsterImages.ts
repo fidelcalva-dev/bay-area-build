@@ -20,7 +20,7 @@
 // Canonical photo paths - served from public/ to avoid bundling
 // Note: 5yd uses the same physical photos as the former 6yd
 const dumpster5yardPhoto = '/images/dumpsters/dumpster-5yard-render.jpg';
-const dumpster8yardPhoto = '/images/dumpsters/8_yd.png';
+const dumpster8yardPhoto = '/images/dumpsters/dumpster-8yard-render.jpg';
 const dumpster10yardPhoto = '/images/dumpsters/dumpster-10yard-photo.png';
 const dumpster20yardPhoto = '/images/dumpsters/dumpster-20yard-photo.png';
 const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-photo.png';
