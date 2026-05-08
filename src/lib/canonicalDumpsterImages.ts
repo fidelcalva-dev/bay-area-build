@@ -23,7 +23,7 @@ const dumpster5yardPhoto = '/images/dumpsters/dumpster-5yard-render.jpg';
 const dumpster8yardPhoto = '/images/dumpsters/dumpster-8yard-render.jpg';
 const dumpster10yardPhoto = '/images/dumpsters/dumpster-10yard-render.jpg';
 const dumpster20yardPhoto = '/images/dumpsters/dumpster-20yard-render.jpg';
-const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-photo.png';
+const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-render.jpg';
 const dumpster40yardPhoto = '/images/dumpsters/dumpster-40yard-photo.png';
 
 
