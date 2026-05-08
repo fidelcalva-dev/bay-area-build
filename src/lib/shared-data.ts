@@ -103,11 +103,10 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     loads: '9-12 pickup loads',
     description: 'High walls for bulky items and major projects.',
   },
-  // General Debris Only (40 yard) - 7.5 × 24 × 6 = 1080 cu ft / 27 = 40 cu yd
   {
     yards: 40,
-    dimensions: "24' L × 7.5' W × 6' H",
-    length: "24'",
+    dimensions: "22' L × 7.5' W × 6' H",
+    length: "22'",
     width: "7.5'",
     height: "6'",
     includedTons: 4,
