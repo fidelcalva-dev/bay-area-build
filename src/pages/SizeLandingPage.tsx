@@ -17,7 +17,7 @@ const SIZE_SPECS: Record<number, { physDimensions: string; truckLoads: string; w
   20: { physDimensions: "18' L × 7.5' W × 4' H", truckLoads: '6 truck loads', weightLimit: '2 tons included' },
   30: { physDimensions: "18' L × 7.5' W × 6' H", truckLoads: '9 truck loads', weightLimit: '3 tons included' },
   40: { physDimensions: "22' L × 7.5' W × 6' H", truckLoads: '12 truck loads', weightLimit: '4 tons included' },
-  50: { physDimensions: "24' L × 7.5' W × 8' H", truckLoads: '16 truck loads', weightLimit: '5 tons included' },
+  50: { physDimensions: "24' L × 7.5' W × 7.5' H", truckLoads: '16 truck loads', weightLimit: '5 tons included' },
 };
 
 const WHO_NEEDS: Record<number, string[]> = {
