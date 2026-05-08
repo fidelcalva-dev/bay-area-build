@@ -11,6 +11,23 @@ import { PlainDumpsterCard, type DumpsterSizeYd } from '@/components/shared/Plai
 import { DumpsterSizeVisualizer } from '@/components/visualizer';
 import { DumpsterSizeComparison } from '@/components/dumpster/DumpsterSizeComparison';
 import { PageFAQ, InternalLinkCluster, type FAQItem } from '@/components/seo';
+import sizesImg5 from '@/assets/dumpsters/sizes-5yd.jpg';
+import sizesImg8 from '@/assets/dumpsters/sizes-8yd.jpg';
+import sizesImg10 from '@/assets/dumpsters/sizes-10yd.jpg';
+import sizesImg20 from '@/assets/dumpsters/sizes-20yd.jpg';
+import sizesImg30 from '@/assets/dumpsters/sizes-30yd.jpg';
+import sizesImg40 from '@/assets/dumpsters/sizes-40yd.jpg';
+import sizesImg50 from '@/assets/dumpsters/sizes-50yd.jpg';
+
+const GENERAL_SIZE_IMAGES: Record<number, string> = {
+  5: sizesImg5,
+  8: sizesImg8,
+  10: sizesImg10,
+  20: sizesImg20,
+  30: sizesImg30,
+  40: sizesImg40,
+  50: sizesImg50,
+};
 
 const SIZES_FAQS: FAQItem[] = [
   { question: 'What is the most popular dumpster size?', answer: 'The 20 yard dumpster is our most popular size. It fits most single-room renovations, garage cleanouts, and roofing projects while still fitting in a standard driveway.' },
@@ -125,6 +142,7 @@ export default function Sizes() {
                     isPopular={size.popular}
                     variant="general"
                     ctaLink="/quote"
+                    imageSrc={GENERAL_SIZE_IMAGES[size.yards]}
                   />
                 ))}
               </div>
