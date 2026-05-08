@@ -80,10 +80,10 @@ const SIZE_CONTENT: Record<number, {
   },
   40: {
     headline: 'Commercial-grade capacity for large-scale projects.',
-    description: 'A 40-yard dumpster is built for commercial projects, large demolitions, and industrial waste. At 24 feet long with 6-foot walls, it holds 12-16 pickup truck loads.',
+    description: 'A 40-yard dumpster is built for commercial projects, large demolitions, and industrial waste. At 22 feet long with 6-foot walls, it holds 12-16 pickup truck loads.',
     whoItsFor: ['Commercial projects', 'Large demolition', 'Industrial waste', 'Multi-unit residential renovations'],
     whatFits: ['12-16 pickup truck loads', 'A commercial space buildout', 'A full house demolition', 'Industrial facility cleanout'],
-    commonMistakes: ['Not confirming site access for a 24-foot container', 'Underestimating weight of commercial debris', 'Not ordering enough dumpsters for phased projects'],
+    commonMistakes: ['Not confirming site access for a 22-foot container', 'Underestimating weight of commercial debris', 'Not ordering enough dumpsters for phased projects'],
     tips: ['Most popular commercial size', '4 tons included', 'Consider multiple 20-yard dumpsters for phased work'],
   },
   50: {
