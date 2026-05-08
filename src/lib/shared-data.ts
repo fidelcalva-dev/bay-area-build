@@ -119,10 +119,10 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
   // General Debris Only (50 yard) - 7.5 × 24 × 8 = 1440 cu ft / 27 = 50 cu yd
   {
     yards: 50,
-    dimensions: "24' L × 7.5' W × 8' H",
+    dimensions: "24' L × 7.5' W × 7.5' H",
     length: "24'",
     width: "7.5'",
-    height: "8'",
+    height: "7.5'",
     includedTons: 5,
     category: 'general',
     priceFrom: 1095,  // Approved public price
