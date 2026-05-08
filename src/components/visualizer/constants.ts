@@ -26,7 +26,7 @@ export const DUMPSTER_SPECS: Record<DumpsterSize, DumpsterSpec> = {
   10: { yards: 10, widthFt: 7.5, lengthFt: 12, heightFt: 3,    pickupLoads: '4–5',   volumeCuYd: 10, tonsIncluded: 1 },
   20: { yards: 20, widthFt: 7.5, lengthFt: 18, heightFt: 4,    pickupLoads: '6–8',   volumeCuYd: 20, tonsIncluded: 2 },
   30: { yards: 30, widthFt: 7.5, lengthFt: 18, heightFt: 6,    pickupLoads: '9–12',  volumeCuYd: 30, tonsIncluded: 3 },
-  40: { yards: 40, widthFt: 7.5, lengthFt: 24, heightFt: 6,    pickupLoads: '12–16', volumeCuYd: 40, tonsIncluded: 4 },
+  40: { yards: 40, widthFt: 7.5, lengthFt: 22, heightFt: 6,    pickupLoads: '12–16', volumeCuYd: 40, tonsIncluded: 4 },
 };
 
 export const GENERAL_SIZES: DumpsterSize[] = [5, 8, 10, 20, 30, 40];

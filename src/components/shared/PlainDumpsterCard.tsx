@@ -22,7 +22,7 @@ export const DUMPSTER_SPECS = {
   10: { lengthFt: 12, widthFt: 7.5, heightFt: 3,    tonsIncluded: 1,   pickupLoads: '4–5' },
   20: { lengthFt: 18, widthFt: 7.5, heightFt: 4,    tonsIncluded: 2,   pickupLoads: '6–8' },
   30: { lengthFt: 18, widthFt: 7.5, heightFt: 6,    tonsIncluded: 3,   pickupLoads: '9–12' },
-  40: { lengthFt: 24, widthFt: 7.5, heightFt: 6,    tonsIncluded: 4,   pickupLoads: '12–16' },
+  40: { lengthFt: 22, widthFt: 7.5, heightFt: 6,    tonsIncluded: 4,   pickupLoads: '12–16' },
   50: { lengthFt: 24, widthFt: 7.5, heightFt: 8,    tonsIncluded: 5,   pickupLoads: '16–20' },
 } as const;
 
