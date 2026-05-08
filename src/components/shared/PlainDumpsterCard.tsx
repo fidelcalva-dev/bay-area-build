@@ -38,6 +38,7 @@ export interface PlainDumpsterCardProps {
   ctaLabel?: string;
   variant?: 'general' | 'heavy';
   className?: string;
+  imageSrc?: string;
 }
 
 /**
@@ -54,10 +55,11 @@ export function PlainDumpsterCard({
   ctaLabel,
   variant = 'general',
   className,
+  imageSrc,
 }: PlainDumpsterCardProps) {
   const specs = DUMPSTER_SPECS[sizeYd];
   const isHeavy = variant === 'heavy';
-  const photoUrl = getCanonicalDumpsterImage(sizeYd, 'photo');
+  const photoUrl = imageSrc ?? getCanonicalDumpsterImage(sizeYd, 'photo');
 
   return (
     <div
