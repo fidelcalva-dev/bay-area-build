@@ -84,18 +84,21 @@ export default function About() {
       role: 'CEO & Founder',
       email: 'fidel@calsandumpsterspro.com',
       photo: '/images/team/fidel.png',
+      objectPosition: 'center 35%',
     },
     {
       name: 'Sergio',
       role: 'Chief Financial Officer',
       email: 'sergio@calsandumpsterspro.com',
       photo: '/images/team/sergio.png',
+      objectPosition: 'center 40%',
     },
     {
       name: 'Michelle',
       role: 'Marketing & Sales Manager',
       email: 'mich@calsandumpsterspro.com',
       photo: '/images/team/michelle.png',
+      objectPosition: 'center 45%',
     },
     {
       name: 'Arturo',
@@ -278,7 +281,8 @@ export default function About() {
                       alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: (m as any).objectPosition ?? 'center top' }}
                     />
                   </div>
                   <div className="pt-4 text-center">
