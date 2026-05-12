@@ -97,6 +97,12 @@ export default function About() {
       email: 'mich@calsandumpsterspro.com',
       photo: '/images/team/michelle.png',
     },
+    {
+      name: 'Arturo',
+      role: 'Logistics Manager',
+      email: 'arturo@calsandumpsterspro.com',
+      photo: '/images/team/arturo.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
