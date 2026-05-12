@@ -729,6 +729,23 @@ const Index = () => {
         <ReviewsSection />
       </Suspense>
 
+      {/* ========== SECTION 12.5 — BAY AREA VIDEO ========== */}
+      <section className="py-10 md:py-14 bg-background">
+        <div className="container-wide max-w-4xl mx-auto">
+          <div className="rounded-3xl overflow-hidden shadow-lg border border-border">
+            <video
+              src="/videos/sf-bay-area.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="w-full h-auto block"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ========== SECTION 13 — FAQ ========== */}
       <Suspense fallback={<SectionLoader />}>
         <FAQSection limit={6} />
