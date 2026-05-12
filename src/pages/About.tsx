@@ -216,9 +216,9 @@ export default function About() {
               {teamMembers.map((m) => (
                 <div
                   key={m.name}
-                  className="snap-start shrink-0 w-[280px] md:w-[320px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10"
+                  className="snap-start shrink-0 w-[220px] md:w-[240px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10"
                 >
-                  <div className="aspect-[3/4] bg-muted overflow-hidden">
+                  <div className="aspect-[4/5] bg-muted overflow-hidden">
                     <img
                       src={m.photo}
                       alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
