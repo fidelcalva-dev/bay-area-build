@@ -103,6 +103,12 @@ export default function About() {
       email: 'arturo@calsandumpsterspro.com',
       photo: '/images/team/arturo.png',
     },
+    {
+      name: 'Vero',
+      role: 'Billing Manager',
+      email: 'veronica@calsandumpsterspro.com',
+      photo: '/images/team/vero.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
