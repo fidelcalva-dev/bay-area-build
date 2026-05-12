@@ -269,10 +269,9 @@ export default function About() {
             );
             const byName = (n: string) => teamMembers.find((x) => x.name === n)!;
             const rows: string[][] = [
-              ['Fidel'],
-              ['Sergio', 'Michelle', 'Arturo'],
-              ['Vero', 'Andy', 'José'],
-              ['Adry', 'Xime', 'Citlali'],
+              ['Fidel', 'Sergio', 'Michelle', 'Arturo'],
+              ['Vero', 'Andy', 'José', 'Adry'],
+              ['Xime', 'Citlali'],
             ];
             return (
               <div className="flex flex-col items-center gap-8 md:gap-10">
