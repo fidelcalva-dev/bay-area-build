@@ -109,6 +109,12 @@ export default function About() {
       email: 'veronica@calsandumpsterspro.com',
       photo: '/images/team/vero.png',
     },
+    {
+      name: 'Andy',
+      role: 'Sales Representative',
+      email: 'andrea@calsandumpsterspro.com',
+      photo: '/images/team/andy.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
