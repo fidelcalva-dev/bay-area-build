@@ -224,13 +224,13 @@ export default function About() {
                   key={m.name}
                   className="snap-start shrink-0 w-[220px] md:w-[240px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-4"
                 >
-                  <div className="aspect-square bg-muted overflow-hidden rounded-lg">
+                  <div className="aspect-[4/5] bg-muted overflow-hidden rounded-lg">
                     <img
                       src={m.photo}
                       alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
                   <div className="pt-4 text-center">
