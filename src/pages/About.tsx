@@ -3,7 +3,6 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle, Mail } from 'lucide-react';
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
@@ -69,14 +68,6 @@ const fleetGallery = [
 export default function About() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const teamScrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollTeam = (dir: 'left' | 'right') => {
-    const el = teamScrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.8;
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
-  };
 
   const teamMembers = [
     {
@@ -247,59 +238,55 @@ export default function About() {
             </p>
           </div>
 
-          <div className="relative">
-            {/* Arrows */}
-            <button
-              type="button"
-              onClick={() => scrollTeam('left')}
-              aria-label="Previous team members"
-              className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-primary-foreground text-primary shadow-lg hover:scale-105 transition-transform"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollTeam('right')}
-              aria-label="Next team members"
-              className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-primary-foreground text-primary shadow-lg hover:scale-105 transition-transform"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-
-            <div
-              ref={teamScrollRef}
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {teamMembers.map((m) => (
-                <div
-                  key={m.name}
-                  className="snap-start shrink-0 w-[220px] md:w-[240px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-4"
-                >
-                  <div className="aspect-[4/5] bg-muted overflow-hidden rounded-lg">
-                    <img
-                      src={m.photo}
-                      alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: (m as any).objectPosition ?? 'center top' }}
-                    />
-                  </div>
-                  <div className="pt-4 text-center">
-                    <h3 className="text-xl font-bold text-foreground">{m.name}</h3>
-                    <p className="text-sm font-semibold text-primary uppercase tracking-wide mt-1">{m.role}</p>
-                    <a
-                      href={`mailto:${m.email}`}
-                      className="inline-flex items-center gap-2 mt-3 text-sm text-muted-foreground hover:text-primary transition-colors break-all"
-                    >
-                      <Mail className="w-4 h-4 shrink-0" />
-                      <span>{m.email}</span>
-                    </a>
-                  </div>
+          {(() => {
+            const renderCard = (m: typeof teamMembers[number]) => (
+              <div
+                key={m.name}
+                className="w-[220px] md:w-[240px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-4"
+              >
+                <div className="aspect-[4/5] bg-muted overflow-hidden rounded-lg">
+                  <img
+                    src={m.photo}
+                    alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: (m as any).objectPosition ?? 'center top' }}
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="pt-4 text-center">
+                  <h3 className="text-xl font-bold text-foreground">{m.name}</h3>
+                  <p className="text-sm font-semibold text-primary uppercase tracking-wide mt-1">{m.role}</p>
+                  <a
+                    href={`mailto:${m.email}`}
+                    className="inline-flex items-center gap-2 mt-3 text-sm text-muted-foreground hover:text-primary transition-colors break-all"
+                  >
+                    <Mail className="w-4 h-4 shrink-0" />
+                    <span>{m.email}</span>
+                  </a>
+                </div>
+              </div>
+            );
+            const byName = (n: string) => teamMembers.find((x) => x.name === n)!;
+            const rows: string[][] = [
+              ['Fidel'],
+              ['Sergio', 'Michelle', 'Arturo'],
+              ['Vero', 'Andy', 'José'],
+              ['Adry', 'Xime', 'Citlali'],
+            ];
+            return (
+              <div className="flex flex-col items-center gap-8 md:gap-10">
+                {rows.map((row, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-wrap justify-center gap-6 md:gap-8"
+                  >
+                    {row.map((n) => renderCard(byName(n)))}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </section>
 
