@@ -3,7 +3,6 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle, Mail } from 'lucide-react';
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
@@ -69,14 +68,6 @@ const fleetGallery = [
 export default function About() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const teamScrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollTeam = (dir: 'left' | 'right') => {
-    const el = teamScrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.8;
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
-  };
 
   const teamMembers = [
     {
