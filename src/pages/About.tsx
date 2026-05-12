@@ -242,7 +242,7 @@ export default function About() {
             const renderCard = (m: typeof teamMembers[number]) => (
               <div
                 key={m.name}
-                className="w-[180px] md:w-[200px] lg:w-[215px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-3 md:p-4"
+                className="w-[145px] sm:w-[170px] md:w-[200px] lg:w-[215px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-3 md:p-4"
               >
                 <div className="aspect-[4/5] bg-muted overflow-hidden rounded-lg">
                   <img
@@ -255,11 +255,11 @@ export default function About() {
                   />
                 </div>
                 <div className="pt-4 text-center">
-                  <h3 className="text-xl font-bold text-foreground">{m.name}</h3>
-                  <p className="text-sm font-semibold text-primary uppercase tracking-wide mt-1">{m.role}</p>
+                   <h3 className="text-base md:text-xl font-bold text-foreground">{m.name}</h3>
+                   <p className="text-[11px] md:text-sm font-semibold text-primary uppercase tracking-wide mt-1">{m.role}</p>
                   <a
                     href={`mailto:${m.email}`}
-                    className="inline-flex items-center gap-2 mt-3 text-sm text-muted-foreground hover:text-primary transition-colors break-all"
+                    className="inline-flex items-center gap-1.5 mt-2 md:mt-3 text-[11px] md:text-sm text-muted-foreground hover:text-primary transition-colors break-all"
                   >
                     <Mail className="w-4 h-4 shrink-0" />
                     <span>{m.email}</span>
@@ -278,7 +278,7 @@ export default function About() {
                 {rows.map((row, i) => (
                   <div
                     key={i}
-                    className="flex flex-nowrap md:flex-nowrap justify-center gap-3 md:gap-4 flex-wrap"
+                   className="flex flex-wrap justify-center gap-3 md:gap-4 md:flex-nowrap"
                   >
                     {row.map((n) => renderCard(byName(n)))}
                   </div>
