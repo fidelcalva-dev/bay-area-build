@@ -124,7 +124,7 @@ export default function About() {
     {
       name: 'Xime',
       role: 'Marketing Specialist',
-      email: 'veronica@calsandumpsterspro.com',
+      email: 'ximena@calsandumpsterspro.com',
       photo: '/images/team/xime.png',
     },
     {
