@@ -91,6 +91,12 @@ export default function About() {
       email: 'sergio@calsandumpsterspro.com',
       photo: '/images/team/sergio.png',
     },
+    {
+      name: 'Michelle',
+      role: 'Marketing & Sales Manager',
+      email: 'mich@calsandumpsterspro.com',
+      photo: '/images/team/michelle.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
