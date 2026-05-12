@@ -133,6 +133,12 @@ export default function About() {
       email: 'veronica@calsandumpsterspro.com',
       photo: '/images/team/xime.png',
     },
+    {
+      name: 'Citlali',
+      role: 'Dispatcher',
+      email: 'citlali@calsandumpsterspro.com',
+      photo: '/images/team/citlali.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
