@@ -160,16 +160,15 @@ export default function About() {
       </section>
 
       {/* Meet Our Team */}
-      <section className="bg-background pt-4">
-        <div className="h-2 bg-primary w-full" />
+      <section className="bg-primary text-primary-foreground">
         <div className="container-wide section-padding">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-foreground/15 text-primary-foreground rounded-full text-sm font-semibold mb-4">
               The People Behind Calsan
             </div>
-            <h2 className="heading-lg text-foreground mb-4">Meet Our Team</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real drivers, dispatchers and operators serving the Bay Area every day.
+            <h2 className="heading-lg mb-4">Meet Our Team</h2>
+            <p className="text-lg text-primary-foreground/85 max-w-2xl mx-auto">
+              Managers, sales, customer service, billing and admin staff making every rental run smoothly.
             </p>
           </div>
           {/* Team grid will be populated as photos are provided */}
