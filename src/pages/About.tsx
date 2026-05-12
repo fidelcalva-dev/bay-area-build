@@ -85,6 +85,12 @@ export default function About() {
       email: 'fidel@calsandumpsterspro.com',
       photo: '/images/team/fidel.png',
     },
+    {
+      name: 'Sergio',
+      role: 'Chief Financial Officer',
+      email: 'sergio@calsandumpsterspro.com',
+      photo: '/images/team/sergio.png',
+    },
   ];
 
   const openLightbox = (index: number) => {
