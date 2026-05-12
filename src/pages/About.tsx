@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle } from 'lucide-react';
+import { ArrowRight, Leaf, Truck, Users, Award, Heart, Recycle, Play, ChevronLeft, ChevronRight, Phone, CheckCircle, Mail } from 'lucide-react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { PAGE_SEO, BUSINESS_INFO, generateBreadcrumbSchema } from '@/lib/seo';
 import { InternalLinkCluster, PageFAQ, type FAQItem } from '@/components/seo';
@@ -68,6 +69,23 @@ const fleetGallery = [
 export default function About() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const teamScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollTeam = (dir: 'left' | 'right') => {
+    const el = teamScrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.8;
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
+
+  const teamMembers = [
+    {
+      name: 'Fidel',
+      role: 'CEO & Founder',
+      email: 'fidel@calsandumpsterspro.com',
+      photo: '/images/team/fidel.png',
+    },
+  ];
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -171,9 +189,58 @@ export default function About() {
               Managers, sales, customer service, billing and admin staff making every rental run smoothly.
             </p>
           </div>
-          {/* Team grid will be populated as photos are provided */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Members coming soon */}
+
+          <div className="relative">
+            {/* Arrows */}
+            <button
+              type="button"
+              onClick={() => scrollTeam('left')}
+              aria-label="Previous team members"
+              className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-primary-foreground text-primary shadow-lg hover:scale-105 transition-transform"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollTeam('right')}
+              aria-label="Next team members"
+              className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-primary-foreground text-primary shadow-lg hover:scale-105 transition-transform"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            <div
+              ref={teamScrollRef}
+              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {teamMembers.map((m) => (
+                <div
+                  key={m.name}
+                  className="snap-start shrink-0 w-[280px] md:w-[320px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10"
+                >
+                  <div className="aspect-[3/4] bg-muted overflow-hidden">
+                    <img
+                      src={m.photo}
+                      alt={`${m.name} — ${m.role} at Calsan Dumpsters Pro`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-5 text-center">
+                    <h3 className="text-xl font-bold text-foreground">{m.name}</h3>
+                    <p className="text-sm font-semibold text-primary uppercase tracking-wide mt-1">{m.role}</p>
+                    <a
+                      href={`mailto:${m.email}`}
+                      className="inline-flex items-center gap-2 mt-3 text-sm text-muted-foreground hover:text-primary transition-colors break-all"
+                    >
+                      <Mail className="w-4 h-4 shrink-0" />
+                      <span>{m.email}</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
