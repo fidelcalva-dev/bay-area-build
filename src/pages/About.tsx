@@ -242,7 +242,7 @@ export default function About() {
             const renderCard = (m: typeof teamMembers[number]) => (
               <div
                 key={m.name}
-                className="w-[220px] md:w-[240px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-4"
+                className="w-[180px] md:w-[200px] lg:w-[215px] bg-background text-foreground rounded-2xl shadow-xl overflow-hidden border border-background/10 p-3 md:p-4"
               >
                 <div className="aspect-[4/5] bg-muted overflow-hidden rounded-lg">
                   <img
@@ -274,11 +274,11 @@ export default function About() {
               ['Xime', 'Citlali'],
             ];
             return (
-              <div className="flex flex-col items-center gap-8 md:gap-10">
+              <div className="flex flex-col items-center gap-5 md:gap-6">
                 {rows.map((row, i) => (
                   <div
                     key={i}
-                    className="flex flex-wrap justify-center gap-6 md:gap-8"
+                    className="flex flex-nowrap md:flex-nowrap justify-center gap-3 md:gap-4 flex-wrap"
                   >
                     {row.map((n) => renderCard(byName(n)))}
                   </div>
