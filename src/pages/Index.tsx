@@ -731,7 +731,7 @@ const Index = () => {
 
       {/* ========== SECTION 12.5 — BAY AREA VIDEO ========== */}
       <section className="py-10 md:py-14 bg-background">
-        <div className="container-wide max-w-4xl mx-auto">
+        <div className="container-wide max-w-4xl mx-auto px-[38px]">
           <div className="rounded-3xl overflow-hidden shadow-lg border border-border">
             <video
               src="/videos/sf-bay-area.mp4"
