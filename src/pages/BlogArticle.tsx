@@ -28,6 +28,7 @@ const roofingDumpsterSizeGuideImg = '/images/blog/roofing-dumpster-size-guide.jp
 const kitchenRemodelDumpsterImg = '/images/blog/kitchen-remodel-dumpster-guide.jpg';
 const heavyMaterialDumpstersImg = '/images/blog/heavy-material-dumpsters-explained.jpg';
 const dumpsterPermitOaklandImg = '/images/blog/dumpster-permit-oakland.jpg';
+const dumpsterSizesGuideImg = '/images/blog/dumpster-sizes-guide.jpg';
 
 // Images for SEO-generated topic articles (keyed by topic slug)
 const TOPIC_IMAGES: Record<string, string> = {
@@ -38,6 +39,7 @@ const TOPIC_IMAGES: Record<string, string> = {
   'kitchen-remodel-dumpster-guide': kitchenRemodelDumpsterImg,
   'heavy-material-dumpsters-explained': heavyMaterialDumpstersImg,
   'dumpster-permit-oakland': dumpsterPermitOaklandImg,
+  'dumpster-sizes-guide': dumpsterSizesGuideImg,
 };
 
 interface BlogArticleData {
