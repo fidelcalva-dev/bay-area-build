@@ -133,6 +133,35 @@ export function ReviewsSection() {
             </a>
           </Button>
         </div>
+
+        {/* Accreditation Logos */}
+        <div className="flex items-center justify-center gap-4 mt-8 flex-wrap">
+          <a
+            href="https://www.bbb.org/us/ca/oakland/profile/dumpster-service/calsan-dumpsters-pro-1116-895042"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="BBB Accredited Business"
+            className="inline-flex items-center bg-card rounded-lg border border-border px-3 py-2 hover:shadow-md transition-shadow"
+          >
+            <img
+              src="/images/badges/bbb-accredited.jpg"
+              alt="BBB Accredited Business"
+              className="h-10 w-auto"
+              loading="lazy"
+            />
+          </a>
+          <div
+            aria-label="Google Guaranteed"
+            className="inline-flex items-center bg-card rounded-lg border border-border px-3 py-2"
+          >
+            <img
+              src="/images/badges/google-guaranteed.png"
+              alt="Google Guaranteed"
+              className="h-10 w-auto"
+              loading="lazy"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
