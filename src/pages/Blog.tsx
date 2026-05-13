@@ -26,6 +26,7 @@ const heavyMaterialDumpstersImg = '/images/blog/heavy-material-dumpsters-explain
 const dumpsterPermitOaklandImg = '/images/blog/dumpster-permit-oakland.jpg';
 const dumpsterSizesGuideImg = '/images/blog/dumpster-sizes-guide.jpg';
 const aduConstructionDumpsterImg = '/images/blog/adu-construction-dumpster-guide.jpg';
+const dumpsterRentalHaywardImg = '/images/blog/dumpster-rental-hayward.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -52,6 +53,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'dumpster-permit-oakland': dumpsterPermitOaklandImg,
   'dumpster-sizes-guide': dumpsterSizesGuideImg,
   'ni-construction-dumpster-guide': aduConstructionDumpsterImg,
+  'dumpster-rental-ni-ca': dumpsterRentalHaywardImg,
 };
 
 const blogCategories = [
