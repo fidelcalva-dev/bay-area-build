@@ -20,6 +20,7 @@ const dumpsterCostOaklandImg = '/images/blog/dumpster-cost-oakland.jpg';
 const concreteDisposalBayAreaImg = '/images/blog/concrete-disposal-bay-area.jpg';
 const dumpsterCostSanFranciscoImg = '/images/blog/dumpster-rental-cost-san-francisco.jpg';
 const dumpsterPermitSanJoseImg = '/images/blog/dumpster-permit-san-jose.jpg';
+const roofingDumpsterSizeGuideImg = '/images/blog/roofing-dumpster-size-guide.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -40,6 +41,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'concrete-disposal-bay-area': concreteDisposalBayAreaImg,
   'dumpster-rental-cost-san-francisco': dumpsterCostSanFranciscoImg,
   'dumpster-permit-san-jose': dumpsterPermitSanJoseImg,
+  'roofing-dumpster-size-guide': roofingDumpsterSizeGuideImg,
 };
 
 const blogCategories = [
