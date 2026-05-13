@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import {
   Shield, MapPin, ArrowRight, ArrowLeft, Phone, CheckCircle, Scale, MessageSquare,
   Truck, Star, Clock, Wrench, Upload, Package, Hammer, Users, Globe, HardHat,
-  Search, Building2, Home, TreePine, Shovel,
+  Search, Building2, Home, TreePine, Shovel, Newspaper,
 } from 'lucide-react';
 import { DumpsterIllustration } from '@/components/dumpster/DumpsterIllustration';
 import { DumpsterSizeComparison } from '@/components/dumpster/DumpsterSizeComparison';
@@ -750,6 +750,32 @@ const Index = () => {
       <Suspense fallback={<SectionLoader />}>
         <FAQSection limit={6} />
       </Suspense>
+
+      {/* ========== NEWS & UPDATES ========== */}
+      <section className="py-12 md:py-16 bg-background">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+              <Newspaper className="w-3.5 h-3.5" />
+              News &amp; Updates
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              Guides, tips and Bay Area updates
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground mt-3 max-w-xl mx-auto">
+              Read our latest articles on dumpster sizes, permits, pricing and local projects across the Bay Area.
+            </p>
+            <div className="mt-6">
+              <Button asChild size="lg" className="rounded-xl">
+                <Link to="/blog">
+                  Visit the Calsan Blog
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ========== SPLIT SERVICE SELECTOR ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
