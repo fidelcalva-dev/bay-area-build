@@ -70,6 +70,35 @@ export default function Quote() {
                 className="mb-6"
               />
 
+              {/* Accreditation logos */}
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
+                <a
+                  href="https://www.bbb.org/us/ca/oakland/profile/dumpster-service/calsan-dumpsters-pro-1116-895042"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="BBB Accredited Business"
+                  className="inline-flex items-center bg-card rounded-lg border border-border px-3 py-2 hover:shadow-md transition-shadow"
+                >
+                  <img
+                    src="/images/badges/bbb-accredited.jpg"
+                    alt="BBB Accredited Business"
+                    className="h-10 w-auto"
+                    loading="lazy"
+                  />
+                </a>
+                <div
+                  aria-label="Google Guaranteed"
+                  className="inline-flex items-center bg-card rounded-lg border border-border px-3 py-2"
+                >
+                  <img
+                    src="/images/badges/google-guaranteed.png"
+                    alt="Google Guaranteed"
+                    className="h-10 w-auto"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">
                 Get Your Dumpster Quote
                 <span className="block text-primary mt-1">In 60 Seconds</span>
