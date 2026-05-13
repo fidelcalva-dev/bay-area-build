@@ -21,10 +21,12 @@ const reduceProjectCostsImg = '/images/blog/dumpster-reduce-project-costs.jpg';
 const commonMistakesFillingImg = '/images/blog/common-mistakes-filling-dumpster.jpg';
 const maximizeDumpsterSpaceImg = '/images/blog/maximize-dumpster-space.jpg';
 const dumpsterCostOaklandImg = '/images/blog/dumpster-cost-oakland.jpg';
+const concreteDisposalBayAreaImg = '/images/blog/concrete-disposal-bay-area.jpg';
 
 // Images for SEO-generated topic articles (keyed by topic slug)
 const TOPIC_IMAGES: Record<string, string> = {
   'dumpster-cost-oakland': dumpsterCostOaklandImg,
+  'concrete-disposal-bay-area': concreteDisposalBayAreaImg,
 };
 
 interface BlogArticleData {
