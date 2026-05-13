@@ -17,6 +17,7 @@ const reduceProjectCostsImg = '/images/blog/dumpster-reduce-project-costs.jpg';
 const commonMistakesFillingImg = '/images/blog/common-mistakes-filling-dumpster.jpg';
 const maximizeDumpsterSpaceImg = '/images/blog/maximize-dumpster-space.jpg';
 const dumpsterCostOaklandImg = '/images/blog/dumpster-cost-oakland.jpg';
+const concreteDisposalBayAreaImg = '/images/blog/concrete-disposal-bay-area.jpg';
 import { PAGE_SEO, BUSINESS_INFO } from '@/lib/seo';
 
 // Map slugs to their imported images
@@ -34,6 +35,7 @@ const BLOG_IMAGES: Record<string, string> = {
   'common-mistakes-when-filling-a-dumpster': commonMistakesFillingImg,
   'tips-to-maximize-space-in-your-dumpster': maximizeDumpsterSpaceImg,
   'dumpster-cost-oakland': dumpsterCostOaklandImg,
+  'concrete-disposal-bay-area': concreteDisposalBayAreaImg,
 };
 
 const blogCategories = [
