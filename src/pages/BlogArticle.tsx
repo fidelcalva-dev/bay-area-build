@@ -43,8 +43,8 @@ const TOPIC_IMAGES: Record<string, string> = {
   'heavy-material-dumpsters-explained': heavyMaterialDumpstersImg,
   'dumpster-permit-oakland': dumpsterPermitOaklandImg,
   'dumpster-sizes-guide': dumpsterSizesGuideImg,
-  'ni-construction-dumpster-guide': aduConstructionDumpsterImg,
-  'dumpster-rental-ni-ca': dumpsterRentalHaywardImg,
+  'adu-construction-dumpster-guide': aduConstructionDumpsterImg,
+  'dumpster-rental-hayward-ca': dumpsterRentalHaywardImg,
   'same-day-dumpster-delivery-bay-area': sameDayDeliveryBayAreaImg,
 };
 
