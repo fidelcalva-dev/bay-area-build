@@ -23,6 +23,7 @@ const maximizeDumpsterSpaceImg = '/images/blog/maximize-dumpster-space.jpg';
 const dumpsterCostOaklandImg = '/images/blog/dumpster-cost-oakland.jpg';
 const concreteDisposalBayAreaImg = '/images/blog/concrete-disposal-bay-area.jpg';
 const dumpsterCostSanFranciscoImg = '/images/blog/dumpster-rental-cost-san-francisco.jpg';
+const dumpsterPermitSanJoseImg = '/images/blog/dumpster-permit-san-jose.jpg';
 
 // Images for SEO-generated topic articles (keyed by topic slug)
 const TOPIC_IMAGES: Record<string, string> = {
@@ -105,6 +106,7 @@ const EDITORIAL_ARTICLES: Record<string, BlogArticleData> = {
     date: 'January 28, 2026',
     readTime: '4 min read',
     category: 'Permits',
+    image: dumpsterPermitSanJoseImg,
     sections: [
       { heading: 'Do You Need a Permit?', body: 'In San Jose, whether you need a permit depends on WHERE the dumpster is placed:\n\nPrivate property (driveway, yard): NO permit needed\nPublic street or right-of-way: YES, you need an encroachment permit from San Jose DOT\n\nMost residential customers place dumpsters on their driveway and do not need a permit.' },
       { heading: 'How to Get a San Jose Dumpster Permit', body: '1. Apply online through the San Jose DOT portal\n2. Specify the location, duration, and dumpster size\n3. Allow 5-7 business days for processing\n4. Permit fees vary by location and duration\n5. The permit must be displayed on or near the dumpster' },
