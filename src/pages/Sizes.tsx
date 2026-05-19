@@ -163,6 +163,7 @@ export default function Sizes() {
                     useCases={size.useCases}
                     variant="heavy"
                     ctaLink="/quote"
+                    imageSrc={GENERAL_SIZE_IMAGES[size.yards]}
                   />
                 ))}
               </div>
