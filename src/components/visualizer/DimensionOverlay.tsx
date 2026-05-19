@@ -65,45 +65,14 @@ export function DimensionOverlay({ size, className, showPickupLoads = true }: Di
           className="flex transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {/* Slide 0: Canonical dimension view */}
-          <div className="w-full flex-shrink-0 p-4 pt-14">
-            {/* Height dimension line - left side */}
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-xs text-muted-foreground z-10">
-              <div className="w-px h-8 bg-primary/60" />
-              <span className="font-semibold text-foreground bg-background/90 px-1.5 py-0.5 rounded shadow-sm">
-                {spec.heightFt}' H
-              </span>
-              <div className="w-px h-8 bg-primary/60" />
-            </div>
-
-            {/* Canonical dumpster photo */}
-            <div className="relative mx-8">
-              <img
-                src={photoUrl}
-                alt={`${size}-yard dumpster dimensions`}
-                className="w-full h-auto object-contain rounded-lg"
-                loading="lazy"
-              />
-
-              {/* Width indicator - top */}
-              <div className="absolute -top-1 left-1/4 right-1/4 flex items-center justify-center z-10">
-                <div className="h-px flex-1 bg-primary/60" />
-                <span className="px-2 text-xs font-semibold text-foreground bg-background/90 rounded shadow-sm">
-                  {spec.widthFt}' W
-                </span>
-                <div className="h-px flex-1 bg-primary/60" />
-              </div>
-            </div>
-
-            {/* Length dimension line - bottom */}
-            <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
-              <div className="h-px flex-1 bg-primary/60" />
-              <span className="font-semibold text-foreground bg-background/90 px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                <Ruler className="w-3 h-3" />
-                {spec.lengthFt}' L
-              </span>
-              <div className="h-px flex-1 bg-primary/60" />
-            </div>
+          {/* Slide 0: Canonical dimension view — dimensions are baked into the render */}
+          <div className="w-full flex-shrink-0 p-4 pt-14 flex items-center justify-center">
+            <img
+              src={photoUrl}
+              alt={`${size}-yard dumpster dimensions: ${spec.widthFt}' W × ${spec.lengthFt}' L × ${spec.heightFt}' H`}
+              className="w-full h-auto max-h-[480px] object-contain rounded-lg"
+              loading="lazy"
+            />
           </div>
 
           {/* Gallery photo slides */}

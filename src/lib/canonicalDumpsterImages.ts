@@ -17,33 +17,30 @@
  * const dims = getCanonicalDumpsterImage(20, 'dims'); // Returns dimension diagram URL
  */
 
-// Canonical photo paths - served from public/ to avoid bundling
-// Note: 5yd uses the same physical photos as the former 6yd
-const dumpster5yardPhoto = '/images/dumpsters/dumpster-5yard-render.jpg';
-const dumpster8yardPhoto = '/images/dumpsters/dumpster-8yard-render.jpg';
-const dumpster10yardPhoto = '/images/dumpsters/dumpster-10yard-render.jpg';
-const dumpster20yardPhoto = '/images/dumpsters/dumpster-20yard-render.jpg';
-const dumpster30yardPhoto = '/images/dumpsters/dumpster-30yard-render.jpg';
-const dumpster40yardPhoto = '/images/dumpsters/dumpster-40yard-render.jpg';
+// Canonical dimensioned render images (with measurements + human scale baked in)
+// Single source of truth — all photo/dims/png references resolve to these.
+const dumpster5yardPhoto = '/images/dumpsters/render-5yd.png';
+const dumpster8yardPhoto = '/images/dumpsters/render-8yd.png';
+const dumpster10yardPhoto = '/images/dumpsters/render-10yd.png';
+const dumpster20yardPhoto = '/images/dumpsters/render-20yd.png';
+const dumpster30yardPhoto = '/images/dumpsters/render-30yd.png';
+const dumpster40yardPhoto = '/images/dumpsters/render-40yd.png';
+const dumpster50yardPhoto = '/images/dumpsters/render-50yd.png';
 
+// Dimension diagrams and legacy PNGs now use the same dimensioned renders
+const dumpster5yardDims = dumpster5yardPhoto;
+const dumpster8yardDims = dumpster8yardPhoto;
+const dumpster10yardDims = dumpster10yardPhoto;
+const dumpster20yardDims = dumpster20yardPhoto;
+const dumpster30yardDims = dumpster30yardPhoto;
+const dumpster40yardDims = dumpster40yardPhoto;
 
-// Canonical dimension diagram imports
-// Note: 5yd uses the former 6yd dimension diagram assets
-import dumpster5yardDims from '@/assets/dumpsters/dumpster-6yard-dims.png';
-import dumpster8yardDims from '@/assets/dumpsters/dumpster-8yard-dims.png';
-import dumpster10yardDims from '@/assets/dumpsters/dumpster-10yard-dims.png';
-import dumpster20yardDims from '@/assets/dumpsters/dumpster-20yard-dims.png';
-import dumpster30yardDims from '@/assets/dumpsters/dumpster-30yard-dims.png';
-import dumpster40yardDims from '@/assets/dumpsters/dumpster-40yard-dims.png';
-
-
-// Legacy PNG imports (for backwards compatibility - prefer photos)
-import dumpster5yardPng from '@/assets/dumpsters/dumpster-6yard.png';
-import dumpster8yardPng from '@/assets/dumpsters/dumpster-8yard.png';
-import dumpster10yardPng from '@/assets/dumpsters/dumpster-10yard.png';
-import dumpster20yardPng from '@/assets/dumpsters/dumpster-20yard.png';
-import dumpster30yardPng from '@/assets/dumpsters/dumpster-30yard.png';
-import dumpster40yardPng from '@/assets/dumpsters/dumpster-40yard.png';
+const dumpster5yardPng = dumpster5yardPhoto;
+const dumpster8yardPng = dumpster8yardPhoto;
+const dumpster10yardPng = dumpster10yardPhoto;
+const dumpster20yardPng = dumpster20yardPhoto;
+const dumpster30yardPng = dumpster30yardPhoto;
+const dumpster40yardPng = dumpster40yardPhoto;
 
 
 /**
@@ -163,7 +160,7 @@ export const DUMPSTER_PHOTO_MAP: Record<number, string> = {
   20: dumpster20yardPhoto,
   30: dumpster30yardPhoto,
   40: dumpster40yardPhoto,
-  50: dumpster40yardPhoto, // 50yd uses 40yd visual
+  50: dumpster50yardPhoto,
 };
 
 /**
@@ -177,7 +174,7 @@ export const DUMPSTER_DIMS_MAP: Record<number, string> = {
   20: dumpster20yardDims,
   30: dumpster30yardDims,
   40: dumpster40yardDims,
-  50: dumpster40yardDims,
+  50: dumpster50yardPhoto,
 };
 
 /**
@@ -191,7 +188,7 @@ export const DUMPSTER_PNG_MAP: Record<number, string> = {
   20: dumpster20yardPng,
   30: dumpster30yardPng,
   40: dumpster40yardPng,
-  50: dumpster40yardPng,
+  50: dumpster50yardPhoto,
 };
 
 /**
