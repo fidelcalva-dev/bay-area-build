@@ -521,17 +521,17 @@ const Index = () => {
             })}
           </div>
 
-          {/* Second row: 50 yd centered */}
-          <div className="flex justify-center max-w-5xl mx-auto mb-6">
+          {/* Second row: 50 yd centered — same card size as the grid above */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6">
             <Link
               to={quoteUrl({ size: '50' })}
-              className="relative bg-card rounded-2xl border border-border p-8 md:p-10 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center w-full max-w-xs"
+              className="relative bg-card rounded-2xl border border-border p-4 md:p-8 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center md:col-start-1 md:col-span-2 md:max-w-[calc(50%-12px)] md:mx-auto w-full"
             >
               <div className="absolute top-3 right-3">
                 <SizeCategoryBadge yards={50} />
               </div>
               <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                <DumpsterIllustration yards={50} width={420} className="w-full h-auto max-w-[420px]" />
+                <DumpsterIllustration yards={50} width={400} className="w-full h-auto max-w-[400px]" />
               </div>
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
