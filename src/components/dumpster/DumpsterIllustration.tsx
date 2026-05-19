@@ -3,22 +3,15 @@
  * Pure-SVG isometric roll-off dumpster illustration.
  * Realistic 3D look with metal ribbing, rear door, wheels, and scale reference.
  */
-import dumpster5yd from "@/assets/dumpsters/dumpster-5yd.jpg";
-import dumpster8yd from "@/assets/dumpsters/dumpster-8yd.jpg";
-import dumpster10yd from "@/assets/dumpsters/dumpster-10yd.jpg";
-import dumpster20yd from "@/assets/dumpsters/dumpster-20yd.jpg";
-import dumpster30yd from "@/assets/dumpsters/dumpster-30yd.jpg";
-import dumpster40yd from "@/assets/dumpsters/dumpster-40yd.jpg";
-import dumpster50yd from "@/assets/dumpsters/dumpster-50yd.jpg";
-
+// Canonical dimensioned renders (with measurements + human scale baked in)
 const PHOTO_OVERRIDES: Partial<Record<number, string>> = {
-  5: dumpster5yd,
-  8: dumpster8yd,
-  10: dumpster10yd,
-  20: dumpster20yd,
-  30: dumpster30yd,
-  40: dumpster40yd,
-  50: dumpster50yd,
+  5: '/images/dumpsters/render-5yd.png',
+  8: '/images/dumpsters/render-8yd.png',
+  10: '/images/dumpsters/render-10yd.png',
+  20: '/images/dumpsters/render-20yd.png',
+  30: '/images/dumpsters/render-30yd.png',
+  40: '/images/dumpsters/render-40yd.png',
+  50: '/images/dumpsters/render-50yd.png',
 };
 
 interface DumpsterIllustrationProps {
