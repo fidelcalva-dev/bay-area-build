@@ -160,7 +160,7 @@ export default function SizeLandingPage() {
               <div className="absolute top-3 right-3">
                 <SizeCategoryBadge yards={yards} />
               </div>
-              <DumpsterIllustration yards={yards} width={320} className="w-full h-auto mx-auto" />
+              <DumpsterIllustration yards={yards} width={320} className="w-full h-auto mx-auto rounded-2xl" />
             </div>
           </div>
         </div>
