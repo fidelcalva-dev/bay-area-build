@@ -486,7 +486,12 @@ const Index = () => {
 
           {/* Size grid — 1 col mobile, 2 col desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6">
-            {GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => {
+            {(() => {
+              // Lowest "From $" per size, sourced from META 2026 v2 price list (GA group — closest service area)
+              const LOWEST_FROM: Record<number, number> = {
+                5: 481, 8: 511, 10: 581, 15: 629, 20: 687, 25: 744, 30: 755, 40: 881, 50: 1051,
+              };
+              return GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => {
               const isMostPopular = s.size === 20;
               return (
                 <Link
@@ -514,11 +519,12 @@ const Index = () => {
                   <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                     {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
                   </div>
-                  <div className="text-lg font-semibold text-primary mt-3">From ${s.price.toLocaleString()}</div>
+                  <div className="text-lg font-semibold text-primary mt-3">From ${(LOWEST_FROM[s.size] ?? s.price).toLocaleString()}</div>
                   <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
                 </Link>
               );
-            })}
+              });
+            })()}
           </div>
 
           {/* Second row: 50 yd centered — same card size as the grid above */}
@@ -536,7 +542,7 @@ const Index = () => {
               <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
                 50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
               </div>
-              <div className="text-lg font-semibold text-primary mt-3">From ${GENERAL_DEBRIS_SIZES.find(s => s.size === 50)?.price.toLocaleString()}</div>
+              <div className="text-lg font-semibold text-primary mt-3">From $1,051</div>
               <div className="text-sm text-muted-foreground mt-1">{GENERAL_DEBRIS_SIZES.find(s => s.size === 50)?.includedTons} tons included</div>
             </Link>
           </div>
@@ -545,9 +551,12 @@ const Index = () => {
           <div className="max-w-2xl mx-auto bg-muted/40 rounded-xl border border-border p-4">
             <h3 className="text-sm font-semibold text-foreground mb-2">Heavy Material Pricing (Soil / Concrete)</h3>
             <div className="flex flex-wrap gap-4">
-              {HEAVY_MATERIAL.cleanSoil.allowedSizes.map((size) => (
+              {[
+                { size: 8, price: 571 },
+                { size: 10, price: 608 },
+              ].map(({ size, price }) => (
                 <div key={size} className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{size} yd</span> — ${HEAVY_MATERIAL.cleanSoil.prices[size]}
+                  <span className="font-medium text-foreground">{size} yd Clean</span> — From ${price}
                 </div>
               ))}
             </div>
