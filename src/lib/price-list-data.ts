@@ -1,296 +1,175 @@
-// Official Price List Data - META 2026 (ZIP-Code Based)
-// Source: Lista de precios para Calsan Dumpsters Pro
+// Official Price List Data - META 2026 v2 (ZIP-Code Based, updated)
+// Source: Lista_de_Precios_Actual_CALSAN (provided 2026-05)
 // Prices include delivery, pickup, taxes, 7 rental business days
 //
-// Each row: [8CS, 8CC, 8Mix, 10CS, 10CC, 10Mix, 10GD, 15GD, 20GD, 25GD, 30GD, 40GD]
-// 8CS  = 8yd Clean Soil
-// 8CC  = 8yd Clean Concrete
-// 8Mix = 8yd Mixed Soil
-// 10CS = 10yd Clean Soil
-// 10CC = 10yd Clean Concrete
-// 10Mix= 10yd Mixed Soil
-// 10GD = 10yd General Debris
-// 15GD = 15yd General Debris
-// 20GD = 20yd General Debris
-// 25GD = 25yd General Debris
-// 30GD = 30yd General Debris
-// 40GD = 40yd General Debris
+// Each row has 13 columns:
+// [0] 5GD   = 5yd General Debris
+// [1] 8Cln  = 8yd Clean (Concrete OR Soil — same price)
+// [2] 8Mix  = 8yd Mixed Soil
+// [3] 8GD   = 8yd General Debris
+// [4] 10Cln = 10yd Clean (Concrete OR Soil — same price)
+// [5] 10Mix = 10yd Mixed Soil
+// [6] 10GD  = 10yd General Debris
+// [7] 15GD  = 15yd General Debris
+// [8] 20GD  = 20yd General Debris
+// [9] 25GD  = 25yd General Debris
+// [10] 30GD = 30yd General Debris
+// [11] 40GD = 40yd General Debris
+// [12] 50GD = 50yd General Debris
 
-type ZipPriceRow = [number, number, number, number, number, number, number, number, number, number, number, number];
+type ZipPriceRow = [number, number, number, number, number, number, number, number, number, number, number, number, number];
 
 // Price groups for compactness
-const GA: ZipPriceRow = [571, 571, 782.75, 608.5, 608.5, 899.2, 581.6, 629.5, 687, 744.5, 755, 881];
-const GB: ZipPriceRow = [591, 591, 802.75, 628.5, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 958.4];
-const GBb: ZipPriceRow = [591, 591, 802.75, 628.5, 628.5, 919.2, 601.6, 609.5, 667, 764.5, 775, 958.4];
-const GC: ZipPriceRow = [651, 651, 862.75, 688.5, 688.5, 979.2, 661.6, 709.5, 767, 824.5, 835, 961];
-const GD: ZipPriceRow = [652.5, 652.5, 882.5, 721.5, 721.5, 966, 658.25, 715.75, 773.25, 830.75, 911.25, 1049.25];
-const GE: ZipPriceRow = [676, 676, 887.75, 713.5, 713.5, 1004.2, 686.6, 734.5, 792, 849.5, 860, 986];
-const GF: ZipPriceRow = [697.25, 697.25, 907.25, 760.25, 760.25, 998.87, 702.5, 755, 807.5, 860, 933.5, 1059.5];
-const GG: ZipPriceRow = [701, 701, 887.75, 738.5, 738.5, 1029.2, 711.6, 759.5, 817, 874.5, 885, 1011];
-const GH: ZipPriceRow = [726, 726, 937.75, 763.5, 763.5, 1054.2, 736.6, 784.5, 842, 899.5, 910, 1036];
-const GI: ZipPriceRow = [801, 801, 1012.75, 838.5, 838.5, 1129.2, 811.6, 859.5, 917, 974.5, 985, 1111];
-const GJ: ZipPriceRow = [807.5, 807.5, 1017.5, 870.5, 870.5, 1101.5, 812.75, 865.25, 917.75, 970.25, 1043.75, 1169.75];
 
-// Special per-ZIP rows that don't fit standard tiers
-const G_OAK662: ZipPriceRow = [591, 591, 802.75, 628.5, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 901];
-const G_MTEDEN: ZipPriceRow = [652.5, 652.5, 882.5, 721.5, 721.5, 966, 658.25, 649.5, 773.25, 830.75, 911.25, 1049.25];
-const G_PA303: ZipPriceRow = [726, 726, 937.75, 738.5, 738.5, 1054.2, 736.6, 784.5, 817, 874.5, 910, 1036];
-const G_SC056: ZipPriceRow = [701, 701, 912.75, 738.5, 738.5, 1029.2, 711.6, 759.5, 817, 874.5, 885, 1011];
+const GA: ZipPriceRow = [481.6, 571, 782.75, 511.6, 608.5, 899.2, 581.6, 629.5, 687, 744.5, 755, 881, 1051];
+const GB: ZipPriceRow = [501.6, 591, 802.75, 531.6, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 958.4, 1128.4];
+const GBb: ZipPriceRow = [501.6, 591, 802.75, 531.6, 628.5, 919.2, 601.6, 609.5, 667, 764.5, 775, 958.4, 1128.4];
+const GC: ZipPriceRow = [561.6, 651, 862.75, 591.6, 688.5, 979.2, 661.6, 709.5, 767, 824.5, 835, 961, 1131];
+const GD: ZipPriceRow = [558.25, 652.5, 882.5, 588.25, 721.5, 966, 658.25, 715.75, 773.25, 830.75, 911.25, 1049.25, 1219.25];
+const GE: ZipPriceRow = [586.6, 676, 887.75, 616.6, 713.5, 1004.2, 686.6, 734.5, 792, 849.5, 860, 986, 1156];
+const GF: ZipPriceRow = [602.5, 697.25, 907.25, 632.5, 760.25, 998.87, 702.5, 755, 807.5, 860, 933.5, 1059.5, 1229.5];
+const GG: ZipPriceRow = [611.6, 701, 887.75, 641.6, 738.5, 1029.2, 711.6, 759.5, 817, 874.5, 885, 1011, 1181];
+const GH: ZipPriceRow = [636.6, 726, 937.75, 666.6, 763.5, 1054.2, 736.6, 784.5, 842, 899.5, 910, 1036, 1206];
+const GI: ZipPriceRow = [711.6, 801, 1012.75, 741.6, 838.5, 1129.2, 811.6, 859.5, 917, 974.5, 985, 1111, 1281];
+const GJ: ZipPriceRow = [712.75, 807.5, 1017.5, 742.75, 870.5, 1101.5, 812.75, 865.25, 917.75, 970.25, 1043.75, 1169.75, 1339.75];
 
-// Build ZIP → price map
+// Per-ZIP special overrides
+
+const G_94662: ZipPriceRow = [501.6, 591, 802.75, 531.6, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 901, 1071];
+const G_94557: ZipPriceRow = [558.25, 652.5, 882.5, 588.25, 721.5, 966, 658.25, 649.5, 773.25, 830.75, 911.25, 1049.25, 1219.25];
+const G_95056: ZipPriceRow = [611.6, 701, 912.75, 641.6, 738.5, 1029.2, 711.6, 759.5, 817, 874.5, 885, 1011, 1181];
+
 function buildZipMap(): Record<string, ZipPriceRow> {
   const m: Record<string, ZipPriceRow> = {};
   const assign = (zips: string[], row: ZipPriceRow) => { for (const z of zips) m[z] = row; };
 
-  // Group A — Alameda, Oakland core, Emeryville, Piedmont, San Leandro, San Lorenzo, Berkeley (94701/03/04)
+  // Group GA
   assign([
-    '94501','94502', // Alameda
-    '94601','94602','94603','94604','94605','94606','94607','94608','94609',
-    '94610','94611','94612','94613','94614','94615','94617','94618','94619',
-    '94620','94621','94622','94623','94624','94649','94659','94660','94661',
-    '94666', // Oakland + Emeryville
-    '94577','94578','94579', // San Leandro
-    '94580', // San Lorenzo
-    '94701','94703','94704', // Berkeley
+    '94501','94502','94577','94578','94579','94580','94601','94602','94603','94604',
+    '94605','94606','94607','94608','94609','94610','94611','94612','94613','94614',
+    '94615','94617','94618','94619','94620','94621','94622','94623','94624','94649',
+    '94659','94660','94661','94666','94701','94703','94704',
   ], GA);
 
-  // Group B — Albany, Berkeley, Canyon, Hayward, Orinda, UC Berkeley, Richmond, SF downtown
+  // Group GB
   assign([
-    '94707','94710', // Albany
-    '94702','94705','94709','94712','94720', // Berkeley
-    '94516', // Canyon
-    '94540','94541','94542','94544','94545', // Hayward
-    '94563', // Orinda
-    '94850', // Richmond
-    '94104','94105','94119','94120','94130','94137','94145', // SF (lower-price zips)
+    '94104','94105','94119','94120','94130','94137','94145','94516','94540','94541',
+    '94542','94544','94545','94552','94563','94702','94705','94706','94707','94709',
+    '94710','94712','94720','94850',
   ], GB);
 
-  // Group Bb — Same base as B but 15yd=$609.50, 20yd=$667
+  // Group GBb
   assign([
-    '94543','94546', // Hayward / Castro Valley
-    '94706', // Berkeley / Kensington
+    '94543','94546',
   ], GBb);
 
-  // Group C — Milpitas, Alviso, Santa Clara core, San Jose core
+  // Group GC
   assign([
-    '95002', // Alviso
-    '95035','95036', // Milpitas
-    '95050','95051','95052','95053','95054', // Santa Clara
-    '95101','95103','95106','95109','95110','95112','95115','95116',
-    '95126','95128','95131','95132','95133','95134',
-    '95150','95152','95156','95159','95164','95173',
-    '95190','95191','95192','95194', // San Jose
+    '95002','95035','95036','95050','95051','95052','95053','95054','95101','95103',
+    '95106','95109','95110','95112','95115','95116','95126','95128','95132','95133',
+    '95134','95150','95152','95156','95159','95164','95173','95190','95191','95192',
+    '95194',
   ], GC);
 
-  // Group D — El Cerrito, Lafayette, Moraga, Fremont (partial), Pleasanton (partial),
-  // Richmond core, Union City, Hayward 94552, SF mid-range, Berkeley 94708, Kensington 94708
+  // Group GD
   assign([
-    '94530', // El Cerrito
-    '94549', // Lafayette
-    '94556','94570','94575', // Moraga
-    '94538','94539', // Fremont
-    '94552', // Hayward
-    '94566', // Pleasanton
-    '94801','94802','94804','94805','94807','94808', // Richmond / Point Richmond
-    '94587', // Union City
-    '94708', // Berkeley / Kensington
-    '94102','94103','94107','94108','94109','94110','94111',
-    '94114','94115','94117','94118',
-    '94122','94123','94124','94125','94126','94129',
-    '94133','94134','94139','94140','94141','94142','94143','94144',
-    '94146','94147','94151','94158','94159','94160','94161',
-    '94163','94164','94172','94177','94188', // SF
+    '94102','94103','94107','94108','94109','94110','94111','94114','94115','94117',
+    '94118','94122','94123','94124','94125','94126','94129','94133','94134','94139',
+    '94140','94141','94142','94143','94144','94146','94147','94151','94158','94159',
+    '94160','94161','94163','94164','94172','94177','94188','94530','94538','94549',
+    '94556','94566','94570','94575','94587','94708','94801','94802','94804','94805',
+    '94807','94808',
   ], GD);
 
-  // Group E — Cupertino, Coyote, Mountain View, Sunnyvale, Los Altos 94023,
-  // Los Gatos 95030/95032, Campbell 95009/95011, San Jose mid
+  // Group GE
   assign([
-    '95013', // Coyote
-    '95014','95015', // Cupertino / Permanente / Monte Vista
-    '94035','94039','94040','94041','94042','94043', // Mountain View / Moffett Field
-    '94085','94086','94087','94088','94089', // Sunnyvale / Onizuka
-    '95009','95011', // Campbell
-    '94023', // Los Altos
-    '95030','95032', // Los Gatos / Monte Sereno
-    '95055', // Santa Clara
-    '95071', // Saratoga
-    '95111','95113','95117','95118','95121','95122','95123','95124','95125',
-    '95127','95129','95130','95136','95139','95148',
-    '95153','95154','95155','95157','95158',
-    '95170','95172','95193','95196', // San Jose
+    '94023','94035','94039','94040','94041','94042','94043','94085','94086','94087',
+    '94088','94089','95009','95011','95013','95014','95015','95030','95032','95055',
+    '95071','95111','95113','95117','95118','95121','95122','95123','95124','95125',
+    '95127','95129','95130','95136','95139','95148','95153','95154','95155','95157',
+    '95158','95170','95172','95193','95196',
   ], GE);
 
-  // Group F — Alamo, Belmont, Brisbane, Broadmoor, Colma, Concord, Corte Madera, Crockett,
-  // Daly City, Danville 94526, Diablo, Dublin, El Sobrante, Foster City, Fremont (partial),
-  // Hercules, Kentfield 94914, Larkspur, Millbrae, Newark, Pinole, Pleasant Hill,
-  // Pleasanton (partial), Rodeo, Ross, San Anselmo, San Pablo, San Quentin, San Rafael 94901/94912,
-  // San Ramon, South SF, Walnut Creek, SF outer, San Mateo 94402/94403
+  // Group GF
   assign([
-    '94507', // Alamo
-    '94002', // Belmont
-    '94005', // Brisbane
-    '94015', // Broadmoor Vlg
-    '94014', // Colma / Daly City
-    '94518','94519','94521','94522','94524','94527','94529', // Concord
-    '94925','94976', // Corte Madera
-    '94525', // Crockett
-    '94016','94017', // Daly City
-    '94526', // Danville
-    '94528', // Diablo
-    '94568', // Dublin / Pleasanton
-    '94803','94820', // El Sobrante / Richmond
-    '94404', // Foster City / San Mateo
-    '94536','94537','94555', // Fremont
-    '94547', // Hercules / Rodeo
-    '94806', // Hilltop Mall / Richmond / San Pablo
-    '94914', // Kentfield
-    '94939','94977', // Larkspur
-    '94030', // Millbrae
-    '94560', // Newark
-    '94564', // Pinole
-    '94523', // Pleasant Hill
-    '94588', // Pleasanton
-    '94572', // Rodeo
-    '94957', // Ross
-    '94080','94083', // South San Francisco
-    '94960','94979', // San Anselmo
-    '94901', // San Anselmo / San Rafael
-    '94964','94974', // San Quentin
-    '94912', // San Rafael
-    '94582','94583', // San Ramon
-    '94402','94403', // San Mateo
-    '94595','94596','94597','94598', // Walnut Creek
-    '94112','94116','94121','94127','94128','94131','94132', // SF outer
+    '94002','94005','94014','94015','94016','94017','94030','94080','94083','94112',
+    '94116','94121','94127','94128','94131','94132','94402','94403','94404','94507',
+    '94518','94519','94521','94522','94523','94524','94525','94526','94527','94528',
+    '94529','94536','94537','94539','94547','94555','94560','94564','94568','94572',
+    '94582','94583','94588','94595','94596','94597','94598','94803','94806','94820',
+    '94901','94904','94912','94914','94925','94939','94957','94960','94964','94974',
+    '94976','94977','94979',
   ], GF);
 
-  // Group G — Campbell 95008, Los Altos 94022/94024, Los Gatos 95033, Menlo Park,
-  // Novato 94947, Palo Alto 94302/94304/94306, Portola Valley, Redwood City 94063/94064,
-  // Saratoga 95070, Sausalito, San Jose outer
+  // Group GG
   assign([
-    '95008', // Campbell
-    '94022','94024', // Los Altos / Los Altos Hills
-    '95033', // Los Gatos
-    '94025', // Menlo Park / W Menlo Park
-    '94026','94028', // Menlo Park / Portola Valley
-    '94947', // Novato
-    '94302','94304','94306', // Palo Alto
-    '94063','94064', // Redwood City
-    '95070', // Saratoga
-    '94965','94966', // Sausalito
-    '95119','95120','95135','95138','95160','95161', // San Jose
+    '94022','94024','94025','94026','94028','94063','94064','94302','94304','94305',
+    '94306','94309','94947','94966','95008','95033','95070','95119','95120','95131',
+    '95135','95138','95160','95161',
   ], GG);
 
-  // Group H — San Bruno, San Carlos, Hillsborough, Redwood City/Woodside 94061/94065,
-  // Palo Alto 94301, Stanford 94305
+  // Group GH
   assign([
-    '94066', // San Bruno
-    '94070', // San Carlos
-    '94010', // Hillsborough
-    '94061','94065', // Redwood City / Woodside
-    '94301', // Palo Alto
-    '94305', // Stanford
+    '94061','94065','94066','94070','94301',
   ], GH);
 
-  // Group I — Bethel Island
-  assign(['94511'], GI);
-
-  // Group J — American Canyon, Antioch, Atherton, Bay Point, Belvedere, Benicia, Blackhawk,
-  // Brentwood, Burlingame, Byron, Clayton, Concord 94520, Discovery Bay, El Granada,
-  // Fairfax, Fairfield, Forest Knolls, Half Moon Bay, Knightsen, Lagunitas, Livermore,
-  // Martinez, Mill Valley, Montara, Moss Beach, Napa, Nicasio, Novato, Oakley, Pacheco,
-  // Pacifica, Petaluma, Pittsburg, Port Costa, San Geronimo, San Mateo 94401/94497,
-  // San Rafael 94903/94913/94915, Sonoma, Stinson Beach, Suisun City, Sunol, Tiburon,
-  // Vallejo, Vineburg, Woodacre, Morgan Hill, Redwood City/Woodside 94062,
-  // Kentfield 94904, Stanford 94309, San Jose 95108/95151
+  // Group GI
   assign([
-    '94503','94589', // American Canyon / Vallejo
-    '94509','94531', // Antioch
-    '94027', // Atherton / Menlo Park
-    '94565', // Bay Point / Pittsburg
-    '94920', // Belvedere / Tiburon
-    '94510', // Benicia
-    '94506', // Blackhawk / Danville
-    '94513', // Brentwood
-    '94011', // Burlingame
-    '94505','94514', // Byron / Discovery Bay
-    '94517', // Clayton
-    '94520', // Concord
-    '94553', // Briones / Martinez / Pacheco
-    '94018', // El Granada
-    '94930','94978', // Fairfax
-    '94533','94534', // Fairfield / Suisun City
-    '94933', // Forest Knolls
-    '94019', // Half Moon Bay
-    '94548', // Knightsen
-    '94550','94551', // Livermore
-    '94941','94942', // Mill Valley
-    '94037', // Montara
-    '94038', // Moss Beach
-    '94558','94559','94581', // Napa
-    '94946', // Nicasio
-    '94945','94948','94949','94998', // Novato
-    '94561', // Oakley
-    '94044', // Pacifica
-    '94062', // Palomar Park / Redwood City / Emerald Hills / Woodside
-    '94952','94954','94955','94999', // Petaluma
-    '94569', // Port Costa
-    '94963', // San Geronimo
-    '95108','95151', // San Jose
-    '94401','94497', // San Mateo
-    '94903','94913','94915', // San Rafael
-    '95476', // Sonoma
-    '95416','95433', // Boyes Hot Spg / El Verano
-    '94970', // Stinson Beach
-    '94585', // Suisun City
-    '94586', // Sunol
-    '94590','94591','94592', // Vallejo
-    '95487', // Vineburg
-    '94973', // Woodacre
-    '94938', // Lagunitas
-    '94904', // Kentfield (overrides Greenbrae GF)
-    '95037', // Morgan Hill
-    '94309', // Stanford
+    '94511',
+  ], GI);
+
+  // Group GJ
+  assign([
+    '94010','94011','94018','94019','94027','94037','94038','94044','94062','94303',
+    '94401','94497','94503','94505','94506','94509','94510','94513','94514','94517',
+    '94520','94531','94533','94534','94548','94550','94551','94553','94558','94559',
+    '94561','94565','94569','94581','94585','94586','94589','94590','94591','94592',
+    '94903','94913','94915','94920','94930','94933','94938','94941','94942','94945',
+    '94946','94948','94949','94952','94954','94955','94963','94965','94970','94973',
+    '94978','94998','94999','95037','95108','95151','95416','95433','95476','95487',
   ], GJ);
 
-  // Individual ZIP overrides for special pricing
-  m['94662'] = G_OAK662; // Oakland 94662: GB-like but 40GD=$901
-  m['94557'] = G_MTEDEN; // Mount Eden: GD-like but 15GD=$649.50
-  m['94303'] = G_PA303;  // Palo Alto 94303: unique hybrid row
-  m['95056'] = G_SC056;  // Santa Clara 95056: GG-like but 8Mix=$912.75
+  // Per-ZIP special overrides
+  m['94662'] = G_94662;
+  m['94557'] = G_94557;
+  m['95056'] = G_95056;
 
   return m;
 }
 
 const ZIP_PRICES = buildZipMap();
 
-// Column indices for ZIP lookup
-// [0]8CS [1]8CC [2]8Mix [3]10CS [4]10CC [5]10Mix [6]10GD [7]15GD [8]20GD [9]25GD [10]30GD [11]40GD
+// Column indices for ZIP lookup (13 columns)
+// [0]5GD [1]8Cln [2]8Mix [3]8GD [4]10Cln [5]10Mix [6]10GD [7]15GD [8]20GD [9]25GD [10]30GD [11]40GD [12]50GD
 
 function getZipColumnIndex(sizeYd: number, materialCategory: string): number | null {
   const mat = materialCategory.toUpperCase();
   const isCleanSoil = mat.includes('CLEAN_SOIL') || mat.includes('CLEAN SOIL') || mat === 'SOIL';
   const isCleanConcrete = mat.includes('CLEAN_CONCRETE') || mat.includes('CLEAN CONCRETE') || mat === 'CONCRETE';
+  const isClean = isCleanSoil || isCleanConcrete;
   const isMixed = mat.includes('MIX');
-  const isHeavy = isCleanSoil || isCleanConcrete || mat === 'HEAVY' || mat.includes('DEBRIS_HEAVY');
+  const isHeavy = isClean || mat === 'HEAVY' || mat.includes('DEBRIS_HEAVY');
 
   switch (sizeYd) {
+    case 5:
+      // 5yd: general debris only
+      return 0;
     case 8:
-      if (isCleanSoil) return 0;
-      if (isCleanConcrete) return 1;
+      if (isClean) return 1;       // Clean concrete OR soil — same price
       if (isMixed) return 2;
-      if (isHeavy) return 0; // default heavy to clean soil
-      return 2; // general debris → use mix price for 8yd
+      if (isHeavy) return 1;       // default heavy to clean
+      return 3;                    // general debris (separate column)
     case 10:
-      if (isCleanSoil) return 3;
-      if (isCleanConcrete) return 4;
+      if (isClean) return 4;
       if (isMixed) return 5;
-      if (isHeavy) return 3;
-      return 6; // general debris
+      if (isHeavy) return 4;
+      return 6;                    // general debris
     case 15: return 7;
     case 20: return 8;
     case 25: return 9;
     case 30: return 10;
     case 40: return 11;
+    case 50: return 12;
     default: return null;
   }
 }
@@ -298,7 +177,6 @@ function getZipColumnIndex(sizeYd: number, materialCategory: string): number | n
 /**
  * Look up the customer price by ZIP code from the official price list.
  * Returns the exact price for a given ZIP, dumpster size, and material category.
- * Falls back to city-based lookup if ZIP not found.
  */
 export function getPriceByZip(
   zip: string,
@@ -314,7 +192,7 @@ export function getPriceByZip(
 
   // Handle unknown sizes by finding closest
   if (colIdx === null) {
-    const sizes = [8, 10, 15, 20, 25, 30, 40];
+    const sizes = [5, 8, 10, 15, 20, 25, 30, 40, 50];
     const closest = sizes.reduce((prev, curr) =>
       Math.abs(curr - sizeYd) < Math.abs(prev - sizeYd) ? curr : prev
     );
@@ -323,9 +201,7 @@ export function getPriceByZip(
   }
 
   const price = row[colIdx];
-  // Handle missing values (0 or undefined) — use nearest available
   if (!price || price === 0) {
-    // Try general debris column for same size
     const fallbackIdx = getZipColumnIndex(sizeYd, 'GENERAL');
     if (fallbackIdx !== null && row[fallbackIdx] && row[fallbackIdx] > 0) {
       return { price: row[fallbackIdx], zipFound: true, zip };
@@ -336,64 +212,31 @@ export function getPriceByZip(
 }
 
 // ─── Legacy city-based lookup (kept for backward compatibility) ───
+// Updated to include 5yd, 8GD and 50yd columns.
+// Row order: [5GD, 8Cln, 8Mix, 8GD, 10Cln, 10Mix, 10GD, 15GD, 20GD, 25GD, 30GD, 40GD, 50GD]
 
-type PriceRow = [number, number, number, number, number, number, number, number, number];
-
-const PRICE_LIST: Record<string, PriceRow> = {
-  'alameda':            [571, 783, 609, 899, 582, 630, 687, 745, 755],
-  'emeryville':         [571, 783, 609, 899, 582, 630, 687, 745, 755],
-  'piedmont':           [571, 783, 609, 899, 582, 630, 687, 745, 755],
-  'san leandro':        [571, 783, 609, 899, 582, 630, 687, 745, 755],
-  'san lorenzo':        [571, 783, 609, 899, 582, 630, 687, 745, 755],
-  'oakland':            [572, 783, 609, 900, 582, 630, 687, 745, 755],
-  'albany':             [591, 803, 629, 919, 602, 650, 707, 765, 775],
-  'berkeley':           [591, 804, 631, 918, 601, 647, 704, 765, 781],
-  'castro valley':      [591, 803, 629, 919, 602, 630, 687, 765, 775],
-  'hayward':            [598, 812, 639, 924, 608, 644, 701, 772, 790],
-  'san francisco':      [650, 875, 714, 964, 650, 700, 757, 815, 825],
-  'el cerrito':         [653, 883, 722, 966, 658, 716, 773, 831, 900],
-  'lafayette':          [653, 883, 722, 966, 658, 716, 773, 831, 900],
-  'moraga':             [653, 883, 722, 966, 658, 716, 773, 831, 900],
-  'milpitas':           [651, 863, 689, 979, 662, 710, 767, 825, 835],
-  'alviso':             [651, 863, 689, 979, 662, 710, 767, 825, 835],
-  'richmond':           [660, 882, 724, 971, 670, 718, 775, 833, 843],
-  'santa clara':        [662, 873, 699, 990, 672, 720, 777, 835, 845],
-  'san jose':           [673, 882, 711, 1000, 683, 731, 788, 846, 856],
-  'cupertino':          [676, 888, 714, 1004, 687, 735, 792, 850, 860],
-  'mountain view':      [676, 888, 714, 1004, 687, 735, 792, 850, 860],
-  'sunnyvale':          [676, 888, 714, 1004, 687, 735, 792, 850, 860],
-  'fremont':            [679, 897, 745, 986, 685, 739, 799, 848, 925],
-  'concord':            [711, 921, 774, 1012, 716, 769, 821, 874, 947],
-  'daly city':          [697, 907, 760, 999, 703, 755, 808, 860, 934],
-  'dublin':             [697, 907, 760, 999, 703, 755, 808, 860, 934],
-  'foster city':        [697, 907, 760, 999, 703, 755, 808, 860, 934],
-  'walnut creek':       [697, 907, 760, 999, 703, 755, 808, 860, 934],
-  'south san francisco':[697, 907, 760, 999, 703, 755, 808, 860, 934],
-  'menlo park':         [728, 920, 772, 1047, 738, 786, 843, 901, 911],
-  'redwood city':       [732, 934, 775, 1054, 742, 790, 847, 905, 915],
-  'san mateo':          [741, 951, 804, 1040, 751, 799, 856, 914, 924],
-  'palo alto':          [708, 902, 742, 1036, 718, 766, 823, 881, 891],
-  'livermore':          [808, 1018, 871, 1102, 813, 865, 918, 970, 1044],
-  'napa':               [808, 1018, 871, 1102, 813, 865, 918, 970, 1044],
-  'vallejo':            [808, 1018, 871, 1102, 813, 865, 918, 970, 1044],
-  'novato':             [786, 992, 844, 1087, 796, 848, 901, 953, 1027],
-};
-
-const SIZE_INDEX: Record<number, { heavy: number; debris: number }> = {
-  8:  { heavy: 0, debris: 1 },
-  10: { heavy: 2, debris: 3 },
-  15: { heavy: 4, debris: 4 },
-  20: { heavy: 5, debris: 5 },
-  25: { heavy: 6, debris: 6 },
-  30: { heavy: 7, debris: 7 },
-  40: { heavy: 8, debris: 8 },
+const CITY_GROUP: Record<string, ZipPriceRow> = {
+  'alameda': GA, 'emeryville': GA, 'piedmont': GA, 'san leandro': GA, 'san lorenzo': GA, 'oakland': GA,
+  'albany': GB, 'berkeley': GB, 'kensington': GB,
+  'castro valley': GBb, 'hayward': GB,
+  'san francisco': GD,
+  'el cerrito': GD, 'lafayette': GD, 'moraga': GD, 'richmond': GD,
+  'milpitas': GC, 'alviso': GC, 'santa clara': GC, 'san jose': GC,
+  'cupertino': GE, 'mountain view': GE, 'sunnyvale': GE,
+  'fremont': GD,
+  'concord': GF, 'daly city': GF, 'dublin': GF, 'foster city': GF, 'walnut creek': GF, 'south san francisco': GF,
+  'menlo park': GG, 'redwood city': GG, 'palo alto': GG, 'san mateo': GF,
+  'livermore': GJ, 'napa': GJ, 'vallejo': GJ, 'novato': GJ,
+  'pittsburg': GJ, 'antioch': GJ, 'martinez': GJ,
+  'hillsborough': GH, 'san bruno': GH, 'san carlos': GH,
 };
 
 /** Available dumpster sizes in the price list */
-export const PRICE_LIST_SIZES = [8, 10, 15, 20, 25, 30, 40] as const;
+export const PRICE_LIST_SIZES = [5, 8, 10, 15, 20, 25, 30, 40, 50] as const;
 
 /** Included tonnage per size (general debris only; heavy = flat fee) */
 export const INCLUDED_TONS: Record<number, number> = {
+  5: 0.25,
   8: 0.5,
   10: 1,
   15: 1.5,
@@ -401,6 +244,7 @@ export const INCLUDED_TONS: Record<number, number> = {
   25: 2.5,
   30: 3,
   40: 4,
+  50: 5,
 };
 
 /**
@@ -414,53 +258,44 @@ export function getPriceFromList(
 ): { price: number; cityFound: boolean; cityUsed: string } {
   const normalizedCity = city.trim().toLowerCase();
 
-  let row = PRICE_LIST[normalizedCity];
+  let row = CITY_GROUP[normalizedCity];
   let cityUsed = normalizedCity;
   let cityFound = !!row;
 
   if (!row) {
-    const match = Object.keys(PRICE_LIST).find(
+    const match = Object.keys(CITY_GROUP).find(
       k => normalizedCity.includes(k) || k.includes(normalizedCity)
     );
     if (match) {
-      row = PRICE_LIST[match];
+      row = CITY_GROUP[match];
       cityUsed = match;
       cityFound = true;
     }
   }
 
   if (!row) {
-    row = PRICE_LIST['oakland'];
+    row = CITY_GROUP['oakland'];
     cityUsed = 'oakland';
   }
 
-  const sizeMap = SIZE_INDEX[sizeYd];
-  if (!sizeMap) {
+  let colIdx = getZipColumnIndex(sizeYd, materialCategory);
+  if (colIdx === null) {
     const closest = PRICE_LIST_SIZES.reduce((prev, curr) =>
       Math.abs(curr - sizeYd) < Math.abs(prev - sizeYd) ? curr : prev
     );
-    return getPriceFromList(cityUsed, closest, materialCategory);
+    colIdx = getZipColumnIndex(closest, materialCategory);
+    if (colIdx === null) return { price: 0, cityFound, cityUsed };
   }
 
-  const isHeavy = materialCategory === 'HEAVY' || materialCategory === 'DEBRIS_HEAVY'
-    || materialCategory === 'CLEAN_SOIL' || materialCategory === 'CLEAN_CONCRETE';
-
-  const idx = isHeavy ? sizeMap.heavy : sizeMap.debris;
-  const price = row[idx];
-
-  return { price, cityFound, cityUsed };
+  return { price: row[colIdx], cityFound, cityUsed };
 }
 
-/**
- * Get all available city names in the price list
- */
+/** Get all available city names in the price list */
 export function getPriceListCities(): string[] {
-  return Object.keys(PRICE_LIST).sort();
+  return Object.keys(CITY_GROUP).sort();
 }
 
-/**
- * Get all ZIP codes in the price list
- */
+/** Get all ZIP codes in the price list */
 export function getPriceListZips(): string[] {
   return Object.keys(ZIP_PRICES).sort();
 }
