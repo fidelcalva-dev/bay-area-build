@@ -261,7 +261,7 @@ const Index = () => {
                 </p>
                 {/* Dynamic starting price from config */}
                 <p className="text-base text-foreground font-semibold">
-                  Starting at ${GENERAL_DEBRIS_SIZES[0]?.price || 395} · 7-day rental · Delivery included
+                  Starting at $481 · 7-day rental · Delivery included
                 </p>
               </div>
 
