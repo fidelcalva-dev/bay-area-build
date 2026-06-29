@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense, useRef } from 'react';
 import { getPriceRangeForZip, type PriceRange } from '@/lib/masterPricingService';
+import { getPriceByZip } from '@/lib/price-list-data';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
 import { useQuoteSessionTracker } from './hooks/useQuoteSessionTracker';
@@ -373,6 +374,18 @@ export function V3QuoteFlow() {
   // Calculate quote
   const quote = useMemo(() => {
     if (!zoneResult) return { subtotal: 0, subtotalHigh: 0, includedTons: 0, isValid: false, isFlatFee: false };
+    // Priority 1: exact official META 2026 price list by ZIP
+    if (zip && zip.length === 5) {
+      const zipLookup = getPriceByZip(zip, size, isHeavy ? 'HEAVY' : 'GENERAL');
+      if (zipLookup.zipFound && zipLookup.price > 0) {
+        let low = Math.round(zipLookup.price);
+        let high = low + 70;
+        if (distanceCalc.distance?.priceAdjustment) { low += distanceCalc.distance.priceAdjustment; high += distanceCalc.distance.priceAdjustment; }
+        if (rentalDays > 7) { const extra = 15 * (rentalDays - 7); low += extra; high += extra; }
+        const includedTons = isHeavy ? 0 : calculateIncludedTons(size, materialTypeForPricing);
+        return { subtotal: low, subtotalHigh: high, includedTons, isValid: true, isFlatFee: isHeavy };
+      }
+    }
     if (masterPriceRange) {
       let low = masterPriceRange.low;
       let high = masterPriceRange.high;
@@ -390,7 +403,7 @@ export function V3QuoteFlow() {
     if (distanceCalc.distance?.priceAdjustment) subtotal += distanceCalc.distance.priceAdjustment;
     if (rentalDays > 7) subtotal += 15 * (rentalDays - 7);
     return { subtotal, subtotalHigh: subtotal + 70, includedTons, isValid: true, isFlatFee };
-  }, [size, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange, rentalDays]);
+  }, [size, zip, zoneResult, DUMPSTER_SIZES, distanceCalc.distance, isHeavy, materialTypeForPricing, masterPriceRange, rentalDays]);
 
   // Step index for progress
   const totalSteps = 10;
