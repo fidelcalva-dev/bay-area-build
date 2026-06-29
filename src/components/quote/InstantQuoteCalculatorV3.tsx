@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { selectVendorForQuote, saveQuote, type VendorSelectionResult } from '@/lib/vendorSelection';
 import { getOverageInfo, PRICING_POLICIES, HEAVY_IN_GENERAL_WARNING, CONTAMINATION_POLICY } from '@/lib/shared-data';
 import { validateAndFormatPhone } from '@/lib/phoneUtils';
+import { getPriceByZip } from '@/lib/price-list-data';
 
 // Extra Tons Pre-Purchase
 import { ExtraTonsRecommendation, shouldShowExtraTonsRecommendation, getSuggestedExtraTons, DEFAULT_EXTRA_TON_PRICING } from './ExtraTonsRecommendation';
