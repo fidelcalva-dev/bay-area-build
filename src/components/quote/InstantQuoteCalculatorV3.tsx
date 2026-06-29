@@ -393,9 +393,16 @@ export function InstantQuoteCalculatorV3() {
     const isFlatFeePricing = formData.material === 'heavy' || isGreenHaloMaterial;
     const includedTons = isFlatFeePricing ? 0 : calculateIncludedTons(formData.size, formData.material);
 
-    // Base price with zone multiplier
-    const basePrice = Math.round(sizeData.basePrice * zoneResult.multiplier);
-    
+    // Base price: prefer exact ZIP price from the official price list (META 2026).
+    // Falls back to size.basePrice × zone.multiplier when ZIP is not in the list.
+    const zipLookup = formData.zip && formData.zip.length === 5
+      ? getPriceByZip(formData.zip, formData.size, formData.material === 'heavy' ? 'HEAVY' : 'GENERAL')
+      : { price: 0, zipFound: false, zip: formData.zip };
+    const usingZipPrice = zipLookup.zipFound && zipLookup.price > 0;
+    const basePrice = usingZipPrice
+      ? Math.round(zipLookup.price)
+      : Math.round(sizeData.basePrice * zoneResult.multiplier);
+
     lineItems.push({
       label: `${sizeData.label} Dumpster`,
       subLabel: isFlatFeePricing 
@@ -405,8 +412,8 @@ export function InstantQuoteCalculatorV3() {
       type: 'base',
     });
 
-    // Heavy material surcharge
-    if (material.priceAdjustment > 0) {
+    // Heavy material surcharge — skip when ZIP price already reflects heavy column
+    if (material.priceAdjustment > 0 && !usingZipPrice) {
       lineItems.push({
         label: formData.material === 'heavy' ? 'Heavy Materials (flat-fee pricing)' : 'Heavy Material Surcharge',
         subLabel: formData.material === 'heavy' ? 'Disposal included, no weight charges' : 'Concrete, dirt, rock, asphalt',
