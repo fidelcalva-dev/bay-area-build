@@ -591,6 +591,19 @@ const Index = () => {
               </div>
             ))}
           </div>
+
+          {/* Video explainer */}
+          <div className="max-w-3xl mx-auto mt-10">
+            <div className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+              <video
+                className="w-full aspect-video"
+                controls
+                playsInline
+                preload="none"
+                src={howItWorksVideo.url}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
