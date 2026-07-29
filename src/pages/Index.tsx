@@ -1,5 +1,6 @@
 import { Suspense, lazy, useState, useCallback } from 'react'; // homepage
 import { PhotoCarousel } from '@/components/home/PhotoCarousel';
+import howItWorksVideo from '@/assets/how-it-works-home.mp4.asset.json';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
@@ -590,6 +591,19 @@ const Index = () => {
                 <p className="text-xs text-muted-foreground">{step.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Video explainer */}
+          <div className="max-w-3xl mx-auto mt-10">
+            <div className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+              <video
+                className="w-full aspect-video"
+                controls
+                playsInline
+                preload="none"
+                src={howItWorksVideo.url}
+              />
+            </div>
           </div>
         </div>
       </section>
