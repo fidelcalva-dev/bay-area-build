@@ -1,5 +1,6 @@
 import { Suspense, lazy, useState, useCallback } from 'react'; // homepage
 import { PhotoCarousel } from '@/components/home/PhotoCarousel';
+import howItWorksVideo from '@/assets/how-it-works-home.mp4.asset.json';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
