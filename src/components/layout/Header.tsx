@@ -29,6 +29,7 @@ const NAV_ITEMS: NavItem[] = [
       { to: '/residential-dumpster-rental', label: 'Residential Dumpsters' },
       { to: '/concrete-dumpster-rental', label: 'Concrete & Dirt Dumpsters' },
       { to: '/contractors', label: 'Contractor Programs' },
+      { to: '/construction-materials', label: 'Construction Materials Delivery' },
     ],
   },
   {
