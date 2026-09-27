@@ -24,13 +24,13 @@ export function HeroImagePanel({
 
   return (
     <div className="relative w-full">
-      <div className="relative rounded-2xl overflow-hidden shadow-lg h-[240px] md:h-[280px] lg:h-full lg:min-h-[480px]">
+      <div className="relative rounded-2xl overflow-hidden shadow-lg bg-muted aspect-[4/3]">
         <img
           src={src}
           alt={imageAlt}
           width={1280}
           height={960}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
           fetchPriority="high"
         />
         {/* Subtle gradient overlay */}
