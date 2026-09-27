@@ -225,8 +225,7 @@ serve(async (req) => {
       vendor_cost: payload.vendor_cost,
       margin: payload.margin,
       is_calsan_fulfillment: payload.is_calsan_fulfillment ?? true,
-      // Status: draft for draft_mode, otherwise existing behavior
-      status: isDraftMode ? 'draft' : (payload.status || 'pending'),
+      // Status is set by the server below (CAL 001A)
       // Smart recommendation fields
       recommended_size_yards: payload.recommended_size_yards,
       recommendation_reason: payload.recommendation_reason,
@@ -307,17 +306,40 @@ serve(async (req) => {
       if (quoteData[key] === undefined) delete quoteData[key];
     }
 
+    // CAL 001A: status is decided by the server only. Browser-supplied status is ignored.
+    quoteData.status = isDraftMode ? 'draft' : 'pending';
+
     // =====================================================
-    // UPSERT: Update existing or insert new
+    // UPDATE (requires signed draft token) or INSERT
+    // A failed update NEVER falls back to inserting a new quote.
     // =====================================================
     let quoteId: string;
 
     if (existingQuoteId) {
-      // Update existing draft quote
-      console.log('[save-quote] Updating existing quote:', existingQuoteId);
-      
-      // Don't overwrite status if upgrading from draft to final
-      if (!isDraftMode) {
+      const check = await verifyDraftToken(payload.draft_token, existingQuoteId);
+      if (!check.ok) {
+        console.warn('[save-quote] Update rejected:', check.code);
+        return jsonResponse({ success: false, error: 'Not authorized to update this quote', code: check.code }, check.status);
+      }
+
+      const { data: current, error: readError } = await supabase
+        .from('quotes')
+        .select('id, status, order_id, converted_at')
+        .eq('id', existingQuoteId)
+        .maybeSingle();
+
+      if (readError) {
+        console.error('[save-quote] Read before update failed:', readError.message);
+        return jsonResponse({ success: false, error: 'Quote not saved', code: 'db_error' }, 500);
+      }
+      if (!current) {
+        return jsonResponse({ success: false, error: 'Quote not found', code: 'not_found' }, 404);
+      }
+      if (current.order_id || current.converted_at || !EDITABLE_STATUSES.has(String(current.status || 'draft'))) {
+        return jsonResponse({ success: false, error: 'This quote can no longer be changed', code: 'quote_locked' }, 409);
+      }
+      // A submitted (pending) quote cannot be downgraded back to draft.
+      if (current.status === 'pending' && isDraftMode) {
         quoteData.status = 'pending';
       }
 
@@ -325,31 +347,21 @@ serve(async (req) => {
         .from('quotes')
         .update(quoteData)
         .eq('id', existingQuoteId)
+        .in('status', ['draft', 'pending'])
+        .is('order_id', null)
+        .is('converted_at', null)
         .select('id')
         .maybeSingle();
 
-      if (updateError || !updated) {
-        // Fallback: insert new if update fails (quote may have been deleted)
-        console.warn('[save-quote] Update failed, inserting new:', updateError?.message);
-        const { data: inserted, error: insertError } = await supabase
-          .from('quotes')
-          .insert(quoteData)
-          .select('id')
-          .single();
-
-        if (insertError) {
-          console.error('[save-quote] Insert fallback failed:', insertError);
-          return new Response(
-            JSON.stringify({ success: false, error: 'Failed to save quote' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        quoteId = inserted.id;
-      } else {
-        quoteId = updated.id;
+      if (updateError) {
+        console.error('[save-quote] Update failed:', updateError.message);
+        return jsonResponse({ success: false, error: 'Quote not saved', code: 'db_error' }, 500);
       }
+      if (!updated) {
+        return jsonResponse({ success: false, error: 'This quote can no longer be changed', code: 'quote_locked' }, 409);
+      }
+      quoteId = updated.id;
     } else {
-      // Insert new quote
       console.log('[save-quote] Inserting new quote...');
       const { data: quote, error: quoteError } = await supabase
         .from('quotes')
@@ -359,16 +371,12 @@ serve(async (req) => {
 
       if (quoteError) {
         console.error('[save-quote] Database insert error:', quoteError);
-        const userMessage = quoteError.message?.includes('uuid')
-          ? 'A data formatting issue occurred. Your quote info has been preserved.'
-          : 'We could not save your quote right now. Please try again or contact us.';
-        return new Response(
-          JSON.stringify({ success: false, error: userMessage, debug: quoteError.message }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return jsonResponse({ success: false, error: 'Quote not saved', code: 'db_error' }, 500);
       }
       quoteId = quote.id;
     }
+
+    const draftToken = await signDraftToken(quoteId);
 
     console.log('[save-quote] Quote saved successfully:', quoteId);
 
