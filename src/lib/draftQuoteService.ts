@@ -57,6 +57,12 @@ export function meetsQuoteThreshold(data: DraftQuoteData): boolean {
 // Session-level draft quote ID tracker (prevents duplicate creation per session)
 let currentDraftQuoteId: string | null = null;
 let currentDraftLeadId: string | null = null;
+// CAL 001A: signed, server-issued token authorizing updates to currentDraftQuoteId only
+let currentDraftToken: string | null = null;
+
+export function getDraftToken(): string | null {
+  return currentDraftToken;
+}
 
 export function getDraftQuoteId(): string | null {
   return currentDraftQuoteId;
@@ -74,6 +80,7 @@ export function setDraftIds(quoteId: string | null, leadId: string | null) {
 export function clearDraftIds() {
   currentDraftQuoteId = null;
   currentDraftLeadId = null;
+  currentDraftToken = null;
 }
 
 /**
@@ -97,7 +104,8 @@ export async function upsertDraftQuote(data: DraftQuoteData): Promise<{
 
     const payload: Record<string, unknown> = {
       draft_mode: true,
-      existing_quote_id: currentDraftQuoteId || null,
+      existing_quote_id: currentDraftQuoteId && currentDraftToken ? currentDraftQuoteId : null,
+      draft_token: currentDraftQuoteId && currentDraftToken ? currentDraftToken : null,
       user_type: data.customerType || 'homeowner',
       zip_code: data.zip,
       material_type: data.materialType,
@@ -157,13 +165,19 @@ export async function upsertDraftQuote(data: DraftQuoteData): Promise<{
 
     const result = await response.json();
 
-    if (!response.ok || !result.success) {
+    if (!response.ok || !result.success || !result.quote_id) {
       console.warn('[DraftQuote] Save failed:', result.error);
+      // Locked / unauthorized / missing drafts must not be retried as updates.
+      if (['quote_locked', 'not_found', 'expired_token', 'invalid_token', 'token_quote_mismatch', 'missing_token'].includes(result.code)) {
+        currentDraftQuoteId = null;
+        currentDraftToken = null;
+      }
       return { quoteId: currentDraftQuoteId, leadId: currentDraftLeadId, isNew: false, error: result.error };
     }
 
     const isNew = !currentDraftQuoteId;
-    currentDraftQuoteId = result.quote_id || currentDraftQuoteId;
+    currentDraftQuoteId = result.quote_id;
+    currentDraftToken = result.draft_token || null;
 
     // If lead was linked
     if (result.linked_lead_id) {

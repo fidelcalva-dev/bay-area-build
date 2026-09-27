@@ -9,7 +9,7 @@ import { getPriceByZip } from '@/lib/price-list-data';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuoteDraftAutosave, clearDraft } from './useQuoteDraftAutosave';
 import { useQuoteSessionTracker } from './hooks/useQuoteSessionTracker';
-import { upsertDraftQuote, logQuoteMilestone, getDraftQuoteId, clearDraftIds, meetsQuoteThreshold, type DraftQuoteData } from '@/lib/draftQuoteService';
+import { upsertDraftQuote, logQuoteMilestone, getDraftQuoteId, getDraftToken, clearDraftIds, meetsQuoteThreshold, type DraftQuoteData } from '@/lib/draftQuoteService';
 import { HOMEOWNER_PROJECTS, CONTRACTOR_PROJECTS, COMMERCIAL_PROJECTS } from './types';
 import {
   MapPin, ChevronRight, ChevronLeft, Phone, Loader2,
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { supabase } from '@/integrations/supabase/client';
 import { saveQuote } from '@/lib/vendorSelection';
@@ -712,9 +713,12 @@ export function V3QuoteFlow() {
         accessFlags: accessData?.flagsMap,
         placementType: accessData?.placementType,
         gateCode: accessData?.gateCode,
+        existingQuoteId: getDraftQuoteId(),
+        draftToken: getDraftToken(),
       });
 
       if (result.success) {
+        clearDraftIds();
         setSavedQuoteId(result.quoteId ?? null);
         draft.resetDraft();
         sessionTracker.logEvent('quote_submitted', { quote_id: result.quoteId, size, subtotal: quote.subtotal });
@@ -762,11 +766,21 @@ export function V3QuoteFlow() {
         setStep('placement');
       } else {
         console.error('[V3QuoteFlow] Save failed:', result.error);
-        toast({ title: 'Quote Saved Partially', description: "We saved most of your quote. Please continue or contact us if you need help." });
+        toast({
+          title: 'Quote not saved',
+          description: "Your details are still here. Please try again.",
+          variant: 'destructive',
+          action: <ToastAction altText="Retry" onClick={() => handleSaveQuote()}>Retry</ToastAction>,
+        });
       }
     } catch (err) {
       console.error('[V3QuoteFlow] Network error:', err);
-      toast({ title: 'Quote Saved Partially', description: "We saved most of your quote. Please continue or contact us if you need help." });
+      toast({
+          title: 'Quote not saved',
+          description: "Your details are still here. Please try again.",
+          variant: 'destructive',
+          action: <ToastAction altText="Retry" onClick={() => handleSaveQuote()}>Retry</ToastAction>,
+        });
     } finally {
       setIsSubmitting(false);
     }

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { useAutoDetectZip } from '@/hooks/useAutoDetectZip';
 import { useOfficeStatus } from '@/hooks/useOfficeStatus';
 import { supabase } from '@/integrations/supabase/client';
@@ -696,10 +697,11 @@ export function InstantQuoteCalculatorV3() {
 
       if (!result.success) {
         console.error('[SaveQuote] Step A FAILED - DB error:', result.error);
-        toast({
-          title: 'Quote Saved Partially',
-          description: 'We saved most of your quote. Please continue or contact us if you need help.',
-          variant: 'default',
+toast({
+          title: 'Quote not saved',
+          description: 'Your details are still here. Please try again.',
+          variant: 'destructive',
+          action: <ToastAction altText="Retry" onClick={() => handleSaveQuote()}>Retry</ToastAction>,
         });
         setIsSubmitting(false);
         setSmsStatus(null);
@@ -712,10 +714,12 @@ export function InstantQuoteCalculatorV3() {
 
     } catch (dbError: any) {
       console.error('[SaveQuote] Step A EXCEPTION:', dbError);
-      toast({
-        title: 'Quote Saved Partially',
-        description: 'We saved most of your quote. Please continue or contact us if you need help.',
-      });
+toast({
+          title: 'Quote not saved',
+          description: 'Your details are still here. Please try again.',
+          variant: 'destructive',
+          action: <ToastAction altText="Retry" onClick={() => handleSaveQuote()}>Retry</ToastAction>,
+        });
       setIsSubmitting(false);
       setSmsStatus(null);
       return; // Exit early

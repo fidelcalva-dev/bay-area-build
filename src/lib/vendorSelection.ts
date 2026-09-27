@@ -226,7 +226,10 @@ export async function saveQuote(params: {
   accessFlags?: Record<string, boolean>;
   placementType?: string;
   gateCode?: string;
-}): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string }> {
+  // CAL 001A: promote an existing draft instead of creating a new quote
+  existingQuoteId?: string | null;
+  draftToken?: string | null;
+}): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string; code?: string }> {
   try {
     // Use edge function to bypass RLS (server-side insert with service role)
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -311,6 +314,9 @@ export async function saveQuote(params: {
       gate_code: params.gateCode,
       // Source tracking
       source: 'website',
+      ...(params.existingQuoteId && params.draftToken
+        ? { existing_quote_id: params.existingQuoteId, draft_token: params.draftToken }
+        : {}),
     };
 
     console.log('[saveQuote] Calling edge function to save quote...');
@@ -326,9 +332,9 @@ export async function saveQuote(params: {
 
     const result = await response.json();
     
-    if (!response.ok || !result.success) {
+    if (!response.ok || !result.success || !result.quote_id) {
       console.error('[saveQuote] Edge function error:', result.error);
-      return { success: false, error: result.error || 'Failed to save quote' };
+      return { success: false, error: result.error || 'Failed to save quote', code: result.code };
     }
 
     console.log('[saveQuote] Quote saved successfully:', result.quote_id);
