@@ -399,7 +399,7 @@ serve(async (req) => {
       } catch { /* non-critical */ }
 
       return new Response(
-        JSON.stringify({ success: true, quote_id: quoteId }),
+        JSON.stringify({ success: true, quote_id: quoteId, draft_token: draftToken }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -513,6 +513,7 @@ serve(async (req) => {
     try {
       await supabase.from('quote_events').insert({
         quote_id: quoteId,
+        draft_token: draftToken,
         event_type: 'QUOTE_SAVED',
         event_data: {
           source: payload.source || 'website',
@@ -533,6 +534,7 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         quote_id: quoteId,
+        draft_token: draftToken,
         linked_lead_id: linkedLeadId,
         resume_link: resumeLink,
       }),
