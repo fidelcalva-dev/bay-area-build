@@ -4,7 +4,8 @@ import howItWorksVideo from '@/assets/how-it-works-home.mp4.asset.json';
 import { BUILD_INFO } from '@/lib/buildInfo';
 import { Layout } from '@/components/layout/Layout';
 import { PAGE_SEO, generateFAQSchema, generateBreadcrumbSchema, BUSINESS_INFO } from '@/lib/seo';
-import { getFAQsForSchema } from '@/lib/shared-data';
+import { getFAQsForSchema, DUMPSTER_SIZES_DATA } from '@/lib/shared-data';
+import { INCLUDED_TONS as PRICE_LIST_TONS } from '@/lib/price-list-data';
 import { GENERAL_DEBRIS_SIZES, HEAVY_MATERIAL } from '@/config/pricingConfig';
 import { LocalSEOSchema } from '@/components/seo/LocalSEOSchema';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,8 +17,6 @@ import {
   Search, Building2, Home, TreePine, Shovel, Newspaper,
 } from 'lucide-react';
 import { DumpsterIllustration } from '@/components/dumpster/DumpsterIllustration';
-import { DumpsterSizeComparison } from '@/components/dumpster/DumpsterSizeComparison';
-import { SizeCategoryBadge } from '@/components/sizes/SizeCategoryBadge';
 
 // Dumpster images
 import yd5Img from '@/assets/5yd-dumpster.webp';
@@ -207,6 +206,34 @@ const CONTRACTOR_BENEFITS = [
   'Support for recurring projects',
 ];
 
+/* ── CAL 007 — unified size comparison data ── */
+// Price source: META 2026 v2 price list (src/lib/price-list-data.ts), lowest group (GA).
+// NOTE: src/lib/shared-data.ts + src/config/pricingConfig.ts still list different
+// "approved public" prices (5yd $395 …). Discrepancy reported in docs/CAL_007.md — not resolved here.
+const LOWEST_FROM: Record<number, number> = {
+  5: 481, 8: 511, 10: 581, 20: 687, 30: 755, 40: 881, 50: 1051,
+};
+const SIZE_PAGE: Record<number, string> = {
+  5: '/5-yard-dumpster-rental', 8: '/8-yard-dumpster-rental', 10: '/10-yard-dumpster-rental',
+  20: '/20-yard-dumpster-rental', 30: '/30-yard-dumpster-rental', 40: '/40-yard-dumpster-rental',
+  50: '/sizes',
+};
+const POPULAR_SIZE = 20;
+
+/** Included weight is shown only when the price list and the size catalog agree. */
+function confirmedTons(size: number): number | null {
+  const listTons = PRICE_LIST_TONS[size];
+  const catalogTons = GENERAL_DEBRIS_SIZES.find((s) => s.size === size)?.includedTons;
+  if (listTons == null || catalogTons == null || listTons !== catalogTons) return null;
+  return listTons;
+}
+
+const HERO_BADGES = [
+  { icon: MapPin, label: 'Oakland & San Jose Yards' },
+  { icon: Shield, label: 'Licensed & Insured' },
+  { icon: Package, label: '5–50 Yard Sizes' },
+];
+
 const Index = () => {
   const homepageFAQs = getFAQsForSchema(4);
   const navigate = useNavigate();
@@ -220,17 +247,15 @@ const Index = () => {
     const params = new URLSearchParams({ v3: '1' });
     if (isValidZip) params.set('zip', heroInput.trim());
     else if (isAddress) params.set('address', heroInput.trim());
+    if (heroProject) params.set('project', heroProject);
     if (extra) Object.entries(extra).forEach(([k, v]) => params.set(k, v));
     return `/quote?${params.toString()}`;
-  }, [isValidZip, isAddress, heroInput]);
+  }, [isValidZip, isAddress, heroInput, heroProject]);
 
-  const handleHeroQuote = useCallback(() => {
-    const params = new URLSearchParams({ v3: '1' });
-    if (isValidZip) params.set('zip', heroInput.trim());
-    else if (isAddress) params.set('address', heroInput.trim());
-    if (heroProject) params.set('project', heroProject);
-    navigate(`/quote?${params.toString()}`);
-  }, [isValidZip, isAddress, heroInput, heroProject, navigate]);
+  const handleHeroQuote = useCallback((e?: React.FormEvent) => {
+    e?.preventDefault();
+    navigate(quoteUrl());
+  }, [quoteUrl, navigate]);
 
   return (
     <Layout
@@ -245,714 +270,344 @@ const Index = () => {
     >
       <LocalSEOSchema includeFAQ includeService />
 
-      {/* ========== SECTION 1 — HERO ========== */}
-      <section className="bg-background py-10 md:py-16 lg:py-20">
+      {/* ========== 1 — HERO + QUOTE FORM ========== */}
+      <section className="bg-background py-8 md:py-14 lg:py-16">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-8 lg:gap-12 items-center">
-            {/* Left — Content + Form */}
-            <div className="order-1 lg:order-1 space-y-6">
-              <div className="text-center lg:text-left space-y-4">
-                <p className="text-sm font-semibold text-primary tracking-wide uppercase">10+ Years Local Experience · Since 2015</p>
-                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
-                  Bay Area Dumpster Rental
-                  <span className="block text-primary mt-1">Transparent Pricing. No Hidden Fees.</span>
+            <div className="space-y-6 min-w-0">
+              <div className="text-center lg:text-left space-y-3">
+                <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-[1.1] tracking-tight">
+                  Dumpster Rental in Oakland &amp; the Bay Area
                 </h1>
-                <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0">
-                  See your all-in price upfront — delivery, pickup, and included weight shown before you book. No surprises, no bait-and-switch.
-                </p>
-                {/* Dynamic starting price from config */}
-                <p className="text-base text-foreground font-semibold">
-                  Starting at $481 · 7-day rental · Delivery included
+                <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
+                  Tell us your ZIP code and project type to request a dumpster quote.
                 </p>
               </div>
 
-              {/* Mini Quote Starter */}
-              <div className="max-w-md mx-auto lg:mx-0 space-y-3">
-                <div className="flex items-center bg-card rounded-2xl border border-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-all">
-                  <div className="flex items-center pl-4 pr-2">
-                    <MapPin className="w-5 h-5 text-muted-foreground" />
+              <form onSubmit={handleHeroQuote} className="max-w-md mx-auto lg:mx-0 space-y-4" aria-label="Request a dumpster quote">
+                <div className="space-y-1.5">
+                  <label htmlFor="hero-zip" className="block text-sm font-semibold text-foreground">ZIP code</label>
+                  <div className="flex items-center bg-card rounded-xl border border-border shadow-sm focus-within:ring-2 focus-within:ring-ring transition-shadow">
+                    <MapPin className="w-5 h-5 text-muted-foreground ml-4 shrink-0" aria-hidden="true" />
+                    <Input
+                      id="hero-zip"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="postal-code"
+                      value={heroInput}
+                      onChange={(e) => setHeroInput(e.target.value)}
+                      placeholder="e.g. 94607"
+                      className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70"
+                    />
                   </div>
-                  <Input
-                    type="text"
-                    value={heroInput}
-                    onChange={(e) => setHeroInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleHeroQuote(); }}
-                    placeholder="Service address or ZIP"
-                    className="flex-1 h-14 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
-                  />
                 </div>
-                <select
-                  value={heroProject}
-                  onChange={(e) => setHeroProject(e.target.value)}
-                  className="w-full h-12 rounded-2xl border border-border bg-card px-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 focus:outline-none appearance-none"
-                >
-                  <option value="">What are you working on?</option>
-                  <option value="home-cleanout">Home Cleanout</option>
-                  <option value="kitchen-remodel">Kitchen Remodel</option>
-                  <option value="roof-replacement">Roofing Debris</option>
-                  <option value="construction-debris">Construction Debris</option>
-                  <option value="garage-cleanout">Garage Cleanout</option>
-                  <option value="estate-cleanout">Estate Cleanout</option>
-                  <option value="yard-cleanup">Yard Cleanup</option>
-                  <option value="concrete-soil">Concrete / Soil Removal</option>
-                </select>
-                {/* Urgency badge */}
-                <div className="flex justify-center lg:justify-start">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full">
-                    Same-day delivery available in Oakland & San Jose
-                  </span>
-                </div>
-
-                {/* Trust proof lines */}
-                <div className="space-y-1 text-center lg:text-left">
-                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
-                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
-                    4.9★ from 89 verified Bay Area customers
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
-                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
-                    Same-day delivery available
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center lg:justify-start">
-                    <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />
-                    Included weight shown upfront — no hidden fees
-                  </p>
-                </div>
-
-                <Button
-                  size="lg"
-                  onClick={handleHeroQuote}
-                  className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-cta"
-                >
-                  See My Exact Price Now
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <p className="text-xs text-muted-foreground text-center lg:text-left">Instant price — no account needed · No spam · Cancel anytime before delivery</p>
-              </div>
-
-              {/* Supporting CTAs */}
-              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 max-w-[520px] mx-auto lg:mx-0">
-                <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6 text-sm flex-1">
-                  <Link to="/waste-vision">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Photos for Size Help
-                  </Link>
-                </Button>
-              </div>
-              {/* Prominent phone number */}
-              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 items-center">
-                <a
-                  href={`tel:${BUSINESS_INFO.phone.sales}`}
-                  className="inline-flex items-center gap-2 text-lg md:text-xl font-bold text-primary hover:text-primary/80 transition-colors min-h-[44px]"
-                >
-                  <Phone className="w-5 h-5" />
-                  {BUSINESS_INFO.phone.salesFormatted}
-                </a>
-                <span className="hidden sm:inline text-muted-foreground">·</span>
-                <a
-                  href={`sms:${BUSINESS_INFO.phone.sales}`}
-                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium min-h-[44px]"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Text Us
-                </a>
-              </div>
-              <p className="text-center lg:text-left text-sm text-muted-foreground">
-                Need cleanup too?{' '}
-                <Link to="/cleanup" className="text-primary font-medium hover:underline">
-                  The same trusted team now offers construction cleanup →
-                </Link>
-              </p>
-            </div>
-
-            {/* Right — Hero Image */}
-            <div className="order-2 lg:order-2">
-              <HeroImagePanel />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 2 — TRUST BADGES ========== */}
-      <section className="bg-muted/30 py-5 border-y border-border">
-        <div className="container-wide">
-          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2.5">
-            {TRUST_BADGES.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-                <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 3 — MAIN ACTION BLOCK ========== */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              How Can We Help You Today?
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl mx-auto">
-            {ACTION_OPTIONS.map((opt) => {
-              const Icon = opt.icon;
-              if (opt.href) {
-                return (
-                  <a
-                    key={opt.label}
-                    href={`tel:${BUSINESS_INFO.phone.sales}`}
-                    className="flex items-center gap-3 px-5 py-4 bg-card border border-border rounded-xl text-sm font-semibold text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
+                <div className="space-y-1.5">
+                  <label htmlFor="hero-project" className="block text-sm font-semibold text-foreground">Project type</label>
+                  <select
+                    id="hero-project"
+                    value={heroProject}
+                    onChange={(e) => setHeroProject(e.target.value)}
+                    className="w-full h-14 rounded-xl border border-border bg-card px-4 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
-                    </div>
-                    <span>{opt.label}</span>
-                  </a>
-                );
-              }
-              return (
-                <Link
-                  key={opt.label}
-                  to={opt.to === '/quote?v3=1' ? quoteUrl() : opt.to === '/quote?v3=1&schedule=1' ? quoteUrl({ schedule: '1' }) : opt.to!}
-                  className={`flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-semibold transition-all ${
-                    opt.primary
-                      ? 'bg-primary text-primary-foreground shadow-cta hover:bg-primary/90'
-                      : 'bg-card border border-border text-foreground hover:border-primary/40 hover:bg-muted/30'
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    opt.primary ? 'bg-primary-foreground/20' : 'bg-primary/10'
-                  }`}>
-                    <Icon className={`w-4 h-4 ${opt.primary ? 'text-primary-foreground' : 'text-primary'}`} strokeWidth={1.8} />
-                  </div>
-                  <span>{opt.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== CLEANUP ANNOUNCEMENT STRIP ========== */}
-      <div className="bg-accent/10 border-b border-accent/20">
-        <div className="container-wide py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded mr-2">NEW</span>
-              Construction Cleanup Division Now Available
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Calsan C&amp;D Waste Removal now supports active jobsites, final cleanups, demolition debris, and recurring contractor cleanup.
-            </p>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            <Link to="/cleanup" className="text-xs font-semibold text-primary hover:underline">Learn More →</Link>
-            <Link to="/cleanup/quote" className="text-xs font-semibold text-accent hover:underline">Get Cleanup Quote →</Link>
-          </div>
-        </div>
-      </div>
-
-      {/* ========== PHOTO CAROUSEL ========== */}
-      <PhotoCarousel />
-
-      {/* ========== SECTION 4 — WHAT'S INCLUDED ========== */}
-      <section className="py-10 md:py-14 bg-muted/30">
-        <div className="container-wide">
-          <div className="max-w-2xl mx-auto bg-card rounded-2xl border border-border p-6 md:p-8">
-            <h2 className="font-bold text-foreground text-lg md:text-xl mb-4 text-center">
-              What's Included
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {WHATS_INCLUDED.map((item) => (
-                <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                  <span>{item}</span>
+                    <option value="">Select a project type</option>
+                    {PROJECT_TYPES.map((p) => (
+                      <option key={p.slug} value={p.slug}>{p.label}</option>
+                    ))}
+                  </select>
                 </div>
-              ))}
+
+                <Button type="submit" size="lg" className="w-full h-14 rounded-xl text-base font-bold shadow-cta">
+                  Get a Quote
+                  <ArrowRight className="w-5 h-5 ml-2" aria-hidden="true" />
+                </Button>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button asChild variant="outline" size="lg" className="h-12 rounded-xl font-semibold">
+                    <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
+                      <Phone className="w-4 h-4 mr-2" aria-hidden="true" />
+                      Call
+                    </a>
+                  </Button>
+                  <Button asChild variant="outline" size="lg" className="h-12 rounded-xl font-semibold">
+                    <a href={`sms:${BUSINESS_INFO.phone.sales}`}>
+                      <MessageSquare className="w-4 h-4 mr-2" aria-hidden="true" />
+                      Text
+                    </a>
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground text-center lg:text-left">
+                  Call / Text {BUSINESS_INFO.phone.salesFormatted} · English &amp; Español
+                </p>
+              </form>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ========== SECTION 5 — PRICE ANCHOR (All sizes + heavy) ========== */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Popular Dumpster Sizes &amp; Starting Prices
-            </h2>
-          </div>
-
-          {/* Size grid — 1 col mobile, 2 col desktop */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6">
-            {(() => {
-              // Lowest "From $" per size, sourced from META 2026 v2 price list (GA group — closest service area)
-              const LOWEST_FROM: Record<number, number> = {
-                5: 481, 8: 511, 10: 581, 15: 629, 20: 687, 25: 744, 30: 755, 40: 881, 50: 1051,
-              };
-              return GENERAL_DEBRIS_SIZES.filter(s => s.size !== 50).map((s) => {
-              const isMostPopular = s.size === 20;
-              return (
-                <Link
-                  key={s.size}
-                  to={quoteUrl({ size: String(s.size) })}
-                  className={`relative bg-card rounded-2xl border p-4 md:p-8 text-center hover:shadow-xl transition-all group flex flex-col items-center ${
-                    isMostPopular
-                      ? 'border-primary/60 ring-2 ring-primary/30 shadow-lg'
-                      : 'border-border hover:border-primary/30'
-                  }`}
-                >
-                  {isMostPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground shadow-md whitespace-nowrap">
-                        ★ Most Popular
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute top-3 right-3">
-                    <SizeCategoryBadge yards={s.size} />
-                  </div>
-                  <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                    <DumpsterIllustration yards={s.size} width={400} className="w-full h-auto max-w-[400px] rounded-2xl" />
-                  </div>
-                  <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
-                    {s.size}<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
-                  </div>
-                  <div className="text-lg font-semibold text-primary mt-3">From ${(LOWEST_FROM[s.size] ?? s.price).toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground mt-1">{s.includedTons} ton{s.includedTons !== 1 ? 's' : ''} included</div>
-                </Link>
-              );
-              });
-            })()}
-          </div>
-
-          {/* Second row: 50 yd centered — same card size as the grid above */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6">
-            <Link
-              to={quoteUrl({ size: '50' })}
-              className="relative bg-card rounded-2xl border border-border p-4 md:p-8 text-center hover:border-primary/30 hover:shadow-xl transition-all group flex flex-col items-center md:col-start-1 md:col-span-2 md:max-w-[calc(50%-12px)] md:mx-auto w-full"
-            >
-              <div className="absolute top-3 right-3">
-                <SizeCategoryBadge yards={50} />
-              </div>
-              <div className="w-full flex justify-center mb-5 mt-4 relative px-2">
-                <DumpsterIllustration yards={50} width={400} className="w-full h-auto max-w-[400px] rounded-2xl" />
-              </div>
-              <div className="text-4xl md:text-5xl font-bold text-foreground mb-1">
-                50<span className="text-lg font-medium text-muted-foreground ml-1">yd</span>
-              </div>
-              <div className="text-lg font-semibold text-primary mt-3">From $1,051</div>
-              <div className="text-sm text-muted-foreground mt-1">{GENERAL_DEBRIS_SIZES.find(s => s.size === 50)?.includedTons} tons included</div>
-            </Link>
-          </div>
-
-          {/* Heavy material note */}
-          <div className="max-w-2xl mx-auto bg-muted/40 rounded-xl border border-border p-4">
-            <h3 className="text-sm font-semibold text-foreground mb-2">Heavy Material Pricing (Soil / Concrete)</h3>
-            <div className="flex flex-wrap gap-4">
-              {[
-                { size: 8, price: 571 },
-                { size: 10, price: 608 },
-              ].map(({ size, price }) => (
-                <div key={size} className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{size} yd Clean</span> — From ${price}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-muted-foreground mt-5">
-            Final pricing depends on material, location, and included weight.{' '}
-            <Link to="/sizes" className="underline hover:text-primary">View all sizes</Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ========== SECTION 6 — HOW IT WORKS ========== */}
-      <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              How It Works
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-4xl mx-auto">
-            {HOW_IT_WORKS_STEPS.map((step) => (
-              <div key={step.number} className="text-center">
-                <div className="relative mx-auto mb-3 w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                  <step.icon className="w-6 h-6 text-primary" strokeWidth={1.75} />
-                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-primary text-primary-foreground rounded-full text-xs font-bold flex items-center justify-center">
-                    {step.number}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-foreground text-sm mb-1">{step.title}</h3>
-                <p className="text-xs text-muted-foreground">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Video explainer */}
-          <div className="max-w-3xl mx-auto mt-10">
-            <div className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
-              <video
-                className="w-full aspect-video"
-                controls
-                playsInline
-                preload="none"
-                src={howItWorksVideo.url}
+            <div className="min-w-0">
+              <HeroImagePanel
+                imageAlt="Calsan roll-off truck delivering a dumpster in the Bay Area"
+                badges={HERO_BADGES}
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 7 — AI ASSISTANT (compact) ========== */}
-      <section className="py-10 md:py-14 bg-background">
+      {/* ========== 2 — BRIEF CONFIRMED BENEFITS ========== */}
+      <section className="bg-muted/30 py-5 border-y border-border" aria-label="Why Calsan">
         <div className="container-wide">
-          <div className="text-center mb-5">
-            <h2 className="text-xl md:text-2xl font-bold text-foreground">
-              Not Sure What Size You Need?
-            </h2>
-            <p className="text-muted-foreground mt-1.5 text-sm max-w-md mx-auto">
-              Ask our dumpster assistant for a quick recommendation, then get exact pricing by ZIP.
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-3">
+            {TRUST_BADGES.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-1.5 text-sm text-foreground/80 font-medium">
+                <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} aria-hidden="true" />
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ========== 3 — SIZE COMPARISON (single section) ========== */}
+      <section className="py-12 md:py-16 bg-background" id="sizes">
+        <div className="container-wide">
+          <div className="text-center mb-8 max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Compare Dumpster Sizes</h2>
+            <p className="text-muted-foreground mt-2">
+              Sizes are in cubic yards (volume). Included weight is listed separately in tons. Delivery, pickup and a standard 7-day rental are included.
             </p>
           </div>
-          <Suspense fallback={<SectionLoader />}>
-            <HomepageAIAssistant />
-          </Suspense>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+            {GENERAL_DEBRIS_SIZES.map((s) => {
+              const isPopular = s.size === POPULAR_SIZE;
+              const tons = confirmedTons(s.size);
+              const price = LOWEST_FROM[s.size];
+              const useCases = DUMPSTER_SIZES_DATA.find((d) => d.yards === s.size)?.useCases.slice(0, 3) ?? [];
+              return (
+                <article
+                  key={s.size}
+                  className={`relative bg-card rounded-2xl border p-5 flex flex-col ${
+                    isPopular ? 'border-primary ring-1 ring-primary/40' : 'border-border'
+                  }`}
+                >
+                  {isPopular && (
+                    <span className="absolute -top-3 left-5 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+                      Most Popular
+                    </span>
+                  )}
+                  <Link to={SIZE_PAGE[s.size]} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`${s.size} yard dumpster details`}>
+                    <DumpsterIllustration yards={s.size} width={320} className="w-full h-auto rounded-xl" />
+                  </Link>
+                  <h3 className="mt-4 text-2xl font-bold text-foreground">
+                    {s.size} <span className="text-base font-medium text-muted-foreground">cubic yards</span>
+                  </h3>
+                  {useCases.length > 0 && (
+                    <p className="mt-1 text-sm text-muted-foreground">Good for: {useCases.join(', ')}</p>
+                  )}
+                  <dl className="mt-3 space-y-1 text-sm">
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-muted-foreground">Included weight</dt>
+                      <dd className="font-medium text-foreground text-right">
+                        {tons != null ? `${tons} ton${tons !== 1 ? 's' : ''}` : 'Confirmed in quote'}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-muted-foreground">Price</dt>
+                      <dd className="font-semibold text-primary text-right">
+                        {price ? `From $${price.toLocaleString()}` : 'Request a quote'}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="mt-auto pt-4 space-y-2">
+                    <Button asChild className="w-full h-11 rounded-xl font-semibold">
+                      <Link to={quoteUrl({ size: String(s.size) })}>Select size</Link>
+                    </Button>
+                    <Link to={SIZE_PAGE[s.size]} className="block text-center text-sm font-medium text-primary hover:underline py-1">
+                      {s.size} yard details
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="max-w-3xl mx-auto mt-6 bg-muted/40 rounded-xl border border-border p-4 text-sm">
+            <p className="font-semibold text-foreground mb-1">Heavy material (clean concrete or soil)</p>
+            <p className="text-muted-foreground">8 yd from $571 · 10 yd from $608. Heavy loads have size limits.</p>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            "From" prices are for the closest service area. Your final price depends on ZIP, material and weight.{' '}
+            <Link to="/sizes" className="underline hover:text-primary">All sizes &amp; pricing</Link>
+            {' · '}
+            <Link to="/waste-vision" className="underline hover:text-primary">Upload photos for size help</Link>
+          </p>
+
+          {/* Common projects (links kept for navigation / SEO) */}
+          <div className="max-w-4xl mx-auto mt-8">
+            <h3 className="text-center text-base font-semibold text-foreground mb-3">Common projects</h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              {PROJECT_TYPES.map(({ label, slug }) => (
+                <Link
+                  key={slug}
+                  to={`/projects/${slug}`}
+                  className="px-4 py-2 min-h-[44px] inline-flex items-center bg-card border border-border rounded-full text-sm font-medium text-foreground hover:border-primary/40"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="max-w-3xl mx-auto mt-10">
+            <h3 className="text-center text-lg font-semibold text-foreground mb-3">Not sure what size you need?</h3>
+            <Suspense fallback={<SectionLoader />}>
+              <HomepageAIAssistant />
+            </Suspense>
+          </div>
         </div>
       </section>
 
-      {/* ========== SECTION 8 — COMMON PROJECTS ========== */}
+      {/* ========== 4 — HOW IT WORKS ========== */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Common Project Types
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-w-3xl mx-auto">
-            {PROJECT_TYPES.map(({ label, slug, icon: Icon }) => (
-              <Link
-                key={slug}
-                to={`/projects/${slug}`}
-                className="flex items-center gap-3 px-4 py-4 bg-card border border-border rounded-xl text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted/30 transition-all"
-              >
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.8} />
+          <h2 className="text-center text-2xl md:text-3xl font-bold text-foreground mb-8">How It Works</h2>
+          <ol className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-4xl mx-auto">
+            {HOW_IT_WORKS_STEPS.map((step) => (
+              <li key={step.number} className="text-center">
+                <div className="relative mx-auto mb-3 w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <step.icon className="w-6 h-6 text-primary" strokeWidth={1.75} aria-hidden="true" />
+                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-primary text-primary-foreground rounded-full text-xs font-bold flex items-center justify-center">
+                    {step.number}
+                  </span>
                 </div>
-                <span>{label}</span>
-              </Link>
+                <h3 className="font-semibold text-foreground text-sm mb-1">{step.title}</h3>
+                <p className="text-sm text-muted-foreground">{step.desc}</p>
+              </li>
             ))}
+          </ol>
+          <div className="max-w-3xl mx-auto mt-10">
+            <div className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+              <video className="w-full aspect-video" controls playsInline preload="none" src={howItWorksVideo.url} />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 8.5 — VISUAL SIZE COMPARISON ========== */}
-      <DumpsterSizeComparison />
+      {/* ========== 5 — JOB PHOTOS + VERIFIED REVIEWS ========== */}
+      <PhotoCarousel />
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewsSection />
+      </Suspense>
 
-      {/* ========== SECTION 9 — WHY CALSAN ========== */}
-      <section className="py-12 md:py-16 bg-background">
+      {/* ========== 6 — COVERAGE ========== */}
+      <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-wide">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-6">
-              Why Customers Choose Calsan
-            </h2>
-            <div className="space-y-3">
-              {WHY_CALSAN.map((item) => (
-                <div key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </div>
+          <div className="max-w-3xl mx-auto bg-card rounded-2xl border border-border p-6 md:p-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Local Bay Area Coverage</h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              We operate from yards in Oakland and San Jose and support projects across the Bay Area, including{' '}
+              {SERVICE_AREAS_CITIES.join(', ')}. Selected other California markets are coordinated through our service network.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                ['Oakland', '/dumpster-rental-oakland-ca'],
+                ['San Jose', '/dumpster-rental-san-jose-ca'],
+                ['San Francisco', '/dumpster-rental-san-francisco-ca'],
+                ['Bay Area', '/areas'],
+                ['California', '/areas/california'],
+              ].map(([label, to]) => (
+                <Link key={to} to={to} className="px-4 py-2 min-h-[44px] inline-flex items-center bg-muted/50 border border-border rounded-full text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary">
+                  {label}
+                </Link>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 10 — LOCAL COVERAGE ========== */}
-      <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-6">
-              Local Bay Area Coverage
-            </h2>
-
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 mb-4">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Building2 className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    We operate directly from Oakland and San Jose and support projects across the Bay Area, including{' '}
-                    {SERVICE_AREAS_CITIES.join(', ')}.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <Globe className="w-5 h-5 text-accent" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                    Need service outside the Bay Area? We also coordinate dumpster rental in selected California markets through our service network.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Link to="/dumpster-rental-oakland-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">Oakland</Link>
-                    <Link to="/dumpster-rental-san-jose-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Jose</Link>
-                    <Link to="/dumpster-rental-san-francisco-ca" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">San Francisco</Link>
-                    <Link to="/areas" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">Bay Area</Link>
-                    <Link to="/areas/california" className="px-3 py-1.5 bg-muted/50 border border-border rounded-full text-xs font-medium text-foreground hover:border-primary/30 hover:text-primary transition-colors">California</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 11 — CONTRACTOR BLOCK ========== */}
+      {/* ========== SECONDARY — CONTRACTORS & CONSTRUCTION CLEANUP ========== */}
       <section className="py-12 md:py-16 bg-background">
         <div className="container-wide">
-          <div className="max-w-2xl mx-auto bg-card rounded-2xl border border-border p-6 md:p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <HardHat className="w-5 h-5 text-primary" />
+          <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <HardHat className="w-5 h-5 text-primary" aria-hidden="true" />
+                <h2 className="font-bold text-foreground text-lg">For Contractors</h2>
               </div>
-              <div className="flex-1">
-                <h2 className="font-bold text-foreground text-lg md:text-xl mb-3">Built for Contractors</h2>
-                <div className="space-y-2 mb-4">
-                  {CONTRACTOR_BENEFITS.map((b) => (
-                    <div key={b} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                      <span>{b}</span>
-                    </div>
-                  ))}
-                </div>
-                <Button asChild size="lg" className="rounded-full font-semibold px-6">
-                  <Link to="/contractor-application">
-                    Apply for Contractor Account
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
+              <ul className="space-y-1.5 mb-4">
+                {CONTRACTOR_BENEFITS.map((b) => (
+                  <li key={b} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />{b}
+                  </li>
+                ))}
+              </ul>
+              <Button asChild variant="outline" className="rounded-xl font-semibold">
+                <Link to="/contractor-application">Apply for Contractor Account</Link>
+              </Button>
+            </div>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <div className="flex items-center gap-3 mb-1">
+                <Building2 className="w-5 h-5 text-accent" aria-hidden="true" />
+                <h2 className="font-bold text-foreground text-lg">Construction Cleanup</h2>
               </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Calsan C&amp;D Waste Removal handles cleanup labor when you need a crew, not just a container.
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mb-4 text-sm">
+                {[
+                  ['Construction Cleanup', '/cleanup/construction-cleanup'],
+                  ['Post-Construction', '/cleanup/post-construction-cleanup'],
+                  ['Demolition Debris', '/cleanup/demolition-debris-cleanup'],
+                  ['Recurring Cleanup', '/cleanup/recurring-jobsite-cleanup'],
+                  ['For Contractors', '/cleanup/for-contractors'],
+                  ['Cleanup Overview', '/cleanup'],
+                ].map(([label, to]) => (
+                  <li key={to}>
+                    <Link to={to} className="inline-flex min-h-[36px] items-center text-primary hover:underline">{label}</Link>
+                  </li>
+                ))}
+              </ul>
+              <Button asChild variant="outline" className="rounded-xl font-semibold">
+                <Link to="/cleanup/quote">Request Cleanup Quote</Link>
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 12 — REVIEWS ========== */}
-      <Suspense fallback={<SectionLoader />}>
-        <ReviewsSection />
-      </Suspense>
-
-      {/* ========== SECTION 12.5 — BAY AREA VIDEO ========== */}
-      <section className="py-10 md:py-14 bg-background">
-        <div className="container-wide max-w-4xl mx-auto px-[38px]">
-          <div className="rounded-3xl overflow-hidden shadow-lg border border-border">
-            <video
-              src="/videos/sf-bay-area.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="w-full h-auto block"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 13 — FAQ ========== */}
+      {/* ========== 7 — FAQ ========== */}
       <Suspense fallback={<SectionLoader />}>
         <FAQSection limit={6} />
       </Suspense>
 
-      {/* ========== NEWS & UPDATES ========== */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container-wide">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
-              <Newspaper className="w-3.5 h-3.5" />
-              News &amp; Updates
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-              Guides, tips and Bay Area updates
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground mt-3 max-w-xl mx-auto">
-              Read our latest articles on dumpster sizes, permits, pricing and local projects across the Bay Area.
-            </p>
-            <div className="mt-6">
-              <Button asChild size="lg" className="rounded-xl">
-                <Link to="/blog">
-                  Visit the Calsan Blog
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+      <section className="py-8 bg-background">
+        <div className="container-wide text-center">
+          <Link to="/blog" className="inline-flex items-center gap-2 min-h-[44px] text-primary font-semibold hover:underline">
+            <Newspaper className="w-4 h-4" aria-hidden="true" />
+            News &amp; Updates — guides and Bay Area tips on the Calsan Blog
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
         </div>
       </section>
 
-      {/* ========== SPLIT SERVICE SELECTOR ========== */}
-      <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Two Service Lines, One Trusted Team</h2>
-            <p className="text-muted-foreground mt-2 max-w-xl mx-auto text-sm">
-              The same team you know as Calsan Dumpsters Pro, now with a dedicated construction cleanup division.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {/* Dumpster Rentals */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 text-center">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Truck className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Dumpster Rentals</h3>
-              <p className="text-sm text-muted-foreground mb-5">
-                Roll-off dumpsters, debris containers, and self-loaded projects across the Bay Area.
-              </p>
-              <Button asChild size="lg" className="w-full rounded-xl">
-                <Link to={quoteUrl()}>Rent a Dumpster</Link>
-              </Button>
-            </div>
-            {/* Cleanup */}
-            <div className="bg-card rounded-2xl border-2 border-accent p-6 md:p-8 text-center relative">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-full">NEW</span>
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
-                <HardHat className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Construction Cleanup</h3>
-              <p className="text-sm text-muted-foreground mb-5">
-                Active jobsite cleanup, final cleanup, demolition debris, and recurring contractor support.
-              </p>
-              <Button asChild size="lg" variant="cta" className="w-full rounded-xl">
-                <Link to="/cleanup/quote">Request Cleanup Service</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== WHICH SERVICE DO I NEED? ========== */}
-      <section className="py-10 md:py-14 bg-background">
-        <div className="container-wide max-w-3xl mx-auto">
-          <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-6">Which Service Do I Need?</h2>
-          <div className="space-y-4">
-            <div className="bg-card rounded-xl border border-border p-5">
-              <h3 className="font-semibold text-foreground mb-1">Choose a Dumpster Rental when…</h3>
-              <p className="text-sm text-muted-foreground">You need a container placed on-site, your crew loads it, and we pick it up when you're done.</p>
-            </div>
-            <div className="bg-card rounded-xl border border-border p-5">
-              <h3 className="font-semibold text-foreground mb-1">Choose Cleanup Service when…</h3>
-              <p className="text-sm text-muted-foreground">You need our crew to handle the cleanup labor — debris collection, site reset, final cleaning, or recurring support.</p>
-            </div>
-            <div className="bg-card rounded-xl border border-border p-5">
-              <h3 className="font-semibold text-foreground mb-1">Need both?</h3>
-              <p className="text-sm text-muted-foreground">Many projects use dumpster rental plus cleanup support. We can coordinate both service lines for your project.</p>
-            </div>
-          </div>
-          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-            <Button asChild size="lg" className="rounded-full font-semibold px-8">
-              <Link to={quoteUrl()}>Start With Dumpster Quote</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full font-semibold px-8">
-              <Link to="/cleanup/quote">Start With Cleanup Quote</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== CLEANUP TEASER ========== */}
-      <section className="py-12 md:py-16 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Construction Cleanup &amp; Debris Removal for Contractors and Owners
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto mb-8">
-            {[
-              { name: 'Construction Cleanup', desc: 'Active jobsite cleanup and site reset between trades.', href: '/cleanup/construction-cleanup' },
-              { name: 'Final / Post-Construction', desc: 'Turnover-ready cleanup for walkthroughs and handoff.', href: '/cleanup/post-construction-cleanup' },
-              { name: 'Demolition Debris', desc: 'Debris staging, loading, and disposal coordination.', href: '/cleanup/demolition-debris-cleanup' },
-              { name: 'Recurring Cleanup', desc: 'Scheduled support for contractors with active projects.', href: '/cleanup/recurring-jobsite-cleanup' },
-            ].map((svc) => (
-              <Link
-                key={svc.name}
-                to={svc.href}
-                className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-accent/30 transition-all group"
-              >
-                <h3 className="font-bold text-foreground text-sm mb-2">{svc.name}</h3>
-                <p className="text-xs text-muted-foreground mb-3">{svc.desc}</p>
-                <span className="text-xs font-medium text-accent group-hover:underline">Learn More →</span>
-              </Link>
-            ))}
-          </div>
-          <div className="text-center flex flex-col sm:flex-row justify-center gap-3">
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-6">
-              <Link to="/cleanup/for-contractors">For Contractors</Link>
-            </Button>
-            <Button asChild variant="cta" size="lg" className="rounded-full font-semibold px-6">
-              <Link to="/cleanup/quote">Request Cleanup Quote</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 14 — FINAL CTA ========== */}
+      {/* ========== 8 — FINAL CONTACT ========== */}
       <section className="py-14 md:py-20 gradient-hero">
         <div className="container-narrow text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            Ready to Get Started?
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-4">
-            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full font-semibold px-8 shadow-cta text-base">
-              <Link to={quoteUrl()}>
-                Get Dumpster Quote
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
-              <Link to="/cleanup/quote">
-                Request Cleanup Quote
-              </Link>
-            </Button>
-          </div>
-          <div className="flex justify-center gap-4">
-            <Button asChild variant="outline" size="lg" className="rounded-full font-semibold px-8 border-primary-foreground/30 text-accent hover:bg-primary-foreground/10 hover:text-accent text-base">
-              <a href={`tel:${BUSINESS_INFO.phone.sales}`}>
-                <Phone className="w-4 h-4 mr-2" />
-                Call / Text Us
-              </a>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 15 — CONTACT US CTA ========== */}
-      <section className="py-10 md:py-14 bg-muted">
-        <div className="container-narrow text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Have Questions?</h2>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Reach out to our team — we're here to help you pick the right dumpster and get it delivered fast.
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Ready for a Quote?</h2>
+          <p className="text-primary-foreground/85 mb-6 max-w-xl mx-auto">
+            Request a quote online, or call / text our Bay Area team at {BUSINESS_INFO.phone.salesFormatted}.
           </p>
-          <Button asChild size="lg" className="rounded-full font-semibold px-10 text-base shadow-cta">
-            <Link to="/contact-us">
-              Contact Us
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-xl mx-auto">
+            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-xl font-semibold px-8 shadow-cta">
+              <Link to={quoteUrl()}>Get a Quote<ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" /></Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-xl font-semibold px-8 bg-background text-foreground hover:bg-background/90">
+              <a href={`tel:${BUSINESS_INFO.phone.sales}`}><Phone className="w-4 h-4 mr-2" aria-hidden="true" />Call / Text</a>
+            </Button>
+          </div>
+          <p className="mt-5 text-sm">
+            <Link to="/contact-us" className="text-primary-foreground underline underline-offset-4">Contact us</Link>
+          </p>
         </div>
       </section>
 
-      {/* Build fingerprint — invisible metadata only (visible overlay removed) */}
       <div
         data-build-source="src/pages/Index.tsx"
         data-build-time={BUILD_INFO.timestamp}
