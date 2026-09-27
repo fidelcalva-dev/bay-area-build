@@ -53,6 +53,61 @@ function sanitizeUuid(v: unknown): string | null {
   return typeof v === 'string' && UUID_RE.test(v) ? v : null;
 }
 
+// =====================================================
+// CAL 001A — Signed draft tokens (HMAC-SHA256, quote-scoped, expiring)
+// Format: <quoteId>.<expiresEpochSec>.<base64url(sig)>
+// =====================================================
+const DRAFT_TOKEN_TTL_SEC = 72 * 60 * 60;
+const EDITABLE_STATUSES = new Set(['draft', 'pending']);
+
+function b64url(bytes: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(bytes)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function hmac(message: string): Promise<string> {
+  const secret = Deno.env.get('QUOTE_DRAFT_SIGNING_SECRET');
+  if (!secret) throw new Error('signing secret missing');
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
+  );
+  return b64url(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message)));
+}
+
+async function signDraftToken(quoteId: string): Promise<string> {
+  const exp = Math.floor(Date.now() / 1000) + DRAFT_TOKEN_TTL_SEC;
+  return `${quoteId}.${exp}.${await hmac(`${quoteId}.${exp}`)}`;
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+
+type TokenCheck = { ok: true } | { ok: false; status: number; code: string };
+async function verifyDraftToken(token: unknown, quoteId: string): Promise<TokenCheck> {
+  if (typeof token !== 'string' || !token) return { ok: false, status: 401, code: 'missing_token' };
+  const parts = token.split('.');
+  if (parts.length !== 3) return { ok: false, status: 401, code: 'invalid_token' };
+  const [tid, expStr, sig] = parts;
+  const expected = await hmac(`${tid}.${expStr}`);
+  if (!safeEqual(sig, expected)) return { ok: false, status: 401, code: 'invalid_token' };
+  if (tid !== quoteId) return { ok: false, status: 403, code: 'token_quote_mismatch' };
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || exp < Math.floor(Date.now() / 1000)) {
+    return { ok: false, status: 401, code: 'expired_token' };
+  }
+  return { ok: true };
+}
+
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -62,6 +117,9 @@ serve(async (req) => {
     const payload = await req.json();
     const isDraftMode = payload.draft_mode === true;
     const existingQuoteId = sanitizeUuid(payload.existing_quote_id);
+    if (payload.existing_quote_id && !existingQuoteId) {
+      return jsonResponse({ success: false, error: 'Invalid quote reference', code: 'invalid_quote_id' }, 400);
+    }
 
     console.log(`[save-quote] Received payload (draft_mode=${isDraftMode}, existing=${existingQuoteId || 'none'})`);
 
