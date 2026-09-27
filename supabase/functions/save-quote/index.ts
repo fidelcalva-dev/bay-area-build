@@ -513,7 +513,6 @@ serve(async (req) => {
     try {
       await supabase.from('quote_events').insert({
         quote_id: quoteId,
-        draft_token: draftToken,
         event_type: 'QUOTE_SAVED',
         event_data: {
           source: payload.source || 'website',
