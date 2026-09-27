@@ -9,6 +9,7 @@ const Sizes = lazy(lazyRetry(() => import("@/pages/Sizes")));
 const DumpsterVisualizer = lazy(lazyRetry(() => import("@/pages/DumpsterVisualizer")));
 const Areas = lazy(lazyRetry(() => import("@/pages/Areas")));
 const Materials = lazy(lazyRetry(() => import("@/pages/Materials")));
+const ConstructionMaterials = lazy(lazyRetry(() => import("@/pages/ConstructionMaterials")));
 const CapacityGuide = lazy(lazyRetry(() => import("@/pages/CapacityGuide")));
 const Contractors = lazy(lazyRetry(() => import("@/pages/Contractors")));
 const ContractorApplication = lazy(lazyRetry(() => import("@/pages/ContractorApplication")));
@@ -60,6 +61,7 @@ export function getPublicRoutes() {
     <Route key="visualizer" path="/visualizer" element={<SuspenseRoute><DumpsterVisualizer /></SuspenseRoute>} />,
     <Route key="areas" path="/areas" element={<SuspenseRoute><Areas /></SuspenseRoute>} />,
     <Route key="materials" path="/materials" element={<SuspenseRoute><Materials /></SuspenseRoute>} />,
+    <Route key="construction-materials" path="/construction-materials" element={<SuspenseRoute><ConstructionMaterials /></SuspenseRoute>} />,
     <Route key="capacity-guide" path="/capacity-guide" element={<SuspenseRoute><CapacityGuide /></SuspenseRoute>} />,
     <Route key="contractors" path="/contractors" element={<SuspenseRoute><Contractors /></SuspenseRoute>} />,
     <Route key="contractor-application" path="/contractor-application" element={<SuspenseRoute><ContractorApplication /></SuspenseRoute>} />,
