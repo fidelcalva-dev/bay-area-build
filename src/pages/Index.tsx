@@ -167,13 +167,13 @@ function DumpsterGallery({ images, alt }: { images: string[]; alt: string }) {
       />
       {/* Left arrow */}
       {idx > 0 && (
-        <button onClick={goPrev} className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
+        <button type="button" aria-label="Previous image" onClick={goPrev} className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
           <ArrowLeft className="w-4 h-4" />
         </button>
       )}
       {/* Right arrow */}
       {idx < images.length - 1 && (
-        <button onClick={goNext} className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
+        <button type="button" aria-label="Next image" onClick={goNext} className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md opacity-80 hover:opacity-100 transition-opacity">
           <ArrowRight className="w-4 h-4" />
         </button>
       )}
