@@ -406,43 +406,37 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/5-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/5-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/8-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/8-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/10-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/10-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/20-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/20-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/30-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/30-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://calsandumpsterspro.com/40-yard-dumpster</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://calsandumpsterspro.com/50-yard-dumpster</loc>
+    <loc>https://calsandumpsterspro.com/40-yard-dumpster-rental</loc>
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -3272,5 +3266,10 @@
     <lastmod>2026-04-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://calsandumpsterspro.com/construction-materials</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

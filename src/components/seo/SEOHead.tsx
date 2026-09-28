@@ -12,8 +12,9 @@ interface SEOHeadProps {
   ogImage?: string;
 }
 
-const DEFAULT_TITLE = `${BUSINESS_INFO.name} | Dumpster Rental Oakland, San Jose & SF`;
+const DEFAULT_TITLE = 'Dumpster Rental Oakland, San Jose & SF | Calsan';
 const DEFAULT_DESCRIPTION = 'Same-day dumpster rental in Oakland, San Jose & San Francisco. Transparent pricing, real local yards, 5-50 yard roll-off dumpsters. Instant quote in 60 seconds. Hablamos Español.';
+const MAX_TITLE = 60;
 
 export function SEOHead({ 
   title, 
@@ -26,12 +27,16 @@ export function SEOHead({
 }: SEOHeadProps) {
   const { data: schemaSameAs } = useSchemaSocialUrls();
 
-  // Avoid double brand name — if title already contains brand, use as-is
+  // Keep titles within 60 chars: add the shortest brand suffix that fits.
   const brandName = BUSINESS_INFO.name;
   const titleAlreadyBranded = title ? (title.includes('Calsan') || title.includes(brandName)) : false;
-  const fullTitle = title 
-    ? (titleAlreadyBranded ? title : `${title} | ${brandName}`)
-    : DEFAULT_TITLE;
+  let fullTitle = DEFAULT_TITLE;
+  if (title) {
+    if (titleAlreadyBranded) fullTitle = title;
+    else if (`${title} | ${brandName}`.length <= MAX_TITLE) fullTitle = `${title} | ${brandName}`;
+    else if (`${title} | Calsan`.length <= MAX_TITLE) fullTitle = `${title} | Calsan`;
+    else fullTitle = title;
+  }
   const canonicalUrl = canonical ? `${BUSINESS_INFO.url}${canonical}` : undefined;
   const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${BUSINESS_INFO.url}${ogImage}`;
   
