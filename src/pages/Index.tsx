@@ -342,7 +342,9 @@ const Index = () => {
 
             <div className="min-w-0">
               <HeroImagePanel
-                imageAlt="Calsan roll-off truck delivering a dumpster in the Bay Area"
+                imageUrl="/images/hero/calsan-truck-desktop.webp"
+                mobileImageUrl="/images/hero/calsan-truck-mobile.webp"
+                imageAlt="Calsan roll-off truck loading a dumpster."
                 badges={HERO_BADGES}
               />
             </div>

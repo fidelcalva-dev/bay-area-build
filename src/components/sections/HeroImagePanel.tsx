@@ -9,6 +9,7 @@ const BADGES = [
 
 interface HeroImagePanelProps {
   imageUrl?: string;
+  mobileImageUrl?: string;
   imageAlt?: string;
   overlayOpacity?: number;
   badges?: { icon: typeof MapPin; label: string }[];
@@ -16,6 +17,7 @@ interface HeroImagePanelProps {
 
 export function HeroImagePanel({
   imageUrl,
+  mobileImageUrl,
   imageAlt = 'Professional roll-off dumpster on a clean Bay Area driveway',
   overlayOpacity = 0.15,
   badges = BADGES,
@@ -24,15 +26,18 @@ export function HeroImagePanel({
 
   return (
     <div className="relative w-full">
-      <div className="relative rounded-2xl overflow-hidden shadow-lg bg-muted aspect-[4/3]">
-        <img
-          src={src}
-          alt={imageAlt}
-          width={1280}
-          height={960}
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          fetchPriority="high"
-        />
+      <div className="relative rounded-2xl overflow-hidden shadow-lg bg-muted aspect-[16/10]">
+        <picture>
+          {mobileImageUrl && <source media="(max-width: 767px)" srcSet={mobileImageUrl} />}
+          <img
+            src={src}
+            alt={imageAlt}
+            width={1600}
+            height={1000}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            fetchPriority="high"
+          />
+        </picture>
         {/* Subtle gradient overlay */}
         <div
           className="absolute inset-0 bg-gradient-to-t from-foreground/[var(--hero-overlay)] via-transparent to-transparent"
