@@ -579,6 +579,19 @@ const Index = () => {
         <FAQSection limit={6} />
       </Suspense>
 
+      <section className="py-12 md:py-16 bg-muted/40">
+        <div className="container-narrow text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Construction Materials Delivery</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+            Need drain rock or baserock for your project? We deliver virgin and recycled drain rock, baserock, and landscape materials throughout the SF Bay Area, including Oakland, San Jose and San Francisco.
+          </p>
+          <Link to="/construction-materials" className="inline-flex items-center gap-2 min-h-[44px] text-primary font-semibold hover:underline">
+            See Materials
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+
       <section className="py-8 bg-background">
         <div className="container-wide text-center">
           <Link to="/blog" className="inline-flex items-center gap-2 min-h-[44px] text-primary font-semibold hover:underline">
