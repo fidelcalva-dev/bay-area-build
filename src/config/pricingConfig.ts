@@ -41,7 +41,7 @@ export interface PricingPolicies {
 
 // ── General Debris ───────────────────────────────────────────
 export const GENERAL_DEBRIS_SIZES: GeneralDebrisSize[] = [
-  { size: 5,  price: 395,  includedTons: 0.5, bestFor: 'small cleanouts and heavy materials' },
+  { size: 5,  price: 390,  includedTons: 0.5, bestFor: 'small cleanouts and heavy materials' },
   { size: 8,  price: 425,  includedTons: 0.5, bestFor: 'small remodeling projects' },
   { size: 10, price: 495,  includedTons: 1,   bestFor: 'garage cleanouts and small remodels' },
   { size: 20, price: 650,  includedTons: 2,   bestFor: 'construction and renovation' },

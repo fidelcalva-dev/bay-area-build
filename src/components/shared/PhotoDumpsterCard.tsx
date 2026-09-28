@@ -28,7 +28,7 @@ const DUMPSTER_SPECS: Record<number, {
   popular?: boolean;
   priceFrom?: number;
 }> = {
-  5:  { length: "12'", width: "5'",   height: "2.25'", tons: 0.5, loads: '2–3 loads', priceFrom: 395 },
+  5:  { length: "12'", width: "5'",   height: "2.25'", tons: 0.5, loads: '2–3 loads', priceFrom: 390 },
   8:  { length: "12'", width: "6'",   height: "3'",    tons: 0.5, loads: '3–4 loads', priceFrom: 425, popular: true },
   10: { length: "12'", width: "7.5'", height: "3'",    tons: 1, loads: '4–5 loads', priceFrom: 495 },
   20: { length: "18'", width: "7.5'", height: "4'",    tons: 2, loads: '6–8 loads', priceFrom: 650, popular: true },

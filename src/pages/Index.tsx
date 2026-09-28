@@ -211,7 +211,7 @@ const CONTRACTOR_BENEFITS = [
 // NOTE: src/lib/shared-data.ts + src/config/pricingConfig.ts still list different
 // "approved public" prices (5yd $395 …). Discrepancy reported in docs/CAL_007.md — not resolved here.
 const LOWEST_FROM: Record<number, number> = {
-  5: 481, 8: 511, 10: 581, 20: 687, 30: 755, 40: 881, 50: 1051,
+  5: 390, 8: 511, 10: 581, 20: 687, 30: 755, 40: 881, 50: 1051,
 };
 const SIZE_PAGE: Record<number, string> = {
   5: '/5-yard-dumpster-rental', 8: '/8-yard-dumpster-rental', 10: '/10-yard-dumpster-rental',
