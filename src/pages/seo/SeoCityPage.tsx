@@ -173,7 +173,7 @@ export default function SeoCityPage() {
     name: `Dumpster Rental ${city.city_name} CA`,
     description: pageDescription,
     areaServed: [city.city_name, city.county || 'Bay Area', 'California'],
-    price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 395),
+    price: String(DUMPSTER_SIZES_DATA[0]?.priceFrom || 390),
   });
 
   const yardLabel = yardCluster ? `${yardCluster.yardCity} Yard` : (yard?.city ? `${yard.city} Yard` : 'Bay Area');
