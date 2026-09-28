@@ -40,7 +40,7 @@ export const DUMPSTER_SIZES_DATA: DumpsterSizeData[] = [
     height: "2.25'",
     includedTons: 0.5,
     category: 'both',
-    priceFrom: 395,  // Approved public price
+    priceFrom: 390,  // Confirmed by Fidel 2026-09-27
     useCases: ['Concrete removal', 'Dirt & soil', 'Small cleanouts', 'Yard debris'],
     loads: '2–3 pickup loads',
     description: 'Compact size for small jobs.',
@@ -487,7 +487,7 @@ export interface V56PricingTier {
 
 // Plan A pricing (General Debris - includes tons) — Approved public prices
 export const PLAN_A_PRICING: V56PricingTier[] = [
-  { size: 5, basePrice: 395, priceRangeLow: 395, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
+  { size: 5, basePrice: 390, priceRangeLow: 390, priceRangeHigh: 475, includedTons: 0.5, category: 'both' },
   { size: 8, basePrice: 425, priceRangeLow: 425, priceRangeHigh: 510, includedTons: 0.5, category: 'both' },
   { size: 10, basePrice: 495, priceRangeLow: 495, priceRangeHigh: 595, includedTons: 1, category: 'both' },
   { size: 20, basePrice: 650, priceRangeLow: 650, priceRangeHigh: 780, includedTons: 2, category: 'general' },

@@ -12,8 +12,8 @@ import { CityVisualIdentity } from '@/components/seo/CityVisualIdentity';
 const OAKLAND_YARD = OPERATIONAL_YARDS.find(y => y.id === 'oakland')!;
 
 const META = {
-  title: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $395 | Calsan',
-  description: 'Local dumpster rental in Oakland, CA. 5-50 yard roll-off dumpsters from $395. Same-day delivery from our Oakland yard. Transparent pricing, no brokers. Get an instant quote.',
+  title: 'Dumpster Rental Oakland CA | Same-Day Delivery | From $390 | Calsan',
+  description: 'Local dumpster rental in Oakland, CA. 5-50 yard roll-off dumpsters from $390. Same-day delivery from our Oakland yard. Transparent pricing, no brokers. Get an instant quote.',
   slug: 'dumpster-rental-oakland-ca',
 };
 

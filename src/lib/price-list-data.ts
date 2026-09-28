@@ -21,7 +21,8 @@ type ZipPriceRow = [number, number, number, number, number, number, number, numb
 
 // Price groups for compactness
 
-const GA: ZipPriceRow = [481.6, 571, 782.75, 511.6, 608.5, 899.2, 581.6, 629.5, 687, 744.5, 755, 881, 1051];
+const GA: ZipPriceRow = [390, // 5GD confirmed by Fidel 2026-09-27
+   571, 782.75, 511.6, 608.5, 899.2, 581.6, 629.5, 687, 744.5, 755, 881, 1051];
 const GB: ZipPriceRow = [501.6, 591, 802.75, 531.6, 628.5, 919.2, 601.6, 649.5, 707, 764.5, 775, 958.4, 1128.4];
 const GBb: ZipPriceRow = [501.6, 591, 802.75, 531.6, 628.5, 919.2, 601.6, 609.5, 667, 764.5, 775, 958.4, 1128.4];
 const GC: ZipPriceRow = [561.6, 651, 862.75, 591.6, 688.5, 979.2, 661.6, 709.5, 767, 824.5, 835, 961, 1131];
@@ -236,7 +237,7 @@ export const PRICE_LIST_SIZES = [5, 8, 10, 15, 20, 25, 30, 40, 50] as const;
 
 /** Included tonnage per size (general debris only; heavy = flat fee) */
 export const INCLUDED_TONS: Record<number, number> = {
-  5: 0.25,
+  5: 0.5, // confirmed by Fidel 2026-09-27
   8: 0.5,
   10: 1,
   15: 1.5,
