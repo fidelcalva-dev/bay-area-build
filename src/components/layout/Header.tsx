@@ -65,6 +65,10 @@ const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    label: 'Materials',
+    to: '/construction-materials',
+  },
+  {
     label: 'Blog',
     to: '/blog',
   },
