@@ -140,7 +140,8 @@ Deno.serve(async (req) => {
           phone: formattedPhone,
           billing_phone: formattedPhone,
           customer_type: "homeowner",
-          user_id: crypto.randomUUID(), // Placeholder for phone-only customers
+          // CAL 010: user_id stays empty for phone-only customers. A random id
+          // violated the link to real accounts and every insert failed.
         })
         .select()
         .single();

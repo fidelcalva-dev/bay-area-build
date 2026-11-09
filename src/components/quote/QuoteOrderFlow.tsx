@@ -235,7 +235,7 @@ export function QuoteOrderFlow({
         delivery_lat: addressResult.lat,
         delivery_lng: addressResult.lng,
       });
-      if (!r.ok) showStepError(r.message);
+      if (!r.ok) showStepError((r as { message?: string }).message);
     }
   };
 
@@ -273,7 +273,7 @@ export function QuoteOrderFlow({
           placement_notes: placementResult.notes || null,
         });
         if (!saved.ok) {
-          showStepError(saved.message);
+          showStepError((saved as { message?: string }).message);
           return;
         }
 
@@ -329,7 +329,7 @@ export function QuoteOrderFlow({
           is_weekend_delivery: schedulingResult.isWeekendDelivery,
         });
         if (!saved.ok) {
-          showStepError(saved.message);
+          showStepError((saved as { message?: string }).message);
           return;
         }
 

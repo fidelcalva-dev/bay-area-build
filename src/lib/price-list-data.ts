@@ -212,6 +212,20 @@ export function getPriceByZip(
   return { price: price || 0, zipFound: true, zip };
 }
 
+/**
+ * CAL 010 — strict lookup: the exact list cell, or null.
+ * No nearest-size guess and no fallback to the General Debris column.
+ * Used by the prepared server-side calculator (not active yet).
+ */
+export function getExactListPrice(zip: string, sizeYd: number, materialCategory: string): number | null {
+  const row = ZIP_PRICES[zip];
+  if (!row) return null;
+  const colIdx = getZipColumnIndex(sizeYd, materialCategory);
+  if (colIdx === null) return null;
+  const price = row[colIdx];
+  return price && price > 0 ? price : null;
+}
+
 // ─── Legacy city-based lookup (kept for backward compatibility) ───
 // Updated to include 5yd, 8GD and 50yd columns.
 // Row order: [5GD, 8Cln, 8Mix, 8GD, 10Cln, 10Mix, 10GD, 15GD, 20GD, 25GD, 30GD, 40GD, 50GD]

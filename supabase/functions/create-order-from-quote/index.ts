@@ -49,6 +49,13 @@ const STAFF_CONVERT_ROLES = [
 const VISITOR_CONVERTIBLE = new Set(["draft", "pending", "saved", "scheduled", "checkout_started"]);
 const NEVER_CONVERTIBLE = new Set(["cancelled", "canceled", "lost", "expired", "rejected", "declined"]);
 
+// deno-lint-ignore no-explicit-any
+async function contractAutoSmsEnabled(admin: any): Promise<boolean> {
+  const { data } = await admin.from("config_settings").select("value").eq("key", "contracts.auto_send_sms").maybeSingle();
+  const v = data?.value;
+  return v === true || v === "true" || v === '"true"';
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -212,7 +219,9 @@ Deno.serve(async (req) => {
             billing_email: quote.customer_email,
             company_name: quote.company_name,
             customer_type: quote.user_type === "contractor" ? "contractor" : "homeowner",
-            user_id: crypto.randomUUID(), // Placeholder for phone-based customers
+            // CAL 010: user_id stays empty for phone-based customers. A random id
+            // violated the link to real accounts, so every website order was left
+            // without a customer.
           })
           .select("id")
           .single();
@@ -386,6 +395,10 @@ Deno.serve(async (req) => {
             // CAL 010: isolated test data (@calsan.test) uses the test transport.
             if (quote.customer_phone && newAddendum && isTestContact(quote.customer_email)) {
               console.log(`TEST_TRANSPORT: contract SMS suppressed for addendum ${newAddendum.id}`);
+            } else if (quote.customer_phone && newAddendum && !(await contractAutoSmsEnabled(supabase))) {
+              // CAL 010: this SMS never fired before (customer creation always failed).
+              // It stays off until the owner turns on contracts.auto_send_sms.
+              console.log(`contract SMS pending approval (contracts.auto_send_sms off) for addendum ${newAddendum.id}`);
             } else if (quote.customer_phone && newAddendum) {
               try {
                 await supabase.functions.invoke("send-contract", {

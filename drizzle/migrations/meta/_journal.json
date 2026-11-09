@@ -22,6 +22,20 @@
       "when": 1794236625626,
       "tag": "0002_cal010_quote_schedule_links",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794237566485,
+      "tag": "0003_cal010_public_reference_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794237695473,
+      "tag": "0004_cal010_dump_ticket_storage",
+      "breakpoints": true
     }
   ]
 }

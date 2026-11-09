@@ -177,7 +177,11 @@ export function buildSmsPreview(input: {
     input.customer_type === 'commercial' ? 'commercial quote' :
       `${input.size_yd} yd dumpster quote`;
 
-  let msg = `Hi ${input.customer_name}, your ${typeLabel} is $${input.customer_price} (delivery + pickup + ${input.included_days} days + ${input.included_tons}T included). Overage: ${input.overage_rule_text}. Schedule: ${input.schedule_link} Pay: ${input.payment_link} Track: ${input.portal_link} - Calsan Dumpsters Pro`;
+  // CAL 010: only a secure, quote-specific link (?t=) may be shared; otherwise ask the customer to call.
+  const schedulePart = input.schedule_link && input.schedule_link.includes('/portal/schedule?t=')
+    ? `Schedule: ${input.schedule_link}`
+    : 'To schedule, call (510) 680-2150.';
+  let msg = `Hi ${input.customer_name}, your ${typeLabel} is $${input.customer_price} (delivery + pickup + ${input.included_days} days + ${input.included_tons}T included). Overage: ${input.overage_rule_text}. ${schedulePart} Pay: ${input.payment_link} Track: ${input.portal_link} - Calsan Dumpsters Pro`;
 
   if (['HEAVY', 'DEBRIS_HEAVY'].includes(input.material_category.toUpperCase())) {
     msg += '\nHeavy materials: fill-line required. If contamination is found, reclassification may apply at $165/ton.';
