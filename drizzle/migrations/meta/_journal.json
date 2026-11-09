@@ -8,6 +8,20 @@
       "when": 1794234496568,
       "tag": "0000_cal009_unique_order_per_quote",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794236467370,
+      "tag": "0001_cal010_security_phase1",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794236625626,
+      "tag": "0002_cal010_quote_schedule_links",
+      "breakpoints": true
     }
   ]
 }

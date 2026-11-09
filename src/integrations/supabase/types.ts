@@ -16413,6 +16413,89 @@ export type Database = {
           },
         ]
       }
+      quote_schedule_links: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          last_viewed_at: string | null
+          order_id: string | null
+          outbound_quote_id: string | null
+          quote_id: string
+          requested_delivery_date: string | null
+          requested_delivery_window: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          token_hash: string
+          view_count: number
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          last_viewed_at?: string | null
+          order_id?: string | null
+          outbound_quote_id?: string | null
+          quote_id: string
+          requested_delivery_date?: string | null
+          requested_delivery_window?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          token_hash: string
+          view_count?: number
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          order_id?: string | null
+          outbound_quote_id?: string | null
+          quote_id?: string
+          requested_delivery_date?: string | null
+          requested_delivery_window?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          token_hash?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_schedule_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "heavy_risk_orders_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "quote_schedule_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_schedule_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "overdue_assets_billing_vw"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "quote_schedule_links_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_sessions: {
         Row: {
           abandoned_at: string | null
@@ -25041,6 +25124,42 @@ export type Database = {
         }
         Returns: string
       }
+      chat_conversation_update: {
+        Args: {
+          p_context?: Json
+          p_customer_email?: string
+          p_customer_name?: string
+          p_customer_phone?: string
+          p_escalate?: boolean
+          p_id: string
+        }
+        Returns: undefined
+      }
+      chat_session_create: {
+        Args: {
+          p_landing_url?: string
+          p_referrer_url?: string
+          p_user_agent?: string
+          p_utm_campaign?: string
+          p_utm_medium?: string
+          p_utm_source?: string
+        }
+        Returns: Json
+      }
+      chat_session_lead: {
+        Args: { p_session_id: string; p_session_token: string }
+        Returns: string
+      }
+      chat_session_update: {
+        Args: {
+          p_context?: Json
+          p_lead_id?: string
+          p_session_id: string
+          p_session_token: string
+          p_status?: string
+        }
+        Returns: string
+      }
       check_admin_permission: {
         Args: { _action: string; _module: string; _user_id: string }
         Returns: boolean
@@ -25067,6 +25186,18 @@ export type Database = {
       compute_health_status: {
         Args: { p_score: number }
         Returns: Database["public"]["Enums"]["health_status"]
+      }
+      contract_for_signing: { Args: { p_contract_id: string }; Returns: Json }
+      contract_sign: {
+        Args: {
+          p_contract_id: string
+          p_policy_version: string
+          p_signer_email: string
+          p_signer_name: string
+          p_terms_version: string
+          p_user_agent: string
+        }
+        Returns: Json
       }
       create_compensation_earning: {
         Args: {
@@ -25341,6 +25472,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
       lifecycle_advance_stage: {
         Args: {
           p_entity_id: string

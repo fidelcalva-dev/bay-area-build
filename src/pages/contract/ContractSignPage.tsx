@@ -53,53 +53,25 @@ export default function ContractSignPage() {
     if (token) loadContract();
   }, [token]);
 
+  // CAL 010: the page no longer reads or writes the contracts table directly.
+  // Two database functions check the link's contract id and only expose that one
+  // contract. Holding the link authorizes signing; it is not proof of identity.
   async function loadContract() {
     setIsLoading(true);
     try {
-      const { data, error: err } = await supabase
-        .from('contracts' as 'orders')
-        .select('*')
-        .eq('id' as 'id', token!)
-        .single();
+      const { data, error: err } = await supabase.rpc('contract_for_signing' as never, {
+        p_contract_id: token,
+      } as never);
+      const payload = data as unknown as { contract: ContractData; quote: QuoteData | null } | null;
 
-      if (err || !data) {
+      if (err || !payload?.contract) {
         setError('Contract not found or has expired.');
         return;
       }
 
-      const c = data as unknown as ContractData;
-      setContract(c);
-
-      if (c.status === 'signed') {
-        setIsSigned(true);
-      }
-
-      // Mark as viewed
-      if (c.status === 'pending') {
-        await supabase
-          .from('contracts' as 'orders')
-          .update({ viewed_at: new Date().toISOString() } as never)
-          .eq('id' as 'id', c.id);
-
-        // Log view event
-        await supabase
-          .from('contract_events' as 'orders')
-          .insert({
-            contract_id: c.id,
-            event_type: 'viewed',
-            metadata: { timestamp: new Date().toISOString() },
-          } as never);
-      }
-
-      // Fetch linked quote data if available
-      if (c.quote_id) {
-        const { data: q } = await supabase
-          .from('quotes')
-          .select('customer_name, subtotal, material_type, zip_code')
-          .eq('id', c.quote_id)
-          .single();
-        if (q) setQuote(q);
-      }
+      setContract(payload.contract);
+      if (payload.contract.status === 'signed') setIsSigned(true);
+      if (payload.quote) setQuote(payload.quote);
     } catch {
       setError('Failed to load contract.');
     } finally {
@@ -112,75 +84,23 @@ export default function ContractSignPage() {
     setIsSubmitting(true);
 
     try {
-      const now = new Date().toISOString();
       const termsVersion = contract.contract_type === 'msa' ? CONTRACT_VERSION : ADDENDUM_VERSION;
+      const { data, error: err } = await supabase.rpc('contract_sign' as never, {
+        p_contract_id: contract.id,
+        p_signer_name: signerName.trim(),
+        p_signer_email: signerEmail.trim() || null,
+        p_terms_version: termsVersion,
+        p_policy_version: POLICY_VERSION,
+        p_user_agent: navigator.userAgent,
+      } as never);
+      const result = data as unknown as { ok: boolean; code?: string } | null;
 
-      const { error: err } = await supabase
-        .from('contracts' as 'orders')
-        .update({
-          status: 'signed',
-          signed_at: now,
-          signer_name: signerName.trim(),
-          signer_email: signerEmail.trim() || null,
-          signature_method: 'web_link',
-          esign_consent_at: now,
-          terms_version: termsVersion,
-          contract_version: termsVersion,
-        } as never)
-        .eq('id' as 'id', contract.id);
-
-      if (err) throw err;
-
-      // Log signed event
-      await supabase
-        .from('contract_events' as 'orders')
-        .insert({
-          contract_id: contract.id,
-          event_type: 'signed',
-          metadata: {
-            method: 'web_link',
-            signer_name: signerName.trim(),
-            signer_email: signerEmail.trim() || null,
-            esign_consent: true,
-            terms_version: termsVersion,
-            policy_version: POLICY_VERSION,
-          },
-        } as never);
-
-      // Record document acceptance for version tracking
-      await supabase
-        .from('document_acceptances' as 'orders')
-        .insert({
-          customer_id: contract.customer_id,
-          contract_id: contract.id,
-          document_type: contract.contract_type === 'msa' ? 'contract_msa' : 'contract_addendum',
-          version_code: termsVersion,
-          signer_name: signerName.trim(),
-          signer_email: signerEmail.trim() || null,
-          delivery_method: 'sms_link',
-          electronic_consent_given: true,
-          electronic_consent_at: now,
-          user_agent: navigator.userAgent,
-        } as never);
-
-      // Create timeline event
-      await supabase
-        .from('timeline_events')
-        .insert({
-          entity_type: 'CUSTOMER' as const,
-          entity_id: contract.customer_id,
-          customer_id: contract.customer_id,
-          event_type: 'SYSTEM' as const,
-          event_action: 'COMPLETED' as const,
-          summary: `Contract signed by ${signerName.trim()}`,
-          details_json: {
-            contract_id: contract.id,
-            contract_type: contract.contract_type,
-            signer_name: signerName.trim(),
-            terms_version: termsVersion,
-            event: 'CONTRACT_SIGNED',
-          },
-        });
+      if (err || !result?.ok) {
+        setError(result?.code === 'expired'
+          ? 'This contract link has expired. Please contact us for a new one.'
+          : 'Failed to sign contract. Please try again.');
+        return;
+      }
 
       setIsSigned(true);
     } catch {

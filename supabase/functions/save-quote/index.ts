@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { isTestContact } from "../_shared/test-transport.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { signDraftToken, verifyDraftToken } from "../_shared/quote-draft-token.ts";
 
@@ -366,7 +367,12 @@ serve(async (req) => {
     // NON-DRAFT: Full pipeline — lead ingest + alerts
     // =====================================================
     let linkedLeadId: string | null = null;
-    try {
+    // CAL 010: isolated test data (reserved @calsan.test email) never reaches
+    // lead-ingest or internal alerts. Real customers are unaffected.
+    const testTransport = isTestContact(payload.customer_email);
+    if (testTransport) {
+      console.log('[save-quote] TEST_TRANSPORT: lead-ingest and alerts suppressed for', quoteId);
+    } else try {
       const leadIngestResponse = await fetch(`${supabaseUrl}/functions/v1/lead-ingest`, {
         method: 'POST',
         headers: {
@@ -439,7 +445,7 @@ serve(async (req) => {
     }
 
     // Dispatch internal alert (best effort)
-    try {
+    if (!testTransport) try {
       await fetch(`${supabaseUrl}/functions/v1/internal-alert-dispatcher`, {
         method: 'POST',
         headers: {

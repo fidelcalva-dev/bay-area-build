@@ -22,6 +22,10 @@ export interface ChatSession {
 }
 
 // ---- Session management ----
+// CAL 010: visitors no longer read or update chat tables directly. Every session
+// operation goes through narrow database functions that require the session token
+// returned at creation. The token is kept in memory for this page view only.
+const sessionTokens = new Map<string, string>();
 
 export async function createChatSession(params: {
   utm_source?: string;
@@ -30,51 +34,64 @@ export async function createChatSession(params: {
   referrer_url?: string;
   landing_url?: string;
 }): Promise<ChatSession | null> {
-  const { data, error } = await supabase
-    .from('ai_chat_sessions' as never)
-    .insert({
-      utm_source: params.utm_source || null,
-      utm_medium: params.utm_medium || null,
-      utm_campaign: params.utm_campaign || null,
-      referrer_url: params.referrer_url || null,
-      landing_url: params.landing_url || null,
-      capture_user_agent: navigator.userAgent,
-    } as never)
-    .select('*')
-    .single();
+  const { data, error } = await supabase.rpc('chat_session_create' as never, {
+    p_utm_source: params.utm_source || null,
+    p_utm_medium: params.utm_medium || null,
+    p_utm_campaign: params.utm_campaign || null,
+    p_referrer_url: params.referrer_url || null,
+    p_landing_url: params.landing_url || null,
+    p_user_agent: navigator.userAgent,
+  } as never);
 
-  if (error) {
+  if (error || !data) {
     console.error('Failed to create chat session:', error);
     return null;
   }
-  return data as unknown as ChatSession;
+  const session = data as unknown as ChatSession;
+  sessionTokens.set(session.id, session.session_token);
+  return session;
+}
+
+async function updateSession(
+  sessionId: string,
+  patch: { context?: Record<string, unknown>; status?: 'HANDED_OFF' | 'CLOSED'; leadId?: string },
+): Promise<string | null> {
+  const token = sessionTokens.get(sessionId);
+  if (!token) return null;
+  const { data, error } = await supabase.rpc('chat_session_update' as never, {
+    p_session_id: sessionId,
+    p_session_token: token,
+    p_context: patch.context ?? null,
+    p_status: patch.status ?? null,
+    p_lead_id: patch.leadId ?? null,
+  } as never);
+  if (error) console.error('Failed to update chat session:', error);
+  return (data as unknown as string | null) ?? null;
+}
+
+export async function getSessionLeadId(sessionId: string): Promise<string | null> {
+  const token = sessionTokens.get(sessionId);
+  if (!token) return null;
+  const { data } = await supabase.rpc('chat_session_lead' as never, {
+    p_session_id: sessionId,
+    p_session_token: token,
+  } as never);
+  return (data as unknown as string | null) ?? null;
 }
 
 export async function updateSessionContext(
   sessionId: string,
   context: Record<string, unknown>
 ): Promise<void> {
-  await supabase
-    .from('ai_chat_sessions' as never)
-    .update({
-      context_json: context,
-      last_event_at: new Date().toISOString(),
-    } as never)
-    .eq('id', sessionId);
+  await updateSession(sessionId, { context });
 }
 
 export async function markSessionHandedOff(sessionId: string): Promise<void> {
-  await supabase
-    .from('ai_chat_sessions' as never)
-    .update({ status: 'HANDED_OFF', last_event_at: new Date().toISOString() } as never)
-    .eq('id', sessionId);
+  await updateSession(sessionId, { status: 'HANDED_OFF' });
 }
 
 export async function closeSession(sessionId: string): Promise<void> {
-  await supabase
-    .from('ai_chat_sessions' as never)
-    .update({ status: 'CLOSED', last_event_at: new Date().toISOString() } as never)
-    .eq('id', sessionId);
+  await updateSession(sessionId, { status: 'CLOSED' });
 }
 
 // ---- Message persistence ----
@@ -103,13 +120,8 @@ export async function ensureLeadCreated(params: {
   messages: Array<{ role: string; content: string }>;
 }): Promise<string | null> {
   // Check if session already has a lead
-  const { data: session } = await supabase
-    .from('ai_chat_sessions' as never)
-    .select('lead_id')
-    .eq('id', params.sessionId)
-    .single();
-
-  if ((session as any)?.lead_id) return (session as any).lead_id;
+  const existingLeadId = await getSessionLeadId(params.sessionId);
+  if (existingLeadId) return existingLeadId;
 
   const fields = extractFieldsFromMessages(params.messages, params.context);
 
@@ -151,10 +163,7 @@ export async function ensureLeadCreated(params: {
 
       if (leadId) {
         // Link lead to session
-        await supabase
-          .from('ai_chat_sessions' as never)
-          .update({ lead_id: leadId } as never)
-          .eq('id', params.sessionId);
+        await updateSession(params.sessionId, { leadId });
         return leadId;
       }
     }
@@ -184,9 +193,11 @@ export async function createHandoffPacket(params: {
   // Determine recommended action
   const action = getRecommendedAction(params.intent.label, params.riskBand);
 
-  const { data, error } = await supabase
+  const packetId = crypto.randomUUID();
+  const { error } = await supabase
     .from('lead_handoff_packets' as never)
     .insert({
+      id: packetId,
       lead_id: params.leadId,
       session_id: params.sessionId,
       assigned_team: params.department,
@@ -194,9 +205,7 @@ export async function createHandoffPacket(params: {
       extracted_fields_json: fields,
       recommended_next_action: action,
       risk_band: params.riskBand,
-    } as never)
-    .select('id')
-    .single();
+    } as never);
 
   if (error) {
     console.error('Failed to create handoff packet:', error);
@@ -209,7 +218,7 @@ export async function createHandoffPacket(params: {
   // Log lifecycle event
   await logHandoffEvent(params.leadId, params.sessionId, params.department, params.intent.label);
 
-  return (data as any)?.id || null;
+  return packetId;
 }
 
 function generateHandoffSummary(

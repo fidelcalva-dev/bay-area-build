@@ -8,6 +8,7 @@ import {
   saveChatMessage,
   ensureLeadCreated,
   createHandoffPacket,
+  getSessionLeadId,
   isBusinessHours,
   type ChatSession,
 } from '@/lib/chatHandoffService';
@@ -124,11 +125,14 @@ export function useCalsanChat() {
 
   // Create a new conversation in DB
   const createConversation = async (): Promise<string> => {
-    const { data } = await supabase.from('chat_conversations').insert([{
+    // CAL 010: the browser creates the id; visitors can no longer read the table back.
+    const id = crypto.randomUUID();
+    await supabase.from('chat_conversations').insert([{
+      id,
       source: 'website',
       context_json: JSON.parse(JSON.stringify(context)),
-    }]).select('id').single();
-    return data?.id || crypto.randomUUID();
+    }]);
+    return id;
   };
 
   // Initialize chat - restore or create new
@@ -271,7 +275,10 @@ export function useCalsanChat() {
           content: clean,
           quick_replies: replies.length > 0 ? replies : null,
         });
-        await supabase.from('chat_conversations').update({ context_json: JSON.parse(JSON.stringify(newContext)) }).eq('id', convId);
+        await supabase.rpc('chat_conversation_update' as never, {
+          p_id: convId,
+          p_context: JSON.parse(JSON.stringify(newContext)),
+        } as never);
       }
 
       // Save to new ai_chat_messages system
@@ -320,13 +327,7 @@ export function useCalsanChat() {
         }
 
         // Get session to find lead_id
-        const { data: sess } = await supabase
-          .from('ai_chat_sessions' as never)
-          .select('lead_id')
-          .eq('id', chatSessionRef.current)
-          .single();
-
-        const leadId = (sess as any)?.lead_id;
+        const leadId = await getSessionLeadId(chatSessionRef.current);
         if (leadId) {
           const riskBand: RiskBand = (newContext.riskBand as RiskBand) || 'GREEN';
 
@@ -385,13 +386,13 @@ export function useCalsanChat() {
     setIsLeadCaptured(true);
 
     if (conversationId) {
-      await supabase.from('chat_conversations').update({
-        customer_name: data.name,
-        customer_phone: data.phone,
-        customer_email: data.email || null,
-        status: 'escalated',
-        escalation_reason: 'Lead captured via chat',
-      }).eq('id', conversationId);
+      await supabase.rpc('chat_conversation_update' as never, {
+        p_id: conversationId,
+        p_customer_name: data.name,
+        p_customer_phone: data.phone,
+        p_customer_email: data.email || null,
+        p_escalate: true,
+      } as never);
     }
 
     // Create lead via canonical lead-ingest

@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyDraftToken } from "../_shared/quote-draft-token.ts";
+import { isTestContact } from "../_shared/test-transport.ts";
+import { checkScheduleLink } from "../_shared/schedule-link.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,10 +58,11 @@ function json(body: unknown, status = 200) {
 type Caller =
   | { kind: "staff"; userId: string }
   | { kind: "visitor" }
+  | { kind: "schedule_link"; linkId: string }
   | { kind: "denied"; status: number; code: string };
 
 // deno-lint-ignore no-explicit-any
-async function resolveCaller(req: Request, admin: any, quoteId: string, draftToken: unknown): Promise<Caller> {
+async function resolveCaller(req: Request, admin: any, quoteId: string, draftToken: unknown, scheduleToken: unknown): Promise<Caller> {
   // (b) Staff session?
   const auth = req.headers.get("Authorization") || "";
   const jwt = auth.startsWith("Bearer ") ? auth.slice(7) : "";
@@ -75,6 +78,15 @@ async function resolveCaller(req: Request, admin: any, quoteId: string, draftTok
         return { kind: "denied", status: 403, code: "staff_inactive" };
       }
     }
+  }
+  // (c) CAL 010: schedule link issued by staff for THIS quote (hash lookup,
+  // expiry and revocation checked in the database). Possession of the link is
+  // not identity proof; it only authorizes converting the quote it was issued for.
+  if (typeof scheduleToken === "string" && scheduleToken !== "") {
+    const link = await checkScheduleLink(admin, scheduleToken);
+    if (!link.ok) return { kind: "denied", status: link.status, code: link.code };
+    if (link.row.quote_id !== quoteId) return { kind: "denied", status: 403, code: "link_quote_mismatch" };
+    return { kind: "schedule_link", linkId: link.row.id };
   }
   // (a) Signed quote token from save-quote?
   if (draftToken !== undefined && draftToken !== null && draftToken !== "") {
@@ -99,18 +111,19 @@ Deno.serve(async (req) => {
     const body: any = await req.json().catch(() => ({}));
     const quoteId: string = body.quoteId ?? body.quote_id;
     const draftToken = body.draftToken ?? body.draft_token;
+    const scheduleToken = body.scheduleToken ?? body.schedule_token;
 
     if (!quoteId) return json({ error: "quoteId is required", code: "missing_quote_id" }, 400);
     if (typeof quoteId !== "string" || !UUID_RE.test(quoteId)) {
       return json({ error: "Invalid quote reference", code: "invalid_quote_id" }, 400);
     }
 
-    const caller = await resolveCaller(req, supabase, quoteId, draftToken);
+    const caller = await resolveCaller(req, supabase, quoteId, draftToken, scheduleToken);
     if (caller.kind === "denied") {
       console.warn(`[create-order-from-quote] denied quote=${quoteId} code=${caller.code}`);
       return json({ error: "Not authorized to create an order for this quote", code: caller.code }, caller.status);
     }
-    const actorRole = caller.kind === "staff" ? "staff" : "customer";
+    const actorRole = caller.kind === "staff" ? "staff" : caller.kind === "schedule_link" ? "customer_link" : "customer";
 
     // 1. Check if order already exists for this quote (prevent duplicates)
     const { data: existingOrder } = await supabase
@@ -150,7 +163,7 @@ Deno.serve(async (req) => {
 
     const quoteStatus = String(quote.status || "").toLowerCase();
     if (NEVER_CONVERTIBLE.has(quoteStatus) ||
-        (caller.kind === "visitor" && !VISITOR_CONVERTIBLE.has(quoteStatus))) {
+        (caller.kind !== "staff" && !VISITOR_CONVERTIBLE.has(quoteStatus))) {
       return json({ error: "This quote can no longer be converted", code: "quote_not_convertible", status: quoteStatus }, 409);
     }
 
@@ -175,12 +188,15 @@ Deno.serve(async (req) => {
 
     // 4. Find or create customer
     let customerId: string | null = quote.customer_id;
-    if (!customerId && quote.customer_phone) {
+    // CAL 010: the phone comes from the visitor; keep only phone characters so it
+    // cannot inject extra conditions into the lookup filter below.
+    const safePhone = String(quote.customer_phone || "").replace(/[^0-9+]/g, "");
+    if (!customerId && safePhone.length >= 7) {
       // Try to find customer by phone
       const { data: existingCustomer } = await supabase
         .from("customers")
         .select("id")
-        .or(`phone.eq.${quote.customer_phone},billing_phone.eq.${quote.customer_phone}`)
+        .or(`phone.eq.${safePhone},billing_phone.eq.${safePhone}`)
         .limit(1)
         .single();
 
@@ -366,8 +382,11 @@ Deno.serve(async (req) => {
             
             console.log(`Auto-created pending Addendum for address: ${serviceAddress}`);
 
-            // Auto-send contract request via SMS if phone available
-            if (quote.customer_phone && newAddendum) {
+            // Auto-send contract request via SMS if phone available.
+            // CAL 010: isolated test data (@calsan.test) uses the test transport.
+            if (quote.customer_phone && newAddendum && isTestContact(quote.customer_email)) {
+              console.log(`TEST_TRANSPORT: contract SMS suppressed for addendum ${newAddendum.id}`);
+            } else if (quote.customer_phone && newAddendum) {
               try {
                 await supabase.functions.invoke("send-contract", {
                   body: {
@@ -518,7 +537,9 @@ Deno.serve(async (req) => {
         new_date: quote.preferred_delivery_date,
         new_window: quote.preferred_delivery_window,
         actor_role: actorRole,
-        reason: caller.kind === "staff" ? "Staff converted quote to order" : "Customer scheduled via quote flow",
+        reason: caller.kind === "staff" ? "Staff converted quote to order"
+          : caller.kind === "schedule_link" ? "Customer confirmed via schedule link (link holder, not identity-verified)"
+          : "Customer scheduled via quote flow",
       });
 
     console.log(`Order ${order.id} created from quote ${quoteId} with invoice ${invoice?.invoice_number}. Contracts valid: ${contractsValid}`);
