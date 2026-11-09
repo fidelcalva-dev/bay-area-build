@@ -29,3 +29,9 @@
 - [x] Agente Calsan en modo consulta.
 - [ ] Publicar la vista previa — espera autorización de Fidel.
 - [ ] Decidir advertencias restantes del escaneo (chat público, borradores, contraseñas filtradas).
+
+## Propuesta de precios por zona (encargo 9-nov-2026, Fidel)
+- [x] Plantillas de costeo: registro de 10–15 servicios desde Oakland, recorridos compartidos, costo del camión (sin activar tarifas).
+- [ ] Llenar costos y servicios reales — espera costos confirmados de camión, vertedero, puentes, gastos generales y margen objetivo de Fidel.
+- [ ] Proponer precio por zona y comparar márgenes — después de lo anterior; zonas siguen provisionales.
+- [ ] Decidir "entrega incluida" frente al recargo por distancia — falta saber cómo se armó la lista META 2026.
