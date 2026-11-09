@@ -2,7 +2,7 @@
  * DocumentDeliveryCenter — Preview, send, and download quotes/contracts/addenda.
  * Used from Quote Detail and Customer 360.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Send, Download, Copy, Eye, Mail, MessageSquare,
   Loader2, Link2, ScrollText, FileText, Upload,
@@ -18,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { describeSendResult, findOutboundForSavedQuote, newSendKey, sendOutboundQuote } from '@/services/outboundQuoteService';
 
 interface DeliveryAction {
   documentId: string;
@@ -50,6 +51,7 @@ export function DocumentDeliveryCenter({
   const [sending, setSending] = useState(false);
   const [method, setMethod] = useState<'sms' | 'email' | null>(null);
   const { toast } = useToast();
+  const sendKeyRef = useRef<{ via: 'sms' | 'email'; key: string } | null>(null);
 
   const typeLabels: Record<string, string> = {
     quote: 'Quote',
@@ -66,7 +68,36 @@ export function DocumentDeliveryCenter({
     setSending(true);
     setMethod(via);
     try {
-      // Log the send event
+      // CAL 011: report only what really happened; log the send after it succeeds.
+      let summary = `${label} sent via ${via.toUpperCase()}`;
+      if (documentType === 'contract' || documentType === 'addendum') {
+        const { error } = await supabase.functions.invoke('send-contract', {
+          body: { contractId: documentId, method: via, phone: customerPhone, email: customerEmail },
+        });
+        if (error) throw new Error(error.message);
+      } else if (documentType === 'quote') {
+        if (!quoteId) throw new Error('Quote is not saved yet');
+        const outboundId = await findOutboundForSavedQuote(quoteId);
+        if (!outboundId) throw new Error('Use "Send Quote" first to prepare the customer message');
+        if (!sendKeyRef.current || sendKeyRef.current.via !== via) {
+          sendKeyRef.current = { via, key: newSendKey() };
+        }
+        const result = await sendOutboundQuote(outboundId, [via === 'sms' ? 'SMS' : 'EMAIL'], {
+          idempotencyKey: sendKeyRef.current.key,
+          includeScheduleLink: true,
+        });
+        if (result.status === 'UNKNOWN') {
+          throw new Error(`${result.error || 'No answer from server'}. Sending again will not duplicate the message.`);
+        }
+        sendKeyRef.current = null;
+        if (!result.success) throw new Error(describeSendResult(result) || result.error || 'Not sent');
+        summary = describeSendResult(result);
+        if (!(result.results ?? []).some((r) => r.status === 'SENT')) {
+          toast({ title: `${label} not delivered`, description: summary });
+          return;
+        }
+      }
+
       if (customerId) {
         await supabase.from('timeline_events').insert({
           entity_type: 'CUSTOMER' as const,
@@ -86,35 +117,15 @@ export function DocumentDeliveryCenter({
         });
       }
 
-      // Invoke appropriate edge function
-      if (documentType === 'contract' || documentType === 'addendum') {
-        try {
-          await supabase.functions.invoke('send-contract', {
-            body: {
-              contractId: documentId,
-              method: via,
-              phone: customerPhone,
-              email: customerEmail,
-            },
-          });
-        } catch { /* edge function may not exist yet */ }
-      } else if (documentType === 'quote') {
-        // Quote sending via outbound-quote system
-        try {
-          await supabase.functions.invoke('send-outbound-quote', {
-            body: {
-              quoteId: documentId,
-              channels: [via.toUpperCase()],
-            },
-          });
-        } catch { /* fallback: just log */ }
-      }
-
-      toast({ title: `${label} sent via ${via.toUpperCase()}` });
+      toast({ title: `${label} sent via ${via.toUpperCase()}`, description: documentType === 'quote' ? summary : undefined });
       onSent?.();
       setOpen(false);
-    } catch {
-      toast({ title: `Failed to send ${label.toLowerCase()}`, variant: 'destructive' });
+    } catch (err) {
+      toast({
+        title: `Failed to send ${label.toLowerCase()}`,
+        description: err instanceof Error ? err.message : undefined,
+        variant: 'destructive',
+      });
     } finally {
       setSending(false);
       setMethod(null);

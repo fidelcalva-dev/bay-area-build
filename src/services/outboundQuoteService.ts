@@ -32,7 +32,7 @@ export interface OutboundQuoteRecord {
 
 // Build next-steps links (fallback when portal doesn't exist yet).
 // CAL 010: the schedule link is no longer built from an id. A secure, expiring link
-// is issued by the server (ensureSecureScheduleLink) for quotes linked to a saved quote.
+// is issued by the server (send-outbound-quote) for quotes linked to a saved quote.
 export function buildCustomerNextStepsLinks(outboundQuoteId: string): {
   schedule_link: string;
   payment_link: string;
@@ -105,34 +105,6 @@ export async function createOutboundQuote(
   return data as OutboundQuoteRecord;
 }
 
-// CAL 010 — Issue (once) a secure schedule link for an outbound quote that is linked
-// to a saved quote. The server checks the staff member's role, stores only a hash of
-// the token, and the link expires after 7 days. Returns null when no link can be issued
-// (e.g. the outbound quote has no saved quote); the message then asks the customer to call.
-export async function ensureSecureScheduleLink(outboundQuoteId: string): Promise<string | null> {
-  const { data: row } = await supabase
-    .from('outbound_quotes')
-    .select('schedule_link, quote_id')
-    .eq('id', outboundQuoteId)
-    .maybeSingle();
-  const current = (row as { schedule_link?: string | null } | null)?.schedule_link;
-  if (current && current.includes('/portal/schedule?t=')) return current;
-  if (!(row as { quote_id?: string | null } | null)?.quote_id) {
-    if (current) await supabase.from('outbound_quotes').update({ schedule_link: null } as any).eq('id', outboundQuoteId);
-    return null;
-  }
-  const { data, error } = await supabase.functions.invoke('quote-schedule-link', {
-    body: { action: 'issue', outbound_quote_id: outboundQuoteId },
-  });
-  if (error || !data?.path) {
-    console.error('[outboundQuote] secure schedule link not issued', error || data);
-    return null;
-  }
-  const url = `${window.location.origin}${data.path}`;
-  await supabase.from('outbound_quotes').update({ schedule_link: url } as any).eq('id', outboundQuoteId);
-  return url;
-}
-
 // CAL 010 — Revoke every active schedule link for a saved quote.
 export async function revokeScheduleLinks(quoteId: string): Promise<number> {
   const { data, error } = await supabase.functions.invoke('quote-schedule-link', {
@@ -142,21 +114,80 @@ export async function revokeScheduleLinks(quoteId: string): Promise<number> {
   return data?.revoked ?? 0;
 }
 
-// Send an outbound quote via edge function
+export interface SendOutboundResult {
+  success: boolean;
+  status: string;
+  error?: string;
+  duplicate?: boolean;
+  results?: { channel: string; status: string; error?: string; duplicate?: boolean }[];
+  schedule_link_included?: boolean;
+  schedule_link_expires_at?: string | null;
+  schedule_link_unavailable_reason?: string | null;
+}
+
+// New key for one send attempt. Reuse the same key when retrying the same attempt
+// (e.g. after a timeout) so the server never sends the message twice.
+export function newSendKey(): string {
+  return (crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`).replace(/[^A-Za-z0-9_-]/g, '');
+}
+
+// Send an outbound quote via edge function.
+// CAL 011: the server checks the staff role, issues the secure schedule link itself
+// (only the hash is stored) and uses idempotencyKey so a retry does not send twice.
 export async function sendOutboundQuote(
   outboundQuoteId: string,
   channels: ('SMS' | 'EMAIL')[],
-): Promise<{ success: boolean; status: string; error?: string }> {
-  await ensureSecureScheduleLink(outboundQuoteId);
+  opts: { idempotencyKey?: string; includeScheduleLink?: boolean } = {},
+): Promise<SendOutboundResult> {
   const { data, error } = await supabase.functions.invoke('send-outbound-quote', {
-    body: { outbound_quote_id: outboundQuoteId, channels },
+    body: {
+      outbound_quote_id: outboundQuoteId,
+      channels,
+      idempotency_key: opts.idempotencyKey,
+      include_schedule_link: opts.includeScheduleLink === true,
+    },
   });
 
   if (error) {
-    return { success: false, status: 'FAILED', error: error.message };
+    let message = error.message;
+    try {
+      const ctx = (error as { context?: Response }).context;
+      if (ctx && typeof ctx.json === 'function') {
+        const body = await ctx.json();
+        if (body?.error) message = body.error;
+      }
+    } catch { /* keep original message */ }
+    return { success: false, status: 'UNKNOWN', error: message };
   }
 
-  return data;
+  return data as SendOutboundResult;
+}
+
+// Latest outbound quote created for a saved quote, if any.
+export async function findOutboundForSavedQuote(quoteId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('outbound_quotes')
+    .select('id')
+    .eq('quote_id', quoteId)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  return data && data.length > 0 ? data[0].id : null;
+}
+
+// Human summary of a send result for staff.
+export function describeSendResult(r: SendOutboundResult): string {
+  const parts = (r.results ?? []).map((x) => {
+    const label = x.status === 'SENT' ? 'sent'
+      : x.status === 'TEST_SUPPRESSED' ? 'test contact, not sent'
+      : x.status === 'DRY_RUN' ? 'messaging off, not sent'
+      : x.status === 'FAILED' ? `failed${x.error ? ` (${x.error})` : ''}`
+      : x.status.toLowerCase();
+    return `${x.channel}: ${label}${x.duplicate ? ' (already handled)' : ''}`;
+  });
+  const link = r.schedule_link_included
+    ? ' Secure schedule link included.'
+    : r.schedule_link_unavailable_reason ? ' No schedule link (customer asked to call).' : '';
+  return `${parts.join(' · ')}.${link}`;
 }
 
 // Build the SMS message body for copy-to-clipboard

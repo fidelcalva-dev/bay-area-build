@@ -33,6 +33,44 @@ export async function hashScheduleToken(token: string): Promise<string> {
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+export const CLOSED_QUOTE_STATUSES = new Set(["cancelled", "canceled", "lost", "expired", "rejected", "declined"]);
+
+// Site that serves /portal/schedule. Links always point to the public site.
+export const SCHEDULE_SITE_ORIGIN = "https://calsandumpsterspro.com";
+
+export type IssueResult =
+  | { ok: true; linkId: string; token: string; path: string; expiresAt: string }
+  | { ok: false; status: number; code: string };
+
+// Creates one link for a quote. Caller must already have checked that the requester
+// is authorized staff. Stores only the hash; the raw token is returned once.
+// deno-lint-ignore no-explicit-any
+export async function issueScheduleLink(admin: any, opts: {
+  quoteId: string; outboundQuoteId?: string | null; userId: string; days?: number;
+}): Promise<IssueResult> {
+  const { data: quote } = await admin.from("quotes").select("id, status").eq("id", opts.quoteId).maybeSingle();
+  if (!quote) return { ok: false, status: 404, code: "quote_not_found" };
+  if (CLOSED_QUOTE_STATUSES.has(String(quote.status || "").toLowerCase())) {
+    return { ok: false, status: 409, code: "quote_not_convertible" };
+  }
+  const days = Math.min(Math.max(Number(opts.days) || 7, 1), 30);
+  const token = newScheduleToken();
+  const expiresAt = new Date(Date.now() + days * 86400_000).toISOString();
+  const { data: link, error } = await admin.from("quote_schedule_links").insert({
+    quote_id: opts.quoteId,
+    outbound_quote_id: opts.outboundQuoteId ?? null,
+    token_hash: await hashScheduleToken(token),
+    expires_at: expiresAt,
+    created_by: opts.userId,
+  }).select("id").single();
+  if (error || !link) return { ok: false, status: 500, code: "db_error" };
+  await admin.from("quote_events").insert({
+    quote_id: opts.quoteId, event_type: "SCHEDULE_LINK_ISSUED",
+    event_data: { link_id: link.id, expires_at: expiresAt, issued_by: opts.userId, outbound_quote_id: opts.outboundQuoteId ?? null },
+  });
+  return { ok: true, linkId: link.id, token, path: `/portal/schedule?t=${token}`, expiresAt };
+}
+
 // deno-lint-ignore no-explicit-any
 export async function checkScheduleLink(admin: any, token: unknown): Promise<LinkCheck> {
   if (typeof token !== "string" || !TOKEN_RE.test(token)) {

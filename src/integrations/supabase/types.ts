@@ -13816,6 +13816,7 @@ export type Database = {
           channel: string
           created_at: string
           id: string
+          idempotency_key: string | null
           message_body: string
           outbound_quote_id: string
           provider: string
@@ -13827,6 +13828,7 @@ export type Database = {
           channel: string
           created_at?: string
           id?: string
+          idempotency_key?: string | null
           message_body: string
           outbound_quote_id: string
           provider: string
@@ -13838,6 +13840,7 @@ export type Database = {
           channel?: string
           created_at?: string
           id?: string
+          idempotency_key?: string | null
           message_body?: string
           outbound_quote_id?: string
           provider?: string
@@ -25268,6 +25271,7 @@ export type Database = {
         }
         Returns: string
       }
+      current_user_is_office_staff: { Args: never; Returns: boolean }
       driver_assigned_to_order: {
         Args: { p_order_id: string; p_user_id: string }
         Returns: boolean
@@ -25600,6 +25604,10 @@ export type Database = {
           }
       normalize_address: { Args: { p_address: string }; Returns: string }
       normalize_phone: { Args: { raw: string }; Returns: string }
+      quote_accepts_public_placement: {
+        Args: { _quote_id: string }
+        Returns: boolean
+      }
       recalculate_customer_health: {
         Args: { p_customer_id: string }
         Returns: number
@@ -25631,6 +25639,7 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      staff_is_deactivated: { Args: { _user_id: string }; Returns: boolean }
       transition_entity_stage: {
         Args: {
           p_assigned_user_id?: string

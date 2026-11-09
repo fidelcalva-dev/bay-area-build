@@ -8,7 +8,7 @@
 // Holding the link authorizes these customer actions for that quote only; it is not
 // identity verification and is recorded as "link holder".
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { checkScheduleLink, hashScheduleToken, newScheduleToken } from "../_shared/schedule-link.ts";
+import { checkScheduleLink, issueScheduleLink } from "../_shared/schedule-link.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,7 +22,6 @@ const STAFF_LINK_ROLES = [
   "admin", "system_admin", "owner", "executive", "ops_admin",
   "sales", "sales_admin", "sales_rep", "dispatcher", "cs", "cs_agent", "customer_service",
 ];
-const CLOSED_QUOTE = new Set(["cancelled", "canceled", "lost", "expired", "rejected", "declined"]);
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -82,29 +81,11 @@ Deno.serve(async (req) => {
       }
       if (!quoteId || !UUID_RE.test(quoteId)) return json({ error: "A saved quote is required", code: "missing_quote_id" }, 400);
 
-      const { data: quote } = await admin.from("quotes").select("id, status").eq("id", quoteId).maybeSingle();
-      if (!quote) return json({ error: "Quote not found", code: "quote_not_found" }, 404);
-      if (CLOSED_QUOTE.has(String(quote.status || "").toLowerCase())) {
-        return json({ error: "Quote is closed", code: "quote_not_convertible" }, 409);
-      }
-
-      const days = Math.min(Math.max(Number(body.expires_in_days) || 7, 1), 30);
-      const token = newScheduleToken();
-      const expiresAt = new Date(Date.now() + days * 86400_000).toISOString();
-      const { data: link, error } = await admin.from("quote_schedule_links").insert({
-        quote_id: quoteId,
-        outbound_quote_id: outboundId,
-        token_hash: await hashScheduleToken(token),
-        expires_at: expiresAt,
-        created_by: userId,
-      }).select("id").single();
-      if (error || !link) return json({ error: "Could not create link", code: "db_error" }, 500);
-
-      await admin.from("quote_events").insert({
-        quote_id: quoteId, event_type: "SCHEDULE_LINK_ISSUED",
-        event_data: { link_id: link.id, expires_at: expiresAt, issued_by: userId },
+      const issued = await issueScheduleLink(admin, {
+        quoteId, outboundQuoteId: outboundId, userId, days: Number(body.expires_in_days) || 7,
       });
-      return json({ success: true, link_id: link.id, path: `/portal/schedule?t=${token}`, expires_at: expiresAt });
+      if (!issued.ok) return json({ error: "Could not create link", code: issued.code }, issued.status);
+      return json({ success: true, link_id: issued.linkId, path: issued.path, expires_at: issued.expiresAt });
     }
 
     // ---------------- staff: revoke ----------------

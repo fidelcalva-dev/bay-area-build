@@ -1,109 +1,56 @@
+// CAL 011 — Short-lived link to one customer photo/video from the size analysis.
+// Only active office staff (current_user_is_office_staff) may open customer media.
+// Files always come from the private "waste-uploads" bucket; the caller cannot choose
+// another bucket or an arbitrary path.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const STAFF_ROLES = ["admin", "sales", "dispatcher", "finance", "cs", "cs_agent", "ops_admin", "executive"];
+const BUCKET = "waste-uploads";
+// Same file names the website uses when it uploads (see storage rule in migration 0005).
+const PATH_RE = /^(photo_[0-9]{10,16}_[a-z0-9]{0,12}\.jpg|(photo|video)-assessments\/[0-9]{10,16}_[a-z0-9]{0,12}\.(jpg|mp4))$/;
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const authHeader = req.headers.get("Authorization") || "";
+    if (!authHeader.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
 
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const asCaller = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData } = await asCaller.auth.getUser(authHeader.slice(7));
+    if (!userData?.user?.id) return json({ error: "Unauthorized" }, 401);
 
-    const supabaseUser = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const { data: allowed, error: roleErr } = await asCaller.rpc("current_user_is_office_staff");
+    if (roleErr || allowed !== true) return json({ error: "Forbidden" }, 403);
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: claimsErr } = await supabaseUser.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const body = await req.json().catch(() => ({}));
+    let path = typeof body?.storage_path === "string" ? body.storage_path.trim() : "";
+    if (path.startsWith(`${BUCKET}/`)) path = path.slice(BUCKET.length + 1);
+    if (path.startsWith("uploads/")) path = path.slice("uploads/".length);
+    if (!PATH_RE.test(path)) return json({ error: "Invalid file", code: "invalid_path" }, 400);
 
-    const userId = claims.claims.sub;
+    const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: signed, error: signErr } = await admin.storage.from(BUCKET).createSignedUrl(path, 300);
+    if (signErr || !signed?.signedUrl) return json({ error: "File not found", code: "not_found" }, 404);
 
-    // Verify staff role
-    const { data: roles } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
-
-    const hasStaffRole = (roles || []).some((r: any) => STAFF_ROLES.includes(r.role));
-    if (!hasStaffRole) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const { storage_path } = await req.json();
-    if (!storage_path) {
-      return new Response(JSON.stringify({ error: "storage_path required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Determine bucket and path
-    let bucket = "photo-assessments";
-    let filePath = storage_path;
-
-    if (storage_path.startsWith("uploads/photo-assessments/")) {
-      bucket = "photo-assessments";
-      filePath = storage_path.replace("uploads/photo-assessments/", "");
-    } else if (storage_path.startsWith("uploads/video-assessments/")) {
-      bucket = "video-assessments";
-      filePath = storage_path.replace("uploads/video-assessments/", "");
-    } else if (storage_path.includes("/")) {
-      // Try to extract bucket from path
-      const parts = storage_path.split("/");
-      bucket = parts[0];
-      filePath = parts.slice(1).join("/");
-    }
-
-    const { data: signedData, error: signErr } = await supabaseAdmin.storage
-      .from(bucket)
-      .createSignedUrl(filePath, 300); // 5 minutes
-
-    if (signErr) {
-      console.error("Signed URL error:", signErr);
-      return new Response(JSON.stringify({ error: "Could not generate URL" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(
-      JSON.stringify({ signed_url: signedData.signedUrl, expires_in: 300 }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return json({ signed_url: signed.signedUrl, expires_in: 300 });
   } catch (error) {
-    console.error("get-assessment-media-url error:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    console.error("get-assessment-media-url error:", error instanceof Error ? error.message : "unknown");
+    return json({ error: "Internal error" }, 500);
   }
 });

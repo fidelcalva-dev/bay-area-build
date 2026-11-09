@@ -5,7 +5,7 @@ import {
   FileText, Camera, Trash2, ImageIcon, Send, ScrollText, CreditCard,
   Phone, MessageSquare, Mail, User, Building2, Package, Weight,
   DollarSign, CheckCircle2, XCircle, AlertTriangle, Truck, Pencil,
-  ShieldCheck, StickyNote, Zap, Eye, Ban, CircleDot, Info, Copy
+  ShieldCheck, StickyNote, Zap, Eye, Ban, CircleDot, Info, Copy, Link2Off
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText } from "@/services/outboundQuoteService";
+import { sendOutboundQuote, createOutboundQuote, getIncludedTonsText, newSendKey, describeSendResult, revokeScheduleLinks } from "@/services/outboundQuoteService";
 import { addTimelineNote } from "@/lib/timelineService";
 import { DocumentDeliveryCenter } from "@/components/documents/DocumentDeliveryCenter";
 
@@ -548,6 +548,8 @@ export default function SalesQuoteDetail() {
   const [deliveryPhotos, setDeliveryPhotos] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [isRevoking, setIsRevoking] = useState(false);
+  const sendKeyRef = useRef<string | null>(null);
   const [isSendingContract, setIsSendingContract] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [salesNotes, setSalesNotes] = useState("");
@@ -824,18 +826,47 @@ export default function SalesQuoteDetail() {
         return;
       }
 
-      const result = await sendOutboundQuote(outboundId, channels);
+      // CAL 011: one key per send attempt. If the answer is uncertain (timeout, network),
+      // the next click reuses the key so the server does not send a second message.
+      if (!sendKeyRef.current) sendKeyRef.current = newSendKey();
+      const result = await sendOutboundQuote(outboundId, channels, {
+        idempotencyKey: sendKeyRef.current,
+        includeScheduleLink: true,
+      });
+      if (result.status === "UNKNOWN") {
+        toast({
+          title: "Send result unknown",
+          description: `${result.error || "No answer from server"}. Pressing Send again will not duplicate the message.`,
+          variant: "destructive",
+        });
+        return;
+      }
+      sendKeyRef.current = null;
       if (result.success) {
-        toast({ title: `Quote resent via ${channels.join(" & ")}` });
+        toast({ title: result.duplicate ? "Already sent" : "Quote send finished", description: describeSendResult(result) });
         fetchCommercialStatus();
       } else {
-        toast({ title: result.error || "Failed to resend", variant: "destructive" });
+        toast({ title: "Quote not sent", description: describeSendResult(result) || result.error, variant: "destructive" });
       }
     } catch (err: any) {
       console.error(err);
       toast({ title: err.message || "Error resending quote", variant: "destructive" });
     } finally {
       setIsResending(false);
+    }
+  }
+
+  async function handleRevokeScheduleLinks() {
+    if (!quote) return;
+    if (!window.confirm("Cancel every active schedule link sent for this quote? The customer will need a new link.")) return;
+    setIsRevoking(true);
+    try {
+      const n = await revokeScheduleLinks(quote.id);
+      toast({ title: n > 0 ? `${n} schedule link(s) cancelled` : "No active schedule links" });
+    } catch (err: any) {
+      toast({ title: "Could not cancel links", description: err?.message, variant: "destructive" });
+    } finally {
+      setIsRevoking(false);
     }
   }
 
@@ -1498,6 +1529,9 @@ export default function SalesQuoteDetail() {
             />
             <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleSendContract} disabled={isSendingContract}>
               <ScrollText className="w-3.5 h-3.5" /> Send Contract
+            </Button>
+            <Button variant="outline" size="sm" className="w-full gap-1.5" onClick={handleRevokeScheduleLinks} disabled={isRevoking}>
+              {isRevoking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Link2Off className="w-3.5 h-3.5" />} Cancel Schedule Links
             </Button>
             <SendPaymentDialog
               quoteId={id!}

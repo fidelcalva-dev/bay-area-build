@@ -36,6 +36,20 @@
       "when": 1794237695473,
       "tag": "0004_cal010_dump_ticket_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794239221890,
+      "tag": "0005_cal011_customer_files_and_deactivated_staff",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794239493672,
+      "tag": "0006_cal011_outbound_quotes_office_staff",
+      "breakpoints": true
     }
   ]
 }

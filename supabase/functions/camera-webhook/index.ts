@@ -37,16 +37,29 @@ Deno.serve(async (req) => {
       webhook_secret,
     } = body;
 
-    // Verify webhook secret if provider_id given
-    if (provider_id && webhook_secret) {
+    // CAL 011: every call must name an active provider and present its secret
+    // (body field or x-webhook-secret header). Before, a call without them was accepted.
+    const presented = (typeof webhook_secret === "string" && webhook_secret) || req.headers.get("x-webhook-secret") || "";
+    if (typeof provider_id !== "string" || !provider_id || !presented) {
+      return new Response(
+        JSON.stringify({ error: "provider_id and webhook secret required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    {
       const { data: provider } = await supabase
         .from("camera_providers")
         .select("webhook_secret")
         .eq("id", provider_id)
         .eq("is_active", true)
-        .single();
+        .maybeSingle();
 
-      if (!provider || provider.webhook_secret !== webhook_secret) {
+      const expected = provider?.webhook_secret || "";
+      let diff = expected.length === presented.length && expected.length > 0 ? 0 : 1;
+      for (let i = 0; i < Math.min(expected.length, presented.length); i++) {
+        diff |= expected.charCodeAt(i) ^ presented.charCodeAt(i);
+      }
+      if (diff !== 0) {
         return new Response(
           JSON.stringify({ error: "Invalid webhook secret" }),
           { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }

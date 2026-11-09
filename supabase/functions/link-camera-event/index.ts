@@ -21,6 +21,29 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // CAL 011: this function changes camera events with the backend key, so the caller
+    // must be the backend itself or an active office employee.
+    const authHeader = req.headers.get("Authorization") || "";
+    const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    let authorized = jwt !== "" && jwt === serviceKey;
+    if (!authorized && jwt) {
+      const asCaller = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: u } = await asCaller.auth.getUser(jwt);
+      if (u?.user?.id) {
+        const { data: ok } = await asCaller.rpc("current_user_is_office_staff");
+        authorized = ok === true;
+      }
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json();
     const { event_id, backfill } = body;
 

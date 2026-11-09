@@ -49,8 +49,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch clip
-    const { data: clip, error: clipErr } = await supabaseAdmin
+    // CAL 011: read the clip as the caller, so the access rules decide who may see it
+    // (admin/dispatch/ops see all clips; a driver only the clips of their own events).
+    // A customer or a deactivated employee gets "not found".
+    const { data: clip, error: clipErr } = await supabaseUser
       .from("camera_clips")
       .select("file_url")
       .eq("id", clip_id)
