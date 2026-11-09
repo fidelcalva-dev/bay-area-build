@@ -99,7 +99,7 @@ export default function CalsanAgent() {
               <p className="text-sm text-muted-foreground">Ejemplos:</p>
               <div className="flex flex-wrap gap-2">
                 {SUGGESTIONS.map((s) => (
-                  <Button key={s} variant="outline" size="sm" onClick={() => ask(s)} disabled={loading}>{s}</Button>
+                  <Button key={s} variant="outline" size="sm" className="h-auto whitespace-normal text-left py-1.5" onClick={() => ask(s)} disabled={loading}>{s}</Button>
                 ))}
               </div>
             </div>
