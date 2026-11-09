@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { logTimelineEvent } from '@/lib/timelineService';
 import { useToast } from '@/hooks/use-toast';
 import logoCalsan from '@/assets/logo-calsan.webp';
+import PortalScheduleLink from './PortalScheduleLink';
 
 const TIME_WINDOWS = [
   { id: 'morning', label: 'Morning', time: '8 AM - 12 PM', icon: '🌅' },
@@ -34,6 +35,13 @@ function toISODate(d: Date): string {
 
 export default function PortalSchedule() {
   const [searchParams] = useSearchParams();
+  const linkToken = searchParams.get('t');
+  if (linkToken) return <PortalScheduleLink token={linkToken} />;
+  return <PortalScheduleLegacy />;
+}
+
+function PortalScheduleLegacy() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -55,53 +63,10 @@ export default function PortalSchedule() {
     const resolve = async () => {
       try {
         if (quoteParam) {
-          // Look up outbound_quote to get/create order
-          const { data: oq, error: oqErr } = await supabase
-            .from('outbound_quotes')
-            .select('*')
-            .eq('id', quoteParam)
-            .single();
-
-          if (oqErr || !oq) {
-            setError('Quote not found.');
-            return;
-          }
-
-          setQuoteInfo({ size: oq.size_yd, price: oq.customer_price as number, name: oq.customer_name });
-
-          if (oq.order_id) {
-            setOrderId(oq.order_id);
-          } else if (oq.quote_id) {
-            // Check if order exists for this quote
-            const { data: existingOrder } = await supabase
-              .from('orders')
-              .select('id')
-              .eq('quote_id', oq.quote_id)
-              .single();
-
-            if (existingOrder) {
-              setOrderId(existingOrder.id);
-              // Link it back
-              await supabase.from('outbound_quotes').update({ order_id: existingOrder.id } as any).eq('id', quoteParam);
-            } else {
-              // Create order from quote
-              const { data: newOrder, error: createErr } = await supabase.functions.invoke('create-order-from-quote', {
-                body: { quoteId: oq.quote_id },
-              });
-              // The server only converts quotes for staff or for the visitor holding
-              // the signed quote token. Customers arriving here without either are
-              // asked to contact the team instead of seeing a false success.
-              if (createErr || !newOrder?.orderId) {
-                setError('Unable to create order. Please contact support.');
-                return;
-              }
-              setOrderId(newOrder.orderId);
-              await supabase.from('outbound_quotes').update({ order_id: newOrder.orderId } as any).eq('id', quoteParam);
-            }
-          } else {
-            setError('This quote has no linked order. Please contact support.');
-            return;
-          }
+          // CAL 010: old links carried only an id and could not prove anything.
+          // They no longer create orders; customers need the secure link (?t=...).
+          setError('This scheduling link has been replaced by a secure link. Please call (510) 680-2150 and we will text you a new one.');
+          return;
         } else if (orderParam) {
           // Load order info
           const { data: order } = await supabase

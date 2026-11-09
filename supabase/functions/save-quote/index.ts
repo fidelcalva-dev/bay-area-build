@@ -80,6 +80,59 @@ serve(async (req) => {
       return jsonResponse({ success: false, error: 'Invalid quote reference', code: 'invalid_quote_id' }, 400);
     }
 
+    // =====================================================
+    // CAL 010 — details_only: add logistics details (address, pin, schedule) to a
+    // quote the caller already saved. Requires the signed token for that quote,
+    // never changes status or price, and never re-runs lead-ingest or alerts.
+    // =====================================================
+    if (payload.details_only === true) {
+      if (!existingQuoteId) {
+        return jsonResponse({ success: false, error: 'Quote reference required', code: 'missing_quote_id' }, 400);
+      }
+      const check = await verifyDraftToken(payload.draft_token, existingQuoteId);
+      if (!check.ok) {
+        return jsonResponse({ success: false, error: 'Not authorized to update this quote', code: check.code }, check.status);
+      }
+      const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+      const str = (v: unknown, max: number) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : undefined);
+      const date = (v: unknown) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : undefined);
+      const details: Record<string, unknown> = {
+        delivery_address: str(payload.delivery_address, 300),
+        delivery_lat: num(payload.delivery_lat),
+        delivery_lng: num(payload.delivery_lng),
+        placement_lat: num(payload.placement_lat),
+        placement_lng: num(payload.placement_lng),
+        placement_type: str(payload.placement_type, 40),
+        placement_notes: str(payload.placement_notes, 1000),
+        preferred_delivery_date: date(payload.preferred_delivery_date),
+        preferred_delivery_window: str(payload.preferred_delivery_window, 40),
+        suggested_pickup_date: date(payload.suggested_pickup_date),
+        is_weekend_delivery: typeof payload.is_weekend_delivery === 'boolean' ? payload.is_weekend_delivery : undefined,
+      };
+      for (const k of Object.keys(details)) if (details[k] === undefined) delete details[k];
+      if (Object.keys(details).length === 0) {
+        return jsonResponse({ success: false, error: 'Nothing to update', code: 'empty_update' }, 400);
+      }
+      const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+      const { data: updated, error: updErr } = await db
+        .from('quotes')
+        .update(details)
+        .eq('id', existingQuoteId)
+        .in('status', ['draft', 'pending'])
+        .is('order_id', null)
+        .is('converted_at', null)
+        .select('id')
+        .maybeSingle();
+      if (updErr) {
+        console.error('[save-quote] details update failed:', updErr.message);
+        return jsonResponse({ success: false, error: 'Details not saved', code: 'db_error' }, 500);
+      }
+      if (!updated) {
+        return jsonResponse({ success: false, error: 'This quote can no longer be changed', code: 'quote_locked' }, 409);
+      }
+      return jsonResponse({ success: true, quote_id: existingQuoteId, draft_token: payload.draft_token });
+    }
+
     console.log(`[save-quote] Received payload (draft_mode=${isDraftMode}, existing=${existingQuoteId || 'none'})`);
 
     // =====================================================

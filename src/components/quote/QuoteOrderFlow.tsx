@@ -1,7 +1,7 @@
 // Quote Order Flow - Multi-step lead capture after quote
 // Step 1: Save Quote (contact) → Step 2: Address → Step 3: Map Pin → Step 4: Schedule → Step 5: Continue
 
-import { useState, useCallback, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { format } from 'date-fns';
 import { 
   User, MapPin, Navigation, ExternalLink, ChevronLeft, ChevronRight,
@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { saveQuote } from '@/lib/vendorSelection';
+import { loadQuickQuote, storeQuickQuote, clearQuickQuote, saveQuoteDetails, quoteErrorMessage } from '@/lib/quoteResume';
 import { AddressInput } from './steps/AddressInput';
 import { SchedulingStep, type SchedulingResult } from './steps/SchedulingStep';
 import type { Yard } from '@/lib/distanceService';
@@ -80,6 +82,8 @@ interface DistanceInfo {
 
 interface QuoteOrderFlowProps {
   quoteId?: string;
+  /** Signed token from save-quote for quoteId (required to add details to it). */
+  draftToken?: string;
   quoteSummary: QuoteSummary;
   initialContact?: Partial<ContactInfo>;
   onComplete: () => void;
@@ -90,6 +94,7 @@ interface QuoteOrderFlowProps {
 
 export function QuoteOrderFlow({ 
   quoteId, 
+  draftToken: initialDraftToken,
   quoteSummary, 
   initialContact,
   onComplete,
@@ -100,6 +105,8 @@ export function QuoteOrderFlow({
   const [step, setStep] = useState<OrderStep>('save');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedQuoteId, setSavedQuoteId] = useState<string | null>(quoteId || null);
+  const [draftToken, setDraftToken] = useState<string | null>(initialDraftToken || null);
+  const [savedContactKey, setSavedContactKey] = useState<string | null>(null);
 
   // Form state
   const [contact, setContact] = useState<ContactInfo>({
@@ -113,6 +120,23 @@ export function QuoteOrderFlow({
   const [address, setAddress] = useState<AddressResult | null>(null);
   const [placement, setPlacement] = useState<PlacementResult | null>(null);
   const [scheduling, setScheduling] = useState<SchedulingResult | null>(null);
+
+  // CAL 010: continue a quote saved in this browser (same ZIP and size) after a reload.
+  useEffect(() => {
+    if (quoteId) return;
+    const stored = loadQuickQuote({ zipCode: quoteSummary.zipCode, sizeLabel: quoteSummary.sizeLabel });
+    if (!stored) return;
+    setSavedQuoteId(stored.quoteId);
+    setDraftToken(stored.draftToken);
+    setContact(stored.contact);
+    setSavedContactKey(JSON.stringify(stored.contact));
+    setStep('address');
+    toast({ title: 'Welcome back', description: 'We kept your saved quote. Continue with your delivery address.' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const showStepError = (message: string) =>
+    toast({ title: 'Not saved', description: message, variant: 'destructive' });
 
   // Step navigation
   const stepIndex = ORDER_STEPS.findIndex(s => s.key === step);
@@ -145,85 +169,57 @@ export function QuoteOrderFlow({
 
     setIsSubmitting(true);
     try {
-      if (savedQuoteId) {
-        // Update existing quote
-        const { error } = await supabase
-          .from('quotes')
-          .update({
-            customer_name: contact.name,
-            customer_phone: contact.phone,
-            customer_email: contact.email || null,
-            company_name: contact.company || null,
-            user_type: contact.customerType,
-            status: 'saved',
-          })
-          .eq('id', savedQuoteId);
-
-        if (error) throw error;
-      } else {
-        // Create new quote record
-        const { data, error } = await supabase
-          .from('quotes')
-          .insert({
-            customer_name: contact.name,
-            customer_phone: contact.phone,
-            customer_email: contact.email || null,
-            company_name: contact.company || null,
-            user_type: contact.customerType,
-            zip_code: quoteSummary.zipCode,
-            material_type: quoteSummary.materialType,
-            rental_days: quoteSummary.rentalDays,
-            subtotal: quoteSummary.subtotal,
-            estimated_min: quoteSummary.estimatedMin,
-            estimated_max: quoteSummary.estimatedMax,
-            status: 'saved',
-          })
-          .select('id')
-          .single();
-
-        if (error) throw error;
-        setSavedQuoteId(data.id);
+      // CAL 010: saved through the protected endpoint (server decides status, signs a
+      // token for this quote, and runs lead-ingest + alerts once). If this browser
+      // already saved the same contact, nothing is sent again.
+      const contactKey = JSON.stringify(contact);
+      if (savedQuoteId && draftToken && savedContactKey === contactKey) {
+        setStep('address');
+        return;
       }
+
+      const result = await saveQuote({
+        customerName: contact.name,
+        customerPhone: contact.phone,
+        customerEmail: contact.email || undefined,
+        userType: contact.customerType,
+        zipCode: quoteSummary.zipCode,
+        materialType: quoteSummary.materialType,
+        rentalDays: quoteSummary.rentalDays,
+        extras: [],
+        subtotal: quoteSummary.subtotal,
+        estimatedMin: quoteSummary.estimatedMin,
+        estimatedMax: quoteSummary.estimatedMax,
+        isCalsanFulfillment: true,
+        userSelectedSizeYards: parseInt(quoteSummary.sizeLabel) || undefined,
+        existingQuoteId: savedQuoteId,
+        draftToken,
+      });
+
+      if (!result.success || !result.quoteId || !result.draftToken) {
+        showStepError(result.code ? quoteErrorMessage(result.code) : (result.error || quoteErrorMessage()));
+        return;
+      }
+
+      setSavedQuoteId(result.quoteId);
+      setDraftToken(result.draftToken);
+      setSavedContactKey(contactKey);
+      storeQuickQuote({
+        quoteId: result.quoteId,
+        draftToken: result.draftToken,
+        zipCode: quoteSummary.zipCode,
+        sizeLabel: quoteSummary.sizeLabel,
+        contact,
+      });
 
       toast({
         title: 'Quote Saved!',
         description: 'Your information has been saved.',
       });
-
-      // ── Lead Ingest: ensure this submission appears in the Lead Hub ──
-      try {
-        await supabase.functions.invoke('lead-ingest', {
-          body: {
-            source_channel: 'WEBSITE_QUOTE',
-            source_detail: 'quote_order_flow',
-            name: contact.name,
-            phone: contact.phone,
-            email: contact.email || null,
-            zip: quoteSummary.zipCode || null,
-            project_type: quoteSummary.materialType || null,
-            material_category: quoteSummary.materialType || null,
-            size_preference: quoteSummary.sizeLabel || null,
-            consent_status: 'FORM_SUBMIT',
-            raw_payload: {
-              quote_id: savedQuoteId,
-              estimated_min: quoteSummary.estimatedMin,
-              estimated_max: quoteSummary.estimatedMax,
-              rental_days: quoteSummary.rentalDays,
-            },
-          },
-        });
-      } catch (leadErr) {
-        console.error('[QuoteOrderFlow] lead-ingest failed (non-blocking):', leadErr);
-      }
-      
       setStep('address');
     } catch (error) {
       console.error('Save error:', error);
-      toast({
-        title: 'Save Failed',
-        description: 'Please try again or call us directly',
-        variant: 'destructive',
-      });
+      showStepError(quoteErrorMessage('network'));
     } finally {
       setIsSubmitting(false);
     }
@@ -233,19 +229,13 @@ export function QuoteOrderFlow({
   const handleAddressConfirmed = async (addressResult: AddressResult) => {
     setAddress(addressResult);
     
-    if (savedQuoteId) {
-      try {
-        await supabase
-          .from('quotes')
-          .update({
-            delivery_address: addressResult.formattedAddress,
-            delivery_lat: addressResult.lat,
-            delivery_lng: addressResult.lng,
-          })
-          .eq('id', savedQuoteId);
-      } catch (error) {
-        console.error('Address save error:', error);
-      }
+    if (savedQuoteId && draftToken) {
+      const r = await saveQuoteDetails(savedQuoteId, draftToken, {
+        delivery_address: addressResult.formattedAddress,
+        delivery_lat: addressResult.lat,
+        delivery_lng: addressResult.lng,
+      });
+      if (!r.ok) showStepError(r.message);
     }
   };
 
@@ -253,7 +243,7 @@ export function QuoteOrderFlow({
   const handlePlacementConfirmed = async (placementResult: PlacementResult) => {
     setPlacement(placementResult);
     
-    if (savedQuoteId) {
+    if (savedQuoteId && draftToken) {
       try {
         // Upload screenshot if available
         let screenshotUrl: string | null = null;
@@ -276,16 +266,16 @@ export function QuoteOrderFlow({
           entry: placementResult.entry,
         };
 
-        await supabase
-          .from('quotes')
-          .update({
-            placement_lat: placementResult.dumpsterRect.centerLat,
-            placement_lng: placementResult.dumpsterRect.centerLng,
-            placement_type: 'driveway',
-            placement_notes: placementResult.notes || null,
-            status: 'pinned',
-          })
-          .eq('id', savedQuoteId);
+        const saved = await saveQuoteDetails(savedQuoteId, draftToken, {
+          placement_lat: placementResult.dumpsterRect.centerLat,
+          placement_lng: placementResult.dumpsterRect.centerLng,
+          placement_type: 'driveway',
+          placement_notes: placementResult.notes || null,
+        });
+        if (!saved.ok) {
+          showStepError(saved.message);
+          return;
+        }
 
         // Save to quote_site_placement
         await supabase.from('quote_site_placement').insert({
@@ -329,33 +319,36 @@ export function QuoteOrderFlow({
   const handleSchedulingConfirmed = async (schedulingResult: SchedulingResult) => {
     setScheduling(schedulingResult);
     
-    if (savedQuoteId) {
+    if (savedQuoteId && draftToken) {
       try {
-        // First update the quote with scheduling data
-        await supabase
-          .from('quotes')
-          .update({
-            preferred_delivery_date: format(schedulingResult.deliveryDate, 'yyyy-MM-dd'),
-            preferred_delivery_window: schedulingResult.deliveryWindow,
-            suggested_pickup_date: format(schedulingResult.pickupDate, 'yyyy-MM-dd'),
-            is_weekend_delivery: schedulingResult.isWeekendDelivery,
-            status: 'scheduled',
-          })
-          .eq('id', savedQuoteId);
+        // First save the scheduling details on the quote
+        const saved = await saveQuoteDetails(savedQuoteId, draftToken, {
+          preferred_delivery_date: format(schedulingResult.deliveryDate, 'yyyy-MM-dd'),
+          preferred_delivery_window: schedulingResult.deliveryWindow,
+          suggested_pickup_date: format(schedulingResult.pickupDate, 'yyyy-MM-dd'),
+          is_weekend_delivery: schedulingResult.isWeekendDelivery,
+        });
+        if (!saved.ok) {
+          showStepError(saved.message);
+          return;
+        }
 
-        // Auto-create order from the scheduled quote
+        // Create the order with this visitor's signed quote token (CAL 009).
+        // Retries return the same order.
         const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order-from-quote', {
-          body: { quoteId: savedQuoteId },
+          body: { quoteId: savedQuoteId, draftToken },
         });
 
-        if (orderError) {
+        if (orderError || !orderResult?.orderId) {
           console.error('Auto-order creation error:', orderError);
-        } else if (orderResult) {
+          showStepError('Your schedule was saved, but we could not create the order. Please try again or call (510) 680-2150.');
+        } else {
+          clearQuickQuote();
           console.log('Order created:', orderResult);
           // Show toast for new orders
           if (!orderResult.alreadyExists) {
             toast({
-              title: '📋 Order Created',
+              title: 'Order Created',
               description: `Your order #${orderResult.orderId.slice(0, 8)} is in our system.`,
             });
           }
@@ -368,17 +361,7 @@ export function QuoteOrderFlow({
 
   // Continue to checkout
   const handleContinueOrder = async () => {
-    // Update status to checkout_started
-    if (savedQuoteId) {
-      try {
-        await supabase
-          .from('quotes')
-          .update({ status: 'checkout_started' })
-          .eq('id', savedQuoteId);
-      } catch (error) {
-        console.error('Status update error:', error);
-      }
-    }
+    // CAL 010: status is decided by the server; the browser no longer writes it.
 
     // Build checkout URL with params
     const checkoutParams = new URLSearchParams({

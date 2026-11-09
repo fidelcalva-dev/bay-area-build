@@ -85,7 +85,9 @@ Deno.serve(async (req: Request) => {
       included_days: String(quote.included_days),
       included_tons: quote.included_tons || "2.0",
       overage_rule: quote.overage_rule_text || "$165/ton overage",
-      schedule_link: quote.schedule_link || "#",
+      // CAL 010: only secure links (?t=) are sent; otherwise ask the customer to call.
+      schedule_link: (quote.schedule_link && quote.schedule_link.includes("/portal/schedule?t="))
+        ? quote.schedule_link : "call (510) 680-2150",
       payment_link: quote.payment_link || "#",
       portal_link: quote.portal_link || "#",
     };

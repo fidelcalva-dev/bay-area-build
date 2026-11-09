@@ -30,7 +30,9 @@ export interface OutboundQuoteRecord {
   tier: string;
 }
 
-// Build next-steps links (fallback when portal doesn't exist yet)
+// Build next-steps links (fallback when portal doesn't exist yet).
+// CAL 010: the schedule link is no longer built from an id. A secure, expiring link
+// is issued by the server (ensureSecureScheduleLink) for quotes linked to a saved quote.
 export function buildCustomerNextStepsLinks(outboundQuoteId: string): {
   schedule_link: string;
   payment_link: string;
@@ -38,7 +40,7 @@ export function buildCustomerNextStepsLinks(outboundQuoteId: string): {
 } {
   const baseUrl = window.location.origin;
   return {
-    schedule_link: `${baseUrl}/portal/schedule?quote=${outboundQuoteId}`,
+    schedule_link: `${baseUrl}/portal/schedule`,
     payment_link: `${baseUrl}/portal/pay?quote=${outboundQuoteId}`,
     portal_link: `${baseUrl}/portal/quote/${outboundQuoteId}`,
   };
@@ -95,7 +97,7 @@ export async function createOutboundQuote(
     .from('outbound_quotes')
     .update({
       payment_link: realLinks.payment_link,
-      schedule_link: realLinks.schedule_link,
+      schedule_link: null,
       portal_link: realLinks.portal_link,
     } as any)
     .eq('id', data.id);
@@ -103,11 +105,49 @@ export async function createOutboundQuote(
   return data as OutboundQuoteRecord;
 }
 
+// CAL 010 — Issue (once) a secure schedule link for an outbound quote that is linked
+// to a saved quote. The server checks the staff member's role, stores only a hash of
+// the token, and the link expires after 7 days. Returns null when no link can be issued
+// (e.g. the outbound quote has no saved quote); the message then asks the customer to call.
+export async function ensureSecureScheduleLink(outboundQuoteId: string): Promise<string | null> {
+  const { data: row } = await supabase
+    .from('outbound_quotes')
+    .select('schedule_link, quote_id')
+    .eq('id', outboundQuoteId)
+    .maybeSingle();
+  const current = (row as { schedule_link?: string | null } | null)?.schedule_link;
+  if (current && current.includes('/portal/schedule?t=')) return current;
+  if (!(row as { quote_id?: string | null } | null)?.quote_id) {
+    if (current) await supabase.from('outbound_quotes').update({ schedule_link: null } as any).eq('id', outboundQuoteId);
+    return null;
+  }
+  const { data, error } = await supabase.functions.invoke('quote-schedule-link', {
+    body: { action: 'issue', outbound_quote_id: outboundQuoteId },
+  });
+  if (error || !data?.path) {
+    console.error('[outboundQuote] secure schedule link not issued', error || data);
+    return null;
+  }
+  const url = `${window.location.origin}${data.path}`;
+  await supabase.from('outbound_quotes').update({ schedule_link: url } as any).eq('id', outboundQuoteId);
+  return url;
+}
+
+// CAL 010 — Revoke every active schedule link for a saved quote.
+export async function revokeScheduleLinks(quoteId: string): Promise<number> {
+  const { data, error } = await supabase.functions.invoke('quote-schedule-link', {
+    body: { action: 'revoke', quote_id: quoteId },
+  });
+  if (error) throw error;
+  return data?.revoked ?? 0;
+}
+
 // Send an outbound quote via edge function
 export async function sendOutboundQuote(
   outboundQuoteId: string,
   channels: ('SMS' | 'EMAIL')[],
 ): Promise<{ success: boolean; status: string; error?: string }> {
+  await ensureSecureScheduleLink(outboundQuoteId);
   const { data, error } = await supabase.functions.invoke('send-outbound-quote', {
     body: { outbound_quote_id: outboundQuoteId, channels },
   });
