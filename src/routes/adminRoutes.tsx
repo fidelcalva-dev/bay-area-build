@@ -18,6 +18,7 @@ const CalsanControlCenter = lazy(() => import("@/pages/admin/CalsanControlCenter
 // AI Pages
 const AIPerformanceDashboard = lazy(() => import("@/pages/admin/AIPerformanceDashboard"));
 const AIControlCenter = lazy(() => import("@/pages/admin/ai/AIControlCenter"));
+const CalsanAgent = lazy(() => import("@/pages/admin/ai/CalsanAgent"));
 const AISalesCopilot = lazy(() => import("@/pages/admin/ai/AISalesCopilot"));
 const AICsCopilot = lazy(() => import("@/pages/admin/ai/AICsCopilot"));
 const AIDispatchCopilot = lazy(() => import("@/pages/admin/ai/AIDispatchCopilot"));
@@ -352,6 +353,7 @@ export function getAdminRoutes() {
       <Route path="ai/chat" element={<SuspenseRoute><AdminAIChat /></SuspenseRoute>} />
       <Route path="ai/performance" element={<SuspenseRoute><AIPerformanceDashboard /></SuspenseRoute>} />
       <Route path="ai/control-center" element={<SuspenseRoute><AIControlCenter /></SuspenseRoute>} />
+      <Route path="ai/agent" element={<SuspenseRoute><CalsanAgent /></SuspenseRoute>} />
       <Route path="ai/sales" element={<SuspenseRoute><AISalesCopilot /></SuspenseRoute>} />
       <Route path="ai/customer-service" element={<SuspenseRoute><AICsCopilot /></SuspenseRoute>} />
       <Route path="ai/dispatch" element={<SuspenseRoute><AIDispatchCopilot /></SuspenseRoute>} />

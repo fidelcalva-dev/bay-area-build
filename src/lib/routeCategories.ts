@@ -383,6 +383,7 @@ const crmMarketingAnalytics: RouteEntry[] = [
 
 const crmAI: RouteEntry[] = [
   { path: '/admin/ai/control-center', name: 'AI Control Center', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Brain, sidebarLabel: 'AI Control Center', sidebarEnd: true, sidebarOrder: 0 },
+  { path: '/admin/ai/agent', name: 'Agente Calsan', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Brain, sidebarLabel: 'Agente Calsan', sidebarOrder: 0 },
   { path: '/admin/ai/sales', name: 'AI Sales Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: TrendingUp, sidebarLabel: 'Sales Copilot', sidebarOrder: 1, visibleTo: ['admin', 'sales'] },
   { path: '/admin/ai/customer-service', name: 'AI CS Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Users, sidebarLabel: 'CS Copilot', sidebarOrder: 2, visibleTo: ['admin', 'cs'] },
   { path: '/admin/ai/dispatch', name: 'AI Dispatch Copilot', group: 'CRM_INTERNAL', subcategory: 'AI', isProtected: true, indexable: false, mounted: true, showInSidebar: true, sidebarSection: 'ai', sidebarIcon: Truck, sidebarLabel: 'Dispatch Copilot', sidebarOrder: 3, visibleTo: ['admin', 'dispatcher', 'ops_admin'] },
