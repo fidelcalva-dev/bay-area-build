@@ -229,7 +229,7 @@ export async function saveQuote(params: {
   // CAL 001A: promote an existing draft instead of creating a new quote
   existingQuoteId?: string | null;
   draftToken?: string | null;
-}): Promise<{ success: boolean; quoteId?: string; resumeLink?: string; error?: string; code?: string }> {
+}): Promise<{ success: boolean; quoteId?: string; draftToken?: string; resumeLink?: string; error?: string; code?: string }> {
   try {
     // Use edge function to bypass RLS (server-side insert with service role)
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -341,6 +341,7 @@ export async function saveQuote(params: {
     return { 
       success: true, 
       quoteId: result.quote_id, 
+      draftToken: typeof result.draft_token === 'string' ? result.draft_token : undefined,
       resumeLink: result.resume_link,
     };
   } catch (err) {

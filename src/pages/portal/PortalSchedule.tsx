@@ -86,14 +86,17 @@ export default function PortalSchedule() {
             } else {
               // Create order from quote
               const { data: newOrder, error: createErr } = await supabase.functions.invoke('create-order-from-quote', {
-                body: { quote_id: oq.quote_id },
+                body: { quoteId: oq.quote_id },
               });
-              if (createErr || !newOrder?.order_id) {
+              // The server only converts quotes for staff or for the visitor holding
+              // the signed quote token. Customers arriving here without either are
+              // asked to contact the team instead of seeing a false success.
+              if (createErr || !newOrder?.orderId) {
                 setError('Unable to create order. Please contact support.');
                 return;
               }
-              setOrderId(newOrder.order_id);
-              await supabase.from('outbound_quotes').update({ order_id: newOrder.order_id } as any).eq('id', quoteParam);
+              setOrderId(newOrder.orderId);
+              await supabase.from('outbound_quotes').update({ order_id: newOrder.orderId } as any).eq('id', quoteParam);
             }
           } else {
             setError('This quote has no linked order. Please contact support.');

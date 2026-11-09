@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { verifyDraftToken } from "../_shared/quote-draft-token.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,6 +28,63 @@ interface OrderSnapshot {
   text_before_arrival: boolean;
 }
 
+// =====================================================
+// CAL 009 — Authorization gate.
+// A caller may convert a quote into an order only if:
+//   (a) it presents the server-signed token issued by save-quote for THIS quote
+//       (the website visitor who just saved it), or
+//   (b) it is a signed-in, active staff member with a role allowed to convert.
+// Roles come from public.user_roles on the server; nothing sent by the browser
+// is trusted. Without either proof the function refuses and changes nothing.
+// =====================================================
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const STAFF_CONVERT_ROLES = [
+  "admin", "system_admin", "owner", "executive", "ops_admin",
+  "sales", "sales_admin", "sales_rep", "dispatcher", "cs", "cs_agent", "customer_service",
+];
+// Statuses a visitor (token path) may still convert. Staff may convert any
+// quote that is not cancelled/lost/expired.
+const VISITOR_CONVERTIBLE = new Set(["draft", "pending", "saved", "scheduled", "checkout_started"]);
+const NEVER_CONVERTIBLE = new Set(["cancelled", "canceled", "lost", "expired", "rejected", "declined"]);
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+type Caller =
+  | { kind: "staff"; userId: string }
+  | { kind: "visitor" }
+  | { kind: "denied"; status: number; code: string };
+
+// deno-lint-ignore no-explicit-any
+async function resolveCaller(req: Request, admin: any, quoteId: string, draftToken: unknown): Promise<Caller> {
+  // (b) Staff session?
+  const auth = req.headers.get("Authorization") || "";
+  const jwt = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (jwt) {
+    const { data } = await admin.auth.getUser(jwt);
+    const userId = data?.user?.id as string | undefined;
+    if (userId) {
+      const { data: allowed } = await admin.rpc("has_any_role", { _user_id: userId, _roles: STAFF_CONVERT_ROLES });
+      if (allowed === true) {
+        const { data: staffRow } = await admin
+          .from("staff_users").select("status").eq("user_id", userId).maybeSingle();
+        if (!staffRow || staffRow.status === "active") return { kind: "staff", userId };
+        return { kind: "denied", status: 403, code: "staff_inactive" };
+      }
+    }
+  }
+  // (a) Signed quote token from save-quote?
+  if (draftToken !== undefined && draftToken !== null && draftToken !== "") {
+    const check = await verifyDraftToken(draftToken, quoteId);
+    if (check.ok) return { kind: "visitor" };
+    return { kind: "denied", status: check.status, code: check.code };
+  }
+  return { kind: "denied", status: 401, code: "not_authorized" };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,34 +95,39 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { quoteId }: CreateOrderRequest = await req.json();
+    // deno-lint-ignore no-explicit-any
+    const body: any = await req.json().catch(() => ({}));
+    const quoteId: string = body.quoteId ?? body.quote_id;
+    const draftToken = body.draftToken ?? body.draft_token;
 
-    if (!quoteId) {
-      return new Response(
-        JSON.stringify({ error: "quoteId is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!quoteId) return json({ error: "quoteId is required", code: "missing_quote_id" }, 400);
+    if (typeof quoteId !== "string" || !UUID_RE.test(quoteId)) {
+      return json({ error: "Invalid quote reference", code: "invalid_quote_id" }, 400);
     }
+
+    const caller = await resolveCaller(req, supabase, quoteId, draftToken);
+    if (caller.kind === "denied") {
+      console.warn(`[create-order-from-quote] denied quote=${quoteId} code=${caller.code}`);
+      return json({ error: "Not authorized to create an order for this quote", code: caller.code }, caller.status);
+    }
+    const actorRole = caller.kind === "staff" ? "staff" : "customer";
 
     // 1. Check if order already exists for this quote (prevent duplicates)
     const { data: existingOrder } = await supabase
       .from("orders")
       .select("id, status")
       .eq("quote_id", quoteId)
-      .single();
+      .maybeSingle();
 
     if (existingOrder) {
       console.log(`Order already exists for quote ${quoteId}: ${existingOrder.id}`);
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          orderId: existingOrder.id, 
-          status: existingOrder.status,
-          alreadyExists: true,
-          message: "Order already exists for this quote" 
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return json({
+        success: true,
+        orderId: existingOrder.id,
+        status: existingOrder.status,
+        alreadyExists: true,
+        message: "Order already exists for this quote",
+      });
     }
 
     // 2. Fetch the quote with all relevant data
@@ -83,6 +146,12 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "Quote not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    const quoteStatus = String(quote.status || "").toLowerCase();
+    if (NEVER_CONVERTIBLE.has(quoteStatus) ||
+        (caller.kind === "visitor" && !VISITOR_CONVERTIBLE.has(quoteStatus))) {
+      return json({ error: "This quote can no longer be converted", code: "quote_not_convertible", status: quoteStatus }, 409);
     }
 
     // 3. Look up yard by yard_id or yard_name
@@ -189,10 +258,20 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
+    if (orderError && (orderError as { code?: string }).code === "23505") {
+      // Concurrent request already created the order (unique index on orders.quote_id).
+      const { data: raced } = await supabase
+        .from("orders").select("id, status").eq("quote_id", quoteId).maybeSingle();
+      if (raced) {
+        return json({ success: true, orderId: raced.id, status: raced.status, alreadyExists: true,
+          message: "Order already exists for this quote" });
+      }
+    }
+
     if (orderError) {
       console.error("Order creation error:", orderError);
       return new Response(
-        JSON.stringify({ error: "Failed to create order", details: orderError.message }),
+        JSON.stringify({ error: "Failed to create order", code: "db_error" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -417,7 +496,8 @@ Deno.serve(async (req) => {
       .insert({
         order_id: order.id,
         event_type: "ORDER_CREATED",
-        actor_role: "system",
+        actor_role: actorRole,
+        actor_id: caller.kind === "staff" ? caller.userId : null,
         message: `Order created from quote. Invoice: ${invoice?.invoice_number || 'N/A'}. Delivery: ${quote.preferred_delivery_date || 'TBD'} (${quote.preferred_delivery_window || 'TBD'})`,
         after_json: {
           status: "scheduled_requested",
@@ -437,8 +517,8 @@ Deno.serve(async (req) => {
         action: "requested",
         new_date: quote.preferred_delivery_date,
         new_window: quote.preferred_delivery_window,
-        actor_role: "customer",
-        reason: "Customer scheduled via quote flow",
+        actor_role: actorRole,
+        reason: caller.kind === "staff" ? "Staff converted quote to order" : "Customer scheduled via quote flow",
       });
 
     console.log(`Order ${order.id} created from quote ${quoteId} with invoice ${invoice?.invoice_number}. Contracts valid: ${contractsValid}`);

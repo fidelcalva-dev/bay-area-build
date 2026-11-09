@@ -751,7 +751,7 @@ export function V3QuoteFlow() {
 
         try {
           const { data: orderData } = await supabase.functions.invoke('create-order-from-quote', {
-            body: { quoteId: result.quoteId },
+            body: { quoteId: result.quoteId, draftToken: result.draftToken },
           });
           if (orderData?.orderId) {
             toast({ title: 'Order Confirmed!', description: 'Choose your delivery date next.' });
